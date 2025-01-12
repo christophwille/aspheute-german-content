@@ -1,0 +1,308 @@
+<HTML>
+<HEAD>
+<TITLE>Uploaden einer beliebigen Datei in eine Datenbank</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Auf Anregung einer Frage in der AspGerman Liste m&ouml;chte ich in diesem Artikel demonstrieren, wie man eine beliebige Datei (zum Beispiel ein Bild) vom Client (Browser) auf den Server uploaded und in einer Datenbank speichert.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,HTML,Upload,Datenbank,Image Upload,Bildupload,Access,ActiveFile,Komponente,AspGerman,File Upload,FileUpload">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Uploaden einer beliebigen Datei in eine Datenbank</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/Komponenten.htm">Komponenten</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001030"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Auf Anregung einer Frage in der 
+<a href="http://www.aspgerman.com/aspgerman/listen/" target="_blank">AspGerman Liste</a> m&ouml;chte ich
+in diesem Artikel demonstrieren, wie man eine beliebige Datei (zum Beispiel ein Bild)
+vom Client (Browser) auf den Server uploaded und in einer Datenbank speichert.</p>
+
+<p>Wie der Dateiupload vom Client zum Server mittels ASP prinzipiell funktioniert,
+habe ich bereits im Artikel 
+<a href="../artikel/19990812.htm">Dateien mit dem Browser auf Webserver laden</a>
+dargelegt. Auf die Einzelheiten, die man beachten mu&szlig;, werde ich nat&uuml;rlich auch in diesem Artikel eingehen.
+</p>
+
+<p>Dateiupload unter ASP bewerkstelligt man am einfachsten mit einer ActiveX Komponente.
+Die meisten Upload-Komponenten am Markt erlauben das Uploaden mehrerer Dateien gleichzeitig
+und auch das Auslesen von weiteren mit dem HTML Formular abgesendeten Werten.</p>
+
+<p>Zur Demonstration der Uploadfunktion mit anschlie&szlig;endem Speichern in einer Datenbank
+habe ich die 
+<a href="http://www.infomentum.com/activefile/" target="_blank">ActiveFile Komponente</a> 
+(Version 2.2.7) der Firma <a href="http://www.Infomentum.com" target="_blank">Infomentum, Inc.</a>
+herangezogen, da diese unter anderem das direkte Schreiben einer upgeloadeten Datei in ein 
+ADO <i>Field</i> und damit in eine Datenbank erm&ouml;glicht.</p>
+
+<p>Nebenbei bemerkt beherrscht die ActiveFile Komponente nicht nur Dateiup- und Datei-Download, 
+sondern auch das Erstellen und Auslesen von Archiven (ZIP, StuffIT, TAR, GNU zip, MacBinary format),
+das Impersonalisieren von NT Permissions in ASP Skripts,
+die Installation von Komponenten (DLL) am Webserver, &uuml;bergeben von Webserverdateien
+an den Browser und noch einiges anderes.</p>
+
+<p>Ausserdem kann ActiveFile von Mac Computern upgeloadete Dateien automatisch in PC Format umwandeln
+indem es die sogenannte "resource fork" des MacBinary Formats entsorgt.</p>
+
+<p>Die Installation der ActiveFile Komponente verl&auml;uft meiner Erfahrung nach 
+einfach und reibungslos. Wie bei der Installation vieler anderer Komponente wird
+dabei kurzzeitig der IIS und damit alle Websites des Server au&szlig;er Betrieb gesetzt.</p>
+
+<p>Hinweis: Auch in reinem ASP (VBScript) l&auml;&szlig;t sich eine upgeloadete Datei 
+entgegennehmen und auf der Festplatte oder in einer Datenbank speichern. Die folgenden
+Scripts zeigen, wie man nur mit VBScript unter ASP einen Dateiupload durchf&uuml;hren kann:</p>
+
+<p><ul>
+	<li><a href="http://www.teamone.de/selfaktuell/artikel/aspupload.htm" target="_blank">Dateiupload per ASP</a> 
+	von Stefan Falz auf <a href="http://www.teamone.de/selfaktuell/" target="_blank">SELFHTML</a></li>
+	<li><a href="http://www.asptoday.com/articles/20000316.htm" target="_blank">File Uploading with ASP and VBScript</a>
+	von Philippe Collignon auf <a href="http://www.asptoday.com" target="_blank">ASPToday</a> 
+</li>
+	<li><a href="http://www.aspzone.com/articles/john/aspUpload/" target="_blank">ASP File Upload using VBScript</a>
+	von John R. Lewis bei <a href="http://www.aspzone.com" target="_blank">AspZone.com</a></li>
+	<li><a href="http://www.pstruh.cz/help/ScptUtl/library.htm" target="_blank">Pure ASP Upload</a>
+	von Antonin Foller</li>
+</ul></p>
+
+
+<h2>Dateiupload mit ActiveFile</h2>
+
+<p>Zum Uploaden von Dateien ben&ouml;tigt man ein spezielles HTML Formular: 
+Im &lt;FORM&gt; Tag mu&szlig; der Parameter <i>METHOD</i> den Wert <i>"POST"</i> 
+und der Parameter <i>ENCTYPE</i> den Wert <i>"MULTIPART/FORM-DATA"</i> haben.</p>
+
+<p>Das folgende HTML Formular erlaubt den Upload einer Datei zum Server:</p>
+
+<p><pre style="background='silver';">
+&lt;FORM ACTION="DateiLaden.asp" ENCTYPE="MULTIPART/FORM-DATA" 
+   METHOD="POST"&gt;
+   Geben Sie den Dateinamen ein:
+   &lt;INPUT TYPE="FILE" NAME="DATEI1"&gt;
+   &lt;BR&gt;&lt;BR&gt;
+   &lt;INPUT TYPE="SUBMIT" NAME="Datei laden"&gt;
+&lt;/FORM&gt;
+</pre></p>
+
+<p>Das Formular finden Sie auch in der Datei <i>form.htm</i>, die im
+Download zu diesem Artikel enthalten ist.</p>
+
+<p>Schickt man dieses Formular ab, so sendet der Browser die Datei f&uuml;r 
+den Upload an das ASP Skript, das im <i>ACTION</i> Parameter des
+&lt;FORM&gt; Tags angegeben ist (<i>DateiLaden.asp</i>).
+So kann das ASP Skript die Datei vom Browser entgegennehmen und 
+am Webserver oder in einer Datenbank speichern.</p>
+
+<p>Wie schon erw&auml;hnt ben&ouml;tigt das ASP Skript dazu zwar nicht unbedingt 
+eine Komponente wie ActiveFile, aber es vereinfacht die Sache ungemein.</p>
+
+<p>Die ASP Seite instanziert die Upload-Komponente (z.B. ActiveFile), die dann den 
+HTTP Response vom Browser entgegen nimmt.
+Dies alles l&auml;uft konform zur RFC 1867, "Form-based File Upload in HTML" des W3C ab.
+Die Upload-Komponente &uuml;bernimmt dann die volle Verwaltung der upgeloadeten Datei.</p>
+
+<p>Am einfachsten l&auml;&szlig;t sich die komplexe Funktionalit&auml;t 
+und das Uploaden eines Bildes anhand eines Beispielskripts erkl&auml;ren.</p>
+
+
+<h3>ASP Skript zum Speichern einer Datei in der Datenbank</h3>
+
+<p>Ich habe ein ASP Skript namens <i>upload.asp</i> geschrieben,
+welches eine beliebige Datei entgegen nimmt, den Namen der Datei, 
+die Art der Datei ("ContentType") sowie die Datei selbst in eine Access 2000
+Datenbank schreibt. Die Access Datenbank namens <i>UploadDB.mdb</i> finden Sie im 
+Download zum Artikel. Die Datenbank enth&auml;lt nur die Tabelle <i>tUpload</i>, in der alle
+Daten der Datei gespeichert werden.</p>
+
+<p><IMG SRC="/artikel/Bilder/200010/20001030_tUpload.png" width=590 height=135 alt="" border="0">
+<br>
+<i>Bild 1: Struktur der Tabelle tUpload</i></p>
+
+<p>Das Feld <i>ID</i> ist vom Typ <i>AutoNumber</i>, soda&szlig; f&uuml;r 
+jeden neuen Eintrag eine eigene ID generiert wird.
+Die Felder <i>DateiName</i> und <i>DateiContentType</i> speichern den Namen der 
+upgeloadeten Datei sowie den Dateityp (bzw. ContentType).
+Im Feld <i>Datei</i> vom Typ <i>OLE Object</i> wird schlie&szlig;lich die Datei
+selbst gespeichert.</p>
+
+<p>Der Zugriff auf die Access Datenbank erfolgt &uuml;ber ADO und den <i>OLE DB Provider for JET</i>.</p>
+
+<p>Nat&uuml;rlich kann man die Dateien in jeder anderen Datenbank
+(SQL Server, Oracle, DB2 ..) speichern. In einer SQL Server Datenbank w&uuml;rde
+man dann f&uuml;r das ID Feld ein Identity Feld nehmen
+(siehe 
+<a href="../artikel/20000606.htm">Zugriff auf autom. generierte ID beim 
+Einf&uuml;gen eines Datensatzes</a>).
+Der entsprechende Datentyp zu <i>AutoNumber</i> in Access ist in einer
+SQL Server Datenbank der Datentyp <i>image</i>.</p>
+
+<p>Nun aber zum eigentlichen ASP Skript namens <i>upload.asp</i>. 
+Das Skript managt den Dateiupload durch Einsatz des 
+<i>ActiveFile.Post</i> Objektes, das alle Dateien des Uploads empf&auml;ngt und
+in ein tempor&auml;res Verzeichnis schreibt. 
+Das <i>ActiveFile.Post</i> Objekt ist Teil der ActiveFile Komponente.</p>
+
+<p>Danach wird eine Datenbankverbindung zur Access Datenbank <i>UploadDB.mdb</i>
+hergestellt, um die Datei darin zu speichern.
+Zuerst wird ein leeres Recordset (<i>CursorLocation = adUseServer</i>, 
+<i>CursorType = adOpenKeyset</i> und <i>LockType = adLockOptimistic</i>)
+ge&ouml;ffnet, um mit Hilfe dieses Recordsets unter Einsatz der <i>Recordset.AddNew</i>
+und der <i>Recordset.Update</i> Methoden die Daten der Datei (Name und Contenttype)
+sowie den Inhalt der Datei in die Datenbank zu schreiben.</p>
+
+<p>Das Schreiben des vollen Inhaltes der upgeloadeten Datei geschieht mittels 
+<i>Import</i> Methode des <i>ActiveFile.File</i> Objektes:</p>
+
+<p><pre style="background='silver';">
+<i>File</i>.Import <i>rs</i>(<i>"Feldname"</i>)
+</pre></p>
+
+<p>Das volle Listing des ASP Skripts - mit vielen wertvollen Kommentaren -
+finden Sie im Download und 
+<a href="../artikel/20001030_upload_asp.htm" target="_blank">hier</a>.</p>
+
+<p>Sobald eine Datei in der Datenbank gespeichert ist gibt das Skript die 
+ID f&uuml;r den Datensatz aus der Tabelle <i>tUpload</i> zur&uuml;ck.
+Ausserdem pr&auml;sentiert das Skript einen Link zum ASP Skript namens 
+<i>download.asp</i>, das ein Auslesen der Datei aus der Datenbank und 
+Senden zum Browser bewerkstelligt.</p>
+
+<p>Die Datei <i>download.asp</i> liest den Dateinamen sowie den Datetyp (Contenttyp)
+der gespeicherten Datei aus und sendet die Datei unter Angabe des Contenttype
+und des urspr&uuml;nglichen Dateinamens zum Browser.</p>
+
+<p>Damit der Browser die Datei richtig (und nicht als ASP-Datei) 
+zur Anzeige bzw. zum Download akzeptiert,
+mu&szlig; man im ASP Skript den Browser dementsprechend instruieren. 
+Dies geschieht mittels <i>Response.ContentType</i>
+und <i>Response.AddHeader "Content-Disposition", "inline; filename=Dateiname"</i>.
+Dazu setzt man  <i>Response.ContentType</i> auf den in der Datenbank gespeicherten
+Wert des Feldes <i>DateiContenttype</i>. Der Dateiname wird durch den
+HTTP Header namens "<i>Content-Disposition</i>" mit dem Wert
+"inline; filename=<i>Dateiname.ext</i>" zum Browser gesendet.
+
+<p>Die Datei selbst wird aus dem ADO Field (mittels <i>Field.GetChunk</i>)
+ausgelesen und durch den ASP Befehl <i>Response.BinaryWrite</i>
+zum Browser geschickt:</p>
+
+<p><pre style="background='silver';">
+   ...
+   ' HTTP Header setzen und Datei zum Browser senden
+   Response.ContentType = strContentType
+   Response.AddHeader "Content-Disposition", _
+      "inline; filename=" &amp; strFileName
+   Response.BinaryWrite rs("Datei").GetChunk(rs("Datei").ActualSize)
+   ...
+</pre></p>
+
+
+<p>Das volle Skript der Datei <i>download.asp</i> finden Sie im Download
+zu diesem Artikel und 
+<a href="../artikel/20001030_download_asp.htm" target="_blank">hier</a>.</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>Speichern von beliebigen Dateien - wie zum Beispiel Bildern, Word-Dokumenten,
+ASP-Dateien, ZIP-Archiven - in Datenbanken l&auml;&szlig;t sich mit Hilfe von
+Komponenten in ASP einfach bewerkstelligen.</p>
+
+<p>Zum Auslesen einer Datei aus der Datenank und Senden zum Browser gen&uuml;gt 
+ganz gew&ouml;hnliches ASP, wenn man ein paar Kniffe (zus&auml;tzliche HTTP Header
+und Einsatz von Response.BinaryWrite) benutzt.</p>
+
+<p>F&uuml;r die jenigen, die trotzdem mehr zum Dateiupload OHNE ASP-Komponente
+wissen m&ouml;chte empfehle ich die Linkliste am Ende dieses Artikels.</p>
+
+<p>F&uuml;r Fragen und Anregungen bin ich als Autor immer Dankbar, bitte benutzen
+Sie dazu den Link "Autor kontaktieren" am Ende des Artikels.</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001030.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20001030.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/19990825.htm">ADO und ASP - Datenbanken einmal n&auml;her betrachtet</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990825.htm</span><br>
+<a href="../artikel/20000406.htm">Auswertung von HTML Formularen mit ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000406.htm</span><br>
+<a href="../artikel/20010510.htm">Beliebige Anzahl von Dateien uploaden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010510.htm</span><br>
+<a href="../artikel/19990812.htm">Dateien mit dem Browser auf Webserver laden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990812.htm</span><br>
+<a href="../artikel/20000802.htm">Dateiupload mit ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000802.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Einfomentum%2Ecom%2Factivefile%2F">ActiveFile Komponente</a><br>
+<SPAN class="content">http://www.infomentum.com/activefile/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpzone%2Ecom%2Farticles%2Fjohn%2FaspUpload%2F">ASP File Upload using VBScript</a><br>
+<SPAN class="content">http://www.aspzone.com/articles/john/aspUpload/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpgerman%2Ecom%2Faspgerman%2Flisten%2F">AspGerman Liste</a><br>
+<SPAN class="content">http://www.aspgerman.com/aspgerman/listen/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpgerman%2Ecom%2Faspgerman%2Flisten%2Farchiv%2F">AspGerman Liste - Archiv</a><br>
+<SPAN class="content">http://www.aspgerman.com/aspgerman/listen/archiv/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Epstruh%2Ecz%2Ftips%2Fdetpg%5FBinASP%2Ehtm">Create and work with binary data in ASP/VBS</a><br>
+<SPAN class="content">http://www.pstruh.cz/tips/detpg_BinASP.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eteamone%2Ede%2Fselfaktuell%2Fartikel%2Faspupload%2Ehtm">Dateiupload per ASP ohne Komponente</a><br>
+<SPAN class="content">http://www.teamone.de/selfaktuell/artikel/aspupload.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easptoday%2Ecom%2Farticles%2F20000316%2Ehtm">File Uploading with ASP and VBScript</a><br>
+<SPAN class="content">http://www.asptoday.com/articles/20000316.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2EInfomentum%2Ecom%2F">Infomentum, Inc.</a><br>
+<SPAN class="content">http://www.Infomentum.com/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Epstruh%2Ecz%2Fhelp%2FScptUtl%2Flibrary%2Ehtm">Pure ASP Upload</a><br>
+<SPAN class="content">http://www.pstruh.cz/help/ScptUtl/library.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Epstruh%2Ecz%2Fhelp%2FScptUtl%2Flibrary%2Ehtm">ScriptUtilities - Komponenten zum Manipulieren von Bin&auml;rdaten</a><br>
+<SPAN class="content">http://www.pstruh.cz/help/ScptUtl/library.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,214 @@
+<HTML>
+<HEAD>
+<TITLE>MP3-Titelinformationen mit .NET auslesen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Das MP3-Format erfreut sich ungebrochener Beliebtheit, um die gesamte heimische Platten- und CD-Sammlung auf g&auml;ngige PC-Festplatten zu rippen. Dieser Artikel beschreibt, wie leicht man mit .NET die Titelinformationen auslesen kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,MP3,ID3 Tags,Titelinformationen,Mp3File,Klasse,C#,Stream,File,Datei">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>MP3-Titelinformationen mit .NET auslesen</H1>
+<p>
+Geschrieben von: <a href="../autoren/bjoernwaide.htm">Björn Waide</a><br>
+Kategorie: <a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20030430"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+St&auml;ndig eintrudelnde Pressemeldungen &uuml;ber Schlie&szlig;ungen von Peer-To-Peer Tauschb&ouml;rsen wie Napster und Co. hin oder her, das MP3-Format 
+erfreut sich ungebrochener Beliebtheit. Die Kompressionsrate ist bei guter Audio-Qualit&auml;t hoch genug, um die gesamte heimische Platten- 
+und CD-Sammlung auf g&auml;ngige PC-Festplatten zu rippen. Tagelanger Musik-Genuss ohne CD-Wechsel ist die Folge. Ohne die auf den CD-Covern 
+abgedruckten Informationen &uuml;ber Titel, Interpret und Sonstigem kann man jedoch schnell den &Uuml;berblick &uuml;ber den Inhalt seiner Mega-Jukebox 
+verlieren. Dankeswerterweise erlaubt es das MP3-Format, solche Informationen direkt mit in die Dateien zu schreiben. 
+</p>
+<p>
+Dieser Artikel beschreibt, wie leicht man mit den Klassen des .NET-Frameworks diese Titelinformationen aus MP3-Dateien auslesen kann. 
+Die Ergebnisse dieses kleinen HowTo's sind dem Artikel als Sourcecode beigelegt.
+</p>
+
+<h2>ID3 Tags</h2>
+<p>
+Um an die Meta-Daten zu einem MP3-File heranzukommen, mu&szlig; man als Erstes wissen, wo und wie sie abgelegt sind. Zur Zeit gibt es zwei 
+Standards mit den Namen ID3v1 und ID3v2. Diese legen fest, an welcher Stelle in einer MP3-Datei und mit wieviel Bytes eine bestimmte 
+Information, z.B. die &uuml;ber den Interpreten, abgelegt ist. In diesem Artikel wird ausschlie&szlig;lich auf die Version 1 dieses Standards 
+eingegangen. Eine informelle &Uuml;bersicht findet sich in der nachstehenden Grafik.
+</p>
+
+<IMG SRC="/artikel/Bilder/200304/20030430.png" width="221" height="240" alt="" border="0">
+
+<p>
+Im Anhang zur Spezifikation der aktuellen ID3 Version ID3v2.4.0 findet sich die genaue Definition. Die Informationen stehen, sofern sie 
+vorhanden sind, in den letzten 128 Bytes einer MP3-Datei. Sie werden mit der Zeichenfolge "TAG" eingeleitet. Danach stehen in dieser 
+Reihenfolge die interessierenden Daten:
+</p>
+
+<table>
+<tr><td>Song title</td><td>30 Zeichen</td></tr>
+<tr><td>Artist</td><td>30 Zeichen</td></tr>
+<tr><td>Album</td><td>30 Zeichen</td></tr>
+<tr><td>Year</td><td>4 Zeichen</td></tr>
+<tr><td>Comment</td><td>30 Zeichen</td></tr>
+<tr><td>Genre</td><td>1 Byte</td></tr>
+</table>
+
+<h2>Auslesen der Informationen</h2>
+<p>
+Mit diesem Wissen ausger&uuml;stet k&ouml;nnen wir uns daran wagen, das Ganze mit C# zu realisieren. Mit Hilfe der Klassen aus dem Namespace 
+<i>System.IO</i> des .NET-Frameworks lesen wir zuerst die letzten 128 Byte der Datei aus. Dazu &ouml;ffnen wir in den Zeilen 1 und 2 des nachfolgenden 
+Listings einen <i>Stream</i> auf die jeweilige Datei und "spulen" in Zeile 5 bis auf diese letzten Bytes vor. &Uuml;ber die Methode <i>Read</i> des 
+Stream-Objektes lesen wir in Zeile 9 diese letzten 128 Bytes nun schrittweise in ein Byte-Array.
+</p>
+
+<pre style="background='silver';">
+FileInfo file = new FileInfo(this.Filename);
+Stream s = file.OpenRead();
+ 		
+byte[] bytes = new byte[128];
+s.Seek(-128, SeekOrigin.End);
+int numBytesToRead = 128;
+int numBytesRead = 0;
+while (numBytesToRead &gt; 0) {
+	int n = s.Read(bytes, numBytesRead, numBytesToRead);
+
+	if (n==0) {
+		break;
+	}
+	numBytesRead += n;
+	numBytesToRead -= n;
+}
+s.Close();
+</pre>
+
+<h2>Parsen der ID3 Tags</h2>
+<p>
+Nachdem das geschafft ist, mu&szlig; der Inhalt dieses Byte-Arrays noch anhand der Angaben aus der ID3-Spezifikation "geparsed" werden. Aufgrund 
+der festen L&auml;ngen der einzelnen Abschnitte ist das ein leichtes Unterfangen. Wir verwenden hierzu die Methode <i>ConvertByteToString</i>, 
+die einen bestimmten Abschnitt des &uuml;bergebenen Byte-Arrays als String zur&uuml;ckgibt. 
+</p>
+
+<pre style="background='silver';">
+private static String ConvertByteToString(byte[] bytes, int pos1, int pos2)
+{
+   //pos2 mu&szlig; gr&ouml;&szlig;er oder gleich pos1 sein und
+   //pos2 darf L&auml;nge des Arrays nicht &uuml;berschreiten
+   if ((pos1 &gt; pos2) || (pos2 &gt; bytes.Length - 1))
+   {
+    throw new ArgumentException("Aruments out of range");
+   }
+    
+   //L&auml;nge des zu betrachtenden Ausschnittes
+   int length = pos2 - pos1 + 1;
+    
+   //neues Char-Array anlegen der L&auml;nge length
+   Char[] chars = new Char[length];
+    
+   //packe alle Bytes von pos1 bis pos2 als
+   //Char konvertiert in Array chars
+   for (int i = 0; i &lt; length; i++)
+   {
+    chars[i] = Convert.ToChar(bytes[i + pos1]);
+   }//end for
+    
+   //konvertiere Char-Array in String und gebe es zur&uuml;ck
+   return new String(chars);
+}
+</pre>
+
+<p>
+Wir brauchen nun eigentlich nur noch die Tabelle 1 aus dem Abschnitt "ID3 Tags" abzutippen. Vorher ist jedoch noch darauf zu achten, da&szlig; 
+die eingelesene Datei auch wirklich ID3-Informationen enth&auml;lt. Dem ist so, wenn in den ersten drei Bytes unseres Byte-Arrays das Wort 
+"TAG" steht.
+</p>
+
+<pre style="background='silver';">
+String tag = ConvertByteToString(bytes, 0, 2);
+if (tag != "TAG") {
+	return false;
+}
+
+m_title  = ConvertByteToString(bytes, 3, 32);
+m_artist = ConvertByteToString(bytes, 33, 62);
+m_album  = ConvertByteToString(bytes, 63, 92);
+m_year = Int32.Parse(ConvertByteToString(bytes, 93, 96));
+m_comment = ConvertByteToString(bytes, 97, 126);
+m_genre = bytes[127];
+</pre>
+
+<p>
+Damit haben wir schon den wichtigsten Teil, das Auslesen der Daten, erledigt. Mit ein wenig schm&uuml;ckendem Code-Beiwerk erh&auml;lt man so eine 
+leicht zu benutzende Klasse. Der beiliegende Source Code enth&auml;lt neben der eigentlichen <i>Mp3File</i> Klasse zwei kleine Beispiele, wie man 
+die gewonnenen Daten darstellen kann: Einmal an der Kommandozeile und - etwas sch&ouml;ner und komfortabler - ein anderes Mal als DataGrid 
+auf einer Web-Seite.
+</p>
+
+<IMG SRC="/artikel/Bilder/200304/20030430_1.png" width="800" height="241" alt="" border="0">
+
+<p>
+Dieses zweite Beispiel demonstriert dabei auch noch das DataBinding mit Standard-Collections und eigenen Objekten.
+</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Wie man sieht, ist es mit ein wenig Hintergrundwissen und den Klassen des .NET-Frameworks sehr leicht m&ouml;glich, an die Titelinformationen 
+von MP3-Dateien zu gelangen. Als Hausaufgabe verbleibt dem Leser die Implementierung des ID3v2-Standards, der wesentlich mehr Felder bei 
+variabler Feldl&auml;nge bietet. N&auml;here Informationen zu diesem Thema finden sich auf den Seiten der 
+<a href="http://www.id3.org" target="_blank">ID3.org</a>.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20030430.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20030430.zip</span></p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eid3%2Eorg">ID3.org</a><br>
+<SPAN class="content">http://www.id3.org</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

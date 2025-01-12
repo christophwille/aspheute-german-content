@@ -1,0 +1,263 @@
+<HTML>
+<HEAD>
+<TITLE>DropDown Listen bef&uuml;llen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel beschreibt zwei unterschiedliche Methoden wie man die DropDownList WebControl mit Daten bef&uuml;llen kann. Zuerst mit Hilfe der ArrayList, und danach wie man die Listeneintr&auml;ge aus einer SQL-Datenbank bezieht.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,DropDownList,ASP.NET,C#,Csharp,C Sharp,Web Form,Control,SQL,ADO.NET,DataBind,DataSource">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>DropDown Listen bef&uuml;llen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ADOdotNET.htm">ADO.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001123"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Dieser Artikel beschreibt zwei unterschiedliche Methoden wie man die DropDownList WebControl
+mit Daten bef&uuml;llen kann. Zuerst mit Hilfe der ArrayList, und danach wie man die Listeneintr&auml;ge
+aus einer SQL-Datenbank bezieht.
+</p>
+
+<p>
+Ich m&ouml;chte darauf hinweisen, da&szlig; wenn Sie den Beispiel-Sourccode selbst
+ausprobieren m&ouml;chten, Sie einen Microsoft SQL Server 7.0 oder h&ouml;her mit der Zugangsberechtigung
+<i>user id=sa; pwd=;</i> ben&ouml;tigen. Als Beispieldatenbank habe ich die <i>Northwind</i> Datenbank herangezogen. Diese ist
+standardm&auml;&szlig;ig bei den Beispieldateien des SQL Servers enthalten.
+</p>
+
+<p>
+Weiters ist zu beachten, da&szlig; wie immer bei unseren ASP.NET Artikeln, Sie nur dann vom downloadbaren Sourcecode 
+profitieren k&ouml;nnen, wenn Sie das Microsoft .NET Framework SDK auf einem Webserver installiert haben. 
+Damit werden auf diesem Webserver ASP.NET Seiten ( .aspx ) ausf&uuml;hrbar. 
+</p>
+
+<h2>ArrayList</h2>
+
+<p>
+Im einfachsten Fall kann man die Listeneintr&auml;ge innerhalb des <i>&lt;script&gt;</i>-Blockes mit Hilfe der 
+<i>ArrayList</i> Klasse erstellen. Dabei werden die Eintr&auml;ge durch die von der <i>ArrayList</i> Klasse unterst&uuml;tzte
+<i>Add</i> Methode hinzugef&uuml;gt. Das folgende Beispiel zeigt die sourcecodem&auml;&szlig;ige Ausf&uuml;hrung.
+Sie finden diese Datei im Download unter <i>DropDownSimple.aspx</i>:
+</p>
+
+<pre style="background='silver';">
+...
+void Page_Load(Object Sender, EventArgs E)
+{
+
+  if (!IsPostBack) 
+  {
+    ArrayList Days = new ArrayList();
+
+    Days.Add ("Montag");
+    Days.Add ("Dienstag");
+    Days.Add ("Mittwoch");
+    Days.Add ("Donnerstag");
+    Days.Add ("Freitag");
+    Days.Add ("Samstag");
+    Days.Add ("Sonntag");
+
+    MyDropDown.DataSource = Days;
+    MyDropDown.DataBind();
+  }
+}
+...
+</pre>
+
+<p>
+Zuerst wird ein neues <i>ArrayList</i> Objekt erstellt. Danach werden die einzelnen Eintr&auml;ge
+mit der <i>Add</i> Methode der Klasse dem Objekt hinzugef&uuml;gt. Um die Eintr&auml;ge des ArrayList Objekts
+der ASP.NET Control hinzuzuf&uuml;gen, geben wir zuerst der <i>DropDownList</i> Control die Datenquelle
+mittels der <i>DataSource</i> Property bekannt. Die Datenquelle ist ja in diesem Fall die ArrayList.
+Durch die <i>DataBind</i> Methode werden dann die Eintr&auml;ge der Control zugewiesen.
+</p>
+
+<p>
+Um dann die Benutzerauswahl erfassen zu k&ouml;nnen gibt es die M&ouml;glichkeit dies entweder &uuml;ber die <i>AutoPostBack</i>
+Property der WebControl zu tun oder durch einen Event (z.B Button_Click) einen PostBack zu erzwingen.
+</p>
+
+<p>
+In diesm Beispiel habe ich mich f&uuml;r letzters entschieden; D. h. man mu&szlig; im <i>script</i>-Block eine <i>_Click</i> Methode erstellen
+um den PostBack-Event triggern zu k&ouml;nnen:
+</p>
+
+<pre style="background='silver';">
+...
+void btnSubmit_Click(Object sender, EventArgs e)
+{
+   lblMsg1.Text = "Ihre Auswahl: " + MyDropDown.SelectedItem.Text;
+}
+...
+</pre>
+
+<p>
+Diese Methode &uuml;bergibt als Ergebnis nach dem PostBack die Auswahl des Benutzers an eine
+<i>Label</i> Control. 
+</p>
+
+<p>
+Zus&auml;tzlich um diesen Event starten zu k&ouml;nnen mu&szlig; man wie gewohnt innerhalb der <i>form</i> Tags
+eine <i>Button</i> Control einbauen:
+</p>
+
+<pre style="background='silver';">
+...
+&lt;asp:button Text="Abschicken" OnClick="btnSubmit_Click" runat="server" /&gt;
+...
+</pre>
+
+<p>
+Das war ja ganz einfach. Was aber wenn man die Daten allgemein aus einer Datenbank bekommen m&ouml;chte?
+Anwendungsbeispiele w&auml;ren z.B. ein Web Shop mit einer Produkt Datenbank. Bei einer gro&szlig;en Anzahl
+von Listeneintr&auml;gen wird die ArrayList Methode schnell unhandlich, und au&szlig;erdem ist es irgendwie
+unflexibel. 
+</p>
+
+<h2>SQL-DB und DataBind</h2>
+
+<p>
+Durch eine Anbindung an die Datenbank kann man z.B. die Listeneintr&auml;ge leichter sortieren,
+ein weiteres Processing wird durch die Verwendung der Prim&auml;rschl&uuml;ssel um einiges einfacher und
+man kann den erstellten Sourcecode leichter wiederverwerten. Dabei mu&szlig; man lediglich den <i>Connection</i> String und
+das <i>SQL-Statement</i> &auml;ndern.
+</p>
+
+<p>
+In diesem Beispiel verwende ich der Einfachheit halber die <i>Northwind</i> Datenbank. Der
+Benutzer kann bei Verwendung der im Beispiel angegebenen Randbedingungen (<i>Connection</i> String, 
+<i>SQL-Statement</i>) in der DropDownList aus den in der Datenbank angegebenen Lieferanten ausw&auml;hlen.
+</p>
+
+<p>
+Je nach der getroffenen Auswahl des Eintrags wird dann ein Index der Label Control zugewiesen.
+Gehen wir aber den Sourcecode einzeln durch (<i>DropDownSql.aspx</i>):
+</p>
+
+<pre style="background='silver';">
+...
+// Namespace Referenzen, etc.
+
+void Page_Load(Object Src, EventArgs E)
+{
+  if (Page.IsPostBack) 
+  {
+     lblMsg1.Text = MyDropDown.SelectedIndex.ToString();
+  } 
+  else 
+  {
+  BindData();
+  }
+}
+...
+</pre>
+
+<p>
+Um Serverresourcen zu sparen verwenden wir die <i>Page.IsPostBack</i> Property um festzustellen, ob
+die Seite schon einmal geladen wurde. Ist dies nicht der Fall so rufen wir die <i>BindData</i>
+Methode auf, die wie folgt aussieht:
+</p>
+
+<pre style="background='silver';">
+...
+void BindData()
+{
+
+  // DataSet Deklaration
+  //Angabe des Conn Strings, SQL Statements, etc.
+     
+   SqlConnection MyNWConn = new SqlConnection(strConn);
+   DataSet MyDataSet = new DataSet();
+   SqlDataAdapter oCommand = new SqlDataAdapter(strSQL,MyNWConn);
+
+   oCommand.Fill(MyDataSet, "MyData");
+   
+   MyDropDown.DataSource = MyDataSet.Tables["MyData"].DefaultView;
+   MyDropDown.DataTextField = "CompanyName";
+   MyDropDown.DataValueField = "SupplierID";
+   MyDropDown.DataBind();
+   }
+}
+...
+</pre>
+
+<p>
+Mit der <i>DataSource</i> Property geben Sie die Datenquelle f&uuml;r die DropDownList Control an.
+Mit <i>DataTextField</i> bestimmen Sie das Feld der Tabelle, das den Text der Eintr&auml;ge in der DropDownList enth&auml;lt.
+<i>DataValueField</i> definiert das Tabellenfeld f&uuml;r den Wert, der beim Abfragen des selektierten Eintrags
+geliefert werden soll (meist der Prim&auml;rschl&uuml;ssel der Tabelle). <i>Databind</i>
+weist dann endg&uuml;ltig die Eintr&auml;ge der Web Control zu.
+</p>
+
+<p>
+Bei der Angabe des <i>DropDownList</i> Tags innerhalb des Form Tags m&uuml;ssen Sie die <i>AutoPostBack</i>
+Property auf "True" setzen um den Postback zu triggern. Und schon k&ouml;nnen Sie die Selektion der
+datenbankgef&uuml;llten DropDown List auswerten.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Dieser Artikel hat Ihnen die M&ouml;glichkeiten der Eintrag-Generierung einer <i>DropDownList</i> Control
+n&auml;hergebracht. Sie k&ouml;nnen jetzt je nach Anforderung entweder die Listeneintr&auml;ge &uuml;ber die <i>ArrayList</i>
+Klasse erstellen oder die Eintr&auml;ge mit Hilfe einer Datenbank generieren.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001123.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20001123.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000808.htm">Einf&uuml;hrung in ASP.NET Web Forms</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000808.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

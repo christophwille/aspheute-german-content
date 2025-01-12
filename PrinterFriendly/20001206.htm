@@ -1,0 +1,550 @@
+<HTML>
+<HEAD>
+<TITLE>Benutzerverfolgung in ASP</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Arikel zeigt wie man mit ASP die Benutzterzugriffe einer Webseite mitprotokolliert.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP,Logfile,loggen,Analyse,Auswertung,Protokoll,protokollieren,Besucher">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Benutzerverfolgung in ASP</H1>
+<p>
+Geschrieben von: <a href="../autoren/stefanmayer.htm">Stefan Mayer</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001206"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Der Microsoft Internet Information Server protokolliert jeden Besucher und jede Datei, die abgerufen wurde 
+im Logfile mit. Oft ist das Logfile jedoch so umfangreich, da&szlig; die gew&uuml;nschte Analyse und Auswertung nur 
+mit teuren Programmen m&ouml;glich ist (WebTrends, etc). Abgesehen davon hat man nicht immer Zugriff auf das 
+Original-Logfile, was besonders bei Free-Providern h&auml;ufig der Fall ist.
+</p>
+
+<p>
+Die hier vorgestellte Variante erm&ouml;glicht eine recht einfache "Benutzerverfolgung", in dem einerseits 
+ausgew&auml;hlte Seiten gezielt in eine Datenbank protokolliert werden, andererseits wird 
+eine Online-Auswertungsm&ouml;glichkeit vorgestellt.
+</p>
+
+<h2>Die Datenbank</h2>
+
+<p>
+In der vorgestellten Version hei&szlig;t die Datenbank LOG.MDB. Es handelt sich um eine MS-Access 2000 - 
+Datenbank, die in E:\DBROOT abgespeichert ist. 
+</p>
+
+<p>
+Die Datenbank enth&auml;lt die Tabelle T_LOG. In diese Tabelle k&ouml;nnten beliebig viele zus&auml;tzliche Felder 
+eingef&uuml;gt werden oder andere &Auml;nderungen vorgenommen werden. In der beschriebenen Version sind folgende 
+Felder enthalten:
+</p>
+
+<p>
+<pre style="background='silver';">
+ID              Prim&auml;rschl&uuml;ssel/Autowert
+Datum           Enth&auml;lt das Datum &amp; Zeit des Zugriffs
+Seite           Enth&auml;lt den Seitentitel
+IP1             IP des Besuchers
+IP2             IP, Teil 2
+IP3             IP, Teil 3
+IP4             IP, Teil 4
+HOST            Hostname (aufgel&ouml;st) des Besuchers
+HTTP_USER_AGENT Browser-Identifikation
+HTTP_REFERER    Zugriffsverweis gekommen von
+Browser         Browser-Name
+Version         Browser-Versionsnummer
+</pre>
+</p>
+
+<p>
+
+<h2>Seiten in der Datenbank mitloggen</h2>
+
+<p>
+Beigef&uuml;gt ist eine Include-Datei, die zwei Funktionen enth&auml;lt, die den Eintrag in die Datenbank 
+vornehmen. Sie unterscheiden sich darin, da&szlig; die erste Funktion [MakeStat(LogPage)] einen Seitezugriff 
+eintr&auml;gt, w&auml;hrenddessen die zweite Funktion [MakeStatTxt(LogPage, InfoText)] zus&auml;tzlich einen 
+Informationstext eintr&auml;gt, anstatt des Zugriffsverweises.
+</p>
+
+<h2>Die Funktion MakeStat</h2>
+
+<p>
+<pre style="background='silver';">
+function MakeStat(LogPage, Comment, LookUp)
+</pre>
+</p>
+
+<h3>Es werden 3 Parameter &uuml;bergeben:</h3>
+
+<p>
+<ol>
+<li>LogPage - dieser Parameter ist die Seitenbezeichnung
+<li>Comment - hier kann ein Kommentar eingef&uuml;gt werden. Bleibt der Parameter leer, so wird der Name der verweisenden Seite eingetragen. Diese Information ist f&uuml;r eine sp&auml;tere Auswertung sehr wichtig, weil so festgestellt werden kann, woher die Besucher kommen. Also keinen Kommentar eintragen, wenn er nicht wirklich n&ouml;tig ist!
+<li>LookUp - hier kann die Hostnamenssuche aktiviert oder deaktiviert werden. Wird "TRUE" &uuml;bergeben, so wird der Hostname mit in die Datenbank eingetragen.
+</ol>
+</p>
+
+<p>
+Jetzt aber zum Sourcecode der Funktion. Hier ist der erste Teil:
+</p>
+
+<p>
+<pre style="background='silver';">
+REM Daten ermitteln: Browser &amp; Version
+Set BC = Server.CreateObject("MSWC.BrowserType")
+txtBro = bc.browser
+if txtBro = "" Then txtBro = "-"
+txtVer = bc.Version
+if txtVer = "" Then txtVer = "-"
+Set BC = Nothing
+</pre>
+</p>
+
+<p>
+Mittels der BrowserType Komponente l&auml;&szlig;t sich der verwendete Browser des Besuchers ermitteln - 
+allerdings nur dann korrekt, wenn die aktuellen Browserdefinitionen (browsercap.ini) geladen sind 
+- der Link zum downloaden der aktuellsten Version findet sich am BeitragsendeREM Daten ermitteln: 
+IP-Adresse und Host-Name [letzteres nur bei LookUp=TRUE]
+</p>
+
+<p>
+<pre style="background='silver';">
+arrIP = Split(Request.ServerVariables("REMOTE_ADDR"),".")
+If LookUp Then
+   Set DNS = Server.CreateObject("DNS.NSLookup") 
+   txtHost = DNS.RevNSLookup(Request.ServerVariables("REMOTE_ADDR"))
+   Set DNS = Nothing
+Else
+   txtHost = "-"
+End If
+</pre>
+</p>
+
+<p>
+Die IP-Adresse wird ermittelt und in ein Array (arrIP(0)-arrIP(3)) zerlegt. Weiters wird - wenn der 
+Parameter LookUp TRUE ist - der Hostname zur IP-Adresse ermittelt.
+</p>
+
+<p>
+Diese Arbeit &uuml;bernimmt eine DNS-Komponente. Da es eine Vielzahl verschiedener DNS oder IP - 
+Komponenten gibt, mu&szlig; gegebenenfalls die Syntax beim Reverse-Lookup sowie beim Aufruf der Komponente 
+ver&auml;ndert werden.
+</p>
+
+<p>
+<pre style="background='silver';">
+REM Daten ermitteln: alles Andere   
+txtAgent = Request.ServerVariables("HTTP_USER_AGENT")
+if txtAgent = "" Then txtAgent = "-"
+If Comment = "" Then
+   txtRefer = Request.ServerVariables("HTTP_REFERER")
+   if txtRefer = "" Then txtRefer = "-"
+Else
+   txtRefer = Comment
+End If
+</pre>
+</p>
+
+<p>
+Abschlie&szlig;end werden noch die fehlenden zwei Daten ermittelt - der User Agent und der Referer.
+</p>
+
+<p>
+<pre style="background='silver';">
+REM Datenbank &ouml;ffnen
+          strConn = "Driver={Microsoft Access Driver (*.mdb)};DriverID=25;DBQ="
+strConn = strConn &amp; Server.MapPath("log.mdb")
+strConn = strConn &amp; ";FIL=MS Access;MaxBufferSize=512;PageTimeout=5;"
+</pre>
+</p>
+
+<p>
+In diesem Fall liegt die Datenbank im selben Verzeichnis wie das Script - Nachteil: Die ganze Datenbank 
+kann von jedem Besucher heruntergeladen werden - wenn der Name bekannt ist. Es ist jedenfalls 
+sinnvoller, die Datenbank in einen NICHT freigegebenen Ordner zu legen, was jedoch von diversen 
+Free-Providern nicht unterst&uuml;tzt wird.
+</p>
+
+<p>
+<pre style="background='silver';">
+Set Conn = CreateObject("ADODB.Connection")
+Conn.Open strConn
+Set RS = CreateObject("ADODB.Recordset")
+RS.Cursortype = 1
+RS.LockType = 3
+RS.Open "SELECT * FORM T_LOG WHERE ID=0", Conn
+
+RS.AddNew
+   RS("Seite") = LogPage 
+   RS("IP1") = arrIp(0)
+   RS("IP2") = arrIp(1)
+   RS("IP3") = arrIp(2)
+   RS("IP4") = arrIp(3)
+   RS("Host") = txtHost
+   RS("HTTP_USER_AGENT") = txtAgent 
+   RS("HTTP_REFERER") = txtRefer
+   RS("Browser") = txtBro
+   RS("Version") = txtVer
+RS.Update
+RS.Close
+Conn.Close
+</pre>
+</p>
+
+<p>
+Um einen Eintrag in die Datenbank zu machen, 
+mu&szlig; in die ASP-Datei, die protokolliert werden soll, folgender Code am Anfang eingetragen werden: 
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;!-- #INCLUDE FILE="stat.asp" --&gt;
+&lt;% Dummy = MakeStat("Startseite", "", TRUE) %&gt;
+</pre>
+</p>
+
+<p>
+Zu beachten ist, da&szlig; bei dem Include File eventuell ein anderer Pfad angegeben werden mu&szlig;.
+</p>
+
+<p>
+Im folgenden Beispiel wird ein fehlgeschlagener Login-Versuch dokumentiert:
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;!-- #INCLUDE FILE="stat.inc" --&gt;
+&lt;% 
+Dummy = MakeStat ("Login", "Zugriff verweigert - falsches Pa&szlig;wort: "&amp; 
+Request("Passwort"), TRUE) 
+%&gt;
+</pre>
+</p>
+
+<h2>Auswertung der Datenbank</h2>
+
+<p>
+Nachdem Daten gesammelt werden, kann eine Auswertung durchgef&uuml;hrt werden. Diese Auswertung kann von 
+jedermann ganz leicht an individuelle Bed&uuml;rfnisse angepasst werden - es kommt einfach darauf an, was 
+man &uuml;ber seine Besucher bzw. &uuml;ber deren Verhalten wissen will.
+</p>
+
+<p>
+Beigef&uuml;gt ist ein Script (shortstat.asp), das kommentarlos die letzten 100 Besucher anzeigt. In einer 
+Fortsetzung dieses Artikels werden weitere Auswertungs- und Selektionsm&ouml;glichkeiten vorgestellt. 
+</p>
+
+<p><IMG SRC="/artikel/Bilder/200012/20001206_shortstat.png" width="590" height="363" alt="" border="0"></p>
+
+<p>
+Das folgende Script sollte ausschlie&szlig;lich dem Webmaster der Website zug&auml;nglich sein, da unter umst&auml;nden 
+hochsensible Daten enthalten sind.
+</p>
+
+<p>
+Genauso wie beim Erstellen des Eintrags wird die Datenbank ge&ouml;ffnet. Befindet sich diese in einem 
+anderen Verzeichnis, so mu&szlig; das hier ge&auml;ndert werden.
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;%
+REM Datenbank &ouml;ffnen
+strConn = "Driver={Microsoft Access Driver (*.mdb)};DriverID=25;DBQ="
+strConn = strConn &amp; Server.MapPath("log.mdb")
+strConn = strConn &amp; ";FIL=MS Access;MaxBufferSize=512;PageTimeout=5;"
+
+Set Conn = CreateObject("ADODB.Connection")
+Conn.Open strConn
+Set RS = CreateObject("ADODB.Recordset")
+RS.Cursortype = 1
+RS.LockType = 3
+RS.Open "SELECT * FROM T_LOG WHERE (Datum &gt; (Now()-31))ORDER BY Datum DESC", Conn
+%&gt;
+</pre>
+</p>
+
+<p>
+Die Datenbank wird ge&ouml;ffnet und alle Datens&auml;tze der letzten 31 Tage werden abgefragt
+- absteigend sortiert, also der neueste Datensatz wird zu Beginn angezeigt.
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;b&gt;Die letzten 100 Zugriffe der letzten 31 Tage&lt;p&gt;&lt;/b&gt;
+&lt;%
+response.write "&lt;/p&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;font size=1&gt;#&lt;/font&gt;&lt;/td&gt;"
+response.write "&lt;td&gt;&lt;font size=1&gt;Tag&lt;/font&gt;&lt;/td&gt;"
+response.write "&lt;td&gt;&lt;font size=1&gt;Zeit&lt;/font&gt;&lt;/td&gt;"
+response.write "&lt;td&gt;&lt;font size=1&gt;Seite&lt;/font&gt;&lt;/td&gt;"
+response.write "&lt;td&gt;&lt;font size=1&gt;IP-Adresse&lt;/font&gt;&lt;/td&gt;"
+response.write "&lt;td&gt;&lt;font size=1&gt;Host-Name&lt;/font&gt;&lt;/td&gt;"
+response.write "&lt;td&gt;&lt;font size=1&gt;Browser-Info&lt;/font&gt;&lt;/td&gt;"
+response.write "&lt;td&gt;&lt;font size=1&gt;Linkt von&lt;/font&gt;&lt;/td&gt;"
+response.write "&lt;td&gt;&lt;font size=1&gt;&lt;/font&gt;&lt;/td&gt;&lt;/form&gt;&lt;/tr&gt;"
+...
+</pre>
+</p>
+
+<p>
+Der Tabellenkopf wird erstellt .
+</p>
+
+<p>
+<pre style="background='silver';">
+i=1
+while (not rs.eof) and (i&lt;101)
+</pre>
+</p>
+
+<p>
+Die ersten 100 Datens&auml;tze werden angezeigt, es sei denn, es existieren nicht so viele.
+</p>
+
+<p>
+<pre style="background='silver';">
+rem Die Nummer
+response.write ("&lt;tr&gt;&lt;td&gt;&lt;font size=1&gt;")
+response.write (i)
+response.write ("&lt;/td&gt;")
+</pre>
+</p>
+
+<p>
+Als erstes Tabellenfeld wird die laufende Nummer ausgegeben
+</p>
+
+<p>
+<pre style="background='silver';">
+rem der Tag:
+Out = rs("Datum")
+out = left(out,instr(out, "."))
+If Out = DAlt Then
+   Out = ""
+else
+   DAlt = out
+End If
+response.write ("&lt;td&gt;&lt;font size=1&gt;")
+response.write (out)
+response.write ("&lt;/td&gt;")
+</pre>
+</p>
+
+<p>
+In die n&auml;chste Spalte kommt das Datum. Das Datum 
+wird pro Tag jedoch nur einmal ausgegeben; das macht das Ergebnis besser lesbar!
+</p>
+
+<p>
+<pre style="background='silver';">
+rem die Zeit:
+Out = rs("Datum")
+Out = Mid(Out, Instr(Out, ":")-2)
+response.write ("&lt;td&gt;&lt;font size=1&gt;")
+response.write (out)
+response.write ("&lt;/td&gt;")
+</pre>
+</p>
+
+<p>
+Die Uhrzeit wird komplett ausgegeben.
+</p>
+
+<p>
+<pre style="background='silver';">
+rem die Seite:
+Out = rs("Seite")
+response.write ("&lt;td&gt;&lt;font size=1&gt;")
+response.write (out)
+response.write ("&lt;/td&gt;")
+</pre>
+</p>
+
+<p>
+Hier wird der Seitenname, der &uuml;ber die Funktion eingegeben wurde, angezeigt.
+</p>
+
+<p>
+<pre style="background='silver';">
+rem die IP-Adresse:
+Out = rs("IP1")&amp;"."&amp; rs("IP2") &amp; "." &amp; rs("IP3") &amp; "." &amp; rs("IP4")
+response.write ("&lt;td&gt;&lt;font size=1&gt;")
+response.write (out)
+response.write ("&lt;/td&gt;")
+</pre>
+</p>
+
+<p>
+Die IP-Adresse mu&szlig; aus ihren 4 Bestandteilen wieder zusammengesetzt werden.
+</p>
+
+<p>
+<pre style="background='silver';">
+rem der Host:
+Out = rs("HOST")
+response.write ("&lt;td&gt;&lt;font size=1&gt;")
+response.write (out)
+response.write ("&lt;/td&gt;")
+</pre>
+</p>
+
+<p>
+Der Host-Name wird daneben ausgegeben.
+</p>
+
+<p>
+<pre style="background='silver';">
+rem der Browser:
+Out = rs("HTTP_USER_AGENT")
+response.write ("&lt;td&gt;&lt;font size=1&gt;")
+response.write (out)
+response.write ("&lt;/td&gt;")
+</pre>
+</p>
+
+<p>
+Ebenfalls wie "Browserinformation"
+</p>
+
+<p>
+<pre style="background='silver';">
+rem der Verweiser:
+Out = rs("HTTP_REFERER")
+response.write ("&lt;td&gt;&lt;font size=1&gt;")
+response.write (out)
+response.write ("&lt;/td&gt;")
+</pre>
+</p>
+
+<p>
+Und - sehr interessant - die Herkunft des Besuchers.
+</p>
+
+<p>
+<pre style="background='silver';">
+Rem der Browser:
+Out = rs("Browser")&amp; ", "&amp; rs("Version")
+response.write ("&lt;td&gt;&lt;font size=1&gt;")
+response.write (out)
+response.write ("&lt;/td&gt;")
+response.write ("&lt;/tr&gt;")
+out = ""
+</pre>
+</p>
+
+<p>
+Und f&uuml;r alle, die wissen wollen, ob Netscape oder 
+Internet Explorer h&auml;ufiger verwendet wird - hier die Best&auml;tigung.
+</p>
+
+<p>
+<pre style="background='silver';">
+rs.Movenext
+i=i+1
+wend
+
+RS.CLOSE
+Conn.Close
+%&gt;
+&lt;/table&gt;
+</pre>
+</p>
+
+<p>
+Abschlie&szlig;end werden Datenbank und Tabelle geschlossen. Das war's.
+</p>
+
+<p>
+Die hier beschriebene Abfrage l&auml;&szlig;t sich noch verfeinern und auf die eigenen Bed&uuml;rfnisse anpassen;
+sie kann jedoch auch ohne gro&szlig;e Modifikationen verwendet werden. So k&ouml;nnen auch Besucher gez&auml;hlt 
+werden, eine Netscape / Internet-Explorer - Statistik allen Besuchern angezeigt werden, etc.
+</p>
+
+<p>
+Die Daten k&ouml;nnen jedenfalls auch mit allen M&ouml;glichkeiten, die Access bietet, verarbeitet und 
+ausgewertet werden.
+</p>
+
+<h2>Notwendige Anpassungen</h2>
+
+<p>
+Um das beschriebene Beispiel verwenden zu k&ouml;nnen, mu&szlig; die Datenbank auf dem Server abgelegt werden 
+und die Pfade in der Include-Datei sowie in ShowStat.asp entsprechend ge&auml;ndert werden. Es empfiehlt 
+sich unter Umst&auml;nden, die Datenbank in ein Verzeichnis zu legen, wo sie vom Webbrowser nicht 
+heruntergeladen werden kann. Wird das gemacht, so mu&szlig; der Zugriffspfad auf die Datenbank ge&auml;ndert 
+werden.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Das beschriebene Script ist ein recht gutes Werkzeug, um die Zugriffe auf kleinere Websites zu 
+protokollieren. Es ist auf jeden Fall allerdings mit gro&szlig;er Sorgfalt vorzugehen, da die gesammelten 
+Daten nicht in falsche H&auml;nde geraten sollten.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001206.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20001206.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020429.htm">Benutzerverwaltung leicht gemacht: Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020429.htm</span><br>
+<a href="../artikel/20020121.htm">Besucherverfolgung f&uuml;r Fortgeschrittene</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020121.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easptracker%2Ecom">Browsercap.ini (die aktuellen Browserdefinitionen)</a><br>
+<SPAN class="content">http://www.asptracker.com</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

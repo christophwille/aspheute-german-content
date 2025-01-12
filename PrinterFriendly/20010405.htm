@@ -1,0 +1,281 @@
+<HTML>
+<HEAD>
+<TITLE>Komponente Y - welche Version bist Du?</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel zeigt, wie man mit nur einer ProgId &quot;bewaffnet&quot; die Versionsinformationen der Komponente auslesen kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,VersionInfo,IISDEV,Versionsinformation,FileSystemObject,Versionsnummer,Debugging,Testing,Problem">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Komponente Y - welche Version bist Du?</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Komponenten.htm">Komponenten</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010405"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Als ASP Programmierer verwendet man Komponenten - ein Administrator installiert sie (&uuml;blicherweise). Meist geschieht der
+Aufruf der Komponente &uuml;ber ihre ProgID, die sehr selten Auskunft &uuml;ber die Version gibt. Noch viel seltener
+erf&auml;hrt man, wo die Komponente gespeichert ist - was beim Aufsetzen oder Fehlersuchen hin und wieder
+hilfreich sein soll.
+</p>
+
+<p>
+Wie kommt man nun an die Versionsinformation heran? Nun, diese ist in der DLL oder EXE Datei gespeichert,
+in der die Komponente "lebt". Mit nur der ProgID in der Hand, wie komme ich da an den Dateinamen, noch nicht
+redend von wie lese ich die Versionsinformation aus? Die
+gute Nachricht ist, es geht. Die noch bessere - man mu&szlig; es nicht selbst programmieren, es gibt daf&uuml;r eine
+Komponente.
+</p>
+
+<p>
+Im heutigen Artikel verwende ich die <a href="http://www.alphasierrapapa.com/IisDev/Components/VersionInfo/" target="_blank">VersionInfo</a>
+Komponente, die ich selbst vor nun doch schon einiger Zeit programmiert habe. Da die Komponente
+gratis ist, habe ich auch kein schlechtes Gewissen, sie sozusagen zu "bewerben". &Uuml;brigens sind auch
+alle anderen bei <a href="http://www.alphasierrapapa.com/IisDev/Components/" target="_blank">IISDEV</a> 
+zu findenden Komponenten gratis.
+</p>
+
+<p>
+Wie funktioniert die VersionInfo Komponente? Ich teile ihr mit, welche ProgId ich kenne, und sie geht
+dann in der Registrierdatenbank "auf die Jagd" nach der zugeh&ouml;rigen Datei, aus der die Komponente dann
+s&auml;mtliche Versioninformation ausliest - die ich dann wiederum in ASP anzeigen lassen kann. Und genau
+so ein Formular bauen wir uns heute.
+</p>
+
+<h2>Das Formular</h2>
+<p>
+Unser Formular m&uuml;&szlig;te eigentlich nur ein Textfeld zur Verf&uuml;gung stellen - damit man eine ProgId wie
+zB <i>ADODB.Connection</i> eintippen kann. Um die Arbeit aber zu vereinfachen habe ich dem Formular
+eine weitere DropDown-Box spendiert: damit der Benutzer eine vordefinierte ProgId ausw&auml;hlen kann. Sie
+sind herzlich eingeladen, diese Liste nach Ihren W&uuml;nschen umzugestalten.
+</p>
+
+<pre style="background='silver';">
+&lt;FORM ACTION=&quot;&lt;%= Request.ServerVariables(&quot;SCRIPT_NAME&quot;) %&gt;&quot; METHOD=&quot;POST&quot;&gt;
+&lt;TABLE CELLSPACING=&quot;2&quot; CELLPADDING=&quot;2&quot;&gt;
+&lt;TR&gt;
+    &lt;TD&gt;Prog ID: &lt;/TD&gt;
+    &lt;TD&gt;&lt;INPUT TYPE=&quot;Text&quot; NAME=&quot;ProgID&quot;&gt;&lt;/TD&gt;
+    &lt;TD&gt;&lt;SELECT NAME=&quot;ProgID&quot;&gt;
+      &lt;OPTION Value =&quot;&quot;&gt;- Select -
+      &lt;OPTION&gt;ADODB.Connection
+      &lt;OPTION&gt;ADODB.Recordset
+      &lt;OPTION&gt;Scripting.FileSystemObject
+      &lt;OPTION&gt;Scripting.Dictionary
+      &lt;OPTION&gt;MSWC.ContentRotator
+      &lt;OPTION&gt;MSWC.NextLink
+    &lt;/SELECT&gt;&lt;/TD&gt;
+    &lt;TD&gt;&lt;INPUT TYPE=&quot;Submit&quot; NAME=&quot;Submit&quot; VALUE=&quot;Versioninfo ermitteln&quot;&gt;&lt;/TD&gt;
+&lt;/TR&gt;
+&lt;/TABLE&gt;
+&lt;/FORM&gt;
+</pre>
+
+<h2>Der Code</h2>
+<p>
+Zur&uuml;ckkommend auf den Formularcode aus der vorangegangenen Sektion - sowohl das Textfeld als auch die
+DropDown-Box haben den gleichen Namen. Warum? Damit ich in einer einzigen <i>For...Next</i> Schleife die
+eingegebene oder selektierte ProgId auslesen kann.
+</p>
+<pre style="background='silver';">
+&lt;%
+For intI = 1 to Request.Form(&quot;ProgID&quot;).Count
+  strProgID = Trim(Request.Form(&quot;ProgID&quot;)(intI))
+  If strProgID &lt;&gt; &quot;&quot; Then
+    Response.Write &quot;&lt;B&gt;You have queried for &quot; &amp; strProgID &amp; &quot;&lt;/B&gt;&lt;BR&gt;&quot;
+    Response.Write Replace(GetProgIDInfo(strProgID),vbCrLf,&quot;&lt;BR&gt;&quot; &amp; vbCrLf)
+    Response.Write &quot;&lt;BR&gt;&quot; &amp; vbCrLf
+  End If
+Next
+%&gt;
+</pre>
+
+<p>
+Der Grund f&uuml;r die <i>For...Next</i> Schleife ist nun klar. Wo aber rufe ich die VersionInfo Komponente
+auf? Dies passiert in den Funktion <i>GetProgIDInfo</i>:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Function GetProgIDInfo(strProgID)
+    Dim xObj, bResult, strResult
+    Dim aKeys, i, strOut
+  
+    Set xObj = Server.CreateObject(&quot;Softwing.VersionInfo&quot;)
+    
+    bResult = xObj.GetByProgId(strProgID)
+    If 1 &lt;&gt; bResult Then
+        strOut = &quot;Could not load &quot; &amp; strProgID
+    Else
+    strOut = strOut &amp; &quot;ProgID: &quot; &amp; strProgID &amp; vbCrLf
+    If 1 &lt;&gt; xObj.IsMtxObject() Then
+        aKeys = Array(&quot;CompanyName&quot;, &quot;FileDescription&quot;, &quot;FileVersion&quot;, _
+            &quot;InternalName&quot;, &quot;LegalCopyright&quot;, &quot;OriginalFilename&quot;, _
+            &quot;ProductName&quot;, &quot;ProductVersion&quot;)
+        For i = 0 To UBound(aKeys)
+            strValue = strValue &amp; aKeys(i) &amp; &quot;: &quot; &amp; xObj.GetValue(aKeys(i)) &amp; vbCrLf
+        Next
+        strOut = strOut &amp; strValue &amp; vbCrLf
+  
+        strResult = &quot;File Name: &quot; &amp; xObj.FileName &amp; vbCrLf
+        ' please see declares.vbs for the numeric values to which you could compare
+        strResult = strResult &amp; &quot;Major Version: &quot; &amp; xObj.MajorVersion &amp; vbCrLf
+        strResult = strResult &amp; &quot;Minor Version: &quot; &amp; xObj.MinorVersion &amp; vbCrLf
+        strResult = strResult &amp; &quot;File Flags: &quot; &amp; xObj.FileFlags &amp; vbCrLf
+        strResult = strResult &amp; &quot;File OS: &quot; &amp; xObj.FileOS &amp; vbCrLf
+        strResult = strResult &amp; &quot;File Type: &quot; &amp; xObj.FileType &amp; vbCrLf
+    Else
+      strResult = &quot;This object is hosted in transaction server...&quot;
+    End If
+      strOut = strOut &amp; strResult
+  End If
+    Set xObj = Nothing
+    GetProgIDInfo = strOut
+End Function
+%&gt;
+</pre>
+
+<p>
+Der VersionInfo Komponente &uuml;bergebe ich die abzufragende Komponenten-ProgId in der folgenden Zeile:
+</p>
+
+<pre style="background='silver';">
+bResult = xObj.GetByProgId(strProgID)
+</pre>
+
+<p>
+Sollte die ProgId nicht gefunden werden k&ouml;nnen, ist der Wert von <i>bResult</i> <i>False</i> (und der
+Fehler wird ausgegeben). Weiter geht es mit einer etwas eigenartigen Abfrage:
+</p>
+
+<pre style="background='silver';">
+    If 1 &lt;&gt; xObj.IsMtxObject() Then
+      ...
+    Else
+      strResult = &quot;This object is hosted in transaction server...&quot;
+    End If
+</pre>
+
+<p>
+F&uuml;r Objekte die in MS Transaction Server (oder COM+ Applications) gehostet werden, kann die VersionInfo
+Komponente keine Versionsinformation ermitteln. Aber durch diese Abfrage wird zumindest ein entsprechender
+Hinweis ausgegeben (der f&uuml;r sich alleine schon n&uuml;tzlich sein kann).
+</p>
+
+<p>
+Nun wissen wir, da&szlig; die VersionInfo Komponente ihren Dienst verrichtet hat, und wir nur noch die Versionsinformationen
+auslesen m&uuml;ssen. Alle benannten Versioninformationen werden mittels <i>GetValue</i> ausgelesen, die Versionsnummern
+k&ouml;nnen &uuml;ber Eigenschaften des Objekts ermittelt werden.
+</p>
+
+<p>
+Sind alle Informationen gesammelt, werden diese als Stringr&uuml;ckgabewert an den Aufrufer zur&uuml;ckgegeben - und im Falle unseres Scripts
+an den Benutzer geschickt.
+</p>
+
+<h2>Versioninformationen ermitteln</h2>
+<p>
+Sehen wir uns einmal an, wie das Skript seine Arbeit verrichtet:
+</p>
+
+<IMG SRC="/artikel/Bilder/200104/20010405.png" width="637" height="559" alt="" border="0">
+
+<p>
+Warum habe ich mir das FileSystemObject ausgesucht? Weil das ein besonders gutes Beispiel f&uuml;r eine
+Komponente ist, mit der man unter Umst&auml;nden Probleme bekommen kann (die nachfolgenden Informationen
+stammen von einer anderen Maschine):
+</p>
+
+<pre style="background='silver';">
+You have queried for Scripting.FileSystemObject
+ProgID: Scripting.FileSystemObject
+CompanyName: Symantec Corporation
+FileDescription: ScriptBlocking
+FileVersion: 1, 0, 0, 32
+InternalName: ScrBlocking
+LegalCopyright: Copyright &copy; 2000
+OriginalFilename: ScrBlock.dll
+ProductName: Symantec ScriptBlocking
+ProductVersion: 1, 0, 0, 32
+
+File Name: C:\Program Files\Common Files\Symantec Shared\Script Blocking\scrblock.dll
+Major Version: 1
+Minor Version: 0
+File Flags: 0
+File OS: 4
+File Type: 1
+</pre>
+
+<p>
+Ja, der Norton AntiVirus 2001 hat hier zugeschlagen - dieser ersetzt einige als gef&auml;hrlich eingestufte
+Komponenten mit eigenen "Blockern" - was bei ASP zu mittelschweren Problemen f&uuml;hren kann! Also ein gutes
+Beispiel, wo die VersionInfo Komponente Probleme l&ouml;sen helfen kann - nicht zu reden, da&szlig; man f&uuml;r ADO
+einfach und schnell die Version ermitteln kann.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Es ist niemals schlecht, einfach herausfinden zu k&ouml;nnen, wo eine Komponente liegt, und um welche Version
+es sich genau handelt.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010405.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010405.zip</span></p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2FIisDev%2FComponents%2F">IISDEV Gratiskomponenten</a><br>
+<SPAN class="content">http://www.alphasierrapapa.com/IisDev/Components/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2FIisDev%2FComponents%2FVersionInfo%2F">VersionInfo Komponente Download</a><br>
+<SPAN class="content">http://www.alphasierrapapa.com/IisDev/Components/VersionInfo/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

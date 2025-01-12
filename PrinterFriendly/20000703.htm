@@ -1,0 +1,247 @@
+<HTML>
+<HEAD>
+<TITLE>SQL Server 2000 Volltextsuche</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Es gibt einen Weg, mehrere Text- als auch Memofelder zu durchsuchen (einzeln oder alle), der noch dazu einfach, schnell und sehr elegant ist: die Volltextsuche von SQL Server 2000. Die hier vorgestellte Technologie gibt es auch bereits in SQL Server 7.0.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ADO,Full Text,Search,Microsoft Search,Catalog,CONTAINS,FREETEXT,SQL Server,SQL Server 2000">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>SQL Server 2000 Volltextsuche</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000703"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wer kennt das Problem nicht - man soll in einer Tabelle suchen, und zwar nach Textfragmenten.
+Solange es nur eine Spalte ist, &uuml;ber die gesucht werden soll, kann man sich ja noch mehr oder minder
+elegant mit LIKE und dem Prozentzeichen &uuml;ber die Runden retten. Sollen es aber mehrere Spalten sein,
+&uuml;ber die nach einem bestimmten Fragment gesucht werden soll, wird es interessant. Und gesellen sich dann
+noch Memo Felder dazu, ist es endg&uuml;ltig aus.
+</p>
+
+<p>
+Habe ich gerade endg&uuml;ltig aus gesagt? Stimmt &uuml;berhaupt nicht! Es gibt einen Weg, der noch dazu einfach, schnell
+und sehr elegant ist: die Volltextsuche von SQL Server 2000. Die hier vorgestellte Technologie gibt es auch
+bereits in SQL Server 7, allerdings k&ouml;nnen einige Screenshots und Befehlsreihenfolgen differieren.
+</p>
+
+<h2>Installation der Volltextsuche</h2>
+<p>
+Standardm&auml;&szlig;ig findet die Volltextsuche ihren Weg leider nicht auf den Rechner - das mu&szlig; man durch ein Custom
+Setup mit SQL Server nachholen. Ist aber recht einfach, weil man nur ein H&auml;kchen in der Dialogbox Select
+Components setzen mu&szlig;.
+</p>
+<p><IMG SRC="/artikel/Bilder/200007/20000703_1.png" width="479" height="357" border="0" alt=""></p>
+<p>
+Dieser Schritt installiert den Microsoft Search Service (der ist f&uuml;r die Volltextsuche zust&auml;ndig), sowie
+2 weitere SQL Kommandos: <i>FREETEXT</i> und <i>CONTAINS</i>.
+</p>
+
+<h2>Erstellen eines Volltextindexes</h2>
+<p>
+Standardm&auml;&szlig;ig ist die Volltextsuche f&uuml;r keine Datenbank aktiviert. Man mu&szlig; einen Volltextcatalog (&auml;hnlich zu
+Index Server) erzeugen, Tabellen f&uuml;r die Volltextsuche aktivieren, und in diesen Tabellen die Spalten w&auml;hlen,
+die indiziert werden sollen.
+</p>
+<p>
+Das klingt zwar nach viel Arbeit, ist es aber Dank eines Wizards nicht wirklich. Dazu w&auml;hlt man im SQL
+Server Enterprise Manager die in Frage kommende Datenbank aus (ich habe die Beispieldatenbank <b>pubs</b> gew&auml;hlt),
+und startet via <i>Tools/Full-Text Indexing...</i> den Full Text Indexing Wizard. Auf der ersten Seite sehen Sie,
+was Sie alles mit dem Wizard anstellen k&ouml;nnen.
+</p>
+<p>
+<b>Schritt 1</b> W&auml;hlen Sie die Tabelle aus, f&uuml;r die Sie einen Volltextindex anlegen wollen. In diesem Beispiel
+nehmen wir auch gleich die erste Tabelle, <b>[dbo].[authors]</b>. Obwohl auch der Wizard Sie darauf hinweist, m&ouml;chte
+ich es auch explizit tun: Sie m&uuml;ssen der Eigent&uuml;mer (oder alias) der Tabelle sein - "nur" Administrator reicht 
+nicht.
+</p>
+<p><IMG SRC="/artikel/Bilder/200007/20000703_2.png" width="498" height="391" border="0" alt=""></p>
+<p>
+<b>Schritt 2</b> Jetzt werden Sie nach einem Index gefragt, der f&uuml;r JOIN's verwendet werden soll. Warum mu&szlig; 
+ich das angeben, werden sich einige fragen? Der Grund ist, da&szlig; der Microsoft Search Service getrennt vom
+Query Processor l&auml;uft, also Tabellensuchresultate aus defakto zwei verschiedenen authors "Tabellen" gejoint
+werden - die aus der Volltextsuche, und der Rest vom "normalen" Query Processor. 
+</p>
+<p>
+In unserem Fall ist bereits der richtige Index selektiert. Verwenden Sie immer den Primary Key Index f&uuml;r diese
+Selektion - dieser wird auch vom Query Processor verwendet.
+</p>
+<p>
+<b>Schritt 3</b> Nun k&ouml;nnen Sie die Spalten aussuchen, die in den Volltextindex integriert werden sollen (also alle
+Spalten, die ein Statement abfragen kann). Volltextindizes k&ouml;nnen nur &uuml;ber Textspalten (<i>char</i>, <i>varchar</i>, <i>text</i>) gemacht werden, daher w&auml;hlen
+wir der Einfachheit diesmal auch alle aus.
+</p>
+<p><IMG SRC="/artikel/Bilder/200007/20000703_3.png" width="498" height="391" border="0" alt=""></p>
+<p>
+<b>Schritt 4</b> Die Grundangaben haben wir jetzt alle gemacht, allerdings m&uuml;ssen wir Microsoft Search jetzt
+noch sagen, wohin der Index gespeichert werden soll - der Speicherort des Catalogs (analog zu Index Server
+Catalogs). Am besten, Sie behalten das Verzeichnis bei, das vorgeschlagen wird, und geben nur den Namen des
+Catalogs an - <b>pubstest</b>.
+</p>
+<p><IMG SRC="/artikel/Bilder/200007/20000703_4.png" width="498" height="391" border="0" alt=""></p>
+<p>
+<b>Schritt 5</b> Wichtig f&uuml;r die Aktualit&auml;t des Volltextindexes ist wann und wie er aktualisiert wird. Zur 
+Aktualisierung gibt es drei Varianten:
+<ul>
+	<li><b>Voller Rebuild</b> Baut den Volltextindex von Grund auf neu auf. Verbraucht naturgem&auml;&szlig; viel Rechenzeit,
+		kann aber als Task mit dem SQL Server Agent gescheduled werden.
+	<li><b>Inkrementeller Rebuild</b> Macht &Auml;nderungen im Volltextindex nur f&uuml;r Zeilen, die sich seit dem letzten
+		Rebuild ge&auml;ndert haben. Dazu ben&ouml;tigt man allerdings eine zus&auml;tzlich Spalte in der Tabelle, und zwar vom
+		Datentyp <i>timestamp</i>. Vorteil: deutlich schneller, l&auml;uft ebenso wie der Full Rebuild zu bestimmten Off-Hours,
+		ben&ouml;tigt weniger Resourcen.
+	<li><b>&Auml;nderungsverfolgung</b> Die &Auml;nderungen werden aktiv verfolgt, da&szlig; hei&szlig;t, eine Liste der ver&auml;nderten
+		Daten wird mitgef&uuml;hrt. Im Gegensatz zum inkrementellen Rebuild mu&szlig; die Tabelle nicht umgebaut werden,
+		allerdings bekommt man einen Geschwindigkeitsnachteil durch die aktive Nachverfolgung.
+</ul>
+</p>
+<p>
+Der inkrementelle Rebuild als auch die &Auml;nderungsverfolgung haben einen gemeinsamen Nachteil: alle &Auml;nderungen an
+Memofeldern, die mit <i>WRITETEXT</i> oder <i>UPDATETEXT</i> durchgef&uuml;hrt wurden, werden nicht erkannt. Daher sind regelm&auml;&szlig;ige
+Full Rebuilds zu&auml;tzlich notwendig.
+</p>
+<p>
+Daher legen wir uns einen Full Rebuild Schedule an, und lassen ihn einmal pro Woche am Sonntag um Mitternacht laufen.
+Die weiteren inkrementellen Rebuilds k&ouml;nnen Sie sich dann selbst anlegen.
+</p>
+<p><IMG SRC="/artikel/Bilder/200007/20000703_5.png" width="420" height="327" border="0" alt=""></p>
+<p>
+<b>Schritt 6</b> Damit sind wir schon beim letzten Schritt des Wizards. Begutachten Sie nochmals die Einstellungen
+und klicken dann auf Finish.
+</p>
+<p>
+Damit wir den Index sofort verwenden k&ouml;nnen, gehen Sie danach zum Folder <i>Full-Text Catalogs</i>, klicken
+mit der rechten Maustaste auf den neuen Catalog und w&auml;hlen <i>Start Full Population</i>.
+</p>
+
+<h2>Abfragen mit dem CONTAINS Schl&uuml;sselwort</h2>
+<p>
+&Ouml;ffnen Sie den Query Analyzer um die Abfragen interaktiv ausprobieren zu k&ouml;nnen (nat&uuml;rlich hindere ich Sie nicht,
+es sofort in ASP auszuprobieren). Stellen Sie sicher, da&szlig; Sie in die <b>pubs</b> Datenbank gewechselt sind!
+</p>
+<p>
+Tippen Sie folgende einfache Abfrage ein:
+<pre style="background='silver';">
+SELECT * FROM authors
+</pre>
+</p>
+<p>
+Diese Abfrage liefert alle Autoren, die in dieser Tabelle gespeichert sind. Um das ganze jetzt auf Autoren
+einzuschr&auml;nken, die das Wort "green" in Ihren Nachnamen haben, k&ouml;nnten Sie folgendes <i>LIKE</i> Statement verwenden:
+<pre style="background='silver';">
+SELECT * FROM authors WHERE au_lname LIKE '%green%'
+</pre>
+</p>
+<p>
+Unter Ausnutzung der Volltextsuche w&uuml;rde das nun wie folgt aussehen:
+<pre style="background='silver';">
+SELECT * FROM authors WHERE CONTAINS(au_lname,'green')
+</pre>
+</p>
+<p>
+Nun k&ouml;nnten Sie berechtigt argumentieren, da&szlig; ich daf&uuml;r nun wirklich nicht den Volltextindex h&auml;tte bem&uuml;hen
+m&uuml;ssen. Stimmt. Allerdings wie machen Sie das folgende in normalen SQL?
+<pre style="background='silver';">
+SELECT * FROM authors WHERE CONTAINS(*,'green')
+</pre>
+</p>
+<p>
+Jetzt wird der Volltextindex f&uuml;r alle Spalten durchsucht, und wenn eine Spalte <i>green</i> aufweist, wird die Zeile 
+zur&uuml;ckgeliefert. Das w&auml;re mit normalen SQL zwar noch m&ouml;glich, allerdings ziemlich l&auml;nglich:
+<pre style="background='silver';">
+SELECT * FROM authors WHERE 
+	au_lname LIKE '%green%' OR
+	au_fname LIKE '%green%' OR
+	address LIKE '%green%' OR
+	city LIKE '%green%' OR
+	state LIKE '%green%'
+</pre>
+</p>
+<p>
+Mit der Volltextsuche kann man nat&uuml;rlich auch nach Phrasen suchen:
+<pre style="background='silver';">
+SELECT * FROM authors WHERE CONTAINS(address,'"Seventh Av"')
+</pre>
+</p>
+<p>
+Damit bekommt man beide Autoren Ringer zur&uuml;ckgeliefert, da diese in der Seventh Avenue leben. Will man nebenbei auch noch zus&auml;tzlich alle Autoren,
+die in einer Street leben, sieht das Statement wie folgt aus:
+<pre style="background='silver';">
+SELECT * FROM authors WHERE CONTAINS(address,'"Seventh Av" OR "St"')
+</pre>
+</p>
+<p>
+Neben <i>OR</i> kann man auch noch <i>AND</i> und <i>AND NOT</i> verwenden, um boolsche Abfragen zu gestalten. Obwohl die authors Tabelle keinerlei
+Memofelder beinhaltet, k&ouml;nnen diese nat&uuml;rlich auch &uuml;ber den Volltextindex gesucht werden - und das wird wohl
+das Hauptanwendungsgebiet dieser Technologie in Ihren Applikationen werden.
+</p>
+<p>
+Die Programmierung in ASP ist vollst&auml;ndig gleich zu einer normalen Abfrage, die keinen Volltextindex verwendet.
+Es gibt keinerlei Einschr&auml;nkungen in punkto Updatef&auml;higkeit des Recordsets, das man zur&uuml;ckgeliefert bekommt.
+Die Volltextsuche verh&auml;lt sich v&ouml;llig transparent.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dieser Artikel zeigt, wie man einen Volltextindex anlegt, und einfache Abfragen auf diesen absetzt. Ich habe
+Details wie Wortst&auml;mme oder die FREETEXT Funktion ausgelassen. Sie haben aber dennoch genug Wissen, um der
+LIKE Funktion Ade zu sagen - und Memofelder bequem suchen zu k&ouml;nnen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Fsqlserver%2F">SQL Server Developer Center</a><br>
+<SPAN class="content">http://msdn.microsoft.com/sqlserver/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eswynk%2Ecom%2Fsysapps%2Fsql%2Easp">Stephen Wynkop's SQL Server Home</a><br>
+<SPAN class="content">http://www.swynk.com/sysapps/sql.asp</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

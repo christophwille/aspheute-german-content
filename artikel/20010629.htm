@@ -1,0 +1,419 @@
+<HTML>
+<HEAD>
+<TITLE>Web Services mit dem SOAP Toolkit erstellen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Web Services sind keine Exklusivveranstaltung von ASP.NET. Man kann auch mit klassischen Entwicklungstools wie Visual Basic 6 und Active Server Pages einen &uuml;ber SOAP kommunizierenden Web Service erstellen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Web Service,SOAP Toolkit,Simple Object Access Protocol,WSDL,WSML,Listener,XSD,schema">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Web Services mit dem SOAP Toolkit erstellen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Web%20Services.htm">Web Services</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010629"></SCRIPT>
+</p>
+<p>
+Web Services sind keine Exklusivveranstaltung von ASP.NET. Man kann auch mit "klassischen" Entwicklungstools wie
+Visual Basic 6 und Active Server Pages einen &uuml;ber SOAP (Simple Object Access Protocol) kommunizierenden Web Service 
+erstellen. Zur Erleichterung der Entwicklung stellt Microsoft das SOAP Toolkit gratis zur Verf&uuml;gung.
+Dieser Artikel stellt Ihnen dieses anhand eines einfachen Web Services vor.
+</p>
+
+<p>
+Die SOAP Server Objects k&ouml;nnen entweder f&uuml;r das Internet Server API (ISAPI) oder ASP erstellt werden. Hierf&uuml;r
+wird entweder ein Windows 2000 Server oder ein Windows NT 4 Server mit SP6 ben&ouml;tigt. Das SOAP Toolkit 2.0 ben&ouml;tigt
+mindestens Visual Studio 6 (ab Professional) oder h&ouml;her, sowie den MSXML Parser 3.0 oder h&ouml;her. Der MSXML Parser
+3.0 wird bei der Installation des Toolkits automatisch mitinstalliert, falls er nicht verf&uuml;gbar ist (wichtig: das
+Toolkit mu&szlig; am Server installiert werden!). Und das Visual Studio 6 ben&ouml;tigt man nur am Entwicklungsserver, nicht am
+Deployment Target Server.
+</p>
+
+<p>
+Das SOAP Toolkit k&ouml;nnen Sie, wie schon erw&auml;hnt kostenlos bei den
+<a href="http://msdn.microsoft.com/downloads../default.htm" target="_blank">MSDN Downloads</a>
+unter Software Development Kits, SOAP Toolkit 2.0 Gold Release, downloaden (oder eine neuere Version, so bereits
+erh&auml;ltlich).
+Nach dem Download einfach die <b>soaptoolkit20.exe</b> ausf&uuml;hren und den Anweisungen am Bildschirm folgen.
+</p>
+
+<p>
+Der heute vorgestellte Beispiel-Web Service wird aus folgenden Dateien bestehen:
+</p>
+
+<ul>
+<li>SimpleWS.dll</li>
+<li>SimpleWebService.asp</li>
+<li>SimpleWebService.WSDL</li>
+<li>SimpleWebService.wsml</li>
+</ul>
+
+<p>
+Die ActiveX DLL <b>SimpleWS.dll</b> Datei repr&auml;sentiert unser COM Objekt, das wir &uuml;ber einen Web Service zur Verf&uuml;gung 
+stellen werden. Die DLL ist in Visual Basic erstellt, und enth&auml;lt unsere Klasse, die der Einfachheit halber einen String 
+zur&uuml;ckliefert (die Funktionalit&auml;t ist also nicht weltbewegend).
+</p>
+
+<p>
+<b>SimpleWebService.asp</b> wird durch den im SOAP Toolkit mitgelieferten <i>WSDL Generator</i> generiert. Sie dient als 
+Listener, der in diesem Beispiel in Form einer ASP Datei erstellt wird. Der Listener wird ben&ouml;tigt, um zus&auml;tzliche
+Parsingfunktionalit&auml;t bereit zustellen, z.B um Eingabewerte zu parsen und zu &uuml;berpr&uuml;fen. Alternativ k&ouml;nnen Sie den 
+Listener auch als ISAPI erstellen lassen.
+</p>
+
+<p>
+Die beiden anderen Dateien <b>SimpleWebService.WSDL</b> und <b>SimpleWebService.wsml</b>, die ebenfalls durch
+den <i>WSDL Generator</i> generiert werden, dienen allgemein der Beschreibung des Web Service. Die WSDL 
+(Web Service Description Language) Datei beschreibt die Funktionlit&auml;t des Web Service, also u.a. auf welche Methoden
+der Client Zugriff hat. Die WSML (Web Service Meta Language) enth&auml;lt Informationen &uuml;ber die Ausf&uuml;hrung des COM
+Objektes, d.h. welche Methoden geladen werden m&uuml;ssen, um einen Request verarbeiten zu k&ouml;nnen.
+</p>
+
+<p>
+F&uuml;r den heute vorgestellten Web Service erstellen Sie bitte ein neues virtuelles Verzeichnis in der Web Site, in der
+Sie den Web Service dann mit Hilfe des SOAP Toolkits installieren werden. Das ist die einzige Vorbereitungsarbeit,
+die Sie in der ISM (Internet Services Manager) durchf&uuml;hren m&uuml;ssen.
+</p>
+
+<h2>Das COM Objekt</h2>
+
+<p>
+Nun k&ouml;nnen wir das COM Objekt f&uuml;r den Web Service erstellen, indem wir in Visual Basic eine ActiveX DLL 
+(Dynamic Link Library) erzeugen. Klicken Sie hierf&uuml;r auf das Men&uuml; <i>File</i> und dann auf <i>New Project</i>.
+Im <i>New Project</i> Auswahldialogfenster klicken wir dann auf <i>ActiveX DLL</i> und best&auml;tigen mit <i>OK</i>.
+</p>
+
+<p>
+Wir benennen unser neues Projekt <i>SimpleWSProj</i> und die neue Klasse <i>SimpleWS</i>. Diese
+&Auml;nderungen sind durch Anklicken der jeweiligen Items im Project Explorer, und &Auml;ndern des Namens im Eigenschaftenfenster vorzunehmen.
+Nun k&ouml;nnen wir den Sourcecode f&uuml;r die Klasse des COM Objektes erstellen. F&uuml;r diesen Artikel habe ich nur eine
+sehr einfache Funktion geschrieben, die der Einfachheit halber nur einen String zur&uuml;ckgibt:
+</p>
+
+<pre style="background='silver';">
+Public Function RetString() As String
+    RetString = "Hello from Web Service using SOAP ToolKit"
+End Function
+</pre>
+
+<p>
+Da wir mit der Funktionalit&auml;t der Klasse schon fertig sind, speichern wir das VB Projekt und k&ouml;nnen die 
+ben&ouml;tigte DLL erstellen. Dazu w&auml;hlen wir im <i>File</i> Men&uuml; den Eintrag <i>Make SimpleWS.dll</i>. Nach der erfolgreichen 
+Erstellung der DLL k&ouml;nnen wir Visual Basic wieder schlie&szlig;en, die DLL in das zuvor erstellte
+Webverzeichnis kopieren und mit der Einrichtung des Web Service am Web 
+Server mit Hilfe des mit dem SOAP Toolkit mitgelieferten <i>WSDL Generator</i> beginnen. 
+</p>
+
+<h2>Den Web Service erstellen</h2>
+
+<p>
+Nach der erfolgreichen Installation des SOAP Toolkits (am Server) finden Sie den <i>WSDL Generator</i> unter Programs, 
+Mircosoft SOAP Toolkit, WSDL Generator. Nach dem Einf&uuml;hrungsdialog erhalten Sie folgendes Fenster:
+</p>
+
+<IMG SRC="Bilder/200106/20010629_1.png" width="482" height="411" alt="" border="0">
+
+<p>
+In diesem m&uuml;ssen Sie Ihren Web Service benennen und den lokalen Pfad angeben, wo sich die DLL Datei 
+befindet, die f&uuml;r den Web Service verwendet werden soll. Mit der Angabe des Pfades wird zun&auml;chst die DLL
+untersucht und nach m&ouml;glichen, f&uuml;r den Client zug&auml;nglichen Methoden durchsucht. Mit <i>Next</i> gelangen Sie zum 
+n&auml;chsten Fenster, wo Sie die Methoden, die f&uuml;r den Client zug&auml;nglich sein sollen - die "exposed" werden - 
+ausw&auml;hlen m&uuml;ssen:
+</p>
+
+<IMG SRC="Bilder/200106/20010629_2.png" width="482" height="411" alt="" border="0">
+
+<p>
+Alle Methoden, die Sie nicht selektieren, bleiben vom Web Service ausgeschlossen und sind nicht von au&szlig;en zug&auml;nglich.
+Im n&auml;chsten Fenster m&uuml;ssen Sie dann Informationen &uuml;ber den Listener angeben. Dies geschieht durch die
+Angabe des Uniform Resource Identifier (URI), in dem sich der Listener befinden soll. Zus&auml;tzlich ist
+noch die Auswahl des Listenertyps (f&uuml;r unser Beispiel w&auml;hlen wir ASP) und die Version des XSD Schema 
+Namespaces anzugeben:
+</p>
+
+<IMG SRC="Bilder/200106/20010629_3.png" width="482" height="411" alt="" border="0">
+
+<p>
+Im letzten Fenster m&uuml;ssen Sie noch das Character Set der WSDL Datei angeben, und den Speicherort der zu 
+generierenden Dateien ausw&auml;hlen:
+</p>
+
+<IMG SRC="Bilder/200106/20010629_4.png" width="482" height="411" alt="" border="0">
+
+<p>
+Mit <i>Next</i> werden dann die f&uuml;r den Web Service ben&ouml;tigten Dateien - Listener, WSDL und WSML Dateien - erstellt.
+</p>
+
+<p>
+Damit ist der Web Service erstellt und einsatzbereit. Um ihn auf einen anderen Server zu deployen reicht es, das gesamte
+Verzeichnis zu kopieren - allerdings mu&szlig; am Zielserver das SOAP Toolkit ebenso installiert sein. Ach ja - wenn Sie eine
+Visual Basic Komponente deployen, dann m&uuml;ssen Sie auch die Runtime installieren!
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Wie Sie sehen k&ouml;nnen, &uuml;bernimmt der WSDL Generator die meiste Arbeit mit der Generierung des Listeners sowie der WSDL und WSML
+Dateien, die f&uuml;r die Einrichtung des Web Service n&ouml;tig ist. Sie m&uuml;ssen lediglich das COM Objekt mit der 
+gew&uuml;nschten Funktionalit&auml;t erstellen. Mit den im Artikel 
+gezeigten Schritten k&ouml;nnen Sie nun einen Web Service erstellen und am Web Server einrichten. Ein weiterer
+Artikel besch&auml;ftigt sich mit der Konsumierung des Web Services mit Hilfe des SOAP Toolkits.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010629.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20010514.htm">Was sind XML Schemas?</a><br>
+<a href="20010621.htm">Web Services 101 in ASP.NET</a><br>
+<a href="20010703.htm">Web Services einfach konsumieren</a><br>
+<a href="20010622.htm">Web Services in Anwendungen konsumieren</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Fdownloads%2Fdefault%2Easp">MSDN Downloads</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20010629" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Web Services mit dem SOAP Toolkit erstellen"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20010629.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Holm"><input type="hidden" name="AuthorEmail" value="office@holmcs.com"><input type="hidden" name="Artikel" value="20010629"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20010629.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

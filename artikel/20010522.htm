@@ -1,0 +1,474 @@
+<HTML>
+<HEAD>
+<TITLE>Die SQL2Table Komponente</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Daten aus einer Datenbank &uuml;bersichtlich anzuzeigen bzw. Daten webbasierend hinzuzuf&uuml;gen oder zu editieren ben&ouml;tigt in ASP einige Zeilen Code. Die SQL2Table Komponente schafft hier eine angenehme Abhilfe.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SQL2Table,Editing,Datensätze,Datenbank,Wartung,Eingabemaske,Datagrid,Paging,seitenweise">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Die SQL2Table Komponente</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Komponenten.htm">Komponenten</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010522"></SCRIPT>
+</p>
+<p>
+Daten aus einer Datenbank &uuml;bersichtlich anzuzeigen bzw. Daten webbasierend hinzuzuf&uuml;gen oder zu editieren
+ben&ouml;tigt in ASP einige Zeilen Code. Die SQL2Table Komponente schafft hier eine angenehme Abhilfe. Diese
+stellt einige Funktionen zur Verf&uuml;gung, die dem Programmierer einiges an Arbeit abnehmen. Dieser Artikel soll Ihnen
+diese Funktionalit&auml;ten n&auml;herbringen. Angenehmerweise ist diese Komponente auch noch kostenlos.
+</p>
+
+<p>
+Die SQL2Table k&ouml;nnen Sie von Jeff Louie's Homepage kostenlos
+<a href="http://www.geocities.com/Jeff_Louie/index.html" target="_blank">downloaden</a>. Nach dem Download und Entpacken des Zip-Archivs
+ist die Komponente mit <i>regsvr32</i> auf einem Webserver zu registrieren.
+</p>
+<p>
+F&uuml;r diesen Artikel habe ich zwei einfache 
+Beispiele und einen Walkthru durch die fortgeschrittenen Features vorbereitet. Die Daten werden dabei aus Datenbanken
+geholt, welche auf einem SQL Server 2000 liegen.
+</p>
+
+<p>
+Im ersten Beispiel werden die SELECTeten Daten in einem Html Table eingebettet, welches eine der Hauptfunktionen der Komponente darstellt.
+Dies ist eigentlich nichts aufregendes, aber im Gegensatz zu der h&auml;ndisch programmierten Version, steht die geringere 
+Fehleranf&auml;lligkeit und der geringere Aufwand. Hinzu kommt noch, da&szlig; eine Fehlerbehandlung
+integriert ist und dies mit einem Methodenaufruf erledigt ist. 
+</p>
+<p>
+Nun zum Aufw&auml;rmen das erste Beispiel.
+Dieses holt die Daten anhand des hardcodierten SQL-Statements aus der Northwind Datenbank und stellt diese dann eingebettet 
+in einer Html Tabelle dar:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Set objSQL2Table= Server.CreateObject("JAL.SQL2Table")
+objSQL2Table.strConn= "Provider=SQLOLEDB.1;Initial Catalog=Northwind;Data Source=BLUESCREEN"
+objSQL2Table.strSQL= "SELECT CompanyName, ContactName, ContactTitle, Phone " & _
+      " FROM Suppliers ORDER BY CompanyName ASC"
+objSQL2Table.strID= "sa"
+objSQL2Table.strPW = ""
+objSQL2Table.strTableTags= "&lt;table border=2&gt;"
+
+If objSQL2Table.Connect() Then 
+    If objSQL2Table.Update() Then
+        Response.Write objSQL2Table.GetGrid()
+    Else
+        Response.Write objSQL2Table.GetLog()
+    End If
+Else 
+    Response.Write objSQL2Table.GetLog()
+End If
+objSQL2Table.Disconnect()
+
+Set objSQL2Table = Nothing
+%&lt;
+</pre>
+
+<p>
+Mit <i>Server.CreateObject</i> erstellen Sie das Objekt der SQL2Table Komponente. Danach - wie gewohnt - ist der
+Connection String (<i>strConn</i> Property) und das SQL Statement (<i>strSQL</i> Property) sowie die Logininformationen
+anzugeben (<i>strID</i> und <i>strPW</i> Property).
+</p>
+
+<p>
+Mit der <i>strTableTags</i> Property k&ouml;nnen Sie dem Html Table zus&auml;tzliche Formatoptionen zuweisen.
+Danach erfolgt die Verbindung zur SQL Datenbank mittels der <i>Connect</i> Methode. Praktischerweise gibt diese auch
+eine genaue Fehlerbeschreibung zur&uuml;ck, falls Probleme auftauchen. Auftretende Exceptions werden mit der <i>GetLog</i>
+Methode angezeigt, welche immer die zuletzt aufgetretene Exception darstellt.
+</p>
+
+<p>
+Die <i>Update</i> Methode erstellt dann das Recordset-Objekt unter Verwendung des angegebenen SQL Statements.
+Der Html Table wird durch die <i>GetGrid</i> Methode erzeugt. Beide Methoden k&ouml;nnen ebenfalls Fehler behandeln, die dann
+wiederum mit der <i>GetLog</i> Methode ausgegeben werden. Die <i>Disconnect</i> Methode trennt danach wieder die 
+aktive Verbindung zur Datenbank.
+</p>
+
+<p>
+Wenn Sie nun den obigen Sourcecode (<b>simpleExample.asp</b>) auf einem Webserver mit angepa&szlig;tem Connection String ausf&uuml;hren,
+erhalten Sie folgendes Ergebnis:
+</p>
+
+<IMG SRC="Bilder/200105/20010522_1.png" width="590" height="392" alt="" border="0">
+
+<p>
+Dies bietet keinen gro&szlig;artigen Komfort, hat aber dennoch die beschriebenen Vorteile gegen&uuml;ber dem "Do-It-Yourself" Coding.
+Jetzt werden Sie vielleicht meinen, ob es sich nach dieser Demonstration des Beispiels auszahlt, f&uuml;r einen Html Table
+eine Komponente am Webserver zu registrieren. Nun, die Komponente kann nat&uuml;rlich noch mehr. Dies soll das n&auml;chste Beispiel
+demonstrieren (<b>DGrid.asp</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;%
+    Dim nStartRow, strColumnName, strSortOrder
+    
+    strColumnName_Default = "CompanyName"
+    strSortOrder_Default = "ASC"
+    nStartRow_Default = 1
+    
+    strColumnName = Trim(Request.Querystring("ColumnName"))
+    If ("" = strColumnName) Then strColumnName = strColumnName_Default
+
+    nStartRow= Trim(Request.Querystring("StartRow"))
+    If ("" = nStartRow) Then nStartRow = nStartRow_Default
+    
+    strSortOrder = Trim(Request.Querystring("SortOrder"))
+    If ("" = strSortOrder) Then strSortOrder = strSortOrder_Default
+    
+    Set objSQL2Table = Server.CreateObject("JAL.SQL2Table")
+
+    objSQL2Table.strConn = "Provider=SQLOLEDB.1;Initial Catalog=northwind;Data Source=BLUESCREEN"
+    objSQL2Table.strSQL = "SELECT CompanyName AS 'Company' , ContactName AS 'Contact', 
+        ContactTitle AS 'Title', Phone FROM Suppliers"
+    objSQL2Table.strID = "sa"
+    objSQL2Table.strPW = ""
+    objSQL2Table.lMaxRows = 10
+    objSQL2Table.lStartRow = nStartRow
+    objSQL2Table.isRowNumber = true
+    objSQL2Table.isFooter = true
+    objSQL2Table.isAltRows = true
+    objSQL2Table.isColoredBorder = true
+    objSQL2Table.isNavBar = true
+    objSQL2Table.isUseAlias = true
+    objSQL2Table.isColumnLinks = true
+    objSQL2Table.isAppendSortOrder = true
+    objSQL2Table.strAltRowTagsOdd = "&lt;tr bgcolor=White&gt;"
+    objSQL2Table.strAltRowTagsEven = "&lt;tr bgcolor=Silver&gt;"
+    objSQL2Table.strColumnURL= "./DGrid.asp?ColumnName="
+    objSQL2Table.strSortOrderName= "SortOrder"
+    objSQL2Table.strOrderBy= "ORDER BY "&amp; strColumnName &amp; " " &amp; strSortOrder
+    objSQL2Table.strNavURL="./DGrid.asp?ColumnName=" &amp; strColumnName &amp; "&amp;SortOrder=" 
+        &amp; strSortOrder &amp; "&amp;StartRow="
+
+    Response.Write(objSQL2Table.GetExtendedSQL()+"&lt;br&gt;")
+    If (objSQL2Table.Connect()) Then
+        If objSQL2Table.Update() Then
+            Response.Write objSQL2Table.GetGrid()
+        Else
+            Response.Write objSQL2Table.GetLog()
+        End If
+    Else
+        Response.Write objSQL2Table.GetLog() 
+    End If
+     Response.Write "&lt;br&gt;"+objSQL2Table.GetLog()
+    objSQL2Table.Disconnect()
+
+    Set objSQL2Table= Nothing
+%&gt;
+</pre>
+
+<p>
+Die <i>lMaxRows</i> Property beschr&auml;nkt die maximal gleichzeitig anzuzeigenden Datenreihen. Datenreihennummern
+werden mit der <i>isRowNumber</i> Property angezeigt. Eine Alternativeinf&auml;rbung der Datenreihen wird durch die
+<i>strAltRowTagsOdd</i> bzw. durch die <i>strAltRowTagsEven</i> Property realisiert.
+</p>
+
+<p>
+Ausgef&uuml;hrt auf einem Webserver ist das Ergebnis schon um einiges besser als das vorherige:
+</p>
+
+<IMG SRC="Bilder/200105/20010522_2.png" width="590" height="390" alt="" border="0">
+
+<p>
+Mittels Querystring&uuml;bergabe werden die einzelnen Spalten auf- bzw. absteigend sortiert. Sie m&uuml;ssen hierzu nur auf 
+die Links <i>.il</i> (entspricht aufsteigender Sortierreihenfolge) bzw. <i>.li</i> (absteigend) klicken.
+Die Navigation erfolgt mit den unterhalb der Datenauflistung befindlichen Links <i>First</i>, <i>Prev</i>, <i>Next</i> 
+und <i>Last</i>. 
+Die Aktivierung dieser Navigationsleiste erfolgt durch die Setzung der <i>isNavBar</i> Property. Durchgef&uuml;hrt
+wird diese durch die Querystringangaben, welche in der <i>strNavURL</i> Property anzugeben sind.
+</p>
+
+<p>
+Abschlie&szlig;end m&ouml;chte ich Ihnen die Premiumfeatures der Komponente vorf&uuml;hren. Diese beinhalten die vollst&auml;ndige
+Manipulation der Daten einer Datenbank - also neue Datens&auml;tze erstellen, bestehende editieren oder auch l&ouml;schen.
+Der Download der Komponente enth&auml;lt bereits eine vollst&auml;ndige sourcecodem&auml;&szlig;ige Implementierung in JScript dieser 
+Features (<b>BindMSDErc.asp</b>). Daher soll hier nur ein kurzer Walkthru angef&uuml;hrt sein.
+</p>
+
+<p>
+Um den Sourcecode zu testen, m&uuml;ssen Sie lediglich den Connection String (<i>var strConnection=...</i>) an Ihre 
+Gegebenheiten anpassen. Nach dem Datenbanklogin erhalten Sie folgende Ansicht:
+</p>
+
+<IMG SRC="Bilder/200105/20010522_3.png" width="590" height="296" alt="" border="0">
+
+<p>
+Sie haben nun neben den Datenspalten auch eine Spalte, die einen Link namens Edit/Delete enth&auml;lt. 
+Unterhalb der angezeigten Daten sehen Sie Radiobuttons (siehe Cursorposition), die die Funktionen <i>New</i> und 
+<i>Find</i> enthalten. Wenn Sie auf <i>New</i> klicken, erhalten Sie entsprechend der Tabelleneigenschaften eine 
+Eingabemaske. Bei <i>Find</i> haben Sie die M&ouml;glichkeit nach Datens&auml;tzen zu suchen.
+</p>
+
+<p>
+Wenn Sie auf den Link <i>Edit/Delete</i> neben dem gew&uuml;nschten Datensatz klicken, erhalten Sie eine editierbare 
+Auflistung des jeweiligen Datensatzes:
+</p>
+
+<IMG SRC="Bilder/200105/20010522_4.png" width="572" height="474" alt="" border="0">
+
+<p>
+Mit der untersten Werkzeugleiste haben Sie wieder die M&ouml;glichkeit, die &Auml;nderungen zu speichern, einen neuen Datensatz
+hinzuzuf&uuml;gen oder einen bestehenden zu l&ouml;schen. Weiters gibt es die Option nach einem Datensatz zu suchen.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Wie Sie unschwer erkennen k&ouml;nnen, bietet diese kostenlose Komponente einige Vorteile. Angefangen von einfachen
+Aufgaben, wie der der Datenvisualisierung bis hin zur vollst&auml;ndigen Datenmanipulation ist alles m&ouml;glich. Warum
+also m&uuml;hsam alles selber codieren wenn einem eine kostenlose Unterst&uuml;tzung angeboten wird.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010522.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20010329.htm">Auto-Generierung von performantem Abfragecode</a><br>
+<a href="20010418.htm">Das TableEditor Datenbank Administrationstool</a><br>
+<a href="20001013.htm">Highspeed-Abfragen einer SQL Server Datenbank</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Egeocities%2Ecom%2FJeff%5FLouie%2Findex%2Ehtml">SQL2Table Komponente</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20010522" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Die SQL2Table Komponente"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20010522.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Holm"><input type="hidden" name="AuthorEmail" value="office@holmcs.com"><input type="hidden" name="Artikel" value="20010522"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20010522.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

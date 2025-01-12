@@ -1,0 +1,363 @@
+<HTML>
+<HEAD>
+<TITLE>Mailadressen-&uuml;berpr&uuml;fen f&uuml;r Fortgeschrittene</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor, wie man eine Emailadresse nicht nur vom Format her &uuml;berpr&uuml;ft, sondern wie man gleichzeitig die Existenz eines Mailservers und des Mailaccounts nachfragt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,mail exchanger,mailserver,SMTP,VRFY,MAIL FROM,Emailadresse,Überprüfung,Check">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Mailadressen-&uuml;berpr&uuml;fen f&uuml;r Fortgeschrittene</H1>
+<p>
+Geschrieben von: <a href="../autoren/stephantroxler.htm">Stephan Troxler</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000822"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Man kennt die Problematik - eine Mailadresse die via Webformular entgegengenommen wird, kann man von der Syntax her
+auf Richtigkeit pr&uuml;fen wie man will, sie kann immer noch ung&uuml;ltig (nicht existent) sein. Ob sie funktioniert kommt 
+dann erst beim effektiven Gebrauch auf.
+</p>
+<p>
+Um solche Emailfehler zu vermeiden, kann man nebst den &uuml;blichen Pr&uuml;froutinen einen weiteren Check einf&uuml;hren, der die 
+Existenz des Mailservers und der Adresse auf diesem Server kontrolliert. Um die im Artikel vorgestellten Techniken 
+erfolgreich einzusetzen, werden nebst Kentnissen &uuml;ber SMTP und die Verwendung von <i>nslookup</i> noch zwei 
+Serverkomponenten ben&ouml;tigt. Die angef&uuml;hrten Komponenten sind Freeware und nat&uuml;rlich lediglich eine M&ouml;glichkeit von 
+vielen.
+<ul>
+<li>AspExec von ServerObjects
+<li>W3Sockets von Dimac
+</ul>
+</p>
+
+<h2>Die Beispielsannahme</h2>
+<p>
+Gegeben sei ein Formular &uuml;ber welches (nebst beliebigen anderen Werten) eine Mailadresse angegeben wird. 
+Nach dem Zuordnen des Wertes in eine Variable erfolgt nun zun&auml;chst die gewohnte G&uuml;ltigkeitspr&uuml;fung, welche die 
+folgenden Eigenschaften der E-Mailadresse &uuml;berpr&uuml;fen sollte:
+<ul>
+<li>mindestens 7 Zeichen lang 
+<li>"@" mu&szlig; einmal darin enthalten sein
+<li>keine Sonderzeichen
+<li>hinter dem @ mu&szlig; mindestens ein "." vorkommen
+<li>nach dem letzen "." folgen mindestens 2 und h&ouml;chstens 3 weitere Zeichen
+</ul>
+</p>
+<p>
+So stellen wir sicher, da&szlig; wir einerseits den User nicht unn&ouml;tig bei der &Uuml;berpr&uuml;fung warten lassen und andereseits 
+sparen wir uns eine unn&ouml;tige Abfrage gegen den Mailserver, wenn diese sowieso zum Scheitern verurteilt ist.
+Ich m&ouml;chte an dieser Stelle nicht im Detail auf diesen Punkt eingehen. Ein bischen Stringzerlegung sollte noch jeder 
+hinkriegen.
+</p>
+
+
+<h2>Suchen des Mailservers</h2>
+<p>
+Nun haben wir eine Emailadresse in der Hand, die zumindest theoretisch g&uuml;ltig sein k&ouml;nnte. F&uuml;r die folgenden Beispiele 
+nennen wir die Variable <i>email</i> und geben Ihr den Wert "info@simmcomm.ch".
+Diese Variable m&uuml;ssen wir nun zuerst in die Teile vor und nach dem "@" zerlegen. (sofern wir nicht schon beides aus 
+dem ersten Schritt haben):
+<pre style="background='silver';">
+&lt;%
+adresse  =  split (email, "@")
+account  =  adresse(0)
+domain   =  adresse(1)
+%&gt;
+</pre>
+</p>
+<p>
+Mittels einem <i>nslookup</i> auf den Domain der Adresse gilt es nun den f&uuml;r die Adresse zust&auml;ndigen Mailserver 
+herauszufinden. In einem Command Prompt w&uuml;rde man nun folgendes Kommando absetzen (Achtung: nur NT und 2000):
+<pre style="background='silver';">
+nslookup - type = mx simmcomm.ch
+</pre>
+</p>
+<p>
+Die Antwort sieht dann so &auml;hnlich aus:
+</p>
+<p><IMG SRC="/artikel/Bilder/200008/20000822.png" width="567" height="330" border="0" alt=""></p>
+<p>
+Der f&uuml;r uns relevante Part steht im hinteren Teil der 5.Zeile:
+<pre style="background='silver';">
+<i>mail exchanger = mail.simmcomm.ch</i>
+</pre>
+</p>
+<p>
+Das ist der Server, der f&uuml;r die Mailweiterleitung dieser Domain zust&auml;ndig ist. Bekommt man diesen Eintrag nicht, 
+gibt es keinen Mailserver. Bekommt man keinerlei Informationen zur Domain, dann gibt es sie nicht. 
+Nun gilt es das ganze Prozedere auf dem Server in ASP vorzunehmen und den ermittelten Mailserver in eine Variable 
+zu bringen. Dazu verwende ich die Freeware-Komponente AspExec von ServerObjects.
+Der ganze Output wird als String in die Variable <i>mxstring</i> geschrieben.
+</p>
+<p>
+<pre style="background='silver';">
+Set Executor          =  Server.CreateObject("ASPExec.Execute")
+Executor.Application  =  "nslookup"
+Executor.Parameters   =  "-type=MX " &amp; domain
+mxstring              =  Cstr(Executor.ExecuteDosApp)
+</p>
+</pre>
+<p>
+Mittels einer Stringzerlegung komme ich nun an den String des Mailservers.
+Ist der String "mail exchanger " nicht im Output vorhanden, existiert die getestete Domain nicht, oder sie besitzt 
+keinen g&uuml;ltigen MX-Eintrag. In diesem Fall kann das Script fr&uuml;hzeitig abgebrochen werden.
+</p>
+<p>
+<pre style="background='silver';">
+plinks      =   inStr(mxstring, "mail exchanger ")
+mxstring    =   right(mxstring, (len(mxstring) - plinks -16))
+plinks      =   inStr(mxstring, vbCrLf)
+mailserver  =   CStr(left(mxstring, plinks -1))
+</pre>
+</p>
+<p>
+Was &uuml;brig bleibt ist die Variable <i>mailserver</i>, welche wir zum n&auml;chsten Schritt mitnehmen.
+</p>
+<p>
+<b>Hinweis:</b>
+Mit der Komponente <i>AspMX</i> von ServerObjects l&auml;&szlig;t sich der soeben beschriebene Schritt wesentlich leichter 
+bew&auml;ltigen. Allerdings ist die Komponente nicht Freeware.
+</p>
+
+<h2>Ein kurzer Abri&szlig; &uuml;ber SMTP</h2>
+<p>
+Beim Senden eines Mails kommt das <i>SMTP</i> (Simple Mail Transfer Protocol)-Protokoll zum Zug. In dieser Sektion 
+m&ouml;chte ich Ihnen einen Kurz&uuml;berblick geben, wie eine Kommunikation zwischen einem Mailclient und einem Mailserver 
+etwa aussieht:
+</p>
+<p>
+Zun&auml;chst wird die Verbindung &uuml;ber den Port 25 aufgebaut.
+<pre style="background='silver';">
+User tippt: <i>telnet mail.simmcomm.ch 25</i>
+</pre>
+</p>
+<p>
+Sobald diese steht, meldet sich der Mailserver mit einem ersten Statuscode und einer Begr&uuml;&szlig;ung. Diese Meldung 
+ist konfigurierbar und folglich je nach Software und Mailserver wieder anders.
+<pre style="background='silver';">
+MX antwortet: <i>220 Host mail.simmcomm.ch ready</i>
+</pre>
+</p>
+<p>
+Dannach werden die folgenden Kommandos abgesetzt und die entsprechenden Statusmeldungen vom Server empfangen 
+(wieder je nach Server unterschiedlich).
+</p>
+<p>
+Begr&uuml;&szlig;ung (Handshake):
+<pre style="background='silver';">
+User tippt: <i>HELO mail.simmcomm.ch</i>
+MX antwortet: <i>250 Hello myhost.mydomain.com, pleased to meet you!</i>
+</pre>
+</p>
+<p>
+Angabe des Absenders/&Uuml;berpr&uuml;fung des Absenders
+<pre style="background='silver';">
+User tippt: <i>MAIL FROM: meinabsender@irgendwas.com</i>
+MX antwortet: <i>250 meinabsender@irgendwas.com... Sender ok</i>
+</pre>
+</p>
+<p>
+Angabe des Empf&auml;ngers/&Uuml;berpr&uuml;fung des Empf&auml;ngers:
+<pre style="background='silver';">
+User tippt: <i>RCPT TO: derempfaenger@irgendwas.com</i>
+MX antwortet: <i>250 derempfanger@irgenwas.com ... Recipient ok</i>
+</pre>
+</p>
+<p>
+Als n&auml;chstes w&uuml;rde nun der Befehl <i>DATA</i> und die &Uuml;bergabe der Daten folgen. F&uuml;r uns ist der interessante Teil 
+jedoch nun durch. Wenn bis hierhin immer ein Ok des Servers zur&uuml;ckkam, wissen wir mit 100% Sicherheit, da&szlig; der 
+entfernte Mailserver ein E-Mail an den angegebenen Account annehmen w&uuml;rde.
+</p>
+<p>
+Zur &Uuml;berpr&uuml;fung eines Mailaccounts wurde an sich das <i>VRFY</i> Kommando geschaffen. Da sich ein Mailserver aber 
+so konfigurieren l&auml;&szlig;t, da&szlig; er die &Uuml;berpr&uuml;fung ablehnt, ist der Befehl f&uuml;r unser Vorhaben nicht geeignet - und wir
+m&uuml;ssen den eben beschriebenen langen Weg gehen.
+</p>
+<p>
+<b>Achtung:</b>
+Ein Mailserver l&auml;&szlig;t sich so konfigurieren, da&szlig; er gr&uuml;nds&auml;tzlich alles animmt, was ihm f&uuml;r eine seiner Domains 
+"<i>angeboten</i>" wird. Bei Mailroutern in Gro&szlig;firmen geht das zum Beispiel gar nicht anders. Dadurch wissen wir 
+nat&uuml;rlich wiederum nicht 100%ig, ob der Account letzten Endes existiert oder nicht. Fest steht jedoch, da&szlig; das 
+Mail angenommen wird und die zu sendende Instanz entlastet wird.
+</p>
+
+
+<h2>Die Account-Abfrage</h2>
+<p>
+Um den vorher beschriebenen Protokollablauf in die Tat umzusetzen brauchen wir eine weitere Serverkomponente, welche 
+die Funktion einer Telnetkonsole auf dem Server wahrnimmt. In meinem Beispiel verwende ich die Freeware-Komponente 
+W3Sockets. Wichtig ist es, ein relativ hohes Timeout zu w&auml;hlen, da der anzukickende Mailserver je nach dem schnell 
+mal 30 Sekunden wartet bis er antwortet.
+</p>
+<p>
+<pre style="background='silver';">
+Set Socket      =   Server.CreateObject("Socket.TCP") 
+Socket.Host     =   mailserver &amp; ":25"
+Socket.TimeOut  =   "40000"
+Socket.Open()
+</pre>
+</p>
+<p>
+Zuerst kommt der Handshake, anschlie&szlig;end lesen wir die ersten zwei Zeilen aus.
+<b>Anmerkung:</b> Ich sammle jeweils die Antworten in einem String, um ihn testhalber am Schlu&szlig; auszugeben.
+</p>
+<pre style="background='silver';">
+Socket.sendLine("HELO " &amp; mailserver &amp; vbCrlf)
+Socket.wait()
+test1   =   Socket.GetLine() &amp; "&lt;br&gt;"
+test1   =   test1 &amp; Socket.GetLine()  &amp; "&lt;br&gt;"
+</pre>
+<p>
+Das erste Zeichen im erhaltenen String gibt uns Auskunft &uuml;ber den Statuscode (2xx = ok; 5xx=Fehler). Anhand des 
+Statuscodes speichern wir nun eine entsprechende Mitteilung in der Variablen mxserver.
+</p>
+<p>
+<pre style="background='silver';">
+mxserver   =   cstr(left(test1, 1))
+	
+     select case mxserver
+          case "2"
+                mxserver = "existiert"
+          case "5"
+                mxserver = "Eintrag ung&uuml;ltig"
+          case " " OR ""
+                mxserver = "error..."
+	end select
+</pre>
+</p>
+<p>
+Als Pseudo-Absenderadresse wird eine fix eingetragene Adresse verwendet. Die Antwortzeile m&uuml;ssen wir auslesen, um 
+den Antwortpuffer zu leeren.
+</p>
+<pre style="background='silver';">
+Socket.sendLine("Mail From: webmaster@darkwolf.ch" & vbCrlf)
+test2   =   test1 &amp; Socket.GetLine() &amp; "&lt;br&gt;"
+</pre>
+</p>
+<p>
+Unsere Variable <i>email</i> wird jetzt als Empf&auml;nger eingesetzt und gesendet.
+</p>
+<p>
+<pre style="background='silver';">
+Socket.sendLine("RCPT to: " &amp; email &amp; vbCrlf)
+test3     =    Socket.GetLine()
+verlauf   =    test2 &amp; test3 &amp; "&lt;br&gt;"
+</pre>
+</p>
+<p>
+Wie schon beim allgemeinen Testen des Mailserver kann man anhand des ersten Zeichens des Antwortstrings erkennen 
+(Statuscodes), ob der Account existiert oder nicht.
+</p>
+<p>
+<pre style="background='silver';">
+account  =  cstr(left(test3, 1))
+
+select case account
+        case "2"
+            account = "existiert"
+        case "5"
+            account = "Eintrag ung&uuml;ltig"
+        case " " OR ""
+        account = "error..."
+end select
+</pre>
+</p>
+<p>
+Da wir jetzt alle Informationen erhalten haben schlie&szlig;en wir die Verbindung wieder.
+</p>
+<p>
+<pre style="background='silver';">
+   Socket.sendLine("QUIT")
+   Socket.Close()
+</pre>
+</p>
+<p>
+Was uns bleibt, ist der Protokollverlauf und zwei Variablen, die uns &uuml;ber die Existenz des Mailservers und des Accounts
+Auskunft geben. Am einfachsten verpackt man den ganzen Code in eine Funktion, der man die Adresse &uuml;bergibt und sich 
+ein <i>True</i> oder <i>False</i> zur&uuml;ckgeben l&auml;&szlig;t. Im Fehlerfall kann man nun den User auf das Formular zur&uuml;ckleiten 
+und ihn bitten, eine g&uuml;ltige Adresse zu verwenden.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die Pr&uuml;froutine hat einzig einen gro&szlig;en Haken. Sofern der entfernte Mailserver gerade nicht verf&uuml;gbar ist, wird die 
+Mailadresse zwangsl&auml;ufig immer als "<i>ung&uuml;ltig</i>" klassiert.
+Ebenfalls ein offener Punkt sind die Antwortzeiten des Mailservers und dessen R&uuml;ckmeldungen, die ja von Fall zu Fall 
+etwas anders aussehen. 
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000822.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000822.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20021028.htm">ACT MetaMailer - Mails verschicken leicht gemacht</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021028.htm</span><br>
+<a href="../artikel/20010220.htm">Applikationen aus ASP.NET ausf&uuml;hren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010220.htm</span><br>
+<a href="../artikel/20010531.htm">Keine gefakten Bestellungen mehr!</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010531.htm</span><br>
+<a href="../artikel/20010516.htm">Kommandozeilen-Programme aufrufen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010516.htm</span><br>
+<a href="../artikel/20020902.htm">Regex'en zu Assemblies kompilieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020902.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eserverobjects%2Ecom%2Fproducts%2Ehtm">AspExec von ServerObjects</a><br>
+<SPAN class="content">http://www.serverobjects.com/products.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eserverobjects%2Ecom%2Fproducts%2Ehtm">AspMX von ServerObjects</a><br>
+<SPAN class="content">http://www.serverobjects.com/products.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Edimac%2Enet%2F">W3Sockets von Dimac</a><br>
+<SPAN class="content">http://www.dimac.net/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

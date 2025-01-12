@@ -1,0 +1,234 @@
+<HTML>
+<HEAD>
+<TITLE>404 Fehler elegant entsch&auml;rfen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel stellt ein ASP Skript vor, mit dem man sogar aus 404 Object Not Found Fehlern Nutzen ziehen kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,404,ASP,Referer,Redirect,Fehlerbehandlung,Link,broken link,Linkcheck,Mailparser">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>404 Fehler elegant entsch&auml;rfen</H1>
+<p>
+Geschrieben von: <a href="../autoren/patricka_lorenz.htm">Patrick A. Lorenz</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000608"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Die wohl bekannteste unter den Fehlermeldungen eines Web-Servers ist Numero 404, die die ern&uuml;chternde 
+Feststellung "Object not found" auf den Bildschirm des hoffnungsvollen Surfers zaubert. In diesem Artikel 
+m&ouml;chte ich Euch eine L&ouml;sung vorstellen, mit der Ihr die trostlose Fehlerseite gegen ein funktionales Script 
+austauschen k&ouml;nnt, das Euch automatisch &uuml;ber den Fehler informiert und Euch somit die M&ouml;glichkeit gibt, 
+schnell zu handeln und die schadhafte Stelle Eurer Website zu flicken.
+</p>
+
+<h2>Die Idee</h2>
+<p>
+Der Internet Information Server bietet die M&ouml;glichkeit, f&uuml;r die komplette Website oder sogar f&uuml;r einzelne 
+Verzeichnisse sog. Custom Error Messages festzulegen. Neben der 404 Fehlermeldung k&ouml;nnen dabei auch f&uuml;r nahezu 
+alle anderen Fehlermeldungen alternative Texte oder je nach Art der Meldung ein Script hinterlegt werden.
+</p>
+<p>
+In unserem Fall soll bei der Anforderung einer nicht existierenden Seite unser Script aufgerufen werden. Dieses 
+pr&uuml;ft an Hand des &uuml;bergebenen HTTP-Referers, woher der Benutzer kommt. Die URL der angeforderten Seite erh&auml;lt 
+das Script per GET Parameter &uuml;bergeben. Der Aufruf sieht wie folgt aus:
+<pre style="background=silver;">
+http://www.mydomain.com/?404;http://www.mydomain.com/missing.asp
+</pre>
+</p>
+<p>
+Aus den explizit (URL) und implizit (Referer) erhaltenen Informationen lassen sich drei F&auml;lle diagnostizieren:
+</p>
+<p>
+<ul>
+<li>Der Benutzer gibt manuell eine falsche Adresse in den Browser ein, in diesem Fall 
+	wird kein HTTP-Referer &uuml;bergeben.
+<li>Der Benutzer folgt einem Link innerhalb eines anderen Internet-Angebotes auf unser Internet-Angebot, 
+	der HTTP-Referer enth&auml;lt die URL der externen Seite.
+<li>Oder aber, der Benutzer folgt einem Link innerhalb unseres eigenen Internet-Angebotes, es gibt also 
+	einen fehlerhaften Link auf unseren eigenen Seiten. In diesem Fall enth&auml;lt der HTTP-Referer die URL der 
+	eigenen Seite.
+</ul>
+</p>
+<p>
+In den ersten beiden F&auml;llen wollen wir dem Benutzer lediglich eine entsprechende Meldung ausgeben, denn 
+tats&auml;chlich handeln k&ouml;nnen wir nicht. Im dritten Fall aber, haben wir den falschen Link selbst verbrochen 
+und sollten daher schnellstm&ouml;glichst Abhilfe schaffen. 
+</p>
+<p>
+Zun&auml;chst einmal m&uuml;ssen wir aber von dem Problem erfahren, am besten per eMail - Keine Frage, das erledigt unser 
+MailParser aus dem Artikel <a href="../artikel/20000602.htm">Allgemeine MailParser Klasse</a> f&uuml;r uns.
+</p>
+
+<h2>Vorbereitung</h2>
+<p>
+Bevor wir das Script implementieren, bedarf es ein wenig Vorbereitung...
+</p>
+<p>
+Zun&auml;chst legen wir in der Root unseres Servers eine neue, leere ASP-Seite mit dem Namen 404.asp an. Nun rufen 
+wir den Konfigurationsdialog des Internet Information Servers auf. Unter Windows 2000 versteckt sich dieser 
+als "Internet Services Manager" im Order "Administrative Tools" der Systemsteuerung. Jetzt rufen wir den 
+Eigenschaftsdialog des gew&uuml;nschten Servers auf und markieren die Lasche "Custom Errors". In der erschreckend 
+langen Liste der m&ouml;glichen Fehler findet sich auch Nummer 404. Nach einem Klick auf den Eigenschaften-Button 
+und Ausw&auml;hlen der Option "URL" m&uuml;ssen wir nur noch die URL "/404.asp" eingeben und beide ge&ouml;ffneten Dialoge 
+best&auml;tigen.
+</p>
+<p><IMG SRC="/artikel/Bilder/200006/20000608.png" width="461" height="453" border="0" alt=""></p>
+<p>
+Ab sofort ist die Custom Error Message aktiv!
+</p>
+
+<h2>Das Script</h2>
+<p>
+Nach einem kleinen Hinweis auf den Umstand dieser Fehlerseite in purem HTML wird das eigentliche Script 
+interpretiert. Dabei wird zun&auml;chst die Ursprungsseite ermittelt, die in der Server-Variable HTTP_REFERER im 
+Header des HTTP-Aufrufes vom Browser an den Server gesendet wird.
+<pre style="background=silver;">
+referer = Request.ServerVariables("HTTP_REFERER") 
+</pre>
+</p>
+<p>
+Nun stellen wir mit Hilfe der Ursprungsseite fest, wie der Benutzer auf die nicht existierende Seite gelangt 
+ist. Es gibt dabei die weiter oben angesprochenen folgenden drei M&ouml;glichkeiten:
+</p>
+<p>
+<ul>
+<li>Manuelle Eingabe
+<li>Link in anderem Internet-Angebot
+<li>Link in eigenem Internet-Angebot
+</ul>
+</p>
+<p>
+In dieser Reihenfolge wollen wir die Ursprungsseite auch ermitteln. Dazu verwenden wir ein einfaches 
+IF-ELSEIF-ELSE-Konstrukt:
+<pre style="background=silver;">
+ If IsEmpty(referer) Then
+  Message = "Bitte pr&uuml;fen Sie die Schreibweise der Adresse."
+  ...
+</pre>
+</p>
+<p>
+Es wurde kein Referer &uuml;bergeben, der Benutzer hat die URL also vermutlich manuell eingegeben.
+<pre style="background=silver;">
+ ElseIf InStr(1, referer, Request.ServerVariables("HTTP_HOST"), _
+ 		vbTextCompare) = 0 Then
+  Message = "Bitte informieren Sie den Webmaster der Seite " &amp; referer &amp; _
+            " &uuml;ber den fehlerhaften Link."
+  ...
+</pre>
+</p>
+<p>
+Es wurde ein Referer &uuml;bergeben, dieser liegt aber au&szlig;erhalb des eigenen Internet-Angebotes. Wie haben wir das 
+festgestellt? Nun, wenn er im eigenen Internet-Angebot liegen w&uuml;rde, w&uuml;rde er den Namen des Hosts beinhalten, 
+den wir &uuml;ber die Servervariable HTTP_HOST ermittelt haben.
+<pre style="background=silver;">
+ Else
+  Message = "Unser Webmaster wurde &uuml;ber den fehlerhaften Link " &amp; _
+            " innerhalb unseres Internet-Angebotes informiert und " &amp; _
+            " wird sich so schnell wie m&ouml;glich mit dem Problem besch&auml;ftigen"
+
+  url = Request.ServerVariables("QUERY_STRING")
+  url = Mid(url, InStr(url, ";") + 1)
+
+  Dim NewMail
+  Set NewMail = New MailParser
+
+  NewMail.AddVariable "referer", referer
+  NewMail.AddVariable "url", url
+  NewMail.Template = Server.Mappath("404.msg")
+
+  Call NewMail.Send
+ End If
+</pre>
+</p>
+<p>
+Wenn der Referer nicht leer ist und den Namen unseres eigenen Hosts enth&auml;lt, dann ist uns wohl ein Fehler 
+unterlaufen. In diesem Fall soll uns das Script mit Hilfe einer eMail informieren. 
+</p>
+<p>
+Wir verwenden dazu die Allgemeine MailParser-Klasse aus dem gleichnamigen <a href="../artikel/20000602.htm">Artikel</a>. Der Klasse werden 
+zwei Variablen &uuml;bergeben. Zum einen ist das der Referer, also die Ursprungsseite, die wir bereits weiter oben 
+ermittelt haben und zum anderen ben&ouml;tigen wir zur Korrektur nat&uuml;rlich die URL der nicht existierenden Seite. 
+Diese wird vom Internet Information Server per Parameter an das Script &uuml;bergeben und zwar in folgender 
+Schreibweise: 404;<URL>. Per InStr und Mid schneiden wir die Fehlernummer kurzer Hand ab und &uuml;bergeben 
+lediglich die URL an die MailParser-Klasse.
+</p>
+<p>
+Im Anschlu&szlig; mu&szlig; lediglich die individuelle Fehlerbeschreibung ausgegeben werden:
+<pre style="background=silver;">
+ &lt;p&gt;
+  &lt;% = Message %&gt; &lt;b&gt; Vielen Dank f&uuml;r Ihr Verst&auml;ndnis! &lt;/b&gt;
+ &lt;/p&gt;
+</pre>
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Custom Error Pages erm&ouml;glichen uns, die tristen Fehlermeldungen des Internet Information Servers gegen 
+funktionale Scripts einzutauschen, die nicht nur den Benutzer schonend informieren, sondern dar&uuml;ber hinaus 
+einen Mehrwert zur Fehlerreduzierung bieten. Wer also eine ansprechende Website erstellen will, der sollte 
+sich einmal mit diesem Thema besch&auml;ftigen.
+</p>
+<p>
+<i>&lt;schleichwerbung&gt;</i> Ein meines Erachtens gutes Beispiel f&uuml;r den Einsatz einer Custom Error 404 Message 
+findet Ihr bei <a href="http://www.combit.de" target="_blank">combit.de</a>. Um die Effektivit&auml;t zu testen w&uuml;rde ich vorschlagen, 
+jeder, der auf der Website einen toten Link findet, bekommt von mir... Nein, soweit w&uuml;rde ich nicht gehen 
+;-), aber einen Blick lohnt die Website dennoch. <i>&lt;/schleichwerbung&gt;</i>
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000608.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000608.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000602.htm">Allgemeine MailParser-Klasse mit ASPMail</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000602.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

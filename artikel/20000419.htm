@@ -1,0 +1,470 @@
+<HTML>
+<HEAD>
+<TITLE>Auswirkung des Providers auf die Datenbank Performance</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Die Performance einer ADO Anwendung h&auml;gt sehr stark vom verwendeten Datenbankprovider ab, und oftmals sind erhebliche Geschwindigkeitssteigerungen m&ouml;glich. Dieser Artikel zeigt, wo man ansetzen mu&szlig;.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ADO,Performance,OLE DB,OLEDB,provider,ODBC,connection,DSN,Connection,ADODB">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Auswirkung des Providers auf die Datenbank Performance</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/Optimierung.htm">Optimierung</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000419"></SCRIPT>
+</p>
+<p>Um mittels ADO 2.5 eine Datenbank-Verbindung mit Hilfe des 
+<i>Connection</i> Objektes aufzubauen gibt es unterschiedliche M&ouml;glichkeiten.
+Unabh&auml;ngig davon, ob sich Datenbank und Applikation am selben
+Server befinden, kann man verschiedene Datenbank Provider benutzen.
+</p>
+
+<p>Ein Datenbank Provider stellt die Verbindung zwischen der OLE DB Ebene, 
+die unter ADO liegt, und der Datenbank her. Fr&uuml;her hatten Datenbanken
+oft nur eine ODBC Schnittstelle zur Anbindung an Applikationen
+zur Verf&uuml;gung. Daher ist es nicht verwunderlich, da&szlig;
+es lange Zeit unter ADO &uuml;blich war, mittels <i>OLE DB Provider f&uuml;r ODBC</i>
+und dem <i>ODBC Treiber</i> f&uuml;r die jeweilige Datenbank eine Verbindung
+zwischen Applikation und Datenbank herzustellen. 
+Der <i>ConnectionString</i> f&uuml;r eine ODBC-Verbindung in ADO sieht wie folgt aus:</p>
+
+<pre style="background='silver';">
+"Provider=MSDASQL;DSN=<i>DSN-Name</i>;UID=<i>User Name</i>;PWD=<i>Pa&szlig;wort</i>;"</pre>
+
+<p>Seitdem Microsoft ADO zur Standardschnittstelle f&uuml;r den Datenaustausch
+zwischen verschiedensten Applikationen und Datenquellen aller Art erkl&auml;rt hat,
+sind inzwischen spezielle <i>OLE DB Provider</i> für viele Datenbanken erh&auml;ltlich.
+Um einen <i>OLE-DB Provider</i> f&uuml;r die Datenbankanbindung zu benutzen wird ein 
+<i>ConnectionString</i> verwendet, der auf den jeweiligen <i>OLE DB Provider</i> 
+zugeschnitten ist:</p>
+
+<pre style="background='silver';">
+<div align="center"><b>SQL Server 7.0:</b></div>
+"Provider=SQLOLEDB;Data Source=<i>Server Name</i>;Initial Catalog=" & _
+   "<i>Datenbank Name</i>;User ID=<i>User Name</i>;Password=<i>Pa&szlig;wort</i>;"
+   
+<div align="center"><b>Access 2000:</b></div>
+"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=<i>Datenbank Pfad</i>;" & _
+   "User ID=<i>User Name</i>;Password=<i>Pa&szlig;wort</i>;"</pre>
+
+<p>Wenn man nun eine Datenbankverbindung &uuml;ber die ODBC-Schnittstelle errichtet,
+so m&uuml;ssen alle Daten &uuml;ber 3 Ebenen transportiert werden:<br>
+<div align="center"><b>ADO &lt;--&gt; OLE DB Provider f&uuml;r ODBC &lt;--&gt; ODBC Treiber</b></div></p>
+
+<p>Hingegen sind in eine Datenbankverbindung direkt &uuml;ber den
+<i>OLE DB Provider</i> (f&uuml;r die jeweilige Datenbank) nur zwei Ebenen involviert:<br>
+<div align="center"><b>ADO &lt;--&gt; OLE DB Provider f&uuml;r die Datenbank</b></div></p>
+
+<p>Zus&auml;tzlich werden <i>OLE DB Provider</i> bereits optimiert f&uuml;r die 
+jeweilige Datenbank geschrieben, im Gegensatz zu ODBC Treibern, die eine 
+standardisierte ODBC Schnittstelle haben m&uuml;ssen. 
+Daher ist der Einsatz eines <i>OLE DB Providers</i> bei einem Datenbankzugriff 
+prinzipiell schneller als der Einsatz des <i>OLE DB Providers f&uuml;r ODBC</i>
+(zusammen mit dem jeweiligen <i>ODBC Treiber</i>).</p>
+
+<p>Wie hoch ist aber nun der Geschwindigkeitsgewinn, wenn man statt des 
+<i>OLE DB Providers f&uuml;r ODBC</i> gleich den <i>OLE DB Provider</i> f&uuml;r die Datenbank 
+benutzt?</p>
+
+<p>Um dies zu testen habe ich die 
+gratis erh&auml;ltliche 
+Profiling Komponente
+von <a href="http://www.alphasierrapapa.com" target="_blank">Alpha Sierra Papa</a> benutzt und in
+dem folgenden Skript eingesetzt:</p>
+
+<pre style="background='silver';">
+&lt;% 
+Dim xObj, intI, profileElapsed
+Dim connOLEDB, connODBC, rs, strSQL
+Dim strConnectionString_OLEDB, strConnectionString_ODBC
+
+strConnectionString_OLEDB = "Provider=Microsoft.Jet.OLEDB.4.0;" & _
+   "Data Source=E:\Program Files\Microsoft Office\Office\Samples\" & _
+   "Northwind.mdb;User ID=admin;Password=;"
+strConnectionString_ODBC = "Provider=MSDASQL;DSN=NW;UID=;PWD=;"
+strSQL = "Select LastName, FirstName, BirthDate FROM Employees"
+
+Set xObj = Server.CreateObject("Softwing.Profiler")
+
+Set connODBC = CreateObject("ADODB.Connection")
+Set connOLEDB = CreateObject("ADODB.Connection")
+
+Response.Write "Access &uuml;ber ODBC: Recordset auslesen - Start&lt;br&gt;"
+xObj.ProfileStart(strSQL)
+connODBC.open strConnectionString_ODBC
+Set rs = connODBC.Execute()
+for intI = 1 to 100
+	Set fldLastName = rs("LastName")
+	Set fldFirstName = rs("FirstName")
+	Set fldGebDat = rs("BirthDate")
+	rs.MoveFirst
+	While Not rs.EOF
+	   strName = fldLastName
+	   strAdresse = fldFirstName
+	   strGebDat = fldGebDat
+	   '...
+	   rs.MoveNext
+	Wend
+Next
+rs.close
+connODBC.close
+profileElapsed = xObj.ProfileStop()
+Response.Write "Ergebnis: " & FormatNumber(profileElapsed/10000,3) & _
+	" Sekunden&lt;BR&gt;&lt;br&gt;&lt;br&gt;"
+
+Response.Write "Access &uuml;ber OLEDB: Recordset auslesen - Start&lt;br&gt;"
+xObj.ProfileStart()
+connOLEDB.open strConnectionString_OLEDB
+Set rs = connOLEDB.Execute(strSQL)
+for intI = 1 to 100
+	Set fldLastName = rs("LastName")
+	Set fldFirstName = rs("FirstName")
+	Set fldGebDat = rs("BirthDate")
+	rs.MoveFirst
+	While Not rs.EOF
+	   strName = fldLastName
+	   strAdresse = fldFirstName
+	   strGebDat = fldGebDat
+	   '...
+	   rs.MoveNext
+	Wend
+Next
+rs.close
+connOLEDB.close
+profileElapsed = xObj.ProfileStop()
+Response.Write "Ergebnis: " & FormatNumber(profileElapsed/10000,3) & _
+	" Sekunden&lt;BR&gt;&lt;br&gt;&lt;br&gt;"
+
+Response.Write "Access &uuml;ber ODBC: Connection &ouml;ffnen und " & _
+	Recordset auslesen - Start&lt;br&gt;"
+xObj.ProfileStart()
+for intI = 1 to 100
+	connODBC.open strConnectionString_ODBC
+	Set rs = connODBC.Execute(strSQL)
+	Set fldLastName = rs("LastName")
+	Set fldFirstName = rs("FirstName")
+	Set fldGebDat = rs("BirthDate")
+	rs.MoveFirst
+	While Not rs.EOF
+	   strName = fldLastName
+	   strAdresse = fldFirstName
+	   strGebDat = fldGebDat
+	   '...
+	   rs.MoveNext
+	Wend
+	rs.close
+	connODBC.close
+Next
+profileElapsed = xObj.ProfileStop()
+Response.Write "Ergebnis: " & FormatNumber(profileElapsed/10000,3) & _
+	" Sekunden&lt;BR&gt;&lt;br&gt;&lt;br&gt;"
+
+Response.Write "Access &uuml;ber OLE DB: Connection &ouml;ffnen und " & _
+	"Recordset auslesen - Start&lt;br&gt;"
+xObj.ProfileStart()
+for intI = 1 to 100
+	connOLEDB.open strConnectionString_OLEDB
+	Set rs = connOLEDB.Execute(strSQL)
+	
+	Set fldLastName = rs("LastName")
+	Set fldFirstName = rs("FirstName")
+	Set fldGebDat = rs("BirthDate")
+	rs.MoveFirst
+	While Not rs.EOF
+	   strName = fldLastName
+	   strAdresse = fldFirstName
+	   strGebDat = fldGebDat
+	   '...
+	   rs.MoveNext
+	Wend
+	rs.close
+	connOLEDB.close
+Next
+profileElapsed = xObj.ProfileStop()
+Response.Write "Ergebnis: " & FormatNumber(profileElapsed/10000,3) & _
+	" Sekunden&lt;BR&gt;&lt;br&gt;&lt;br&gt;"
+
+Set xObj = Nothing
+%&gt;
+Fertig...
+</pre>
+
+<p>Anzumerken ist, da&szlig; ich vorher die ODBC DSN names <b>NW</b> eingerichtet habe,
+die genauso auf die Access Datenbank names Northwind verbindet. 
+Ein Durchlauf des Skripts auf meinem Server (<u>Athlon 750 Mhz</u>, <u>Win NT Server</u>)
+erbrachte folgendes Ergebnis:</p>
+
+<pre style="background='silver';">
+Access &uuml;ber ODBC: Recordset auslesen - Start
+Ergebnis: 0.533 Sekunden
+
+Access &uuml;ber OLEDB: Recordset auslesen - Start
+Ergebnis: 0.109 Sekunden
+
+Access &uuml;ber ODBC: Connection &ouml;ffnen und Recordset auslesen - Start
+Ergebnis: 4.036 Sekunden
+
+Access &uuml;ber OLE DB: Connection &ouml;ffnen und Recordset auslesen - Start
+Ergebnis: 4.014 Sekunden
+</pre>
+
+<p>Das bedeutet, da&szlig; der Zugriff auf Daten eines <i>Recordsets</i> unter
+OLE DB bis zu 5 mal so schnell ist wie unter ODBC.
+</p>
+<p>
+Realistischer Performance-Gewinn in einer typischen ASP Anwendung bei 
+Verwendung einer Access 2000 oder SQL Server 7.0 Datenbank liegt erfahrungsgem&auml;&szlig;
+zwischen 2 und 10 Prozent, in Einzelf&auml;llen aber auch weit dar&uuml;ber. Deshalb lohnt
+es sich oft, eine Datenbank-Anwendung gleich unter Verwendung eines
+<i>OLE DB Provider</i> zu programmieren.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000419.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20020319.htm">Ein einfacher Eventkalender f&uuml;r Projektteams</a><br>
+<a href="20000814.htm">Webserver-Tuning mit XTune</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2FIisDev%2FComponents%2FProfiler%2F">Profiling Komponente</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000419" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Auswirkung des Providers auf die Datenbank Performance"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000419.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Koller"><input type="hidden" name="AuthorEmail" value="christiank@aspexpert.com"><input type="hidden" name="Artikel" value="20000419"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000419.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

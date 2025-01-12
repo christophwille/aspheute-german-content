@@ -1,0 +1,412 @@
+<HTML>
+<HEAD>
+<TITLE>Automation - WSH versus Wget</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel beschreibt der Autor, wie man bestimmte Tasks zu bestimmten Zeiten ablaufen lassen - und zwar entweder als ASP Datei, oder als WSH Skript.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,WSH,ASP,Windows Scripting Host,WGet,HTTP,Automation,Administration,AT,Scheduled Task,Scheduler,Windows">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Automation - WSH versus Wget</H1>
+<p>
+Geschrieben von: <a href="../autoren/wernerkofler.htm">Werner Kofler</a><br>
+Kategorie: <a href="../kategorien/Server.htm">Server</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000511"></SCRIPT>
+</p>
+<p>
+Eine Frage, die h&auml;ufig auftritt ist: Wie kann ich ASP-Scripts zu bestimmten Zeiten aufrufen? Oder, eng damit 
+verbunden: Wie kann ich die Ausgabe eines ASP-Scripts in eine Datei umleiten? Zwei verschiedene Ans&auml;tze um 
+Probleme dieser Art zu l&ouml;sen werden in diesem Artikel betrachtet.
+</p>
+<p>
+ASP-Dateien und WSH Dateien (.vbs und .js) basieren beide auf der gleichen Technologie: dem ActiveX Scripting 
+Host. Der Unterschied ist, da&szlig; ASP Scripts von Besuchern einer Website aktiviert werden,  und das Ergebnis wird 
+als HTML-Code an den Client zur&uuml;ckgeschickt.  WSH Scripts hingegen werden auf der lokalen Maschine von einem 
+User angestossen (seit dem LoveLetter Virus d&uuml;rfte dies einigen Personen schmerzlich bewu&szlig;t sein...).
+</p>
+<p>
+Zwei Probleme f&uuml;r ASP Programmierer, die sich &ouml;fter stellen, sind nun folgende:
+<ul>
+	<li>Ein Script soll zu einem bestimmten Zeitpunkt oder regelm&auml;&szlig;ig ausgef&uuml;hrt werden.
+	<li>Die komplette Ausgabe (HTML-Code) eines Scripts soll als Datei auf dem Server abgespeichert werden.
+</ul>
+</p>
+
+<h2>Scripts zeitgesteuert aufrufen</h2>
+<p>
+Um irgendeine Aktion auf einem Server zeitgesteuert zu starten, wird normalerweise ein <i>Scheduler</i> verwendet. 
+Windows NT 4.0  hat einen recht einfachen Scheduler als Dienst integriert.
+</p>
+<p>
+Das Dos-Kommando
+<pre style="background=silver;">At /?</pre>
+liefert die Anleitung zur Verwendung des Schedulers.
+</p>
+<p>
+Windows 2000 stellt unter <i>Control Panel/Scheduled Tasks/Add Scheduled Tasks</i> einen wesentlich besseren 
+Scheduler zur Verf&uuml;gung, sofern man die erweiterten Einstellungen miteinbezieht. 
+</p>
+<p>
+Benutzt man NT 4.0, so sollte man, je nach gegebener Aufgabe, &uuml;berpr&uuml;fen, ob AT den eigenen Anforderungen 
+entspricht, oder ob man doch einen professionellen Scheduler installiert. <a href="http://arcanadev.com/" target="_blank">Arcana Development</a> 
+bietet einen effizienten Scheduler an, der einige M&ouml;glichkeiten mehr bietet, allerdings auch etwas kostet. (40 USD)
+</p>
+<p>
+Um ein ASP-Script &uuml;ber einen Scheduler auszuf&uuml;hren, sollte das Script in eine Windows Script Datei umgewandelt 
+werden. Dazu entfernt man jeglichen HTML-Code aus der ASP-Datei, also im Grunde alles was au&szlig;erhalb der 
+&lt;% %&gt; Delimiter steht. Auch die Delimiter werden entfernt. Wenn im Script Objekte erstellt werden, so ist 
+statt <i>Server.CreateObject</i> nur <i>CreateObject</i> zu verwenden. So wird aus 
+<pre style="background=silver;">
+Set Conn = Server.CreateObject("ADODB.Connection")
+</pre>
+einfach nur
+<pre style="background=silver;">
+Set Conn = CreateObject("ADODB.Connection")
+</pre>
+</p>
+<p>
+Wird im Script ein <i>Response.Write</i> verwendet, so ist das durch <i>WScript.Echo</i> zu ersetzen, das eine 
+Ausgabe zur Konsole t&auml;tigt.
+</p>
+<p>
+Die so modifizierte ASP-Datei sollte jetzt je nach verwendeter Script-Sprache als .vbs oder .js-Datei 
+abgespeichert werden und kann dann mit
+<pre style="background=silver;">
+Cscript meinscript.vbs
+</pre>
+aufgerufen werden. Damit kann man z.B. Datenbanken "aufr&auml;umen" oder Daten zu statistischen Zwecken aufarbeiten.
+</p>
+<p>
+Die Vorteile, die das Ausf&uuml;hren mittels WSH mit sich bringt sind folgende:
+<ul>
+<li>das Script mu&szlig; nicht unter dem anonymen IUSR-Account laufen, sondern kann, falls notwendig erweiterte Berechtigungen haben.
+<li>das Script ist nicht durch ein Timeout begrenzt. 
+<li>das Script l&auml;uft nicht im selben Speicherbereich wie der WebServer. Fehler haben also keinen Ausfall zur Folge.
+<li>Der WebServer wird nicht mit Aufgaben wie Logging oder dem Beantworten des http-Requests belastet.
+</ul>
+</p>
+<p>
+Sollte aus irgend einem Grund die Umwandlung in eine WSH-Datei nicht m&ouml;glich sein, oder ist es zu viel Arbeit, 
+kann man auch eine ASP-Datei zu einem bestimmten Zeitpunkt aufrufen. Dazu simuliert man im Prinzip einen 
+Besucher, der das Script aufruft. Ein Tool, das das erm&ouml;glicht stammt aus der Unix-Welt und hei&szlig;t <b>Wget</b>. 
+Tim Charron hat sich die M&uuml;he gemacht, und das Programm in die Microsoft-Welt portiert. Es kann unter
+von seiner <a href="http://www.interlog.com/~tcharron/wgetwin.html" target="_blank">Website</a> heruntergeladen werden.
+</p>
+<p>
+Wget ist ein Command-Line-Tool das http-Requests erm&ouml;glicht. &Uuml;ber zahlreiche Parameter (Anzeige &uuml;ber Kommando 
+<i>wget -help</i>) kann man das Programm sehr gut steuern.
+</p>
+<p>
+Um jetzt ein ASP-Script zeitgesteuert auf dem Web-Server auszuf&uuml;hren benutzt man wiederum einen Scheduler und 
+erstellt einen entsprechenden Task. Dieser kann dabei auf demselben Server wie auch auf einem anderen Host 
+ausgef&uuml;hrt werden. Wichtig ist in letzterem Fall, da&szlig; zum entsprechenden Zeitpunkt eine http-Verbindung zum 
+Server m&ouml;glich sein mu&szlig;.
+</p>
+<p>
+Der Befehl
+<pre style="background=silver;">
+Wget www.webserver.com/script.asp -c
+</pre>
+ruft die Datei script.asp vom Webserver ab, und speichert das Ergebnis (HTML-Code) unter dem selben Namen 
+lokal ab. Der Paramter <i>-c</i> weist Wget an eine eventuell bereits vorhandene Datei zu &uuml;berschreiben. Das ist 
+wichtig da Wget ansonsten eine neue Datei "script.asp.1" usw. erstellt. Funktionen wie das Speichern unter 
+einem anderen Namen, rekursive Aufrufe, Wiederholungsversuche, Benutzer-Authentifizierung usw. k&ouml;nnen 
+ebenfalls angegeben werden.
+</p>
+<p>
+Das Ausf&uuml;hren eines Wget Kommands wirkt sich am Webserver wie ein "richtiger" HTTP-Request eines "richtigen" 
+Besuchers aus. Es wird also auch ein Log-Eintrag erstellt, der bei entsprechender H&auml;ufigkeit Statistiken 
+beeinflussen kann. Weiters zu beachten ist, da&szlig; ein ASP-Script auch zu lange brauchen und ein Timeout 
+zur&uuml;ckgeben kann.
+</p>
+
+<h2>Komplette Script-Ausgabe in Datei umleiten</h2>
+<p>
+Die hier beschriebene Methode ist eigentlich keine richtige Umleitung, sondern eine weitere 
+Anwendungsm&ouml;glichkeit von Wget. Mit
+<pre style="background=silver;">
+Wget www.webserver.com/script.asp -O script.html -nc
+</pre>
+ruft man das Script auf, und speichert das Ergebnis als HTML-Code in der Datei script.html lokal ab. 
+</p>
+<p>
+Wird Wget auf diese Weise auf dem Webserver selbst aufgerufen, hat man hiermit die Ausgabe an den Client in die 
+entsprechende Datei "umgeleitet". Das eignet sich auch hervorragend um vielbesuchte Seiten, die 
+resourcenfressenden Code enthalten, nur einmal alle x Minuten auszuf&uuml;hren, und dem Besucher die statische 
+HTML-Seite zu pr&auml;sentieren. Wird, als Beispiel, die Startseite &ouml;fter als einmal alle 3 Minuten aufgerufen, 
+so kann es sinnvoll sein, diese Seite nur einmal &uuml;ber Wget aufzurufen, und das generierte Ergebnis dann als 
+statische HTML-Seite zu verlinken.
+</p>
+<p>
+In diesem Fall sollte aber auf entsprechende Verfalls-Angaben im http-Header oder im &lt;HEAD&gt;-Teil des 
+HTML-Codes geachtet werden, um dem Besucher auch wirklich immer aktuelle Daten zu pr&auml;sentieren. Der 
+AspHeute-Artikel  <a href="19990808.htm">Caching bei Browser und Proxy</a> gibt eine 
+Anleitung dazu. 
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Bei einem Abruf eines ASP-Scripts &uuml;ber Wget von einem anderen Host aus hat man eine hervorragende M&ouml;glichkeit 
+um Content zu replizieren bzw. zu spiegeln. Der ganze Vorgang l&auml;uft &uuml;ber das HTTP-Protokoll ab, und d&uuml;rfte 
+somit weder von Firewalls noch Proxies blockiert werden. Weiters erm&ouml;glicht es Wget auch, ein ASP-Script 
+"remote" zeitgesteuert aufzurufen. Dies ist vor allem sinnvoll wenn man keinen administrativen Zugang zum 
+Webserver hat, um auf diese Weise den Scheduler zu konfiguieren. Grunds&auml;tzlich gilt: Wget eignet sich 
+hervorragend um das Ergebnis von ASP-Scripts lokal in einer Datei abzuspeichern.
+</p>
+<p>
+Zur L&ouml;sung von Automatisationproblemen mit WSH gilt zu sagen, da&szlig; es normalerweise m&ouml;glich ist, ein ASP-Script 
+in ein WSH-Script umzuwandeln. Wenn man diese M&ouml;glichkeit hat, sollte man sich ernsthaft &uuml;berlegen, diese der
+Verwendung von Wget vorzuziehen - die wichtigsten Vorteile sind die Nicht-Belastung des Webservers, die 
+Nicht-Gef&auml;hrdung seiner Laufstabilit&auml;t sowie die erweiterten M&ouml;glichkeiten durch administrative Benutzeraccounts.
+</p><h2>Verwandte Artikel</h2>
+<p>
+<a href="20000629.htm">Automatisation mit SQL Server</a><br>
+<a href="19990808.htm">Caching bei Browser und Proxy - Woher Seiten wirklich kommen</a><br>
+<a href="20040517.htm">Filesystem-Watcher leicht gemacht</a><br>
+<a href="20010516.htm">Kommandozeilen-Programme aufrufen</a><br>
+<a href="20010928.htm">Schlu&szlig; mit lustig Teil 3 - das Hfnetchk Tool</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Farcanadev%2Ecom%2F">Arcana Development</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Einterlog%2Ecom%2F%7Etcharron%2Fwgetwin%2Ehtml">Wget</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000511" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Automation - WSH versus Wget"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000511.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Werner Kofler"><input type="hidden" name="AuthorEmail" value="werkof@stol.it"><input type="hidden" name="Artikel" value="20000511"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000511.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

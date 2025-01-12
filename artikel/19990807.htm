@@ -1,0 +1,316 @@
+<HTML>
+<HEAD>
+<TITLE>Dynamische Arrays - Fluch und Segen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wenn man gleichartige, jedoch in der Anzahl nicht bekannte Werte speichern m&ouml;chte, dann sollte man zu dynamischen Arrays greifen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Array,dynamisch,IIS,ASP,VBScript,Redim,Dim">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Dynamische Arrays - Fluch und Segen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=19990807"></SCRIPT>
+</p>
+<p>
+Was ist ein dynamisches Array, und wodurch erh&auml;lt es seine Daseinsberechtigung,
+wie setze ich es ein, worauf mu&szlig; ich achten? All dies sind Fragen die sich einem
+(guten) ASP Programmierer fr&uuml;her oder sp&auml;ter stellen.
+</p>
+<p>
+Ein dynamisches Array kommt sinnvollerweise immer dann zum Einsatz, wenn man eine im vornherein 
+unbekannte Anzahl gleichartiger Werte speichern m&ouml;chte. 
+Sehen wir uns einmal ein Beispiel an, das ein dynamisches Array benutzt.
+<Pre>
+ReDim arrA(0)
+</pre>
+Diese Zeile initialisiert das dynamische Array mit Namen <i>arrA</i> &auml;hnlich wie dies der Befehl Dim bei Variablen tut.
+<pre>
+ReDim arrA(2)
+arrA(0) = 47
+arrA(1) = 11
+arrA(2) = 0
+</pre>
+Hier wird nun das Array auf insgesamt 3 Elemente vergr&ouml;&szlig;ert (der Index ist 0-basierend) und den 3 Elementen Werte zugewiesen.
+<pre>
+ReDim Preserve arrA(3)
+arrA(3) = 88
+</pre>
+Der <b>Preserve</b> Zusatz in der Redim Anweisung bewirkt, da&szlig; bereits zugewiesene Werte des 
+Arrays erhalten bleiben. Ansonsten w&uuml;rde das Array beim Redimensionieren gel&ouml;scht werden.
+Schlie&szlig;lich wird dem 4. Element (Index ist 3) der Wert 88 zugewiesen.
+Nat&uuml;rlich k&ouml;nnen Sie auch Strings oder Objekte als Werte f&uuml;r Arrays benutzen.
+Auf einen Wert des dynamischen Arrays wird genauso zugegriffen wie bei einem gew&ouml;hnlichen 
+Array durch Angabe des Arraynames und des Index.
+</p>
+<p>
+Wie kann ich nun alle Elemente eines Arrays auslesen? Die Indizes des Arrays laufen immer von 0 bis Ubound(ArrayName).
+<pre>
+For intI = 0 to Ubound(arrA)
+	Response.Write intI &amp; ". Wert: " &amp; arrA(intI) &amp; "&lt;BR&gt;"
+Next
+</pre>
+</p>
+<p>
+Wo nun sind dynamische Arrays in Verwendung?
+<ul>
+	<li>Beim Speichern von Usereingaben wie zum Beispiel in sogenannten "Shoppingbags", die die Eink&auml;ufe 
+		von Kunden bis zur Bezahlung mitprotokollieren. Die Anzahl der vom Kunden gew&auml;hlten Produkte kann beliebig sein.
+	<li>Zum Speichern einer beliebigen Anzahl von Datens&auml;tzen aus einer Datenbank.
+</ul>
+</p>
+<p>
+Worauf mu&szlig; man bei dynamischen Arrays achten?
+<ul>
+	<li>Wenn man ein Array verkleinert gehen automatisch die Werte verloren, die nicht mehr im 
+		verkleinerten Array Platz haben.
+	<li>Will man beim Ver&auml;ndern der Gr&ouml;&szlig;e des Arrays die gespeicherten Werte erhalten, so mu&szlig; 
+		man <i>ReDim Preserve</i> benutzen.
+	<li>Man kann auch mehrdimensionale dynamische Arrays benutzen, aber bei <i>Redim Preserve</i> kann 
+		man nur die letzte Dimension in der Gr&ouml;&szlig;e ver&auml;ndern.
+</ul>
+</p><h2>Verwandte Artikel</h2>
+<p>
+<a href="20001002.htm">Arrayfunktionen</a><br>
+<a href="20000927.htm">Das Array, unendliche Weiten?</a><br>
+<a href="20000906.htm">Sortieren von Arrays in VBScript</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="19990807" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Dynamische Arrays - Fluch und Segen"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/19990807.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Koller"><input type="hidden" name="AuthorEmail" value="christiank@aspexpert.com"><input type="hidden" name="Artikel" value="19990807"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/19990807.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

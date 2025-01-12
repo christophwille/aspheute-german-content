@@ -1,0 +1,300 @@
+<HTML>
+<HEAD>
+<TITLE>Eine Klasse f&uuml;r sich - die .NET Zip Library</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Das .NET Framework umfasst hunderte Klassen, doch etwas fehlt: es gibt keinerlei Klassen zur Komprimierung und Dekomprimierung von Zip Archiven. Diesem Fehlen kann aber mit der .NET Zip Library (SharpZipLib) abgeholfen werden.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Zip,Gzip,Inflate,Deflate,Komprimierung,Compression,.NET,source code,included,Klasse,Library,SharpZipLib,NZipLib">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Eine Klasse f&uuml;r sich - die .NET Zip Library</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20011115"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Das .NET Framework umfasst hunderte Klassen, doch etwas fehlt: es gibt keinerlei Klassen zur
+Komprimierung und Dekomprimierung von Zip Archiven. Diesem Fehlen kann aber mit der .NET Zip Library (#ziplib)
+abgeholfen werden - diese unterst&uuml;tzt sowohl das Zip als auch das GZip Format, ist gratis, und kommt
+mit C# Code inklusive.
+</p>
+
+<p>
+Die #ziplib (SharpZipLib, ehemals NZipLib) kann von <a href="http://www.icsharpcode.net/opensource/sharpziplib/" target="_blank">ic#code</a> downgeloadet werden.
+Obwohl die Library selbst unter der GPL (GNU General Public License) vertrieben wird, darf man dank der
+Ausnahme die Library in Nicht-GPL Programmen einsetzen.
+</p>
+
+<h2>Verwendung in ASP.NET</h2>
+<p>
+Die Library ist als <a href="http://www.icsharpcode.net/OpenSource/SharpZipLib/DownloadLatestVersion.asp?what=assembly">DLL Assembly</a> kompiliert, und ist im
+verlinkten Download als Datei namens <b>SharpZipLib.dll</b> enthalten. Der erste Schritt ist also, sie in das <b>bin</b> Verzeichnis der 
+Website zu verfrachten - dieser Vorgang wurde bereits im Artikel <a href="../artikel/20010123.htm">Eine Eurokonvertierungskomponente in C# erstellen</a> beschrieben
+</p>
+<p>
+Jetzt wo die Komponente dank <i>XCOPY Deployment</i> bereits registriert ist, kann sie auch schon
+verwendet werden. Dazu habe ich eine kleine ASP.NET Seite geschrieben, die den Inhalt eines Zip
+Archivs ausgibt: den Dateinamen, die Dateigr&ouml;&szlig;e, die komprimierte Gr&ouml;&szlig;e. Der Sourcecode ist im Download
+des heutigen Artikels als <b>ListZipContent.aspx</b> enthalten:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language= "C#" %&gt;
+&lt;% @Import Namespace="System.IO" %&gt;
+&lt;% @Import Namespace="System.Text" %&gt;
+&lt;% @Import Namespace="ICSharpCode.SharpZipLib.Zip" %&gt;
+&lt;%
+ZipInputStream s = new ZipInputStream(File.OpenRead("c:\\test.zip"));
+ZipEntry theEntry = null;
+StringBuilder strOutput = new StringBuilder();
+
+while ((theEntry = s.GetNextEntry()) != null) 
+{
+  strOutput.Append("&lt;tr&gt;&lt;td&gt;");
+  strOutput.Append(theEntry.Name);
+  strOutput.Append("&lt;/td&gt;&lt;td&gt;");
+  strOutput.Append(theEntry.Size.ToString());
+  strOutput.Append("&lt;/td&gt;&lt;td&gt;");
+  strOutput.Append(theEntry.CompressedSize.ToString());
+  strOutput.Append("&lt;/td&gt;&lt;/tr&gt;\r\n");
+}
+
+s.Close(); // clean up the file resource immediately
+%&gt;
+
+&lt;table&gt;
+&lt;tr&gt;&lt;th&gt;File name&lt;/th&gt;&lt;th&gt;Actual Size&lt;/th&gt;&lt;th&gt;Compressed Size&lt;/th&gt;&lt;/tr&gt;
+&lt;%
+  Response.Write(strOutput.ToString());
+%&gt;
+&lt;/table&gt;
+</pre>
+
+<p>
+Dieses Beispiel verwendet die Klassen aus dem <b>ICSharpCode.SharpZipLib.Zip</b> Namespace, deshalb mu&szlig; ein entsprechendes
+<i>Import</i> Statement vorhanden sein. Eine genaue Beschreibung aller Namespaces und Klassen k&ouml;nnen
+Sie in der Hilfedatei <b>Documentation.chm</b> finden. Diese Dokumentation ist &auml;hnlich
+zur .NET Framework Reference aufgebaut, das navigieren sollte also kein Problem sein.
+</p>
+<p>
+In obigem Beispiel verwende ich die <i>ZipInputStream</i> Klasse, um auf eine bereits existierende
+(hardcodierte) Zip Datei zuzugreifen. Nach dem &Ouml;ffnen des Archivs laufe ich mittels einer <i>while</i>
+Schleife alle Eintr&auml;ge (<i>ZipEntry</i> Klasse) durch, und puffere den generierten Tabelleninhalt in
+einem <i>StringBuilder</i> Objekt (siehe auch Artikel <a href="../artikel/20000803.htm">Die String Klasse in C#</a>).
+</p>
+<p>
+Die Ausgabe sieht wenig aufregend so aus, ist aber Beweis, da&szlig; es funktioniert wie geplant:
+</p>
+<IMG SRC="/artikel/Bilder/200111/20011115.png" width="400" height="227" alt="" border="0">
+
+<h2>Dateien in Archiven betrachten</h2>
+<p>
+Jetzt haben wir eine Liste von Dateien - wie kommen wir aber an deren Inhalte? Sprich wie dekomprimieren
+wir die einzelnen Dateien? Hierzu ein modifiziertes Beispiel, das an der Kommandozeile l&auml;uft
+(<b>ViewZipFile.cs</b>):
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.Text;
+using System.IO;
+
+using ICSharpCode.SharpZipLib.Zip;
+
+class MainClass
+{
+  public static void Main(string[] args)
+  {
+    ZipInputStream s = new ZipInputStream(File.OpenRead(args[0]));
+    ZipEntry theEntry;
+
+    int nBytes = 2048;
+    byte[] data = new byte[2048];
+
+    while ((theEntry = s.GetNextEntry()) != null) 
+    {
+      Console.WriteLine(theEntry.Name);
+      Console.Write("Eintrag anzeigen? (j/n)");
+
+      if (Console.ReadLine() == "j") 
+      {
+        while((nBytes = s.Read(data, 0, data.Length))  &gt; 0)
+        {
+           Console.Write(new ASCIIEncoding().GetString(data,0,nBytes));
+        }
+      }
+      Console.WriteLine();
+    }
+    s.Close();
+  }
+}
+</pre>
+
+<p>
+Im Prinzip ist das Auslesen einer komprimierten Datei aus dem Zip Archiv nur der <i>Read</i> Befehl, den man von Streams
+sowieso schon kennt. Wir verarbeiten die erhaltenen Daten so, da&szlig; wir sie mittels ASCII
+Encoding an der Konsole ausgeben. Nat&uuml;rlich k&ouml;nnte man statt der Konvertierung die Daten in eine
+Datei auf der Festplatte schreiben.
+</p>
+
+<p>
+Kompiliert wird diese Anwendung wie folgt (Annahme: NZipLib.dll liegt im gleichen Verzeichnis):
+</p>
+
+<pre style="background='silver';">
+csc /target:exe /reference:SharpZipLib.dll ViewZipFile.cs
+</pre>
+
+<p>
+Der Aufruf erfolgt so:
+</p>
+
+<pre style="background='silver';">
+viewzipfile c:\test.zip
+</pre>
+
+<p>
+Und schon kann man sich die Dateien im Zip Archiv ansehen.
+</p>
+
+<h2>Zip Archive erstellen</h2>
+<p>
+Auslesen ist ja leicht! Und wie steht's mit dem Erstellen eines Zip Archivs? Nun, sehen wir uns
+ein kleines Beispielprogramm an, das alle Dateien eines Unterverzeichnisses in eine Zip Datei
+schreibt (<b>CreateZipFile</b>):
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.IO;
+
+using ICSharpCode.SharpZipLib.Zip;
+
+class MainClass
+{
+  public static void Main(string[] args)
+  {
+    // alle Dateien im angegebenen Ordner werden komprimiert
+    string[] aFilenames = Directory.GetFiles(args[0]);
+    
+    // der Name der Zipdatei ist der zweite Parameter im Aufruf
+    ZipOutputStream s = new ZipOutputStream(File.Create(args[1]));
+    
+    // Komprimierungslevel setzen: 0 [keine] - 9 [st&auml;rkste]
+    s.SetLevel(5); 
+    
+    for (int i=0; i &lt; aFilenames.Length; i++)
+    {
+      FileStream fs = File.OpenRead(aFilenames[i]);
+      
+      // im Normalfall allokiert man die Buffer im voraus
+      // hier aus Klarheitsgr&uuml;nden pro Datei einmal
+      byte[] buffer = new byte[fs.Length];
+      fs.Read(buffer, 0, buffer.Length);
+
+      // und jetzt schreiben wir einen ZipEntry &amp; die Daten      
+      ZipEntry entry = new ZipEntry(aFilenames[i]);
+      s.PutNextEntry(entry);
+      s.Write(buffer, 0, buffer.Length);
+    }
+    
+    s.Finish();
+    s.Close();
+  }
+}
+</pre>
+
+<p>
+Im Komprimierungsszenario arbeiten wir mit der <i>ZipOutputStream</i> Klasse, die uns bei der 
+Erstellung des Archivs zur Seite steht. Im Prinzip ist alles ein umgekehrter Vorgang zum 
+Entzippen: hier erstellen wir einen <i>ZipEntry</i>, und anstatt da&szlig; wir die Datei aus dem
+Archiv auslesen, schreiben wir sie in das Archiv.
+</p>
+
+<p>
+Verwendet wird das Programm wie folgt:
+</p>
+
+<pre style="background='silver';">
+createzipfile c:\verzeichnis c:\zipfile.zip
+</pre>
+
+<p>
+Ich denke da&szlig; das Erzeugen eines Archivs um nichts schwieriger ist als das Auslesen von Dateien
+aus einem Archiv.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Ich habe heute nur die Verwendung der Zip Klassen in der Library gezeigt. Allerdings werden die
+GZip Klassen v&ouml;llig analog verwendet, da sie von denselben Basisklassen ableiten. Zip ahoi!
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20011115.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20011115.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000803.htm">Die String Klasse in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000803.htm</span><br>
+<a href="../artikel/20000804.htm">Directory Browsing a la .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000804.htm</span><br>
+<a href="../artikel/20010123.htm">Eine Eurokonvertierungskomponente in C# erstellen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010123.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eicsharpcode%2Enet%2FOpenSource%2FSharpZipLib%2F">#ZipLib (SharpZipLib) Download</a><br>
+<SPAN class="content">http://www.icsharpcode.net/OpenSource/SharpZipLib/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

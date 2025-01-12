@@ -1,0 +1,339 @@
+<HTML>
+<HEAD>
+<TITLE>Nachrichten an Newsserver (NNTP) mittels CDOSYS senden</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Die ben&ouml;tigte Funktionalit&auml;t um eine Nachricht an eine beliebige 
+Newsgroup zu senden, wird vollst&auml;ndig von der CDOSYS Komponente zur Verf&uuml;gung gestellt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,CDOSYS,Collaboration Data Objects,Configuration,NNTP,News,Protocol,News Protocol,Posting,Newsgruppe,Newsreader">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Nachrichten an Newsserver (NNTP) mittels CDOSYS senden</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000928"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>Wie bereits im Artikel 
+<a href="../artikel/20000919.htm">Emails mittels CDOSYS versenden</a> erw&auml;hnt, kann man
+News (Nachrichten) von einem Windows 2000 Server an einen Newsgroup Server mittels 
+NNTP (Network News Transport Protocol) versenden. F&uuml;r diejenigen, die den vohergegangenen Artikel
+nicht gelesen haben: CDOSYS steht f&uuml;r 
+<i>Collaboration Data Objects for Windows 2000 Server</i>.</p>
+
+<p>Die ben&ouml;tigte Funktionalit&auml;t um eine Nachricht an eine beliebige 
+Newsgroup zu senden, wird vollst&auml;ndig von der CDOSYS Komponente zur Verf&uuml;gung gestellt. 
+Da CDOSYS Teil des Windows 2000 Server Betriebsystems ist, kann es von jeder ASP Seite aus, 
+die auf einem IIS 5.0 gehostet wird, aufgerufen und benutzt werden.</p>
+
+<p>Um in ASP eine NNTP Nachricht zu generieren, greift man auf das <i>CDO.Message</i> Objekt 
+der CDOSYS Komponente zur&uuml;ck. Man weist dann die Eigenschaften und den Inhalt der
+NNTP Nachricht den entsprechenden Eigenschaften des <i>CDO.Message</i> Objektes zu.
+Da CDOSYS sehr flexibel in der Art und Weise ist, wie und wohin eine Nachricht 
+gesendet werden kann, stellt man mittels <i>CDO.Configuration</i> ein, da&szlig; das 
+<i>Message</i> Objekt eine Newsgroup-Nachricht an einen externen Server sendet.
+Ausserdem gibt man den Namen der Newsgroup sowie dem Domain oder die IP Adresse und den Port 
+des Newsservers an.</p>
+
+   
+<p>Hier ein kurzer Abriss &uuml;ber die wichtigsten Eigenschaften des <i>CDO.Message</i> Objektes:</p>
+<p>
+<table>
+<tr>
+	<td><b>To</b></td>
+	<td>Gibt den Empf&auml;nger der Nachricht an.</td>
+</tr>
+<tr>
+	<td><b>From</b></td>
+	<td>Enth&auml;lt den Absender und f&uuml;r gew&ouml;hnlich auch 
+	die Email Adresse des Absenders.</td>
+</tr>
+<tr>
+	<td><b>Newsgroups</b></td>
+	<td>Gibt die Empf&auml;nger-Newsgroup(s) an.</td>
+</tr>
+<tr>
+	<td><b>Subject</b></td>
+	<td>Betreff der Nachricht</td>
+</tr>
+<tr>
+	<td><b>TextBody</b></td>
+	<td>Inhalt der Nachricht</td>
+</tr>
+</table>
+</p>
+
+<p>Die zum Versenden einer News ben&ouml;tigten Eigenschaften des <i>Message</i> Objektes
+sind einfach zu beschreiben. Hingegen sind die Konfigurationsm&ouml;glichkeiten 
+und dementsprechend die Anzahl der Felder des <i>Configuration</i> Objektes 
+bei weitem zu umfangreich um diese hier zu besprechen. 
+Bitte benutzen Sie die Windows 2000 Platform SDK Dokumentation (die auch in der
+<a href="http://msdn.microsoft.com" target="_blank">MSDN Dokumentation</a> enthalten ist)
+um die Felder und Werte des <i>Configuration</i> Objectes f&uuml;r den jeweiligen
+Einsatzzweck des <i>CDO.Message</i> Objektes nachzuschlagen.</p>
+
+<p>Anschaulicher als jede Theorie ist nat&uuml;rlich die Praxis. Daher m&ouml;chte ich
+hier eine ASP Datei pr&auml;sentieren, die eine einfache Nachricht an 
+einen externen Newsgroup Server sendet.</p>
+
+<p>Zum Senden einer Nachricht ben&ouml;tigt man im ASP Skript
+zwei CDOSYS Objekte: <i>Message</i> und <i>Configuration</i>.
+Die Nachricht an die Newsgroup wird vom <i>Message</i> Objekt repr&auml;sentiert.
+Daher setzt man mittels <i>Message</i> Eigenschaften die Eigenschaften und den Inhalt der
+Nachricht fest.</p>
+
+<p>Mittels <i>Configuration</i> Objekt legt man fest, wie und wohin die Nachricht 
+versendet werden soll. In unserem Fall kann die Nachricht an einen beliebigen externen Server
+verschickt werden. Das folgende Beispiel demonstriert anonymes Posting.</p>
+
+<p><pre style="background='silver';">
+&lt;% ' Typeinformationen und CDOSYS Konstanten 
+   ' ueber das CDOSYS und das ADO 2.5 Objekt zugaenglich machen: %&gt;
+&lt;!--METADATA TYPE="typelib" 
+UUID="CD000000-8B95-11D1-82DB-00C04FB1625D" 
+NAME="CDO for Windows 2000 Library" --&gt;
+&lt;!--METADATA TYPE="typelib" 
+UUID="00000205-0000-0010-8000-00AA006D2EA4" 
+NAME="ADODB Type Library" --&gt;
+
+&lt;html&gt;
+&lt;body&gt;
+
+&lt;%
+Dim strFrom, strTo, strSubject, strBody
+Dim objMessage, objConfig
+
+' Message und Configuration Objekte instanzieren
+Set objMessage = CreateObject("CDO.Message")
+Set objConfig = CreateObject("CDO.Configuration")
+
+' Nachrichten Eigenschaften festlegen
+With objMessage
+   .To         = "empfanger@aspheute.com"
+   .From       = "absender@internet.net"
+   .Newsgroups = "ASP.developer.CDOSYS"
+   .Subject    = "Betreff"
+   .TextBody   = "Nachricht"
+End With          
+
+' Konfigurieren:
+  ' Newsgroup Server: news.domain.com
+objConfig.Fields(cdoNNTPServer) = "news.domain.com"
+  ' News Port : 119 (Standard bei NNTP Server)
+objConfig.Fields(cdoNNTPServerPort) = 119
+  ' Authentifizierung am Newsgroup Server:  Keine
+objConfig.Fields(cdoNNTPAuthenticate) = cdoAnonymous
+  ' Nachricht an externen Newsgroup Server verschicken
+objConfig.Fields(cdoPostUsingMethod) = cdoPostUsingPort
+
+' Konfiguration updaten
+objConfig.Fields.Update
+
+' Konfiguration an Nachricht binden
+Set objMessage.Configuration = objConfig
+
+' Nachricht zu Newsgroups-Server senden:
+' Error Handling waehrend dem Versenden
+On Error Resume Next
+
+' CDO-Nachricht an Newsgroup Server senden
+objMessage.Post
+
+
+If Err.Number = 0 Then
+   Response.Write("Die Nachricht wurde versendet!")
+Else
+   Response.Write("Waehrend des Versendens ist " &amp; _
+   "ein Fehler aufgetreten.")
+   Err.Number = 0
+End If
+On Error Goto 0
+
+%&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></p>
+
+<p>Um das Skript lokal auf Ihrem IIS 5.0 Server testen zu k&ouml;nnen,
+m&uuml;&szlig;en Sie f&uuml;r die Internet Information Services die
+NNTP Server Unterst&uuml;tzung installiert haben. Diese ist Teil des IIS
+und daher auch Teil des Windows 2000 Server Betriebssystem.</p>
+
+
+<h2>Installation des NNTP Service auf Windows 2000 Server</h2>
+
+
+<p>Um festzustellen, ob Ihr IIS NNTP Sites unterst&uuml;tzt,
+&ouml;ffen Sie den Internet Services Manager, zu finden im
+Start Men&uuml; unter Programme, Administrations Tools. Klicken Sie
+mit der rechten Maustaste auf Ihren Server und stellen Sie fest,
+ob unter <i>Neu</i> der Punkt "<i>NNTP Virtual Server..</i>" existiert
+(siehe Bild 1).</p>
+
+
+<p><IMG SRC="/artikel/Bilder/200009/20000928_CheckNNTP.png" width=458 height=315 alt="" border="0">
+<br>
+<i>Bild 1: Internet Services Manager</i></p>
+
+<p>Sollte der Punkt nicht vorhanden sein, so installieren Sie den NNTP Service.
+Gehen Sie dazu zum Control Panel und starten Sie "Add/Remove Programms".</p>
+
+<p>Im sich &ouml;ffnenden Fenster (Bild 2) w&auml;hlen Sie "Add/Remove Windows Component"
+und der Windows Component Wizard erscheint.</p>
+
+
+<p><IMG SRC="/artikel/Bilder/200009/20000928_InstallProgamms.png" width=566 height=291 alt="" border="0">
+<br>
+<i>Bild 2: Add/Remove Programms</i></p>
+
+<p>W&auml;hlen Sie "Internet Information Services (IIS)" und klicken Sie auf 
+den Button "Details" (siehe Bild 3).</p>
+
+<p><IMG SRC="/artikel/Bilder/200009/20000928_WCW.png" width=503 height=385 alt="" border="0">
+<br>
+<i>Bild 3: Windows Component Wizard</i></p>
+
+<p>Im erscheinenden Fenster k&ouml;nnen Sie nun den NNTP Service installieren
+(siehe Bild 4).</p>
+
+<p><IMG SRC="/artikel/Bilder/200009/20000928_NNTP.png" width=449 height=344 alt="" border="0">
+<br>
+<i>Bild 4: Installation des NNTP Servers</i></p>
+
+<p>Nachdem der NNTP Service installiert ist, k&ouml;nnen Sie zu Testzwecken einen
+NNTP Virtual Server anlegen.</p>
+
+
+
+<h3>Erstellen eines NNTP Virtual Server</h3>
+
+<p>Zuerst m&uuml;ssen Sie zwei Verzeichnisse auf Ihrem Webserver anlegen.
+Eines wird ben&ouml;tigt um die internen Server Dateien des NNTP Servers
+zu speichern, das zweite Verzeichnis speichert alle Newsgroup Nachrichten.</p>
+
+
+<p>Nachdem die zwei Verzeichnisse angelegt sind installieren Sie einen neuen
+(virtuellen) NNTP Server im IIS.</p>
+
+<p>&Ouml;fnnen Sie dazu den Internet Services Manager und klicken Sie auf das Icon,
+das Ihren Webserver symbolisiert. Nun w&auml;hlen Sie im Men&uuml;
+(unter Action oder mit der rechten Maustaste) <i>New, NNTP Virtual Server</i>. 
+Darauf &ouml;ffnet sich der <i>New NNTP Virtual Server Wizard</i>. 
+Geben Sie eine Beschreibung des NNTP Servers ein, z.B. <i>NNTP Test</i>. 
+Danach weisen Sie dem NNTP Server eine IP Adresse Ihres Servers zu. 
+Der Port sollte &uuml;blicherweise auf den Standardwert <i>119</i> gesetzt werden 
+(siehe Bild 5).</p>
+
+<p><IMG SRC="/artikel/Bilder/200009/20000928_NNVSW.png" width=441 height=324 alt="" border="0">
+<br>
+<i>Bild 5: New NNTP Virtual Server Wizard</i></p>
+
+
+<p>Geben Sie den Pfad zum Verzeichnis an, das die NNTP Dateien speichern soll.
+W&auml;hlen Sie File System als Speichermedium.</p>
+
+<p>W&auml;hlen Sie das Verzeichnis, das die Newsgroup Nachrichten beinhalten soll.
+Schon haben Sie einen neuen NNTP Server installiert.</p>
+
+<p>Um nun noch eine Newsgroup auf dem Server einzurichten, klicken Sie auf das
+Icon des Newsgroup Servers. Klicken Sie nun mit der rechten Maustaste auf "Newsgroups"
+und w&auml;hlen Sie <i>New, Newsgroup</i> (siehe Bild 6).</p>
+
+<p><IMG SRC="/artikel/Bilder/200009/20000928_NN.png" width=556 height=218 alt="" border="0">
+<br>
+<i>Bild 6: Neue Newsgroup anlegen</i></p>
+
+<p>Der New Newsgroup Wizard &ouml;ffnet sich und Sie k&ouml;nnen den Namen 
+f&uuml;r die Newsgroup (zum Beispiel <i>NNTP.Test</i>) angeben.</p>
+
+<p>Nachdem die Newsgroup angelegt ist, ist diese unter der 
+Newsgroups Eigenschaft des NNTP Virtual Servers im Internet Service Manager
+sichtbar (Bild 7).</p>
+
+<p><IMG SRC="/artikel/Bilder/200009/20000928_AngelNGs.png" width=530 height=232 alt="" border="0">
+<br>
+<i>Bild 7: Angelegte Newsgroups im Internet Service Manager</i></p>
+
+
+<p>Nun k&ouml;nnen Sie die angelegte Newsgroup zum Testen mit CDOSYS benutzen.
+Um Nachrichten aus der Newsgroup wieder auszulesen, um zum Bespiel sicherstellen
+zu k&ouml;nnen, da&szlig; eine Nachricht in der Newsgroup angekommen ist,
+benutzen Sie einen ganz gew&ouml;hnlichen Newsgroup Reader, wie er zum Beispiel
+im Netscape Communicator als Messenger bekannt ist (siehe Bild 8).</p>
+
+<p><IMG SRC="/artikel/Bilder/200009/20000928_NCMessenger.png" width=550 height=206 alt="" border="0">
+<br>
+<i>Bild 8: Netscape Communicator Messenger mit Newsgroup</i></p>
+
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Mit CDOSYS hat man als Entwickler f&uuml;r ASP unter IIS 5.0 ein hervorragendes
+Werkzeug um aus ASP Seiten heraus nicht nur Emails sondern auch News an Newsgroups 
+schicken zu k&ouml;nnen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000928.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000928.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000919.htm">Emails mittels CDOSYS versenden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000919.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2F">MSDN Dokumentation</a><br>
+<SPAN class="content">http://msdn.microsoft.com/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

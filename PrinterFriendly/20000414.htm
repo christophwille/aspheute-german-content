@@ -1,0 +1,224 @@
+<HTML>
+<HEAD>
+<TITLE>Messen der Verbindungsgeschwindigkeit</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Bestimmen Sie die Verbindungsgeschwindigkeit des Browsers Ihres Kunden mit Hilfe der BrowserHawk Komponente, um entsprechende Inhalte (der Downloadrate entsprechend) an den Kunden schicken zu k&ouml;nnen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,BrowserHawk,Cyscape,connection,speed,connection speed,Verbindungsgeschwindigkeit,Download,Downloadrate,T1,T3,Speedmessung">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Messen der Verbindungsgeschwindigkeit</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/Komponenten.htm">Komponenten</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000414"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>Im Internet ist ein deutlicher Trend zu gr&ouml;&szlig;eren Datenstr&ouml;men
+hin festzustellen. Ob nun ein Anwender einen Film online ansieht,
+Internet-Radio h&ouml;rt, oder ein MP3-File aus dem Web abspielt, 
+immer ist ein gro&szlig;er Datenstrom zwischen Browser und
+Internetserver erforderlich.</p>
+<p>
+Ein Browser kann &uuml;ber Leitungen unterschiedlicher Geschwindigkeit eine 
+Internetseite von einem Server abrufen. 
+Folgende Faktoren begrenzen die Verbindungsgeschwindigkeit
+zwischen Browser und Internetserver:
+<ul>
+	<li>Analoges Modem: 28.8 - 56 KBit/s</li>
+	<li>Netzwerkkarte: 10 - 100 MBit/s</li>
+	<li>Leitung: 
+		<ul type="circle">
+			<li>Handynetz: 8 - 28 KBit/s</li>
+			<li>Analoge Leitung: 30 - 56 KBit/s</li>
+			<li>ISDN: 64 KBit/s (mehr bei Kanalb&uuml;ndelung)</li>
+			<li>ADSL (Telefon- oder Fernsehkabel): Bis etwa 1024 KBit/s</li>
+		</ul>
+	<li>Belastung des Internetservers</li>
+	<li>Belastung der Knotenpunktserver und der Internetleitungen</li>
+</ul>
+</p>
+<p>F&uuml;r Sie als ASP Programmierer bedeutet das, 
+da&szlig; Sie Ihre Webapplikationen auf sehr unterschiedliche
+Daten&uuml;bertragungsraten abstimmen m&uuml;ssen.
+Wenn man eine Webapplikation erstellt, die auch mit der langsamsten Verbindung 
+sehr gut arbeiten kann, so mu&szlig; man zwangsl&auml;ufig Kompromisse eingehen, 
+zum Beispiel kleinere Grafiken verwenden, keine animierten Bilder oder 
+Videosequenzen in die Internetseite einbinden, usw.</p>
+
+<p>Aus diesem Grund ist es oftmals w&uuml;nschenswert
+die Daten&uuml;bertragungsgeschwindigkeit zwischen einem bestimmten User 
+und dem Internetserver zu bestimmen, um je nach Geschwindigkeit dem User 
+unterschiedliche Versionen der Webapplikation bereitstellen
+zu k&ouml;nnen.</p>
+
+<p>Einfach geht es, wenn man die Professional oder
+Enterprise Edition der BrowserHawk 2000 Server-Komponente (Firma CyScape) verwendet. 
+Diese Komponente erlaubt Ihnen mit einfachen ASP Befehlen 
+die Daten&uuml;bertragungsrate zwischen Browser und Server festzustellen. 
+Ausserdem liefert Ihnen diese Komponente viele andere Browsereigenschaften.
+</p>
+
+<p>Das folgende ASP Beispiel zeigt Ihnen die Anwendung der BrowserHawk 2000 
+Komponente (<a href="../artikel/20000414_code.asp" target="_blank">ausf&uuml;hrbares Beispiel</a>):</p>
+
+<pre style="background='silver';">
+&lt;%
+' Test-Seite darf nicht gecached werden
+' um vernuenftige Resultate zu bekommen
+Response.Expires=0
+Response.AddHeader "Pragma","no-cache"
+Response.AddHeader "cache-control", "no-store"
+
+Set BrowserHawk = Server.Createobject("CyScape.Browserobj")
+BrowserHawk.GetExtProperties
+If BrowserHawk.JavaScriptEnabled = True Then
+  BrowserHawk.SpeedDetector , "Bitte warten...", _
+  "&nbsp;Die Verbindung wird getestet, bitte warten..."
+End If
+%&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;Verbindungsgeschwindigkeit: Test Resultat&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;Ihre Verbindungsgeschwindigkeit:
+&lt;%
+Speed = BrowserHawk.ConnectionSpeed
+
+If Speed = -1 Then
+  If (Not BrowserHawk.JavaScriptEnabled) Then
+    Response.Write "Geschwindigkeit nicht messbar da " & _
+    "JavaScript am Browser nicht ausgef&uuml;hrt werden kann."
+  Else
+    Response.Write "Kleiner als 10 KBytes/sec " & _
+    "(schlechte Verbindung oder zu gro&szlig;er Datenstrom)"
+  End If
+Else
+  kBytesProSec = Speed / 8
+  If kBytesProSec &gt; 2000000 Then
+    Response.Write "Nicht messbar " & _
+	  "(intern zu hoher Wert ermittelt)"
+    Else
+      Response.Write FormatNumber(kBytesProSec) & _
+      " KBytes/sec"
+    End If
+End If
+
+Set BrowserHawk = Nothing
+%&gt;
+&lt;/p&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>Der ASP Code verwendet die <i>ConnectionSpeed</i> Eigenschaft des BrowserHawk
+Objektes um die Verbindungsgeschwindigkeit zu erhalten. 
+Bevor man jedoch einen Wert aus dieser Eigenschaft auslesen kann,
+mu&szlig; man erst die <i>SpeedDetector</i> Methode ausf&uuml;hren.</p>
+
+<p>Da die <i>SpeedDetector</i> Methode zur Bestimmung der Daten&uuml;bertragungsrate 
+im Browser ein JavaScript Programm ablaufen l&auml;sst, 
+ist es g&uuml;nstig, vor dem Aufrufen der <i>SpeedDetector</i> Methode zu pr&uuml;fen,
+ob der Browser JavaScript ausf&uuml;hren kann.
+Dies geschieht durch Aufruf der <i>GetExtProperties</i> Methode und dem 
+Auslesen der <i>JavaScriptEnabled</i> Eigenschaft.
+Liefert die <i>JavaScriptEnabled</i> nach Aufruf der <i>GetExtProperties</i> 
+Methode den Wert <i>True</i>, so ist der Browser in der Lage JavaScript 
+Programme auszuf&uuml;hren.
+</p>
+
+<p>
+Was die <i>SpeedDetector</i> Methode genau macht ist schnell erkl&auml;rt:
+Sie schickt ein JavaScript Programm zum Browser, das aus 3 Bl&ouml;cken besteht:
+<ol>
+	<li> Block speichert die aktuelle Zeit in der JavaScript Variable <i>stm</i>.</li>
+	<li> Block l&auml;dt einen gro&szlig;en Textblock vom Server</li>.
+	<li> Block speichert die aktuelle Zeit nach dem Laden in der JavaScript Variable <i>etm</i>,
+	bildet die Differenz zwischen <i>etm</i> und <i>stm</i> (in Millisekunden), und
+	dividiert das Ergebnis durch <i>1000</i> um die Zeitdifferenz in Sekunden zu erhalten. 
+	Danach wird die Gr&ouml;&szlig;e des geladenen Textblockes (in Bit) durch die Zeitdifferenz 
+	(in Sekunden) dividiert und das Ergebnis (Bit/sec) in der JavaScript Variablen
+	 <i>kbps</i> gespeichert.
+	</li>
+</ol>
+Wenn schlie&szlig;lich die Seite geladen und alle JavaScript Bl&ouml;cke ausgef&uuml;hrt worden sind,
+dann veranlasst eine JavaScript Funktion den Brower die urspr&uuml;ngliche Seite zu laden.
+In der URL der geladenen Seite wird im QueryString die Variable <i>bhkbps</i>
+mit dem Wert der JavaScript Variablen <i>kbps</i> belegt. Die QueryString 
+Variable <i>bhjs</i> erh&auml;lt den Wert <i>0</i> um anzuzeigen, da&szlig; die 
+<i>SpeedDetector</i> Methode erfolgreich ausgef&uuml;hrt wurde.
+</p>
+
+<p>
+Wenn eine ASP Seite die <i>SpeedDetector</i> oder <i>GetExtProperties</i> Methode
+der BrowserHawk Komponente ausf&uuml;hrt, so kann sie nicht gleichzeitig das Ergebnis eines
+mittels <i>POST</i>-Methode abgesendeten Formulares entgegen nehmen. Hingegen
+wird der Inhalt eines mittels <i>GET</i>-Methode abgesendetes Formular problemlos
+an die ASP Seite weitergereicht.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000414.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000414.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000410.htm">Browsereigenschaften mit BrowserHawk 2000 bestimmen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000410.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ebrowserhawk%2Ecom%2Fproducts%2Fbhawk%2Fdownload%2Easp">BrowserHawk</a><br>
+<SPAN class="content">http://www.browserhawk.com/products/bhawk/download.asp</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,286 @@
+<HTML>
+<HEAD>
+<TITLE>Auswirkung des Providers auf die Datenbank Performance</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Die Performance einer ADO Anwendung h&auml;gt sehr stark vom verwendeten Datenbankprovider ab, und oftmals sind erhebliche Geschwindigkeitssteigerungen m&ouml;glich. Dieser Artikel zeigt, wo man ansetzen mu&szlig;.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ADO,Performance,OLE DB,OLEDB,provider,ODBC,connection,DSN,Connection,ADODB">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Auswirkung des Providers auf die Datenbank Performance</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/Optimierung.htm">Optimierung</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000419"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>Um mittels ADO 2.5 eine Datenbank-Verbindung mit Hilfe des 
+<i>Connection</i> Objektes aufzubauen gibt es unterschiedliche M&ouml;glichkeiten.
+Unabh&auml;ngig davon, ob sich Datenbank und Applikation am selben
+Server befinden, kann man verschiedene Datenbank Provider benutzen.
+</p>
+
+<p>Ein Datenbank Provider stellt die Verbindung zwischen der OLE DB Ebene, 
+die unter ADO liegt, und der Datenbank her. Fr&uuml;her hatten Datenbanken
+oft nur eine ODBC Schnittstelle zur Anbindung an Applikationen
+zur Verf&uuml;gung. Daher ist es nicht verwunderlich, da&szlig;
+es lange Zeit unter ADO &uuml;blich war, mittels <i>OLE DB Provider f&uuml;r ODBC</i>
+und dem <i>ODBC Treiber</i> f&uuml;r die jeweilige Datenbank eine Verbindung
+zwischen Applikation und Datenbank herzustellen. 
+Der <i>ConnectionString</i> f&uuml;r eine ODBC-Verbindung in ADO sieht wie folgt aus:</p>
+
+<pre style="background='silver';">
+"Provider=MSDASQL;DSN=<i>DSN-Name</i>;UID=<i>User Name</i>;PWD=<i>Pa&szlig;wort</i>;"</pre>
+
+<p>Seitdem Microsoft ADO zur Standardschnittstelle f&uuml;r den Datenaustausch
+zwischen verschiedensten Applikationen und Datenquellen aller Art erkl&auml;rt hat,
+sind inzwischen spezielle <i>OLE DB Provider</i> für viele Datenbanken erh&auml;ltlich.
+Um einen <i>OLE-DB Provider</i> f&uuml;r die Datenbankanbindung zu benutzen wird ein 
+<i>ConnectionString</i> verwendet, der auf den jeweiligen <i>OLE DB Provider</i> 
+zugeschnitten ist:</p>
+
+<pre style="background='silver';">
+<div align="center"><b>SQL Server 7.0:</b></div>
+"Provider=SQLOLEDB;Data Source=<i>Server Name</i>;Initial Catalog=" & _
+   "<i>Datenbank Name</i>;User ID=<i>User Name</i>;Password=<i>Pa&szlig;wort</i>;"
+   
+<div align="center"><b>Access 2000:</b></div>
+"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=<i>Datenbank Pfad</i>;" & _
+   "User ID=<i>User Name</i>;Password=<i>Pa&szlig;wort</i>;"</pre>
+
+<p>Wenn man nun eine Datenbankverbindung &uuml;ber die ODBC-Schnittstelle errichtet,
+so m&uuml;ssen alle Daten &uuml;ber 3 Ebenen transportiert werden:<br>
+<div align="center"><b>ADO &lt;--&gt; OLE DB Provider f&uuml;r ODBC &lt;--&gt; ODBC Treiber</b></div></p>
+
+<p>Hingegen sind in eine Datenbankverbindung direkt &uuml;ber den
+<i>OLE DB Provider</i> (f&uuml;r die jeweilige Datenbank) nur zwei Ebenen involviert:<br>
+<div align="center"><b>ADO &lt;--&gt; OLE DB Provider f&uuml;r die Datenbank</b></div></p>
+
+<p>Zus&auml;tzlich werden <i>OLE DB Provider</i> bereits optimiert f&uuml;r die 
+jeweilige Datenbank geschrieben, im Gegensatz zu ODBC Treibern, die eine 
+standardisierte ODBC Schnittstelle haben m&uuml;ssen. 
+Daher ist der Einsatz eines <i>OLE DB Providers</i> bei einem Datenbankzugriff 
+prinzipiell schneller als der Einsatz des <i>OLE DB Providers f&uuml;r ODBC</i>
+(zusammen mit dem jeweiligen <i>ODBC Treiber</i>).</p>
+
+<p>Wie hoch ist aber nun der Geschwindigkeitsgewinn, wenn man statt des 
+<i>OLE DB Providers f&uuml;r ODBC</i> gleich den <i>OLE DB Provider</i> f&uuml;r die Datenbank 
+benutzt?</p>
+
+<p>Um dies zu testen habe ich die 
+gratis erh&auml;ltliche 
+Profiling Komponente
+von <a href="http://www.alphasierrapapa.com" target="_blank">Alpha Sierra Papa</a> benutzt und in
+dem folgenden Skript eingesetzt:</p>
+
+<pre style="background='silver';">
+&lt;% 
+Dim xObj, intI, profileElapsed
+Dim connOLEDB, connODBC, rs, strSQL
+Dim strConnectionString_OLEDB, strConnectionString_ODBC
+
+strConnectionString_OLEDB = "Provider=Microsoft.Jet.OLEDB.4.0;" & _
+   "Data Source=E:\Program Files\Microsoft Office\Office\Samples\" & _
+   "Northwind.mdb;User ID=admin;Password=;"
+strConnectionString_ODBC = "Provider=MSDASQL;DSN=NW;UID=;PWD=;"
+strSQL = "Select LastName, FirstName, BirthDate FROM Employees"
+
+Set xObj = Server.CreateObject("Softwing.Profiler")
+
+Set connODBC = CreateObject("ADODB.Connection")
+Set connOLEDB = CreateObject("ADODB.Connection")
+
+Response.Write "Access &uuml;ber ODBC: Recordset auslesen - Start&lt;br&gt;"
+xObj.ProfileStart(strSQL)
+connODBC.open strConnectionString_ODBC
+Set rs = connODBC.Execute()
+for intI = 1 to 100
+	Set fldLastName = rs("LastName")
+	Set fldFirstName = rs("FirstName")
+	Set fldGebDat = rs("BirthDate")
+	rs.MoveFirst
+	While Not rs.EOF
+	   strName = fldLastName
+	   strAdresse = fldFirstName
+	   strGebDat = fldGebDat
+	   '...
+	   rs.MoveNext
+	Wend
+Next
+rs.close
+connODBC.close
+profileElapsed = xObj.ProfileStop()
+Response.Write "Ergebnis: " & FormatNumber(profileElapsed/10000,3) & _
+	" Sekunden&lt;BR&gt;&lt;br&gt;&lt;br&gt;"
+
+Response.Write "Access &uuml;ber OLEDB: Recordset auslesen - Start&lt;br&gt;"
+xObj.ProfileStart()
+connOLEDB.open strConnectionString_OLEDB
+Set rs = connOLEDB.Execute(strSQL)
+for intI = 1 to 100
+	Set fldLastName = rs("LastName")
+	Set fldFirstName = rs("FirstName")
+	Set fldGebDat = rs("BirthDate")
+	rs.MoveFirst
+	While Not rs.EOF
+	   strName = fldLastName
+	   strAdresse = fldFirstName
+	   strGebDat = fldGebDat
+	   '...
+	   rs.MoveNext
+	Wend
+Next
+rs.close
+connOLEDB.close
+profileElapsed = xObj.ProfileStop()
+Response.Write "Ergebnis: " & FormatNumber(profileElapsed/10000,3) & _
+	" Sekunden&lt;BR&gt;&lt;br&gt;&lt;br&gt;"
+
+Response.Write "Access &uuml;ber ODBC: Connection &ouml;ffnen und " & _
+	Recordset auslesen - Start&lt;br&gt;"
+xObj.ProfileStart()
+for intI = 1 to 100
+	connODBC.open strConnectionString_ODBC
+	Set rs = connODBC.Execute(strSQL)
+	Set fldLastName = rs("LastName")
+	Set fldFirstName = rs("FirstName")
+	Set fldGebDat = rs("BirthDate")
+	rs.MoveFirst
+	While Not rs.EOF
+	   strName = fldLastName
+	   strAdresse = fldFirstName
+	   strGebDat = fldGebDat
+	   '...
+	   rs.MoveNext
+	Wend
+	rs.close
+	connODBC.close
+Next
+profileElapsed = xObj.ProfileStop()
+Response.Write "Ergebnis: " & FormatNumber(profileElapsed/10000,3) & _
+	" Sekunden&lt;BR&gt;&lt;br&gt;&lt;br&gt;"
+
+Response.Write "Access &uuml;ber OLE DB: Connection &ouml;ffnen und " & _
+	"Recordset auslesen - Start&lt;br&gt;"
+xObj.ProfileStart()
+for intI = 1 to 100
+	connOLEDB.open strConnectionString_OLEDB
+	Set rs = connOLEDB.Execute(strSQL)
+	
+	Set fldLastName = rs("LastName")
+	Set fldFirstName = rs("FirstName")
+	Set fldGebDat = rs("BirthDate")
+	rs.MoveFirst
+	While Not rs.EOF
+	   strName = fldLastName
+	   strAdresse = fldFirstName
+	   strGebDat = fldGebDat
+	   '...
+	   rs.MoveNext
+	Wend
+	rs.close
+	connOLEDB.close
+Next
+profileElapsed = xObj.ProfileStop()
+Response.Write "Ergebnis: " & FormatNumber(profileElapsed/10000,3) & _
+	" Sekunden&lt;BR&gt;&lt;br&gt;&lt;br&gt;"
+
+Set xObj = Nothing
+%&gt;
+Fertig...
+</pre>
+
+<p>Anzumerken ist, da&szlig; ich vorher die ODBC DSN names <b>NW</b> eingerichtet habe,
+die genauso auf die Access Datenbank names Northwind verbindet. 
+Ein Durchlauf des Skripts auf meinem Server (<u>Athlon 750 Mhz</u>, <u>Win NT Server</u>)
+erbrachte folgendes Ergebnis:</p>
+
+<pre style="background='silver';">
+Access &uuml;ber ODBC: Recordset auslesen - Start
+Ergebnis: 0.533 Sekunden
+
+Access &uuml;ber OLEDB: Recordset auslesen - Start
+Ergebnis: 0.109 Sekunden
+
+Access &uuml;ber ODBC: Connection &ouml;ffnen und Recordset auslesen - Start
+Ergebnis: 4.036 Sekunden
+
+Access &uuml;ber OLE DB: Connection &ouml;ffnen und Recordset auslesen - Start
+Ergebnis: 4.014 Sekunden
+</pre>
+
+<p>Das bedeutet, da&szlig; der Zugriff auf Daten eines <i>Recordsets</i> unter
+OLE DB bis zu 5 mal so schnell ist wie unter ODBC.
+</p>
+<p>
+Realistischer Performance-Gewinn in einer typischen ASP Anwendung bei 
+Verwendung einer Access 2000 oder SQL Server 7.0 Datenbank liegt erfahrungsgem&auml;&szlig;
+zwischen 2 und 10 Prozent, in Einzelf&auml;llen aber auch weit dar&uuml;ber. Deshalb lohnt
+es sich oft, eine Datenbank-Anwendung gleich unter Verwendung eines
+<i>OLE DB Provider</i> zu programmieren.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000419.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000419.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020319.htm">Ein einfacher Eventkalender f&uuml;r Projektteams</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020319.htm</span><br>
+<a href="../artikel/20000814.htm">Webserver-Tuning mit XTune</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000814.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2FIisDev%2FComponents%2FProfiler%2F">Profiling Komponente</a><br>
+<SPAN class="content">http://www.alphasierrapapa.com/IisDev/Components/Profiler/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

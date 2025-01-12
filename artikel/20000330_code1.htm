@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML>
+<HEAD>
+<TITLE>eMailDownload.asp</TITLE>
+<STYLE>
+BODY {
+  font-family: "sans-serif";
+  bgcolor: "#FFFFFF";
+}
+
+PRE {
+  font-family: "monospaced";
+  }
+
+#statement {
+  color: "#0000FF"; /* Color for Script Statements (things like Call, Dim, If...Then...Else, etc) */
+  }
+
+#function {
+  color: "#FF0000"; /* Color for Script Functions (things like Instr, Abs, etc) */
+  }
+
+#script {
+  color: "#800000"; /* Color for anything that is not in one of the above script categories, but is
+                      contained inside script delimeters */
+  }
+
+#scripton {
+  color: "#FF00FF"; /* Color for anything that is not in one of the above script categories, but is
+                      contained inside script delimeters, inside quotation marks */
+  }
+
+#html {
+  color: "#0000FF"; /* Color for any non-script html output */
+  }
+
+#base {
+  color: "#000000"; /* Color for any non-script, non-html output */
+  }
+
+#comment {
+  color: "#008000"; /* Color for any commented code */
+  }
+
+#linenum {
+  color: "#808080"; /* Color for the line numbers */
+  }
+</STYLE>
+</HEAD>
+
+<BODY>
+
+<pre><span id="linenum">001&nbsp;&nbsp;</span><span id="script">&lt;% @ Language=VBScript %&gt;</span><br><span id="linenum">002&nbsp;&nbsp;</span><span id="script">&lt;%<br><span id="linenum">003&nbsp;&nbsp;</span>	<span id="statement">Dim </span>aPrograms, aDLUrls, strProgram<br><span id="linenum">004&nbsp;&nbsp;</span>	<br><span id="linenum">005&nbsp;&nbsp;</span>	aPrograms = <span id="function">Array</span>(<span id="scripton">"Euro Conversion Component"</span>,<span id="scripton">"OdbcRegTool 2.0"</span>,<span id="scripton">"AspTear 1.2"</span>)<br><span id="linenum">006&nbsp;&nbsp;</span>	aDLUrls = <span id="function">Array</span>(<span id="scripton">"full.zip"</span>,<span id="scripton">"odbcregtool2.zip"</span>,<span id="scripton">"asptear12.zip"</span>)<br><span id="linenum">007&nbsp;&nbsp;</span><br><span id="linenum">008&nbsp;&nbsp;</span>	strProgram = <span id="function">Trim</span>(Request.QueryString(<span id="scripton">"program"</span>))<br><span id="linenum">009&nbsp;&nbsp;</span>	<span id="statement">If </span><span id="scripton">""</span> = strProgram Or <span id="statement">Not </span><span id="function">IsNumeric</span>(strProgram) then<br><span id="linenum">010&nbsp;&nbsp;</span>		Response.Write <span id="scripton">"Fatal Error: No program was selected for downloading!"</span><br><span id="linenum">011&nbsp;&nbsp;</span>		Response.End<br><span id="linenum">012&nbsp;&nbsp;</span>	<span id="statement">End If</span><br><span id="linenum">013&nbsp;&nbsp;</span>	<br><span id="linenum">014&nbsp;&nbsp;</span>	strProgram = Clng(strProgram)<br><span id="linenum">015&nbsp;&nbsp;</span>	<span id="statement">If </span>strProgram &lt; 0 Or strProgram &gt; Ubound(aPrograms) <span id="statement">Then</span><br><span id="linenum">016&nbsp;&nbsp;</span>		Response.Write <span id="scripton">"Fatal Error: The requested program does not exist!"</span><br><span id="linenum">017&nbsp;&nbsp;</span>		Response.End<br><span id="linenum">018&nbsp;&nbsp;</span>	<span id="statement">End If</span><br><span id="linenum">019&nbsp;&nbsp;</span><br><span id="linenum">020&nbsp;&nbsp;</span>	<span id="comment">' change according to your server setup and site preferences</span><br><span id="linenum">021&nbsp;&nbsp;</span>	strSMTPHost = <span id="scripton">"mail.alphasierrapapa.com"</span><br><span id="linenum">022&nbsp;&nbsp;</span>	strSenderEmail = <span id="scripton">"webmaster@alphasierrapapa.com"</span><br><span id="linenum">023&nbsp;&nbsp;</span>	strSenderDisplayName = <span id="scripton">"Automated Download"</span><br><span id="linenum">024&nbsp;&nbsp;</span>%&gt;</span><br><span id="linenum">025&nbsp;&nbsp;</span><span id="html">&lt;HTML&gt;</span><br><span id="linenum">026&nbsp;&nbsp;</span><span id="html">&lt;HEAD&gt;</span><br><span id="linenum">027&nbsp;&nbsp;</span><span id="html">&lt;TITLE&gt;</span>Request <span id="script">&lt;%=aPrograms(strProgram)%&gt;</span> via Email<span id="html">&lt;/TITLE&gt;</span><br><span id="linenum">028&nbsp;&nbsp;</span><span id="html">&lt;/HEAD&gt;</span><br><span id="linenum">029&nbsp;&nbsp;</span><span id="html">&lt;BODY BGCOLOR="#ffffff"&gt;</span><br><span id="linenum">030&nbsp;&nbsp;</span><span id="script">&lt;%<br><span id="linenum">031&nbsp;&nbsp;</span>strAction = Request.QueryString(<span id="scripton">"send"</span>)<br><span id="linenum">032&nbsp;&nbsp;</span><br><span id="linenum">033&nbsp;&nbsp;</span><span id="statement">If </span>strAction &lt;&gt; <span id="scripton">"yes"</span> <span id="statement">Then</span><br><span id="linenum">034&nbsp;&nbsp;</span>%&gt;</span><br><span id="linenum">035&nbsp;&nbsp;</span><span id="html">&lt;FORM METHOD="GET" ACTION="<span id="script">&lt;%=Request.ServerVariables(<span id="scripton">"SCRIPT_NAME"</span>)%&gt;</span>"&gt;</span><br><span id="linenum">036&nbsp;&nbsp;</span><span id="html">&lt;TABLE&gt;</span><br><span id="linenum">037&nbsp;&nbsp;</span><span id="html">&lt;TR&gt;</span><br><span id="linenum">038&nbsp;&nbsp;</span>	<span id="html">&lt;TD&gt;</span>Send to:<span id="html">&lt;/TD&gt;</span><br><span id="linenum">039&nbsp;&nbsp;</span>	<span id="html">&lt;TD&gt;</span><span id="html">&lt;INPUT TYPE="TEXT" SIZE="30" NAME="Email"&gt;</span><span id="html">&lt;/TD&gt;</span><br><span id="linenum">040&nbsp;&nbsp;</span>	<span id="html">&lt;TD&gt;</span><br><span id="linenum">041&nbsp;&nbsp;</span>		<span id="html">&lt;input type="hidden" name="send" value="yes"&gt;</span><br><span id="linenum">042&nbsp;&nbsp;</span>		<span id="html">&lt;input type="hidden" name="program" value="<span id="script">&lt;%=strProgram%&gt;</span>"&gt;</span><br><span id="linenum">043&nbsp;&nbsp;</span>		<span id="html">&lt;INPUT TYPE="SUBMIT" NAME="btnSubmit" VALUE="Send download"&gt;</span><br><span id="linenum">044&nbsp;&nbsp;</span>	<span id="html">&lt;/TD&gt;</span><br><span id="linenum">045&nbsp;&nbsp;</span><span id="html">&lt;/TR&gt;</span><br><span id="linenum">046&nbsp;&nbsp;</span><span id="html">&lt;/TABLE&gt;</span><br><span id="linenum">047&nbsp;&nbsp;</span><span id="html">&lt;/FORM&gt;</span><br><span id="linenum">048&nbsp;&nbsp;</span><span id="script">&lt;% <br><span id="linenum">049&nbsp;&nbsp;</span><span id="statement">Else</span> <br><span id="linenum">050&nbsp;&nbsp;</span>	strSendTo = <span id="function">Trim</span>(Request.QueryString(<span id="scripton">"Email"</span>))<br><span id="linenum">051&nbsp;&nbsp;</span>	<span id="comment">' a very simple check if the email address is correct</span><br><span id="linenum">052&nbsp;&nbsp;</span>	<span id="statement">If </span><span id="function">Len</span>(strSendTo) &lt; 6 Or 0 = <span id="function">InStr</span>(strSendTo, <span id="scripton">"@"</span>) <span id="statement">Then</span><br><span id="linenum">053&nbsp;&nbsp;</span>		Response.Write <span id="scripton">"The email address you have entered is not correct!"</span><br><span id="linenum">054&nbsp;&nbsp;</span>	<span id="statement">Else</span><br><span id="linenum">055&nbsp;&nbsp;</span>		<span id="statement">Set </span>Mailer = <span id="function">CreateObject</span>(<span id="scripton">"SoftArtisans.SMTPMail"</span>)<br><span id="linenum">056&nbsp;&nbsp;</span>		Mailer.FromName = strSenderDisplayName<br><span id="linenum">057&nbsp;&nbsp;</span>		Mailer.FromAddress = strSenderEmail<br><span id="linenum">058&nbsp;&nbsp;</span>		Mailer.RemoteHost = strSMTPHost<br><span id="linenum">059&nbsp;&nbsp;</span>		Mailer.AddRecipient <span id="scripton">""</span>, strSendTo<br><span id="linenum">060&nbsp;&nbsp;</span>		Mailer.Subject = aPrograms(strProgram)<br><span id="linenum">061&nbsp;&nbsp;</span>		<br><span id="linenum">062&nbsp;&nbsp;</span>		strBodyText = <span id="scripton">"Attached is the download you requested to be sent to you via email."</span> & vbCrLf<br><span id="linenum">063&nbsp;&nbsp;</span>		strBodyText = strBodyText & vbCrlf & <span id="scripton">"Thank you for your interest in our software!"</span><br><span id="linenum">064&nbsp;&nbsp;</span>		Mailer.BodyText = strBodyText<br><span id="linenum">065&nbsp;&nbsp;</span>		<br><span id="linenum">066&nbsp;&nbsp;</span>		Mailer.AddAttachment Server.MapPath(aDLUrls(strProgram))<br><span id="linenum">067&nbsp;&nbsp;</span>		<br><span id="linenum">068&nbsp;&nbsp;</span>		<span id="statement">If </span>Mailer.SendMail <span id="statement">Then</span><br><span id="linenum">069&nbsp;&nbsp;</span>			Response.Write <span id="scripton">"The file "</span> & aDLUrls(strProgram) & <span id="scripton">" is on its way to "</span> & strSendTo<br><span id="linenum">070&nbsp;&nbsp;</span>		<span id="statement">Else</span><br><span id="linenum">071&nbsp;&nbsp;</span>			Response.Write <span id="scripton">"An error has occured:&lt;br&gt;&lt;b&gt;"</span> & Mailer.Response & <span id="scripton">"&lt;/b&gt;"</span><br><span id="linenum">072&nbsp;&nbsp;</span>		<span id="statement">End If</span><br><span id="linenum">073&nbsp;&nbsp;</span>		<span id="statement">Set </span>Mailer = <span id="statement">Nothing</span><br><span id="linenum">074&nbsp;&nbsp;</span>	<span id="statement">End If</span><br><span id="linenum">075&nbsp;&nbsp;</span>End <span id="statement">If </span><br><span id="linenum">076&nbsp;&nbsp;</span>%&gt;</span><br><span id="linenum">077&nbsp;&nbsp;</span><span id="html">&lt;/BODY&gt;</span><br><span id="linenum">078&nbsp;&nbsp;</span><span id="html">&lt;/HTML&gt;</span><br></pre>
+</BODY>
+</HTML>

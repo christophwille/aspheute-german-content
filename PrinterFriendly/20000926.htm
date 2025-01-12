@@ -1,0 +1,300 @@
+<HTML>
+<HEAD>
+<TITLE>Collections einmal anders: Stacks und Queues</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor, da&szlig; es unter ASP+ einiges mehr an Collections gibt, als unter ASP. Heute besch&auml;ftigt er sich mit Stacks und Queues.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,FIFO,Stack,Queue,Push,Pop,Enqueue,Dequeue,foreach,GetEnumerator,C#,CSharp,C Sharp,ASP.NET,Framework,Classes">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Collections einmal anders: Stacks und Queues</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000926"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Unter ASP wurden wir mit Collections ziemlich kurz gehalten - es gab nur das Scripting.Dictionary. 
+Die Zeiten haben sich allerdings ge&auml;ndert, und ASP.NET bietet uns Implementationen f&uuml;r first in, first out
+Collections als auch first in, last out Collections: Queues (FIFO) und Stacks.
+</p>
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation des Microsoft 
+.NET Framework SDK's auf einem Webserver. Weiters setze ich voraus, da&szlig; der Leser die Programmiersprache 
+C# zu einem gewissen Grad beherrscht - es finden sich etliche Artikel auf diesem Server, um das notwendige 
+Wissen zu erlernen 
+</p>
+
+<h2>Die Stack Klasse</h2>
+<p>
+Der Stack sollte allen eingefleischten Assembler Programmierern bekannt sein - f&uuml;r alle anderen, in K&uuml;rze,
+was ist ein Stack: ein Stack ist ein Stapel, auf den ich Elemente legen kann ("push"), und dann in der 
+umgekehrten Reihenfolge wieder auslesen kann ("pop"). Um es in einem angreifbaren Bild zu bringen: ich
+habe ein Stapel von Hemden, auf den ich ein weiteres lege - und dieses ist dann auch wieder das Erste,
+das ich herunternehme.
+</p>
+
+<h3>Bef&uuml;llen eines Stacks</h3>
+<p>
+Die erste Aufgabe ist es nat&uuml;rlich, den Stack mit Elementen zu bef&uuml;llen. Dazu bedient man sich der
+<i>Push</i> Methode, die ein <i>object</i> als Parameter annimmt. Das habe ich nat&uuml;rlich im folgenden Beispiel
+entsprechend ausgenutzt (<b>stack.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Collections&quot; %&gt;
+&lt;%
+Stack myStack = new Stack();
+myStack.Push(&quot;Christoph&quot;);
+myStack.Push(Request.ServerVariables.Get(&quot;SCRIPT_NAME&quot;));
+myStack.Push(new DateTime(2000,7,29));
+myStack.Push(Math.PI);
+myStack.Push(2000.0 / 10.5);
+
+Response.Write(myStack.Count.ToString());
+%&gt;
+</pre>
+
+<p>
+Im gezeigten Beispiel lege ich zuerst ein Stack Objekt an, und f&uuml;lle dann Strings, DateTime Werte und Zahlen
+ein. Als Beweis gebe ich dann die Anzahl der Elemente aus, die man vom Stack wieder herunternehmen k&ouml;nnte.
+</p>
+
+<h3>Auslesen eines Stacks</h3>
+<p>
+Interessanter wird da schon das Auslesen - weil es f&uuml;hren viele Wege nach Rom. Der erste ist das Auslesen
+mittels eines <i>foreach</i> Statements (<b>stack_show.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Collections&quot; %&gt;
+&lt;%
+Stack myStack = new Stack(5);
+myStack.Push(&quot;Christoph&quot;);
+myStack.Push(Request.ServerVariables.Get(&quot;SCRIPT_NAME&quot;));
+myStack.Push(new DateTime(2000,7,29));
+myStack.Push(Math.PI);
+myStack.Push(2000.0 / 10.5);
+
+foreach (object objElement in myStack)
+{
+  Response.Write(objElement.ToString() + &quot;&lt;br&gt;\r\n&quot;);
+}
+%&gt;
+</pre>
+
+<p>
+Da die Stack Klasse die <i>GetEnumerator</i> Methode unterst&uuml;tzt (liefert das IEnumerator Interface), kann ich
+die <i>foreach</i> Schleife einsetzen. Bei Verwendung dieses Loops werden keine Elemente vom Stack heruntergenommen.
+</p>
+<p>
+Anders sieht es aus, wenn man sich der <i>Pop</i> Methode des Stacks bedient - das Element wird heruntergenommen und
+vom Stack gel&ouml;scht. Deshalb kann man sich mit <i>Peek</i> eine kleine "Vorschau" auf das n&auml;chste Element holen,
+ohne es aber vom Stack herunterzunehmen (<b>stack_read.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Collections" %&gt;
+&lt;%
+Stack myStack = new Stack(5);
+myStack.Push("Christoph");
+myStack.Push(Request.ServerVariables.Get("SCRIPT_NAME"));
+myStack.Push(new DateTime(2000,7,29));
+myStack.Push(Math.PI);
+myStack.Push(2000.0 / 10.5);
+
+// peek at the first element
+object objHead = myStack.Peek();
+Response.Write("Peeked at " + objHead.ToString() + "&lt;br&gt;\r\n");
+
+int nCount = myStack.Count;
+for (int i = 0; i &lt; nCount; i++)
+{
+   object objCurrent = myStack.Pop();
+   Response.Write("Popped " + objCurrent.ToString() + "&lt;br&gt;\r\n");
+}
+%&gt;
+</pre>
+
+<p>
+Ich habe behauptet, da&szlig; <i>Peek</i> das Element nicht l&ouml;scht - der folgende Screenshot beweist es, weil
+das Element zweimal in der Liste aufscheint.
+</p>
+
+<IMG SRC="/artikel/Bilder/200009/20000926.png" width="464" height="324" alt="" border="0">
+
+<h2>Die Queue Klasse</h2>
+<p>
+Im Gegensatz zum Stack wird in einer Queue das zuerst eingef&uuml;gte Element auch als erstes wieder
+ausgelesen. Die Anwendung wird daher eine normale "Arbeitsqueue" sein, bei der ich auf der einen Seite
+Elemente einf&uuml;ge, und am anderen Ende wieder herausnehme.
+</p>
+
+<h3>Bef&uuml;llen einer Queue</h3>
+<p>
+Auch f&uuml;r die Queue Klasse werden wir uns zuerst ansehen, wie man Elemente einf&uuml;gt (<b>queue.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Collections&quot; %&gt;
+&lt;%
+Queue myQueue = new Queue(5);
+myQueue.Enqueue(&quot;Christoph&quot;);
+myQueue.Enqueue(Request.ServerVariables.Get(&quot;SCRIPT_NAME&quot;));
+myQueue.Enqueue(new DateTime(2000,7,29));
+myQueue.Enqueue(Math.PI);
+myQueue.Enqueue(2000.0 / 10.5);
+
+Response.Write(myQueue.Count.ToString());
+%&gt;
+</pre>
+
+<p>
+Der einzige Unterschied zum Stack ist der, da&szlig; die Methode jetzt <i>Enqueue</i> hei&szlig;t. Sonst hat sich
+nichts ge&auml;ndert, was ja f&uuml;r das Erlernen nur von Vorteil ist.
+</p>
+<p>
+Zum Konstruktor m&ouml;chte ich noch ein Wort loswerden: dort steht in den Klammern der Wert f&uuml;nf. Dies gibt
+die anf&auml;ngliche Gr&ouml;&szlig;e an. Weitere Overloads des Konstruktors lassen auch zu, den Wachstumsfaktor f&uuml;r
+die Queue zu definieren. Der Vorteil: die Speicherallokierung f&uuml;r die Elemente geht deutlich effizienter
+von statten, was sich speziell bei einer gr&ouml;&szlig;eren Anzahl von Elementen deutlich auswirkt.
+</p>
+
+<h3>Auslesen einer Queue</h3>
+<p>
+Das Auslesen einer Queue funktioniert ebenfalls mit <i>GetEnumerator</i> und <i>foreach</i>. Deshalb m&ouml;chte ich einen
+anderen Weg demonstrieren, der auch das gew&uuml;nschte Ergebnis liefert (<b>queue_show.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Collections&quot; %&gt;
+&lt;%
+Queue myQueue = new Queue(5);
+myQueue.Enqueue(&quot;Christoph&quot;);
+myQueue.Enqueue(Request.ServerVariables.Get(&quot;SCRIPT_NAME&quot;));
+myQueue.Enqueue(new DateTime(2000,7,29));
+myQueue.Enqueue(Math.PI);
+myQueue.Enqueue(2000.0 / 10.5);
+
+object[] arrElements = myQueue.ToArray();
+foreach (object objElement in arrElements)
+{
+  Response.Write(objElement.ToString() + &quot;&lt;br&gt;\r\n&quot;);
+}
+%&gt;
+</pre>
+
+<p>
+In diesem Beispiel habe ich die <i>ToArray</i> Methode verwendet, um die Daten der Queue in ein Array zu 
+kopieren. Dieses enumiere ich dann mit <i>foreach</i>. Apropos: dieser Ansatz funktioniert 1:1 auch f&uuml;r einen
+Stack.
+</p>
+<p>
+Um nun ein Element zu lesen und gleichzeitig aus der Queue zu entfernen, sollte man die <i>Dequeue</i> Methode
+verwenden. Will man nur das erste Element lesen ohne es zu entfernen, dann bietet sich wieder die
+<i>Peek</i> Methode an (<b>queue_read.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Collections&quot; %&gt;
+&lt;%
+Queue myQueue = new Queue(5);
+myQueue.Enqueue(&quot;Christoph&quot;);
+myQueue.Enqueue(Request.ServerVariables.Get(&quot;SCRIPT_NAME&quot;));
+myQueue.Enqueue(new DateTime(2000,7,29));
+myQueue.Enqueue(Math.PI);
+myQueue.Enqueue(2000.0 / 10.5);
+
+// peek at the first element
+object objHead = myQueue.Peek();
+Response.Write(&quot;Peeked at &quot; + objHead.ToString() + &quot;&lt;br&gt;\r\n&quot;);
+
+int nCount = myQueue.Count;
+for (int i = 0; i &lt; nCount; i++)
+{
+   object objCurrent = myQueue.Dequeue();
+   Response.Write(&quot;Dequeud &quot; + objCurrent.ToString() + &quot;&lt;br&gt;\r\n&quot;);
+}
+%&gt;
+</pre>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Heute haben wir zwei weitere Collections aus dem <i>System.Collections</i> Namespace kennengelernt, n&auml;mlich
+<i>Queue</i> und <i>Stack</i>. Die Verwendung einer Queue bietet sich dann an, wenn man Elemente in der
+Reihenfolge des Bef&uuml;llens abarbeiten m&ouml;chte. Der Stack hingegen kommt dann zum Einsatz, wenn Elemente
+nach dem last in, first out Prinzip bearbeitet werden sollen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000926.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000926.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020124.htm">Arrays mit Index und Schl&uuml;ssel</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020124.htm</span><br>
+<a href="../artikel/19990806.htm">Das Dictionary Objekt - Dein Feind und Helfer</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990806.htm</span><br>
+<a href="../artikel/20000720.htm">Das foreach Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000720.htm</span><br>
+<a href="../artikel/20020401.htm">Debugging in der Tiefe</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020401.htm</span><br>
+<a href="../artikel/20000823.htm">Die Hashtable Klasse</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000823.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

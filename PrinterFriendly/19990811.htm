@@ -1,0 +1,179 @@
+<HTML>
+<HEAD>
+<TITLE>Eigenschaften der Connection und Recordset Objekte</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Welche ADO Version hat man installiert? Was kann eigentlich der Datenbanktreiber oder die Datenbank? Diese Fragen werden mit dem in diesen Artikel vorgestellten Code beantwortet.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ADO,Connection,Recordset,Properties,IIS,ASP,Record,Field">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Eigenschaften der Connection und Recordset Objekte</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=19990811"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wenn Sie effizient von ASP Scripts auf Datenbanken zugreifen wollen, dann werden Sie in der 
+ASP Programmierung um ADO (ActiveX Data Objects) nicht herumkommen. F&uuml;r die technisch 
+Interessierten: ADO ist nichts anderes als ein Objektmodell zur einfachen Handhabung 
+der OLE DB Schnittstelle (Object Linking and Embedding Databases).
+</p>
+<p>
+Das hei&szlig;t, da&szlig; man Daten von jedem OLE DB Provider (also auch von ODBC) mittels ADO 
+handhaben kann. Typische Anwendungen sind Datenaustausch mit SQL Server, Access, Oracle 
+und ODBC (Open Database Connectivity) Datenquellen im Allgemeinen.
+</p>
+<p>
+Wenn man nun wissen m&ouml;chte, welche ADO Version (1.0, 1.5, 2.0, 2.1,...) auf einem Server 
+l&auml;uft und welche Eigenschaften eine Connection oder ein Recordset Objekt hat, so kann man sich 
+des nachfolgenden Scripts bedienen.
+</p>
+<p>
+Das Script erstellt ein Connection Objekt und &ouml;ffnet damit eine Verbindung zur Datenbank. 
+Danach werden Informationen &uuml;ber ADO, die Datenbank und die zugeh&ouml;rigen Treiber abgefragt. 
+Der letzte Teil des Scripts liefert die Eigenschaften der Connection und des Recordset zur&uuml;ck.
+<pre>
+&lt;%
+<font face="" color="Green">' Autoren: Christian Koller und Christoph Wille
+' (c) 1998, http://www.alphasierrapapa.com/
+'
+' Sie benoetigen eine ODBC DSN zu einer Datenbank 
+' um dieses Script laufen zu lassen
+
+' Statt Northwind hier den Namen der ODBC DSN eintragen</font>
+strDSN = &quot;Northwind&quot;
+<font face="" color="Green">' Statt sa den Benutzernamen zum Einloggen in die Datenbank eintragen</font>
+strUser = &quot;sa&quot;			
+<font face="" color="Green">' Hier das Passwort zum Einloggen in die Datenbank eintragen</font>
+strPwd = &quot;&quot;
+
+<font face="" color="Green">' ### Erstellen eines Connection Objektes (Datenbankverbindung)</font>
+Set conn = Server.CreateObject(&quot;ADODB.Connection&quot;)
+
+<font face="" color="Green">' strDSN: Enthaelt den Namen der ODBC Verbindung zur Datenbank
+' strUser: Username zum Einloggen in die Datenbank
+' strPwd: Passwort zum Einloggen in die Datenbank
+' ### Oeffnen der Datenbankverbindung</font>
+conn.open strDSN,strUser,strPwd
+
+Dim arrI(7), arrP(7)
+arrI(0) = &quot;DBMS Name: &quot; : arrP(0) = &quot;DBMS Name&quot;
+arrI(1) = &quot;DBMS Version: &quot; : arrP(1) = &quot;DBMS Version&quot;
+arrI(2) = &quot;OLE DB Version: &quot; : arrP(2) = &quot;OLE DB Version&quot;
+arrI(3) = &quot;Provider Name: &quot; : arrP(3) = &quot;Provider Name&quot;
+arrI(4) = &quot;Provider Version: &quot; : arrP(4) = &quot;Provider Version&quot;
+arrI(5) = &quot;Driver Name: &quot; : arrP(5) = &quot;Driver Name&quot;
+arrI(6) = &quot;Driver Version: &quot; : arrP(6) = &quot;Driver Version&quot;
+arrI(7) = &quot;Driver ODBC Version: &quot; : arrP(7) = &quot;Driver ODBC Version&quot;
+strInfo =  &quot;ADO Version: &quot; &amp; conn.Version &amp; &quot;&lt;BR&gt;&quot; &amp; vbcrlf
+For intI = 0 to UBound(arrI)
+	strInfo = strInfo &amp; arrI(intI) 
+	strInfo = strInfo &amp; conn.Properties(arrP(intI))
+	strInfo = strInfo &amp; &quot;&lt;BR&gt;&quot; &amp; vbcrlf 	
+Next
+
+Response.Write &quot;&lt;B&gt;ADO Versions Information&lt;/B&gt;:&lt;BR&gt;&quot;
+Response.Write strInfo
+Response.Write &quot;&lt;BR&gt;&quot;
+
+Response.Write &quot;&lt;B&gt;Eigenschaften des Connection Objektes&lt;/B&gt;:&lt;BR&gt;&quot;
+
+<font face="" color="Green">' ### Abfragen aller Eigenschaften der Datenbankverbindung</font>
+For Each connprop In conn.properties
+	Response.Write connprop.name &amp; &quot;: &lt;I&gt;&quot; &amp; connprop &amp;  _
+		&quot;&lt;/I&gt;&lt;BR&gt;&quot; &amp; vbCRLF
+Next
+
+Response.Write &quot;&lt;BR&gt;&quot;
+Response.Write &quot;&lt;B&gt;Eigenschaften des Recorset Objektes&lt;/B&gt;:&lt;BR&gt;&quot;
+
+<font face="" color="Green">' ### Erstellen eines Recordset Objektes</font>
+Set rsQuery = Server.CreateObject(&quot;ADODB.RecordSet&quot;)
+strQuery = &quot;SELECT 0&quot;	
+
+<font face="" color="Green">' ### Durchfuehren der Datenbankabfrage und Speichern 
+' des Ergebnisses in der Objektvariablen rsQuery (Recordset)</font>
+rsQuery.Open strQuery, conn
+
+<font face="" color="Green">' ### Abfragen aller Eigenschaften des Recordset Objektes</font>
+For Each rsprop In rsQuery.properties
+	Response.Write rsprop.name &amp; &quot;: &lt;I&gt;&quot; &amp; rsprop &amp;  _
+		&quot;&lt;/I&gt;&lt;BR&gt;&quot; &amp; vbCRLF
+Next
+
+<font face="" color="Green">' ### Schliessen der Objekte</font>
+rsQuery.close
+conn.close
+%&gt;
+</pre>
+</p>
+<p>
+Die wichtigsten Informationen sind sicherlich die ADO Version und die Treiber Informationen.
+Nicht unwesentlich sind auch die Eigenschaften des Recordset Objektes, die von Datenbank zu 
+Datenbank unterschiedlich sind, so kann man zum Beispiel bei einer Access Datenbank 
+keine Bookmarks setzen. 
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000518.htm">ADO Konstanten und die Datei Adovbs.inc</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000518.htm</span><br>
+<a href="../artikel/20001023.htm">Das SQL Join Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001023.htm</span><br>
+<a href="../artikel/20001201.htm">Die SQL ORDER BY Clause</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001201.htm</span><br>
+<a href="../artikel/20001107.htm">Einf&uuml;gen eines Datensatzes mit dem INSERT Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001107.htm</span><br>
+<a href="../artikel/20000606.htm">Zugriff auf autom. generierte ID beim Einf&uuml;gen eines Datensatzes</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000606.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

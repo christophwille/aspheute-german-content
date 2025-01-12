@@ -1,0 +1,505 @@
+<HTML>
+<HEAD>
+<TITLE>Sichere Zahlungen im Internet mit SET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel beschreibt der Autor die Grundlagen von SET (Secure Electronic Transactions). Es geht um Wallets, Payment Gateways, Payware und viel anderes Grundlagenwissen, das in weiteren Artikeln gebraucht wird.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SSL,SETCO,SET,Secure Electronic Transaction,Mastercard,Visa">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Sichere Zahlungen im Internet mit SET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianweissengruber.htm">Christian Weissengruber</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000901"></SCRIPT>
+</p>
+<p>
+Die Abwicklung gesch&auml;ftlicher Transaktionen im Internet funktioniert nur, wenn auch der Zahlungsverkehr f&uuml;r den Kunden
+wie f&uuml;r den H&auml;ndler sichergestellt ist und er darauf vertrauen kann, da&szlig; Mi&szlig;brauch ausgeschlossen ist. Niemand wirft 
+gerne seine Kreditkartendaten in ein schwarzes Loch.
+</p>
+<p>
+Das Internet ist ein &ouml;ffentliches Medium, wie  z. B. die Post auch. Wenn ich einen Brief aufgebe, mu&szlig; ich (leider) damit 
+rechnen, da&szlig; er verloren gehen kann oder da&szlig; er von Unbefugten ge&ouml;ffnet wird. Wenn ich denselben Brief eingeschrieben 
+versende, habe ich zumindest die Garantie, da&szlig; er ankommt. Wenn ich zus&auml;tzlich den Brief noch verschl&uuml;ssle, habe ich 
+weiters die Gewissheit da&szlig; er nur von Befugten - mit einem Schl&uuml;ssel - gelesen werden kann. Es kommt also immer darauf 
+an, wie man mit einem Medium umgeht.
+</p>
+
+<h2>Zahlungsarten</h2>
+<p>
+Im Internet spielt nat&uuml;rlich auch die physikalische Distanz zwischen Kunde und H&auml;ndler eine nicht wegzuleugnende Rolle.
+Hinzu kommt die Anonymit&auml;t des Kunden, der alles kaufen kann, was er im realen Leben nicht tun w&uuml;rde. Die Verf&uuml;gbarkeit
+wirklich aller Art von Waren und Dienstleistungen spielt nat&uuml;rlich die wesentlichste Rolle.
+</p>
+<p>
+Es gibt generell  zwei Arten des Warenangebotes im Internet:
+</p>
+<ul>
+<li>der klassische Warenversand (B&uuml;cher)
+<li>virtuelle Waren und Dienstleistungen wie Downloads ( Software, Musik, Video) und Informationen.
+</ul>
+<p>
+Die Bezahlung im Internet kann auch auf verschiedene Arten erfolgen:
+</p>
+<ul>
+<li>Nachnahme
+<li>Bankeinzug
+<li>Vorauskasse
+<li>Elektronische Zahlungsmittel
+<li>Kreditkarte
+</ul>
+<p>
+Nachnahme ist jedoch nur f&uuml;r physikalische Waren m&ouml;glich.Bankeinzug und einige propriet&auml;re Zahlungsysteme wie e-cash,
+cybercash oder &auml;hnliche, haben eines gemeinsam: sie verlangen nach einer lokalen (nationalen) Clearingstelle zur Abwicklung
+der Finanztransaktionen. Vorauskasse ist sicher nicht f&uuml;r viele Gesch&auml;ftsf&auml;lle praktikabel - Internet ist, wie der 
+Name schon sagt, ist international.
+</p>
+<p>
+Somit bleibt nur eine Art der Bezahlung die (zur Zeit) weltweit funktionieren kann -
+die Kreditkarte, und zwar weil die Verwendung den meisten Menschen vertraut ist und der Komfort f&uuml;r den Karteninhaber 
+dabei gegeben ist. F&uuml;r den H&auml;ndler sind die Kosten im Vergleich zu Nachnahme oder Rechnung in den meisten F&auml;llen 
+geringer.
+Es sind hier nat&uuml;rlich einige wesentliche Aspekte zu beachten:
+</p>
+<ul>
+<li>die technische Sicherheit
+<li>die Rechtsverbindlichkeit
+<li>die Geschwindigkeit der Karten-Autorisierung
+</ul>
+<p>
+Zahlreiche Web Shops bieten die M&ouml;glichkeit, Kreditkartenzahlungen per SSL (Secure Socket Layer) zu akzeptieren.
+SSL ist der zur Zeit gebr&auml;uchlichste Standard f&uuml;r die &Uuml;bertragung von vertraulichen Daten. Dieser bietet einen meist 
+ausreichenden Schutz gegen das Abfangen von Kreditkartendaten oder das Ver&auml;ndern von Daten durch Dritte.
+</p>
+<p>
+SSL stellt lediglich ein Verschl&uuml;sselungsverfahren dar, das die Datensicherheit zum Ziel hat. Die eigentliche Autorisierung
+und Verrechnung von Kreditkartenums&auml;tzen ist dabei noch nicht inkludiert. 
+</p>
+<p>
+Die wichtigste Komponente f&uuml;r sichere Zahlungen im Internet ist aber die Gewi&szlig;heit &uuml;ber die Berechtigung von H&auml;ndler 
+und Kunde, Zahlungen mit einer Kreditkarte durchf&uuml;hren zu d&uuml;rfen, sowie &uuml;ber eine rechtsverbindliche Best&auml;tigung 
+einer Bestellung. 
+</p>
+<p>
+Um dieses zu erreichen, wurde  SET<sup>TM</sup>  geschaffen.
+</p>
+
+<h2>Secure Electronic Transaction<sup>TM</sup></h2>
+<p>
+SET ist ein Sicherheitsstandard f&uuml;r Transaktionen per Kreditkarte &uuml;ber das Internet. SET wurde haupts&auml;chlich von 
+Mastercard, Visa und technologisch f&uuml;hrenden Unternehmen entwickelt.
+</p>
+<p>
+Bei der Abwicklung der Transaktionsdaten schreibt das <b>SET</b> Protokoll zweierlei vor. Einerseits bekommt in der virtuellen
+Welt niemand Informationen zu Einsicht, die nicht f&uuml;r ihn bestimmt sind, anderseits werden alle &uuml;bermittelten Informationen 
+mittels Verschl&uuml;sselung f&uuml;r Dritte unlesbar gemacht. Das hei&szlig;t, da&szlig; der H&auml;ndler keinerlei Kontodaten des Kunden im 
+Klartext f&uuml;r das Zustandekommen eines Gesch&auml;fts ben&ouml;tigt, er sieht nur die Bestellinformationen und erh&auml;lt eine 
+Benachrichtigung des Kartenausstellers (VISA, MC, etc), ob das Kundenkonto f&uuml;r die H&ouml;he des zu erwartenden Betrag "gut"
+ist, bzw. ob der Kartenstatus einen Umsatz zul&auml;&szlig;t. Die Bank wiederum erh&auml;lt keine Informationen &uuml;ber die Bestellung des 
+Karteninhabers, f&uuml;r sie ist nur die kontoseitige Information vonn&ouml;ten.
+</p>
+<h2>Die wesentlichen SET Komponenten</h2>
+<p>
+Das Wesen von SET besteht darin, da&szlig; sowohl Karteninhaber als auch der H&auml;ndler ein SET Zertifikat erhalten. Die 
+Zertifikate werden von den jeweiligen Banken, im Falle des Karteninhabers von der kartenausgebenden Bank (Issuer), 
+im Falle des H&auml;ndlers von der H&auml;ndlerbank (Acquirer), ausgegeben. 
+</p>
+<p>
+<b>Karteninhaber</b> erhalten zur Abwicklung von SET Transaktionen eine sog. Wallet, also eine elektronische Brieftasche, deren 
+Inhalt aus zertifizierten Kreditkarten besteht. 
+</p>
+Der <b>H&auml;ndler</b> mu&szlig; einen SET f&auml;higen Server installieren, der es erm&ouml;glicht, SET Transaktionen aufzunehmen, um diese an 
+seine H&auml;ndlerbank weiterzugeben. 
+</p>
+<p>
+<b>Das Payment Gateway.</b>
+Dieses nimmt SET Transaktionen von H&auml;ndlern auf und setzt diese in die derzeit g&auml;ngigen ISO Formate um, die in den 
+Netzen der Kartenorganisationen benutzt werden:
+</p>
+<ul>
+<li>Visa: VisaNet
+<li>Mastercard: Banknetz
+</ul>
+<p>
+Das Payment Gateway erh&auml;lt ein Zertifikat direkt von SETCO.
+</p>
+<p>
+<b>SETCO:</b> Um eine einheitliche und fl&auml;chendeckende Verbreitung des Standards zu gew&auml;hrleisten, wurde von Visa und
+Mastercard die Zertifizierungs-Instanz SETCO gegr&uuml;ndet. Aufgabe der SETCO ist es, s&auml;mtliche eingereichten Softwareprodukte
+auf SET-Konformit&auml;t zu pr&uuml;fen. Erst mit der offiziellen Vergabe des SET-Logos best&auml;tigt die Instanz, da&szlig; das 
+eingereichte Produkt zu 100% der aktuellen Spezifikation des SET-Protokolls entspricht. Somit ist auch sichergestellt,
+da&szlig; ein H&auml;ndler, der das SET-Logo in seinem Shop verwendet, von einer Kreditkartengesellschaft dazu autorisiert ist.
+</p>
+<p>
+Der Zahlungsverkehr zwischen H&auml;ndlerbank und kartenausgebender Bank l&auml;uft wie bisher in internen Netzwerken, also 
+nicht &uuml;ber offene Netze ab. Zur gegenseitigen Kenntlichmachung der SET F&auml;higkeit wurde ein SET Warenzeichen entwickelt, 
+welches der H&auml;ndler nach entsprechender Zertifizierung auf seiner Web Seite zeigen darf - das sogenannte <b>SET Mark</b>
+</p>
+<IMG SRC="Bilder/200009/20000901.png" width=74 height=51 border=0 alt="">
+<p>
+Unter SET-Transaktion versteht man standardm&auml;&szlig;ig eine 3KP (Key Pair) Transaktion,
+daneben gibt es 2KP Transaktionen, im Sprachgebrauch auch als SET-MIA (Merchant Initiated Authorization) oder MO-SET 
+(Merchant Originated) bekannt. In der Terminologie der Software-Hersteller sind die o.g. Begriffe einfach unter SSL 
+benannt. 
+</p>
+<p>
+Die Bedeutung der Key Pairs ist folgende: (1 Key Pair, also Schl&uuml;sselpaar entspricht einem Zertifikat)
+</p>
+<p>
+<b>2KP bedeutet:</b>
+<ul>
+<li>1 Zertifikat  liegt beim H&auml;ndler
+<li>1 Zertifikat  liegt beim Paymentgateway
+</ul>
+</p>
+<p>
+Der Karteninhaber hat in dem Fall kein Zertifikat zur Verf&uuml;gung und gibt seine Kartendaten wie von anderen Seiten 
+gewohnt &uuml;ber eine https-Verbindung ein (Kartennummer, Ablaufdatum; Name auf Karte)
+</p>
+<p>
+<b>3KP bedeutet:</b>
+<ul>
+<li>1 Zertifikat  liegt beim H&auml;ndler
+<li>1 Zertifikat  liegt beim Paymentgateway
+<li>1 Zertifikat  liegt beim Karteninhaber
+</ul>
+</p>
+<p>
+Der wesentliche Unterschied zwischen 3KP und 2KP Transaktionen liegt in der Zahlungsgarantie seitens der Kartenorganisationen
+gegen&uuml;ber dem H&auml;ndler bei Verwendung von SET.
+</p>
+<p>
+Wir k&ouml;nnen derzeit davon ausgehen, da&szlig; die Verbreitung von SET-Wallets nicht fl&auml;chendeckend ist, und daher von Online-Shops 
+beide L&ouml;sungen angeboten werden sollten.
+</p>
+<h2>Ablauf einer SET-Transaktion:</h2>
+<p>
+W&auml;hrend des Verkaufsdialoges w&auml;hlt der K&auml;ufer auf den Angebotsseiten des H&auml;ndlers die gew&uuml;nschten Waren oder Dienstleistungen aus. Bei der Bestellung wird er eine Wahlm&ouml;glichkeit f&uuml;r die Bezahlung mit SET finden und ausw&auml;hlen.
+Daraufhin wird am PC des K&auml;ufers automatisch das SET-Wallet gestartet. 
+</p>
+<p>
+Der K&auml;ufer mu&szlig; das Wallet mit seinem Benutzernamen und einem Passwort freigeben. Der K&auml;ufer w&auml;hlt eine der im Wallet
+verf&uuml;gbaren Kreditkarten aus, es wird ihm im SET-Wallet die Rechnung nochmals angezeigt und er best&auml;tigt die Zahlung.
+Nun werden zuerst die Zertifikate des H&auml;ndlers und des SET-Payment-Gateways &uuml;berpr&uuml;ft. Dies gibt dem K&auml;ufer die 
+Gewissheit, da&szlig; es sich um offizielle Vertragspartner handelt. Danach wird eine Meldung mit einer "Pr&uuml;fsumme" &uuml;ber die
+Rechnung, die W&auml;hrung und den Betrag erstellt. Diese Meldung wird mit dem geheimen Schl&uuml;ssel des Karteninhabers 
+unterschrieben, verschl&uuml;sselt und zusammen mit dem Zertifikat des Karteninhabers an den H&auml;ndler geschickt.
+</p>
+<p>
+Der H&auml;ndler pr&uuml;ft als erstes das Zertifikat des Kunden, um sicherzugehen, da&szlig; er die Daten vom echten Karteninhaber 
+erhalten hat. Danach erstellt die H&auml;ndler-Software eine Autorisierungsanfrage an das SET-Payment-Gateway mit folgendem 
+Inhalt:
+</p>
+<ol>
+<li>Die Meldung des K&auml;ufers mit dessen Zertifikat
+<li>Eine Meldung des H&auml;ndlers, welche dieselben Informationen (Pr&uuml;fsumme, W&auml;hrung, Betrag) aus der Sicht des H&auml;ndlers enth&auml;lt. 
+Diese Meldung hat der H&auml;ndler mit seinem privaten SET-Schl&uuml;ssel unterschrieben, verschl&uuml;sselt und mit seinem Zertifikat erg&auml;nzt.
+</ol>
+<p>
+Das SET-Payment-Gateway pr&uuml;ft die Unterschrift des Karteninhabers, die Unterschrift des H&auml;ndlers sowie &Uuml;bereinstimmung 
+von Rechnungs-Pr&uuml;fsumme, W&auml;hrung und Betrag aus den beiden Meldungen. Sofern diese Pr&uuml;fungen erfolgreich sind, ist 
+sowohl die Echtheit von Karteninhaber und H&auml;ndler als auch die &Uuml;bereinstimmung der Kaufabsichten von K&auml;ufer und 
+H&auml;ndler erwiesen. Das SET-Payment-Gateway leitet nun die W&auml;hrung, den Betrag und die Kartennummer an den Autorisierungshost
+weiter.
+</p>
+<p>
+Der Autorisierungshost der Kreditkartenorganisation pr&uuml;ft, ob ein g&uuml;ltiger Vertrag mit dem H&auml;ndler vorliegt, die 
+Karte des Kunden nicht gesperrt ist und das Limit der Karte nicht &uuml;berschritten ist.
+</p>
+<p>
+Das Ergebnis der Autorisierung wird wieder an das SET-Payment-Gateway zur&uuml;ckgesandt, das seinerseits den H&auml;ndler-Server 
+&uuml;ber das Resultat informiert.
+Wenn der Kauf vom SET-Payment-Gateway freigegeben wurde, wird die erfolgreiche Abwicklung des Kaufes dem K&auml;ufer 
+best&auml;tigt. Andernfalls wird der Karteninhaber &uuml;ber den Grund der Ablehnung informiert.
+</p>
+<p>
+Nach Abschlu&szlig; der Autorisierung erfolgt au&szlig;erhalb von SET die Auslieferung der bestellten Waren oder Dienstleistungen 
+durch den H&auml;ndler.
+</p>
+<p>
+Dieser relativ kompliziert wirkende Vorgang l&auml;uft innerhalb weniger Sekunden ab, so da&szlig; sich der Kunde nahezu verzugslos
+weiteren Aktivit&auml;ten im Internet widmen kann. Die abschlie&szlig;ende Sektion des heutigen Artikels gibt detailliert Aufschlu&szlig; 
+wann und wie welcher Schritt des SET Einkaufsvorgangs abl&auml;uft.
+</p>
+<p>
+<h2>Der Nachrichtenverlauf im Detail</h2>
+<ol>
+<li>Der Karteninhaber f&uuml;llt den Warenkorb und leitet den Kaufvorgang ein (kein Zertifikat notwendig). 
+<li>Der Server des H&auml;ndlers sendet eine Initialisierungsnachricht an die Payware (kein Zertifikat notwendig). 
+<li>Die Payware sendet eine Wakeup-Nachricht an den H&auml;ndler-Server (kein Zertifikat notwendig). 
+<li>Der H&auml;ndler-Server leitet die Wakeup-Nachricht an den Browser weiter (kein Zertifikat notwendig). 
+<li>Der Browser erh&auml;lt die Wakeup-Nachricht und aktiviert das Wallet (kein Zertifikat notwendig). 
+<li>Das Wallet sendet eine Anforderung der Kaufinitialisierung (PInitReq) an die Payware (Zertifikat notwendig). 
+<li>Die Payware sendet eine Antwort wegen Kaufinitialisierung (PInitRes) an das Wallet mit der Frage nach Bestelldetails (Zertifikat notwendig). 
+<li>Das Wallet sendet eine Kaufanforderung mit Bestelldetails (PReq) an die Payware (Zertifikat notwendig). 
+<li>Die Payware sendet eine Anforderung der Kaufautorisierung (AuthReq) an das Payment Gateway (Zertifikat notwendig). 
+<li>Das Payment Gateway sendet eine Anforderung (AuthReq) der Kaufgenehmigung an die abwickelnde Bank (Zertifikat notwendig). 
+<li>Die abwickelnde Bank sendet eine Antwort (AuthRes) auf die Genehmigungsanforderung an das Payment Gateway (Zertifikat notwendig). 
+<li>Das Payment Gateway sendet eine Antwort wegen Kaufautorisierung (AuthRes) an die Payware (Zertifikat notwendig). 
+<li>Die Payware sendet die Autorisierungsantwort an den H&auml;ndler-Server (kein Zertifikat notwendig). 
+<li>Die Payware sendet eine Transaktionsbest&auml;tigung (PRes) an das Wallet (Zertifikat notwendig). 
+<li>Das Wallet veranlasst den Browser zur Anzeige einer Ausgabeseite (Erfolgs-/Fehlermeldung) (kein Zertifikat notwendig). 
+</ol>
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+In diesem Artikel habe ich Ihnen die Grundlagen von SET, und wie die einzelnen Schritte (Kunde, H&auml;ndler, Gateway, 
+Kreditkartenfirmen) ablaufen im &Uuml;berblick pr&auml;sentiert. Details zu den Einzelkomponenten (Gateway, Wallet, 
+H&auml;ndlersoftware) folgen im n&auml;chsten Artikel.
+</p><h2>Verwandte Artikel</h2>
+<p>
+<a href="20000904.htm">Beteiligte Komponenten bei SET Transaktionen (Teil&nbsp;1)</a><br>
+<a href="20000905.htm">Beteiligte Komponenten bei SET Transaktionen (Teil&nbsp;2)</a><br>
+<a href="20010531.htm">Keine gefakten Bestellungen mehr!</a><br>
+<a href="20000630.htm">Verwendung von SSL Test-Certificates</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eecin%2Ede">Ecin</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eeuropay%2Eat%2Fhtdocs%2Findex%2Ehtm">Mastercard.at</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eeurocard%2Ede%2Fonline%2Dshopping%2Findex%2Ehtml">Mastercard.de</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Esetco%2Eorg">SETCO</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Evisa%2Eat%2Fset%2Findex%2Ehtml">Visa.at</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Evisa%2Ede%2Fks%2Fservice%2Finternetshopping%2Ehtm">Visa.de</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000901" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Sichere Zahlungen im Internet mit SET"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000901.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Weissengruber"><input type="hidden" name="AuthorEmail" value="c.weissengruber@set4u.at"><input type="hidden" name="Artikel" value="20000901"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000901.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

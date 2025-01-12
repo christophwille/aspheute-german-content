@@ -1,0 +1,620 @@
+<HTML>
+<HEAD>
+<TITLE>Stringoperationen, die Zweite</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel stellt der Autor wiederum Stringfunktionen anhand praktischer Beispiele vor. Darunter sind Left, Right, Mid, Len, Replace, Instr, InstrRev und andere mehr.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Left,Mid,Right,Instr,InstrRev,Len,Split,Join,String,VBScript,ASP,Replace,SQL Server,Apostroph,Ersetzen von Zeichen,Suchen in strings">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Stringoperationen, die Zweite</H1>
+<p>
+Geschrieben von: <a href="../autoren/stefangruendhammer.htm">Stefan Gründhammer</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001020"></SCRIPT>
+</p>
+<p>
+Zur ausgekl&uuml;gelten Validierung von Formularen ist es fast immer n&ouml;tig, die Position eines oder mehrerer
+Zeichen zu kennen. Nehmen wir als Beispiel eine E-Mail-Adresse. Hier m&ouml;chte man wissen, ob das  
+@-Zeichen  vorkommt, und an welcher Stelle. Oder, Sie haben einen String in dem eine bestimmte Zeichenfolge
+immer wieder vorkommt, diese aber in einem neuen Dokument nicht mehr erscheinen darf - was machen wir da?
+Nat&uuml;rlich ausschneiden oder durch z.B.: ein Leerzeichen ("") ersetzen.
+</p>
+
+<p>
+Bevor wir mit Anwendungsbeispielen starten, m&ouml;chte ich Ihnen noch eine Liste der Befehle zeigen, mit denen
+wir uns heute besch&auml;ftigen werden:
+</p>
+<p>
+<table>
+<tr><th align="left">Funktion</th><th align="left">Bedeutung der Funktion</th></tr>
+<tr><td>InStr()</td><td>Gibt die Position eines Zeichens oder einer Zeichenkette in einem String, beginnend von links, an </td></tr>
+<tr><td>InStrRev()</td><td>Gibt die Position eines Zeichens oder einer Zeichenkette in einem String, beginnend von rechts, an</td></tr>
+<tr><td>Len()</td><td>Gibt die L&auml;nge eines Textes zur&uuml;ck</td></tr>				
+<tr><td>Replace()</td><td>Ersetzt Textst&uuml;cke durch andere</td></tr>
+<tr><td>Left()</td><td>Gibt den linken Teil vom Text zur&uuml;ck</td></tr>
+<tr><td>Mid()</td><td>Gibt den mittleren Teil vom String zur&uuml;ck</td></tr>
+<tr><td>Right()</td><td>Gibt den rechten Teil vom Text zur&uuml;ck</td></tr>
+<tr><td>Split()</td><td>Liefert ein nullbasierendes, eindimensionales Array bestehend aus Teilstrings</td></tr>
+<tr><td>Join()</td><td>Bildet einen String aus Teilstrings eines Arrays</td></tr>
+</table>
+</p>
+<p>Ich habe mir folgende Probleme zur Beschreibung der oben angef&uuml;hrten Funktionen ausgesucht:</p>
+<p>
+<ul>
+<li>Zerschneiden und wieder zusammensetzen von Zeichenketten</li>
+<li>Suchen von Zeichenketten in Strings</li>
+<li>Austauschen von Strings</li>
+</ul>
+</p>
+<h2>Zerschneiden und wieder zusammensetzen von Zeichenketten</h2>
+<p>
+Stellen Sie sich einmal vor, Sie haben einen String den Sie an ganz spezifischen Punkten trennen m&uuml;ssen. Leider
+ist dieser String ziehmlich lang - oder es gibt mehrere zu trennen, was dann?
+Da Programmierer von Haus aus tippfaul sind, und sich lieber den Kopf dar&uuml;ber zerbrechen "Wie kann ich mir die 
+Arbeit erleichtern, oder gar ersparen", als Sie zu Fu&szlig; zu machen, zeige ich Ihnen wie man das macht.
+</p>
+<p>
+Nehmen wir zum Beispiel die Punkte in einer IP-Adresse als unsere spezifischen Trennzeichen. 
+Ich zeige Ihnen jetzt 2 M&ouml;glichkeiten eine IP-Adresse zu trennen und wieder zusammenzusetzen.
+</p>
+<h3>M&ouml;glichkeit 1</h3>
+<p>
+Wenn Sie in einer Datenbank tausende Datens&auml;tze haben und sich in jedem eine IP-Adresse befindet dann 
+k&ouml;nnen Sie durch den Split der IP-Adresse sehr viel an Platz einsparen. Sie k&ouml;nnen die
+Zahlenbl&ouml;cke der IP-Adresse in eigene Felder speichern, und dadurch, da&szlig; es sich nun nur noch um Zahlen
+handelt (welche ein Byte brauchen) werden Sie viel weniger Speicherplatz ben&ouml;tigen als wenn Sie 
+z.B 192.168.3.22 in ein eigenes Textfeld speichern. Die Speicherplatzersparnis betr&auml;gt 11 Byte,
+und das allein ist schon ein guter Grund f&uuml;r diese Prozedur. Und au&szlig;erdem werden Zahlenfelder von Datenbanken 
+schneller und leichter verwaltet als Textfelder, was wiederum Geschwindigkeit bringt. 
+</p>
+<P>
+Das folgende Beispiel ist <i>splitten.asp</i>. 
+</p>
+<p>
+<pre style="background='silver';">
+10: &lt;% Dim strIP, arrIP, strIP2
+11: strIP = "192.168.3.22"
+12: Response.Write "Die IP-Adresse lautet" &amp; strIP &amp; _
+       " und wird mit Split() getrennt" &amp;"&lt;br&gt;"
+13: arrIP = Split(strIP,".")
+14: Response.Write arrIP(0) &amp; "&lt;br&gt;"
+15: Response.Write arrIP(1) &amp; "&lt;br&gt;"
+16: Response.Write arrIP(2) &amp; "&lt;br&gt;"
+17: Response.Write arrIP(3) &amp; "&lt;br&gt;"
+18:
+19: Response.Write "Nun werden die Segmente wieder mit der Funktion &lt;i&gt;
+                   Join()&lt;i&gt; zusammengef&uuml;gt.&lt;br&gt;"
+20: strIP2 = Join(arrIP,".")
+21: Response.Write strIP2 &amp; "&lt;br&gt;"
+22: %&gt;
+</pre>	
+</p>					
+<p>
+Die <i>Split()</i> Funktion liefert ein nullbasierendes eindimensionales Array zur&uuml;ck in welches die 
+Segmente der <i>Split</i> Funktion gespeichert werden. Durch die Syntax des <i>Split</i> Befehls 
+<i>Split(Ausdruck,Begrenzungszeichen,Z&auml;hler,Vergleich)</i> k&ouml;nnen Sie mit diesem Befehl sehr viel 
+machen.
+</p>
+<p>
+Hier noch einige Erkl&auml;rungen zur Syntax: Das <i>Begrenzungszeichen</i> m&uuml;ssen Sie zwischen zwei 
+Anf&uuml;hrungszeichen setzen (in unserem Fall "."). Wenn Sie -1 f&uuml;r den <i>Z&auml;hler</i> einsetzen, werden alle
+Teilstrings zur&uuml;ckgeliefert, sollten Sie in Versuchung kommen z.B. 3 einzusetzen werden 3 Teilstrings
+zur&uuml;ckgegeben. Mit <i>Vergleich</i> k&ouml;nnen Sie auf bin&auml;re Gleichheit (0) oder Textgleichheit (1) vergleichen.
+</p>
+<p>
+Die Funktion <i>Join(Wert,Begrenzungzeichen)</i> liefert einen String zur&uuml;ck, der aus den Substrings
+eines Arrays gebildet wird - also das Gegenteil von Split tut. In unserem Fall habe ich die IP-Adresse wieder 
+zusammengesetzt.
+</p>
+
+<h3>M&ouml;glichkeit 2</h3>
+<p>
+Hier verwende ich nun einen anderen String, um Ihnen die M&ouml;glichkeiten der unten beschriebenen Funktionen etwas
+besser illustrieren zu k&ouml;nnen. Meistens werden die zerschnitten Strings auch wieder zusammengef&uuml;gt, sei es nun
+in der selben Reihenfolge oder einer anderen oder gar mit F&uuml;llzeichen (Trennzeichen) wie z.B. einem Leerzeichen. 
+Ich werde Ihnen nun anhand eines kleinen Beispiels (<i>zerschneiden.asp</i> im Download) drei neue Funktionen
+erkl&auml;ren.
+</p>
+<p>
+<pre style="background='silver';">
+ 1: &lt;% @Language = VBScript %&gt;
+ 2: &lt;% Option Explicit 
+ 3:  Response.Expires=0 %&gt;
+ 4:  &lt;html&gt;
+ 5:  &lt;head&gt;
+ 6:  &lt;title&gt;zerschneiden.asp&lt;/title&gt;
+ 7:  &lt;/head&gt;
+ 8:  &lt;body&gt;
+ 9:	&lt;h3&gt;Zerschneiden und wieder zusammensetzen eines Strings&lt;/h3&gt;
+10:	&lt;p&gt;Zum Zerschneiden eines Strings werden folgende Befehle verwendet:&lt;/p&gt;
+11:	&lt;p&gt;&lt;ul&gt;
+12:     &lt;li&gt;Left()&lt;/li&gt;
+13:     &lt;li&gt;Mid()&lt;/li&gt;
+14:     &lt;li&gt;Right()&lt;/li&gt;
+15:     &lt;/ul&gt;&lt;/p&gt;
+16:     &lt;p&gt;&lt;b&gt;Unser Teststring lautet: &lt;i&gt;ZerschneidenvonStings&lt;/i&gt;&lt;/b&gt;&lt;/p&gt;
+17: &lt;% Dim strText, zer, von, str
+18:	strText = "ZerschneidenvonStings"
+19:	zer = Left(strText, 12)
+20:	von = Mid(strText, 13, 3)
+21:	str = Right(strText, 6)
+22: %&gt;
+23: Das Ergebnis lautet: &lt;% Response.Write zer %&gt;&nbsp;&lt;% = von %&gt;&nbsp;&lt;% = str %&gt;
+24: Kuerzer geht das so: &lt;% = zer &amp;" "&amp; von &amp;" "&amp; str %&gt;
+25: &lt;/body&gt;
+26: &lt;/html&gt;
+</pre>
+</p>
+<p>
+Der Befehl <i>Left(strText, 12)</i> in Zeile 19 liefert die ersten 12 Zeichen der Zeichenkette 
+strText von links startend als Stringkopie und schreibt diese aus, bzw. weist sie der 
+Variable "zer" zu. Die Syntax von <i>Left(Zeichenfolge, L&auml;nge)</i> ist wiedereinmal sehr leicht.
+</p>	
+<p>
+<i>Mid(strText, 13, 3)</i> in der Zeile 20 liefert eine Kopie von 3 Zeichen beginnend vom 
+13ten (einschlie&szlig;lich) und schreibt diese entweder aus oder weist diese einer Variable zu.
+Die Syntax von <i>Mid(Zeichenfolge, Anfang, L&auml;nge)</i> ist etwas komplizierter als die von <i>Left()</i>.
+Mit <i>Anfang</i> geben Sie die Position des Zeichens an, von dem weg eine bestimmte Anzahl an Zeichen (<i>L&auml;nge</i>)
+zur&uuml;ckgeliefert werden soll. <i>Zeichenfolge</i> und <i>Anfang</i> m&uuml;ssen in dieser Funktion gesetzt sein,
+<i>L&auml;nge</i> dagegen ist optional. Wenn Sie bei <i>L&auml;nge</i> eine Zahl eingeben die gr&ouml;&szlig;er ist als die Anzahl an
+Zeichen vom Anfang (Position von der weg Sie ausschneiden m&ouml;chten) bis zum Ende der Zeichenfolge, oder Sie
+<i>L&auml;nge</i> nicht angeben, werden alle Zeichen von <i>Anfang</i> bis zum Ende der Zeichenfolge zur&uuml;ckgeliefert 
+(w&uuml;rde dann der <i>Right()</i> Funktion entsprechen).  
+</p>
+<p>
+Der Befehl <i>Right(strText, 6)</i> in Zeile 21 liefert eine Kopie der letzten 6 Zeichen der 
+Zeichenkette und schreibt diese aus. Die Syntax der <i>Right</i>-Funktion ist <i>Right(Zeichenfolge, L&auml;nge)</i>, und ist
+somit die selbe wie bei der <i>Left</i>-Funktion.
+</p>
+<p>
+In Zeile 23 zeige ich die primitivste Art des Ausschreibens und Aneinanderf&uuml;gens von Strings,
+und in Zeile 24 die etwas k&uuml;rzere Version mit Hilfe des "&amp;" Zeichens. Sie k&ouml;nnen zum Zusammensetzen
+eines Strings aber auch das "+" Zeichen verwenden, aber <b>Vorsicht</b> "&amp;" und "+" haben 
+grunds&auml;tzliche Unterschiede. Wenn Sie das "+" Zeichen verwenden um Strings aneinanderzureihen
+und in beiden Strings befindet sich ein Zahl, so kommt es zu einer Addition der Zahlen und das 
+ist nicht das was wir wollen. Also verwenden Sie im Zweifelsfall immer das "&amp;" Zeichen.
+N&auml;heres dazu finden Sie im Artikel
+<a href="20000503.htm">Einfache String Operationen</a>.
+</p>
+<h2>Suchen von Zeichenketten in Strings</h2>
+<p>
+Wenn Sie Eingaben eines Formulars auf ihre Richtigkeit &uuml;berpr&uuml;fen kommen Sie nicht um das Suchen
+von Zeichenketten in Zeichenketten herum. Nat&uuml;rlich ist die Position des gefunden Zeichens auch sehr wichtig.
+Im n&auml;chsten Listing sehen Sie einen Ausschnitt eines einfachen Formularvalidierungsskripts <i>formular.asp</i>.
+Ich werde hier besonders auf die Funktionen <i>InStrRev()</i> und <i>InStr()</i> eingehen.
+</p>
+<p>
+<pre style="background='silver';">
+45: ' Emailadresse auf Richtigkeit bei der Eingabe pruefen
+46: If 6 &gt; Len(strEmailAdresse) Or 0 = Instr(strEmailAdresse,"@") Or _
+       0 = InstrRev(strEmailAdresse,".") or _
+47:   5 &lt;= (Len(strEmailAdresse) - InstrRev(strEmailAdresse,".")) or _
+48:   2 &gt; (Len(strEmailAdresse) - InstrRev(strEmailAdresse,".")) Then
+49:   bErfolg = False
+50:   strError = strError &amp; "Email Adresse, "
+51: End if
+</pre>	
+</p>
+<p>
+In Zeile 46 sehen Sie folgende Funktionen <i>Len(strEmailAdresse)</i>, <i>Instr(strEmailAdresse,"@"),</i>
+<i> InstrRev(strEmailAdresse,".")</i>. <i>Len()</i> wurde bereits im Artikel
+<a href="20001003.htm">Einf&uuml;hrung in Stringoperationen</a> beschrieben und wird
+hier nur angef&uuml;hrt. Die Beschreibung der beiden anderen folgt sofort.
+</p>
+<p>
+Der gesamte Codeblock ist von einer If-Verzweigung eingeschlossen.
+<i>0 = Instr(strEmailAdresse,"@")</i> aus der Zeile 46 liefert die Position des Zeichens @
+zur&uuml;ck, die Position wird von links ermittelt. Wenn das Zeichen nicht im String vorhanden ist
+liefert die Funktion 0 zur&uuml;ck, und die Bedingung ist erf&uuml;llt und liefert <i>True</i>. 
+Ebenso wie bei der n&auml;chsten Funktion: <i>0 = InstrRev(strEmailAdresse,".")</i> wiederum aus 
+Zeile 46 liefert die Position des ersten Punktes von rechts aus gesehen, die Position wird 
+wieder von links (also absolut) bestimmt. Ist kein Punkt im String dann liefert die Funktion 0.
+W&auml;ren z.B. vier Punkte in einem String liefert <i>InstrRev()</i> die Position des letzten, oder anders gesagt des
+ersten von rechts.
+Indem ich <i>InStr()</i> und <i>InStrRev</i> mit 0 vergleiche pr&uuml;fe ich eigentlich nur auf Vorhandensein des gesuchten Zeichens.
+</p>
+<p>
+In den Zeilen 47 und 48 bestimme ich die Position des ersten Punktes (von rechts) in der 
+Emailadresse und vergleiche sie. 
+<i>5 &lt;= (Len(strEmailAdresse) - InstrRev(strEmailAdresse,"."))</i> stellt fest ob die Position
+des ersten Punktes von rechts gr&ouml;&szlig;er oder gleich 5 ist. Wenn ja, dann wird <i>True</i> zur&uuml;ckgeliefert.
+<i>2 &gt; (Len(strEmailAdresse) - InstrRev(strEmailAdresse,"."))</i> pr&uuml;ft ob der Punkt an 
+letzter oder vorletzter Stelle des Strings ist. Ist dies der Fall, dann liefert die Bedingung <i>True</i>.
+Bei jedem <i>True</i> in dieser If-Verzweigung wird die Fehlermeldung <i>strError</i> ausgegeben.
+</p>
+
+<h2>Austauschen von Strings</h2>
+<p>
+Oft ist es notwendig, W&ouml;rter oder Zeichenketten in einer Datenbank oder einem Formular etc. 
+auszutauschen. Auch daf&uuml;r gibt es eine passende Funktion und diese w&auml;re <i>Replace()</i>.
+Die Syntax von <i>Replace(Zeichenfolge, SuchString, ErsetzenDurch[,Anfang[,Anzahl[,Vergleich]]])</i>
+ist etwas komplexer, die Parameter <i>Zeichenfolge</i>, <i>SuchString</i> und <i>ErsetzenDurch</i>
+m&uuml;ssen in der Replace-Funktion enthalten sein. <i>Anfang</i>, <i>Anzahl</i> und <i>Vergleich</i>
+hingegen sind optional.
+</p>
+<h3>Erforderliche Parameter</h3>
+<p>
+<table>
+<tr>
+<td><i>Zeichenfolge</i></td>
+<td>hier k&ouml;nnen Sie direkt einen String eingeben, oder Sie geben einfach die Variable eines Strings ein. </td>
+</tr>
+<tr>
+<td><i>Suchstring</i></td>
+<td>das ist jener String, nach dem in der Zeichenfolge gesucht wird.</td>
+</tr>
+<tr>
+<td><i>ErsetzenDurch</i></td>
+<td>der neue String.</td>
+</tr>
+</table>
+</p>
+<h3>Optionale Parameter</h3>
+<p>
+<table>
+<tr>
+<td><i>Anfang</i></td>
+<td>gibt die Position in Zeichenfolge an, von der die Suche nach der Teilzeichenfolge
+beginnen soll</td>
+</tr>
+<tr>
+<td><i>Anzahl</i></td>
+<td>hiermit k&ouml;nnen Sie bestimmen wie oft die Teilzeichenfolge ersetzt werden soll. Wenn 
+Sie nichts angeben werden alle ersetzt. Kann nur in Verbindung mit <i>Anfang</i> eingesetzt werden, und 
+umgekehrt</td>
+</tr>
+<tr>
+<td><i>Vergleich</i></td>
+<td>hier k&ouml;nnen Sie wieder auf bin&auml;re Gleichheit oder Textgleichheit pr&uuml;fen</td>
+</tr>
+</table>
+</p>
+<p>
+Mit <i>Replace()</i> k&ouml;nnen Sie Textst&uuml;cke bzw. Zeichenketten durch andere ersetzen. Diese Funktion eignet
+sich zum Beispiel hervorragend um Namen in Serienbriefe einzuf&uuml;gen. Ich habe dazu wieder ein kleines
+Beispielscript geschrieben, das Sie unter <i>ersetzen.asp</i> im Download finden.
+</p>
+<p>
+<pre style="background='silver';">
+ 1: &lt;% @Language = VBScript %&gt;
+ 2: &lt;% Option Explicit 
+ 3:  Response.Expires=0 %&gt;
+ 4:	&lt;html&gt;
+ 5:	&lt;head&gt;
+ 6:	&lt;title&gt;ersetzen.asp&lt;/title&gt;
+ 7:	&lt;/head&gt;
+ 8:	&lt;body&gt;
+ 9:     &lt;h3&gt;Ersetzen eines Strings durch einen anderen&lt;/h3&gt;
+10:     &lt;p&gt;Zum Ersetzen eines Strings wird die Funktion Replace() verwendet: &lt;/p&gt;
+11:     &lt;p&gt;&lt;b&gt;Unser Teststring lautet: &lt;i&gt;Ersetzen von Stings&lt;/i&gt;&lt;/b&gt;&lt;/p&gt;
+12:     &lt;% Dim strText, zer, von, ersetzt
+13:     strText = "Ersetzen von Stings"
+14:     ersetzt = Replace(strText, "von", "durch")
+15:     %&gt;
+16:	&lt;b&gt;Das Ergebnis lautet:&lt;i&gt;&lt;% Response.Write ersetzt %&gt;&lt;/i&gt;&lt;/b&gt;
+17:	&lt;/body&gt;
+18:	&lt;/html&gt;
+</pre>
+</p>
+<p>
+In diesem Beispiel sehen Sie wie einfach man Strings ersetzen kann. Diese Funktion k&ouml;nnen Sie auch zum
+Updaten Ihrer Site nutzen indem Sie den String mittels Formular an das Script &uuml;bergeben. Auch das 
+ist wieder nur ein kleines Beispiel f&uuml;r diesen m&auml;chtigen Befehl.
+</p>
+<p>
+Sie sollten sich bei der Verwendung der Replace-Funktion &uuml;ber eines im Klaren sein: Replace liefert nicht
+den ge&auml;nderten Originalstring, sondern nur den neuen ge&auml;nderten String zur&uuml;ck. Der orginale bleibt somit erhalten.
+Wenn Sie aber den Orginalstring ge&auml;ndert haben wollen, dann speichern Sie das Ergebnis einfach in der
+selben Variable ab.
+</p>
+<p>
+Die Einsatzm&ouml;glichkeiten der <i>Replace</i>-Funktion sind sehr gro&szlig;. Sie reichen vom entfernen von Leerzeichen oder
+immer wiederkehrenden Zeichenfolgen bis zum ganz einfachen ersetzen von Zeichen. Eines der wichtigsten
+Beispiele f&uuml;r das Ersetzen von Zeichen und Zeichenketten kommt aus dem Bereich Datenbanken. Folgende
+Fehlermeldung ist mit Sicherheit jedem ASP-Programmierer ein Begriff: <i>Syntax error (missing operator) in
+query expression"</i>.
+</p>
+<p>
+Wenn Sie f&uuml;r das Auslesen, Hinzuf&uuml;gen, Updaten, oder L&ouml;schen von Werten einer Datenbank
+SQL Statements (Structured Query Language) verwenden, dann gibt es einen Fall auf den Sie besonders
+aufpassen sollten. Ich werden diesen Fall anhand dieses Beispiels erkl&auml;ren:
+</p>
+<p>
+<pre style="background='silver';">
+ 1: strDatei = Server.MapPath("/Datenbank.mdb")
+ 2:
+ 3: Set conn = Server.CreateObject("ADODB.Connection")
+ 4: conn.open "Provider=Microsoft.Jet.OLEDB.4.0;" &amp; _
+ 5:     "Data Source=" &amp; strDatei &amp; ";User ID=admin;Password=;"
+ 6: Set rs = Server.CreateObject("ADODB.Recordset")
+ 7: strNachName = "O'Neil"
+ 8: rs.Open "SELECT * FROM Tabelle1 WHERE Name = '" &amp; strNachName &amp; "'", conn
+</pre>
+</p>			
+<p>
+In Zeile 7 wird der Variable strName der String O'Neil zugewiesen, dieser Name
+enth&auml;lt ein Apostroph. Dieses Apostroph ist schuld an der Fehlermeldung. Sehen wir 
+uns das SQL Statement einmal etwas genauer an:
+</p>
+<p>
+<pre style="background='silver';">SELECT * FROM Tabelle1 WHERE Name ='O'Neil'</pre>
+</p>
+<p>
+Da der Text 'O'Neil' durch zwei Apostrophe begrenzt wird und der Text selber auch eines
+enth&auml;lt ist es f&uuml;r SQL nicht mehr m&ouml;glich eine zuverl&auml;ssige Entscheidung zu treffen.
+Um SQL die Entscheidung abzunehmen mu&szlig; man zwei Apostrophe in den Text schreiben.
+</p> 
+<p>
+Das korrekte SQL Statement mu&szlig; dann so aussehen:
+</p>
+<p>
+<pre style="background='silver';">SELECT * FROM Tabelle1 WHERE Name ='O''Neil'</pre>
+</p>
+<p>
+Um uns nun die Arbeit etwas zu erleichtern werde ich nun die Replace() Funktion ins Spiel
+bringen. Um diesen Fehler zu vermeiden sollten Sie das SQL Statement wie folgt ver&auml;ndern.
+</p>
+<p>
+<pre style="background='silver';">SELECT * FROM Tabelle1 WHERE Name = '" &amp; Replace(strNachName,"'","''") &amp; "'</pre>
+</p>	
+<p>
+Damit Ihnen dieser Fehler nicht mehr unterkommt empfehle ich Ihnen die <i>Replace()</i> Funktion
+in jedem SQL Statement, in dem Sie Texte dynamisch einf&uuml;gen.
+</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Sie haben in diesem Artikel neben vielen anderen die wichtigsten Stringoperationen, wie z.B. die <i>Split()</i>, 
+<i>Join()</i> oder die <i>Replace</i> Funktion kennengelernt. Sie k&ouml;nnen nun u. a. Strings mit 
+Hilfe der <i>Split</i> Funktion in einzelne Arrays aufteilen oder Strings mit <i>Join()</i> zusammenf&uuml;gen. 
+Die <i>Replace</i> Funktion erspart Ihnen m&uuml;hseliges auffinden und ersetzen von Strings.
+</p>
+<p>
+Diese Anleitung mit praktischen Beispielen sollte Ihren t&auml;glichen ASP/VBScript Alltag um einiges vereinfachen.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001020.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20001003.htm">Einf&uuml;hrung in Stringoperationen</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20001020" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Stringoperationen, die Zweite"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20001020.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Stefan Gründhammer"><input type="hidden" name="AuthorEmail" value="stefang@xitra.com"><input type="hidden" name="Artikel" value="20001020"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20001020.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

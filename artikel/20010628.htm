@@ -1,0 +1,594 @@
+<HTML>
+<HEAD>
+<TITLE>Onlinestatus des Users &uuml;ber RemoteScripting ermitteln</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Eine der interessantesten Fragen ist doch immer wieder, wieviele User jetzt gerade in unserem Webangebot online sind. Ich m&ouml;chte Ihnen heute vorstellen, die RemoteScripting entsprechend nutzt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Remote Scripting,RemoteScripting,User online,Counter,aktive Benutzer">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Onlinestatus des Users &uuml;ber RemoteScripting ermitteln</H1>
+<p>
+Geschrieben von: <a href="../autoren/renedrescher-hackel.htm">Rene Drescher-Hackel</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010628"></SCRIPT>
+</p>
+<p>
+Eine der interessantesten Fragen ist doch immer wieder, wieviele User jetzt gerade in unserem Webangebot 
+"online" sind. Hier gibt es sicherlich verschiedene Ansatzpunkte, um diese Frage zu beantworten. Einerseits 
+k&ouml;nnte man &uuml;ber Sessionvariablen verschiedene Events ausl&ouml;sen. Doch da ist wieder das Problem mit dem tempor&auml;ren 
+Cookie, sowie das Problem mit dem TimeOut. Dann k&ouml;nnte man aber auch &uuml;ber ein "Null-definiertes" Frame (ein 
+Frame mit der Gr&ouml;&szlig;e 0 bzw. 1) einen Refresh auf eine bestimmte Seite setzen. Doch was machen wir, wenn der 
+Browser keine Frames unterst&uuml;tzt (was aber fast kaum noch der Fall sein d&uuml;rfte - von einigen Exoten mal 
+abgesehen)?
+</p>
+
+<p>
+Ich m&ouml;chte Ihnen heute eine weitere Variante vorstellen, die die Vorz&uuml;ge des RemoteScripting entsprechend nutzt. 
+Um auch hier den Nachteil klar beim Namen zu nennen: Es wird ein Java-Applet initialisiert, soda&szlig; clientseitige 
+Javaunterst&uuml;tzung vorhanden sein mu&szlig;. Das Java-Applet ist beim RemoteScripting die Br&uuml;cke zwischen Client und 
+Server.
+</p>
+
+<h3>Voraussetzungen</h3>
+
+<p>
+Die Voraussetzungen sind im wesentlichen in den Artikeln 
+<a href="20010601.htm">Sicherheitsaspekte bei der Gestaltung von ASP Sites ohne Cookies</a> und 
+<a href="20010606.htm">RemoteScripting - Einf&uuml;hrung, Tips und Tricks</a> beschrieben. Erg&auml;nzend 
+zum letztgenannten Artikel werde ich Ihnen dabei heute den asyncronen Funktionsaufruf mit vorstellen.
+</p>
+
+<h2>User erfassen</h2>
+
+<p>
+Da wir auf Cookies und Sessions verzichten, m&uuml;ssen wir wieder ein anderes Merkmal schaffen, an dem wir immer 
+wieder unseren Client erkennen. Hier nutzen wir einfach wieder unsere ID, die wir entsprechend allen Links 
+mitgeben. Die ID erzeugen wir dabei nach der gleichen Methode, wie im Artikel <a href="20010601.htm">Sicherheitsaspekte bei der 
+Gestaltung von ASP Sites ohne Cookies</a> beschrieben:
+</p>
+
+<pre style="background='silver';">
+Public Function ID_erzeugen()
+	' erforderliche Variablen dimensionieren
+	Dim z		' Zufallszahl
+	Dim t		' Zeit
+	Dim d		' Datum
+	Dim ip		' IP des jeweiligen IUSR
+	Dim tempID	' die sp&auml;tere ID in der tempor&auml;ren Variablen
+	tempID = ""
+	Do
+	RANDOMIZE(TIME())
+	' 1. Parameter - eine Zufallszahl bis 999.999.999
+	z = Int(999999999 * RND + 1)
+	' 2. Parameter - eine Zahl aus der aktuellen Zeit erstellt
+	t = Replace(TIME(),":","")
+	' 3. Parameter - eine Zahl aus dem aktuellen Datum erstellt
+	d = Replace(DATE(),".","")
+	' 4. Parameter - eine Zahl aus der IP des Besuchers erstellt
+	ip = Replace(Request.ServerVariables("REMOTE_ADDR"),".","")
+	' ID erzeugen
+	tempID = z &amp; t &amp; d &amp; ip
+	' Nach erfolgreicher Erzeugung der ID kann diese jetzt in die DB &uuml;bernommen werden
+	sql = "INSERT INTO tblcount(sessionid) VALUES('" &amp; tempID &amp; "');"
+	call dbconnect()
+	On Error Resume Next
+	Conn.Execute(sql)
+	On Error Goto 0
+	loop Until Err=0
+	call dbclose()
+	' ID an die Function &uuml;bergeben
+	'ID_erzeugen = tempID
+	' oder mit ID Startseite aufrufen
+	Response.Redirect "index.asp?ID="&amp; tempID
+End Function
+</pre>
+
+<p>
+Die erzeugte ID wird dabei in einer Datenbank abgespeichert. Hier habe ich eine Access-Datenbank erstellt, die 
+die folgende Tabelle (<i>tblCount</i>) enth&auml;lt:
+</p>
+
+<IMG SRC="Bilder/200106/20010628_1.png" width="478" height="373" alt="" border="0">
+
+<p>
+Neben der ID, die wir im Feld <i>sessionid</i> ablegen, speichern wir auch noch die letzte Aktivit&auml;t des Clients 
+im Feld lastaction, wobei dieses Feld als "DATETIME" (DATE[Standarddatum]) definiert ist. Weiterhin speichern 
+wir den Onlinestatus im Feld <i>connected</i>, das wir lediglich auf "Ja/Nein" eingestellt haben. Da das Feld 
+<i>connected</i> sogenannte "Proze&szlig;daten" enth&auml;lt, ist es von der Sache her nicht zwingend erforderlich.  
+</p>
+
+<p>
+Die Datenbankverbindung ist auch hier wieder in einer kleinen Prozedur zusammengefa&szlig;t.
+</p>
+
+<pre style="background='silver';">
+Private Sub dbconnect()
+ Dim strConnStr
+ ' Datenbankverbindung aufbauen (mit Fehlerpr&uuml;fung)
+ If IsObject("Conn") = FALSE Then ' Object erstellen
+   Set Conn = Server.CreateObject("ADODB.Connection")
+   strConnStr = "Provider=Microsoft.Jet.OLEDB.4.0;" &amp;_
+        "Data Source=" &amp; Server.MapPath("db/aspproject.mdb")
+   Conn.Open strConnStr
+ End If
+End Sub
+</pre>
+
+<p>
+Hat der User unser Webangebot erstmals aufgerufen, wird dann folgender Eintrag in der Datenbank erzeugt:
+</p>
+
+<IMG SRC="Bilder/200106/20010628_2.png" width="684" height="102" alt="" border="0">
+
+<p>
+Das hei&szlig;t also, da&szlig; jeder User, der unser Webangebot aufruft, automatisch einen eigenen und &uuml;ber die ID ihm 
+zuordenbaren Datensatz erzeugt. Jetzt ben&ouml;tigen wir lediglich eine Routine, die abgleicht, ob der Datensatz 
+noch aktuell ist (<i>lastaction</i>), der User also noch "online" ist.
+</p>
+
+<h2>Useraktivstatus pr&uuml;fen</h2>
+
+<p>
+In der Datei <b>onliner.asp</b> haben wir die eigentliche Funktionalit&auml;t wieder zusammengefa&szlig;t. Hier ist dann auch die 
+Function "online_upd()" angelegt, die den User Status &uuml;berpr&uuml;ft.
+</p>
+
+<pre style="background='silver';">
+Public Function online_upd(ByVal ID)
+    ' Function aktualisiert eigenen Datensatz und 
+    ' 1.) den Zeitstempel aktualisieren
+    sql1 = "UPDATE tblCount SET lastaction ='" &amp; now() &amp; "' , connected = true " 
+    ' 1a.) in Abh&auml;ngigkeit zum Client &uuml;ber die SessionID
+    sql1 = sql1 &amp; " WHERE sessionid ='" &amp; ID &amp; "';" 
+    ' deaktiviert "inaktive" Sessions
+    sql2 = "UPDATE tblCount SET connected = false " 'inaktive Sessions abmelden
+    ' wo die letzte Aktion l&auml;nger als 10 Sek. zur&uuml;ckliegt
+    sql2 = sql2 &amp; " WHERE connected = true AND lastaction &lt; DATEadd(""s"",-10,NOW) ;"
+    ' Datenbankverbindung aufbauen
+    call dbconnect()
+    ' und Abfragen ausf&uuml;hren
+    conn.Execute(sql1)
+    conn.Execute(sql2)
+    ' zum Schlu&szlig; die Anzahl der aktiven Sessions an die Function zur&uuml;ck geben
+    online_upd = conn.Execute("SELECT COUNT(sessionid) FROM tblCount WHERE connected = true;")(0)
+    call dbclose()
+End Function
+</pre>
+
+<p>
+Als Parameter &uuml;bergeben wir wertm&auml;&szlig;ig an die Funktion die ID, also <i>ByVal</i>.
+</p>
+
+<p>
+Dann formulieren wir erst unsere einzelnen SQL-Statements. Hier m&uuml;ssen wir als erstes den der ID entsprechenden 
+Datensatz "aktualisieren". Die Aktualisierung erfolgt &uuml;ber das Feld <i>lastaction</i>, wobei einfach nur der 
+Zeitwert neu gesetzt wird.
+</p>
+
+<p>
+Als zweites deaktivieren wir "inaktive Sitzungen", solche also, deren letzte Aktualisierung schon l&auml;nger zur&uuml;ck 
+liegt. Als Zeitgrenze w&auml;hlen wir hier einmal 10 Sekunden, das hei&szlig;t, alle Eintr&auml;ge im Feld <i>lastaction</i>, die 
+&auml;lter als 10 Sekunden sind, sind "inaktiv". Deshalb wird <i>connected</i> dann auf "false" gesetzt.
+</p>
+
+<h2>Clientseitige Einbettung</h2>
+
+<p>
+Nat&uuml;rlich m&uuml;ssen wir das ganze irgendwie auch vom Client(-browser)  aus aufrufen k&ouml;nnen. Wie eingangs schon 
+angesprochen, k&ouml;nnte man das ganze nat&uuml;rlich &uuml;ber Frames entsprechend realisieren. Wir wollen hier aber 
+wieder die Vorz&uuml;ge des RemoteScriptings nutzen.
+</p>
+
+<p>
+Hinsichtlich der Einbettung der RemoteScripting-Funktionalit&auml;t sei hier nur nochmal auf den oben aufgef&uuml;hrten 
+<a href="20010606.htm">Artikel zum RemoteScripting</a> verwiesen.
+</p>
+
+<p>
+Um eventuelle Fehler jetzt abzufangen, erfolgt der Aufruf der Serverfunktion asyncron, das hei&szlig;t,  unsere 
+JavaScript-Funktion ruft die Serverfunktion auf, wartet aber nicht auf das vom Server zur&uuml;ckgegebene Ergebnis 
+(die Funktion wird nur "angestossen"). Damit das Ergebnis aber dennoch angezeigt wird, wird eine 
+"Erfolgsfunktion" und eine "Mi&szlig;erfolgsfunktion" im Aufruf der Serverfunktion mit angegeben. Praktisch sieht das 
+ganze wie folgt aus:
+</p>
+
+<pre style="background='silver';">
+// Datei mit der Serverfunktionalit&auml;t
+var url = "onliner.asp";
+// Function, die die Serverfunktion aufruft
+function jetztonline(myid)
+{
+  var retval = RSExecute(url,"online_upd",myid,online,fehler);
+}
+</pre>
+
+<p>
+Die Variable <i>url</i> enth&auml;lt die Angabe auf unsere RemoteScripting Datei, die die Serverfunktionalit&auml;t 
+bereith&auml;lt - im heutigen Beispiel <b>onliner.asp</b>.
+</p>
+
+<p>
+In der Funktion "jetztonline()" rufen wir die RSExecute-Methode auf, wobei die Funktion "jetztonline()" die 
+ID des Users aus der URL mit &uuml;bernimmt, da dieser Wert ja von unserer Serverfunktion <i>online_upd</i> erwartet wird. 
+</p>
+
+<p>
+Bekommen wir ein Ergebnis zur&uuml;ck, dann wird die (Erfolgs)Funktion "online" aufgerufen, andernfalls - wenn der 
+Aufruf der Funktion "jetztonline(myid)" einen Fehler erzeugte - die (Mi&szlig;erfolgs)Funktion "fehler". Die Funktion 
+"online" &uuml;bernimmt dabei den R&uuml;ckgabewert (<i>retval</i>) der RSExecute-Methode aus der Function "jetztonline()". 
+</p>
+
+<p>
+Unsere Funktion "online" sieht folgenderma&szlig;en aus:
+</p>
+
+<pre style="background='silver';">
+// Function, die im Erfolgsfall (kein Fehler) aufgerufen wird
+function online(retval)
+{
+  document.all.online.innerHTML = "zur Zeit online:" + retval.return_value;
+}
+</pre>
+
+<p>
+Im BODY Tag unseres Dokumentes haben wir den Eintrag
+</p>
+
+<pre style="background='silver';">
+&lt;div id=online &gt;&lt;/div&gt;
+</pre>
+
+<p>
+Innerhalb diesen Bereiches geben wir dann unser Ergebnis des &uuml;rspr&uuml;nglichen Serverfunktionsaufrufes aus, das 
+wir mit 
+</p>
+
+<pre style="background='silver';">
+document.all.online.innerHTML = "zur Zeit online:" + retval.return_value;
+</pre>
+
+<p>
+sichtbar machen k&ouml;nnen.
+</p>
+
+<p>
+Jetzt m&uuml;ssen wir nur noch ein "Refresh" unseres Funktionsaufrufes realisieren, damit der Onlinestatus immer 
+aktuell ist. Da der eigentliche Refresh nicht auf die Seite gerichtet sein mu&szlig; ( wie z.B. in der 
+Frames-Variante), damit die Funktion "jetztonline()" neu ausgef&uuml;hrt wird, m&uuml;ssen wir eine L&ouml;sung in die 
+Funktion "online" einf&uuml;gen, die die Funktion "jetztonline" in bestimmten, kontinuierlichen Abst&auml;nden 
+aufrufen wird. Hier ist uns die JavaScript-Anweisung 
+</p>
+
+<pre style="background='silver';">
+setTimeout("jetztonline('&lt;%=id%&gt;')",9000);
+</pre>
+
+<p>
+behilflich. Im ersten Teil benennen wir die Funktion, die aufzurufen ist (mit all ihren Argumenten - hier die 
+ID des Clients), im zweiten Teil geben wir an, nach welcher Zeit die Funktion, die wir im ersten Teil 
+benannt haben, aufzurufen ist. Die Angabe des Zeitintervalls erfolgt dabei hier in Millisekunden, so 
+da&szlig; in unserem konkreten Fall alle 9 Sekunden die Funktion "jetztonline" aufgerufen wird (alles gr&ouml;&szlig;er 
+oder gleich 10 Sekunden w&uuml;rde eine Abmeldung zur Folge haben. Wer also den Wert von 9000 msec. erh&ouml;hen m&ouml;chte, 
+mu&szlig; dann auch die Zeitparameter in der Funktion <i>online_upd()</i> entsprechend anpassen.).
+</p>
+
+<p>
+Falls der Aufruf der Funktion "jetztonline" einen Fehler hervorruft, wird die Fehlerfunktion aufgerufen. Will 
+man das R&uuml;ckgabeergebnis <i>retval</i> in der Fehlerfunktion auswerten, so mu&szlig; diese auch den Wert mit&uuml;bernehmen. 
+In unserem Beispiel ist aber gerade die Fehlerauswertung des R&uuml;ckgabewerte v&ouml;llig uninteressant. Wir 
+ben&ouml;tigen bestenfalls nur eine alternative Anzeige beim Client, ohne jedoch eine "alert"-Box aufzurufen. 
+Nach M&ouml;glichkeit soll doch der Client gar nicht mitbekommen, da&szlig; es jetzt gerade einen Fehler gab. 
+</p>
+
+<p>
+Unsere Fehlerfunktion haben wir daher folgenderma&szlig;en definiert:
+</p>
+
+<pre style="background='silver';">
+// Function, die im Fall eines RemoteScripting-Fehlers aufgerufen wird
+function fehler()
+{
+  document.all.online.innerHTML = "zur Zeit online:...bitte warten...";
+  setTimeout("jetztonline('&lt;%=id%&gt;')",3000);} 
+}
+</pre>
+
+<p>
+Wurde ein Fehler in der Funktion "jetztonline" zur&uuml;ckgegeben, so wird nicht der aktuelle Onlinestatus beim Client 
+angezeigt, sondern alternativ "...bitte warten ...". 
+</p>
+
+<IMG SRC="Bilder/200106/20010628_3.png" width="626" height="185" alt="" border="0">
+
+<p>
+Wir warten einfach 3 Sekunden, und fragen dann erneut beim Server an.
+Wird kein Fehler zur&uuml;ckgegeben, bekommen wir die gew&uuml;nschte Anzeige im Browser.
+</p>
+
+<IMG SRC="Bilder/200106/20010628_4.png" width="626" height="185" alt="" border="0">
+
+<p>
+Damit jetzt das Ganze durch den Client ohne gro&szlig;es Zutun in Gang gesetzt wird, m&uuml;ssen wir irgendwo unsere 
+Funktion "jetztonline" einmal aufrufen. Im weiteren ruft sie sich - wie wir oben ja gesehen haben - 
+selbst&auml;ndig auf. Es bietet sich also das "onload"-Event an, soda&szlig; im BODY Tag folgender Eintrag hinzukommt:
+</p>
+
+<pre style="background='silver';">
+&lt;BODY onload = "jetztonline('&lt;%=id%&gt;')"&gt;
+</pre>
+
+<p>
+Damit w&auml;ren wir fertig. Wir bekommen jetzt immer die Anzahl aller Benutzer angezeigt, die im Zeitrahmen 
+von &plusmn;10 Sekunden in unserem Angebot "online" sind.
+</p>
+
+<h2>Zusammenfassung</h2>
+
+<p>
+&Uuml;ber RemoteScripting den Onlinestatus zu erfassen ist eine durchaus interessante Sache und zeigt einmal mehr, 
+was alles m&ouml;glich ist. Zu bedenken bleibt aber eines dennoch: wir fragen permanent die Datenbank ab, und das 
+in relativ kurzen Zeitperioden. Wenn Sie die hier vorgestellte Variante einsetzen wollen, so w&uuml;rde ich Ihnen 
+eine separate Datenbank (Access) empfehlen, damit die Zugriffszahlen gewisserma&szlig;en verteilt werden k&ouml;nnen. 
+Beim Einsatz des MS-SQL-Servers bietet es sich an, einiges an Arbeit auf den SQL-Server zu verlagern. 
+</p>
+
+<p>
+Hinsichtlich des Einsatzes des MySQL-Servers hat die Praxis gezeigt, da&szlig; es hier dem Datenbank-Server scheinbar 
+egal ist, wie oft und in welchen Zeitintervallen eine Abfrage erfolgt - ein Punkt, der sicherlich f&uuml;r dessen 
+Einsatz spricht. Im kleinen "Stresstest" hat sich gezeigt, da&szlig; sowohl die Access-Datenbank, als auch die 
+Anwendung ohne gr&ouml;&szlig;ere Probleme die Aufgaben bew&auml;ltigt. Nach ca. 62 Aufrufen in 7 Sekunden war allerdings 
+am Windows 2000 Professional PC "Feierabend" - der IE hat hier dann seinen weiteren Dienst versagt.
+</p>
+
+<p>
+In entsprechender Kombination k&ouml;nnte man dann noch eine Benutzertabelle abfragen und sich so den Benutzernamen 
+des (angemeldeten) Benutzers anzeigen lassen. &Uuml;ber eine entsprechende Verlinkung lie&szlig;e sich dann sogar ein 
+kleines Kommunikationssystem realisieren. 
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010628.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20010125.htm">Remote Scripting (I)</a><br>
+<a href="20010606.htm">RemoteScripting - Einf&uuml;hrung, Tips und Tricks</a><br>
+<a href="20010601.htm">Sicherheitsaspekte bei der Gestaltung von ASP Sites ohne Cookies</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20010628" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Onlinestatus des Users &uuml;ber RemoteScripting ermitteln"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20010628.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Rene Drescher-Hackel"><input type="hidden" name="AuthorEmail" value="rene@drescher-hackel.de"><input type="hidden" name="Artikel" value="20010628"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20010628.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

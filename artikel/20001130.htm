@@ -1,0 +1,434 @@
+<HTML>
+<HEAD>
+<TITLE>Bildinformationen selbst ermitteln</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel beschreibt wie mant mit Hilfe von C# und ASP.NET Bildinformationen von Bildern beliebiger Formate selbst ermittelt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP.NET,.NET,ImageSize,Bildinformationen,SDK,C#,C Sharp,Csharp,ASPX,GUID">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Bildinformationen selbst ermitteln</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001130"></SCRIPT>
+</p>
+<p>
+Ein h&auml;ufiges Problem beim Upload von Bilddateien ist, da&szlig; die Gr&ouml;&szlig;e (Breite, H&ouml;he) nicht
+bekannt ist, und man sie selbst ermitteln mu&szlig;. Unter ASP kann man sich mit der Gratiskomponente
+ImageSize von ServerObjects behelfen, die allerdings auf wenige (wichtige) Formate beschr&auml;nkt ist.
+</p>
+<p>
+Mit Hilfe des .NET Frameworks hingegen kann man sich selbst eine ImageInfo Komponente programmieren,
+ohne da&szlig; dies in groben Aufwand ausartet - man mu&szlig; nur die Bitmap Klasse zu seinem Vorteil verwenden.
+Und schon bekommt man Gr&ouml;&szlig;eninformationen zu den wichtigsten Bildformaten!
+</p>
+
+<h2>Die ImageInfo Komponente erstellen</h2>
+<p>
+Ich habe mich entschlossen, die Funktionalit&auml;t der Ermittlung von Bildinformationen in eine eigene
+Klasse auszulagern. Diese Klasse hat folgende Methoden und Eigenschaften:
+</p>
+
+<ul>
+<li><b>void Load(string)</b>: L&auml;dt die angegebene Bilddatei.
+<li>[get] <b>int Width</b>: Auslesen der Bildbreite.
+<li>[get] <b>int Height</b>: Auslesen der Bildh&ouml;he.
+<li>[get] <b>string Format</b>: Auslesen des Bildformats ("JPEG", etc).
+</ul>
+
+<p>
+Die Eigenschaften sind klarerweise Nur-Lese Eigenschaften, die mit Hilfe von Accessors implementiert
+sind. Aus Faulheitsgr&uuml;nden f&auml;ngt die Klasse selbst keine Exceptions ab, diese werden an den 
+Aufrufer durchgereicht (Datei nicht existent, kein g&uuml;ltiges Format, ...).
+</p>
+<p>
+Der vollst&auml;ndige Sourcecode sieht wie folgt aus (<b>ImageInfo.cs</b>):
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+
+namespace AspHeute
+{
+ public class ImageInfo
+ {
+   Bitmap m_bmpRepresentation;
+   
+   public void Load(string strImageFile)
+   {
+    m_bmpRepresentation = new Bitmap(strImageFile, false);
+   }
+
+   public int Height
+   {
+     get { return m_bmpRepresentation.Height; }
+   }
+   
+   public int Width
+   {
+     get { return m_bmpRepresentation.Height; }
+   }  
+   
+   public string Format
+   {
+     get 
+     {
+      ImageFormat bmpFormat = m_bmpRepresentation.RawFormat;
+      string strFormat = &quot;unidentified format&quot;;
+      
+	  if (bmpFormat.Equals(ImageFormat.Bmp)) strFormat = "BMP";
+	  else if (bmpFormat.Equals(ImageFormat.Emf)) strFormat = "EMF";
+	  else if (bmpFormat.Equals(ImageFormat.Exif)) strFormat = "EXIF";
+	  else if (bmpFormat.Equals(ImageFormat.Gif)) strFormat = "GIF";
+	  else if (bmpFormat.Equals(ImageFormat.Icon)) strFormat = "Icon";
+	  else if (bmpFormat.Equals(ImageFormat.Jpeg)) strFormat = "JPEG";
+	  else if (bmpFormat.Equals(ImageFormat.MemoryBmp)) strFormat = "MemoryBMP";
+	  else if (bmpFormat.Equals(ImageFormat.Png)) strFormat = "PNG";
+	  else if (bmpFormat.Equals(ImageFormat.Tiff)) strFormat = "TIFF";
+	  else if (bmpFormat.Equals(ImageFormat.Wmf)) strFormat = "WMF";
+      
+      return strFormat;
+     }
+   }
+ }
+}
+</pre>
+
+<p>
+Der Gro&szlig;teil des Codes findet sich im Accessor f&uuml;r das Bildformat (<i>Format</i>), da das Bildformat als <i>GUID</i>
+definiert ist, und ich somit die Vergleiche mit <i>Equals</i> durchf&uuml;hren mu&szlig;. Allerdings bekommt
+der Anwender der Komponente einen einfach weiterzuverwendenden String geliefert, zB f&uuml;r ein <i>Select Case</i>
+in VB.NET
+</p>
+<p>
+Das Laden des Bitmaps geschieht mit dem Konstruktor der <i>Bitmap</i> Klasse in der <i>Load</i> Methode. 
+Ab diesem Zeitpunkt ist das Bitmap im Speicher, und zwar vollst&auml;ndig. Da Speicher in .NET mit
+Hilfe des Garbage Collectors gemanaged wird, sollte man die <i>Bitmap</i> Klasse und das <i>ImageInfo</i> 
+Objekt daher nach Verwendung so schnell als m&ouml;glich explizit (=selbst) aus dem Speicher entfernen, und zwar mit Hilfe einer <i>Dispose</i>
+Methode, die ich <i>nicht</i> eingebaut habe (Bastel&uuml;bung f&uuml;r den Leser):
+</p>
+
+<pre style="background='silver';">
+public void Dispose()
+{
+  m_bmpRepresentation.Dispose();
+}
+</pre>
+
+<p>
+Diese Methode sollte man nach der letzten Verwendung der ImageInfo Klasse aufrufen, was die
+Performance der Applikation deutlich hebt. Generell gilt unter .NET, da&szlig; man Resourcen selbst so bald
+als m&ouml;glich explizit freigeben soll! Das Warten auf den Garbage Collector kann zur (Performance)Falle werden.
+</p>
+<p>
+Kompiliert wird die Komponente mittels der im Download beigef&uuml;gten Batchdatei <i>compile.bat</i>.
+Nach erfolgter Kompilierung mu&szlig; man die Komponente noch in das <i>bin</i> Verzeichnis der Website kopieren,
+und schon kann man diese in allen ASP.NET Seiten verwenden.
+</p>
+
+<h2>Die Komponente im Einsatz</h2>
+<p>
+Da die Komponente nicht gerade "viel" an Funktionalit&auml;t bietet, ist die Verwendung denkbar einfach.
+Der einzige wichtige Punkt ist die Fehlerbehandlung - da ich in der Komponente auf Exceptionhandling
+verzichtet habe, mu&szlig; man dieses in der ASP.NET Datei nachholen (<b>demo.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;AspHeute&quot; %&gt;
+&lt;%
+string strImageFile = Page.MapPath(&quot;myImage.jpg&quot;);
+bool bLoadedOK = true;
+ImageInfo imgInfo = new ImageInfo();
+
+try
+{
+  imgInfo.Load(strImageFile);
+}
+catch (Exception e)
+{
+  Response.Write(e.ToString());
+  bLoadedOK = false;
+}
+
+if (bLoadedOK)
+{
+  Response.Write(&quot;Breite: &quot; + imgInfo.Width + &quot;&lt;br&gt;&quot;);
+  Response.Write(&quot;H&ouml;he: &quot; + imgInfo.Height + &quot;&lt;br&gt;&quot;);
+  Response.Write(&quot;Bildformat: &quot; + imgInfo.Format + &quot;&lt;br&gt;&quot;);
+}
+%&gt;
+</pre>
+
+<p>
+Bei diesem Sourcecode d&uuml;rfte eigentlich alles klar sein. Es ist jeder herzlich eingeladen,
+verschiedene Bilddateien und -formate auszuprobieren!
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Wieder einmal rettet .NET den Tag dadurch, da&szlig; es enorm viel Funktionalit&auml;t gratis zur Verf&uuml;gung stellt,
+und man nur danach suchen mu&szlig;. Und das Beste ist, die heute vorgestellte ImageInfo Komponente ist in
+allen .NET Applikationen verwendbar, nicht nur in ASP.NET Seiten.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001130.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20020702.htm">.NET Komponenten in COM+ Clients einsetzen</a><br>
+<a href="20020703.htm">Eine kleine Bilddatenbank, Teil 1</a><br>
+<a href="20020225.htm">Thumbnailgenerierung in .NET</a><br>
+<a href="20010212.htm">Thumbnails mit ASP generieren</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eserverobjects%2Ecom%2Fproducts%2Ehtm%23free">ImageSize</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20001130" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Bildinformationen selbst ermitteln"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20001130.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20001130"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20001130.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

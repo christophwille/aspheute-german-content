@@ -1,0 +1,420 @@
+<HTML>
+<HEAD>
+<TITLE>404 Fehler elegant entsch&auml;rfen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel stellt ein ASP Skript vor, mit dem man sogar aus 404 Object Not Found Fehlern Nutzen ziehen kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,404,ASP,Referer,Redirect,Fehlerbehandlung,Link,broken link,Linkcheck,Mailparser">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>404 Fehler elegant entsch&auml;rfen</H1>
+<p>
+Geschrieben von: <a href="../autoren/patricka_lorenz.htm">Patrick A. Lorenz</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000608"></SCRIPT>
+</p>
+<p>
+Die wohl bekannteste unter den Fehlermeldungen eines Web-Servers ist Numero 404, die die ern&uuml;chternde 
+Feststellung "Object not found" auf den Bildschirm des hoffnungsvollen Surfers zaubert. In diesem Artikel 
+m&ouml;chte ich Euch eine L&ouml;sung vorstellen, mit der Ihr die trostlose Fehlerseite gegen ein funktionales Script 
+austauschen k&ouml;nnt, das Euch automatisch &uuml;ber den Fehler informiert und Euch somit die M&ouml;glichkeit gibt, 
+schnell zu handeln und die schadhafte Stelle Eurer Website zu flicken.
+</p>
+
+<h2>Die Idee</h2>
+<p>
+Der Internet Information Server bietet die M&ouml;glichkeit, f&uuml;r die komplette Website oder sogar f&uuml;r einzelne 
+Verzeichnisse sog. Custom Error Messages festzulegen. Neben der 404 Fehlermeldung k&ouml;nnen dabei auch f&uuml;r nahezu 
+alle anderen Fehlermeldungen alternative Texte oder je nach Art der Meldung ein Script hinterlegt werden.
+</p>
+<p>
+In unserem Fall soll bei der Anforderung einer nicht existierenden Seite unser Script aufgerufen werden. Dieses 
+pr&uuml;ft an Hand des &uuml;bergebenen HTTP-Referers, woher der Benutzer kommt. Die URL der angeforderten Seite erh&auml;lt 
+das Script per GET Parameter &uuml;bergeben. Der Aufruf sieht wie folgt aus:
+<pre style="background=silver;">
+http://www.mydomain.com/?404;http://www.mydomain.com/missing.asp
+</pre>
+</p>
+<p>
+Aus den explizit (URL) und implizit (Referer) erhaltenen Informationen lassen sich drei F&auml;lle diagnostizieren:
+</p>
+<p>
+<ul>
+<li>Der Benutzer gibt manuell eine falsche Adresse in den Browser ein, in diesem Fall 
+	wird kein HTTP-Referer &uuml;bergeben.
+<li>Der Benutzer folgt einem Link innerhalb eines anderen Internet-Angebotes auf unser Internet-Angebot, 
+	der HTTP-Referer enth&auml;lt die URL der externen Seite.
+<li>Oder aber, der Benutzer folgt einem Link innerhalb unseres eigenen Internet-Angebotes, es gibt also 
+	einen fehlerhaften Link auf unseren eigenen Seiten. In diesem Fall enth&auml;lt der HTTP-Referer die URL der 
+	eigenen Seite.
+</ul>
+</p>
+<p>
+In den ersten beiden F&auml;llen wollen wir dem Benutzer lediglich eine entsprechende Meldung ausgeben, denn 
+tats&auml;chlich handeln k&ouml;nnen wir nicht. Im dritten Fall aber, haben wir den falschen Link selbst verbrochen 
+und sollten daher schnellstm&ouml;glichst Abhilfe schaffen. 
+</p>
+<p>
+Zun&auml;chst einmal m&uuml;ssen wir aber von dem Problem erfahren, am besten per eMail - Keine Frage, das erledigt unser 
+MailParser aus dem Artikel <a href="20000602.htm">Allgemeine MailParser Klasse</a> f&uuml;r uns.
+</p>
+
+<h2>Vorbereitung</h2>
+<p>
+Bevor wir das Script implementieren, bedarf es ein wenig Vorbereitung...
+</p>
+<p>
+Zun&auml;chst legen wir in der Root unseres Servers eine neue, leere ASP-Seite mit dem Namen 404.asp an. Nun rufen 
+wir den Konfigurationsdialog des Internet Information Servers auf. Unter Windows 2000 versteckt sich dieser 
+als "Internet Services Manager" im Order "Administrative Tools" der Systemsteuerung. Jetzt rufen wir den 
+Eigenschaftsdialog des gew&uuml;nschten Servers auf und markieren die Lasche "Custom Errors". In der erschreckend 
+langen Liste der m&ouml;glichen Fehler findet sich auch Nummer 404. Nach einem Klick auf den Eigenschaften-Button 
+und Ausw&auml;hlen der Option "URL" m&uuml;ssen wir nur noch die URL "/404.asp" eingeben und beide ge&ouml;ffneten Dialoge 
+best&auml;tigen.
+</p>
+<p><IMG SRC="Bilder/200006/20000608.png" width="461" height="453" border="0" alt=""></p>
+<p>
+Ab sofort ist die Custom Error Message aktiv!
+</p>
+
+<h2>Das Script</h2>
+<p>
+Nach einem kleinen Hinweis auf den Umstand dieser Fehlerseite in purem HTML wird das eigentliche Script 
+interpretiert. Dabei wird zun&auml;chst die Ursprungsseite ermittelt, die in der Server-Variable HTTP_REFERER im 
+Header des HTTP-Aufrufes vom Browser an den Server gesendet wird.
+<pre style="background=silver;">
+referer = Request.ServerVariables("HTTP_REFERER") 
+</pre>
+</p>
+<p>
+Nun stellen wir mit Hilfe der Ursprungsseite fest, wie der Benutzer auf die nicht existierende Seite gelangt 
+ist. Es gibt dabei die weiter oben angesprochenen folgenden drei M&ouml;glichkeiten:
+</p>
+<p>
+<ul>
+<li>Manuelle Eingabe
+<li>Link in anderem Internet-Angebot
+<li>Link in eigenem Internet-Angebot
+</ul>
+</p>
+<p>
+In dieser Reihenfolge wollen wir die Ursprungsseite auch ermitteln. Dazu verwenden wir ein einfaches 
+IF-ELSEIF-ELSE-Konstrukt:
+<pre style="background=silver;">
+ If IsEmpty(referer) Then
+  Message = "Bitte pr&uuml;fen Sie die Schreibweise der Adresse."
+  ...
+</pre>
+</p>
+<p>
+Es wurde kein Referer &uuml;bergeben, der Benutzer hat die URL also vermutlich manuell eingegeben.
+<pre style="background=silver;">
+ ElseIf InStr(1, referer, Request.ServerVariables("HTTP_HOST"), _
+ 		vbTextCompare) = 0 Then
+  Message = "Bitte informieren Sie den Webmaster der Seite " &amp; referer &amp; _
+            " &uuml;ber den fehlerhaften Link."
+  ...
+</pre>
+</p>
+<p>
+Es wurde ein Referer &uuml;bergeben, dieser liegt aber au&szlig;erhalb des eigenen Internet-Angebotes. Wie haben wir das 
+festgestellt? Nun, wenn er im eigenen Internet-Angebot liegen w&uuml;rde, w&uuml;rde er den Namen des Hosts beinhalten, 
+den wir &uuml;ber die Servervariable HTTP_HOST ermittelt haben.
+<pre style="background=silver;">
+ Else
+  Message = "Unser Webmaster wurde &uuml;ber den fehlerhaften Link " &amp; _
+            " innerhalb unseres Internet-Angebotes informiert und " &amp; _
+            " wird sich so schnell wie m&ouml;glich mit dem Problem besch&auml;ftigen"
+
+  url = Request.ServerVariables("QUERY_STRING")
+  url = Mid(url, InStr(url, ";") + 1)
+
+  Dim NewMail
+  Set NewMail = New MailParser
+
+  NewMail.AddVariable "referer", referer
+  NewMail.AddVariable "url", url
+  NewMail.Template = Server.Mappath("404.msg")
+
+  Call NewMail.Send
+ End If
+</pre>
+</p>
+<p>
+Wenn der Referer nicht leer ist und den Namen unseres eigenen Hosts enth&auml;lt, dann ist uns wohl ein Fehler 
+unterlaufen. In diesem Fall soll uns das Script mit Hilfe einer eMail informieren. 
+</p>
+<p>
+Wir verwenden dazu die Allgemeine MailParser-Klasse aus dem gleichnamigen <a href="20000602.htm">Artikel</a>. Der Klasse werden 
+zwei Variablen &uuml;bergeben. Zum einen ist das der Referer, also die Ursprungsseite, die wir bereits weiter oben 
+ermittelt haben und zum anderen ben&ouml;tigen wir zur Korrektur nat&uuml;rlich die URL der nicht existierenden Seite. 
+Diese wird vom Internet Information Server per Parameter an das Script &uuml;bergeben und zwar in folgender 
+Schreibweise: 404;<URL>. Per InStr und Mid schneiden wir die Fehlernummer kurzer Hand ab und &uuml;bergeben 
+lediglich die URL an die MailParser-Klasse.
+</p>
+<p>
+Im Anschlu&szlig; mu&szlig; lediglich die individuelle Fehlerbeschreibung ausgegeben werden:
+<pre style="background=silver;">
+ &lt;p&gt;
+  &lt;% = Message %&gt; &lt;b&gt; Vielen Dank f&uuml;r Ihr Verst&auml;ndnis! &lt;/b&gt;
+ &lt;/p&gt;
+</pre>
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Custom Error Pages erm&ouml;glichen uns, die tristen Fehlermeldungen des Internet Information Servers gegen 
+funktionale Scripts einzutauschen, die nicht nur den Benutzer schonend informieren, sondern dar&uuml;ber hinaus 
+einen Mehrwert zur Fehlerreduzierung bieten. Wer also eine ansprechende Website erstellen will, der sollte 
+sich einmal mit diesem Thema besch&auml;ftigen.
+</p>
+<p>
+<i>&lt;schleichwerbung&gt;</i> Ein meines Erachtens gutes Beispiel f&uuml;r den Einsatz einer Custom Error 404 Message 
+findet Ihr bei <a href="http://www.combit.de" target="_blank">combit.de</a>. Um die Effektivit&auml;t zu testen w&uuml;rde ich vorschlagen, 
+jeder, der auf der Website einen toten Link findet, bekommt von mir... Nein, soweit w&uuml;rde ich nicht gehen 
+;-), aber einen Blick lohnt die Website dennoch. <i>&lt;/schleichwerbung&gt;</i>
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000608.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20000602.htm">Allgemeine MailParser-Klasse mit ASPMail</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000608" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="404 Fehler elegant entsch&auml;rfen"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000608.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Patrick A. Lorenz"><input type="hidden" name="AuthorEmail" value="pl@p-l.de"><input type="hidden" name="Artikel" value="20000608"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000608.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

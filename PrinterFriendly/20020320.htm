@@ -1,0 +1,305 @@
+<HTML>
+<HEAD>
+<TITLE>Flash Detection ohne Komponente</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Eine unter Webprogrammierern &auml;u&szlig;ert beliebte Aufgabe ist es, ein Flash-Movie einzubinden und zwar so, da&szlig; der Browser des Benutzers vorher abgefragt wird, ob denn Flash &uuml;berhaupt und in welcher Version installiert ist.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,moock,moock fpi,Macromedia Flash,Detection,Plugin Detection,ActiveX Detection">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Flash Detection ohne Komponente</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020320"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Eine unter Webprogrammierern &auml;u&szlig;ert "beliebte" Aufgabe ist es, ein Flash-Movie einzubinden und zwar so, da&szlig;
+der Browser des Benutzers vorher abgefragt wird, ob denn Flash &uuml;berhaupt und in welcher Version installiert ist.
+Das Problem kann mit der BrowserHawk Komponente gel&ouml;st werden, oder gratis mit dem moock fpi.
+</p>
+<p>
+Der <b>moock flash player inspector</b> (kurz moock fpi) ist im Prinzip nichts anderes als ein JavaScript, das
+folgende Aufgabenstellungen bew&auml;ltigen kann:
+</p>
+
+<ul>
+<li>Explizite Detection-Seite, von der aus automatisch auf die Flash-Seite, eine Update-Seite oder 
+    eine Kein Flash-Seite umgeleitet (redirected) wird.
+<li>Inline Detection, bei der der Flash-Check in der Seite direkt ausgef&uuml;hrt wird (und dann 
+    entweder das Movie oder alternativer Inhalt angezeigt wird)
+</ul>
+
+<p>
+Die Version, auf der der Artikel basiert ist 1.3.5, und kann von <a href="http://www.moock.org/webdesign/flash/detection/moockfpi/">moock.org</a>
+downgeloadet werden. Im heutigen Artikel ver&auml;ndere ich die Skripts allerdings etwas, um das Einbinden in ASP Seiten zu vereinfachen.
+</p>
+
+<h2>Die Originalscripts</h2>
+<p>
+Die Arbeit von moock fpi passiert in folgenden Scripts (Reihenfolge der Abarbeitung):
+</p>
+
+<ul>
+<li><b>fpi-init.js</b> Initialisiert die Variablen f&uuml;r die Redirect bzw. Inline Modi.
+<li><b>fpi-writevb.js</b> Schreibt die IE Flash Detection
+<li><b>fpi-main.js</b> Hauptcode der Detection
+<li><b>fpi-swap.js</b> Optionale Datei bei Verwendung des Inline Modus. Beinhaltet das Movie und den alternativen Content.
+</ul>
+
+<p>
+Diese Scripts kann man ohne Umschweife sofort einsetzen (Samples sind bei moock fpi mit dabei), doch sp&auml;testens nach der 
+ersten Verwendung wundert man sich: in <i>fpi-init.js</i> und <i>fpi-swap.js</i> sind etliche wichtige Variablen hardcodiert,
+was zur Folge hat, da&szlig; man f&uuml;r jedes Movie diese beiden Dateien anpassen m&uuml;&szlig;te - das kann es ja wohl nicht sein!
+</p>
+
+<h2>Die FlashDetector Klasse</h2>
+<p>
+Um es m&ouml;glichst flexibel zu gestalten, und nicht globale Variablen einf&uuml;hren zu m&uuml;ssen, habe ich die Flash Detection
+in eine Klasse verpackt, passend benannt als <i>FlashDetector</i>. Das Grundger&uuml;st sieht wie folgt aus:
+</p>
+
+
+<pre style="background='silver';">
+&lt;script language="vbscript" runat="server"&gt;
+Class FlashDetector
+  ' General Properties
+  Public RequiredVersion
+  Public UseRedirect
+
+  ' Redirect to Flash Movie Properties
+  ' (UseRedirect = True)
+  Public FlashPage
+  Public NoFlashPage
+  Public UpgradePage
+
+  ' Page-Inline Flash Movie Properties
+  ' (UseRedirect = False)
+  Public AlternateContent
+  Public MovieWidth
+  Public MovieHeight
+  Public MovieUrl
+
+  Public Sub Initialize()
+  End Sub
+
+  ' Replaces fpi-init.js
+  Public Function GetHeaderJS()
+  End Function
+
+  ' Replaces fpi-swap.js
+  Public Function GetInlineMovieJS()
+  End Function
+End Class
+&lt;/script&gt;
+</pre>
+
+<p>
+Alle ehemals hardcodierten JavaScript Variablen sind in dieser Klasse als Properties verf&uuml;gbar, und die <i>Initialize</i>
+Methode setzt diese auf die Standardwerte, die auch moock fpi besitzt. Die beiden Methoden <i>GetHeaderJS</i> und
+<i>GetInlineMovieJS</i> liefern dann den Html Code, den wir in unsere Seiten einbauen m&uuml;ssen: ersterer kommt in die
+HEAD Sektion der Seite, der zweite wird nur bei Inline Movies eingesetzt.
+</p>
+<p>
+Ich erspare uns hier die Listings f&uuml;r beide Methoden, nur ein wichtiger Hinweis: die Dateien <i>fpi-init-asp.js</i>, <i>fpi-writevb.js</i> und
+<i>fpi-main.js</i> werden von der <i>GetHeaderJS</i> Funktion verwendet. Die Pfade sind relativ implementiert - wer die JS Dateien
+in ein separates Verzeichnis verschieben will, mu&szlig; folgende Zeilen in <b>DetectFlashClass.asp</b> ver&auml;ndern:
+</p>
+
+<pre style="background='silver';">
+strHtml = strHtml &amp; "&lt;SCRIP" &amp; "T LANGUAGE=""JavaScript"" type=""text/javascript""" &amp; _
+    " src=""fpi-init-asp.js""&gt;&lt;/SCRIP" &amp; "T&gt;" &amp; vbCrlf
+strHtml = strHtml &amp; "&lt;SCRIP" &amp; "T LANGUAGE=""JavaScript"" type=""text/javascript""" &amp; _
+    " src=""fpi-writevb.js""&gt;&lt;/SCRIP" &amp; "T&gt;" &amp; vbCrlf
+strHtml = strHtml &amp; "&lt;SCRIP" &amp; "T LANGUAGE=""JavaScript"" type=""text/javascript""" &amp; _
+    " src=""fpi-main.js""&gt;&lt;/SCRIP" &amp; "T&gt;" &amp; vbCrlf
+</pre>
+
+<p>
+Einfach bei <i>src</i> den Pfad absolut angeben, fertig.
+</p>
+
+<h2>Eine explizite Detection Seite</h2>
+<p>
+Nun sehen wir uns die Verwendungsszenarien an, beginnend bei der Variante einer expliziten Detection Seite.
+Im Prinzip habe ich das originale Beispiel nur auf die Klasse angepasst; der untenstehende ASP Code ist im Download als 
+<b>CheckByRedirect.asp</b> mit dabei:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Response.Expires=0
+Response.AddHeader "Pragma","no-cache"
+Response.AddHeader "cache-control", "no-store"
+%&gt;
+&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"&gt;
+&lt;HTML&gt;
+&lt;HEAD&gt;&lt;TITLE&gt;moock.fpi ASP Flash Detection Page&lt;/TITLE&gt;
+&lt;!--#include file="DetectFlashClass.asp"--&gt;
+&lt;%
+Dim flashDetect, strHeader
+Set flashDetect = New FlashDetector
+
+' NOTE: the sample uses the defaults from Initialize
+flashDetect.Initialize
+strHeader = flashDetect.GetHeaderJS()
+Response.Write strHeader
+%&gt;
+&lt;/HEAD&gt;
+&lt;BODY BGCOLOR="#FFFFFF"&gt;
+
+&lt;p&gt;
+Please wait while we are checking for Flash installed...
+&lt;/p&gt;
+
+&lt;NOSCRIPT&gt;
+  &lt;META HTTP-EQUIV="Refresh" CONTENT="10;URL=&lt;%=flashDetect.NoFlashPage%&gt;"&gt; 
+&lt;/NOSCRIPT&gt;
+
+&lt;/BODY&gt;
+&lt;/HTML&gt;
+</pre>
+
+<p>
+Nach dem Aufruf von Initialize sollte man auf alle F&auml;lle die Eigenschaften <i>FlashPage</i>, <i>NoFlashPage</i> und 
+<i>UpgradePage</i> setzen. <i>RequiredVersion</i> ist durch <i>Initialize</i> auf 5 gesetzt, moock fpi unterst&uuml;tzt
+in der aktuellen Version aber bereits Flash 6.
+</p>
+
+
+<h2>Inline Detection</h2>
+<p>
+Oftmals m&ouml;chte man keine Flash-Detection Seite vorschalten, sondern direkt auf der Seite entscheiden, was angezeigt 
+werden soll. Dann kann man bei <i>FlashDetector</i> die Eigenschaft <i>UseRedirect</i> auf False setzen, und direkt 
+mit den <i>Movie*</i> und <i>AlternateContent</i> Eigenschaften arbeiten (<b>InlineCheck.asp</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Response.Expires=0
+Response.AddHeader "Pragma","no-cache"
+Response.AddHeader "cache-control", "no-store"
+%&gt;
+&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"&gt;
+&lt;HTML&gt;
+&lt;HEAD&gt;&lt;TITLE&gt;moock.fpi ASP&lt;/TITLE&gt;
+&lt;!--#include file="DetectFlashClass.asp"--&gt;
+&lt;%
+Dim flashDetect, strHeader
+Set flashDetect = New FlashDetector
+
+flashDetect.Initialize
+flashDetect.UseRedirect = False
+flashDetect.AlternateContent = "&lt;IMG SRC=""altimage.gif"" HEIGHT=""400"" WIDTH=""550""&gt;"
+
+strHeader = flashDetect.GetHeaderJS()
+Response.Write strHeader
+%&gt;
+&lt;/HEAD&gt;
+
+&lt;BODY BGCOLOR="#FFFFFF"&gt;
+
+&lt;%
+strFlashContent = flashDetect.GetInlineMovieJS()
+Response.Write strFlashContent
+%&gt;
+
+&lt;NOSCRIPT&gt;
+&lt;%=flashDetect.AlternateContent%&gt;
+&lt;/NOSCRIPT&gt;
+
+&lt;/BODY&gt;
+&lt;/HTML&gt;
+</pre>
+
+<p>
+Da ich das moock fpi Beispielmovie verwende (das in <i>Initialize</i> gesetzt wird), erspare ich mir das Setzen der
+<i>Movie*</i> Eigenschaften, nur <i>AlternateContent</i> wird von mir verwendet (ist standardm&auml;&szlig;ig ein Leerstring).
+An der Stelle, an der das Movie angezeigt werden soll, ruft man <i>GetInlineMovieJS</i> auf und schreibt den Inhalt
+an den Client.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Das moock fpi ist von Haus aus sehr praktisch und funktioniert in vielen Browsern - in der heute vorgestellten ASP
+Version ist es noch dazu einfach und flexibel einsetzbar. Und vor allem mu&szlig; man kein JavaScript direkt editieren, dies
+wird alles automatisch von der VBScript Klasse passend generiert.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020320.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020320.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000410.htm">Browsereigenschaften mit BrowserHawk 2000 bestimmen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000410.htm</span><br>
+<a href="../artikel/19990808.htm">Caching bei Browser und Proxy - Woher Seiten wirklich kommen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990808.htm</span><br>
+<a href="../artikel/20000908.htm">Cookies in Flash mittels ASP manipulieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000908.htm</span><br>
+<a href="../artikel/20000719.htm">Datenaustausch zwischen Macromedia Flash und ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000719.htm</span><br>
+<a href="../artikel/20020321.htm">Flash Movies einbetten einfach gemacht</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020321.htm</span><br>
+<a href="../artikel/20000411.htm">Flash Plug-In Erkennung</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000411.htm</span><br>
+<a href="../artikel/20000526.htm">Klassen in VBScript</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000526.htm</span><br>
+<a href="../artikel/20010530.htm">Redirects mit Frame-Targets</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010530.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emoock%2Eorg%2Fwebdesign%2Fflash%2Fdetection%2Fmoockfpi%2F">moock fpi</a><br>
+<SPAN class="content">http://www.moock.org/webdesign/flash/detection/moockfpi/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

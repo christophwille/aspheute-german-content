@@ -1,0 +1,233 @@
+<HTML>
+<HEAD>
+<TITLE>Verzeichnissicherheit mit NTFS und IIS Authentifizierung</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Firmen m&ouml;chten hin und wieder den Zugang zu bestimmten Bereichen Ihrer Website absichern. Um dies umzusetzen, bietet der Internet Information Server zusammen mit Windows NT/2000 einiges an Verzeichnissicherheit.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SSL,Basic,Basic Authentication,NTLM,Integrated,Security,Sicherheit,ServerVariables,LOGON_USER,AUTH_TYPE,AUTH_USER,AUTH_PASSWORD">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Verzeichnissicherheit mit NTFS und IIS Authentifizierung</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001109"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Ger&uuml;chteweise habe ich geh&ouml;rt, da&szlig; Firmen hin und wieder den Zugang zu bestimmten Bereichen
+Ihrer Website absichern m&ouml;chten. Um dies umzusetzen, bietet der Internet Information Server
+zusammen mit Windows NT/2000 einiges an Verzeichnissicherheit. Und diese Unterst&uuml;tzung ist
+dergestalt, da&szlig; man als ASP Programmierer mitbekommt, wer gerade berechtigterma&szlig;en auf der
+Seite "surft".
+</p>
+<p>
+In diesem Artikel stelle ich zwei Varianten der IIS Authentifizierung vor, n&auml;mlich 
+<i>Basic Authentication</i> und <i>NTLM (NT Lan Manager) Authentication</i>. Der Vorteil
+von Basic ist da&szlig; jeder Browser sie versteht, wohingegen NTLM nur von Internet Explorer 
+unterst&uuml;tzt wird. Der Nachteil von Basic ist die sehr mangelhafte Verschl&uuml;sselung (daher
+eigentlich nur auf SSL Sites empfehlenswert), wohingegen die Sicherheit von NTLM als mehr
+als ausreichend bezeichnet werden kann.
+</p>
+
+<h2>Ein Verzeichnis sichern</h2>
+<p>
+Grunds&auml;tzlich mu&szlig; man zwei Tasks ausf&uuml;hren, um ein Webverzeichnis abzusichern:
+<ul>
+<li>Im ISM die Authentication Method einstellen
+<li>Im Explorer das Verzeichnis auf die gew&uuml;nschten User absperren
+</ul>
+</p>
+<p>
+Beginnen wir in der ISM. Auf die gew&uuml;nschte Site, Verzeichnis oder Datei mit der rechten
+Maustaste klicken, und Eigenschaften ausw&auml;hlen. Der folgende Screenshot ist f&uuml;r ein
+Verzeichnis, allerdings haben alle Eigenschaftendialogboxen den Security Tab - entweder
+Site Security, Directory Security oder File Security.
+</p>
+<p><IMG SRC="/artikel/Bilder/200011/20001109_01.png" width="511" height="474" alt="" border="0"></p>
+<p>
+Standardm&auml;&szlig;ig w&auml;re <i>Anonymous access</i> und <i>Integrated Windows authentication</i>
+selektiert. Da wir aber Basic Authentication zuerst testen wollen, schalten Sie den
+anonymen Zugriff ab, und w&auml;hlen Sie Basic. Sie werden bez&uuml;glich der mangelnden Sicherheit
+gewarnt, aber akzeptieren Sie diese Meldung. Schlie&szlig;en Sie alle Dialogboxen mit OK.
+</p>
+<p>
+Das war das Setup auf der Seite des IIS. Nun kommen wir zur NT Sicherheit. W&auml;hlen Sie das
+zu sicherende Verzeichnis, gehen in die Eigenschaftsdialogbox und w&auml;hlen Security. Hier
+w&auml;hlen Sie Benutzeraccounts und Berechtigungen aus.
+</p>
+<p><IMG SRC="/artikel/Bilder/200011/20001109_02.png" width="368" height="443" alt="" border="0"></p>
+<p>
+In diesem Beispiel habe ich nur Administratoren Zugriff gew&auml;hrt. F&uuml;r alle Ihre Versuche
+m&ouml;chte ich Sie daran erinnern, sich nicht selbst auszusperren! 
+</p>
+<p>
+Ein weiterer Tip: geben Sie dem <i>SYSTEM</i> Account immer Vollzugriff. Es erspart vor allem
+unerfahrenen NT Administratoren einiges an Problemen, &ouml;ffnet aber keine Sicherheitsl&uuml;cken.
+</p>
+
+<h2>Authentication Daten in ASP abfragen</h2>
+<p>
+Das Verzeichnis ist nun abgesichert. Wenn Sie eine Datei aufrufen, bekommen Sie folgende
+Dialogbox mit der Aufforderung zur Authentifizierung:
+</p>
+<p><IMG SRC="/artikel/Bilder/200011/20001109_03.png" width="589" height="390" alt="" border="0"></p>
+<p>
+Ich habe hier bereits die URL einer Datei eingetippt, die ich f&uuml;r Sie vorbereitet habe. Diese
+liest alle relevanten Benutzerdaten aus:
+</p>
+<p>
+<pre style="background='silver';">
+&lt;pre&gt;
+&lt;%
+strAuthType = Request.ServerVariables(&quot;AUTH_TYPE&quot;)
+strUser = Request.ServerVariables(&quot;AUTH_USER&quot;)
+strPassword = Request.ServerVariables(&quot;AUTH_PASSWORD&quot;)
+
+Response.Write &quot;Authentifizierungsmethode: &quot; &amp; strAuthType
+Response.Write vbCrlf
+Response.Write &quot;Benutzername: &quot; &amp; strUser
+Response.Write vbCrlf
+Response.Write &quot;Passwort (nur bei Basic): &quot; &amp; strPassword
+%&gt;
+&lt;/pre&gt;
+</pre>
+</p>
+<p>
+Sie erhalten &uuml;ber die <i>Request.ServerVariables</i> Collection Zugriff auf die Art
+der Authentifizierung, sowie den Benutzernamen und das Passwort. Zu letzterem m&ouml;chte
+ich ausdr&uuml;cklich hinzuf&uuml;gen da&szlig; dieses <b>nur</b> bei Basic Authentication verf&uuml;gbar
+ist - und bei keiner anderen!
+</p>
+<p>
+Bei Ausf&uuml;hrung sieht der Output wie folgt aus:
+</p>
+<p><IMG SRC="/artikel/Bilder/200011/20001109_04.png" width="427" height="215" alt="" border="0"></p>
+<p>
+Die Sternchen sind &uuml;brigens von mir eingesetzt - mein Passwort ist mein Passwort!
+</p>
+
+<h2>Der Unterschied: NTLM</h2>
+<p>
+Im Prinzip kann man das exakt gleiche Script mit NTLM Authentication laufen lassen. Der
+Unterschied ist nur, da&szlig; das Passwort nicht geliefert werden kann - ein Feature von NTLM.
+</p>
+<p>
+Allerdings habe ich das Script geringf&uuml;gig umgebaut, um die LOGON_USER Variable zu demonstrieren.
+Diese liefert das gleiche Resultat wie AUTH_USER.
+</p>
+<p>
+<pre style="background='silver';">
+&lt;pre&gt;
+&lt;%
+strAuthType = Request.ServerVariables(&quot;AUTH_TYPE&quot;)
+strUser = Request.ServerVariables(&quot;AUTH_USER&quot;)
+strLogonUser = Request.ServerVariables(&quot;LOGON_USER&quot;)
+
+Response.Write &quot;Authentifizierungsmethode: &quot; &amp; strAuthType
+Response.Write vbCrlf
+Response.Write &quot;Benutzername: &quot; &amp; strUser
+Response.Write vbCrlf
+Response.Write &quot;Logged-on User: &quot; &amp; strLogonUser
+%&gt;
+&lt;/pre&gt;
+</pre>
+</p>
+<p>
+Der Output im Browser ist unterschiedlich - wir bekommen die Domain (oder Maschinennamen)
+zus&auml;tzlich zum Benutzernamen geliefert. Und au&szlig;erdem ist die Method <i>Negotiate</i>, was
+allerdings nur IE richtig behandeln kann.
+</p>
+<p>
+<pre style="background='silver';">
+Authentifizierungsmethode: Negotiate
+Benutzername: XITRA-STAGE\Administrator
+Logged-on User: XITRA-STAGE\Administrator
+</pre>
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Basic Authentication ist eine gangbare Methode f&uuml;r Sites, die zus&auml;tzlich mit SSL gesichert
+sind. NTLM ist die erste Wahl bei Intranets, die auf Windows + IE aufbauen, weil man damit
+auch einen Single Sign-on realisieren kann.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001109.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20001109.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010521.htm">ASP-basierte Basic Authentication</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010521.htm</span><br>
+<a href="../artikel/20010508.htm">Dateizugriff auf Netzlaufwerken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010508.htm</span><br>
+<a href="../artikel/20020412.htm">Der Microsoft Baseline Security Analyzer (MBSA) 1.0</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020412.htm</span><br>
+<a href="../artikel/20010917.htm">Erstellung eines Intranets in ASP - Grundlagen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010917.htm</span><br>
+<a href="../artikel/20010608.htm">Formular-basierte Basic Authentication</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010608.htm</span><br>
+<a href="../artikel/20020123.htm">Impersonation mit ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020123.htm</span><br>
+<a href="../artikel/20020129.htm">Komponentenverwendung einschr&auml;nken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020129.htm</span><br>
+<a href="../artikel/20011207.htm">On Demand Zugriffsrechte f&uuml;r Web Sites vergeben</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011207.htm</span><br>
+<a href="../artikel/20010330.htm">Passw&ouml;rter mit SHA1 absichern</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010330.htm</span><br>
+<a href="../artikel/20011119.htm">Schritt-f&uuml;r-Schritt Debuggen von Sicherheitsproblemen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011119.htm</span><br>
+<a href="../artikel/20020503.htm">Show me the source - Includes aufgel&ouml;st</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020503.htm</span><br>
+<a href="../artikel/20010507.htm">Web-basiertes Dateimanagement mit dem ASP FileMan</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010507.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

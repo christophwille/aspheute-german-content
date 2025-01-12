@@ -1,0 +1,235 @@
+<HTML>
+<HEAD>
+<TITLE>Die Performancefalle ReDim Preserve</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wer mit Arrays in VB arbeitet, dem wird auch das ReDim Statement zum Ver&auml;ndern der Gr&ouml;&szlig;e eines Arrays nicht unbekannt sein. In diesem Artikel erkl&auml;rt der Autor, warum es NICHT verwenden sollte!">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,VB,VB.NET,Visual Basic,Visual Basic.net,Redim,Redim Preserve,Preserve,.NET Framework,Framework SDK,C#,C Sharp,Csharp,Array,ArrayList,Add,Trace,Performance,Tuning,Tips,ASP.NET">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Die Performancefalle ReDim Preserve</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/VBdotNET.htm">VB.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001025"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wer mit Arrays in VB arbeitet, dem wird auch das <i>ReDim</i> Statement zum Ver&auml;ndern der Gr&ouml;&szlig;e eines Arrays nicht
+unbekannt sein. Heute werde ich Ihnen ausf&uuml;hrlich darlegen, warum Sie dieses Statement in Zukunft besser 
+nicht mehr, oder nur noch sehr, sehr selten einsetzen sollten.
+</p>
+
+<h2>Die Einsatzm&ouml;glichkeiten von ReDim</h2>
+<p>
+Bevor ich jetzt &uuml;ber das <i>ReDim</i> Statement herfalle und es zerzause, m&ouml;chte ich noch einmal die &uuml;blichsten
+Anwendungsf&auml;lle anhand eines Codebeispiels zeigen (<b>redimsamples.aspx</b>). Dabei handelt es sich um das
+simple <i>ReDim</i>, als auch <i>ReDim Preserve</i>:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="VB" %&gt;
+&lt;%
+Dim arrStrings(1) as String
+Response.Write(UBound(arrStrings) &amp; "&lt;br&gt;")
+
+ReDim arrStrings(20)
+Response.Write(UBound(arrStrings) &amp; "&lt;br&gt;")
+
+ReDim Preserve arrStrings(25)
+Response.Write(UBound(arrStrings) &amp; "&lt;br&gt;")
+%&gt;
+</pre>
+
+<p>
+<i>ReDim</i> erlaubt es, ein Array zu vergr&ouml;&szlig;ern oder zu verkleinern. Dabei wird immer ein neues Array angelegt. Der
+Grund hierf&uuml;r ist, da&szlig; das VB.NET Array vom <i>System.Array</i> der .NET Runtime hergeleitet ist, und dieses per Definition
+eine ab Ersterstellung fixe Gr&ouml;&szlig;e hat. In C# ist das offensichtlich, wie der folgende Code - der <i>ReDim</i> emuliert - zeigt:
+</p>
+
+<pre style="background='silver';">
+string[] arrTest = new string[1];
+// und jetzt wollen wir die Gr&ouml;&szlig;e ver&auml;ndern: ReDim arrTest(20)
+arrTest = new string[20];
+</pre>
+
+<p>
+An sich ist das kein Problem, das Problem kommt erst mit <i>Preserve</i> (unser heutiges Thema).
+Wenn man <i>Redim</i> mit dem Schl&uuml;sselwort <i>Preserve</i> verwendet, so werden die alten Elemente beibehalten - 
+als Kopie im neuen Array.
+</p>
+
+<h2>ReDim Preserve als Performancekiller</h2>
+<p>
+Im Prinzip ist die Katze bereits aus dem Sack - das <i>ReDim Preserve</i> Statement erzeugt ein neues Array - und die Elemente des
+alten Arrays werden in das neue kopiert. Da dies unter VB.NET (wie auch im "alten" VB) implizit passiert, merkt man
+au&szlig;er schlechter Performance nichts. Um es etwas krasser zu zeigen, habe ich einen Loop gebastelt, der ein Array
+f&uuml;nftausend Mal ReDimmed (<b>redimloop.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="VB" Trace="True" %&gt;
+&lt;%
+Dim arrStrings() as String
+Dim i as Integer
+
+Trace.Write("Redim","Start")
+
+For i = 1 To 5000
+  ReDim Preserve arrStrings(i)
+  arrStrings(i-1) = i
+Next
+
+Trace.Write("Redim","End")
+%&gt;
+</pre>
+
+<p>
+Da ich Tracing eingeschaltet habe, kann ich sehr einfach die Performancedaten ermitteln:
+</p>
+
+<IMG SRC="/artikel/Bilder/200010/20001025.png" width="533" height="209" alt="" border="0">
+
+<p>
+Nat&uuml;rlich wird das mit jedem Aufruf etwas differieren (und mit der Maschine), aber man bekommt einen groben 
+Anhaltspunkt f&uuml;r die Performance - und es z&auml;hlt ja die Relativperformance auf ein und derselben 
+Maschine.
+</p>
+<p>
+Was passiert aber im Hintergrund, wenn man <i>ReDim Preserve</i> aufruft? Um es zu illustrieren, habe ich das <i>ReDim</i>
+Statement in C# nachgebaut - weil dort mu&szlig; man alles h&auml;ndisch machen, was <i>ReDim</i> in VB.NET automatisch hinter den
+Kulissen veranstaltet (<b>redimloopexplicit.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" Trace="True" %&gt;
+&lt;%
+string[] arrStrings = new string[1];
+int i;
+
+Trace.Write("Redim","Start");
+
+for (i=1;i&lt;=5000;i++)
+{
+  string[] arrHelper = new string[i];
+  arrStrings.CopyTo(arrHelper, 0);
+  arrHelper[i-1] = i.ToString();
+  arrStrings = arrHelper;
+}
+
+Trace.Write("Redim","End");
+%&gt;
+</pre>
+
+<p>
+Hier sieht man deutlich, wie schlecht die Performance sein mu&szlig; - zuerst wird ein Array der neuen Gr&ouml;&szlig;e angelegt, und
+dann der Inhalt des alten Arrays in das neue kopiert. Die Laufvariable wird zugewiesen, wobei ich in C# den Cast zu String
+selbst machen mu&szlig;. Und zu guter letzt wechsle ich die Arrayvariablen aus.
+</p>
+<p>
+Wer glaubt, VB.NET macht was anderes, der irrt - die Performance ist haarklein dieselbe wie <i>ReDim Preserve</i> (mein Code ist vielleicht
+eine Spur besser, weil ich das Verkleinern des Arrays nicht ber&uuml;cksichtige). Wie schlecht die Performance tats&auml;chlich ist, sieht
+man allerdings erst im Vergleich mit einer besseren Technologie - der <i>ArrayList</i> Klasse.
+</p>
+
+<h2>Die beste L&ouml;sung - ArrayLists</h2>
+<p>
+Die beste L&ouml;sung f&uuml;r ein dynamisches Array ist die <i>ArrayList</i> Klasse aus dem <i>System.Collections</i> Namespace. Eine
+ArrayList kann dynamisch wachsen und schrumpfen, und ist in der Verwendung &auml;u&szlig;erst einfach (<b>arraylistloop.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="VB" Trace="True" %&gt;
+&lt;% @Import Namespace="System.Collections" %&gt;
+&lt;%
+Dim arrList as New ArrayList(100)
+Dim i as Long
+
+Trace.Write("ArrayList","Start")
+
+For i = 1 To 50000
+  arrList.Add(i)
+Next
+
+Trace.Write("ArrayList","End")
+%&gt;
+</pre>
+
+<p>
+Wer genauer hinsieht wird bemerkt haben, da&szlig; der Loop nicht bis f&uuml;nftausend, sondern bis f&uuml;nfzigtausend l&auml;uft - der
+Grund: mit f&uuml;nftausend konnte ich die Performance nicht messen. Aber mit f&uuml;nfzigtausend ist sie immer noch sehr
+beeindruckend:
+</p>
+
+<IMG SRC="/artikel/Bilder/200010/20001025_2.png" width="539" height="220" alt="" border="0">
+
+<p>
+Die Ausf&uuml;hrungszeit ist 0.01 zu 0.45  - und das obwohl der Loop zehn Mal &ouml;fters l&auml;uft! Ich wollte <i>ReDim Preserve</i> 
+ebenfalls mit dieser Anzahl laufen lassen, habe aber dann irgendwann den Server resetted...
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die Quintessenz des Artikels ist da&szlig; man unter VB.NET dringend die Finger von <i>ReDim Preserve</i> lassen sollte. Wenn
+man ver&auml;nderbare Arrays braucht, sollte man statt dessen zur <i>ArrayList</i> greifen, die sich sowieso fast wie ein 
+normales Array verh&auml;lt.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001025.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20001025.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000731.htm">Verwendung von Arrays in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000731.htm</span><br>
+<a href="../artikel/20010913.htm">Wetterbericht per SMS versenden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010913.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

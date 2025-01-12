@@ -1,0 +1,312 @@
+<HTML>
+<HEAD>
+<TITLE>Einsatz des Recordset Objektes als Multifunktionaler Datenspeicher</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Man kann das ADO Recordset Objekt Anstelle eines Arrays benutzen um 
+komplexe Datens&auml;tze in ASP Seiten zu speichern und zu verwalten.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Recordset Object, ADO, XML, Array, Datenspeicher, Werte, filtern, sortieren, suchen, speichern">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Einsatz des Recordset Objektes als Multifunktionaler Datenspeicher</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000516"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>Das ADO <i>Recordset</i> Object (<i>ADODB.Recordset</i>) ist nicht nur geeignet, um Ergebnisse
+von Datenbankabfragen zu speichern. Man kann es auch Anstelle eines <i>Arrays</i> benutzen um 
+komplexe Datens&auml;tze in ASP Seiten zu speichern und zu verwalten.</p>
+
+<p>Durch die Konzeption des ADO <i>Recordsets</i> als Objekt mit Eigenschaften und Methoden
+hat man einen einfachen und komfortablen Zugriff auf die gespeicherten Daten.
+Unter anderem bietet jedes <i>Recordset</i> Objekt von Haus aus die M&ouml;glichkeit nach
+bestimmten Werten zu suchen, Werte zu sortieren, Datens&auml;tze hinzuzuf&uuml;gen oder wieder
+zu l&ouml;schen.</p>
+
+<p>Mit der ADO Version 2.1 ist es sogar m&ouml;glich, alle Daten eines <i>Recordsets</i> als XML
+auf einer Festplatte oder Diskette zu speichern. Damit kann das <i>Recordset</i> per Email oder
+Download verschickt werden. Im XML Format bleiben nicht nur die Daten erhalten, auch die
+komplette Recordsetstruktur wird im XML Dokument gespeichert.</p>
+
+<p>All dies macht das <i>Recordset</i> zu einem wertvollen und praktischen Datenspeicher, 
+der auch in ASP Applikationen gute Dienste leisten kann.</p>
+
+<p>Um ein <i>Recordset</i> Objekt als Datenspeicher zu nutzen, muss man es erstellen (<i>CreateObject</i>), 
+und dann die Struktur eines Datensatzes definieren. 
+Ein Datensatz besteht dabei aus Feldern mit Feldnamen und Datentyp (Text, Zahl, Datum).</p>
+
+<p>Das folgende Beispiel erstellt ein ADO <i>Recordset</i> Objekt und speichert es in der Variable <i>rs</i>.
+Danach definiert es die Felder des <i>Recordsets</i> und legt sowohl Namen als auch Datentyp fest:</p>
+
+<ul>
+	<li><b>ID</b>: Eine ganze Zahlen</li>
+	<li><b>Name</b>: Ein Text einer maximalen L&auml;nge von 64 (Name)</li>
+	<li><b>Notiz</b>: Ein Text der maximalen L&auml;nge von 2048 Zeichen</li>
+</ul>
+
+<p>Um nun die Felder des <i>Recordsets</i> zu definieren benutzt man die <i>Append</i> Methode
+der <i>Fields</i> Collection. Die <i>Fields</i> Collection enth&auml;lt alle Felder des <i>Recordsets</i>,
+und mit Hilfe der <i>Append</i> Method kann man neue Felder zur <i>Fields</i> Collection,
+und damit zum <i>Recordset</i>, hinzuf&uuml;gen:</p>
+
+<pre style="background='silver';">
+' Definition der ADO Datentypen (DataTypeEnum)
+Const adBinary = 128    ' Daten
+Const adBoolean = 11    ' Boolean (True/False)
+Const adChar = 129      ' Text
+Const adCurrency = 6    ' Waehrung
+Const adDate = 7        ' Datum
+Const adDecimal = 14    ' Exakte Dezimalzahl
+Const adDouble = 5      ' Fliesskommazahl hoher Genauigkeit
+Const adInteger = 3     ' Ganze Zahl
+Const adSingle = 4      ' Fliesskommazahl niedriger Genauigkeit
+
+' Erstellen des Recordset Objektes
+<b>Set rs = CreateObject("ADODB.Recordset")</b>
+
+' Definition der Datenstruktur des Recordsets
+'    rs.Fields.Append Name, Datentype, Laenge, Attribute
+rs.<b>Fields.Append</b> "ID", adInteger
+rs.<b>Fields.Append</b> "Name", adChar, 64
+rs.<b>Fields.Append</b> "Notiz", adChar, 2048</pre>
+
+<p>Nachdem nun die Struktur des <i>Recordsets</i> in Form der Felder (Name und Datentyp) 
+feststeht, kann man daran gehen, das <i>Recordset</i> mit Werten zu f&uuml;llen. 
+Zu diesem Zweck &ouml;ffnet man das <i>Recordset</i> mit der <i>Open</i> Methode und f&uuml;gt mit der 
+<i>AddNew</i> Methode neue Datens&auml;tze hinzu:</p>
+
+<pre style="background='silver';">
+' Oeffnen des Recordsets um Daten darin zu speichern
+rs.<b>Open</b>
+
+' Datensaetze in Recordset speichern
+rs.<b>AddNew</b>
+rs("ID") = 1
+rs("Name") = "Christian" 
+rs("Notiz") = "Dies ist eine sehr lange Notiz " & Space(900) & "!"
+
+rs.<b>AddNew</b> 
+rs("ID") = 2
+rs("Name") = "Stefan" 
+rs("Notiz") = "Dies ist eine weitere, sehr lange Notiz " & Space(900) & "!"
+
+rs.<b>AddNew</b> 
+rs("ID") = 3
+rs("Name") = "Guenter" 
+rs("Notiz") = "Dies ist eine kurze Notiz !"
+</pre>
+
+<p>Um Werte aus dem <i>Recordset</i> wieder auszulesen navigiert man den <i>Recordset</i> Cursor
+zum gew&uuml;nschten Datensatz und liest dann die Werte der Felder aus. 
+Das folgende Skript zum Beispiel geht zum zweiten Datensatz (<i>rs.AbsolutePosition = 2</i>)
+und gibt die Werte der 3 Felder des Datensatzes aus:</p>
+
+<pre style="background='silver';">
+' Zum 2. Datensatz gehen und alle Felder ausgeben:
+Response.Write "Werte des zweiten Datensatzes:&lt;br&gt;" & VbCrLf
+<b>rs.AbsolutePosition = 2</b>
+Response.Write <b>rs("ID")</b> & " " & <b>rs("Name")</b> 
+Response.Write "(" & <b>rs("Notiz")</b> & ")&lt;br&gt;" & VbCrLf
+Response.Write "&lt;br&gt;" & VbCrLf</pre>
+
+<p>Um alle Datens&auml;tze des <i>Recordsets</i> zu durchlaufen, verwendet man 
+&uuml;blicherweise eine <i>While...Wend</i> Schleife:</p>
+
+<pre style="background='silver';">
+' Gesamtes Recordset ausgeben:
+Response.Write "Inhalt des Recordsets:&lt;br&gt;" & VbCrLf
+rs.MoveFirst
+<b>While</b> Not rs.EOF
+	Response.Write rs("ID") & " "
+	Response.Write rs("Name") & "&lt;br&gt;" & VbCrLf
+	rs.<b>MoveNext</b>
+<b>Wend</b>
+Response.Write "&lt;br&gt;" & VbCrLf</pre>
+
+<p>Die Anzahl der Datens&auml;tze im <i>Recordset</i> Objekt ist in der <i>RecordCount</i> 
+Eigenschaft des Recordsets enthalten:</p>
+
+<pre style="background='silver';">
+' Anzahl der Datensaetze:
+Response.Write "Recordset enthaelt " & rs.<b>RecordCount</b> & " Datensaetze.&lt;br&gt;"
+Response.Write "&lt;br&gt;" & VbCrLf</pre>
+
+<p>Dar&uuml;ber hinaus erlaubt das <i>Recordset</i> Objekt noch fortgeschrittene Operationen, 
+wie das Sortieren aller Datens&auml;tze, das Finden einzelner Daten, oder das Filtern
+des gesamten Recordsets.</p>
+
+<p>Um alle Datens&auml;tze des <i>Recordsets</i> zu sortieren, weist man der <i>Sort</i> Eigenschaft
+des <i>Recordset</i> Objektes die Sortierkriterien zu. 
+Die Sortierkriterien enthalten den Namen der Datensatzspalte, nach der sortiert werden soll, 
+und den Zusatz <i>ASC</i> (f&uuml;r aufsteigend) oder <i>DESC</i> (f&uuml;r absteigend).</p>
+
+<pre style="background='silver';">
+' Recordset sortieren und ausgeben
+Response.Write "Recordset, sortiert nach Namen und ID:&lt;br&gt;" & VbCrLf
+' Name absteigend (DESC) und ID aufsteigend (ASC) sortieren:
+rs.<b>Sort = "Name DESC, ID ASC"</b>   
+
+rs.MoveFirst
+While Not rs.EOF
+	Response.Write rs("ID") & " "
+	Response.Write rs("Name") & "&lt;br&gt;" & VbCrLf
+	rs.MoveNext
+Wend
+
+' Sortierung aufheben
+rs.<b>Sort = ""</b>
+Response.Write "&lt;br&gt;" & VbCrLf</pre>
+
+<p>Das Filtern eines Recordset wird durch die <i>Filter</i> Methode erm&ouml;glicht. 
+Nach dem Filtern sind im <i>Recordset</i> nur mehr jene Datens&auml;tze sichtbar, die
+dem Filterkriterium gen&uuml;gen. Das Filterkriterium ist in diesem Fall ein Ausdruck
+aus Feldnamen, Operatoren (wie "=", "<", ">", LIKE, AND, OR) und Vergleichswerten:</p>
+
+<pre style="background='silver';">
+' Recordset filtern und ausgeben
+Response.Write "Gefiltertes Recordset:&lt;br&gt;" & VbCrLf
+rs.<b>Filter = "((ID > 1) AND (Name > 'G')) OR " & _
+               "((Name LIKE '%ist%') AND (ID > 1))"</b>
+
+rs.MoveFirst
+While Not rs.EOF
+	Response.Write rs("ID") & " "
+	Response.Write rs("Name") & "&lt;br&gt;" & VbCrLf
+	rs.MoveNext
+Wend
+
+' Filter entfernen
+rs.<b>Filter = 0</b>
+Response.Write "&lt;br&gt;" & VbCrLf</pre>
+
+<p>Wenn man Datens&auml;tze mit ganz bestimmten Datenwerten sucht, so nimmt man
+die <i>Find</i> Methode zu Hilfe. Diese sucht im gesamten <i>Recordset</i> bis es den ersten
+Datensatz findet, der das Suchkriterium erf&uuml;llt:</p>
+
+<pre style="background='silver';">
+' Finden eines Datensatzes und L&ouml;schen des selbigen:
+Response.Write "Suchen des Datensatzes mit der ID = 2.&lt;br&gt;" & VbCrLf
+rs.<b>MoveFirst</b>
+rs.<b>Find "ID = 2"</b>
+If Not rs.EOF Then
+	' Datensatz gefunden, daher loeschen:
+	rs.<b>Delete</b>
+	rs.MoveFirst
+	Response.Write "Datensatz geloescht.&lt;br&gt;" & VbCrLf
+End If
+Response.Write "&lt;br&gt;" & VbCrLf</pre>
+
+<p>Wie das vorherige Beispiel bereits zeigt, kann man nicht mehr ben&ouml;tigte Datens&auml;tze
+einfach mit der <i>Delete</i> Methode l&ouml;schen wenn der <i>Recordset</i> Cursor auf
+den zu löschenden Datensatz zeigt.</p>
+
+<p>Sobald man das <i>Recordset</i> Objekt nicht mehr zum Speichern ben&ouml;tigt
+schlie&szlig;t man es mit der <i>Close</i> Methode und gibt seine Resourcen frei.</p>
+
+<pre style="background='silver';">
+' verbliebene Datensaetze ausgeben:
+Response.Write "Verbliebene Datensaetze:&lt;br&gt;" & VbCrLf
+rs.MoveFirst
+While Not rs.EOF
+	Response.Write rs("ID") & " "
+	Response.Write rs("Name") & " ("
+	Response.Write rs("Notiz") & ")&lt;br&gt;" & VbCrLf
+	rs.MoveNext
+Wend
+
+' Recordset schliessen und Resourcen freigeben
+rs.<b>Close</b>
+<b>Set rs = Nothing</b></pre>
+
+<p>Das <i>Recordset</i> bietet also beim Speichern von Daten eine interessante Alternative 
+zu Arrays, da es Such- und Sortieralgorithmen quasi nebenbei zur Verf&uuml;gung stellt.
+Speziell f&uuml;r Datenbank-Programmierer mit Erfahrung unter ADO ist das <i>Recordset</i>
+Objekt oftmals ein einfach zu handhabender Datenspeicher f&uuml;r eine &uuml;berschaubare Menge 
+von Datens&auml;tzen.</p>
+
+<p>Einen weiteren Vorteil in der Handhabung ist die M&ouml;glichkeit (ab ADO Version 2.1),
+da&szlig; man ein Recordset (inklusive Daten, Struktur und Feld-Definitionen) als XML
+auf einer Festplatte, einer Floppy, in einer <i>Application-</i> oder <i>Session-Variblen</i> 
+speichern kann.</p>
+
+<p>Um ein generiertes <i>Recordset</i> als XML auf der Festplatte zu speichern, f&uuml;hrt man die
+<i>Save</i> Methode wie folgt aus:</p>
+
+<pre style="background='silver';">
+Const <b>adPersistXML = 1</b>
+
+' Speichern des Recordsets auf der Harddisk:
+rs.<b>Save "A:\Data\MyRecordsetData.xml", adPersistXML</b></pre>
+
+<p>Das Auslesen eines als XML gespeicherten Recordset ist &auml;hnlich einfach:</p>
+
+<pre style="background='silver';">
+' Auslesen 
+rs.<b>Open "A:\Data\MyRecordsetData.xml"</b>
+...
+</pre>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000516.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000516.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/19990825.htm">ADO und ASP - Datenbanken einmal n&auml;her betrachtet</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990825.htm</span><br>
+<a href="../artikel/20000417.htm">Auslesen von XML Dateien mit dem DOM</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000417.htm</span><br>
+<a href="../artikel/20000328.htm">Installation der neuesten ADO Version (ADO 2.5)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000328.htm</span><br>
+<a href="../artikel/20000425.htm">Speichern von Recordsets in Application-Variablen (Teil&nbsp;II)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000425.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

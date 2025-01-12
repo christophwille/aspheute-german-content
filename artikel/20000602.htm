@@ -1,0 +1,653 @@
+<HTML>
+<HEAD>
+<TITLE>Allgemeine MailParser-Klasse mit ASPMail</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Erstellung einer VBscript Klasse  zum Versenden Template-basierender Emails aus einer ASP-Page (von einem Webserver unter IIS) unter Verwendung der AspMail Komponente der Firma ServerObjects.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Email Klasse, VBScript, IIS 5.0, Mailkomponente, AspMail, ServerObjects, Templates,">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Allgemeine MailParser-Klasse mit ASPMail</H1>
+<p>
+Geschrieben von: <a href="../autoren/patricka_lorenz.htm">Patrick A. Lorenz</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000602"></SCRIPT>
+</p>
+<p>Nachdem wir im Artikel <a href="../artikel/20000526.htm">Klassen in VBScript</a>
+die allgemeine Funktionsweise von Klassen kennengelernt haben, 
+m&ouml;chte ich Euch heute eine Klasse vorstellen, die allgemein zum 
+Versand von eMails verwendet werden kann.</p> 
+
+<p>Gr&ouml;&szlig;ter Vorteil dieser Klasse gegen&uuml;ber der direkten Anbindung an eine Komponente: 
+Es werden &auml;hnlich zu dem bekannten CGI-EMAIL unter UNIX Text-Dateien auf 
+Variablen und Formeln geparst und das Ergebnis anschlie&szlig;end als eMail versandt.
+Die Realisierung erfolgt in diesem Artikel auf Basis von ASPMail, 
+eine Umsetzung auf andere Komponenten ist aber leicht m&ouml;glich.</p>
+
+<h2>Die Funktionalit&auml;t der <i>MailParser</i> Klasse</h2>
+
+<p>Welche M&ouml;glichkeiten sollte eine <i>MailParser</i>-Klasse bieten? 
+Nun, zun&auml;chst mu&szlig; es eine M&ouml;glichkeit geben, die Text-Vorlage
+zuzuweisen. Desweiteren m&uuml;ssen alle dort vorkommenden Variablen 
+mit ihrem Inhalt angemeldet werden. Dies k&ouml;nnte z.B. so aussehen:</p>
+
+<pre style="background='silver';">
+Dim NewMail
+Set NewMail = New MailParser
+NewMail.Template = Server.MapPath("newmail.txt")
+NewMail.AddVariable "Test", "Hallo Welt"
+NewMail.Send</pre>
+
+<p>Es wird eine Instanz der Klasse erzeugt. &Uuml;ber die Eigenschaft <i>Template</i> wird eine
+lokale Text-Datei zugewiesen, die die Vorlage f&uuml;r die eMail enth&auml;lt. 
+Mit Hilfe der Methode <i>AddVariable</i> wird eine Variable mit dem Namen <i>"Test"</i> 
+und dem Inhalt <i>"Hallo Welt"</i> angelegt. Denkbar w&auml;re hier, die Variablen
+beispielsweise in einer Schleife aus einem Recordset anzulegen. 
+Zu guter letzt wird die eMail mit Hilfe der <i>Send</i> Methode versandt.</p>
+
+<p>Wir wollen diese &ouml;ffentliche Funktionalit&auml;t als Basis f&uuml;r die Klasse nehmen, 
+die nun also zumindest eine &ouml;ffentliche Eigenschaft sowie zwei &ouml;ffentliche 
+Methoden zur Verf&uuml;gung stellen mu&szlig;.</p>
+
+<h2>Die Struktur der <i>MailParser</i> Klasse</h2>
+
+<p>Das Grundger&uuml;st der Klasse m&uuml;&szlig;te wie folgt aussehen:</p>
+
+<pre style="background='silver';">
+Class MailParser
+
+  Public Function AddVariable(Name, Content)
+  End Function
+
+  Public Property Get Template()
+  End Property
+
+  Public Property Let Template(NewValue)
+  End Property
+
+  Public Function Send()
+  End Function
+
+End Class</pre>
+
+<h2>Die Methode <i>AddVariable</i></h2>
+
+<p>Diese Methode soll intern mit einem <i>Dictonary</i> Objekt 
+(vgl. Artikel <a href="../artikel/19990806.htm">Das <i>Dictionary</i> Objekt - Dein Feind und Helfer</a>) 
+arbeiten, das global in der Member Variable <i>m_Variables</i> deklariert wurde
+und bei Bedarf von der Methode <i>AddVariable</i> selbst instanziert wird. 
+Bei Bedarf hei&szlig;t in diesem Zusammenhang, da&szlig; mittels <i>IsObject</i> &uuml;berpr&uuml;ft wird, 
+ob <i>m_Variables</i> bereits auf ein Objekt verweist. 
+Wenn nicht, wird dieses neu instanziert und zugewiesen.</p>
+
+<p>Die fertige Methode k&ouml;nnte wie folgt aussehen:</p>
+
+<pre style="background='silver';">
+Public Function AddVariable(Name, Content)
+   If Not IsObject(m_Variables) Then
+      Set m_Variables = CreateObject("Scripting.Dictionary")
+   End If
+   m_Variables(Name) = Content
+End Function
+</pre>
+
+<h2>Die Eigenschaft <i>Template</i></h2>
+
+<p>Diese Eigenschaft weist der global deklarierten Member-Variable 
+<i>m_Template</i> den Dateinamen der eMail-Vorlage zu. Neben einem <i>Property 
+Let</i> ist auch ein <i>Property Get</i> implementiert, so da&szlig; man den Namen der 
+Datei bei Bedarf auch wieder abfragen kann.</p>
+
+<p>Die fertige Eigenschaft k&ouml;nnte wie folgt aussehen:</p>
+
+<pre style="background='silver';">
+Public Property Get Template()
+  Template = m_Template
+End Property
+
+Public Property Let Template(NewValue)
+  m_Template = NewValue
+End Property</pre>
+
+<h2>Die Methode <i>Send</i></h2>
+
+<p>Diese Methode soll den gesamten Versand der Mail &uuml;bernehmen. 
+Sie ist also daf&uuml;r verantwortlich, da&szlig; der Inhalt der Template
+Datei eingelesen wird und da&szlig; dieser Inhalt mit Hilfe der angelegten 
+Variablen geparst wird. Anschlie&szlig;end mu&szlig; das Ergebnis den verschiedenen 
+Methoden und Eigenschaften der Mail Komponente zugewiesen werden, 
+hier mu&szlig; z.B. zwischen den Steuerungs-/ Kopfzeilen (Headers) und dem 
+eigentlichen Inhalt (Body) der Mail unterschieden werden. Um die Methode 
+&uuml;bersichtlich zu halten soll das Parsen des Templates sowie der Headers in 
+eigene, private Methoden der Klasse ausgegliedert werden.</p>
+
+<p>Zun&auml;chst wird das Template geparst (s. Abschnitt <a href="20000602.htm#tmppars">Der Template Parser</a>) 
+und in Headers und Body, die durch einen doppelten Umbruch getrennt sind, unterteilt:</p>
+
+<pre style="background='silver';">
+  TmpText = ParseTemplate
+  Pos = Instr(TmpText, vbCrLf+vbCrLf)
+  If Pos > 0 Then
+    Headers = Left(TmpText, Pos-1)
+    Body = Mid(TmpText, Pos+4)
+  End If</pre>
+
+<p>Nun wird eine Instanz der Mail Komponente erzeugt:</p>
+
+<pre style="background='silver';">
+Set Mailer = CreateObject("SMTPsvg.Mailer")</pre>
+
+<p>Nachdem durch das Parsen des Templates alle dynamischen Inhalte 
+eingesetzt wurde, werden jetzt die Headers hinsichtlich Ihrer jeweiligen 
+Bedeutung geparst, (siehe Abschnitt <a href="20000602.htm#headpars">Der Header Parser</a>), 
+um sie den verschiedenen daf&uuml;r zust&auml;ndigen Methoden und Eigenschaften 
+der Komponente zuzuweisen. 
+Auch der Body der eMail mu&szlig; der Komponente zugewiesen werden:</p>
+
+<pre style="background='silver';">
+  ParseHeaders Headers, Mailer
+  Mailer.BodyText = Body
+</pre>
+
+<p>Zum Abschlu&szlig; k&ouml;nnen nun noch globale Einstellungen der Komponente vorgenommen werden, 
+zwingend erforderlich ist hier beispielsweise die Angabe des zu verwendenden SMTP-Servers. 
+Nachdem alle Einstellungen gemacht wurden kann die eMail versandt und das 
+instanzierte Objekt terminiert werden:</p>
+
+<pre style="background='silver';">
+  Mailer.RemoteHost = Mail_SMTPHost
+  Send = Mailer.SendMail
+  Set Mailer = Nothing</pre>
+
+<p>Die komplette Methode sieht wie folgt aus:</p>
+
+<pre style="background='silver';">
+Public Function Send()
+  Dim TmpText, Mailer, Pos, Body, Headers
+
+  TmpText = ParseTemplate
+  Pos = Instr(TmpText, vbCrLf+vbCrLf)
+  If Pos &gt; 0 Then
+   Headers = Left(TmpText, Pos-1)
+   Body = Mid(TmpText, Pos+4)
+  End If
+
+  Set Mailer = CreateObject("SMTPsvg.Mailer")
+
+  ParseHeaders Headers, Mailer
+  Mailer.BodyText = Body
+
+  Mailer.RemoteHost = Mail_SMTPHost
+  Send = Mailer.SendMail
+  Set Mailer = Nothing
+
+End Function</pre>
+
+<h2>Die Template Datei</h2>
+
+<p>Bevor wir uns jetzt mit dem wohl wichtigsten Part der Klasse, 
+dem eigentlichen Parser, besch&auml;ftigen, sollten wir unser Augenmerk 
+zun&auml;chst auf die Template Datei richten.</p>
+
+<h3>Allgemeiner Aufbau von eMails</h3>
+
+<p>eMails unterliegen fest definierten Regeln, die in den RFCs festgelegt sind. 
+Diese Richtlinien besagen unter anderem, da&szlig; eine eMail mit den Headern beginnt. 
+Jeder Header beginnt mit einem eindeutigen Namen (z.B. "Subject"), der von einem 
+Doppelpunkt, einem Leerzeichen und anschlie&szlig;end dem Wert dieses Headers gefolgt wird. 
+Den Abschlu&szlig; macht ein Zeilenumbruch, jeder Header erh&auml;lt also eine eigene Zeile 
+(geknickte Header k&ouml;nnen auch &uuml;ber mehrere Zeilen verlaufen, diesen besonderen Fall
+wollen wir hier aber nicht ber&uuml;cksichtigen). Nach den Headern folgt ein doppelter 
+Zeilenumbruch und anschlie&szlig;end der eigentliche Inhalt der eMail, der Body.</p>
+
+<p>Eine eMail k&ouml;nnte vereinfach wie folgt aussehen:</p>
+
+<pre style="background='silver';">
+Received: from ares.piranha-bytes.com ([213.68.93.66])
+Message-ID: &lt;003101bfc0ae$5b62b020$8e0aa8c0@piranhabytes.com&gt;
+From: "Kai Rosenkranz" &lt;kai@piranha-bytes.com&gt;
+To: "Patrick A. Lorenz" &lt;pl@p-l.de&gt;
+Subject: Re: mails
+Date: Thu, 18 May 2000 11:49:24 +0200
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+
+hallo pl ...</pre>
+
+<h3>Aufbau der Template Datei</h3>
+
+<p>Um eine hohe Transparenz zu gew&auml;hren, soll der Aufbau der Template Datei sich 
+so weit wie m&ouml;glich mit dem Aufbau der sp&auml;teren eMail decken: Erst die Header, dann der Body.</p>
+
+<p>Um variable Inhalte verwenden zu k&ouml;nnen, m&uuml;ssen die entsprechenden Platzhalter in irgendeiner 
+Form besonders markiert werden. 
+Dies geschieht in unserer Klasse &uuml;ber einrahmende Zeichen, die in den Konstanten 
+<i>"Expr_Start "</i> und <i>"Expr_End"</i> festgelegt werden. 
+Bei einem Umstieg von CGI-EMAIL aus der UNIX-Welt bieten sich die eckigen 
+Klammern "<b>[</b>" und "<b>]</b>" an, wir wollen hier aber die Chevrons "<b>"</b>" und "<b>"</b>" 
+verwenden. Innerhalb dieser Einrahmung lassen sich mittels <i>AddVariable</i> angelegte Variablen, 
+aber auch komplexe VBScript Ausdr&uuml;cke angeben.</p>
+
+<p>Ein einfaches Template k&ouml;nnte wie folgt aussehen:</p>
+
+<pre style="background='silver';">
+To: Patrick A. Lorenz|pl@p-l.de
+Subject: "Test"
+From: "MyRecordset("Name")"|"MyRecordset("eMail")"
+
+Hallo,
+wie lautet der erste Buchstabe des Satzes "Test"?
+Genau, er lautet "UCase(Left(Test,1))"!</pre>
+
+<p>Eine Sonderstellung nehmen in diesem Beispiel die Header <i>"To"</i> und <i>"From"</i> an, 
+da diese aus zwei durch eine Pipe ( "<b>|</b>" ) getrennte Ausdr&uuml;cke bestehen. 
+Dies ist durch die Stuktur der Komponente bedingt, die f&uuml;r den Absender 
+zwei Eigenschaften und f&uuml;r jeden Empf&auml;nger eine Methode mit zwei Parametern implementiert.</p>
+
+<h2><a name="tmppars">Der Template Parser</a></h2>
+
+<p>Einen komplexen Formel-Parser zu entwickeln w&uuml;rde den Rahmen dieses Artikels 
+in jeder Hinsicht sprengen und VBScript w&auml;re hierf&uuml;r auch sicherlich eine 
+denkbar ungeeignete Sprache. Zu unserem Gl&uuml;ck bietet VBScript seit Version 
+5.0 (etwa ab IIS 5.0) die Funktionen <i>Execute</i> und <i>Eval</i> an, mit der sich</p>
+
+<p>
+&nbsp;&nbsp;&nbsp;VBScript Ausdr&uuml;cke ausf&uuml;hren, und<br>
+&nbsp;&nbsp;&nbsp;VBScript Formeln berechnen lassen.</p>
+
+<p>Und genau das wollen wir ja...</p>
+
+<h3>Variablen definieren</h3>
+
+<p>Zun&auml;chst kommt der "gro&szlig;e Trick" an unserem Parser, der notwendig ist, 
+um die definierten Variablen mit allgemeinen VBScript Funktionen innerhalb 
+des Templates nutzen zu k&ouml;nnen: Die Variablen werden im Kontext der Methode 
+als Variablen definiert. Hierf&uuml;r verwenden wir die oben angesprochene Funktion <i>Execute</i>:</p>
+
+<pre style="background='silver';">
+  For Each VarName In m_Variables
+    VarContent = m_Variables(VarName)
+    VarContent = Replace(VarContent, Chr(34), Chr(34)+Chr(34))
+    Execute VarName &amp; "=" &amp; Chr(34) &amp; VarContent &amp; Chr(34)
+  Next</pre>
+
+<h3>Template einlesen und parsen</h3>
+
+<p>Nun m&uuml;ssen wir das Template aus der Datei einlesen. 
+Hierf&uuml;r verwenden wir das <i>FileSystemObject</i>, das die Datei in der 
+privaten Methode <i>ReadTemplate</i> &ouml;ffnet und ausliest. 
+Anschlie&szlig;end hangeln wird uns mit der <i>InStr</i> Funktion durch das Template und 
+suchen so alle mit Hilfe der festgelegten Markierungen eingerahmten Ausdr&uuml;cke. 
+Pro Fundstelle zerlegen wir den Inhalt des Templates in einen linken 
+und einen rechten Teil und f&uuml;gen diese beiden Teile anschlie&szlig;end mit dem Ergebnis des 
+Ausdruckes wieder zusammen.</p>
+
+<p>Der Ausdruck wird mit Hilfe der oben angesprochenen Funktion <i>Eval</i> berechnet.
+Da alle Variablen zuvor im aktuellen Kontext definiert wurden, kann <i>Eval</i> sowohl auf 
+allgemeine VBScript Funktionen, als auch auf den Inhalt der Variablen zugreifen:</p>
+
+<pre style="background='silver';">
+  TmpText  = ReadTemplate
+  StartPos = 1
+  Do 
+    StartPos = InStr(StartPos+Len(ExprText), TmpText, Expr_Start)
+    EndPos    = InStr(StartPos+1, TmpText, Expr_End)
+    If StartPos&gt;0 And EndPos&gt;0 Then
+      Expr     = Mid(TmpText, StartPos+1, EndPos-StartPos-1)
+      ExprText = Eval(Expr)
+      TmpText = Left(TmpText, StartPos-1) &amp; ExprText &amp; Mid(TmpText, EndPos+1)
+    End If
+  Loop While StartPos&gt;0 And EndPos&gt;0</pre>
+
+<p>Die fertige Methode k&ouml;nnte wie folgt aussehen:</p>
+
+<pre style="background='silver';">
+Private Function ParseTemplate()
+  Dim VarName, Varcontent, TmpText, _
+      StartPos, EndPos, Expr, ExprText
+
+  For Each VarName In m_Variables
+    VarContent = m_Variables(VarName)
+    VarContent = Replace(VarContent, Chr(34), Chr(34)+Chr(34))
+    Execute VarName &amp; "=" &amp; Chr(34) &amp;VarContent &amp; Chr(34)
+  Next
+
+  TmpText  = ReadTemplate
+  StartPos = 1
+  Do 
+    StartPos = InStr(StartPos+Len(ExprText), TmpText, Expr_Start)
+    EndPos    = InStr(StartPos+1, TmpText, Expr_End)
+    If StartPos&gt;0 And EndPos&gt;0 Then
+      Expr     = Mid(TmpText, StartPos+1, EndPos-StartPos-1)
+      ExprText = Eval(Expr)
+      TmpText = Left(TmpText, StartPos-1) &amp; ExprText &amp; Mid(TmpText, EndPos+1)
+    End If
+  Loop While StartPos&gt;0 And EndPos&gt;0
+  ParseTemplate = TmpText
+End Function</pre>
+
+<h3>Tip</h3>
+
+<p>Neben Variablen lassen sich auch ganze Methoden im Kontext definieren. 
+Denkbar w&auml;re z.B. eine Methode zum Zugriff auf eine Datenbank oder eine komplexe Berechnung. 
+Im Source-Code zu diesem Artikel wurde dies an Hand der <i>IIf</i> Methode realisiert - 
+VB Entwickler wissen, was ich meine ;-)</p>
+
+<h2><a name="headpars">Der Header Parser</a></h2>
+
+<p>Nachdem alle variablen Inhalte zugewiesen wurden und die letztliche eMail vorliegt,
+m&uuml;ssen nun eigentlich nur noch die angegebenen Headers den Methoden und Eigenschaften 
+der Komponente zugewiesen werden. Hierzu dient die private Methode <i>ParseHeaders</i>, 
+der neben den Headers im oben beschriebenen Format auch eine Referenz auf die Instanz 
+der Mail Komponente &uuml;bergeben werden mu&szlig;.</p>
+
+<p>Die Methode iteriert durch ein, mittels der Funktion <i>Split</i> erstelltes, Array 
+der Headers und zerlegt jeden in Name und Inhalt. 
+&Uuml;ber ein <i>Select Case</i> Ger&uuml;st wird nun abgepr&uuml;ft, ob dem aktuellen Header eine 
+Sonderbehandlung zuteil werden mu&szlig;, wie dies z.B. f&uuml;r Absender, Empf&auml;nger, 
+Subject, etc. notwendig ist. 
+Alle Header, f&uuml;r die keine spezielle Behandlung durch die Komponente notwendig ist, 
+werden mittels der <i>AddExtraHeader</i> an die Komponente &uuml;bergeben.</p>
+
+<p>Die fertige Methode k&ouml;nnte wie folgt aussehen:</p>
+
+<pre style="background='silver';">
+Private Function ParseHeaders(Headers, Mailer)
+  Dim HeadersArray, i, Pos, HeadName, HeadContent
+
+  HeadersArray = Split(Headers, vbCrLf)
+  For i = LBound(HeadersArray) To UBound(HeadersArray)
+    Pos = Instr(HeadersArray(i), ": ")
+    If Pos &gt; 0 Then
+      HeadName = Left(HeadersArray(i), Pos-1)
+      HeadContent = Mid(HeadersArray(i), Pos+2)
+      Select Case LCase(HeadName)
+        Case "to"
+          Pos = Instr(HeadContent, "|")
+          Mailer.AddRecipient Left(HeadContent, Pos-1), Mid(HeadContent, Pos+1)
+        Case "from"
+          Pos = Instr(HeadContent, "|")
+          Mailer.FromName = Left(HeadContent, Pos-1)
+          Mailer.FromAddress = Mid(HeadContent, Pos+1)
+        Case "subject"
+          Mailer.Subject = HeadContent
+        Case "organization"
+          Mailer.Organization = HeadContent
+        Case Else
+          Mailer.AddExtraHeader HeadName &amp; ": " &amp; HeadContent
+      End Select      
+    End If
+  Next
+End Function</pre>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>Ruck, zuck haben wir hier also unsere allgemeine <i>MailParser</i>-Klasse, 
+die sich f&uuml;r quasi jede eMail verwenden lassen kann. 
+Bestellungen, Feedback-Formulare, etc. lassen sich mit wenigen Zeilen Code realisieren 
+und die eMail-Vorlagen bequem und unabh&auml;ngig vom Source-Code erstellen und pflegen.</p>
+
+<p>Selbstverst&auml;ndlich l&auml;&szlig;t sich die Klasse noch an einigen Ecken und Enden 
+aufbohren und erweitern, bspw. fehlt jegliche Fehlerbehandlung sowie 
+die M&ouml;glichkeit CC- und BCC-Empf&auml;nger anzugeben.</p>
+
+<p>Ein weiterer Artikel wird der Klasse die M&ouml;glichkeit geben, 
+optional verschl&uuml;sselte eMails zu versenden. 
+Eine Reihe von anderen Artikeln werden diese Klasse zum Versand von eMails 
+verwenden bzw. voraussetzen. 
+Vielleicht k&ouml;nnte man auch Regular Expressions verwenden, die M&ouml;glichkeiten bietet 
+VBScript ja an - ich warte auf Eure Vorschl&auml;ge... :-)</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000602.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20000608.htm">404 Fehler elegant entsch&auml;rfen</a><br>
+<a href="20021028.htm">ACT MetaMailer - Mails verschicken leicht gemacht</a><br>
+<a href="19990806.htm">Das Dictionary Objekt - Dein Feind und Helfer</a><br>
+<a href="20000526.htm">Klassen in VBScript</a><br>
+<a href="20000912.htm">Mit PGP verschl&uuml;sselte e-Mails senden</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fweb%2Emit%2Eedu%2Fwwwdev%2Fcgiemail%2F">CGI-EMAIL</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eserverobjects%2Ecom%2Fproducts%2Ehtm%23aspmail">Komponente AspMail von ServerObject</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000602" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Allgemeine MailParser-Klasse mit ASPMail"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000602.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Patrick A. Lorenz"><input type="hidden" name="AuthorEmail" value="pl@p-l.de"><input type="hidden" name="Artikel" value="20000602"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000602.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,307 @@
+<HTML>
+<HEAD>
+<TITLE>Session State in ASP.NET Web Services</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wenn man Web Services in ASP.NET programmiert, dann bekommt man ein bequemes Feature frei Haus geliefert - man kann Session State verwenden, und zwar v&ouml;llig gleich zu normalen ASP.NET Seiten.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Web Services,ASP.NET,SOAP,httpget,httppost,EnableSession,WebMethod,Session,Session State,Session Cookie,.NET,Samples">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Session State in ASP.NET Web Services</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Web%20Services.htm">Web Services</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010627"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wenn man Web Services in ASP.NET programmiert, dann bekommt man ein bequemes Feature frei Haus
+geliefert - man kann Session State verwenden, und zwar v&ouml;llig gleich zu normalen ASP.NET Seiten.
+Nur ein einziges Attribut mu&szlig; gesetzt werden, und schon kann man zB ein einfaches Loginsystem
+f&uuml;r Web Services basteln.
+</p>
+<p>
+Bevor wir beginnen, m&ouml;chte ich die "dunkle Seite" des Session State in ASP.NET Web Services beleuchten:
+wie &uuml;blich bedient sich der Session State entsprechender Cookies, die allerdings nicht alle Clients 
+annehmen. F&uuml;r eine leicht zu kontrollierende L&ouml;sung (=Intranet) ist dies kein Problem - soll der Web
+Service allerdings einer breiten Masse via dem Internet zug&auml;nglich gemacht werden, sollte man auf Session
+State verzichten - und sei es nur, um noch ein letztes Quentchen an Performance herauszuquetschen.
+</p>
+<p>
+Um den heute vorgestellten Code ausf&uuml;hren zu k&ouml;nnen, mu&szlig; ASP.NET am Server installiert sein. F&uuml;r das
+Erstellen von Assemblies ben&ouml;tigt man das vollst&auml;ndige .NET SDK (nicht notwendigerweise am Server,
+allerdings auf der Maschine, auf der die Assembly kompiliert werden soll).
+</p>
+
+<h2>So funktioniert's</h2>
+<p>
+In der Einleitung habe ich davon gesprochen, da&szlig; wir nur ein einziges Attribut ben&ouml;tigen. Stimmt.
+Man mu&szlig; nur <i>EnableSession</i> beim sowieso erforderlichen <i>WebMethod</i> Attribut hinzuf&uuml;gen,
+und schon kann man auf Session State vertrauen:
+</p>
+
+<pre style="background='silver';">
+[ WebMethod(EnableSession=true) ]
+</pre>
+
+<p>
+Ich habe das nat&uuml;rlich gleich in ein einfaches, wenig anspruchvolles Beispiel gepackt: <b>SimpleStateful.asmx</b>.
+Dieser Web Service hat zwei Methoden, <i>MethodA</i> und <i>MethodB</i>. Wenn man <i>MethodA</i> mit
+einem String aufruft, wird dieser in einer Sessionvariable abgelegt, und kann durch Aufruf der Methode
+<i>MethodB</i> wieder ausgelesen werden:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ WebService Language="C#" Class="SimpleState" %&gt;
+using System;
+using System.Web.Services;
+
+public class SimpleState : WebService
+{
+	[ WebMethod(EnableSession=true) ]
+	public void MethodA(string strValue) 
+	{ 
+		Session["SessionStateTest"] = strValue;
+	}
+
+	[ WebMethod(EnableSession=true) ]
+	public string MethodB()
+	{
+		object objState = Session["SessionStateTest"];
+		if (null != objState) return (string)objState;
+		return "";
+	}
+}
+</pre>
+
+<p>
+Die Verwendung von Session State unter ASP.NET funktioniert etwas anders als bisher gewohnt. Existiert
+eine Variable n&auml;mlich nicht, bekommt man eine <i>null</i> Referenz zur&uuml;ckgeliefert - und diese umzucasten
+und zu konvertieren w&auml;re nicht klug (au&szlig;er man liebt Exceptions). Deshalb der Check gegen <i>null</i> in der Funktion <i>MethodB</i>.
+</p>
+<p>
+Da&szlig; das Arbeiten mit Session State funktioniert kann man im Browser versuchen - mittels der von ASP.NET 
+vorgenerierten Seiten. Ich gehe aber sofort dazu &uuml;ber, mir einen Proxy zum Aufrufen des Web Services zu
+generieren.
+</p>
+
+<h2>Den Proxy erstellen</h2>
+<p>
+Der Proxy wird wieder mit Hilfe des <b>wsdl.exe</b> Utility's erzeugt. Ich habe mir dazu die Batchdatei
+<b>CreateProxy.bat</b> angelegt:
+</p>
+
+<pre style="background='silver';">
+Wsdl /language:cs  /protocol:httpget /namespace:SimpleStateProxy 
+     /out:SimpleStateProxy.cs http://192.168.1.203/SessionStateServices/SimpleStateful.asmx
+</pre>
+
+<p>
+Im Vergleich zum Artikel <a href="../artikel/20010622.htm">Web Services in Anwendungen konsumieren</a> habe ich hier das Protokoll ver&auml;ndert:
+von <b>soap</b> auf <b>httpget</b>. Sinn und Zweck der &Uuml;bung ist eindeutig klarzustellen, da&szlig; wir hier
+keinen "korrekten" SOAP Web Service vor uns haben, sondern einen ASP.NET Web Service.
+</p>
+<p>
+&Uuml;brigens g&auml;be es auch <b>httppost</b> als Protokoll. Die Extraerw&auml;hnung verdient es wegen der im Internet
+sehr h&auml;ufig anzutreffenden Proxy Server: GET Requests k&ouml;nnen gecacht werden, POST hingegen nicht. Wer also
+die leidigen Caching Probleme ausschalten will, sollte sich f&uuml;r <b>httppost</b> entscheiden.
+</p>
+
+<p>
+Die Proxyklasse h&auml;tten wir, sie mu&szlig; nur noch kompiliert werden (<b>Compile.bat</b>):
+</p>
+
+<pre style="background='silver';">
+csc.exe /target:library SimpleStateProxy.cs
+</pre>
+
+<p>
+F&uuml;r die Verwendung in ASP.NET Seiten mu&szlig; die erzeugte Assembly in das <b>bin</b> Verzeichnis der
+Applikation kopiert werden, f&uuml;r Windows Applikation in das Verzeichnis des Programms.
+</p>
+
+<h2>Verwenden des Services</h2>
+<p>
+Im heutigen Download findet sich zwar auch ein Kommandozeilenbeispiel, allerdings gehe ich im Artikel
+nur die ASP.NET L&ouml;sung durch, die in <b>CallService.aspx</b> implementiert ist. Ich habe ein Web
+Form erstellt, das nur eine Schaltfl&auml;che beeinhaltet. Wenn man auf diese klickt, wird ein Event ausgel&ouml;st,
+und der Web Service aufgerufen:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Import Namespace="SimpleStateProxy" %&gt;
+&lt;% @Import Namespace="System.Net" %&gt;
+&lt;script language="C#" runat="server"&gt;
+void btnPress_Click(Object Sender, EventArgs E)
+{
+  SimpleState myStateService = new SimpleState();
+  CookieContainer cc = new CookieContainer();
+  myStateService.CookieContainer = cc;
+		
+  myStateService.MethodA("This is the World @" + DateTime.Now.ToString());
+  lblOutput.Text = myStateService.MethodB();
+}
+&lt;/script&gt;
+
+&lt;html&gt;
+&lt;body&gt;
+
+&lt;form runat="server"&gt;
+&lt;asp:Button id="btnPress" text="Test Service" 
+	onClick="btnPress_Click" runat="server" /&gt;
+&lt;p&gt;&lt;asp:Label id="lblOutput" text="" runat="server" /&gt;&lt;/p&gt;
+&lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Das Ergebnis sieht dann im Browser so aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010627_1.png" width="523" height="225" alt="" border="0">
+
+<p>
+Allerdings w&uuml;rde die ganze Sache ohne den folgenden zwei Zeilen keinesfalls funktionieren:
+</p>
+
+<pre style="background='silver';">
+  CookieContainer cc = new CookieContainer();
+  myStateService.CookieContainer = cc;
+</pre>
+
+<p>
+Um Web Services mit Session State verwenden zu k&ouml;nnen, mu&szlig; man einen <i>CookieContainer</i>
+instanzieren, und der <i>CookieContainer</i> Eigenschaft der Web Service Klasse zuweisen. Nur
+so kommt man in den Genu&szlig; von Session State. Sonst differiert der Aufruf der Web Service
+Funktionen nicht von einem, der keinen Session State verwendet.
+</p>
+
+<h2>Anwendungsfall: Authentifizierung</h2>
+<p>
+In der Einleitung erw&auml;hnt, hier kommt es - eine Authentifizierung f&uuml;r Web Services. Besonders praktisch dann,
+wenn man nur bestimmten Benutzern die Verwendung des Web Services gestatten will - und nicht auf
+andere Authentifizierungsmethoden (zB Windows Authentication) ausweichen m&ouml;chte.
+</p>
+<p>
+Die Datei <b>LoginSample.asmx</b> zeigt, wie es ablaufen mu&szlig;. Diese Datei ist nur ein "Skelett", in das
+Datenbankcode f&uuml;r die Benutzerkonten, sowie die eigentliche Funktionalit&auml;t des Web Services eingef&uuml;gt
+werden mu&szlig;. Die Infrastruktur aber ist vorhanden und getestet:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ WebService Language="C#" Class="LoginSample" %&gt;
+using System;
+using System.Web.Services;
+
+public class LoginSample : WebService
+{
+  [ WebMethod(EnableSession=true) ]
+  public bool Login(string Username, string Password) 
+  { 
+    // replace with database code to your liking
+    if ("user" == Username &amp;&amp; "pwd" == Password)
+    {
+      Session["LoggedIn"] = true;
+      return true;
+    }
+    else
+    {
+      Session["LoggedIn"] = false;
+    }
+    return false;
+  }
+
+  [ WebMethod(EnableSession=true) ]
+  public bool IsUserLoggedIn()
+  {
+    object loggedIn = Session["LoggedIn"];
+    if (null != loggedIn) return (bool)loggedIn;
+    return false;
+  }
+}
+</pre>
+
+<p>
+Wer den oben gezeigten Code &uuml;brigens nicht jedes Mal eintippen oder kopieren will - er ist als C#
+und VB.NET Template in <a href="http://www.icsharpcode.net/opensource/sd/" target="_blank">SharpDevelop</a> mit dabei:
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010627_2.png" width="602" height="597" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Session State kann in Intranetanwendungen sehr wohl praktikabel sein, da man ja out-of-process Session
+Stores verwenden kann. F&uuml;r den Web Service, den man Kunden aus aller Welt und auf allen Plattformen 
+anbieten m&ouml;chte, sollte man aber zu anderen Methoden greifen, um Logins (oder State generell) zu managen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010627.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010627.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010208.htm">Web Projekte mit SharpDevelop erstellen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010208.htm</span><br>
+<a href="../artikel/20010621.htm">Web Services 101 in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010621.htm</span><br>
+<a href="../artikel/20010622.htm">Web Services in Anwendungen konsumieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010622.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Edotnetgerman%2Ecom%2F">DotNetGerman Diskussionslisten</a><br>
+<SPAN class="content">http://www.dotnetgerman.com/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eicsharpcode%2Enet%2Fopensource%2Fsd%2F">SharpDevelop</a><br>
+<SPAN class="content">http://www.icsharpcode.net/opensource/sd/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

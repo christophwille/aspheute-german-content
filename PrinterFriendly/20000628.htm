@@ -1,0 +1,208 @@
+<HTML>
+<HEAD>
+<TITLE>Kreditkarten&uuml;berpr&uuml;fung mit ASP</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Eines der wichtigsten Dinge, die man f&uuml;r eine eCommerce Site ben&ouml;tigt ist die Validierung der eingegebenen Kreditkartennummern. Das Sch&ouml;ne an Kreditkartennummern ist, da&szlig; sie mathematisch in ihrer G&uuml;ltigkeit berechenbar sind.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP,MOD10,Luhn,Luhn Mod-10,Credit Card,Validity,Checking,Kreditkarte,Überprüfung,Gültigkeit,Kreditkartennummer,Check,JScript,DevEdge">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Kreditkarten&uuml;berpr&uuml;fung mit ASP</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000628"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Eines der wichtigsten Dinge, die man f&uuml;r eine eCommerce Site ben&ouml;tigt ist die Validierung der eingegebenen 
+Kreditkartennummern. Obwohl nicht jeder Shop online mit einem Payment Gateway zur sofortigen Abbuchung/Validierung
+verbunden ist, kann man sich dennoch gegen allzu groben Unfug bei der Kreditkartendateneingabe absichern.
+</p>
+<p>
+Das Sch&ouml;ne an Kreditkartennummern ist, da&szlig; sie mathematisch in ihrer G&uuml;ltigkeit berechenbar sind. Zus&auml;tzlich kann
+man aus der Nummer auch herausfinden, um welche Kreditkarte es sich handelt. Es gibt einige Komponenten (sehr
+viele davon teuer zu bezahlen), die einem diese Aufgabe abnehmen - wozu aber, wenn man es deutlich g&uuml;nstiger
+haben kann: gratis (aber nicht umsonst).
+</p>
+<p>
+Ich m&ouml;chte nicht behaupten, den Sourcecode zur Validierung erfunden zu haben - ich habe ihn auf der Entwicklerhomepage
+von Netscape gefunden (<a href="http://developer.netscape.com" target="_blank">DevEdge</a> - generell sehr empfehlenswert!).
+Es war ein Client-Side Code in JavaScript; ich habe die Funktionen f&uuml;r Kreditkartenvalidierung herausgeholt, und in 
+eine Datei namens <i>ccfuncs.asp</i> verfrachtet.
+</p>
+
+<h2>Der Validierungscode in ccfuncs.asp</h2>
+<p>
+Die Datei <a href="../artikel/20000628_code1.htm" target="_blank">ccfuncs.asp</a> enth&auml;lt alle &Uuml;berpr&uuml;fungsfunktionen.
+Es sind die originalen Client-Side JavaScript Funktionen, allerdings sind sie jetzt in einem serverseitigen
+SCRIPT Block f&uuml;r JScript eingeschlossen. Alle Funktionen sind gegen&uuml;ber den Originalen unver&auml;ndert.
+</p>
+<p>
+Die folgende Tabelle beschreibt die Funktionen, die in <a href="../artikel/20000628_code1.htm" target="_blank">ccfuncs.asp</a> enthalten sind:
+</p>
+<p>
+<table>
+<tr>	<th>Funktion</th>	<th>Beschreibung</th></tr>
+<tr>	<td>isCreditCard (st)</td>	<td>Liefert True wenn die Kartennummer den Luhn Mod-10 Test besteht.</td></tr>
+<tr>	<td>isVisa (cc)</td>	<td>Liefert True wenn es sich um eine VISA Karte handelt.</td></tr>
+<tr>	<td>isMasterCard (cc)</td>	<td>Liefert True wenn es sich um eine MasterCard handelt.</td></tr>
+<tr>	<td>isAmericanExpress (cc) </td>	<td>Liefert True wenn es sich um eine American Express Karte handelt.</td></tr>
+<tr>	<td>isDinersClub (cc)</td>	<td>Liefert True wenn es sich um eine Diner's Club Karte handelt.</td></tr>
+<tr>	<td>isCarteBlanche (cc)</td>	<td>Liefert True wenn es sich um eine Carte Blanche handelt.</td></tr>
+<tr>	<td>isDiscover (cc) </td>	<td>Liefert True wenn es sich um eine Discover Karte handelt.</td></tr>
+<tr>	<td>isEnRoute (cc) </td>	<td>Liefert True wenn es sich um eine enRoute Karte handelt.</td></tr>
+<tr>	<td>isJCB (cc) </td>	<td>Liefert True wenn es sich um eine JCB Karte handelt.</td></tr>
+<tr>	<td>isAnyCard (cc)</td>	<td>Liefert True wenn es sich um eine der aufgef&uuml;hrten Karten handelt.</td></tr>
+<tr>	<td>isCardMatch (Type, Number)</td>	<td>Liefert True wenn es sich bei <i>Number</i> um eine Karte von <i>Type</i> handelt.</td></tr>
+</table>
+</p>
+<p>
+Da man in ASP ja Funktionen, die in Sprache A geschrieben sind, von Code aus Sprache B aus aufrufen kann, war das auch
+schon der ganze Aufwand (Kurzversion: ich kann diese JScript Funktionen in normalen VBScript ASP Seiten verwenden).
+</p>
+
+<h2>Beispielkreditkarten</h2>
+<p>
+Zum Testen ben&ouml;tigt man eine Kreditkartennummer. Da ziemlich sicher niemand eine Kreditkarte jeder
+Marke besitzt, gibt es eine nette Liste von Testnummern, die man zum &Uuml;berpr&uuml;fen verwenden kann - auch
+mit tats&auml;chlichen Payment Gateways:
+</p>
+<p>
+<TABLE BORDER="0">
+<TR><Th align="left">Kreditkarte</Th><Th align="left">Testnummer</Th></TR>
+<TR><TD>Visa&nbsp;</TD><TD>4111 1111 1111 1111&nbsp;</TD></TR>
+<TR><TD>MasterCard&nbsp;</TD><TD>5500 0000 0000 0004&nbsp;</TD></TR>
+<TR><TD>American Express&nbsp;</TD><TD>3400 0000 0000 009&nbsp;</TD></TR>
+<TR><TD>Diner's Club&nbsp;</TD><TD>3000 0000 0000 04&nbsp;</TD></TR>
+<TR><TD>Carte Blanche&nbsp;</TD><TD>3000 0000 0000 04&nbsp;</TD></TR>
+<TR><TD>Discover&nbsp;</TD><TD>6011 0000 0000 0004&nbsp;</TD></TR>
+<TR><TD>JCB&nbsp;</TD><TD>3088 0000 0000 0009&nbsp;</TD></TR>
+</TABLE>
+</p>
+
+<h2>&Uuml;berpr&uuml;fen von Kreditkartendaten</h2>
+<p>
+So - nun haben wir den &Uuml;berpr&uuml;fungscode, sowie einige Kreditkarten zum Herumspielen - jetzt fehlt nur noch das
+Beispiel, das Kreditkartennummer auch wirklich &uuml;berpr&uuml;ft.
+</p>
+<p>
+Das folgende Beispiel ist mit Absicht einfach gehalten. Der Benutzer kann in einem Formular eine 
+Kreditkartennummer eingeben, und diese wird dann am Server mit <i>isCreditCard</i> &uuml;berpr&uuml;ft. Der Code f&uuml;r
+dieses Beispiel als auch <i>ccfuncs.asp</i> ist im Download dieses Artikels enthalten.
+</p>
+<p>
+<pre style="background=silver;">
+&lt;!-- #include file=&quot;ccfuncs.asp&quot; --&gt;
+&lt;html&gt;
+&lt;head&gt;
+	&lt;title&gt;Kreditkarten&uuml;berpr&uuml;fung&lt;/title&gt;
+&lt;/head&gt;
+&lt;body bgcolor=&quot;#ffffff&quot;&gt;
+&lt;%
+strCC = Request.QueryString(&quot;cc&quot;)
+If &quot;&quot; = strCC Then strCC = &quot;4111111111111111&quot;
+%&gt;
+&lt;h2&gt;Kreditkartencheck in ASP&lt;/h2&gt;
+&lt;form method=&quot;get&quot; action=&quot;&lt;%=Request.ServerVariables(&quot;SCRIPT_NAME&quot;)%&gt;&quot;&gt;
+&lt;input type=&quot;text&quot; name=&quot;cc&quot; value=&quot;&lt;%=strCC%&gt;&quot;&gt;&amp;nbsp;
+&lt;input type=&quot;submit&quot; value=&quot;&Uuml;berpr&uuml;fen!&quot;&gt;
+&lt;/form&gt;
+&lt;%
+If &quot;&quot; &lt;&gt; strCC Then
+	' wir haben eine Kreditkarte zum &Uuml;berpr&uuml;fen erhalten...
+	If Not isCreditCard(strCC) Then
+		Response.Write &quot;Sorry, mit der Karte &lt;b&gt;&quot; &amp; strCC &amp; _
+			&quot;&lt;/b&gt; k&ouml;nnen Sie nicht zahlen!&quot;
+	Else
+		Response.Write &quot;Die Kreditkarte ist OK!&quot;
+	End If
+End If
+%&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</PRE>
+</p>
+<p>
+Der pr&auml;sentierte Code in dieser ASP Seite ist VBScript, und dieser VBScript Code ruft die in JScript 
+geschriebene Kreditkartenvalidierungsfunktion <i>isCreditCard</i> auf. Dieser einfache Aufruf reicht, um sagen
+zu k&ouml;nnen, ob eine Kreditkarte oberfl&auml;chlich - von der Nummer her - OK ist. Man k&ouml;nnte nun auch noch den Typ
+der Karte &uuml;berpr&uuml;fen - um zu sehen, ob der Kunde die richtige Art ausgew&auml;hlt hatte.
+</p>
+<p>
+Wichtig ist, da&szlig; die Kreditkartenvalidierungsfunktionen Nummern erwarten, die keine Leerzeichen beeinhalten
+(sonst werden auch g&uuml;ltige Karten als falsch deklariert).
+Um diese "Kleinigkeit" mu&szlig; man sich vorher noch selbst k&uuml;mmern - entweder indem man einen Fehler ausgibt,
+wenn man ein Leerzeichen findet, oder still und leise alle Leerzeichen l&ouml;scht. Ich pers&ouml;nlich w&uuml;rde zu erster
+Vorgangsweise tendieren.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Ich m&ouml;chte an dieser Stelle nochmals betonen, da&szlig; die &Uuml;berpr&uuml;fung, wie sie in diesem Artikel pr&auml;sentiert
+wurde, nur die Plausibilit&auml;t der Nummer kontrolliert (das aber 100%ig). Ob die Karte tats&auml;chlich ausgeben wurde, oder wie es um
+die Bonit&auml;t des Besitzers steht, kann nur ein Payment Gateway beantworten.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000628.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000628.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010531.htm">Keine gefakten Bestellungen mehr!</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010531.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fdeveloper%2Enetscape%2Ecom%2Fdocs%2Fexamples%2Fjavascript%2Fformval%2Foverview%2Ehtml">JavaScript Form Validation Sample Code</a><br>
+<SPAN class="content">http://developer.netscape.com/docs/examples/javascript/formval/overview.html</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

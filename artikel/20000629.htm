@@ -1,0 +1,387 @@
+<HTML>
+<HEAD>
+<TITLE>Automatisation mit SQL Server</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Der SQL Server Agent kommt mit SQL Server 7.0 oder h&ouml;her, und erlaubt, Jobs zu managen - und das sowohl flexibel als auch programmiertechnisch leistungsstark.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SQL Server Agent,Job,Step,Schedule,ActiveX,Transact SQL,Scheduling,Scheduler">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Automatisation mit SQL Server</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Server.htm">Server</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000629"></SCRIPT>
+</p>
+<p>
+In vorangegangenen Artikeln haben wir bereits gesehen, wie man mit Hilfe verschiedener Werkzeuge
+ASP Seiten automatisch ablaufen lassen kann. Dabei haben wir bis jetzt eine sehr m&auml;chtige Job-Engine
+nicht betrachtet - den SQL Server Agent.
+</p>
+<p>
+Der SQL Server Agent kommt mit SQL Server 7.0 oder h&ouml;her, und erlaubt, Jobs zu managen - und das sowohl
+flexibel als auch programmiertechnisch leistungsstark. Man kann einen Job aus mehreren Schritten zusammensetzen,
+und jeder Schritt kann verschiedene Programmiertechniken beeinhalten (nur ein Auszug):
+<ul>
+<li>CmdExec: ein Kommandozeilenprogramm ausf&uuml;hren.
+<li>ActiveX Script: ein VBScript oder JScript Script ausf&uuml;hren.
+<li>Transact SQL: eine Folge von SQL Befehlen auf einer bestimmten Datenbank ausf&uuml;hren.
+<li>Replikation: eine Datenbankreplikation starten.
+</ul>
+</p>
+<p>
+Diese Schritte k&ouml;nnen miteinander verbunden werden - so zum Beispiel kann man bestimmen, da&szlig; Schritt C nur
+dann ausgef&uuml;hrt wird, wenn Schritt B fehlgeschlagen ist.
+</p>
+<p>
+Das Scheduling ist das, was mir an den SQL Server Agent Jobs eigentlich am besten gef&auml;llt: ich kann mehrere
+Zeitpl&auml;ne festlegen, und dies sehr bequem und leistungsstark. Man kann Jobs unter folgenden Bedingungen
+starten:
+<ul>
+<li>Wenn der SQL Server Agent Service startet
+<li>Wenn die CPU "unterbesch&auml;ftigt" ist
+<li>Einmalig
+<li>Wiederholend - t&auml;glich, w&ouml;chentlich, monatlich.
+</ul>
+</p>
+<p>
+Das folgende Beispiel erkl&auml;rt Schritt f&uuml;r Schritt, wie man einen einfachen Job deklariert. Ich m&ouml;chte Sie
+dazu auffordern, mit den Optionen herumzuspielen, um ein Gef&uuml;hl f&uuml;r die Leistung des SQL Server Agent zu 
+bekommen, da eine eingehende Diskussion aller Optionen nicht m&ouml;glich ist.
+</p>
+
+<h2>Anlegen eines neuen Jobs</h2>
+<p>
+Die folgende Anleitung beschreibt, wie Sie einen neuen SQL Server Job anlegen k&ouml;nnen, der nach einem
+bestimmten Zeitplan eine Aktion ausf&uuml;hrt. In unserem Falle ist es ein einfaches ActiveX Script, das uns
+t&auml;glich um 20:00 eine Abfrage als XML mailt. Ein Anwendungsfall w&auml;re, sich eine &Uuml;bersicht der Bestellungen
+des aktuellen Tages mailen zu lassen - und es mu&szlig; ja nicht XML sein, es kann auch eine aufwendig formatierte
+HTML Email sein.
+</p>
+<p>
+<b>Schritt 1</b> Starten Sie den SQL Server Enterprise Manager, w&auml;hlen Ihren Server aus und &ouml;ffnen den <i>Management</i> Folder.
+Klicken Sie mit der rechten Maustaste, und w&auml;hlen <i>New Job</i> aus dem Kontextmen&uuml; (siehe Abbildung).
+</p>
+<p><IMG SRC="Bilder/200006/20000629_1.png" width="522" height="433" border="0" alt=""></p>
+<p>
+<b>Schritt 2</b> Die <i>New Job Properties</i> Dialogbox &ouml;ffnet sich (siehe Abbildung). Geben Sie hier den Namen des Jobs ein -
+<b>OrdersEmail</b>. F&uuml;r den Anfang kann man die restlichen Optionen auf diesem Tab beruhigt auf den Standardwerten belassen.
+</p>
+<p><IMG SRC="Bilder/200006/20000629_2.png" width="599" height="326" border="0" alt=""></p>
+<p>
+<b>Schritt 3</b> Wechseln Sie zum Tab <i>Steps</i>. Klicken Sie auf die <i>New</i> Schaltfl&auml;che um die Dialogbox <i>New Job Step</i>
+aufzurufen. Benennen Sie den Schritt <b>Send my mail</b>, und w&auml;hlen Sie <b>ActiveX Script</b> als Typ aus. Diese
+Wahl erlaubt Ihnen, VBScript einzutippen - und das kennen Sie ja bereits von ASP her. Hier ist der entsprechende
+Sourcecode zum Testen (tauschen Sie aber bitte die Emailadresse!):
+<pre style="background='silver';">
+Set Mailer = CreateObject(&quot;SoftArtisans.SMTPMail&quot;)
+Mailer.FromName = &quot;SQL Server Automated Mail&quot;
+Mailer.FromAddress = &quot;webmaster@alphasierrapapa.com&quot;
+Mailer.RemoteHost = &quot;email.aon.at&quot;
+Mailer.AddRecipient &quot;Administrator&quot;, &quot;christophw@alphasierrapapa.com&quot;
+Mailer.Subject = &quot;Automatisierte Benachrichtigung&quot;
+Mailer.BodyText = &quot;Datum: &quot; &amp; Now
+
+Set rs = CreateObject(&quot;ADODB.Recordset&quot;)
+strSQL = "SELECT * FROM ORDERS" 
+strConnStr = "provider=sqloledb.1;user id=sa;password=;" &amp; _
+  &quot;initial catalog=Northwind;data source=crimsontide&quot;
+
+rs.Open strSQL, strConnStr
+Const adPersistXML = 1
+rs.Save &quot;c:\temp\test.xml&quot;, adPersistXML
+rs.Close
+Set rs = Nothing
+	
+Mailer.AddAttachment &quot;c:\temp\test.xml&quot;
+Mailer.SendMail
+Set Mailer = Nothing
+</pre>
+</p>
+<p>Die Dialogbox sollte nun wie die folgende Abbildung aussehen:</p>
+<p><IMG SRC="Bilder/200006/20000629_3.png" width="488" height="352" border="0" alt=""></p>
+<p>
+<b>Schritt 4</b> Klicken Sie auf OK, um den Schritt zu &uuml;bernehmen. Der Steps Tab sieht nun wie folgende Abbildung
+aus:</p>
+<p><IMG SRC="Bilder/200006/20000629_4.png" width="599" height="326" border="0" alt=""></p>
+<p>
+Sie k&ouml;nnten jetzt weitere Schritte einf&uuml;gen, so zum Beispiel eine Replizierung starten, oder ein beliebiges
+Transact SQL Statement auszuf&uuml;hren. Meine Empfehlung - spielen Sie ein bischen mit den M&ouml;glichkeiten herum,
+bevor Sie weitermachen.
+</p>
+<p>
+<b>Schritt 5</b> Wechseln Sie zum Tab <i>Schedules</i>. Wie die Mehrzahl bereits impliziert, k&ouml;nnen Sie hier mehrere
+Zeitpl&auml;ne eintragen - f&uuml;r uns reicht ein einziger vollst&auml;ndig aus. Daf&uuml;r klicken Sie auf <i>New Schedule</i>. Die
+<i>New Schedule</i> Dialogbox wird ge&ouml;ffnet. Geben Sie einen Namen ein (<b>Mein Zeitplan</b>) und klicken Sie auf die
+<i>Change</i> Schaltfl&auml;che:
+</p>
+<p><IMG SRC="Bilder/200006/20000629_5.png" width="480" height="293" border="0" alt=""></p>
+<p>
+Die nun folgende Dialogbox ist f&uuml;r die erste Betrachtung etwas &uuml;bervoll. Allerdings wollen wir den Plan
+ja nur auf <b>Daily</b> umstellen, und die Uhrzeit auf 8 Uhr abends (siehe Abbildung). Wenn alle &Auml;nderung durchgef&uuml;hrt sind, 
+klicken Sie auf OK - so oft, bis auch die letzte Dialogbox geschlossen ist. Der Job ist nun angelegt.
+</p>
+<p><IMG SRC="Bilder/200006/20000629_6.png" width="473" height="371" border="0" alt=""></p>
+
+<h2>Den Task sofort starten</h2>
+<p>
+Der Job ist jetzt fertig angelegt und wartet darauf, vom <i>SQL Server Agent</i> gestartet zu werden (daher mu&szlig; dieser
+SQL Server Service auch laufen!). Allerdings bin ich eine Spur zu ungeduldig, und m&ouml;chte es gleich 
+ausprobieren. Dazu klicke ich mit der rechten Maustaste auf den Job, und w&auml;hle <i>Start Job</i> vom Kontextmen&uuml;.
+</p>
+<p>
+Nach einer kleineren Wartezeit kann ich dann die Email abholen:
+</p>
+<p><IMG SRC="Bilder/200006/20000629_7.png" width="590" height="221" border="0" alt=""></p>
+<p>
+Ich kann die XML Datei jetzt einfach mit Internet Explorer ansehen, oder mit Hilfe eines Scripts in meine
+lokale Datenbank &uuml;bertragen. Die Grenzen sind hier nur die Vorstellungskraft.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die M&ouml;glichkeit, Scripts in VBScript zu einem SQL Server Job hinzuzuf&uuml;gen erlaubt es, sehr leistungsstarke
+Scripts zu erzeugen, die am Datenbankserver automatisch ablaufen k&ouml;nnen. Man kann sich damit sogar eine
+Staging L&ouml;sung basteln - allerdings sollte dann der Web Server auf der gleichen Maschine laufen. 
+</p><h2>Verwandte Artikel</h2>
+<p>
+<a href="20000511.htm">Automation - WSH versus Wget</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000629" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Automatisation mit SQL Server"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000629.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20000629"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000629.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

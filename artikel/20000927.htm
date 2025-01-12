@@ -1,0 +1,607 @@
+<HTML>
+<HEAD>
+<TITLE>Das Array, unendliche Weiten?</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel werden Sie lernen wie man ein-, zwei- und mehrdimensionale Arrays deklariert und mit ihnen umgeht. Der Autor geht in diesem Array-Grundlagenartikel auch noch darauf ein, wie man diese erfolgreich einsetzen kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Array,mehrdimensional,zweidimensional,dreidimensional,Spalte,Zeile,VBScript,Dimension">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Das Array, unendliche Weiten?</H1>
+<p>
+Geschrieben von: <a href="../autoren/stefangruendhammer.htm">Stefan Gründhammer</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000927"></SCRIPT>
+</p>
+<p>
+In diesem Artikel werden Sie lernen wie man ein-, zwei- und mehrdimensionale Arrays deklariert und mit ihnen
+umgeht. Ich werde in diesem Array-Grundlagenartikel auch noch darauf eingehen, wie man diese einsetzen kann. 
+</p>
+<p>
+Wie oft ist es Ihnen schon passiert, da&szlig; Sie eine Liste von Elementen gehabt haben, welche Sie so schnell
+und einfach wie m&ouml;glich speichern, und dann auch wieder ansprechen und verwenden wollten - und vielleicht
+nicht gewu&szlig;t haben, wie Sie das machen sollen: hier kommt die L&ouml;sung. All das und vieles mehr funktioniert 
+mit Arrays. 
+</p>
+
+<h2>Allgemeines zu Arrays</h2>
+<p>
+Was ist ein Array? Diese Frage stellt sich jeder Programmierer mindestens einmal in seinem Leben, ich 
+werde versuchen Ihnen diese Frage so einfach wie m&ouml;glich anhand einiger Anwendungsbeispiele und 
+umfangreichen Beschreibungen zu beantworten. Als erstes m&uuml;ssen Sie wissen, da&szlig; man jedes Array deklarieren mu&szlig;. 
+Es ist unerl&auml;&szlig;lich Arrays zu dimensionieren, da VBScript wissen mu&szlig; wie viele Elemente ein Array haben soll.
+Die Ausnahme zu dieser Regel sind die dynamischen Arrays.
+</p>
+<p>
+Verwenden Sie f&uuml;r die Entwicklung Ihrer Scripts wenn m&ouml;glich immer <i>&lt;% Option Explicit %&gt;</i>, denn damit 
+vermeiden Sie Tippfehler (und erh&ouml;hen nebenbei auch noch die Geschwindigkeit). Alle Arrays, die wir hier besprechen sind 
+nullbasierende, das hei&szlig;t der Index des Arrays beginnt bei 0. Wenn Sie z.B. ein eindimensionales Array 
+mit 15 Elementen generieren wollen, dann sieht das so aus: <i>ArrayName(14)</i>. Sie k&ouml;nnen jeden Wert (Eintrag bzw. 
+jedes Element) in Ihrem Array mit Hilfe des Arrayindex ansprechen und auch damit arbeiten.
+</p>
+<p>
+Es gibt grunds&auml;tzlich zwei Typen von Arrays: einerseits Arrays konstanter (statische) und andererseits Arrays variabler
+Gr&ouml;&szlig;e (dynamische Arrays). Statische Arrays k&ouml;nnen nat&uuml;rlich auch mehrere Dimensionen haben, genauso wie
+dynamische. Arrays k&ouml;nnen bis zu 60 Dimensionen haben, aber meistens werden nicht mehr als drei oder vier 
+Dimensionen gebraucht um die allt&auml;glichen Probleme zu l&ouml;sen.
+</p>
+
+<h2>Eindimensionale Arrays</h2>
+<p>
+Wie kann ich mir ein eindimensionales Array vorstellen? Eigentlich sehr einfach: ein eindimensionales Array
+ist nichts anderes als eine Kette (Spalte oder auch Zeile) von Elementen mit fortlaufendem Index von 0
+beginnend bis Anzahl der Elemente (n) minus 1. 
+</p>
+
+<h3>Dimensionierung eines eindimensionalen Arrays</h3>
+<p>
+Wie deklarieren Sie eine Variable in VBScript? Ganz einfach, entweder implizit indem Sie einen 
+Variablennamen in Ihrem Script verwenden (wenn Sie Option Explicit nicht einsetzen), oder explizit durch 
+Verwendung des <i>Dim</i> Statements. <i>Dim Variablenname</i> deklariert eine Variable und allokiert 
+gleichzeitig Speicherplatz f&uuml;r diese Variable. Die Syntax zum Deklarieren eines eindimensionalen Arrays 
+ist sehr einfach: <i>arrTest(Gr&ouml;&szlig;e)</i>. Der Name des 
+Arrays ist arrTest und das Wort "Gr&ouml;&szlig;e" (ist eine ganze Zahl) gibt nicht nur die Elementanzahl des Arrays 
+sondern auch dessen Dimension an, und die w&auml;re in diesem Fall 1.
+</p>
+<p>
+<b>Eigentlich gibt es zwei M&ouml;glichkeiten ein Array zu deklarieren:</b> 
+</p>
+<p>M&ouml;glichkeit 1:</p>
+<p>
+<pre style="background='silver';">
+ 1: &lt;% @LANGUAGE = VBScript %&gt;
+ 2: &lt;% Option Explicit %&gt;
+ 3: &lt;% Dim arrTest(4)
+ 4:     arrTest(0)=1
+ 5:     arrTest(1)=2
+ 6:     arrTest(2)=3
+ 7:     arrTest(3)=4
+ 8:     arrTest(4)=5
+ 9: %&gt;
+</pre>
+</p>
+<p>
+<i>Option Explicit </i> wurde bereits weiter oben kurz erw&auml;hnt. Dieses Statement mu&szlig; vor allen anderen 
+Statements in Ihrem Script stehen. Es zwingt Sie alle Ihre 
+Variablen explizit zu deklarieren, was von gro&szlig;em Nutzen f&uuml;r Ihre Scripts sein kann. Alle nichtdeklarierten 
+Variablen erzeugen dann sofort eine Fehlermeldung.
+</p>
+<p>
+In diesem Beispiel deklariere ich mit <i>Dim arrTest(4)</i> ein Array der fixen Gr&ouml;&szlig;e 5, und nicht der Gr&ouml;&szlig;e 
+4 da Arrays in VBScipt nullbasierend sind. In den Zeilen 4 bis 8 bef&uuml;lle ich das Array mit Werten, und zwar 
+indem ich z.B. mit arrTest(0)=1 dem ersten Feld den Wert 1 zuweise.  
+</p>
+<p>M&ouml;glichkeit 2:</p>
+<p>
+<pre style="background='silver';">
+ 1: &lt;% @LANGUAGE = VBScript %&gt;
+ 2: &lt;% Option Explicit %&gt;
+ 3: &lt;% Dim arrTest, x
+ 4:    arrTest = <b>Array</b>(1,2,3,4,5,6,7,8)
+ 5:    For x = 0 to UBound(arrTest)
+ 6:     Response.Write "arrTest" &amp; "(" &amp; x &amp; ") enth&auml;lt " &amp; arrTest(x) &amp; "&lt;br&gt;"
+ 7:    Next
+ 8: %&gt;
+</pre>
+</p>
+<p>
+In diesem Beispiel dimensioniere ich einfach eine Variable mit Namen arrTest in Zeile 3. In Zeile 4 benutze
+ich die <i>Array-Funktion</i> um aus der einfachen Variablen ein Array zu machen, und das Array gleich mit 
+Werten von 1 bis 8 zu bef&uuml;llen. Auf die Array-Funktion gehe ich etwas sp&auml;ter noch genauer ein.
+</p>
+<p>
+Eine Dimension kann doch noch nicht alles sein, da mu&szlig; es doch noch mehr geben. Richtig - und zwar zwei-
+und mehrdimensionale Arrays.
+</p>
+<h2>Zwei und mehrdimensionale Arrays</h2>
+<p>
+Eine Dimension ist ja recht nett kann aber in vielen, sehr vielen F&auml;llen zu wenig sein.
+</p>
+<h3>Zweidimensionale Arrays</h3>
+<p>
+Stellen Sie sich vor, Sie haben eine Gehaltsliste mit zwei Spalten: in der einen steht der Nachname eines
+Ihrer Mitarbeiter und in der zweiten dessen Gehalt. Wir werden ein Array mit 5 Zeilen und 2 Spalten 
+generieren.
+</p>
+<p>
+<pre style="background='silver';">
+ 1: &lt;% @LANGUAGE = VBScript %&gt;
+ 2: &lt;% Option Explicit %&gt;
+ 3: &lt;% Dim intZeile
+ 4:    Dim arrGehalt(4,1)
+ 5:    arrGehalt(0,0) = "Huber"
+ 6:    arrGehalt(1,0) = "Meier"
+ 7:    arrGehalt(2,0) = "Bauer"
+ 8:    arrGehalt(3,0) = "M&uuml;ller"
+ 9:    arrGehalt(4,0) = "Kaiser"
+10: 
+11:    arrGehalt(0,1) = 21000
+12:    arrGehalt(1,1) = 22000
+13:    arrGehalt(2,1) = 23000
+14:    arrGehalt(3,1) = 24000
+15:    arrGehalt(4,1) = 25000
+16: 
+17: For intZeile = 0 to 4
+18:    Response.Write"Herr " &amp; arrGehalt(intZeile,0)_
+19:    &amp; " erh&auml;lt " &amp; arrGehalt(intZeile,1) &amp; "&lt;br&gt;"
+20: Next
+21: %&gt;
+</pre>
+</p>
+<p>
+In Zeile 3 deklariere ich eine Variabele die ich sp&auml;ter nur in der For-Next Schleife zum Anzeigen des Arrays
+benutze. Mit <i>Dim arrGehalt(4,1)</i> deklariere ich ein zweidimensionales Array, wobei die erste Zahl in der
+Klammer (hier 4) die Anzahl der Reihen und die zweite Zahl (hier 1) die Anzahl der Spalten angibt.
+Zwei Zahlen in der Klammer getrennt durch einen Beistrich zeigen Ihnen an da&szlig; es sich hierbei um ein
+zweidimensionales Array handelt. Sie m&uuml;ssen sich dieses Array wie eine zweispaltige Tabelle mit 5 Zeilen
+vorstellen wobei jedes der Felder durch seinen Index bestehend aus zwei Zahlen, getrennt durch ein Komma,
+eindeutig angesprochen werden kann. Bildlich gesprochen: im linken oberen Eck steht die Zelle (0,0) im rechten unteren Eck die
+Zelle (4,1). 
+</p>
+<p>
+In den Zeilen 17 bis 20 schreibe ich das Array mittels For-Next-Schleife aus. Sie k&ouml;nnen sich diesen Code 
+nat&uuml;rlich wieder downloaden - er hat den Namen <i>zweidim.asp</i>. Aber nun auf zu h&ouml;heren Dimensionen...
+</p>
+
+<h3>Dreidimensionale Arrays</h3>
+<p>
+Dreidimensionale Arrays kommen schon viel seltener vor als zweidimensionale, sind aber f&uuml;r manche Probleme
+die einzige L&ouml;sung. Um Ihnen ein Bild &uuml;ber dreidimensionale Arrays zu geben, habe ich wieder ein Beispiel
+geschrieben. Na gut, eigentlich habe ich das zweidimensionale Beispiel einfach um ein Dimension erweitert...
+</p>
+<p>
+<pre style="background='silver';">
+ 1: &lt;% @LANGUAGE = VBScript %&gt;
+ 2: &lt;% Option Explicit %&gt;
+ 3: &lt;% Dim intZeile
+ 4:    Dim arrGehalt(4,1,1)
+ 5:    arrGehalt(0,0,0) = "Huber"
+ 6:    arrGehalt(1,0,0) = "Meier"
+ 7:    arrGehalt(2,0,0) = "Bauer"
+ 8:    arrGehalt(3,0,0) = "M&uuml;ller"
+ 9:    arrGehalt(4,0,0) = "Kaiser"
+10: 
+11:    arrGehalt(0,1,0) = 21000
+12:    arrGehalt(1,1,0) = 22000
+13:    arrGehalt(2,1,0) = 23000
+14:    arrGehalt(3,1,0) = 24000
+15:    arrGehalt(4,1,0) = 25000
+16: 
+17:    arrGehalt(0,1,1) = 14 * arrGehalt (0,1,0)
+18:    arrGehalt(1,1,1) = 14 * arrGehalt (1,1,0)
+19:    arrGehalt(2,1,1) = 14 * arrGehalt (2,1,0)
+20:    arrGehalt(3,1,1) = 14 * arrGehalt (3,1,0)
+21:    arrGehalt(4,1,1) = 14 * arrGehalt (4,1,0)
+22:
+23: For intZeile = 0 to 4
+24:   Response.Write "Herr " &amp; arrGehalt(intZeile,0,0)_ 
+25:   &amp; " erh&auml;lt " &amp; arrGehalt(intZeile,1,0) &amp; " monatlich "_
+26:   &amp; " und " &amp; arrGehalt(intZeile,1,1) &amp; "im Jahr &lt;br&gt;"
+27: Next
+27: %&gt;
+</pre>
+</p>
+<p>
+Ich habe in diesem Beispiel eine dritte Dimension eingef&uuml;hrt, und zwar genau so wie Sie es bis zu 60 mal
+machen k&ouml;nnen (Sie k&ouml;nnen max. 60 Dimensionen deklarieren) - einfach eine weitere Zahl f&uuml;r die Dimension
+in die Klammer schreiben und durch ein Komma trennen.
+</p>
+<p>
+Mit <i>Dim arrGehalt(4,1,1)</i> in der Zeile 4 habe ich ein dreidimensionales Array deklariert, dieses 
+Array hat folgende Ma&szlig;e: 5 Zeilen, 2 Spalten und 2 Schichten.
+Mit Schicht meine ich die Tiefe eines dreidimensionalen Arrays - man kann es sich wie ein Stapel Papier
+vorstellen, die Anzahl der Schichten entspricht dann der Anzahl der Bl&auml;tter.
+</p>
+<p>
+Viele von Ihnen werden sich fragen, warum ich das Monatsgehalt mit 14 multipliziere um das Jahresgehalt zu 
+ermitteln - na ja, ganz einfach: in &Ouml;sterreich ist das nun mal so. Scherz beiseite, ich habe diese Multiplikation
+nur gemacht um Ihnen zu zeigen, da&szlig; man sich auf diese Weise etwas Arbeit erspart, und so nur einen Wert &auml;ndern
+mu&szlig; wenn einer der Herren (oder Damen) eine Lohnerh&ouml;hung erh&auml;lt.
+</p>
+<p>
+In den Zeilen 23 bis 27 schreibe ich das dreidimensionale Array mit einigen F&uuml;llw&ouml;rtern heraus. Sie sehen, auch
+das l&auml;&szlig;t sich ganz einfach machen. 
+</p>
+
+<h2>Arrays in einem Array, auch das ist m&ouml;glich</h2>
+<p>
+Sie k&ouml;nnen auch Arrays in einem Array abspeichern. Wenn Sie zum Beispiel ein eindimensionales Array
+<i>arrMitarbeiter</i> bestehend aus Vornamen, Nachnamen, Adresse, Telefonnummer und dazugeh&ouml;riger Emailadresse 
+in einem Array <i>arrAbteilung</i> speichern wollen, geht auch dies sehr einfach. Sehen Sie das Array
+<i>arrMitarbeiter</i> ganz einfach wie einen normalen Wert an, den Sie im Array arrAbteilung speichern wollen,
+und legen Sie das Array des ersten Mitarbeiters einfach in <i>arrAbteilung(0,0)</i> ab, und das n&auml;chste 
+in <i>arrAbteilung(1,0)</i> usw.
+</p>
+<p>
+Ich werde Ihnen das Speichern und wieder Ausschreiben eines Arrays in einem Array anhand eines sehr 
+einfachen Beispiels demonstrieren (<i>arrayimarray.asp</i>).
+</p>
+<p>
+<pre style="background='silver';">
+ 1: &lt;% @LANGUAGE = VBScript %&gt;
+ 2: &lt;% Option Explicit %&gt;
+ 3: &lt;% Dim arrTest, arrHilfe(0), Trick, i
+ 4:        arrTest = Array(1,2,3,4,5,6,7,8,9)
+ 5:        arrHilfe(0) = arrTest
+ 6:        Trick = arrHilfe(0)
+ 7:    For i = 0 to UBound(Trick)
+ 8:        Response.Write Trick(i) &amp; " "
+ 9:    Next
+10: %&gt;
+</pre>
+</p>
+<p>
+In Zeile 4 bef&uuml;lle ich das Array <i>arrTest</i> mit Hilfe der Array-Funktion mit Zahlen von 1 bis 9. In Zeile 5
+speichere ich <i>arrTest</i> im Array <i>arrHilfe</i> an der Position 0. Um das Array arrTest wieder ausschreiben zu k&ouml;nnen
+m&uuml;ssen Sie einen kleinen Trick anwenden: Sie m&uuml;sssen arrHilfe(0) in einer anderen Variable (in unserem Fall Trick)
+speichern. Mit der For-Next-Schleife schreibe ich dann das Array wieder aus.
+</p>
+<p>
+Sie k&ouml;nnen jetzt Arrays in einem Array speichern und damit arbeiten, zu bemerken ist allerdings noch da&szlig; der Datentyp
+der Elemente der einzelnen Arrays keine Rolle spielt, d.h. Sie k&ouml;nnen ein Array mit Zahlen ein anderes mit
+Strings und wieder ein anderes mit True oder False f&uuml;llen.
+</p>
+
+<h2>Dynamische Arrays</h2>
+<p>
+Neben Arrays mit konstanter Gr&ouml;&szlig;e gibt es auch noch welche mit variabler Gr&ouml;&szlig;e. Diese werden &uuml;blicherweise
+<i>Dynamische Arrays</i> genannt. Sie k&ouml;nnen die Parameter dieser Arrays jederzeit an Ihre Anforderungen
+in Gr&ouml;&szlig;e und Dimension anpassen. Zum Thema gibt es bereits den Artikel 
+<a href="19990807.htm">Dynamische Arrays - Fluch und Segen</a>, der sehr 
+ausf&uuml;hrlich ist. Aus diesem Grund werde ich mich nur sehr kurz mit dynamischen Arrays befassen.
+</p>
+<p>
+Der Vollst&auml;ndigkeit halber werde ich aber noch kurz einige wichtige Begriffe beschreiben.
+Da w&auml;re wieder <i>Dim</i>, das in Verbindung mit einem Variablennamen und leeren Klammern ein dynamisches Array 
+deklariert:
+</p>
+<p>
+<pre style="background='silver';">
+ &lt;% Dim arrDyn() %&gt;  
+</pre>
+</p>
+<p>
+<i>Dim arrDyn()</i> deklariert ein dynamisches Array ohne Dimensions- oder Gr&ouml;&szlig;enangaben.
+Um das Array einsetzen zu k&ouml;nnen m&uuml;ssen Sie das <i>Redim</i> Statement verwenden.  
+</p>
+<p>
+<pre style="background='silver';">
+ &lt;% ReDim arrDyn(i) %&gt;  
+</pre>
+</p>
+<p>
+In der obenstehenden Codezeile habe ich anstelle einer Zahl eine Variable verwendet - somit kann ich die Gr&ouml;&szlig;e des
+Arrays dynamisch &auml;ndern. Aber Vorsicht bei der Verwendung des <i>ReDim</i> Statements: denn wenn Sie die
+Gr&ouml;&szlig;e ver&auml;ndern, l&ouml;schen Sie auch die Werte der einzelnen Elemente. Um das zu verhindern gibt es das
+Zauberwort <i>Preserve</i>. Mit <i>ReDim Preserve arrDyn(3)</i> ver&auml;ndern Sie die Gr&ouml;&szlig;e Ihres Arrays ohne
+dessen Inhalt zu l&ouml;schen. 
+</p>
+<p>
+Ich habe zum Thema dynamische Arrays nat&uuml;rlich wieder ein kleines Beispiel
+geschrieben (<i>dynamisches.asp</i>).
+</p>
+<p>
+<pre style="background='silver';">
+ 1: &lt;% @LANGUAGE = VBScript %&gt;
+ 2: &lt;% Option Explicit %&gt;
+ 3: &lt;% Dim arrDyn(), x, arrAbteilung, i, k
+ 4:       i=2
+ 5:       ReDim arrDyn(i)
+ 6:
+ 7:       arrDyn(0)= 1
+ 8:       arrDyn(1)= 2
+ 9:       arrDyn(2)= 3
+10: %&gt;
+11: Das dynamische Array:&lt;br&gt;
+12: &lt;%
+13:       For x = 0 to UBound(arrDyn)
+14:           Response.Write arrDyn(x) &amp; "&lt;br&gt;"
+15:       Next
+16: %&gt;
+17: Hier kommt das redimensionierte Array:&lt;br&gt;
+18: &lt;%
+19:       ReDim Preserve arrDyn(3)
+20:       arrDyn(3)= 4
+21:
+22:       For x = 0 to UBound(arrDyn)
+23:           Response.Write arrDyn(x) &amp; "&lt;br&gt;"
+24:       Next
+25: %&gt;
+</pre>
+</p>
+<p>
+In den Zeilen 3-9 dimensioniere ich das Array <i>arrDyn()</i>, weise ihm die Gr&ouml;&szlig;e 2 zu und bef&uuml;lle es.
+In der Zeile 19 &auml;ndere ich die Gr&ouml;&szlig;e meines Arrays, um aber den Inhalt des Arrays nicht zu verlieren mu&szlig; ich 
+das <i>Preserve</i> Statement verwenden. Um Ihnen zu beweisen, da&szlig; dem so ist schreibe ich danach das Array
+wieder aus. Sie k&ouml;nnen die Gr&ouml;&szlig;e Ihrer Arrays beliebig oft &auml;ndern, denken Sie aber daran, da&szlig; beim Verkleinern
+des Arrays Eintr&auml;ge verloren gehen. Soviel zu dynamischen Arrays.
+</p>
+				
+<h2>Praktische Anwendungsbeispiele f&uuml;r Arrays</h2>
+<p>
+Ich werde mich hier auf das Beschreiben von m&ouml;glichen Anwendungen von Arrays beschr&auml;nken, um den Rahmen dieses
+Artikels nicht zu sprengen. Sie k&ouml;nnen Arrays f&uuml;r die Implementierung einer Shopping-Applikation verwenden, indem Sie
+f&uuml;r jeden Kunden Ihrer Site ein Item-Array anlegen und dieses in der Sessionvariable speichern - das ist eine der
+einfachsten L&ouml;sungen f&uuml;r einen Shop. Sie k&ouml;nnen Arrays aber auch verwenden, wenn Sie mit
+Matrizen rechnen m&uuml;ssen. Bei gro&szlig;en Datenmengen empfiehlt es sich aber eine andere Programmiersprache zu w&auml;hlen.
+</p>
+<p>
+Nat&uuml;rlich k&ouml;nnen Sie die Elemente eines Arrays auch sortieren. Wenn Sie z.B. eine Liste mit Namen haben
+und diese Namen sollen aufsteigend sortiert sein, dann verwenden Sie am einfachsten ein Array, und Sie k&ouml;nnen
+jedes Element einzeln ansprechen und bearbeiten. Den Artikel zum Sortieren gibt es nat&uuml;rlich auch schon: 
+<a href="20000906.htm">Sortieren von Arrays in VBScript</a>.    
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Sie haben heute gelernt, wie man statische und dynamische Arrays deklariert, und wie man mit 
+mit mehrdimensionalen Arrays umgeht. Ein weiterer Artikel wird sich mit den wichtigsten
+Array-Funktionen ausf&uuml;hrlich besch&auml;ftigen. 
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000927.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20001002.htm">Arrayfunktionen</a><br>
+<a href="19990807.htm">Dynamische Arrays - Fluch und Segen</a><br>
+<a href="20010921.htm">Erstellung eines Intranets in ASP (Teil 5) - Application Day</a><br>
+<a href="20000906.htm">Sortieren von Arrays in VBScript</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000927" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Das Array, unendliche Weiten?"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000927.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Stefan Gründhammer"><input type="hidden" name="AuthorEmail" value="stefang@xitra.com"><input type="hidden" name="Artikel" value="20000927"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000927.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

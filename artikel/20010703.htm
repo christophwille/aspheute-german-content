@@ -1,0 +1,458 @@
+<HTML>
+<HEAD>
+<TITLE>Web Services einfach konsumieren</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel zeigt Ihnen anhand eines einfachen Beispiels, wie man Web Services mit Hilfe des SOAP Toolkits konsumieren kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SOAP,Web Service,SOAP Toolkit,ASP,Visual Basic,Scripting,Wscript,cscript,mssoapinit,SoapClient">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Web Services einfach konsumieren</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Web%20Services.htm">Web Services</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010703"></SCRIPT>
+</p>
+<p>
+Web Services sind dazu da um konsumiert zu werden! Die Erstellung eines Web Services mit klassischen
+Entwicklungstools wie Visual Basic 6 und Active Server Pages ist ja Dank des Microsoft SOAP Toolkits relativ 
+einfach.
+Nach der Erstellung des Web Service soll der Client aber auch die Dienste benutzen, d.h. konsumieren k&ouml;nnen.
+Dieser Artikel zeigt Ihnen anhand eines einfachen Beispiels, wie das mit Hilfe des SOAP Toolkits geht.
+</p>
+
+<p>
+Im Artikel <a href="20010629.htm">Web Services mit dem SOAP Toolkit erstellen</a> haben wir einen
+einfachen Web Service erstellt, der einen String zur&uuml;ckliefert. Im heutigen Artikel zeige ich Ihnen, wie man diesen
+Web Service client-seitig konsumieren kann. F&uuml;r das Konsumieren ben&ouml;tigt man das SOAP Toolkit, weitere Informationen
+dazu (und Download) finden sich im zuvor genannten Artikel.
+</p>
+
+<p>
+Der "Konsum"-Prozess (&Auml;hnlichkeiten mit realen Bez&uuml;gen nicht beabsichtigt) beginnt mit einem Request des Clients.
+Dieser Request stellt bei Verwendung unseres 
+Web Services aus dem Artikel <a href="20010629.htm">Web Services mit dem SOAP Toolkit erstellen</a>
+einen Methodenaufruf dar. Eben dieser Request wird vom <i>SoapClient</i> Objekt entgegengenommen und erstellt einen
+<i>SOAP Request</i> der dem Web Server &uuml;bergeben wird. Der Server bearbeitet dann den Request, f&uuml;hrt die erhaltenen Anweisungen 
+aus, und schickt das Ergebnis als <i>SOAP Response</i> wieder zur&uuml;ck zum Client. Dort formuliert der <i>SoapClient</i>
+aus der <i>SOAP Response</i> eine, f&uuml;r den Benutzer des Web Service lesbare Anwort, die das Ergebnis aus der Prozedur
+enth&auml;lt.
+</p>
+
+<p>
+Bildlich gesprochen passiert also folgendes:
+</p>
+
+<IMG SRC="Bilder/200107/20010703_1.png" width="569" height="359" alt="" border="0">
+
+<p>
+Damit dieser Proze&szlig; ablaufen kann, mu&szlig; vorher das <i>SoapClient</i> Objekt von der jeweiligen Anwendung 
+instanziert werden.
+Nachdem dies erfolgreich geschehen ist, initialisieren wir das Objekt mit der <i>mssoapinit</i> Methode, welche
+aus der WSDL (Web Services Description Language) Datei die n&ouml;tigen Informationen f&uuml;r diesen Vorgang bezieht.
+</p>
+
+<p>
+Die Syntax der <i>mssoapinit</i> Methode sieht folgenderma&szlig;en aus:
+</p>
+
+<pre style="background='silver';">
+object.mssoapinit("WSDLFile", "ServiceName", "Port", "WSMLFile")
+</pre>
+
+<p>
+Die Parameter dieser Methode bedeuten:
+</p>
+
+
+<li><i>WSDLFile</i>: Angabe des URLs der WSDL Datei</li>
+<li><i>ServiceName</i>: Eigentlicher Service, der in der WSDL Datei beschrieben wird. Dieser Parameter is optional, d.h
+wenn er weggelassen wird, verwendet die Methode den ersten in der Datei berschriebenen Service. Der Eintrag in der WSDL Datei sieht so aus:</li>
+
+<pre style="background='silver';">
+&lt;service name='SimpleWebService' &gt;
+</pre>
+
+<li><i>Port</i>: Der Name des Ports, der in Der WSDL Datei angef&uuml;hrt ist; optional; Eintrag in der WSDL Datei:</li>
+ 
+<pre style="background='silver';">
+&lt;portType name='SimpleWSSoapPort'&gt;
+</pre>
+
+<li><i>WSMLFile</i>: Angabe des URLs der WSML (Web Services Meta Language) Datei; optional</li>
+
+
+<p>
+Nach der Initialisierung tritt der <i>WSDLReader</i> in Aktion. Dieses Objekt liest die von den WSDL und WSML Dateien bereitgestellten 
+Informationen, die den Web Service beschreiben ein, und l&auml;dt diese in ein DOM (Document Object Model). Durch die nun
+erhaltenen Informationen (Methodenaufruf der zug&auml;nglichen Methode <i>RetString</i>) kann ein <i>WSDLOperation</i>
+Objekt erstellt werden. Dieses Objekt enth&auml;lt Eigenschaften, die die IO Messages des Web Service betreffen.
+</p>
+
+<p>
+Danach erstellt der <i>SoapClient</i> f&uuml;r die <i>RetString</i> Methode einen <i>SoapMapper</i> und zus&auml;tzlich werden vom
+<i>SoapClient</i> Objekt die IO Messages (in unserem Fall wird nur ein Outputstring erwartet) in diesen geladen.  
+Der <i>SoapSerializer</i> erstellt anhand des <i>SoapMappers</i> einen <i>SoapRequest</i> der dann zum Server 
+geschickt und verarbeitet wird.
+</p>
+
+<p>
+Nach der serverseitigen Verarbeitung schickt der Server eine SOAP Response (den Outputstring) zum Client zur&uuml;ck.
+Das <i>SoapClient</i> Objekt nimmt diese Response entgegen, packt diese in den daf&uuml;r vorgesehenen Outputteil des
+vorher erstellten <i>SoapMappers</i> und schickt dies zur&uuml;ck zur Client Applikation.
+</p>
+
+<p>
+Sehen wir uns nun aber die Theorie in einem einfachen Beispiel an. Es gibt viele M&ouml;glichkeiten um einen Web Service
+zu konsumieren. Die erste und gleichzeitig einfachste ist jene, den Methodenaufruf der von au&szlig;en zug&auml;nglichen Methode(n)
+in eine VBScript Datei zu packen. Warum dies? Es ist, wie gesagt die einfachste und schnellste M&ouml;glichkeit einen
+Web Service zu testen, bevor man es mit einer GUI konsumiert.
+</p>
+
+<p>
+Wir erstellen also eine VBScript Datei (<b>consumer.vbs</b>), die die n&ouml;tigen Anweisungen zum Konsumieren des Web Service
+beinhaltet:
+</p>
+
+<pre style="background='silver';">
+Option Explicit
+
+Dim SoapClient
+Set SoapClient = CreateObject("MSSOAP.SoapClient") 
+On Error Resume Next
+Call SoapClient.mssoapinit("http://127.0.0.1/WSSoap/SimpleWebService.WSDL",  _
+       "SimpleWebService", "SimpleWSSoapPort")
+       
+If err &lt;&gt; 0 Then
+  wscript.echo "Init Failure: " + err.description
+End If
+
+wscript.echo  SoapClient.RetString
+If err &lt;&gt; 0 Then
+  wscript.echo   "Error: " + err.description
+  wscript.echo   "Error Code: " + SoapClient.faultcode
+  wscript.echo   "Error String: " + SoapClient.faultstring
+  wscript.echo   "Fault Actor: " + SoapClient.faultactor
+  wscript.echo   "Detailed Information: " + SoapClient.detail
+End If
+</pre>
+
+<p>
+Da f&uuml;r Testzwecke auch eine Fehlerbehandlung notwendig ist, habe ich diese gleich miterstellt. Das <i>SoapClient</i>
+Object besitzt schon von Haus aus einige Properties, mit denen man eine m&ouml;gliche Fehlerquelle diagnostizieren kann.
+</p>
+<p>
+Nach dem Speichern der Datei rufen wir das Command Prompt (<b>cmd.exe</b>) auf, und wechseln in das Verzeichnis, wo sich die WScript 
+Datei befindet. Wir k&ouml;nnen nun mit 
+</p>
+
+<pre style="background='silver';">
+cscript consumer.vbs
+</pre>
+
+<p>
+den Web Service konsumieren. Bei erfolgreichem Ablauf pr&auml;sentiert sich an der Kommandozeile folgendes Ergebnis:
+</p>
+
+<IMG SRC="Bilder/200107/20010703_2.png" width="652" height="167" alt="" border="0">
+
+<p>
+Da dieses Beispiel sehr einfach ist, schreiben wir schnell eine ASP Version, indem wir einfach den obigen Code
+etwas anpassen:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Set SoapClient = CreateObject("MSSOAP.SoapClient")
+On Error Resume Next
+
+SoapClient.mssoapinit "http://127.0.0.1/WSSoap/SimpleWebService.WSDL"
+
+If err &lt;&gt; 0 Then
+  Response.Write "Init Failure: " &amp; Err.description
+End If
+
+SoapClient.RetString()
+If Err &lt;&gt; 0 Then
+  Response.Write "&lt;br&gt;&lt;b&gt;Error:&lt;/b&gt; " &amp; Err.description 
+  Response.Write "&lt;br&gt;&lt;b&gt;Error Code:&lt;/b&gt; " &amp; SoapClient.faultcode
+  Response.Write "&lt;br&gt;&lt;b&gt;Error String:&lt;/b&gt; " &amp; SoapClient.faultstring
+  Response.Write "&lt;br&gt;&lt;b&gt;Fault Actor:&lt;/b&gt; " &amp; SoapClient.faultactor
+  Response.Write "&lt;br&gt;&lt;b&gt;Detailed Information:&lt;/b&gt; " &amp; SoapClient.detail
+End If
+
+%&gt;
+</pre>
+
+<p>
+Bei Ausf&uuml;hren dieser Datei bietet sich das gleiche - zugegebenerma&szlig;en einfallslose - Bild. Interessanter wird es aber wenn 
+ein Fehler auftritt. Wenn ich nun gemeinerweise etwas an den Dateien "herumpfusche" (nat&uuml;rlich nur f&uuml;r die 
+Demozwecke), pr&auml;sentiert sich f&uuml;r des Entwickers Augen eine ausf&uuml;hrliche Fehlerbeschreibung:
+</p>
+
+<IMG SRC="Bilder/200107/20010703_3.png" width="563" height="430" alt="" border="0">
+
+<p>
+Was ich damit demonstrieren wollte ist, da&szlig; man auf Fehlerbehandlung beim Konsumieren von Web Services nicht
+verzichten sollte. Es handelt sich ja schlie&szlig;lich um Services, die &uuml;ber Netzwerkverbindungen angesprochen werden - 
+und diese als auch die Services selbst k&ouml;nnen ja einmal nicht verf&uuml;gbar sein.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Dieser Artikel zeigte Ihnen wie man auf altbew&auml;hrte Art und Weise, also mit VBScript und ASP, einen Web Service
+konsumiert. Das Beispiel war mit Absicht einfach gehalten, um den ablaufenden Prozess verst&auml;ndlich zu machen. 
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010703.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20021029.htm">Amazon.com Web Services 2.0</a><br>
+<a href="20020415.htm">Programmieren mit den Google Web APIs Beta 2</a><br>
+<a href="20010629.htm">Web Services mit dem SOAP Toolkit erstellen</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20010703" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Web Services einfach konsumieren"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20010703.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Holm"><input type="hidden" name="AuthorEmail" value="office@holmcs.com"><input type="hidden" name="Artikel" value="20010703"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20010703.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

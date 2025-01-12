@@ -1,0 +1,278 @@
+<HTML>
+<HEAD>
+<TITLE>Thumbnailgenerierung in .NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Produktkataloge und Online-Bildergalerien haben (meist) eines gemeinsam: bevor man zum eigentlichen Detailbild gelangt, wird einem zuerst ein Vorschaubild, ein Thumbnail, pr&auml;sentiert. Heute sehen wir uns an, wie man mit .NET einen Thumbnail generiert">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Thumbnail,Vorschaubild,Preview,Teaser,GetThumbnail,GetThumbnailImage,Image,OutputStream,Response,.NET">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Thumbnailgenerierung in .NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020225"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Produktkataloge und Online-Bildergalerien haben (meist) eines gemeinsam: bevor man zum eigentlichen
+Detailbild gelangt, wird einem zuerst ein Vorschaubild, ein Thumbnail, pr&auml;sentiert. Solange die Bilder
+offline generiert werden, kann man auch die Thumbnails offline mitgenerieren - was aber, wenn die Bilder
+am Server gewartet/erstellt werden, und man die Thumbnails dynamisch on the fly generieren soll?
+</p>
+<p>
+Um die Spannung gleich abzubauen: die Thumbnailgenerierung unter .NET ist an sich ganz einfach - man 
+mu&szlig; nur die <i>GetThumbnailImage</i> Methode der
+<i>Image</i> Klasse aufrufen, und schon bekommt man automatisch das Thumbnail in der gew&uuml;nschten Gr&ouml;&szlig;e 
+in die Hand gedr&uuml;ckt. Es ist zwar praktisch, da&szlig; es so einfach ist, hat aber den Nachteil, da&szlig; man bestimmte
+Arbeiten dann immer wieder per Hand macht - &ouml;ffnen der Grafik, ermitteln der Skalierungverh&auml;ltnisse, etc. 
+Warum das nicht alles in eine Klasse verpacken, und immer wieder verwerten?
+</p>
+<p>
+Das war das Stichwort - Klasse. Unsere Klasse wird <i>Thumbnail</i> hei&szlig;en, und im Prinzip nur aus 
+vielen polymorphen <i>GetThumbnail</i> Methoden bestehen (mehrere Methoden mit identem Namen aber
+unterschiedlicher Parameterliste). Um die Wiederverwendbarkeit noch zu steigern, kompilieren wir
+die Klasse in eine Assembly - damit kann ich auf die Klasse von jeder Programmiersprache aus 
+zugreifen.
+</p>
+<p>
+Damit zum Code (die Erkl&auml;rung folgt) in <b>Thumbnail.cs</b>, in der die gleichnamige Klasse implementiert ist:
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.Drawing;
+
+namespace AspHeute.ThumbsUp
+{
+  public class Thumbnail
+  {
+    public bool AbortThumbnailGeneration()
+    {
+      return false;
+    }
+    
+    public Image GetThumbnail(string strFilename, int nScalePercentage)
+    {
+      Image img2Scale = Image.FromFile(strFilename);
+      Image imgThumb = GetThumbnail(img2Scale, nScalePercentage);
+      img2Scale.Dispose();  // cleanup
+      return imgThumb;
+    }
+    
+    public Image GetThumbnail(Image imgFullSize, int nScalePercentage)
+    {
+      if (nScalePercentage &lt; 1 || nScalePercentage &gt; 99)
+        throw new ArgumentException("Scale percentage must be between 1 and 99");
+      
+      int nImageWidth = imgFullSize.Width;
+      int nImageHeight = imgFullSize.Height;
+      nImageWidth = (int)((double)nImageWidth * ((double)nScalePercentage/100.0));
+      nImageHeight = (int)((double)nImageHeight * ((double)nScalePercentage/100.0));
+      return GetThumbnail(imgFullSize, nImageWidth, nImageHeight);
+    }
+    
+    public Image GetThumbnail(Image imgFullSize, int nWidth, int nHeight)
+    {
+      Image.GetThumbnailImageAbort cb = new Image.GetThumbnailImageAbort(AbortThumbnailGeneration);
+      return imgFullSize.GetThumbnailImage(nWidth, nHeight, cb, IntPtr.Zero);
+    }
+  }
+}
+</pre>
+
+<p>
+Die drei Methoden namens <i>GetThumbnail</i> nehmen jeweils unterschiedliche Parameter entgegen. Die erste
+erlaubt den Aufruf mittels Dateinamen und Skalierungsfaktor, und ruft nach &Ouml;ffnen des Bildes sein
+Pendant mit <i>Image</i> in der Parameterliste auf. Diese Methode erledigt die Berechnung der Breite
+und H&ouml;he des Thumbnails basierend auf dem Skalierungsfaktor, und gibt die Arbeit der Thumbnailgenerierung
+an die letzte <i>GetThumbnail</i> Implementierung weiter. Die ruft dann <i>GetThumbnailImage</i> auf, und
+liefert das <i>Image</i> an den jeweiligen Aufrufer zur&uuml;ck.
+</p>
+<p>
+Auch wenn das auf den ersten Blick nach Overkill aussieht - ich kann ohne ein Image anzugreifen ein
+skaliertes Thumbnail erstellen (Methode 1), von einem ge&ouml;ffneten Bild einen skalierten Thumbnail 
+erstellen (Methode 2), sowie ein v&ouml;llig frei skaliertes Thumbnail erstellen (Methode 3).
+</p>
+<p>
+F&uuml;r die Kompilierung der Assembly habe ich eine Batchdatei namens <b>build.bat</b> mitgegeben. Nach
+erfolgreicher Kompilierung mu&szlig; die Assembly in das <b>bin</b> Verzeichnis kopiert werden, und dann kann
+man sie in ASP.NET verwenden.
+</p>
+<p>
+Die Verwendung der Klasse demonstriert <b>GenThumbnailPercent.aspx</b> - obwohl in C# erstellt,
+kann man die Klasse dank Kompilierung in Assembly genauso in VB.NET verwenden.
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;%@ Import Namespace="AspHeute.ThumbsUp" %&gt;
+&lt;%
+string strImage = Server.MapPath("Pinzgauer.jpg");
+int nPercentage = 40;
+Thumbnail myThumb = new Thumbnail();
+System.Drawing.Image imgThumb = myThumb.GetThumbnail(strImage, nPercentage);
+
+Response.Clear();
+Response.ContentType = "image/jpeg";
+imgThumb.Save(Response.OutputStream, System.Drawing.Imaging.ImageFormat.Jpeg);
+imgThumb.Dispose();
+Response.End();
+%&gt;
+</pre>
+
+<p>
+Die <i>GetThumbnail</i> Methode wird hier mit Dateinamen und Prozentsatz der Skalierung aufgerufen.
+Der zur&uuml;ckgelieferte Thumbnail wird direkt in den <i>OutputStream</i> des <i>Response</i> Objekts
+geschrieben. Und um Resourcen zu schonen, disposen wir das Image sofort. Das Bild, das am Client
+ankommt, sieht dann so aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200202/20020225_1.jpg" width="231" height="200" alt="" border="0">
+
+<h2>Skalieren mit vorgegebenen Seiten</h2>
+<p>
+Bilder werden auf Websites nicht nur prozentuell skaliert, sondern des &ouml;fteren mit einer fixen
+Seitenl&auml;nge - entweder Breite oder H&ouml;he ist fix vorgegeben, die jeweils andere Seite soll im 
+Verh&auml;ltnis skaliert werden. Um dies zu realisieren, habe ich zwei weitere polymorphe Methoden
+in die Klasse eingebaut:
+</p>
+
+<pre style="background='silver';">
+    public Image GetThumbnail(string strFilename, int nPixelSize, bool bPortrait)
+    {
+      Image img2Scale = Image.FromFile(strFilename);
+      Image imgThumb = GetThumbnail(img2Scale, nPixelSize, bPortrait);
+      img2Scale.Dispose();  // cleanup
+      return imgThumb;      
+    }
+    
+    public Image GetThumbnail(Image imgFullSize, int nPixelSize, bool bPortrait)
+    {
+      int nImageWidth = imgFullSize.Width;
+      int nImageHeight = imgFullSize.Height;
+      int nScalePercentage = 0;
+      if (bPortrait)
+      {
+        nScalePercentage = (int)(nPixelSize * 100.0 / (double)nImageHeight);
+        nImageWidth = (int)((double)nImageWidth * ((double)nScalePercentage/100.0));
+        nImageHeight = nPixelSize;
+      }
+      else
+      {
+        nScalePercentage = (int)(nPixelSize * 100.0 / (double)nImageWidth);  
+        nImageHeight = (int)((double)nImageHeight * ((double)nScalePercentage/100.0));
+        nImageWidth = nPixelSize;
+      }
+      return GetThumbnail(imgFullSize, nImageWidth, nImageHeight);
+    }
+</pre>
+
+<p>
+Wird die Breite als fix angesehen, so ist das Bild im Landscape Modus, ist die H&ouml;he hingegen fix,
+nennt sich das Portrait. Deshalb: ist der Parameter <b>bPortrait</b> true, dann ist die H&ouml;he fix, und umgekehrt
+wenn <b>bPortrait</b> false ist, ist die Breite fix vorgegeben. Zusammen mit der Wunschl&auml;nge der
+Seite rechnet man das Verh&auml;ltnis aus, und bestimmt die fehlende skalierte Seite. Und schon hat
+man den skalierten Thumbnail.
+</p>
+
+<p>
+Die Verwendung wird wieder in einem kleinen Beispiel demonstriert, <b>GenThumbnailPixel.aspx</b>:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;%@ Import Namespace="AspHeute.ThumbsUp" %&gt;
+&lt;%@ Import Namespace="System.Drawing" %&gt;
+&lt;%@ Import Namespace="System.Drawing.Imaging" %&gt;
+&lt;%
+string strImage = Server.MapPath("Pinzgauer.jpg");
+int nPixelSize = 150;
+bool bPortrait = false;
+Thumbnail myThumb = new Thumbnail();
+System.Drawing.Image imgThumb = myThumb.GetThumbnail(strImage, nPixelSize, bPortrait);
+
+Response.Clear();
+Response.ContentType = "image/jpeg";
+imgThumb.Save(Response.OutputStream, ImageFormat.Jpeg);
+imgThumb.Dispose();
+Response.End();
+%&gt;
+</pre>
+
+<p>
+Nat&uuml;rlich kann man die <i>Save</i> Methode von <i>Image</i> auch in eine Datei speichern lassen -
+das ist speziell dann interessant, wenn man Thumbnails vorgeneriert, und nicht dynamisch pro User
+erstellt. Solche Batchjobs sollte man aber besser auch als solche ablaufen lassen, und nicht in ASP.NET.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Das Erstellen von Thumbnails in .NET ist ein Kinderspiel - mit ein wenig Klasse kann man sogar noch
+einiges an Produktivit&auml;t herausholen, wie dieser Artikel gezeigt hat.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020225.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020225.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020702.htm">.NET Komponenten in COM+ Clients einsetzen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020702.htm</span><br>
+<a href="../artikel/20001130.htm">Bildinformationen selbst ermitteln</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001130.htm</span><br>
+<a href="../artikel/20000929.htm">Dateien lesen in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000929.htm</span><br>
+<a href="../artikel/20001012.htm">Einf&uuml;hrung: C#-Klassen in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001012.htm</span><br>
+<a href="../artikel/20000728.htm">On-the-fly Generierung von Graphiken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000728.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

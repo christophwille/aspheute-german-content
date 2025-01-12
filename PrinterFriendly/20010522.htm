@@ -1,0 +1,291 @@
+<HTML>
+<HEAD>
+<TITLE>Die SQL2Table Komponente</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Daten aus einer Datenbank &uuml;bersichtlich anzuzeigen bzw. Daten webbasierend hinzuzuf&uuml;gen oder zu editieren ben&ouml;tigt in ASP einige Zeilen Code. Die SQL2Table Komponente schafft hier eine angenehme Abhilfe.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SQL2Table,Editing,Datensätze,Datenbank,Wartung,Eingabemaske,Datagrid,Paging,seitenweise">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Die SQL2Table Komponente</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Komponenten.htm">Komponenten</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010522"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Daten aus einer Datenbank &uuml;bersichtlich anzuzeigen bzw. Daten webbasierend hinzuzuf&uuml;gen oder zu editieren
+ben&ouml;tigt in ASP einige Zeilen Code. Die SQL2Table Komponente schafft hier eine angenehme Abhilfe. Diese
+stellt einige Funktionen zur Verf&uuml;gung, die dem Programmierer einiges an Arbeit abnehmen. Dieser Artikel soll Ihnen
+diese Funktionalit&auml;ten n&auml;herbringen. Angenehmerweise ist diese Komponente auch noch kostenlos.
+</p>
+
+<p>
+Die SQL2Table k&ouml;nnen Sie von Jeff Louie's Homepage kostenlos
+<a href="http://www.geocities.com/Jeff_Louie/index.html" target="_blank">downloaden</a>. Nach dem Download und Entpacken des Zip-Archivs
+ist die Komponente mit <i>regsvr32</i> auf einem Webserver zu registrieren.
+</p>
+<p>
+F&uuml;r diesen Artikel habe ich zwei einfache 
+Beispiele und einen Walkthru durch die fortgeschrittenen Features vorbereitet. Die Daten werden dabei aus Datenbanken
+geholt, welche auf einem SQL Server 2000 liegen.
+</p>
+
+<p>
+Im ersten Beispiel werden die SELECTeten Daten in einem Html Table eingebettet, welches eine der Hauptfunktionen der Komponente darstellt.
+Dies ist eigentlich nichts aufregendes, aber im Gegensatz zu der h&auml;ndisch programmierten Version, steht die geringere 
+Fehleranf&auml;lligkeit und der geringere Aufwand. Hinzu kommt noch, da&szlig; eine Fehlerbehandlung
+integriert ist und dies mit einem Methodenaufruf erledigt ist. 
+</p>
+<p>
+Nun zum Aufw&auml;rmen das erste Beispiel.
+Dieses holt die Daten anhand des hardcodierten SQL-Statements aus der Northwind Datenbank und stellt diese dann eingebettet 
+in einer Html Tabelle dar:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Set objSQL2Table= Server.CreateObject("JAL.SQL2Table")
+objSQL2Table.strConn= "Provider=SQLOLEDB.1;Initial Catalog=Northwind;Data Source=BLUESCREEN"
+objSQL2Table.strSQL= "SELECT CompanyName, ContactName, ContactTitle, Phone " & _
+      " FROM Suppliers ORDER BY CompanyName ASC"
+objSQL2Table.strID= "sa"
+objSQL2Table.strPW = ""
+objSQL2Table.strTableTags= "&lt;table border=2&gt;"
+
+If objSQL2Table.Connect() Then 
+    If objSQL2Table.Update() Then
+        Response.Write objSQL2Table.GetGrid()
+    Else
+        Response.Write objSQL2Table.GetLog()
+    End If
+Else 
+    Response.Write objSQL2Table.GetLog()
+End If
+objSQL2Table.Disconnect()
+
+Set objSQL2Table = Nothing
+%&lt;
+</pre>
+
+<p>
+Mit <i>Server.CreateObject</i> erstellen Sie das Objekt der SQL2Table Komponente. Danach - wie gewohnt - ist der
+Connection String (<i>strConn</i> Property) und das SQL Statement (<i>strSQL</i> Property) sowie die Logininformationen
+anzugeben (<i>strID</i> und <i>strPW</i> Property).
+</p>
+
+<p>
+Mit der <i>strTableTags</i> Property k&ouml;nnen Sie dem Html Table zus&auml;tzliche Formatoptionen zuweisen.
+Danach erfolgt die Verbindung zur SQL Datenbank mittels der <i>Connect</i> Methode. Praktischerweise gibt diese auch
+eine genaue Fehlerbeschreibung zur&uuml;ck, falls Probleme auftauchen. Auftretende Exceptions werden mit der <i>GetLog</i>
+Methode angezeigt, welche immer die zuletzt aufgetretene Exception darstellt.
+</p>
+
+<p>
+Die <i>Update</i> Methode erstellt dann das Recordset-Objekt unter Verwendung des angegebenen SQL Statements.
+Der Html Table wird durch die <i>GetGrid</i> Methode erzeugt. Beide Methoden k&ouml;nnen ebenfalls Fehler behandeln, die dann
+wiederum mit der <i>GetLog</i> Methode ausgegeben werden. Die <i>Disconnect</i> Methode trennt danach wieder die 
+aktive Verbindung zur Datenbank.
+</p>
+
+<p>
+Wenn Sie nun den obigen Sourcecode (<b>simpleExample.asp</b>) auf einem Webserver mit angepa&szlig;tem Connection String ausf&uuml;hren,
+erhalten Sie folgendes Ergebnis:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010522_1.png" width="590" height="392" alt="" border="0">
+
+<p>
+Dies bietet keinen gro&szlig;artigen Komfort, hat aber dennoch die beschriebenen Vorteile gegen&uuml;ber dem "Do-It-Yourself" Coding.
+Jetzt werden Sie vielleicht meinen, ob es sich nach dieser Demonstration des Beispiels auszahlt, f&uuml;r einen Html Table
+eine Komponente am Webserver zu registrieren. Nun, die Komponente kann nat&uuml;rlich noch mehr. Dies soll das n&auml;chste Beispiel
+demonstrieren (<b>DGrid.asp</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;%
+    Dim nStartRow, strColumnName, strSortOrder
+    
+    strColumnName_Default = "CompanyName"
+    strSortOrder_Default = "ASC"
+    nStartRow_Default = 1
+    
+    strColumnName = Trim(Request.Querystring("ColumnName"))
+    If ("" = strColumnName) Then strColumnName = strColumnName_Default
+
+    nStartRow= Trim(Request.Querystring("StartRow"))
+    If ("" = nStartRow) Then nStartRow = nStartRow_Default
+    
+    strSortOrder = Trim(Request.Querystring("SortOrder"))
+    If ("" = strSortOrder) Then strSortOrder = strSortOrder_Default
+    
+    Set objSQL2Table = Server.CreateObject("JAL.SQL2Table")
+
+    objSQL2Table.strConn = "Provider=SQLOLEDB.1;Initial Catalog=northwind;Data Source=BLUESCREEN"
+    objSQL2Table.strSQL = "SELECT CompanyName AS 'Company' , ContactName AS 'Contact', 
+        ContactTitle AS 'Title', Phone FROM Suppliers"
+    objSQL2Table.strID = "sa"
+    objSQL2Table.strPW = ""
+    objSQL2Table.lMaxRows = 10
+    objSQL2Table.lStartRow = nStartRow
+    objSQL2Table.isRowNumber = true
+    objSQL2Table.isFooter = true
+    objSQL2Table.isAltRows = true
+    objSQL2Table.isColoredBorder = true
+    objSQL2Table.isNavBar = true
+    objSQL2Table.isUseAlias = true
+    objSQL2Table.isColumnLinks = true
+    objSQL2Table.isAppendSortOrder = true
+    objSQL2Table.strAltRowTagsOdd = "&lt;tr bgcolor=White&gt;"
+    objSQL2Table.strAltRowTagsEven = "&lt;tr bgcolor=Silver&gt;"
+    objSQL2Table.strColumnURL= "./DGrid.asp?ColumnName="
+    objSQL2Table.strSortOrderName= "SortOrder"
+    objSQL2Table.strOrderBy= "ORDER BY "&amp; strColumnName &amp; " " &amp; strSortOrder
+    objSQL2Table.strNavURL="./DGrid.asp?ColumnName=" &amp; strColumnName &amp; "&amp;SortOrder=" 
+        &amp; strSortOrder &amp; "&amp;StartRow="
+
+    Response.Write(objSQL2Table.GetExtendedSQL()+"&lt;br&gt;")
+    If (objSQL2Table.Connect()) Then
+        If objSQL2Table.Update() Then
+            Response.Write objSQL2Table.GetGrid()
+        Else
+            Response.Write objSQL2Table.GetLog()
+        End If
+    Else
+        Response.Write objSQL2Table.GetLog() 
+    End If
+     Response.Write "&lt;br&gt;"+objSQL2Table.GetLog()
+    objSQL2Table.Disconnect()
+
+    Set objSQL2Table= Nothing
+%&gt;
+</pre>
+
+<p>
+Die <i>lMaxRows</i> Property beschr&auml;nkt die maximal gleichzeitig anzuzeigenden Datenreihen. Datenreihennummern
+werden mit der <i>isRowNumber</i> Property angezeigt. Eine Alternativeinf&auml;rbung der Datenreihen wird durch die
+<i>strAltRowTagsOdd</i> bzw. durch die <i>strAltRowTagsEven</i> Property realisiert.
+</p>
+
+<p>
+Ausgef&uuml;hrt auf einem Webserver ist das Ergebnis schon um einiges besser als das vorherige:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010522_2.png" width="590" height="390" alt="" border="0">
+
+<p>
+Mittels Querystring&uuml;bergabe werden die einzelnen Spalten auf- bzw. absteigend sortiert. Sie m&uuml;ssen hierzu nur auf 
+die Links <i>.il</i> (entspricht aufsteigender Sortierreihenfolge) bzw. <i>.li</i> (absteigend) klicken.
+Die Navigation erfolgt mit den unterhalb der Datenauflistung befindlichen Links <i>First</i>, <i>Prev</i>, <i>Next</i> 
+und <i>Last</i>. 
+Die Aktivierung dieser Navigationsleiste erfolgt durch die Setzung der <i>isNavBar</i> Property. Durchgef&uuml;hrt
+wird diese durch die Querystringangaben, welche in der <i>strNavURL</i> Property anzugeben sind.
+</p>
+
+<p>
+Abschlie&szlig;end m&ouml;chte ich Ihnen die Premiumfeatures der Komponente vorf&uuml;hren. Diese beinhalten die vollst&auml;ndige
+Manipulation der Daten einer Datenbank - also neue Datens&auml;tze erstellen, bestehende editieren oder auch l&ouml;schen.
+Der Download der Komponente enth&auml;lt bereits eine vollst&auml;ndige sourcecodem&auml;&szlig;ige Implementierung in JScript dieser 
+Features (<b>BindMSDErc.asp</b>). Daher soll hier nur ein kurzer Walkthru angef&uuml;hrt sein.
+</p>
+
+<p>
+Um den Sourcecode zu testen, m&uuml;ssen Sie lediglich den Connection String (<i>var strConnection=...</i>) an Ihre 
+Gegebenheiten anpassen. Nach dem Datenbanklogin erhalten Sie folgende Ansicht:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010522_3.png" width="590" height="296" alt="" border="0">
+
+<p>
+Sie haben nun neben den Datenspalten auch eine Spalte, die einen Link namens Edit/Delete enth&auml;lt. 
+Unterhalb der angezeigten Daten sehen Sie Radiobuttons (siehe Cursorposition), die die Funktionen <i>New</i> und 
+<i>Find</i> enthalten. Wenn Sie auf <i>New</i> klicken, erhalten Sie entsprechend der Tabelleneigenschaften eine 
+Eingabemaske. Bei <i>Find</i> haben Sie die M&ouml;glichkeit nach Datens&auml;tzen zu suchen.
+</p>
+
+<p>
+Wenn Sie auf den Link <i>Edit/Delete</i> neben dem gew&uuml;nschten Datensatz klicken, erhalten Sie eine editierbare 
+Auflistung des jeweiligen Datensatzes:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010522_4.png" width="572" height="474" alt="" border="0">
+
+<p>
+Mit der untersten Werkzeugleiste haben Sie wieder die M&ouml;glichkeit, die &Auml;nderungen zu speichern, einen neuen Datensatz
+hinzuzuf&uuml;gen oder einen bestehenden zu l&ouml;schen. Weiters gibt es die Option nach einem Datensatz zu suchen.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Wie Sie unschwer erkennen k&ouml;nnen, bietet diese kostenlose Komponente einige Vorteile. Angefangen von einfachen
+Aufgaben, wie der der Datenvisualisierung bis hin zur vollst&auml;ndigen Datenmanipulation ist alles m&ouml;glich. Warum
+also m&uuml;hsam alles selber codieren wenn einem eine kostenlose Unterst&uuml;tzung angeboten wird.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010522.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010522.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010329.htm">Auto-Generierung von performantem Abfragecode</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010329.htm</span><br>
+<a href="../artikel/20010418.htm">Das TableEditor Datenbank Administrationstool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010418.htm</span><br>
+<a href="../artikel/20001013.htm">Highspeed-Abfragen einer SQL Server Datenbank</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001013.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Egeocities%2Ecom%2FJeff%5FLouie%2Findex%2Ehtml">SQL2Table Komponente</a><br>
+<SPAN class="content">http://www.geocities.com/Jeff_Louie/index.html</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

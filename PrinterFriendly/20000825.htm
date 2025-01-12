@@ -1,0 +1,391 @@
+<HTML>
+<HEAD>
+<TITLE>WHOIS Abfragen a la .NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor, wie man mit Hilfe der TcpClient Klasse des .NET Frameworks verschiedene WHOIS Server abfragen kann, um an die Registrierungsinformationen verschiedenster Domains zu kommen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,TLD,WHOIS,Lookup,TCPClient,.NET,Framework,ASP.NET,C#,CSharp,43,whois lookup,whois query,networking">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>WHOIS Abfragen a la .NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000825"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Des &ouml;fteren m&ouml;chte man wissen, wem eine Domain geh&ouml;rt. Um an die Registrierungsinformationen 
+zu kommen, geht man zur entsprechenden Registry (DENIC, Network Solutions, etc), und macht 
+dort eine sogenannte WHOIS Abfrage (Lookup). Der Haken an der Sache ist halt der, da&szlig; man
+wissen mu&szlig;, welche Registry f&uuml;r welche TLD's (Top Level Domain) zust&auml;ndig ist.
+</p>
+<p>
+Auch wenn man alle TLD-zu-Registry Informationen h&auml;tte - die URL's zur Abfrageseite merkt man 
+sich schon erst recht nicht auswendig. Weil eine gemeinsame gibt es ja nicht - noch nicht!
+Genau so eine Seite werden wir n&auml;mlich heute in diesem Artikel coden.
+</p>
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation 
+des Microsoft .NET Framework SDK's auf einem Webserver. Weiters setze ich voraus, da&szlig; der 
+Leser die Programmiersprache C# zu einem gewissen Grad beherrscht - es finden sich etliche 
+Artikel auf diesem Server, um das notwendige Wissen zu erlernen. 
+</p>
+
+<h2>Eine Dot-Com Domain abfragen</h2>
+<p>
+Um das Prinzip zu kl&auml;ren, wie eine WHOIS Abfrage funktioniert, nehmen wir uns als Beispiel
+die amerikanische Registry Network Solutions (siehe auch Screenshot):
+</p>
+
+<pre style="background='silver';">
+http://www.networksolutions.com/cgi-bin/whois/whois
+</pre>
+
+<IMG SRC="/artikel/Bilder/200008/20000825_2.png" width="590" height="418" border="0" alt="">
+
+<p>
+Alles, was man tun mu&szlig;, ist den Domainnamen einzugeben, und auf Search zu klicken - und schon
+bekommt man die Registrierungsinformationen pr&auml;sentiert. Was l&auml;uft aber im Hintergrund f&uuml;r eine
+Datenbank, die diese Anfragen erm&ouml;glicht?
+</p>
+<p>
+Die Datenbank ist die sogenannte WHOIS Datenbank, und sie hat eine hervorragende Eigenschaft:
+sie stellt &uuml;ber den TCP Port 43 eine Anfrageschnittstelle zur Verf&uuml;gung! Und da das .NET 
+Framework die <i>TcpClient</i> Klasse f&uuml;r uns zur Verf&uuml;gung stellt, k&ouml;nnen wir uns die Daten
+somit direkt &uuml;ber diese Schnittstelle abholen - ohne Umwege &uuml;ber das Scrapen der Webseiten
+auf Network Solutions.
+</p>
+<p>
+Das folgende Beispiel ist die Minimalimplementierung eines Whois-Lookups. Es gibt nur minimale
+Fehlerbehandlung, und eine "Auswahl" der Domain ist im Moment noch nicht m&ouml;glich 
+(<b>queryinternic.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Net.Sockets" %&gt;
+&lt;% @Import Namespace="System.Text" %&gt;
+&lt;% @Import Namespace="System.IO" %&gt;
+&lt;%
+TcpClient tcpc = new TcpClient();
+try
+{
+  tcpc.Connect("whois.networksolutions.com", 43);
+}
+catch(SocketException ex)
+{
+  Response.Write(ex.ToString());
+  Response.End();
+}
+
+String strDomain = "gotdotnet.com\r\n";
+Byte[] arrDomain = Encoding.ASCII.GetBytes(strDomain.ToCharArray());
+  
+Stream s = tcpc.GetStream();
+s.Write(arrDomain, 0, strDomain.Length);
+
+StreamReader sr = new StreamReader(tcpc.GetStream(), Encoding.ASCII);
+string strLine = null;
+
+while (null != (strLine = sr.ReadLine()))
+{
+   Response.Write(strLine + "&lt;br&gt;");
+}
+
+tcpc.Close();
+%&gt;
+</pre>
+
+<p>
+Um mit der <i>TcpClient</i> Klasse arbeiten zu k&ouml;nnen, brauchen wir den <i>System.Net.Sockets</i>
+Namespace. Weiters verwenden wir alte Bekannte wie <i>System.Text</i> oder <i>System.IO</i>.
+</p>
+<p>
+Die meiste Arbeit in diesem Beispiel &uuml;bernimmt die <i>TcpClient</i> Klasse: mit ihr kann ich zu einem
+Server &uuml;ber einen beliebigen Port verbinden (die <i>Connect</i> Methode erledigt das), und Daten
+hin und her schicken (&uuml;ber den <i>Stream</i>).
+</p>
+<p>
+Das Senden der Anfrage verlangt eine kleine Erl&auml;uterung: zum Schicken verwende ich den bin&auml;ren
+Stream ohne irgendwelche Wrapper. Daher mu&szlig; ich den Anfragestring (mit CR+LF terminiert) in
+ein Bytearray umwandeln (mit ASCII Encoding), und kann dann die gew&uuml;nschte Anzahl von Bytes an den
+entfernten Server schicken.
+</p>
+<p>
+Das Abholen der Daten passiert dann &uuml;ber den <i>StreamReader</i>, der ein bequemes und direktes Arbeiten
+mit Zeichendaten erlaubt. Und da das Beispiel auch bis zum Schlu&szlig; einfach bleibt, werden die
+gelesenen Daten sofort an den Client weitergeschickt - das Resultat zeigt der folgende Screenshot.
+</p>
+
+<IMG SRC="/artikel/Bilder/200008/20000825_1.png" width="577" height="324" border="0" alt="">
+
+<h2>Verschiedene Registries abfragen</h2>
+<p>
+Jetzt wissen wir, wie wir den WHOIS Server von Network Solutions abfragen. Haben wir damit
+etwas erreicht? Aber sicher - (fast) jede Registry hat einen solchen, und das Procedere ist
+immer das Gleiche. Man braucht nur ein Liste der Registries und ihrer WHOIS Server.
+</p>
+<p>
+Genau das habe ich im nun folgenden Beispiel implementiert: es hat ein kleines Formular, in dem
+man den Domainnamen eingeben kann. ASP.NET am Server checkt ob der Domainname g&uuml;ltig ist, und 
+entscheidet dann anhand des Domainsuffixes (.com, .de, etc) welcher WHOIS Server welcher
+Registry um Informationen zu dieser Domain gefragt werden soll.
+</p>
+<p>
+Der Code ist bereits &uuml;ber 100 Zeilen lang, deshalb habe ich die Erkl&auml;rung aufgesplittet. Wer
+den &Uuml;berblick behalten will, sollte sich den gesamten Code der Datei 
+<a href="../artikel/20000825_code.htm" target="_blank">queryregistries.aspx</a> in einem zweiten Fenster &ouml;ffnen.
+</p>
+
+<h3>Das Formular</h3>
+<p>
+Zum verwendeten Formular gibt es eigentlich nichts besonderes zu sagen. Es hat ein Eingabefeld,
+einen Button, und eine Label Control, in der dann das Resultat ausgegeben wird.
+</p>
+
+<pre style="background='silver';">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;form runat=&quot;server&quot;&gt;
+Domain name: 
+  &lt;asp:TextBox id=&quot;txtDomain&quot; value=&quot;aspheute.com&quot; runat=&quot;server&quot; /&gt;
+&amp;nbsp; &lt;asp:Button id=&quot;btnQuery&quot; OnClick=&quot;doQuery&quot; 
+           text=&quot;Query!&quot; runat=&quot;server&quot; /&gt;
+&lt;BR&gt;&lt;HR width=&quot;100%&quot;&gt;&lt;BR&gt;
+&lt;asp:label id=&quot;txtResult&quot; runat=&quot;server&quot; /&gt;
+&lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+
+<h3>Das Button-Event doQuery</h3>
+<p>
+In diesem Event ist der meiste neue Code beheimatet. Grunds&auml;tzlich macht er folgendes:
+</p>
+
+<ul>
+<li>Die eingegebene Domain wird auf Plausibilit&auml;t gepr&uuml;ft
+<li>Der richtige WHOIS Server wird ausgesucht
+<li>Die Funktion <i>DoWhoisLookup</i> wird aufgerufen, die Ergebnisse ausgegeben
+</ul>
+
+<p>
+Nun aber zum Sourcecode:
+</p>
+
+<pre style="background='silver';">
+void doQuery(Object sender, EventArgs e)
+{
+  String strDomain = txtDomain.Text;
+  char[] chSplit = {'.'};
+  string[] arrDomain = strDomain.Split(chSplit);
+  // es darf genau ein domain name + ein suffix sein
+  if (arrDomain.Length != 2)
+  {
+    return;
+  }
+
+  // das suffic darf nur 2 oder 3 zeichen lang sein
+  int nLength = arrDomain[1].Length;
+  if (nLength != 2 &amp;&amp; nLength != 3) 
+  {
+    return;
+  }
+
+  Hashtable table = new Hashtable();
+  table.Add(&quot;de&quot;, &quot;whois.denic.de&quot;);
+  table.Add(&quot;be&quot;, &quot;whois.dns.be&quot;);
+  table.Add(&quot;gov&quot;, &quot;whois.nic.gov&quot;);
+  table.Add(&quot;mil&quot;, &quot;whois.nic.mil&quot;);
+
+  String strServer = &quot;whois.networksolutions.com&quot;;
+  if (table.ContainsKey(arrDomain[1]))
+  {
+    strServer = table[arrDomain[1]].ToString();
+  }
+  else if (nLength == 2)
+  {
+    // 2-letter TLD's always default to RIPE in Europe
+    strServer = &quot;whois.ripe.net&quot;;
+  }
+  
+  String strResponse;
+  bool bSuccess = DoWhoisLookup(strDomain, strServer, out strResponse);
+  if (bSuccess)
+  {
+    txtResult.Text = strResponse;
+  }
+  else
+  {
+    txtResult.Text = &quot;Lookup failed&quot;;
+  }
+}
+</pre>
+
+<p>
+Der oberste Block k&uuml;mmert sich nur darum festzustellen, ob die Eingabe g&uuml;ltig ist (die
+Fehlermeldungen sollten Sie vielleicht doch noch ausgeben). Danach baue ich einen Hashtable
+auf, der mir die TLD's zu den jeweiligen WHOIS Servern verlinkt. Ich habe mir nur die
+wichtigsten TLD's herausgepickt, allerdings reicht das, um alle US und
+europ&auml;ischen Domains abfragen.
+</p>
+<p>
+Nach dem Anlegen des Hashtable entscheidet der Code, welcher Server zu verwenden ist. Standardm&auml;&szlig;ig
+ist es der von Network Solutions, ansonsten entweder ein spezieller, oder f&uuml;r 2-Buchstaben TLD's
+der RIPE Server. Auf alle F&auml;lle mu&szlig; man den Hashtable erweitern, falls man auch den asiatischen 
+Raum oder S&uuml;damerika abfragen m&ouml;chte.
+</p>
+<p>
+Da wir nun wissen, nach was wir fragen sollen, und vor allem wo, k&ouml;nnen wir nun die Arbeit
+der Funktion <i>DoWhoisLookup</i> &uuml;berlassen - und dann einfach das Ergebnis ausgeben.
+</p>
+
+<h3>Das Abfragen - DoWhoisLookup</h3>
+<p>
+Jetzt sind wir beim Arbeitstier der Anwendung. Diese Funktion f&uuml;hrt die Abfrage durch, und die
+gute Nachricht ist, da&szlig; wir wirklich den gesamten Sourcecode von der Network Solutions Abfrage
+verwenden konnten - ich habe nur etwas Exception Handling eingebaut, damit diese Applikation
+auch wirklich robust ist.
+</p>
+
+<pre style="background='silver';">
+bool DoWhoisLookup(String strDomain, String strServer, 
+                   out String strResponse)
+{
+  strResponse = "none";
+  bool bSuccess = false;
+
+  TcpClient tcpc = new TcpClient();
+  try
+  {
+    tcpc.Connect(strServer, 43);
+  }
+  catch(SocketException ex)
+  {
+    strResponse = "Could not connect to Whois server";
+    return false;
+  }
+
+  strDomain += "\r\n";
+  Byte[] arrDomain = Encoding.ASCII.GetBytes(strDomain.ToCharArray());
+  try
+  {
+	Stream s = tcpc.GetStream();
+	s.Write(arrDomain, 0, strDomain.Length);
+	
+	StreamReader sr = new StreamReader(tcpc.GetStream(), Encoding.ASCII);
+	StringBuilder strBuilder = new StringBuilder();
+	string strLine = null;
+
+	while (null != (strLine = sr.ReadLine()))
+	{
+		strBuilder.Append(strLine+"&lt;br&gt;");
+	}
+	tcpc.Close();
+		
+	bSuccess = true;
+	strResponse = strBuilder.ToString();
+  }
+  catch(Exception e)
+  {
+	strResponse = e.ToString();
+  }
+  
+  return bSuccess;
+}
+</pre>
+
+<p>
+Wie bereits angek&uuml;ndigt, es ist das Exception Handling dazugekommen. Weiters verwende
+ich jetzt die <i>StringBuilder</i> Klasse, da ich ja den Response des WHOIS Servers an den Aufrufer
+und nicht direkt an Client zur&uuml;ckgeben mu&szlig;. Und das war dann auch schon der gesamte Magic!
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dank der .NET Framework Klassen waren wir in k&uuml;rzester Zeit in der Lage, uns ein komfortables
+Cross-Registry WHOIS Anfrageformular zu basteln. Der einzige Sch&ouml;nheitsfehler ist leicht
+auszubessern: der Hashtable mu&szlig; noch um die restlichen internationalen WHOIS Server erweitert
+werden, aber zumindest die vom Standpunkt eines Europ&auml;ers wichtigsten Registries k&ouml;nnen
+schon abgefragt werden!
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000825.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000825.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020702.htm">.NET Komponenten in COM+ Clients einsetzen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020702.htm</span><br>
+<a href="../artikel/20000823.htm">Die Hashtable Klasse</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000823.htm</span><br>
+<a href="../artikel/20000803.htm">Die String Klasse in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000803.htm</span><br>
+<a href="../artikel/20000724.htm">Exception Handling in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000724.htm</span><br>
+<a href="../artikel/20000824.htm">Scrapen von Webseiten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000824.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eripe%2Enet%2F">RIPE</a><br>
+<SPAN class="content">http://www.ripe.net/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Enetworksolutions%2Ecom%2Fcgi%2Dbin%2Fwhois%2Fwhois">WHOIS Network Solutions</a><br>
+<SPAN class="content">http://www.networksolutions.com/cgi-bin/whois/whois</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

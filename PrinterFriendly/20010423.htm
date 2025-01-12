@@ -1,0 +1,263 @@
+<HTML>
+<HEAD>
+<TITLE>Tracing in ASP</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Der Autor zeigt, wie man mit Hilfe einer ATL Komponente (und etwas C++ Kenntnissen) sich eine tolle Tracing Funktionalit&auml;t schaffen kann, die die leidigen Response.Write Statements leicht vergessen l&auml;&szlig;t.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Tracing,Debugging,Debug,OutputDebugString,BSTR,ATL,Komponente,Component,include">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Tracing in ASP</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010423"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Die M&ouml;glichkeiten f&uuml;r ein vern&uuml;nftiges Tracing unter ASP sind eingeschr&auml;nkt, da man sich mit
+Response.Write Statements entweder das Layout zerst&ouml;rt, oder im Falle von notwendigen Redirects
+&uuml;berhaupt gro&szlig;e Probleme bekommt. Man k&ouml;nnte also glauben, da&szlig; es keine coole L&ouml;sung gibt - aber
+schlie&szlig;lich hei&szlig;t glauben nicht wissen!
+</p>
+<p>
+Es ist hin und wieder ganz n&uuml;tzlich, wenn der eigene Programmier-Background C++ ist. Denn unter C++/WIN32
+gibt es etliche APIs f&uuml;r das Debugging, und unter diesen findet sich die Funktion
+<i>OutputDebugString</i>. Warum also nicht diese in eine Komponente verpacken und dann mit 
+den Debugging Tools die Debugging Meldungen anzeigen?
+</p>
+<p>
+Genau das machen wir heute, allerdings verwenden wir ein spezielles Tool, um uns die Debugging
+Meldungen anzeigen zu lassen: <a href="http://www.sysinternals.com/ntw2k/freeware/debugview.shtml" target="_blank">DebugView</a> von SysInternals.
+Es ist erstens gratis, und kann zudem etwas zweites sehr cooles: es kann auf andere Rechner
+verbinden! Das hei&szlig;t, man kann sich w&auml;hrend ASP Seiten auf einem Webserver ausgef&uuml;hrt werden, sich
+die Debugging Meldungen bequem auf einer anderen Workstation ansehen - mit allen Vorteilen, ohne Nachteile!
+</p>
+
+<h2>Die AspDbg Komponente</h2>
+<p>
+Auf die Programmierung der Komponente m&ouml;chte ich nicht allzu genau eingehen. Sie ist eine 
+einfache ATL Komponente (also sehr schnell), und besitzt nur eine einzige Funktion, die ich
+eingebaut habe - zum Aufruf der <i>OutputDebugString</i> Funktion:
+</p>
+
+<pre style="background='silver';">
+STDMETHODIMP CTrace::Write(BSTR lpszTraceString)
+{
+	USES_CONVERSION;
+	OutputDebugString(W2A(lpszTraceString));
+	return S_OK;
+}
+</pre>
+
+<p>
+Die Komponente ist sowohl im Sourcecode als auch kompiliert als <i>aspdbg.dll</i> im heutigen
+Download mit dabei. Vor der Verwendung mu&szlig; diese (wie immer) registriert werden:
+</p>
+
+<pre style="background='silver';">
+regsvr32.exe aspdbg.dll
+</pre>
+
+<h2>Implementierung des Tracings</h2>
+<p>
+Jetzt geht's an die Verwendung der Komponente. Klarerweise kann man die Komponente schon jetzt
+an beliebiger Stelle verwenden, allerdings sollte man sich schon die M&uuml;he machen, eine kleine
+"Schnittstelle" rund um die Komponente zu programmieren.
+</p>
+
+<p>
+Der Grund daf&uuml;r? Nun, damit man einfach das Tracing ein- und ausschalten kann, oder eigene 
+Zusatzparameter an den Debug-Output weitergeben kann. Ich habe eine solche einfache Schnittstelle
+in der Datei <b>traceinclude.asp</b> programmiert.
+</p>
+
+<pre style="background='silver';">
+&lt;script language="vbscript" runat="server"&gt;
+Dim m_xTraceObj
+Const bDebugFlag = True
+Const cstrPrefix = "ASP: "
+
+Sub TraceWrite(ByVal strTraceMessage)
+  If bDebugFlag Then
+    If Not IsObject(m_xTraceObj) Then
+      Set m_xTraceObj = New Trace
+    End If
+    m_xTraceObj.Write strTraceMessage
+  End If
+End Sub
+
+Sub TraceWarn(ByVal strWarnMessage)
+  If bDebugFlag Then
+    If Not IsObject(m_xTraceObj) Then
+      Set m_xTraceObj = New Trace
+    End If
+    m_xTraceObj.Warn strWarnMessage
+  End If
+End Sub
+
+Class Trace
+ Public Sub Write(ByVal strTraceMessage)
+   InternalWrite strTraceMessage
+ End Sub
+
+ Public Sub Warn(ByVal strTraceMessage)
+   InternalWrite "&gt;Warning&lt; " &amp; strTraceMessage
+ End Sub
+
+ Private Sub InternalWrite(ByVal strTraceMessage)
+   Dim objTrace
+   If bDebugFlag Then
+     Set objTrace = Server.CreateObject("AspDbg.Trace")
+     objTrace.Write cstrPrefix &amp; strTraceMessage
+     Set objTrace = Nothing
+   End If
+ End Sub
+End Class
+
+&lt;/script&gt;
+</pre>
+
+<p>
+Die COM Komponente wird nur in der Funktion <i>InternalWrite</i> aufgerufen, die selbst in
+einer VBScript Klasse gekapselt ist. Der Grund hierf&uuml;r ist, da&szlig; ich alle Tracing Funktionalit&auml;t
+leicht erweiterbar in einem eigenen Objekt haben m&ouml;chte - wie ASP.NET (siehe der Artikel
+<a href="../artikel/20001006.htm">Tracing in ASP.NET</a>).
+</p>
+
+<p>
+Das Objekt selbst greife ich nie direkt an, sondern habe weitere Wrapperfunktionen namens
+<i>TraceWrite</i> und <i>TraceWarn</i> geschrieben. Der Grund? Auf diese Art k&ouml;nnen auch andere
+Scriptsprachen ohne Umwege darauf zugreifen - auch ich verwende die Funktionen, und nicht die
+Objekte - so gezeigt in der Beispieldatei <b>trace.asp</b>.
+</p>
+
+<pre style="background='silver';">
+&lt;!-- #include file="traceinclude.asp"--&gt;
+&lt;% Option Explicit %&gt;
+&lt;%
+TraceWrite "Das ist ein Test"
+TraceWarn "Das ist eine Warnung!"
+%&gt;
+</pre>
+
+<p>
+Die Funktionen werden nun aufgerufen, und der Output erstellt - aber wie komme ich an diesen
+heran? Das ist der Punkt, wo das Programm DebugView die B&uuml;hne betritt.
+</p>
+
+<h2>Die Meldungen anzeigen</h2>
+<p>
+Der Mi&szlig;brauch des DebugView Tools f&uuml;r diese Zwecke ist ob seines gro&szlig;en Leistungsumfanges
+beinahe schon als Gemeinheit zu bezeichnen. Aber der Zweck heiligt die Mittel, wie's so sch&ouml;n
+hei&szlig;t. Dennoch die Empfehlung, sich das Tool genauer anzueignen, da es auch f&uuml;r andere
+Verwendungsf&auml;lle sehr gut geeignet sein kann.
+</p>
+<p>
+Das Programm ben&ouml;tigt keine Installation, nur Download und Entzippen. Daher ist es auch nach
+Doppelklicken auf die <b>DbgView.Exe</b> sofort einsatzbereit:
+</p>
+
+<IMG SRC="/artikel/Bilder/200104/20010423_2.png" width="585" height="319" alt="" border="0">
+
+<p>
+Hier werden die Tracing-Meldungen von <b>trace.asp</b> bereits angezeigt. Wer jetzt ein bischen
+herumexperimentiert wird sehen, da&szlig; sich auch andere Meldungen hier in diesem Fenster finden werden
+- au&szlig;er man filtert den Output entsprechend. Dies gelingt &uuml;ber das Edit Men&uuml;, Men&uuml;punkt
+Filter/Highlight:
+</p>
+
+<IMG SRC="/artikel/Bilder/200104/20010423_1.png" width="417" height="205" alt="" border="0">
+
+<p>
+Das ist auch der Grund, warum ich die Konstante <i>cstrPrefix</i> in <b>traceinclude.asp</b>
+definiert habe: auf diese Art und Weise limitierte ich DebugView auf die Anzeige meiner
+Events. Dies k&ouml;nnte sogar soweit gehen, da&szlig; bestimmte Funktionalit&auml;tsgruppen einer ASP
+Anwendung eigene Prefixes bekommen, nach denen ich dann filtern kann. Zum Beispiel zur
+&Uuml;berwachung des Shops - das ist nur einer von vielen Anwendungsf&auml;llen.
+</p>
+
+<p>
+Schuldig bin ich noch, wie man zu einem anderen Server verbindet: einfach Computer/Connect
+anw&auml;hlen, Rechnernamen eingeben, fertig. Schon kann man den Webserver der Wahl und seine
+Debugging-enabled Seiten &uuml;berwachen.
+</p>
+
+<p>
+Apropos - ein weiteres Feature m&ouml;chte ich nat&uuml;rlich auch nicht verschweigen: alle Logs k&ouml;nnen
+in Dateien exportiert werden. Ein m&ouml;gliches Einsatzgebiet w&auml;re die Testabteilung, die
+die Site testet, und im Fehlerfall das Tracelog zur Fehlerbehebung mitschicken kann.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Mit etwas Kreativit&auml;t kann man ASP auch sehr sinnvolle Funktionalit&auml;ten beibringen. Allerdings
+sind diese meist nur mit C++ Kenntnissen zu erreichen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010423.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010423.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000526.htm">Klassen in VBScript</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000526.htm</span><br>
+<a href="../artikel/20020503.htm">Show me the source - Includes aufgel&ouml;st</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020503.htm</span><br>
+<a href="../artikel/20001006.htm">Tracing in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001006.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Esysinternals%2Ecom%2Fntw2k%2Ffreeware%2Fdebugview%2Eshtml">DebugView Download</a><br>
+<SPAN class="content">http://www.sysinternals.com/ntw2k/freeware/debugview.shtml</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

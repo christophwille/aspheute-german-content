@@ -1,0 +1,451 @@
+<HTML>
+<HEAD>
+<TITLE>Transaktionen in C# Business Tier Komponenten</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Heute werde ich zeigen, da&szlig; das &uuml;ber COM+ Applikationen erworbene Wissen auch in .NET verwendbar ist - und die Anwendung sogar deutlich leichter geworden ist!">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,MTS,COM+,EnterpriseServices,COM+ application,MTS package,ServicedComponent,Transaktion,Transaction,ACID,properties,GAC,global assembly cache">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Transaktionen in C# Business Tier Komponenten</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010619"></SCRIPT>
+</p>
+<p>
+Im Laufe der Zeit hat man sich ja sozusagen die COM+ Applikationen (aka MTS Packages) angew&ouml;hnt, und 
+zwar einerseits als Object Broker, und andererseits als Provider von Transaktionen &uuml;ber Komponentengrenzen
+hinweg. Heute werde ich zeigen, da&szlig; das erworbene Wissen auch in .NET verwendbar ist - und die Anwendung
+sogar deutlich leichter geworden ist!
+</p>
+
+<p>
+Um den heute vorgestellten Code verwenden zu k&ouml;nnen, mu&szlig; am Rechner das Microsoft .NET SDK installiert sein.
+</p>
+
+<h2>Erstellen der Komponente</h2>
+<p>
+Eine l&auml;stige T&auml;tigkeit bei der Verwendung von COM+ Applikationen war ja, da&szlig; man die Applikation h&auml;ndisch
+anlegen und jede einzelne Komponente mit ihren Transaktionsattributen dort registrieren mu&szlig;te. Damit
+komme ich zur besonders guten Nachricht des Tages: in .NET f&auml;llt das weg, die Komponenten registrieren sich 
+selbst&auml;ndig - man mu&szlig; nur Attribute in der Komponente setzen, den Rest erledigt .NET!
+</p>
+<p>
+Eine &Auml;nderung zu COM+ mu&szlig; man aber beachten: es gibt in .NET keine GUID's zur eindeutigen Komponentenidentifizierung
+mehr, diesen Platz nimmt das Konzept der <b>Strong Names</b> ein. Grunds&auml;tzlich handelt es sich dabei um nichts
+anderes als einen kryptographischen Fingerprint der Komponente, der absolut eindeutig ist. Allerdings
+um der Kryptographie gen&uuml;ge zu tun, mu&szlig; man sich ein Keyfile anlegen, und zwar mit Hilfe des <b>sn.exe</b>
+Utility's:
+</p>
+
+<pre style="background='silver';">
+sn -k MyComponent.snk
+</pre>
+
+<p>
+Im Normalfall wird das generierte Keyfile "weggesperrt", weil damit die Echtheit der Komponente bescheinigt wird. Aber
+in unserem ersten einfachen Beispiel lassen wir das generierte Keyfile im Projektverzeichnis "herumliegen".
+Es ist einfach einfacher.
+</p>
+
+<p>
+Schauen wir uns nun an, wie die Komponente dieses Keyfile verwendet (<b>complusservices.cs</b>):
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.EnterpriseServices;
+using System.Reflection;
+
+// This is the name that will appear in the COM+ catalog
+[assembly: ApplicationName("MyComponent")]
+
+// Strong name for assembly.
+[assembly: AssemblyKeyFile("MyComponent.snk")]
+
+namespace AspHeute
+{
+ //... to be continued
+</pre>
+
+<p>
+Das Keyfile wird im <i>AssemblyKeyFile</i> Attribut angegeben - und das war auch schon alles. Den Rest &uuml;bernimmt
+der Compiler f&uuml;r uns. Also keine gro&szlig;e Sache, mu&szlig; aber f&uuml;r jede in COM+ eingebundene .NET Komponente gemacht
+werden.
+</p>
+
+<p>
+Das <i>ApplicationName</i> Attribut ist unser Gratisticket zur Installation als COM+ Application - unter
+diesem Namen wird nach dem ersten Aufruf unsere Komponente registriert sein - cool, nicht wahr?
+</p>
+
+<p>
+Der <i>System.Reflection</i> Namespace ist f&uuml;r das <i>AssemblyKeyFile</i> Attribut inkludiert, der
+<i>System.EnterpriseServices</i> Namespace hingegen dient der Komponente selbst:
+</p>
+
+<pre style="background='silver';">
+	[Transaction(TransactionOption.Required)]
+	public class MyClass : ServicedComponent 
+	{
+	    [AutoComplete]
+	    public String TransactedMethod(int amount) 
+	    {
+	        return "A-OK";
+	    }
+	    
+	    public void VoteOK()
+	    {
+	    	ContextUtil.SetComplete();
+	    }
+	    
+	    public void VoteNo()
+	    {
+	    	ContextUtil.SetAbort();
+	    }
+	}
+</pre>
+
+<p>
+Wieder einmal sind die Attribute unsere Eintrittskarte zu COM+. Mit <i>Transaction</i> gibt man an,
+da&szlig; die folgende von <i>ServicedComponent</i> abgeleitete Komponente in COM+ arbeiten wird - und
+zwar mit einem der entsprechenden Transaktionsattribute: Disabled, NotSupported, Required, RequiresNew
+oder Supported. Nun sind alle Infrastruktur-Tasks erf&uuml;llt, der Rest ist dann der tats&auml;chliche Code
+der Businesskomponente. 
+</p>
+<p>
+Ich habe drei einfache Methoden eingebaut: <i>TransactedMethod</i>, <i>VoteOK</i> und <i>VoteNo</i>.
+Die letzten beiden funktionieren nach dem bekannten Prinzip explizit zum Ausgang einer Transaktion zu
+voten, und zwar entweder mit <i>SetComplete</i> oder <i>SetAbort</i>. Interessanter weil neu ist hingegen
+das Attribut <i>AutoComplete</i> - was bedeutet das? Nun, einfaches und bequemes programmieren: tritt
+eine Exception auf, voted die Methode mit <i>SetAbort</i> - l&auml;uft der Code OK ab, votet sie automatisch mit
+<i>SetComplete</i>. Bequem, nicht wahr?
+</p>
+<p>
+Damit h&auml;tten wir eine voll funktionsf&auml;hige Komponente fertig. Sie mu&szlig; nur noch kompiliert werden. Der
+Faulheit halber habe ich <a href="http://www.icsharpcode.net/opensource/sd/" target="_blank">SharpDevelop</a>
+verwendet, aber wer es gerne selbst macht: man braucht die Reference f&uuml;r <i>System.EnterpriseServices</i>, der
+Rest kommt automatisch mit.
+</p>
+
+<h2>Die Komponente aufrufen</h2>
+<p>
+Wer jetzt schon in Component Services nachgesehen hat, wird bemerkt haben, da&szlig; die Komponente dort noch
+nicht aufscheint. Dies passiert erst, wenn man sie das erste Mal aufruft. Deshalb schreiben wir uns
+ein kleines Kommandozeilenprogramm (<b>Main.cs</b>), eine ASP.NET Seite folgt danach:
+</p>
+
+<pre style="background='silver';">
+using System;
+using AspHeute;
+
+class MainClass
+{
+	public static void Main(string[] args)
+	{
+		MyClass var = new MyClass();
+		Console.WriteLine(var.TransactedMethod(10));
+	}
+}
+</pre>
+
+<p>
+Dieses Programm mit unserer Komponente als Reference kompiliert, und schon haben wir eine kleine
+(nutzlose) Clientapplikation. Aber: nach dem ersten Ausf&uuml;hren ist die Komponente in COM+ registriert:
+</p>
+
+<IMG SRC="Bilder/200106/20010619_1.png" width="630" height="531" alt="" border="0">
+
+<p>
+Und funktioniert hat sie auch beim ersten Mal (nur langsam, wegen der Registrierung). Alle weiteren
+Aufrufe sind ab nun enorm schnell, und ja, wir k&ouml;nnen mit Transaktionen arbeiten. Es war wirklich so
+einfach!
+</p>
+
+<p>
+Nun aber zum ASP.NET Beispiel, das so anders eigentlich nicht ist (<b>tactedinaspnet.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Assembly Name="System.EnterpriseServices" %&gt;
+&lt;% @Import Namespace="System.EnterpriseServices" %&gt;
+&lt;% @Import Namespace="AspHeute" %&gt;
+&lt;%
+MyClass var = new MyClass();
+string strResult = var.TransactedMethod(10);
+Response.Write(strResult);
+%&gt;
+</pre>
+
+<p>
+Nur den <i>System.EnterpriseServices</i> Namespace mu&szlig;te ich extra angeben, da ASP.NET Pages selbst zu Assemblies
+kompiliert werden (und dadurch sonst die Reference fehlen w&uuml;rde). Ach ja - das <i>bin</i> Verzeichnis
+ist ein guter Ort zur "Aufbewahrung" der Komponente, au&szlig;er man registriert die Komponentenassembly
+(korrekterweise) im GAC - dem Global Assembly Cache. Aber das ist ein andere Geschichte...
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Der heutige Artikel war ein Schnellstkurs zur Komponentenerstellung in C#, und deren Integration in
+COM+ Applications. Die Botschaft des Artikels soll sein, da&szlig; es niemals leichter war Business Komponenten
+mit Transaktionen zu erstellen als unter .NET - und man diese Gelegenheit ergreifen sollte.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010619.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20001012.htm">Einf&uuml;hrung: C#-Klassen in ASP.NET</a><br>
+<a href="20010322.htm">In VB Komponenten auf ASP Objekte zugreifen (Variante 2)</a><br>
+<a href="20000828.htm">Verwenden von COM Komponenten in ASP.NET</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Edotnetgerman%2Ecom%2F">DotNetGerman Diskussionslisten</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20010619" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Transaktionen in C# Business Tier Komponenten"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20010619.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20010619"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20010619.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,245 @@
+<HTML>
+<HEAD>
+<TITLE>@-Direktiven auf ASP Seiten</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Lernen Sie die verschiedenen @ Direktiven korrekt auf Ihren ASP Seiten einzusetzen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP,IIS,@Transaction,@LCID,@CodePage,@EnableSessionState,Direktive,@Language">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>@-Direktiven auf ASP Seiten</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000405"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Am Anfang einer jeden ASP Seite kann man @-Direktiven einsetzen, die den Internet Information Server (IIS) 
+anweisen wie eine ASP Seite zu verarbeiten ist. So kann man zum Beispiel angeben, in welcher Sprache - ob 
+Visual Basic Script oder JScript - die Befehle der ASP Seite geschrieben sind.
+</p>
+<p>
+Standardm&auml;&szlig;ig ist auf einem IIS die Sprache VBScript als die Default-Sprache eingestellt. Jedoch kann dieser 
+Wert f&uuml;r jede Web Site oder jedes Verzeichnis eines IIS einzeln eingestellt werden. 
+</p>
+<p>
+Die @-Direktive in der ersten Zeile des nun folgenden Skripts bestimmt, da&szlig; als Sprache der ASP Seite 
+VBScript verwendet wurde:
+<pre style="background='silver';">
+&lt;%@LANGUAGE=VBScript %&gt;
+&lt;% Option Explicit 
+
+Dim objConn, objRecordset
+…
+</pre>
+</p>
+<p>
+Eine ASP @-Direktive mu&szlig; immer in der ersten Zeile einer ASP Seite stehen. Die Direktive selbst wird 
+durch den Klammeraffen (<b>@</b>) angezeigt:
+<pre style="background='silver';">
+&lt;% @Direktive=Wert  %&gt;
+</pre>
+</p>
+<p>
+Werden mehrere Direktiven benutzt, so werden sie einfach in der ersten Zeile inklusive der 
+@-Zeichen nacheinander geschrieben:
+<pre style="background='silver';">
+&lt;% @Direktive1=Wert1  @Direktive2=Wert2  %&gt;
+</pre>
+</p>
+<p>
+Die f&uuml;nf @-Direktiven, die unter IIS 5.0 eingesetzt werden k&ouml;nnen, lauten:
+</p>
+<p>
+<table cellspacing=3 cellpadding=3>
+<tr>
+	<td>@CODEPAGE</td>
+	<td>Codeseite festlegen</td>
+</tr>
+<tr>
+	<td>@ENABLESESSIONSTATE</td>
+	<td>Verfolgen von User Sessions</td>
+</tr>
+<tr>
+	<td>@LANGUAGE</td>
+	<td>Skriptsprache (VBScript, JScript) einstellen</td>
+</tr>
+<tr>
+	<td>@LCID</td>
+	<td>Gebietsschema ID vorgeben</td>
+</tr>
+<tr>
+	<td>@TRANSACTION</td>
+	<td>Skript als Transaktion behandeln</td>
+</tr>
+</table>
+</p>
+<P>
+Die @-Direktiven (auch  @-Anweisung, oder @-Verarbeitungsanweisung) werden wie folgt eingesetzt:
+</p>
+
+<h2>@ENABLESESSIONSTATE</h2>
+<p>
+Die <i>@EnableSessionState</i> Direktive erlaubt ihnen einzustellen, ob User-Sessions ("Sitzungen") verfolgt 
+werden oder nicht. Wenn sie auf einer ASP Seite keine Session Variablen ben&ouml;tigen, um Userdaten zu 
+speichern oder darauf zuzugreifen, so k&ouml;nnen sie die <i>@EnableSessionState</i> Direktive auf <b>False</b> setzen:
+<pre style="background='silver';">
+&lt;% @ ENABLESESSIONSTATE = False %&gt;
+</pre>
+Dieser Befehl bewirkt, da&szlig; der IIS den Session Cookie des Browsers weder ausliest, noch setzt. Daher wird 
+die Ausf&uuml;hrung der ASP Seite beschleunigt, was insbesondere bei gro&szlig;en Websites eine wichtige Rolle spielt.
+</p>
+
+<h2>@LCID</h2>
+<p>
+Die <i>@LCID</i> (Local Identifier ID) Direktive legt das Gebietsschema fest, das mit der ASP Seite verwendet wird. 
+Das Gebietsschema wiederrum legt fest, welche Trennzeichen (Punkt oder Beistrich) als Komma bei Zahlenwerten 
+verwendet wird, oder in welcher Reihenfolge bei einem Datum Tag, Monat und Jahr angegeben werden.
+</p>
+<p>
+Um Deutsch als Gebietsschema einer ASP Seite zu benutzen, geben sie folgende @-Direktive in die erste Zeile:
+<pre style="background='silver';">
+&lt;% @LCID = 1031 %&gt;
+</pre>
+Die Zahl 1031 kennzeichnet das Standard-Gebietschema f&uuml;r Deutsch.
+</p>
+<p>
+Unter anderem gelten folgende Werte f&uuml;r die entsprechenden Gebietsschemata:
+</p>
+<p>
+<table cellspacing=3 cellpadding=3>
+<tr><th>Schema</th><th>LCID</th><th>Schema</th><th>LCID</th></tr>
+<tr><td>D&auml;nisch</td><td>1030</td><td>Griechisch</td><td>1032</td></tr>
+<tr><td>Deutsch</td><td>1031</td><td>Italienisch</td><td>1040</td></tr>
+<tr><td>Englisch (AUS)</td><td>3081</td><td>Niederl&auml;ndisch</td><td>1043</td></tr>
+<tr><td>Englisch (UK)</td><td>2057</td><td>Portugisisch</td><td>2070</td></tr>
+<tr><td>Englisch (USA)</td><td>1033</td><td>Schwedisch</td><td>1053</td></tr>
+<tr><td>Finnisch</td><td>1035</td><td>Spanisch</td><td>1034</td></tr>
+<tr><td>Franz&ouml;sisch</td><td>1036</td></tr>
+</table>
+</p>
+<p>
+Wenn sie eine Webapplikation auf der deutschen Version eines Webservers (wie IIS oder PWS) testen, jedoch 
+bei einem englischen Provider (wie InnerHost oder DataReturn) ihre ASP Seiten betreiben, so kann es durchaus 
+zu Problemen kommen.  <i>@LCID</i> ist daf&uuml;r verantwortlich, wie Zahlen und Datumswerte formatiert werden, bevor sie 
+dargestellt werden.
+</p>
+<p>
+Folgendes Beispiel demonstriert ihnen die Problematik:
+<pre style="background='silver';">
+&lt;% @LCID=1031  %&gt;
+&lt;% 
+Response.Write Now
+Response.Write "&lt;BR&gt;"
+Response.Write 3.14159
+%&gt;
+</pre>
+Die ID auf 1031 (Deutsch) gesetzt liefert:
+<pre style="background='silver';">
+04.04.00 00:47:20
+3,1415926	 
+</pre>
+Hingegen liefert eine ID von 1033 (Englisch, USA): 
+<pre style="background='silver';">
+4/4/00 12:47:20 AM
+3.14159
+</pre>
+Es ist daher ratsam, auf jeder ASP Seite die entsprechende LCID anzugeben um nicht in Konflikt mit der 
+voreingestellten LCID des Servers zu kommen.
+</p>
+
+<h2>@CODEPAGE</h2>
+<p>
+Die <i>@Codepage</i>-Direktive legt den Zeichensatz (inklusive Zahlen-, Satz- und Sonderzeichen) fest, der f&uuml;r die 
+ASP Seite verwendet werden soll.
+</p>
+<p>
+Die folgenden Zeichens&auml;tze stehen unter Windows zur Verf&uuml;gung:
+</p>
+<p>	
+<table cellspacing=3 cellpadding=3>
+<tr><th>Zeichensatz</th><th>CODEPAGE</th><th>Zeichensatz</th><th>CODEPAGE</th></tr>
+<tr><td>Arabisch</td><td>1256</td><td>Japanisch</td><td>932</td></tr>
+<tr><td>Baltisch</td><td>1257</td><td>Koreanisch</td><td>949</td></tr>
+<tr><td>Chinesisch</td><td>950</td><td>Osteurop&auml;isch</td><td>1250</td></tr>
+<tr><td>Cyrillisch</td><td>1251</td><td>T&uuml;rkisch</td><td>1254</td></tr>
+<tr><td>Griechisch</td><td>1253</td><td>Unicode</td><td>1200</td></tr>
+<tr><td>Hebr&auml;isch</td><td>1255</td><td>USA (ANSI)</td><td>1252</td></tr>
+</table>
+</p>
+
+<h2>@TRANSACTION</h2>
+<p>
+Diese @-Direktive wird benutzt, um ein Skript als Transaktion zu behandeln.
+Um alle Objektaufrufe in einer ASP Seite in einer Transaktion laufen zu lassen, greift der Webserver auf 
+den Microsoft Transaction Server (MTS) zur&uuml;ck, der die Transaktion verwaltet. 
+</p>
+<p>
+Die <i>@Transaction</i> Direktive kann auf folgende Werte gesetzt werden:
+<b>Required</b>, <b>Requires_New</b>, <b>Supported</b>, <b>Not_Supported</b>. 
+F&uuml;r n&auml;here Erl&auml;uterungen zur <i>@Transaction</i> Direktive,  Transaktionen und dem MTS sehen sie in der MSDN, 
+Platform SDK, oder der IIS (und PWS) Dokumentation nach.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001010.htm">Fern&ouml;stliche Formulare / Unicode die Zweite</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001010.htm</span><br>
+<a href="../artikel/20000505.htm">Session Variablen - Verwendung und Stolpersteine</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000505.htm</span><br>
+<a href="../artikel/20011112.htm">Strukturierter Aufbau in der ASP-Programmierung</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011112.htm</span><br>
+<a href="../artikel/20020704.htm">Zahl, Datum und W&auml;hrung korrekt formatiert ausgeben</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020704.htm</span><br>
+<a href="../artikel/20000517.htm">Zwischenspeichern von ASP Seiten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000517.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

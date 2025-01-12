@@ -1,0 +1,567 @@
+<HTML>
+<HEAD>
+<TITLE>Exception Handling in Visual Basic.NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor, wie man in Visual Basic.NET (VB.NET) das Exception Handling der Common Language Runtime implementiert.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Exception,Try,Catch,End Try,ArgumentException,VB.NET,ASP.NET,Visual Basic,VB,Visual Basic.net,CLR,Common Language Runtime,Framework,.NET Framework">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Exception Handling in Visual Basic.NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/VBdotNET.htm">VB.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001024"></SCRIPT>
+</p>
+<p>
+Auch bei der Webseiten-Programmierung ist die Fehlerbehandlung ein wichtiges Thema.
+Diese erspart dem Client frustrierende Browsermeldungen, Scriptabst&uuml;rze und Sie k&ouml;nnen
+davon ausgehen, da&szlig; Sie nur korrekte Werte vom Client &uuml;bermittelt bekommen. Das Problem 
+bei ASP Seiten war und ist, da&szlig; VBScript eine Fehlerbehandlung bietet, die jenseits von Gut
+und B&ouml;se liegt. W&auml;hrend also ASP-Programmierer mit <i>On Error Resume Next</i> und <i>Err.Number</i>
+verzweifelten, konnten C++ Programmier komfortabel mit <i>try-catch-finally</i> arbeiten.
+</p>
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation des 
+Microsoft .NET Framework SDK's auf einem Webserver. Weiters setze ich voraus, da&szlig; der Leser 
+den Umgang mit Visual Basic zu einem gewissen Grad beherrscht. 
+</p>
+
+<h2>Exception Handling</h2>
+<p>
+Mit der Microsoft .NET Common Language Runtime wird nun vieles einfacher - nicht nur f&uuml;r C++/C# Programmierer!
+Denn in ASP.NET k&ouml;nnen Sie endlich Gebrauch von richtigen Programmiersprachen machen und die Grenzen von
+Scriptsprachen mit Leichtigkeit &uuml;berfl&uuml;geln. Hinzu kommt, da&szlig; das Microsoft .NET Framework endlich
+- abgesehen von sprachtypischen Syntax-Konventionen - ein einheitliches Fehlermanagement bietet:
+n&auml;mlich die Exceptions. Exceptions, was soviel wie Ausnahmen bedeutet, k&ouml;nnen von einer Komponente
+ausgel&ouml;st werden und im aufrufenden Programm elegant abgefangen werden. 
+</p>
+<p>
+Das .NET Framework stellt standardm&auml;&szlig;ig eine Vielzahl von m&ouml;glichen Exceptions zur Verf&uuml;gung. Ausgehend vom
+Grundausnahmefehler, der einfachen <i>Exception</i>, leiten sich f&uuml;r die h&auml;ufigsten Fehler spezifische
+Exceptions ab. 
+</p>
+
+<p>
+Eine kleine Auswahl:
+</p>
+
+<ul>
+<li><i>SystemException</i>: f&uuml;r Fehler w&auml;hrend der Laufzeit
+<li><i>IndexOutOfRangeException</i>: wenn der Index eines Arrays au&szlig;erhalb des g&uuml;ltigen Bereichs ist
+<li><i>FormatException</i>: wenn einer Variable ein Wert mit nicht dazupassendem Datentyp zugewiesen wird
+<li><i>ArgumentException</i>: allgemeiner Wertzuweisungsfehler
+</ul>
+
+<p>
+Nun wollen Sie aber keine der komplexeren Programmiersprachen wie C++ oder C# lernen. Kein Problem -
+Sie k&ouml;nnen in ASP.NET ohne Probleme Visual Basic verwenden. Visual Basic ist um einiges leistungsf&auml;higer als
+VBScript, bietet mehr M&ouml;glichkeiten und ein Umstieg stellt keinen allzu gro&szlig;en Aufwand dar.
+Zus&auml;tzlich stellt VB.NET Fehlerbehandlungsroutinen zur Verf&uuml;gung, die denen von C++ bzw.
+C# in nichts nachstehen - aber den Komfort von Visual Basic bieten.
+</p>
+
+<p>
+In den nun folgenden Beispielen demostriere ich Ihnen wie einfach das Exception Handling in 
+<i>VB.NET</i> zu implementieren ist. Durch die einheitliche Verankerung im .NET Framework 
+m&uuml;ssen Sie, wie schon erw&auml;hnt, im Vergleich zu C# keine Abstriche machen. Sie k&ouml;nnen wie in C#
+Exceptions abfangen, selbst werfen, oder eine selbst kreierte Fehlermeldung ausgeben. Nat&uuml;rlich k&ouml;nnen
+Sie auch Gebrauch  vom <i>Finally</i> Statement machen, welches Statements auch nach Exceptions ausf&uuml;hrt.
+</p>
+
+<h2>Realisierung in VB.NET</h2>
+<p>
+VB.NET ist in manchen Situationen (z.B cast Operationen) um einiges gutm&uuml;tiger
+als zum Beispiel C# - Datentypen werden je nach Gebrauch teilweise auch implizit konvertiert. C# w&uuml;rde
+Ihnen da schon l&auml;ngst auf die Finger klopfen und Sie zu einer expliziten Umcastung auffordern.
+</p>
+<p>
+Deshalb wollen wir uns in diesem Artikel mit Fehlern besch&auml;ftigen, die VB.NET nicht so leicht verzeiht.
+</p>
+<p>
+Nehmen wir zum Beispiel an, wir deklarieren ein Array mit 4 Elementen. Aus irgendeinem Grund
+passiert es aber, da&szlig; unsere <i>for</i> Schleife 5 Elemente auslesen will. Dies ist nun auch f&uuml;r
+VB ein guter Grund eine Exception auszugeben. Der Sourcode hierf&uuml;r ist folgender:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Page Language=VB %&gt;
+&lt;%
+   Dim arTest() As Integer = {0, 1, 2, 3}
+   Dim nVar As Integer
+
+   For nVar = 0 To 5 Step 1
+       Response.Write(arTest(nVar))
+   Next
+%&gt;
+</pre>
+
+<p>
+Bei Aufruf dieses Sourcecodes erhalten wir eine <i>IndexOutOfRange</i> Exception. Dies sieht dann
+ungef&auml;hr so im Browser aus:
+</p>
+
+<IMG SRC="Bilder/200010/20001024_ArrayException.png" width="514" height="405" alt="" border="0">
+
+<p>
+Nun gibt es mehrere M&ouml;glichkeiten um eine geworfene Exception zu behandeln bzw. anzufangen:
+</p>
+<h2>Die Try-Catch Methode</h2>
+<p>
+Diese ist die einfachste M&ouml;glichkeit um einer abrupte Beendigung der Sourcecodeausf&uuml;hrung zu 
+entgehen. Der <i>Try ... End Try</i> Block enth&auml;lt nicht nur den Sourcecode, der m&ouml;glicherweise
+zu einer Exception f&uuml;hren k&ouml;nnte, sondern auch die Fehlerbehandlung mittels <i>Catch</i> Statement.
+Wie eingangs erw&auml;hnt, geschieht prinzipiell das Gleiche wie in C# - der Unterschied liegt nur im Syntax.
+<p>
+Der vorige Sourecode bekommt nun eine wesentliche Verbesserung. Den Sourcecode f&uuml;r dieses Beispiel finden
+Sie im Sourcecode Download in der Datei <i>ArrayExceptionCatched.aspx</i>.
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Page Language=VB %&gt;
+&lt;%
+  Dim arTest() As Integer = {0, 1, 2, 3}
+  Dim nVar As Integer
+
+  Try
+     For nVar = 0 To 5 Step 1
+         Response.Write(arTest(nVar))
+     Next
+  Catch e As Exception
+     Response.Write(e.toString)
+  End Try
+%&gt;
+</pre>
+
+<p>
+Das <i>Catch</i> Statement f&auml;ngt die allgemeine Exception "<i>e</i>" ab und gibt diese wiederum im Browser Fenster aus.
+Man erh&auml;lt also:
+</p>
+
+<IMG SRC="Bilder/200010/20001024_ArrayExceptionCatched.png" width="517" height="229" alt="" border="0"></p>
+
+Der Sourcecode wird bis zum Auftreten der Exception ausgef&uuml;hrt. Dies erkennt man daran, da&szlig; der
+Inhalt des Arrays <i>arTest</i> bis zum letztg&uuml;ltigen Indexer ausgegeben wird (Stelle am Anfang:
+<i>0123</i>).
+Die Exception ist zwar jetzt elegant abgefangen, aber das war's auch schon. Code, der nach dem 
+aufgetretenen Fehler folgt, wird nicht mehr ausgef&uuml;hrt (innerhalb Try-End Try). Damit zeigt sich schon die Notwendigkeit 
+nach einem ausgereifteren Proze&szlig;. Damit w&auml;ren wir auch schon bei der n&auml;chsten Methode:
+</p>
+<h2>Die Try-Catch-Finally Methode</h2>
+<p>
+F&uuml;r den Fall, da&szlig; es ein "Leben" nach der Exception geben soll, d.h. da&szlig; etwaiger Sourcecode nach
+einer m&ouml;glichen Exception ausgef&uuml;hrt werden soll, bietet sich zus&auml;tzlich das <i>Finally</i> Statement
+an. Wiederum angewandt an unserem Array Beispiel (<i>ArrayExceptionCatchedFinally.aspx</i>):
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Page Language=VB %&gt;
+&lt;%
+  Dim arTest() As Integer = {0, 1, 2, 3}
+  Dim nVar As Integer
+
+  Try
+     For nVar = 0 To 5 Step 1
+         Response.Write(arTest(nVar))
+     Next
+  Catch e As Exception
+       Response.Write(e.toString)
+  Finally
+       Response.Write("&lt;br&gt;&lt;br&gt;Diese Statements werden trotz Exception ausgef&uuml;hrt")
+  End Try
+%&gt;
+</pre>
+
+<p>
+Wie gesagt wird nach der aufgetretenen Exception das <i>Response.Write</i> Statement ausgef&uuml;hrt
+und seine Meldung im Browserfenster sichtbar:
+
+<p><IMG SRC="Bilder/200010/20001024_ArrayExceptionCatchedFinally.png" width="456" height="264" alt="" border="0"></p>
+
+Der Code in <i>Finally</i> wird immer ausgef&uuml;hrt - ob der Code eine Exception ausgel&ouml;st hat oder nicht. Deshalb
+bietet sich der <i>Finally</i> Block f&uuml;r "Cleanup" an: um Resourcen freizugeben.
+</p>
+
+<h3>Mehrere Exceptions</h3>
+<p>
+Wie in C++ bzw. in C# k&ouml;nnen Sie nat&uuml;rlich auch mehrere Exceptions abfangen. Schachteln Sie einfach
+die <i>Catch</i> Statements innerhalb des <i>Try ... End Try</i> Blockes - That's it!.
+</p>
+<p>
+Bei der Anwendung von mehreren <i>Catch</i> Statements kann in manchen F&auml;llen schon eine Exception
+ausreichen, um das Ergebnis oder die weitere Abarbeitung des Sourcecodes sinnlos zu machen.
+Um eben den <i>Try ... End Try</i> Block sofort nach der Exception zu verlassen verwenden Sie 
+<i>Exit Try</i> nach dem <i>Catch</i> Statement.
+</p>
+
+<h2>Benutzerdefinierte Fehlermeldungen</h2>
+<p>
+Die Fehlermeldungen, die Sie nach dem Abfangen einer Exception erhalten sind nicht f&uuml;r jeden
+"lesbar". Um den Client pr&auml;zise und leicht verst&auml;ndlich auf seinen Fehler aufmerksam zu machen,
+k&ouml;nnen Sie Ihre eigenen Fehlermeldungen im Browser ausgeben (<i>CustomExceptionMsg.aspx</i>):
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Page Language=VB %&gt;
+&lt;%
+  Dim nVar As Integer
+
+  Try
+    nVar="Test"         
+    Response.Write(nVar)
+  Catch e As InvalidCastException
+   'benutzerdefinierte Fehlermeldung
+    Response.Write("&lt;b&gt;Fehler aufgetreten!&lt;/b&gt;&lt;br&gt;")
+
+   'Standard-Fehlermeldung
+    Response.Write(e.toString) 
+  End Try
+%&gt;         
+</pre>
+
+<p>
+Die Gegen&uuml;berstellung zwischen benutzerdefiniert und Standard zeigt der n&auml;chste Screenshot:
+</p>
+
+<IMG SRC="Bilder/200010/20001024_CustomExceptionMsg.png" width="364" height="218" alt="" border="0">
+
+<p>
+Nat&uuml;rlich sollte man nicht nur die Meldung "Fehler aufgetreten!" ausgeben - aber hier lag die W&uuml;rze
+in der K&uuml;rze.
+</p>
+
+<h2>Throwing Exceptions</h2>
+<p>
+Als Abschlu&szlig; m&ouml;chte ich Ihnen noch demonstrieren, da&szlig; Sie nicht nur Exceptions abfangen k&ouml;nnen,
+sondern auch selbst "werfen" (throw) k&ouml;nnen.
+Das "Werfen" von Exceptions ist genauso einfach wie das Abfangen. Sie deklarieren die
+Exception und verwenden dann dort wo Sie "geworfen" werden soll das <i>Throw</i> Statement
+(<i>ThrowArgExc.aspx</i>):
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Page Language=VB %&gt;
+&lt;%
+  Dim nVar As Integer
+  Dim ArgEx As New ArgumentException  
+
+  nVar = 10
+ 
+  if nVar &gt; 5 Then
+    Throw ArgEx
+  Else
+    Response.Write("Alles OK")
+  End If
+%&gt;
+</pre>
+
+<p>
+Bei der Deklaration der Exception (<i>Dim ArgEx ...</i>) ist das Keyword <i>New</i> unbedingt anzuf&uuml;hren, da sonst Komplikationen 
+auftreten k&ouml;nnen.
+</p>
+
+<IMG SRC="Bilder/200010/20001024_ThrowArgExc.png" width="512" height="379" alt="" border="0">
+
+<p>
+Selbstverst&auml;ndlich k&ouml;nnen Sie Ihre eigens geworfenen Exceptions auch mit den &uuml;blichen Mitteln 
+wieder abfangen (<i>ThrowNCatchEx.aspx</i>):
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Page Language=VB %&gt;
+&lt;%
+
+  Dim nVar As Integer
+  Dim AEx As New ArgumentException  
+
+  Try
+    nVar ="10"
+    if nVar &gt; 5 Then
+      Throw AEx
+    Else
+      Response.Write("Alles OK")
+    End If
+  Catch e As Exception
+    Response.Write(e.toString)
+  End Try  
+%&gt;
+</pre>
+
+<h2>Tips zur Verwendung von Exceptions:</h2>
+<p>
+Um ein sinnvolles Exception Handling zu gew&auml;hrleisten, sollten Sie:
+</p>
+
+<ul>
+<li>lieber Exceptions genau spezifieren, als nur eine allgemeine Exception werfen
+<li>wenn ung&uuml;ltige Werte &uuml;bergeben werden immer die <i>ArgumentException</i> werfen
+<li>F&uuml;r Exceptions, die vom Client ausgel&ouml;st werden einen verst&auml;ndlichen Text ausgeben
+<li>auf das Werfen von Exceptions verzichten wenn der sichere und vollst&auml;ndige Programmablauf gef&auml;hrdet ist
+<li>auf Exceptions verzichten, wenn triviale Fehler behandelt werden sollen
+</ul>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Sie sind nun in der Lage auch in VB.NET effizientes Exception Handling einzusetzen.
+Sie wissen nun wie Exceptions zustandekommen k&ouml;nnen, wie man Sie "abf&auml;ngt" oder wie
+man nachfolgenden Code trotzdem ausf&uuml;hrt. Sie k&ouml;nnen dem Client nun leicht verst&auml;ndliche
+Fehlermeldungen pr&auml;sentieren oder Exceptions selbst werfen.
+</p>
+<p>
+Da das Microsoft .NET Framework ein einheitliches Exception Handling aufweist, und
+somit VB.NET &auml;hnliche F&auml;higkeiten wie C# in Bezug auf das Exception Handling hat,
+k&ouml;nnen Sie schnell und ohne gro&szlig;en Aufwand professionelle Webseiten mit einer effizienten
+Fehlerbehandlung erstellen.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001024.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20000724.htm">Exception Handling in C#</a><br>
+<a href="20020902.htm">Regex'en zu Assemblies kompilieren</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20001024" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Exception Handling in Visual Basic.NET"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20001024.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Holm"><input type="hidden" name="AuthorEmail" value="office@holmcs.com"><input type="hidden" name="Artikel" value="20001024"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20001024.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

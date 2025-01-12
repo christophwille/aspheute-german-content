@@ -1,0 +1,300 @@
+<HTML>
+<HEAD>
+<TITLE>Eigene Tags - User Input einfach und sicher</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Am Beispiel eines Event-Kalenders wird in diesem Artikel erkl&auml;rt wie man mit einfachen Mitteln die Eingabe von Inhalten f&uuml;r Menschen, die zu wenig von HTML verstehen erleichtern kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,HTML,Tags,Regular Expressions,Regulärer Ausdruck,RegEx,RegExp,Pattern,Match,Replace">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Eigene Tags - User Input einfach und sicher</H1>
+<p>
+Geschrieben von: <a href="../autoren/fredericganner.htm">Frederic Ganner</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020130"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Am Beispiel eines Event-Kalenders wird in diesem Artikel erkl&auml;rt wie man mit einfachen Mitteln die 
+Eingabe von Inhalten f&uuml;r Menschen, die zu wenig von HTML verstehen erleichtern kann, und wie man sich 
+vor denen sch&uuml;tzt, die zu viel davon verstehen. Ein Feature, das sich aus der Anwendung ergibt, ist das 
+Einsetzen von kleinen Grafiken (z.B. Smilies), mittels einfacher Tags, wie es oft bei Forensystemen 
+verwendet wird. 
+</p>
+<p>
+Eines der Kernfeatures der meisten Seiten ist wohl immer die M&ouml;glichkeit aktuellen Content online 
+verf&uuml;gbar zu machen. Wenn daf&uuml;r nicht gerade aufwendige Content Management Systeme verwendet werden, 
+greift man meistens auf eine kleine Datenbankl&ouml;sung und ein Updating durch dynamische Seiten zur&uuml;ck. 
+Das Problem dabei ist nur, da&szlig; die Leute, die die Inhalte letztlich online stellen, oft keine Ahnung 
+von HTML haben, und so weder ihre Texte formatieren, noch sicher mit "Kleinkram" wie Verlinkung etc. 
+umgehen k&ouml;nnen. 
+</p>
+<p>
+Ein weit gr&ouml;&szlig;eres Problem bei solchen Applikationen ist jedoch, da&szlig; man fremde Texte in seine 
+Anwendungen aufnimmt, speichert und darstellt, deren Inhalt man nicht kennt, und deren Darstellung im 
+Web nicht nur unangenehm, sondern auch gef&auml;hrlich werden kann. Die Anforderungen an die Anwendung sind 
+also die Eingabe einerseits zu erleichtern, andererseits die Eingabe von b&ouml;sartigem Content zu 
+verhindern. Konkret handelt es sich dabei um die Einbindung fremder Inhalte wie Includes die z.B. 
+sch&auml;dliche ActiveX Elemente enthalten k&ouml;nnen. Es stellt sich nun die Frage ob man nun einige HTML-Tags 
+erlauben und andere verbieten soll, oder ob Eingabe von HTML generell zu unterbinden ist. In den 
+meisten F&auml;llen ist wohl letzteres sinnvoll.
+</p>
+
+<h2>Entwurf eigener Tags</h2>
+<p>
+Wenn der User nun kein HTML mehr verwenden darf, mu&szlig; nat&uuml;rlich eine Alternative gestellt werden, die 
+alle ben&ouml;tigten Formatierungen erm&ouml;glicht. Es wird hierf&uuml;r also eine Alternativ-Syntax erstellt, die 
+dazu noch m&ouml;glichst intuitiv und einfach ist, damit sie jeder User auch sofort verwenden kann. Die 
+folgenden Tags bestehen dabei entsprechend ihren HTML-Pendants aus einem &ouml;ffnenden und einem schlie&szlig;enden 
+Tag.
+</p>
+<p>
+Das wichtigste Tag im Text, der Link, ist getrennt in einen "normalen" und EMail-Link, da man sonst die 
+Linkadresse innerhalb des Tags mit "mailto:*" angeben m&uuml;&szlig;te.
+</p>
+
+<ul>
+<li>-Link-http://www.example.com-Linktext-An example-Linkende-
+<li>-Emaillink-Peter.Paul@Mary.com-Linktext-Email schicken-Linkende-
+</ul>
+
+<p>
+Weitere, oft verwendete Tags sind die Aufz&auml;hlung("&lt;UL&gt;"), Absatz ("&lt;P&gt;") Umbruch ("&lt;BR&gt;"), und Bilder.	
+</p>
+
+<ul>
+<li>-Liste-Argument1-NaechsterPunkt-Argument2-Listenende
+<li>-Absatz- -Absatzende-
+<li>-Umbruch-
+<li>-Bild-Adresse-Bildende-
+</ul>
+
+<p>
+Es folgen die kleinen Standards die man immer brauchen kann. Die Elemente zu Schriftformatierung k&ouml;nnen 
+entweder zu "&lt;FONT&gt;"-Tags oder zu "&lt;SPAN&gt;"-Tags mit Stylesheet-Referenz werden, eben je nach dem 
+Umfeld in dem sie eingesetzt werden. Aus dem "Linie"-Tag wird ein "&lt;HR&gt;"-Element. Die Ausrichtung 
+von Texten kann links- und rechtsb&uuml;ndig oder als Blocksatz angegeben werden.
+</p>
+
+<ul>
+<li>-Fett- -Fettende-
+<li>-Kursiv- -Kursivende-
+<li>-Linie-
+<li>-Blocksatz- -Blocksatzende-
+<li>-Links- -Linksende-
+<li>-Rechts- -Rechtsende-
+</ul>
+
+<p>
+Um dem Benutzer noch ein paar interessante M&ouml;glichkeiten zur Textgestaltung an die Hand zu geben habe 
+ich das "Einruecken"-Tag und ein Zitat-Format angef&uuml;gt. Bei Einr&uuml;cken wird der Text durch ein 
+"Span"-Tag um 5% am linken Rand einger&uuml;ckt. Durch ein Zitat wird der Inhalt freigestellt und kursiv 
+dargestellt. 
+</p>
+
+<ul>
+<li>-Einruecken- -Einrueckenende-
+<li>-Zitat- -Zitatende-
+</ul>
+
+<p>
+Die folgende Grafik zeigt einen formatierten Text, wie er bei der Eingabe und schlie&szlig;lich im 
+Frontend aussieht.
+</p>
+
+<IMG SRC="/artikel/Bilder/200201/20020130_1.png" width="504" height="481" alt="" border="0">
+
+<p>
+Weil Bilder viel schneller wahrgenommen und verstanden werden als Text, oder einfach nur zur 
+Auflockerung bietet der Event-Kalender die M&ouml;glichkeit kleine Grafiken in den Text einzubinden. Die 
+gebr&auml;uchlichen Smilies k&ouml;nnen in richtige Grafiken umgewandelt werden. Andere, durchaus n&uuml;tzliche 
+Symbole, wie z.B. das Fragezeichen oder ein Pfeilsymbol, kommen hinzu. Zu beachten ist bei Zeichen 
+wie Klammern, und Fragezeichen, da&szlig; sie auch in der Syntax der regul&auml;ren Ausdr&uuml;cke verwendet werden, 
+und deshalb mit einem "\" escaped werden m&uuml;ssen.
+</p>
+
+<ul>
+<li>:)
+<li>:(
+<li>:o
+<li>;) 
+<li>-?- 
+<li>-!-
+<li>-Pfeilr-
+<li>-Pfeill-
+</ul>
+
+<p>
+Diese Grafiken sind in der Anwendung enthalten. Die Datenbankeintr&auml;ge der Grafiken sind Image Tags die 
+auf die Bilder verweisen.
+</p>
+
+<IMG SRC="/artikel/Bilder/200201/20020130_2.png" width="395" height="288" alt="" border="0">
+
+<h2>Ein Event-Kalender als Beispiel</h2>
+<p>
+Das Kernst&uuml;ck der Beispielanwendung ist eine Access-Datenbank. In dieser finden sich zwei Tabellen, eine 
+f&uuml;r die geposteten Beitr&auml;ge im Event-Kalender, und eine f&uuml;r die Patterns. Ein Tag entspricht immer 
+einem Datensatz in der Datenbank, der einerseits das Suchmuster und andererseits den String, durch 
+den die Matches ersetzt werden sollen, enth&auml;lt. Beide Tabellen werden &uuml;ber eigene Adminpages (<b>add.asp</b> 
+f&uuml;r Events, <b>patternadd.asp</b> f&uuml;r die Patterns) upgedated. Jeder Tag wird dabei einzeln mit seiner 
+HTML-Entsprechung in die Datenbank eingetragen.
+</p>
+
+<IMG SRC="/artikel/Bilder/200201/20020130_3.png" width="367" height="312" alt="" border="0">
+
+<p>
+Um HTML-Tags aus dem Spiel zu nehmen, mu&szlig; man sie nat&uuml;rlich erstmal finden, und dann entweder die Tags 
+unmasken, damit sie auf der HTML-Seite dargestellt werden, also die "&lt;" und "&gt;" Zeichen in die 
+entsprechenden HTML-Zeichen umwandeln, oder die Tags komplett aus dem Quelltext l&ouml;schen. Wenn man 
+sich f&uuml;r ersteres entscheidet fallen nat&uuml;rlich auch alle versehentlich in HTML angegeben Sachen raus. 
+Deshalb habe ich in die folgende Beispielanwendung die Option "Show HTML" bzw. "Kick HTML" eingebaut. 
+</p>
+<p>
+Wenn die Option "Kick HTML" gew&auml;hlt wird, durchsucht das RegExp-Objekt den Text nach dem Pattern 
+"&lt;.*&gt;". Dieses Muster erkennt HTML Tags (durch die spitzen Klammern) mit beliebigem Inhalt. Der 
+Punkt ist Platzhalter f&uuml;r alle Zeichen, und das "*" steht f&uuml;r eine nicht definierte Anzahl des 
+vorherigen Zeichens. Die HTML Tags werden in diesem Fall aus dem Text gel&ouml;scht. Wenn dagegen 
+"Show HTML" gew&auml;hlt wurde, werden die spitzen Klammern durch "&amp;gt;" bzw. "&amp;lt;" ersetzt, soda&szlig; 
+die HTML-Tags im Text sichtbar werden.
+</p>
+
+<pre style="background='silver';">
+strText = Request.Form("txt")
+	
+Set regEx = New RegExp
+regEx.IgnoreCase = True
+regEx.Global = True
+	
+If Request.Form("HTML") = "kick" Then
+	regEx.Pattern = "&lt;.*&gt;"
+	strText = regEx.Replace(strText, "")
+Else
+	regEx.Pattern = "&gt;"
+	strText = regEx.Replace(strText, "&amp;gt;")
+	regEx.Pattern = "&lt;"
+	strText = regEx.Replace(strText, "&amp;lt;")
+End If
+</pre>
+
+<p>
+HTML-Tags im Text sind nicht sch&ouml;n, vielleicht geht dem Leser aber auch etwas verloren:
+</p>
+
+<IMG SRC="/artikel/Bilder/200201/20020130_4.png" width="334" height="221" alt="" border="0">
+
+<p>
+Nach dem HTML-Test werden schlie&szlig;lich alle eigenen Tags durch HTML-Syntax ersetzt.
+</p>
+
+<pre style="background='silver';">
+Set Data = Server.CreateObject("ADODB.Recordset")
+Data.ActiveConnection = strConn
+Data.Source = "SELECT * FROM Items"
+Data.CursorType = 0 ' adOpenForwardOnly
+Data.CursorLocation = 2 ' adUseClient
+Data.LockType = 3 ' adLockOptimistic
+Data.Open
+Data.MoveFirst
+
+While Not Data.EOF
+	regEx.Pattern = Data.Fields("strPattern")
+	
+	If regEx.Test(strText) Then
+		strReplace = Data.Fields("strReplace")
+		strText = regEx.Replace(strText, strReplace)
+	End If
+	Data.MoveNext
+Wend
+
+Data.Close
+Set Data = Nothing
+
+set conn= Server.CreateObject("ADODB.Connection")
+conn.Open strConn
+
+StrSql ="INSERT INTO Events (dteDatum, strText) VALUES (#" &amp;_
+   FormatDateTime(Request.Form("show_day"),2) &amp; "#, '" &amp; strText &amp; "')"
+	
+conn.Execute (strSql) 
+</pre>
+
+<p>
+Der &uuml;bergebene Text wird nach allen Patterns, die in der Datenbank vorhanden sind, durchsucht, und die 
+Matches werden durch die jeweiligen Tags ersetzt. Zum Suchen und Ersetzen der Textstellen wird ein 
+Regular Expression Object (<i>RegExp</i>) instanziert. Beim Durchlaufen des Recordset-Objekts wird die 
+Eigenschaft <i>Pattern</i> des Regular Expression-Objekts mit dem jeweils im Datensatz vorhandenen Pattern 
+belegt. Das Ersetzen erfolgt letztendlich durch die Methode <i>Replace</i>. Die Verwendung von Regul&auml;ren 
+Ausdr&uuml;cken wird eingehend in dem Artikel <a href="../artikel/20000829.htm">Regul&auml;re Ausdr&uuml;cke</a> 
+beschrieben. Nachdem alle Datens&auml;tze durchlaufen wurden, wird der bearbeitete Text in die Datenbank 
+eingef&uuml;gt, und ist f&uuml;r die Besucher verf&uuml;gbar.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Wie auch im Artikel &uuml;ber <a href="../artikel/20011030.htm">SQL Injection</a> erw&auml;hnt gilt, da&szlig; aller Input f&uuml;r "evil" zu halten ist, solange 
+nicht das Gegenteil bewiesen ist. Und das gilt eben auch f&uuml;r HTML-Eingaben. Durch das Filtern von 
+HTML-Tags und die Bereitstellung eigener Syntax kann Abhilfe geschaffen werden. Die Beispielanwendung 
+beschr&auml;nkt sich auf sehr einfache Syntax-Beispiele. Das hat den Vorteil, da&szlig; die Anwendung leichter 
+zu warten, und zu skalieren ist - gerade in diesem Bereich kann man jedoch die Anwendung mit ein 
+paar weiteren Ideen auf seine eigenen Bed&uuml;rfnisse anpassen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020130.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020130.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000829.htm">Regul&auml;re Ausdr&uuml;cke / Regular Expressions</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000829.htm</span><br>
+<a href="../artikel/20011030.htm">SQL Injection</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011030.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

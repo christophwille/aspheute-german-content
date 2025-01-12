@@ -1,0 +1,274 @@
+<HTML>
+<HEAD>
+<TITLE>Arrays mit Index und Schl&uuml;ssel</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Was wenn man sowohl per Index als auch Schl&uuml;ssel auf Elemente einer Collection zugreifen will? Auch dann wird man von .NET nicht alleine gelassen, denn es gibt die SortedList Klasse, eine Mischung aus Array und Hashtable.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SortedList,Hashtable,Array,ContainsKey,ContainsValue,foreach,IsSynchronized,Synchronize,thread-safety,static,Indexer">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Arrays mit Index und Schl&uuml;ssel</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020124"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Arrays sind ein tolle Erfindung - man greift per Index bequem auf die Elemente zu. Will man nicht per
+Index auf ein Element zugreifen sondern per Schl&uuml;ssel, dann verwendet man die Hashtable Klasse. Doch 
+was wenn man sowohl per Index als auch Schl&uuml;ssel auf Elemente zugreifen will? Auch dann wird man von .NET
+nicht alleine gelassen, denn es gibt die <i>SortedList</i> Klasse, eine Mischung aus Array und Hashtable.
+</p>
+
+<h2>1,2,3 - so einfach geht's!</h2>
+<p>
+Die <i>SortedList</i> ist also eine Mischung aus <a href="../artikel/20000731.htm">Array</a> und <a href="../artikel/20000823.htm">Hashtable</a>.
+Da&szlig; die Verwendung dadurch nicht komplizierter wird, demonstriert gleich das erste Beispiel (<b>access.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Collections" %&gt;
+&lt;%
+SortedList slDotNetLists = new SortedList();
+slDotNetLists.Add("ASP.NET", "aspDEdotnet@aspfriends.com");
+slDotNetLists.Add("C#", "dotnetDEcsharp@aspfriends.com");
+slDotNetLists.Add("VB.NET", "dotnetDEvb@aspfriends.com");
+
+Response.Write(slDotNetLists.GetByIndex(0).ToString() + "&lt;br&gt;");
+Response.Write(slDotNetLists["C#"].ToString() + "&lt;br&gt;");
+int nIndex = slDotNetLists.IndexOfKey("VB.NET");
+Response.Write(slDotNetLists.GetByIndex(nIndex).ToString() + "&lt;br&gt;");
+%&gt;
+</pre>
+<p>
+Das Hinzuf&uuml;gen von Elementen funktioniert schon wie bei der Hashtable Klasse gelernt. Die Zugriffe
+auf die Elemente sind der interessante Part, zuerst per Index:
+</p>
+
+<pre style="background='silver';">
+object objValue = slDotNetLists.GetByIndex(0);
+</pre>
+<p>
+Der Zugriff auf ein Element passiert via <i>GetByIndex</i> Methode. Warum nicht per Indexer, also den
+eckigen Klammern? Nun, die sind f&uuml;r den Zugriff via Schl&uuml;ssel reserviert:
+</p>
+<pre style="background='silver';">
+object objValue = slDotNetLists["C#"];
+</pre>
+<p>
+Um zu zeigen da&szlig; man auch mit der Kirche um's Kreuz zum Ziel kommen kann, habe ich noch folgende
+Zugriffsvariante eingebaut:
+</p>
+<pre style="background='silver';">
+int nIndex = slDotNetLists.IndexOfKey("VB.NET");
+object objValue = slDotNetLists.GetByIndex(nIndex);
+</pre>
+<p>
+Man kann den Indexwert eines Schl&uuml;ssel ermitteln, und dann per <i>GetByIndex</i> an den Wert kommen.
+</p>
+
+<h2>Die korrekte Verwendung von foreach</h2>
+<p>
+Was soll man da eigentlich falsch machen k&ouml;nnen, werden sich einige fragen. Sehen wir uns
+einmal die Standardanwendung an (<b>iterateforeach.aspx</b>):
+</p>
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Collections" %&gt;
+&lt;%
+SortedList slDotNetLists = new SortedList();
+slDotNetLists.Add("ASP.NET", "aspDEdotnet@aspfriends.com");
+slDotNetLists.Add("C#", "dotnetDEcsharp@aspfriends.com");
+slDotNetLists.Add("VB.NET", "dotnetDEvb@aspfriends.com");
+
+foreach (DictionaryEntry de in slDotNetLists)
+{
+  Response.Write(de.Key + " - " + de.Value + "&lt;br&gt;\r\n");
+}
+%&gt;
+</pre>
+
+<p>
+Prinzipiell ist das in ASP.NET auch so OK, nur: der Enumerator ist nicht thread-safe. Was bedeutet das?
+Angenommen, ich habe eine gr&ouml;&szlig;ere Anwendung, in der ein Teil des Programms die SortedList &auml;ndert 
+(Eintr&auml;ge hinzuf&uuml;gt oder l&ouml;scht), und ein
+anderer die Daten listet. Was passiert, wenn w&auml;hrend des Auflistens ein Wert herausgel&ouml;scht wird? Nun, 
+das foreach wird m&ouml;glicherweise mit einer Exception "sterben", weil ich ohne "Wissen" des Enumerators
+ein Element herausgel&ouml;scht habe, auf das er m&ouml;glicherweise zugreifen wird.
+</p>
+<p>
+Um dies zu verhindern, kann man die SortedList synchronisieren, das hei&szlig;t sich eine thread-sichere Kopie
+geben lassen. Da&szlig; dies keineswegs ein grober Mehraufwand ist demonstriert <b>iteratesynchronized.aspx</b>:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Collections" %&gt;
+&lt;%
+SortedList slDotNetLists = new SortedList();
+slDotNetLists.Add("ASP.NET", "aspDEdotnet@aspfriends.com");
+slDotNetLists.Add("C#", "dotnetDEcsharp@aspfriends.com");
+slDotNetLists.Add("VB.NET", "dotnetDEvb@aspfriends.com");
+
+SortedList slSynchronized = SortedList.Synchronized(slDotNetLists);
+Response.Write(slSynchronized.IsSynchronized.ToString() + "&lt;br&gt;");
+
+foreach (DictionaryEntry de in slSynchronized)
+{
+  Response.Write(de.Key + " - " + de.Value + "&lt;br&gt;\r\n");
+}
+%&gt;
+</pre>
+
+<p>
+Nur der Aufruf der statischen Methode <i>Synchronized</i> ist notwendig, um thread-sicher mit foreach arbeiten
+zu k&ouml;nnen. Die Abfrage von <i>IsSynchronized</i> dient eigentlich nur der Demonstration da&szlig; man leicht herausfinden
+kann, ob man mit einer synchronisierten SortedList arbeitet oder nicht.
+</p>
+
+<h2>Suchen in der SortedList</h2>
+<p>
+Oftmals m&ouml;chte man sich versichern, da&szlig; bestimmte Eintr&auml;ge auch wirklich in der SortedList sind. Dann
+wird man die auch schon von der Hashtable Klasse bekannten Methoden <i>ContainsKey</i> und <i>ContainsValue</i>
+verwenden. Das folgende Beispiel (<b>search.aspx</b>) ist nichts weiter als eine leicht angepasste 
+Version des Scripts, das ich auch schon f&uuml;r die Hashtable Klasse verwendet habe.
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Collections" %&gt;
+&lt;%
+SortedList slDotNetLists = new SortedList();
+slDotNetLists.Add("ASP.NET", "aspDEdotnet@aspfriends.com");
+slDotNetLists.Add("C#", "dotnetDEcsharp@aspfriends.com");
+slDotNetLists.Add("VB.NET", "dotnetDEvb@aspfriends.com");
+
+// Anzahl der Element in der SortedList
+int nElementCount = slDotNetLists.Count;
+
+// existiert der Schl&uuml;ssel?
+bool bKeyCont = slDotNetLists.ContainsKey("C#");
+
+// existiert der Wert?
+bool bValueCont = slDotNetLists.ContainsValue("dotnetDEvb@aspfriends.com");
+
+// Element korrekt suchen
+if (true == bKeyCont)
+{
+  Response.Write(slDotNetLists["C#"].ToString());
+}
+%&gt;
+</pre>
+
+<h2>Updaten und L&ouml;schen</h2>
+<p>
+&Uuml;blicherweise bef&uuml;llt man eine Collection nicht nur, sondern man m&ouml;chte auch Werte &auml;ndern und 
+sogar l&ouml;schen k&ouml;nnen. Das kann die <i>SortedList</i> Klasse nat&uuml;rlich auch - wie im folgenden 
+Beispiel gezeigt (<b>updateremove.aspx</b>):
+</p>
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Collections" %&gt;
+&lt;%
+SortedList slDotNetLists = new SortedList();
+slDotNetLists.Add("ASP.NET", "aspDEdotnet@aspfriends.com");
+slDotNetLists.Add("C#", "dotnetDEcsharp@aspfriends.com");
+slDotNetLists.Add("VB.NET", "dotnetDEvb@aspfriends.com");
+
+// existiert der Schl&uuml;ssel?
+bool bKeyCont = slDotNetLists.ContainsKey("VB.NET");
+
+// Element korrekt updaten
+if (true == bKeyCont)
+{
+  slDotNetLists["VB.NET"] = "deadinthewater@nowhere.org";
+}
+
+// Element l&ouml;schen; existiert es nicht --&gt; Exception
+slDotNetLists.Remove("VB.NET");
+
+// und jetzt l&ouml;schen wir alles
+slDotNetLists.Clear();
+%&gt;
+</pre>
+<p>
+Die Methode <i>ContainsKey</i> ist bereits ein alter Bekannter, ebenso wie der Indexer - nur da&szlig; ich
+ihn hier zum &Auml;ndern des Wertes verwende. Ebenso einfach ist die Verwendung der <i>Remove</i> Methode,
+die ein einzelnes Element anhand des Schl&uuml;ssels aus der SortedList entfernt. Last but not least 
+bleibt mir die <i>Clear</i> Methode zu erkl&auml;ren: diese l&ouml;scht s&auml;mtliche Elemente aus der SortedList.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die SortedList Klasse ist ein weiterer Beweis daf&uuml;r, da&szlig; man im Framework f&uuml;r fast jeden Bedarf eine
+bereits existierende Klasse finden kann.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020124.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020124.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000926.htm">Collections einmal anders: Stacks und Queues</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000926.htm</span><br>
+<a href="../artikel/20000720.htm">Das foreach Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000720.htm</span><br>
+<a href="../artikel/20020401.htm">Debugging in der Tiefe</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020401.htm</span><br>
+<a href="../artikel/20000823.htm">Die Hashtable Klasse</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000823.htm</span><br>
+<a href="../artikel/20020417.htm">Sortieren mit dem IComparer Interface</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020417.htm</span><br>
+<a href="../artikel/20000731.htm">Verwendung von Arrays in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000731.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

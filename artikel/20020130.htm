@@ -1,0 +1,485 @@
+<HTML>
+<HEAD>
+<TITLE>Eigene Tags - User Input einfach und sicher</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Am Beispiel eines Event-Kalenders wird in diesem Artikel erkl&auml;rt wie man mit einfachen Mitteln die Eingabe von Inhalten f&uuml;r Menschen, die zu wenig von HTML verstehen erleichtern kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,HTML,Tags,Regular Expressions,Regulärer Ausdruck,RegEx,RegExp,Pattern,Match,Replace">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Eigene Tags - User Input einfach und sicher</H1>
+<p>
+Geschrieben von: <a href="../autoren/fredericganner.htm">Frederic Ganner</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020130"></SCRIPT>
+</p>
+<p>
+Am Beispiel eines Event-Kalenders wird in diesem Artikel erkl&auml;rt wie man mit einfachen Mitteln die 
+Eingabe von Inhalten f&uuml;r Menschen, die zu wenig von HTML verstehen erleichtern kann, und wie man sich 
+vor denen sch&uuml;tzt, die zu viel davon verstehen. Ein Feature, das sich aus der Anwendung ergibt, ist das 
+Einsetzen von kleinen Grafiken (z.B. Smilies), mittels einfacher Tags, wie es oft bei Forensystemen 
+verwendet wird. 
+</p>
+<p>
+Eines der Kernfeatures der meisten Seiten ist wohl immer die M&ouml;glichkeit aktuellen Content online 
+verf&uuml;gbar zu machen. Wenn daf&uuml;r nicht gerade aufwendige Content Management Systeme verwendet werden, 
+greift man meistens auf eine kleine Datenbankl&ouml;sung und ein Updating durch dynamische Seiten zur&uuml;ck. 
+Das Problem dabei ist nur, da&szlig; die Leute, die die Inhalte letztlich online stellen, oft keine Ahnung 
+von HTML haben, und so weder ihre Texte formatieren, noch sicher mit "Kleinkram" wie Verlinkung etc. 
+umgehen k&ouml;nnen. 
+</p>
+<p>
+Ein weit gr&ouml;&szlig;eres Problem bei solchen Applikationen ist jedoch, da&szlig; man fremde Texte in seine 
+Anwendungen aufnimmt, speichert und darstellt, deren Inhalt man nicht kennt, und deren Darstellung im 
+Web nicht nur unangenehm, sondern auch gef&auml;hrlich werden kann. Die Anforderungen an die Anwendung sind 
+also die Eingabe einerseits zu erleichtern, andererseits die Eingabe von b&ouml;sartigem Content zu 
+verhindern. Konkret handelt es sich dabei um die Einbindung fremder Inhalte wie Includes die z.B. 
+sch&auml;dliche ActiveX Elemente enthalten k&ouml;nnen. Es stellt sich nun die Frage ob man nun einige HTML-Tags 
+erlauben und andere verbieten soll, oder ob Eingabe von HTML generell zu unterbinden ist. In den 
+meisten F&auml;llen ist wohl letzteres sinnvoll.
+</p>
+
+<h2>Entwurf eigener Tags</h2>
+<p>
+Wenn der User nun kein HTML mehr verwenden darf, mu&szlig; nat&uuml;rlich eine Alternative gestellt werden, die 
+alle ben&ouml;tigten Formatierungen erm&ouml;glicht. Es wird hierf&uuml;r also eine Alternativ-Syntax erstellt, die 
+dazu noch m&ouml;glichst intuitiv und einfach ist, damit sie jeder User auch sofort verwenden kann. Die 
+folgenden Tags bestehen dabei entsprechend ihren HTML-Pendants aus einem &ouml;ffnenden und einem schlie&szlig;enden 
+Tag.
+</p>
+<p>
+Das wichtigste Tag im Text, der Link, ist getrennt in einen "normalen" und EMail-Link, da man sonst die 
+Linkadresse innerhalb des Tags mit "mailto:*" angeben m&uuml;&szlig;te.
+</p>
+
+<ul>
+<li>-Link-http://www.example.com-Linktext-An example-Linkende-
+<li>-Emaillink-Peter.Paul@Mary.com-Linktext-Email schicken-Linkende-
+</ul>
+
+<p>
+Weitere, oft verwendete Tags sind die Aufz&auml;hlung("&lt;UL&gt;"), Absatz ("&lt;P&gt;") Umbruch ("&lt;BR&gt;"), und Bilder.	
+</p>
+
+<ul>
+<li>-Liste-Argument1-NaechsterPunkt-Argument2-Listenende
+<li>-Absatz- -Absatzende-
+<li>-Umbruch-
+<li>-Bild-Adresse-Bildende-
+</ul>
+
+<p>
+Es folgen die kleinen Standards die man immer brauchen kann. Die Elemente zu Schriftformatierung k&ouml;nnen 
+entweder zu "&lt;FONT&gt;"-Tags oder zu "&lt;SPAN&gt;"-Tags mit Stylesheet-Referenz werden, eben je nach dem 
+Umfeld in dem sie eingesetzt werden. Aus dem "Linie"-Tag wird ein "&lt;HR&gt;"-Element. Die Ausrichtung 
+von Texten kann links- und rechtsb&uuml;ndig oder als Blocksatz angegeben werden.
+</p>
+
+<ul>
+<li>-Fett- -Fettende-
+<li>-Kursiv- -Kursivende-
+<li>-Linie-
+<li>-Blocksatz- -Blocksatzende-
+<li>-Links- -Linksende-
+<li>-Rechts- -Rechtsende-
+</ul>
+
+<p>
+Um dem Benutzer noch ein paar interessante M&ouml;glichkeiten zur Textgestaltung an die Hand zu geben habe 
+ich das "Einruecken"-Tag und ein Zitat-Format angef&uuml;gt. Bei Einr&uuml;cken wird der Text durch ein 
+"Span"-Tag um 5% am linken Rand einger&uuml;ckt. Durch ein Zitat wird der Inhalt freigestellt und kursiv 
+dargestellt. 
+</p>
+
+<ul>
+<li>-Einruecken- -Einrueckenende-
+<li>-Zitat- -Zitatende-
+</ul>
+
+<p>
+Die folgende Grafik zeigt einen formatierten Text, wie er bei der Eingabe und schlie&szlig;lich im 
+Frontend aussieht.
+</p>
+
+<IMG SRC="Bilder/200201/20020130_1.png" width="504" height="481" alt="" border="0">
+
+<p>
+Weil Bilder viel schneller wahrgenommen und verstanden werden als Text, oder einfach nur zur 
+Auflockerung bietet der Event-Kalender die M&ouml;glichkeit kleine Grafiken in den Text einzubinden. Die 
+gebr&auml;uchlichen Smilies k&ouml;nnen in richtige Grafiken umgewandelt werden. Andere, durchaus n&uuml;tzliche 
+Symbole, wie z.B. das Fragezeichen oder ein Pfeilsymbol, kommen hinzu. Zu beachten ist bei Zeichen 
+wie Klammern, und Fragezeichen, da&szlig; sie auch in der Syntax der regul&auml;ren Ausdr&uuml;cke verwendet werden, 
+und deshalb mit einem "\" escaped werden m&uuml;ssen.
+</p>
+
+<ul>
+<li>:)
+<li>:(
+<li>:o
+<li>;) 
+<li>-?- 
+<li>-!-
+<li>-Pfeilr-
+<li>-Pfeill-
+</ul>
+
+<p>
+Diese Grafiken sind in der Anwendung enthalten. Die Datenbankeintr&auml;ge der Grafiken sind Image Tags die 
+auf die Bilder verweisen.
+</p>
+
+<IMG SRC="Bilder/200201/20020130_2.png" width="395" height="288" alt="" border="0">
+
+<h2>Ein Event-Kalender als Beispiel</h2>
+<p>
+Das Kernst&uuml;ck der Beispielanwendung ist eine Access-Datenbank. In dieser finden sich zwei Tabellen, eine 
+f&uuml;r die geposteten Beitr&auml;ge im Event-Kalender, und eine f&uuml;r die Patterns. Ein Tag entspricht immer 
+einem Datensatz in der Datenbank, der einerseits das Suchmuster und andererseits den String, durch 
+den die Matches ersetzt werden sollen, enth&auml;lt. Beide Tabellen werden &uuml;ber eigene Adminpages (<b>add.asp</b> 
+f&uuml;r Events, <b>patternadd.asp</b> f&uuml;r die Patterns) upgedated. Jeder Tag wird dabei einzeln mit seiner 
+HTML-Entsprechung in die Datenbank eingetragen.
+</p>
+
+<IMG SRC="Bilder/200201/20020130_3.png" width="367" height="312" alt="" border="0">
+
+<p>
+Um HTML-Tags aus dem Spiel zu nehmen, mu&szlig; man sie nat&uuml;rlich erstmal finden, und dann entweder die Tags 
+unmasken, damit sie auf der HTML-Seite dargestellt werden, also die "&lt;" und "&gt;" Zeichen in die 
+entsprechenden HTML-Zeichen umwandeln, oder die Tags komplett aus dem Quelltext l&ouml;schen. Wenn man 
+sich f&uuml;r ersteres entscheidet fallen nat&uuml;rlich auch alle versehentlich in HTML angegeben Sachen raus. 
+Deshalb habe ich in die folgende Beispielanwendung die Option "Show HTML" bzw. "Kick HTML" eingebaut. 
+</p>
+<p>
+Wenn die Option "Kick HTML" gew&auml;hlt wird, durchsucht das RegExp-Objekt den Text nach dem Pattern 
+"&lt;.*&gt;". Dieses Muster erkennt HTML Tags (durch die spitzen Klammern) mit beliebigem Inhalt. Der 
+Punkt ist Platzhalter f&uuml;r alle Zeichen, und das "*" steht f&uuml;r eine nicht definierte Anzahl des 
+vorherigen Zeichens. Die HTML Tags werden in diesem Fall aus dem Text gel&ouml;scht. Wenn dagegen 
+"Show HTML" gew&auml;hlt wurde, werden die spitzen Klammern durch "&amp;gt;" bzw. "&amp;lt;" ersetzt, soda&szlig; 
+die HTML-Tags im Text sichtbar werden.
+</p>
+
+<pre style="background='silver';">
+strText = Request.Form("txt")
+	
+Set regEx = New RegExp
+regEx.IgnoreCase = True
+regEx.Global = True
+	
+If Request.Form("HTML") = "kick" Then
+	regEx.Pattern = "&lt;.*&gt;"
+	strText = regEx.Replace(strText, "")
+Else
+	regEx.Pattern = "&gt;"
+	strText = regEx.Replace(strText, "&amp;gt;")
+	regEx.Pattern = "&lt;"
+	strText = regEx.Replace(strText, "&amp;lt;")
+End If
+</pre>
+
+<p>
+HTML-Tags im Text sind nicht sch&ouml;n, vielleicht geht dem Leser aber auch etwas verloren:
+</p>
+
+<IMG SRC="Bilder/200201/20020130_4.png" width="334" height="221" alt="" border="0">
+
+<p>
+Nach dem HTML-Test werden schlie&szlig;lich alle eigenen Tags durch HTML-Syntax ersetzt.
+</p>
+
+<pre style="background='silver';">
+Set Data = Server.CreateObject("ADODB.Recordset")
+Data.ActiveConnection = strConn
+Data.Source = "SELECT * FROM Items"
+Data.CursorType = 0 ' adOpenForwardOnly
+Data.CursorLocation = 2 ' adUseClient
+Data.LockType = 3 ' adLockOptimistic
+Data.Open
+Data.MoveFirst
+
+While Not Data.EOF
+	regEx.Pattern = Data.Fields("strPattern")
+	
+	If regEx.Test(strText) Then
+		strReplace = Data.Fields("strReplace")
+		strText = regEx.Replace(strText, strReplace)
+	End If
+	Data.MoveNext
+Wend
+
+Data.Close
+Set Data = Nothing
+
+set conn= Server.CreateObject("ADODB.Connection")
+conn.Open strConn
+
+StrSql ="INSERT INTO Events (dteDatum, strText) VALUES (#" &amp;_
+   FormatDateTime(Request.Form("show_day"),2) &amp; "#, '" &amp; strText &amp; "')"
+	
+conn.Execute (strSql) 
+</pre>
+
+<p>
+Der &uuml;bergebene Text wird nach allen Patterns, die in der Datenbank vorhanden sind, durchsucht, und die 
+Matches werden durch die jeweiligen Tags ersetzt. Zum Suchen und Ersetzen der Textstellen wird ein 
+Regular Expression Object (<i>RegExp</i>) instanziert. Beim Durchlaufen des Recordset-Objekts wird die 
+Eigenschaft <i>Pattern</i> des Regular Expression-Objekts mit dem jeweils im Datensatz vorhandenen Pattern 
+belegt. Das Ersetzen erfolgt letztendlich durch die Methode <i>Replace</i>. Die Verwendung von Regul&auml;ren 
+Ausdr&uuml;cken wird eingehend in dem Artikel <a href="20000829.htm">Regul&auml;re Ausdr&uuml;cke</a> 
+beschrieben. Nachdem alle Datens&auml;tze durchlaufen wurden, wird der bearbeitete Text in die Datenbank 
+eingef&uuml;gt, und ist f&uuml;r die Besucher verf&uuml;gbar.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Wie auch im Artikel &uuml;ber <a href="20011030.htm">SQL Injection</a> erw&auml;hnt gilt, da&szlig; aller Input f&uuml;r "evil" zu halten ist, solange 
+nicht das Gegenteil bewiesen ist. Und das gilt eben auch f&uuml;r HTML-Eingaben. Durch das Filtern von 
+HTML-Tags und die Bereitstellung eigener Syntax kann Abhilfe geschaffen werden. Die Beispielanwendung 
+beschr&auml;nkt sich auf sehr einfache Syntax-Beispiele. Das hat den Vorteil, da&szlig; die Anwendung leichter 
+zu warten, und zu skalieren ist - gerade in diesem Bereich kann man jedoch die Anwendung mit ein 
+paar weiteren Ideen auf seine eigenen Bed&uuml;rfnisse anpassen.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020130.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20000829.htm">Regul&auml;re Ausdr&uuml;cke / Regular Expressions</a><br>
+<a href="20011030.htm">SQL Injection</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20020130" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Eigene Tags - User Input einfach und sicher"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20020130.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Frederic Ganner"><input type="hidden" name="AuthorEmail" value="F.Ganner@technomad.de"><input type="hidden" name="Artikel" value="20020130"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20020130.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

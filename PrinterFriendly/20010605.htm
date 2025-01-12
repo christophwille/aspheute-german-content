@@ -1,0 +1,284 @@
+<HTML>
+<HEAD>
+<TITLE>CSVs aus MDBs leicht gemacht</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="CSV (Comma Separated Value) Dateien bieten eine einfache Schnittstelle zwischen unterschiedlichen Datenbanksystem, um Daten untereinander auszutauschen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Comma Separated Value,CSV,Datenbank,Datenaustausch,Relationale Datenbank,RDBMS">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>CSVs aus MDBs leicht gemacht</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010605"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+CSV (Comma Separated Value) Dateien bieten eine einfache Schnittstelle zwischen unterschiedlichen
+Datenbanksystem, um Daten untereinander auszutauschen. Da nicht jeder RDB-Systeme wie Access oder MS SQL Server
+verwendet, kann man mit CSV "Textdatenbanken" die enthaltenen Daten auf andere Systeme transportieren. Dies ist m&ouml;glich,
+da CSV ein h&auml;ufig akzeptierter Standard ist. Es gibt viele L&ouml;sungsm&ouml;glichkeiten um z.B. aus MS Access Datenbanken 
+CSV kompatible Dateien zu erstellen. Dieser Artikel zeigt eine davon in VBScript, welche ganze ohne Access 
+auskommt.
+</p>
+
+<p>
+In CSV Dateien werden die einzelnen Spalteninhalte einer Datenreihe durch Beistriche getrennt. Zwar gehen 
+bei einem solchen Konvertierungsvorgang ins CSV Format alle Beziehungen (Relationships) zu den einzelnen Tabellen
+verloren, man kann aber dennoch die Daten selbst auf ein anderes DB-System transportieren. Dies ist vor allem dann
+von Interesse, wenn es auf dem Zielsystem keine passende Konvertierungsm&ouml;glichkeit gibt.
+</p>
+
+<p>
+Der heutige Artikel zeigt ein Beispiel, das eine Access Datenbank in das CSV Format konvertiert. Nat&uuml;rlich bietet
+Access selbst eine Konvertierungsoption in dieses Format an, aber wie schon erw&auml;hnt, soll diese Aufgabe
+ohne installiertem Access gel&ouml;st werden.
+</p>
+
+<p>
+Eine der einfachsten L&ouml;sungsans&auml;tze ist die Verwendung von VBScript. Um den Sourcecode dieses Artikels leichter 
+wiederverwendbar zu machen und auch modularer zu strukturieren, ist die Konvertierungsfunktion in eine
+Klasse eingebettet. Da dies nicht wirklich einen Mehraufwand bedeutet, ist diese Argumentation haltbar.
+Beginnen wir also mit der <i>MDB2CSV</i> VBScript Klasse, welche in der Datei <b>MDB2CSVClass.asp</b> zu
+finden ist:
+</p>
+
+<pre style="background='silver';">
+Class MDB2CSV
+   
+  Public UseTextQualifier
+   
+  Public Sub ConvertToCSV(ByVal strConn, ByVal strSQL, ByVal strOutputFilePath)
+   
+    Const ForWriting = 2
+    Dim strOutput
+    
+    Set objConn = Server.CreateObject("ADODB.Connection")
+    Set objFSO = Server.CreateObject("Scripting.FileSystemObject")
+    
+    objConn.Open strConn
+
+    Set objRS = objConn.Execute(strSQL)
+</pre>
+
+<p>
+Mit dem <i>Class</i> Statement erstellen wir eine neue Klasse namens <i>MDB2CSV</i>. Die Klasse besitzt
+eine Property (Eigenschaft) <i>UseTextQualifier</i>, mit der man angeben kann, ob die Inhalte der Datenspalten
+von doppelten Anf&uuml;hrungszeichen (") begrenzt werden sollen. Diese Option dient der Erleichterung zum Erkennen
+einer Datenspalte, f&uuml;r den gegebenen Fall, da&szlig; diese selbst Beistriche oder &auml;hnliche Zeichen enth&auml;lt,
+die als Delimiter mi&szlig;interpretiert werden k&ouml;nnten.
+</p>
+
+<p>
+Die Klasse enth&auml;lt wegen der einfachen Aufgabe nur eine Methode (Sub-Prozedur ) <i>ConvertToCSV</i>, die die
+Konvertierungsfunktionalit&auml;t zu CSV Dateien enth&auml;lt. Dieser Methode m&uuml;ssen drei Parameter
+<i>strConn</i>, <i>strSQL</i> und <i>strOutputFilePath</i> &uuml;bergeben werden.
+</p>
+
+<p>
+Der <i>strConn</i> Parameter enth&auml;lt den Connectionstring. In diesem Fall in einer f&uuml;r eine Access Datenbank
+kompatiblen Form. Dieser k&ouml;nnte z.B. so aussehen:
+</p>
+
+<pre style="background='silver';">
+Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" &amp; Server.MapPath("mdb2csv.mdb")
+</pre>
+
+<p>
+<b>mdb2csv.mdb</b> bezieht sich dabei auf den Dateinamen der in diesem Beispiel verwendeten Datenbank und ist
+daher f&uuml;r jede Access Datenbank anzupassen. Der <i>strSQL</i> Parameter gibt das SQL Statement an, das verwendet werden soll,
+um die CSV Datei mit Daten zu f&uuml;llen.
+</p>
+
+<p>
+Der dritte und letzte Parameter <i>strOutputFilePath</i> gibt den vollst&auml;ndigen physikalischen Pfad der CSV-Datei
+an, welche schlie&szlig;lich die Daten im CSV-Format beinhalten soll. Die <i>ForWriting</i> Konstante enth&auml;lt den 
+numerischen Wert f&uuml;r das Argument, das die Art des IO-Modes der <i>OpenTextFile</i> Methode angibt. Diese
+Methode des FileSystemObjects werden wir sp&auml;ter ben&ouml;tigen um die CSV-Datei zu erstellen. <i>ForWriting</i>
+schr&auml;nkt in diesem Fall die Benutzung der Datei f&uuml;r Schreibzwecke ein.
+</p>
+
+<p>
+Die <i>strOutput</i> Variable beinhaltet das Ergebnis der SQL Abfrage. Dieses wird sp&auml;ter in die zu erstellende
+CSV-Datei geschrieben. Weiters wird noch in diesem Sourcecodeabschnitt - auf &uuml;bliche Weise - eine Verbindung
+zu der Datenbank erstellt und eine Abfrage gem&auml;&szlig; des &uuml;bergebenen <i>strSQL</i> Parameters durchgef&uuml;hrt.
+</p>
+
+<pre style="background='silver';">
+While Not objRS.EOF
+    For FieldIndex = 0 To objRS.Fields.Count - 1
+        If (UseTextQualifier) Then 
+            strOutput = strOutput &amp; """" &amp; objRS(FieldIndex) &amp; """"
+        Else
+            strOutput = strOutput &amp; objRS(FieldIndex)
+        End If
+     
+        If (FieldIndex <> objRS.Fields.Count - 1) Then
+            strOutput = strOutput &amp; ","
+        End If
+    Next
+    strOutput = strOutput &amp; vbCrLf
+    objRS.MoveNext
+Wend
+    
+objRS.Close
+objConn.Close
+Set objRS = Nothing
+Set objConn = Nothing
+</pre>
+
+<p>
+Je nach Angabe der <i>UseTextQualifier</i> Property werden nun die Datens&auml;tze mit bzw. ohne eingebundene
+doppelte Anf&uuml;hrungszeichen in der <i>strOutput</i> Variable gespeichert. Solange die Variable, die den
+Feldindex (<i>FieldIndex</i>) enth&auml;lt, ungleich mit der Summe der Datenspaltenanzahl ist, werden Kommas als
+ben&ouml;tigte Trennungszeichen zwischen den einzelen Datenspalten eingef&uuml;gt. Falls die letzte Spalte erreicht ist,
+d.h. die beiden zu vergleichenden Werte gleich sind, wird kein Komma nach der letzten Spalte eingef&uuml;gt.
+Da nun die letzte Datenspalte erreicht wurde, signalisieren wir mit <i>vbCrLf</i> eine neue Zeile um dann mit der 
+n&auml;chsten Datenreihe zu beginnen.
+</p>
+
+<p>
+Da danach die f&uuml;r die Datenbankverbindung ben&ouml;tigten Objekte nicht mehr gebraucht werden, k&ouml;nnen wir die Verbindung mit
+<i>Close</i> schlie&szlig;en und die Objekte mit <i>Nothing</i> wieder zerst&ouml;ren. Was noch fehlt ist die Erstellung der
+CSV-Datei (Dateiendung <i>csv</i>) und das Einf&uuml;gen der Daten, die zwischenzeitlich in der <i>strOutput</i> 
+Variable gespeichert wurden:
+</p>
+
+<pre style="background='silver';">
+    Set objFSO = Server.CreateObject("Scripting.FileSystemObject")
+    Set objFile = objFSO.OpenTextFile(strOutputFilePath, ForWriting, True)
+    objFile.Write strOutput
+    
+    objFile.Close
+    Set objFSO = Nothing
+  End Sub
+End Class
+</pre>
+
+<p>
+Zuerst instanzieren wir mit Server.CreateObject ein neues Objekt, das wir f&uuml;r die Dateioperationen ben&ouml;tigen.
+Mit der <i>OpenTextFile</i> Methode erstellen wir eine neue Datei. Dabei &uuml;bergeben wir den physikalischen Pfad der
+neuen CSV-Datei und weisen an, da&szlig; der IO-Mode nur Schreibzwecke erf&uuml;llen soll. <i>True</i> gibt zus&auml;tzlich an, da&szlig;
+eine neue Datei erstellt werden soll, andernfalls wird eine vorhandene mit dem gleichen Namen &uuml;berschrieben.
+</p>
+
+<p>
+Da wir oben mit <i>vbCrLf</i> schon f&uuml;r den Zeilenumbruch gesorgt haben, k&ouml;nnen wir hier einfach den Inhalt der
+<i>strOutput</i> Variable mit der <i>Write</i> Methode des FileSystem Objektes in die neu erstellte Datei schreiben.
+Nachdem dies erfolgt ist, schlie&szlig;en wir den Textstream mit <i>Close</i> und zerst&ouml;ren wieder das vorher erstellte 
+Objekt. Das war's f&uuml;r die VBScript Klasse - simpel und einfach wiederzuverwerten.
+</p>
+
+<p>
+Abschlie&szlig;end m&ouml;chte ich noch mit einer einfachen ASP Datei die Verwendung der VBScript-Klasse demonstrieren. Hierf&uuml;r
+habe ich die einfache Access Datenbank <b>mdb2csv.mdb</b> benutzt. Als Demo reicht die einfache Struktur der
+Accessdatenbank, die im real-life Anwendungsfall nat&uuml;rlich umfangreicher sein kann:
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010605_1.png" width="555" height="108" alt="" border="0">
+
+<p>
+Der Sourcecode der <b>TestConvertToCSV.asp</b> sieht dabei so aus:
+</p>
+
+<pre style="background='silver';">
+&lt;!-- #include file="MDB2CSVClass.asp" --&gt; 
+
+&lt;%
+    Dim objMDB2CSV
+    Set objMDB2CSV = New MDB2CSV
+    
+    strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" &amp; Server.MapPath("mdb2csv.mdb")
+    strSQL = "SELECT PK_ProdId, ProdName, ProdDescr FROM tProducts"
+    strOutputFilePath = "C:\\test.csv"
+    objMDB2CSV.UseTextQualifier = true
+    objMDB2CSV.ConvertToCSV strConn, strSQL, strOutputFilePath
+    
+    Set objMDB2CVS = Nothing
+%&gt;
+</pre>
+
+<p>
+Einfach mit einer <i>include</i> Anweisung die <b>MDB2CSVClass.asp</b> ASP Datei, die die VBScript Klasse enth&auml;lt, einbinden.
+Zus&auml;tzlich noch die Property und die Parameter &uuml;bergeben - fertig. Die erzeugte Datei k&ouml;nnen Sie dann in jedes 
+CSV-kompatible DB-System importieren, zum Download freigeben, oder auch in z.B. Excel bzw. einfach im 
+Notepad &ouml;ffnen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010605_2.png" width="568" height="110" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dieser Artikel bot eine einfache M&ouml;glichkeit aus einer Access Datenbank mittels VBScript eine CSV-Datei 
+zu erstellen. Nat&uuml;rlich k&ouml;nnen Sie statt Access Datenbanken mit diesem Script auch andere Datenbanken 
+ins CSV-Format konvertieren, die OLEDB unterst&uuml;tzen. Was in diesem Beispiel noch fehlt sind Anweisungen 
+f&uuml;r eine Maskierung von Beistrichen, etc. - und eine entsprechende Fehlerbehandlung.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010605.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010605.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010607.htm">Daten aus CSV-Dateien in MDBs importieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010607.htm</span><br>
+<a href="../artikel/20001128.htm">Datenbank zur Weiterbearbeitung in Excel bereitstellen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001128.htm</span><br>
+<a href="../artikel/20000526.htm">Klassen in VBScript</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000526.htm</span><br>
+<a href="../artikel/20010321.htm">MS Access Datenbanken kompaktieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010321.htm</span><br>
+<a href="../artikel/20000725.htm">Schreiben einer Textdatei auf den Server</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000725.htm</span><br>
+<a href="../artikel/20020410.htm">Yet Another Access Database Administration Tool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020410.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,343 @@
+<HTML>
+<HEAD>
+<TITLE>Erstellen von XML-Dateien mit dem DOM</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Zur Bearbeitung von XML-Dateien bietet das Document Object Model (DOM) ein vielseitiges und praktisches Repertoire an. Dieser Artikel befasst sich mit der Erstellung von XML Dokumenten, beschr&auml;nkt sich dabei aber nicht auf die Arbeit mit dem DOM">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,XML,MSXML,Parser,DOM,Document Object Model,Tree,SetAttribute,AppendChild,CreateElement">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Erstellen von XML-Dateien mit dem DOM</H1>
+<p>
+Geschrieben von: <a href="../autoren/fredericganner.htm">Frederic Ganner</a><br>
+Kategorie: <a href="../kategorien/XML.htm">XML</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20011116"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Zur Bearbeitung von XML-Dateien bietet das Document Object Model (DOM) ein vielseitiges und praktisches Repertoire an. 
+Nach dem vorangegangenen Artikel <a href="../artikel/20000417.htm">Auslesen von XML Dateien mit dem DOM</a> befasst sich 
+dieser mit der Erstellung von XML Dokumenten, beschr&auml;nkt sich dabei aber nicht auf die Arbeit mit dem DOM, sondern 
+zeigt auch einfachere Wege zum Ziel. &Uuml;ber die Erkl&auml;rung der einzelnen M&ouml;glichkeiten des DOMs hinaus wird die Anwendung 
+am Beispiel einer Sendung von Bestelldaten gezeigt.
+</p>
+
+<p>
+Die einfachste Methode ein XML Dokument zu erstellen ist sicherlich den Text der XML Datei in den Output-Stream zu 
+schreiben. Ein Vorteil liegt in der Geschwindigkeit, da im Vergleich zum Aufbau eines DOM-Trees kaum Belastung f&uuml;r den 
+Server anf&auml;llt. Da man das DOM nicht ben&uuml;tzt, mu&szlig; nat&uuml;rlich auch die MSXML-Komponente am Server nicht installiert sein. 
+Wenn man also auf eine Weiterverarbeitung und Caching am Server verzichten kann, tut es auch diese Variante.
+</p>
+
+<p>
+Im folgenden Beispiel (<b>stats.asp</b>) werden Daten aus einer Datenbank ausgelesen, und als einfacher Text-Stream an den 
+Client weitergegeben. Nat&uuml;rlich k&ouml;nnte man es auch als Textdatei speichern, wie im Artikel 
+<a href="../artikel/20000725.htm">Schreiben einer Textdatei auf den Server</a> erkl&auml;rt.
+</p>
+
+<pre style="background='silver';">
+&lt;% Response.ContentType = "text/xml" %&gt;
+&lt;?xml version="1.0" encoding="windows-1252" ?&gt;
+&lt;Stats&gt;
+&lt;%
+strConnStr = "Provider=Microsoft.Jet.OLEDB.4.0;" &amp; _
+      "Data Source=" &amp; Server.MapPath("bestellungen.mdb")
+Set conn = Server.CreateObject("ADODB.Connection")
+conn.Open strConnStr
+Set RSobj = Server.CreateObject("ADODB.Recordset")
+RSobj.ActiveConnection = strConnStr
+RSobj.Source = "SELECT * FROM Statistik"
+RSobj.CursorType = 0
+RSobj.CursorLocation = 2
+RSobj.LockType = 3
+RSobj.Open
+RSobj.MoveFirst
+While Not RSobj.EOF
+%&gt;
+&lt;Zeitraum&gt;
+    &lt;Visits&gt;&lt;%= RSobj.Fields("Visits") %&gt;&lt;/Visits&gt;
+    &lt;PageImpressions&gt;&lt;%= RSobj.Fields("PageImpressions") %&gt;&lt;/PageImpressions&gt;
+    &lt;AdClicks&gt;&lt;%= RSobj.Fields("AdClicks") %&gt;&lt;/AdClicks&gt;
+    &lt;Traffic&gt;&lt;%= RSobj.Fields("Traffic") %&gt;&lt;/Traffic&gt;
+&lt;/Zeitraum&gt;
+&lt;%    
+RSobj.MoveNext
+Wend
+RSobj.close
+conn.close
+%&gt;
+&lt;/Stats&gt;
+</pre>
+
+<h2>Das DOM</h2>
+
+<p>
+Durch ein Interface zum Zugriff, zur Erstellung und Ver&auml;nderung von XML-Daten stellt sich das DOM im Vergleich zur oben 
+vorgestellten Methode als weit eleganter dar. Au&szlig;erdem hat das Erstellen von Dokumenten mit dem DOM die 
+entscheidenden Vorteile, da&szlig; das Ergebnis auf jeden Fall well-formed ist, und der modulare Aufbau eines DOM-Dokuments 
+eine weit flexiblere Handhabung als bei Text-Streams zul&auml;&szlig;t. Sehen wir uns zun&auml;chst in der folgenden Grafik die 
+Struktur eines DOM-Dokuments mit seinen wichtigsten Elementen und Beziehungen an:
+</p>
+
+<IMG SRC="/artikel/Bilder/200111/20011116_1.png" width="336" height="313" alt="" border="0">
+
+<p>
+Beim Aufbau eines XML-Trees wird zuerst das DOM-Document initialisiert. Es enth&auml;lt nur die Root Node, die 
+ihrerseits alle weiteren Elemente enth&auml;lt. Die Eigenschaften des Dokuments, wie zB. die Angabe der DTD bzw. des 
+Schemas, werden auch an die Root Node als Attribute angeh&auml;ngt, obwohl diese im eigentlichen Code im Prolog, also vor 
+dem Wurzelelement, stehen.
+</p>
+
+<pre style="background='silver';">
+Set XMLDoc = Server.CreateObject("Msxml2.DOMDocument")
+</pre>
+
+<p>
+Eventuelle Kommentare werden durch <i>.CreateComment()</i> analog zum Anh&auml;ngen von Elementen an das Root-Element angef&uuml;gt:
+</p>
+
+<pre style="background='silver';">
+Set Comment = XMLDoc.CreateComment("this is an xml file!")
+XMLDoc.AppendChild(Comment)
+</pre>
+
+<p>
+Wenn Verweise zu XSL-Stylesheets verwendet werden, sind diese zwar auch im Prolog zu finden, es ist jedoch egal 
+wo man sie mit dem DOM definiert. 
+</p>
+
+<pre style="background='silver';">
+Set XSL = XMLDoc.CreateProcessingInstruction("xml-stylesheet","type=""text/xsl"" href=""wildstyle.xsl""")
+XMLDoc.AppendChild(XSL)
+</pre>
+
+<p>
+Alle Elemente werden durch die Methode <i>.CreateElement()</i> erstellt. Der eigentliche Aufbau folgt einem immer 
+gleichen Muster: Ein Element wird definiert und dann als child an das im Document-Tree n&auml;chsth&ouml;here Element angeh&auml;ngt. 
+</p>
+
+<pre style="background='silver';">
+Set child = XMLDoc.CreateElement("Bestellungen")
+parent.AppendChild(child)
+</pre>
+
+<p>
+Einem definierten Element k&ouml;nnen durch <i>.SetAttribute()</i> Attribute zugewiesen werden. Dementsprechend kann 
+durch <i>.GetAttribute()</i> auf die Eigenschaften eines Elementes zugegriffen werden. Wenn man anstelle einer DTD ein 
+Schema verwendet, kann man den Elementen Datentypen zuweisen. Der Name des Attributs wird dazu mit dem String 
+"type" belegt, und der Wert des Attributs mit der Bezeichnung des Datentyps. Um die Zahl der Elemente zu 
+minimieren, ist es nat&uuml;rlich ratsam kleine Angaben in ein Attribut zu setzen, anstatt f&uuml;r jede Kleinigkeit ein 
+eigenes Element zu erschaffen.
+</p>
+
+<pre style="background='silver';">
+Element.SetAttribute("type", "string")
+Element.SetAttribute("Name", "Schmidt")
+</pre>
+
+<p>
+Um ein Element mit Inhalt zu f&uuml;llen weist man der Eigenschaft <i>.Text</i> den entsprechenden Wert zu. 
+Dabei ist zu beachten, da&szlig; <i>.Text</i> eine Eigenschaft ist und keine Methode. Daneben ist es auch m&ouml;glich, Text 
+&uuml;ber die Methode <i>.CreateTextNode()</i> anzuh&auml;ngen.
+</p>
+
+<pre style="background='silver';">
+Element.Text = "der text"
+</pre>
+
+<p>
+Wenn man allerdings HTML-Code als Inhalt einf&uuml;gen will, darf dieser nat&uuml;rlich nicht mitgeparsed werden, 
+und mu&szlig; deshalb in separaten CDATA-Sections untergebracht werden. Die Sections werden als eigene Nodes erstellt, 
+die jedoch nicht an Attribut-Nodes anh&auml;ngbar sind.
+</p>
+
+<pre style="background='silver';">
+Set escapedcontent = XMLDoc.createCDATASection("&lt;b&gt;Ein Beispiel ...&lt;/b&gt;")
+Element.AppendChild(escapedcontent)
+</pre>
+
+<p>
+Mit der <i>.Save()</i> Methode wird das Ganze schlie&szlig;lich abgespeichert.
+</p>
+
+<pre style="background='silver';">
+XMLDOC.Save(Server.MapPath("sample.xml"))
+</pre>
+
+<h2>Ein Praxisbeispiel</h2>
+
+<p>
+Im folgenden Beispiel werden Bestelldaten aus einer Access-Datenbank ausgelesen und in ein XML-Dokument 
+verpackt. Aus dem Access-Standarddatum wird dabei ein XSD-konformes Datum nach dem Format "yyyy-mm-dd" gemacht. 
+Das Element "Artikel" enth&auml;lt sowohl den Artikelnamen, als auch die Artikelnummer, die dem Element als Attribut 
+zugewiesen wurde. Bei dem Datum-Element w&auml;re diese Methode na&uuml;rlich nicht m&ouml;glich, da sich Datentypen nur auf 
+den Inhalt von Elementen beziehen, nicht aber auf deren Attribute (<b>dom.asp</b>)
+</p>
+
+<pre style="background='silver';">
+&lt;% @Language = "VBScript" %&gt;
+&lt;%
+strConnStr = "Provider=Microsoft.Jet.OLEDB.4.0;" &amp; _
+      "Data Source=" &amp; Server.MapPath("bestellungen.mdb")
+Set conn = Server.CreateObject("ADODB.Connection")
+conn.Open strConnStr
+	
+Set RSobj = Server.CreateObject("ADODB.Recordset")
+RSobj.ActiveConnection = strConnStr
+RSobj.Source = "SELECT * FROM Bestellungen"
+RSobj.CursorType = 0
+RSobj.CursorLocation = 2
+RSobj.LockType = 3
+RSobj.Open
+RSobj.MoveFirst
+		
+Set XMLDoc = Server.CreateObject("Msxml2.DOMDocument")
+
+Set Root = XMLDoc.CreateElement("Bestellungen")
+XMLDoc.AppendChild(Root)
+Root.SetAttribute "xmlns", "somenamespace"
+Root.SetAttribute "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance"
+Root.SetAttribute "xsi:schemaLocation", "somenamespace C:\path\schema.xsd"
+
+i=0
+
+While Not RSobj.EOF 
+    dtDatum = CDate(RSobj.Fields("datum"))
+    strArtikelname= RSobj.Fields("artikelname")
+    intArtikelnummer = RSobj.Fields("artikelnummer")
+    intAnzahl = RSobj.Fields("anzahl")
+    intPreis = RSobj.Fields("preis")
+	
+    Set Bestellung = XMLDoc.CreateElement("Bestellung")
+    Root.AppendChild (Bestellung)
+	
+        Set Datum = XMLDoc.CreateElement("Datum")
+        If Len(CStr(Month(dtDatum))) = 1 Then
+            Monat = "0"&amp; Month(dtDatum)
+        Else
+            Monat = Month(dtDatum)
+        End If
+        If Len(CStr(Day(dtDatum))) = 1 Then
+            Tag = "0"&amp; Day(dtDatum)
+        Else
+            Tag = Day(dtDatum)
+        End If
+        Datum.Text = Year(dtDatum)&amp;"-"&amp; Monat &amp;"-"&amp; Tag
+        Bestellung.AppendChild (Datum)
+        Datum.SetAttribute "type", "date"
+
+        Set Artikel = XMLDoc.CreateElement("Artikel")
+        Artikel.Text = strArtikelname
+        Bestellung.AppendChild (Artikel)
+        Artikel.SetAttribute "type", "integer"
+        Artikel.SetAttribute "ArtNummer", intArtikelnummer
+				
+        Set Anzahl = XMLDoc.CreateElement("Anzahl")
+        Anzahl.Text = intAnzahl
+        Bestellung.AppendChild (Anzahl)
+        Anzahl.SetAttribute "type", "integer"
+		
+        Set Preis = XMLDoc.CreateElement("Preis")
+        Preis.Text = intPreis
+        Bestellung.AppendChild (Preis)
+        Preis.SetAttribute "type", "decimal"
+
+        i=i+1
+RSobj.MoveNext
+Wend
+	
+XMLDOC.Save(Server.MapPath("sample.xml"))
+Response.Write(i&amp;" Eintr&auml;ge aus der Datenbank in XML-file &uuml;betragen")
+%&gt;
+</pre>
+
+<p>
+Das fertige Dokument sieht im Browser dann folgenderma&szlig;en aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200111/20011116_2.png" width="521" height="313" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Mit dem Document Object Model besitzt man als ASP Programmierer 
+eine leicht zug&auml;ngliche, und trotzdem tiefgehende Br&uuml;cke zwischen Anwendungen und XML-Dateien. Zwar bieten 
+sich zur Behandlung von XML-Daten mit dem DOM inzwischen einige Alternativen aus den Bereichen .NET und 
+SAX, aber gerade wegen der M&ouml;glichkeiten zur Validierung und beispielsweise des Schema Supports bleiben 
+wohl reichlich Gelegenheiten das DOM zu verwenden.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20011116.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20011116.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000417.htm">Auslesen von XML Dateien mit dem DOM</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000417.htm</span><br>
+<a href="../artikel/20000725.htm">Schreiben einer Textdatei auf den Server</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000725.htm</span><br>
+<a href="../artikel/20020116.htm">XML-Daten verarbeiten mit XSLT</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020116.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3Furl%3D%2Flibrary%2Fen%2Dus%2Fxmlsdk30%2Fhtm%2Fxmmscxmlreference%2Easp">DOM-Referenz bei MSDN</a><br>
+<SPAN class="content">http://www.msdn.microsoft.com/library../default.htm?url=/library/en-us/xmlsdk30/htm/xmmscxmlreference.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Etopxml%2Ecom%2Flearning%2Fgames%2Fb%2Fdefault%2Easp">The Understanding XML DOM Game</a><br>
+<SPAN class="content">http://www.topxml.com/learning/games/b../default.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ew3schools%2Ecom%2Fdom%2Fdefault%2Easp">W3 Dom School</a><br>
+<SPAN class="content">http://www.w3schools.com/dom../default.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ew3%2Eorg%2FDOM%2F">W3C DOM Spezifikation</a><br>
+<SPAN class="content">http://www.w3.org/DOM/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Exmldir%2Ecom%2Fdirectory%2Easp%3Fdir%3D497%26ob%3D6">XMLdir: Artikel und Beispiele</a><br>
+<SPAN class="content">http://www.xmldir.com/directory.asp?dir=497&ob=6</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

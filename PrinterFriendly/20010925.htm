@@ -1,0 +1,514 @@
+<HTML>
+<HEAD>
+<TITLE>Verwendung von XML-Schemas (XSD)</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel wird sich anhand eines praktischen Beispiels mit der Verwendung von XML-Schemas besch&auml;ftigen. Sowohl Datentypen als auch die Validation mit Schemas werden hier n&auml;her betrachtet.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,XML,XSD,schema,Parser,Datenaustausch,Validierung,Datentypen">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Verwendung von XML-Schemas (XSD)</H1>
+<p>
+Geschrieben von: <a href="../autoren/fredericganner.htm">Frederic Ganner</a><br>
+Kategorie: <a href="../kategorien/XML.htm">XML</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010925"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Dieser Artikel wird sich anhand eines praktischen Beispiels mit der Verwendung von XML-Schemas 
+besch&auml;ftigen. Sowohl Datentypen als auch die Validation mit Schemas werden hier n&auml;her betrachtet.
+Eine Einleitung zu  XML Schemas k&ouml;nnen Sie im Artikel 
+<a href="../artikel/20010514.htm">Was sind XML Schemas?</a> nachlesen.
+</p>
+
+<p>
+Um XML-Schemas mit ASP am Server verarbeiten zu k&ouml;nnen, wird die neueste Version des Microsoft 
+XML Parsers ben&ouml;tigt. Zum Zeitpunkt des Erscheinens des Artikels war dies der Tech Preview 
+des MSXML 4.0 Parsers. Diesen kann man bei 
+<a href="http://msdn.microsoft.com/xml/" target="_blank">msdn.microsoft.com/xml</a> downloaden.
+</p>
+
+<p>
+Der Datenaustausch zwischen Anwendungen oder Systemen verlangt nach einem festen Muster wie 
+die Daten auszusehen haben, die verarbeitet werden sollen. Betrachtet man das Beispiel einer 
+Rechnungsstellung, so ergeben sich zum einen die Daten des Kunden, wie zum Beispiel Adresse
+oder Bankverbindung , und zum anderen die Leistungen selbst. Die Beschreibung solcher Daten 
+verbessern Schemas durch die M&ouml;glichkeit Datentypen anzugeben, und auch durch die Einfachheit, die 
+die Verwendung von XML-Syntax in Schemas mit sich bringt. 
+</p>
+
+<p>
+Eine der wichtigsten Neuerungen in XSD ist die umfangreiche Unterst&uuml;tzung von Datentypen. Durch 
+sie k&ouml;nnen beim Austausch von XML-Daten die Datentypen bewahrt werden: XSD stellt 42 Basistypen 
+zur Verf&uuml;gung.  Neben Typen zur Beschreibung von Zahlenwerten (integer, decimal, float, double ...),
+werden mit XSD auch M&ouml;glichkeiten zur Angabe von Datumswerten und Zeitspannen 
+(time, date, timeDuration ...) eingef&uuml;hrt. Aus diesen Basistypen l&auml;&szlig;t sich zum Beispiel durch 
+Beschr&auml;nkungen (constraints) eine unbegrenzte Anzahl an eigenen Datentypen definieren. 
+</p>
+
+<p>
+M&ouml;gliche Beschr&auml;nkungen beziehen sich auf die L&auml;nge (length, minLength, maxLength), auf 
+Beschr&auml;nkung durch Patterns nach der Syntax von Regular Expressions (pattern), auf vorgegebene 
+Beispielwerte (enumeration) oder auch auf Grenzwerte bei Zahlen (maxInclusive, maxExclusive, 
+minInclusive, minExclusive). F&uuml;r die &Uuml;bertragung von Postleitzahlen kann man zum Beispiel, auf 
+Basis des Typs string, einen String definieren der den Eigenschaften einer Postleitzahl 
+entspricht. Die L&auml;nge der Zeichenkette wird durch length auf "5" gesetzt, und ein Pattern stellt 
+sicher, da&szlig; nur Zahlenwerte akzeptiert werden.
+</p>
+
+<pre style="background='silver';">
+&lt;xsd:simpleType name="PLZ"&gt;
+  &lt;xsd:restriction base="xsd:string"&gt;
+    &lt;xsd:maxLength value="5"/&gt;
+    &lt;xsd:pattern value="^[1-9]*$"/&gt;
+    &lt;/xsd:restriction&gt;
+&lt;/xsd:simpleType&gt;
+</pre>
+
+<p>
+Im heutigen Beispiel werden die Typen string, date und decimal verwendet. Der Typ date ist ein 
+Datum nach dem Format <i>yyyy-mm-dd</i>, decimal ist eine einfache Dezimalzahl.&Uuml;ber das folgende Formular 
+der Datei <b>entry.asp</b> werden alle notwendigen Rechnungsdaten eingegeben.
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010925_1.png" width="492" height="562" alt="" border="0">
+
+<p>
+Die Anwendung besteht aus drei Dateien, der <b>entry.asp</b>, der Access Datenbank <b>Rechnungen.mdb</b>
+und dem XSD-Schema schema.xsd. In der <b>entry.asp</b> tragen die Mitarbeiter eines Unternehmens 
+die Leistungen, die f&uuml;r Kunden erbracht werden, in ein HTML-Formular ein. Die Daten werden im 
+folgenden Schritt in eine Access Datenbank eingetragen. Auf der betreffenden ASP-Seite stehen noch 
+die Auswahlm&ouml;glichkeiten zur Verf&uuml;gung, dem Kunden die Rechnungsdaten als XML-Datei auf dem Server 
+bereitzustellen und sie als Word Dokument zu erstellen.
+</p>
+
+<h2>Eintragen von Leistungen</h2>
+
+<p>
+F&uuml;r eine vollst&auml;ndige Rechnung m&uuml;ssen nicht nur die einzelnen Leistungen eingetragen werden, 
+sondern auch die Daten des jeweiligen Kunden in die Datenbank eingef&uuml;gt werden. Die folgende 
+Grafik stellt die Struktur der <b>Rechnungen.mdb</b> dar.
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010925_2.png" width="604" height="325" alt="" border="0">
+
+<p>
+F&uuml;r jeden Kunden besteht ein Datensatz der beim Erstellen einer Rechnung ausgelesen wird. Um einen 
+neuen Kunden anzulegen, mu&szlig; in dem Formular die Option "New Client" angew&auml;hlt werden, und die 
+entsprechenden Felder m&uuml;ssen mit den Kundendaten gef&uuml;llt werden. Wenn der Kunde ausgew&auml;hlt, oder 
+ein neuer angelegt wurde, kann in das Feld "Services" die Beschreibung der erbrachten Leistung, 
+und in "Price", wie zu erwarten, der Preis eingetragen werden. 
+</p>
+
+<p>
+Vor dem Absenden des Formulars stehen noch die Optionen "Leistung anf&uuml;gen" und "Rechnung erstellen" 
+zur Auswahl. Die Daten werden schlie&szlig;lich, wie im Artikel 
+<a href="../artikel/20001107.htm">Einf&uuml;gen eines Datensatzes mit dem INSERT Statement</a>
+erkl&auml;rt, eingef&uuml;gt.
+</p>
+
+<pre style="background='silver';">
+strConnStr = "Provider=Microsoft.Jet.OLEDB.4.0;" &amp;
+"DataSource=C:\Inetpub\wwwroot\aspheute\Rechnungen.mdb"
+Set conn = Server.CreateObject("ADODB.Connection")
+conn.Open strConnStr
+
+strNewClient = Request.Form("Clients")
+strClientName = Request.Form("ClientName")
+strStreet = Request.Form("Street")
+strZipCode = Request.Form("ZipCode")
+strCity = Request.Form("City")
+strCountry = Request.Form("Country")
+strService = Request.Form("Service")
+strPrice = Request.Form("Price")
+
+If strNewClient = "New" Then
+    strNewClient = "INSERT INTO Clients " &amp; _
+    (ClientName, Street, ZipCode, City, Country)" &amp; _
+    "VALUES ('"&amp;strClientName&amp;"','"&amp;strStreet&amp;_
+    "','"&amp;strZipCode&amp;"','"&amp;strCity&amp;"','"&amp;strCountry&amp;"')"
+    conn.Execute strNewClient		        
+End If 
+
+strNewService = "INSERT INTO Services" &amp; _
+(ClientName, Service, Price )" &amp; _
+"VALUES ('" &amp; strClientName &amp; "','" &amp; strService &amp; _
+"','" &amp; strPrice &amp; "')"
+conn.Execute strNewService
+</pre>
+
+<h2>Erstellen von Rechnungen</h2>
+
+<p>
+Wenn die Rechnung als XML erstellt werden soll, liest die Anwendung die Rechnungsdaten aus der 
+Datenbank aus und erstellt mit Hilfe des DOMs ein XML-Dokument. Der Artikel 
+<a href="../artikel/20000417.htm">Auslesen von XML Dateien mit dem DOM</a> bietet eine 
+Einf&uuml;hrung in die Arbeit mit dem DOM. 
+</p>
+
+<p>
+Zuerst wird ein Recordset-Objekt erstellt, das Datens&auml;tze der erbrachten Leistungen enth&auml;lt. 
+Wie im angesprochenen Artikel wird nun mittels DOM ein XML-Dokument erstellt. Nur wird in diesem 
+Fall kein XML-File geladen, sondern mit Hilfe der DOM-Methoden 
+<i>.AppendChild()</i>, <i>.SetAttribute()</i>, und <i>.CreateElement()</i> ein neues kreiert. 
+Nach dem Erstellen des Root-Elements wird es dem n&auml;chsth&ouml;heren Element angeh&auml;ngt 
+(das Root Element an das DOM Dokument) und seine Eigenschaften werden definiert. Dieser Vorgang 
+wiederholt sich entsprechend der Baumstruktur des zu erstellenden Files.
+</p>
+
+<pre style="background='silver';">
+Set Data = Server.CreateObject("ADODB.Recordset")
+Data.ActiveConnection = strConnStr
+Data.Source = "SELECT * FROM Services WHERE" &amp;_
+    "ClientName LIKE '" &amp; strClientName &amp; "' "
+Data.CursorType = 0
+Data.CursorLocation = 2
+Data.LockType = 3
+Data.Open
+
+Set XMLDoc = Server.CreateObject("Msxml2.DOMDocument")
+Set DocRoot = XMLDoc.CreateElement("Services")
+XMLDoc.AppendChild(DocRoot)
+DocRoot.SetAttribute "xmlns", "yournamespace"
+DocRoot.SetAttribute "xmlns:xsi", 
+    "http://www.w3.org/2001/XMLSchema-instance"
+DocRoot.SetAttribute "xsi:schemaLocation", 
+    "yournamespace C:\Inetpub\wwwroot\aspheute\schema.xsd"
+
+While Not Data.EOF 
+    dtEntry = CDate(Data.Fields("Date"))
+    strBillService = Data.Fields("Service")
+    intBillPrice = Data.Fields("Price")
+
+    Set Entry = XMLDoc.CreateElement("Entry")
+    DocRoot.appendChild (Entry)
+	
+    Set Datum = XMLDoc.CreateElement("Datum")
+    If Len(CStr(Month(dtEntry))) = 1 Then
+        Monat = "0"&amp; Month(dtEntry)
+    Else
+        Monat = Month(dtEntry)
+    End If
+
+    If Len(CStr(Day(dtEntry))) = 1 Then
+        Tag = "0"&amp; Day(dtEntry)
+    Else
+        Tag = Day(dtEntry)
+    End If
+	     
+    BillDate = Year(dtEntry)&amp;"-"&amp; Monat &amp;"-"&amp; Tag
+    Datum.Text = BillDate 
+    Entry.appendChild (Datum)
+    Datum.SetAttribute "type", "date"
+    
+    Set Service = XMLDoc.CreateElement("Service")
+    Service.Text = strBillService
+    Entry.appendChild (Service)
+    Service.SetAttribute "type", "string"
+    
+    Set Price = XMLDoc.CreateElement("Price")
+    Price.Text = intBillPrice
+    Entry.appendChild (Price)
+    Price.SetAttribute "type", "decimal"
+		
+    Data.MoveNext
+Wend
+
+Data.MoveFirst
+	
+Set Client = XMLDoc.CreateElement("Client")
+DocRoot.appendChild (Client)
+
+Set Name = XMLDoc.CreateElement("Name")
+Name.Text = strClientName
+Client.appendChild (Name)
+Name.SetAttribute "type", "string"
+
+Set Street = XMLDoc.CreateElement("Street")
+Street.Text = strStreet
+Client.appendChild (Street)	
+Street.SetAttribute "type", "string"
+
+Set ZipCode = XMLDoc.CreateElement("ZipCode")
+ZipCode.Text = strZipCode
+Client.appendChild (ZipCode)
+ZipCode.SetAttribute "type", "string"	
+
+Set City = XMLDoc.CreateElement("City")
+City.Text = strCity
+Client.appendChild (City)	
+City.SetAttribute "type", "string"
+
+Set Country = XMLDoc.CreateElement("Country")
+Country.Text = strCountry
+Client.appendChild (Country)	
+Country.SetAttribute "type", "string"
+</pre>
+
+<p>
+Dieses XML-Dokument wird gegen das folgende Schema validiert 
+(<b>schema.xsd</b>), und dann als XML-File gespeichert.
+</p>
+
+<pre style="background='silver';">
+&lt;?xml version="1.0" ?&gt;
+&lt;xsd:schema targetNamespace="yournamespace" xmlns="yournamespace"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+
+&lt;xsd:element name="Date" type="xsd:date"/&gt;
+&lt;xsd:element name="Service" type="xsd:string"/&gt;
+&lt;xsd:element name="Price" type="xsd:decimal"/&gt;
+&lt;xsd:element name="Name" type="xsd:string"/&gt;
+&lt;xsd:element name="Street" type="xsd:string"/&gt;
+&lt;xsd:element name="ZipCode" type="xsd:string"/&gt;
+&lt;xsd:element name="City" type="xsd:string"/&gt;
+&lt;xsd:element name="Country" type="xsd:string"/&gt;
+
+&lt;xsd:element name="Entry"&gt;
+  &lt;xsd:complexType&gt;
+    &lt;xsd:sequence&gt;
+      &lt;xsd:element ref="Date" /&gt;
+      &lt;xsd:element ref="Service" /&gt;
+      &lt;xsd:element ref="Price" /&gt;
+    &lt;/xsd:sequence&gt;
+  &lt;/xsd:complexType&gt;
+&lt;/xsd:element&gt;
+
+&lt;xsd:element name="Client"&gt;
+  &lt;xsd:complexType&gt;
+    &lt;xsd:sequence&gt;
+      &lt;xsd:element ref="Name" /&gt;
+      &lt;xsd:element ref="Street" /&gt;
+      &lt;xsd:element ref="ZipCode" /&gt;
+      &lt;xsd:element ref="City" /&gt;
+      &lt;xsd:element ref="Country" /&gt;
+    &lt;/xsd:sequence&gt;
+  &lt;/xsd:complexType&gt;
+&lt;/xsd:element&gt;
+
+&lt;xsd:element name="Services"&gt;
+  &lt;xsd:complexType&gt;
+    &lt;xsd:sequence&gt;
+      &lt;xsd:element ref="Entry" /&gt;
+      &lt;xsd:element ref="Client" /&gt;
+    &lt;/xsd:sequence&gt;
+  &lt;/xsd:complexType&gt;
+&lt;/xsd:element&gt;
+
+&lt;/xsd:schema&gt;
+</pre>
+
+<p>
+Die Validierung stellt sicher, da&szlig; die Daten dem Schema entsprechen, und gew&auml;hrleistet somit 
+einen fehlerfreien Datenaustausch. Bei der Verwendung von XSD auf dem IIS geschieht dies 
+durch den MSXML 4.0 Parser. Der XML-Parser der Version 3.0 unterst&uuml;tzt XSD nicht. 
+</p>
+
+<p>
+Hier der Code zur Validierung eines XML Dokuments gegen unser Schema:
+</p>
+
+<pre style="background='silver';">
+Set xmlDom = Server.CreateObject("MSXML2.DOMDocument.4.0")
+Set xsc = Server.CreateObject("MSXML2.XMLSchemaCache.4.0")	
+
+xsc.Add "http://www.w3.org/2001/XMLSchema", "C:\yourpath\schema.xsd"
+
+Set xmlDom.schemas = xsc
+xmlDom.async = False
+xmlDom.loadXML ("C:\yourpath\sample.xml")
+
+If xmlDom.parseError.errorCode &lt;&gt; 0 Then
+    Response.Write("Error Reason: " &amp; Space(3) &amp;
+    xmlDom.parseError.reason &amp;  "Source Text: " &amp; 
+    Space(3) &amp; xmlDom.parseError.srcText &amp; vbCrLf &amp;
+    "Error Line: " &amp; Space(3) &amp; xmlDom.parseError.Line &amp;
+    vbCrLf &amp; "Error Position: " &amp; Space(3) &amp; 
+    xmlDom.parseError.linepos &amp; vbCrLf &amp;  "File Name: " &amp;
+    Space(3) &amp; xmlDom.parseError.url)
+Else
+    Response.Write("No Error")
+End If
+</pre>
+
+<p>
+Der erste Schritt bei der Validierung ist das Erstellen eines SchemaCache-Objektes. Diesem wird 
+mittels der <i>Add()</i>-Methode das Schema hinzugef&uuml;gt. Dieses Objekt wird dann dem DOM-Objekt 
+zugeordnet. Durch die <i>Load()</i>-Methode des DOM-Objektes werden die XML-Daten eingelesen. Bei 
+diesem Vorgang findet die eigentliche Validierung der Daten statt. Wenn der Mitarbeiter X nun 
+Daten in das Formular eingetragen hat, die nicht den Vorgaben des Schemas entsprechen 
+(zB.: negativer Rechnungsbetrag), gibt der Parser einen Error zur&uuml;ck, der &uuml;ber die Error-Collection 
+ausgewertet wird. 
+</p>
+
+<p>
+Abschlie&szlig;end werden aus den Rechnungsdaten eine XML-Datei und/oder ein Word-Dokument erstellt. 
+Die Verwendung des Word Objektes wird einf&uuml;hrend in dem Artikel 
+<a href="../artikel/20010319.htm">Mit ASP ein Word Dokument am Server generieren</a> 
+beschrieben.
+</p>
+
+<pre style="background='silver';">
+blxmlfile = Request.Form("makefile")
+blword = Request.Form("makeword")
+
+If blword Then
+    Set ElemList1 = xmlDom.getElementsByTagName("Datum")
+    Set ElemList2 = xmlDom.getElementsByTagName("Service")
+    Set ElemList3 = xmlDom.getElementsByTagName("Price")
+    Set ElemList4 = xmlDom.getElementsByTagName("Client")
+				
+				
+    Dim WdApp,objDocument,objRange,objTable,i,header,sum
+	
+	'Word Konstanten
+    Const wdAlignParagraphCenter = 1
+    Const wdAlignParagraphLeft = 0
+    Const wdParagraph = 4
+    Const wdHorizontalPositionMargin = 0
+    Const wdTableLeft = -999998
+    Const wdCollapseEnd = 0
+	
+    Set WdApp = Server.CreateObject("Word.Application")
+    WdApp.Application.Visible = False
+	
+    Set objDocument = WdApp.Documents.Add("Vorlage.dot")
+	
+    Set objRange = objDocument.Range
+	
+    header = "Rechnung an" &amp; vbCrLf
+    For Each item in ElemList4.item(0).childNodes
+        header = header &amp; item.Text &amp; vbCrLf 
+    Next
+	
+    With objRange
+        .ParagraphFormat.Alignment = wdAlignParagraphCenter
+        .Font.Size = 12
+        .Font.Name = "Arial"
+        .InsertAfter(header)
+        .MoveEnd(wdParagraph)
+        .Collapse(wdCollapseEnd)
+    End With
+	
+    Set objTable = WdApp.ActiveDocument.Tables.Add &amp;_
+        (objRange, ElemList2.length, 3,1,1)
+	
+    sum = 0
+	
+    For i = 0 To (ElemList2.length -1)
+       objTable.Cell(i,1).Range.InsertAfter &amp;_
+          (ElemList1.item(i).text)
+       objTable.Cell(i,2).Range.InsertAfter &amp;_
+          (ElemList2.item(i).text)
+       objTable.Cell(i,3).Range.InsertAfter &amp;_
+          (ElemList3.item(i).text)
+       sum = sum + ElemList3.item(i).text
+    Next
+	
+    objTable.Cell(ElemList2.length,1).Range.InsertAfter &amp;_
+        ("Summe")
+    objTable.Cell(ElemList2.length,2).Range.InsertAfter &amp;_
+        (sum)
+
+    objDocument.SaveAs Server.MapPath("C:\yourpath\Rechnung.doc")
+    objDocument.Close 
+
+    WdApp.Application.Quit
+End If
+
+If blxmlfile Then
+    XMLDoc.save("C:\yourpath\sample.xml")
+End If
+</pre>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Die Zukunft von Schemas liegt in der Standardisierung des Datenaustausches. Initiativen wie 
+ebXML arbeiten daran allgemeine Beschreibungen von Daten zu etablieren. So wird es zB. ein 
+standardisiertes Schema f&uuml;r Rechnungen geben, nach dem sich alle Anwendungen ausrichten lassen. 
+In solchen Bereichen macht die Pr&uuml;fung der Benutzereingaben einen gro&szlig;en Bestandteil der 
+Anwendungen aus. Durch die M&ouml;glichkeiten der Validierung von Schemas kann diese Last von den 
+Schultern solcher Anwendungen genommen werden. 
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010925.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010925.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020416.htm">Arbeiten mit dem SQL Server XML View Mapper</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020416.htm</span><br>
+<a href="../artikel/20000417.htm">Auslesen von XML Dateien mit dem DOM</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000417.htm</span><br>
+<a href="../artikel/20001107.htm">Einf&uuml;gen eines Datensatzes mit dem INSERT Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001107.htm</span><br>
+<a href="../artikel/20010319.htm">Mit ASP ein Word Dokument am Server generieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010319.htm</span><br>
+<a href="../artikel/20010514.htm">Was sind XML Schemas?</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010514.htm</span><br>
+<a href="../artikel/20020116.htm">XML-Daten verarbeiten mit XSLT</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020116.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eebxml%2Eorg">ebXML</a><br>
+<SPAN class="content">http://www.ebxml.org</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Fxml%2F">MSDN XML/XSL</a><br>
+<SPAN class="content">http://msdn.microsoft.com/xml/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eoasis%2Dopen%2Eorg%2Fcover%2Fschemas%2Ehtml">Oasis Schema Seiten</a><br>
+<SPAN class="content">http://www.oasis-open.org/cover/schemas.html</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ew3%2Eorg%2F2001%2F03%2Fwebdata%2Fxsv%2F">Schema Validator</a><br>
+<SPAN class="content">http://www.w3.org/2001/03/webdata/xsv/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ew3schools%2Ecom%2Fschema%2F">XML Schema School</a><br>
+<SPAN class="content">http://www.w3schools.com/schema/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,172 @@
+<HTML>
+<HEAD>
+<TITLE>Virtuelle Verzeichnisse umbenennen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Willkommen beim ersten Artikel zu Administrationsthemen rund um den IIS 6.0. Heute beginnen wir mit einem Thema das auf den ersten Blick f&uuml;rchterlich banal aussieht: dem Umbenennen von virtuellen Verzeichnissen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,IIS 6.0,IIS6,Windows Server 2003,Web Edition,Virtual Directory,Virtuelles Verzeichnis,Umbenennen,ISM,Managen,Installation,Konfiguration">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Virtuelle Verzeichnisse umbenennen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/IIS%206dot0.htm">IIS 6.0</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20030911"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Willkommen beim ersten Artikel zu Administrationsthemen rund um den IIS 6.0. Heute beginnen wir mit einem Thema das
+auf den ersten Blick f&uuml;rchterlich banal aussieht: dem Umbenennen von virtuellen Verzeichnissen. Hier existiert n&auml;mlich ein gr&ouml;&szlig;erer
+Unterschied zum alten IIS 5 als man zuerst annehmen m&ouml;chte.
+</p>
+<p>
+Um zu verstehen warum viele Umsteiger von IIS 5 das Thema als banal abqualifizieren w&uuml;rden, hier ein Screenshot:
+</p>
+
+<IMG SRC="/artikel/Bilder/200309/20030911_1.png" width="531" height="406" alt="" border="0">
+
+<p>
+Im Kontextmen&uuml; f&uuml;r IIS 5 gibt es den "Rename" Befehl, so einfach kann es sein. Die ISM von IIS 6.0 sieht auf den ersten Blick
+zwar &auml;hnlich aus,
+</p>
+
+<IMG SRC="/artikel/Bilder/200309/20030911_2.png" width="665" height="314" alt="" border="0">
+
+<p>
+allerdings den "Rename" Befehl sucht man vergeblich. Der Grund hierf&uuml;r ist, da&szlig; am Namen des virtuellen Verzeichnisses in IIS 6.0
+mehr dranh&auml;ngt (Instanzen und mehr) als bei IIS 5 (wo defakto nichts dranh&auml;ngt). Deshalb geht ein einfaches Umbenennen schlicht
+und wenig ergreifend nicht.
+</p>
+<p>
+Ein Weg w&auml;re, das existierende virtuelle Verzeichnis zu l&ouml;schen, und neu anzulegen. Hat man viele Einstellungen getroffen, ist das
+allerdings mehr als l&auml;stig - es kostet Zeit und es ist fehleranf&auml;llig, weil man k&ouml;nnte ja eine Einstellung vergessen. Das mu&szlig; doch
+anders auch gehen.
+</p>
+<p>
+Stimmt, es gibt eine M&ouml;glichkeit - der Weg f&uuml;hrt &uuml;ber Backup und Restore. Man speichert die Konfiguration des umzubenennenden 
+Verzeichnisses, und re-importiert sie als neu benanntes virtuelles Verzeichnisses. Gehen wir die Schritte dazu gemeinsam durch.
+</p>
+<p>
+Als erstes exportieren wir die Einstellungen des Verzeichnisses, das wir Umbenennen wollen (<i>All Tasks / Save Configuration to a File</i>):
+</p>
+
+<IMG SRC="/artikel/Bilder/200309/20030911_3.png" width="665" height="459" alt="" border="0">
+
+<p>
+Ein Dateiname mu&szlig; eingegeben werden, und man kann nach Wunsch auch verschl&uuml;sselt speichern:
+</p>
+
+<IMG SRC="/artikel/Bilder/200309/20030911_4.png" width="398" height="262" alt="" border="0">
+
+<p>
+Mit der gespeicherten Konfiguration k&ouml;nnen wir nun ein neues virtuelles Verzeichnis anlegen (<i>New / Virtual directory (from file)</i>):
+</p>
+
+<IMG SRC="/artikel/Bilder/200309/20030911_5.png" width="665" height="518" alt="" border="0">
+
+<p>
+Als erstes browsen wir nach der Datei, in der wir zuvor die Konfiguration des virtuellen Verzeichnisses gespeichert haben:
+</p>
+
+<IMG SRC="/artikel/Bilder/200309/20030911_6.png" width="389" height="288" alt="" border="0">
+
+<p>
+Mit "Read File" sehen wir, welche Konfigurationsinformation gespeichert worden sind, und w&auml;hlen das virtuelle Verzeichnis aus (in
+diesem Fall die einzige Option, da wir ja auch nur dieses exportiert haben):
+</p>
+
+<IMG SRC="/artikel/Bilder/200309/20030911_7.png" width="389" height="288" alt="" border="0">
+
+<p>
+Nach einem Klick auf OK werden wir gefragt, ob wir ein neues virtuelles Verzeichnis anlegen wollen, oder das existierende 
+mit den gespeicherten Konfigurationsdaten &uuml;berschreiben m&ouml;chten:
+</p>
+
+<IMG SRC="/artikel/Bilder/200309/20030911_8.png" width="275" height="223" alt="" border="0">
+
+<p>
+Wir m&ouml;chten das virtuelle Verzeichnis ja unter einem neuen Namen speichern, also w&auml;hlen wir die erste Option. 
+Jetzt sind beide virtuelle Verzeichnisse vorhanden - das alte und das neue:
+</p>
+
+<IMG SRC="/artikel/Bilder/200309/20030911_9.png" width="665" height="314" alt="" border="0">
+
+<p>
+Wichtig: das "alte" virtuelle Verzeichnis darf man erst jetzt l&ouml;schen. Der Grund daf&uuml;r ist, da&szlig; wenn man es vor dem Neuanlegen 
+l&ouml;scht, wird die Konfiguration einfach unter dem Namen aus der Backupdatei zur&uuml;ckgespielt - man bekommt keine M&ouml;glichkeit,
+es unter einem neuen Namen anzulegen!
+</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Auch wenn es auf den ersten Anblick kompliziert erscheint, so hat diese Methode auch einen sehr gro&szlig;en Vorteil: man kann die gespeicherte
+Konfiguration eines virtuellen Verzeichnisses auf beliebigen Rechnern in beliebige Sites zur&uuml;ckspielen, etwas, das vor IIS 6.0
+nicht m&ouml;glich war.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020729.htm">Den Webserver umsiedeln (IIS 4 oder 5)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020729.htm</span><br>
+<a href="../artikel/20001115.htm">HTTP Komprimierung in IIS5</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001115.htm</span><br>
+<a href="../artikel/20010504.htm">Script-basierte IIS Administration</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010504.htm</span><br>
+<a href="../artikel/20010419.htm">Site&uuml;berwachung mit Scheduled Tasks</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010419.htm</span><br>
+<a href="../artikel/20030203.htm">Web Folders mit IIS</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20030203.htm</span><br>
+<a href="../artikel/20000814.htm">Webserver-Tuning mit XTune</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000814.htm</span><br>
+<a href="../artikel/20011002.htm">XTune Revisited</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011002.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

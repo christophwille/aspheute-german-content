@@ -1,0 +1,178 @@
+<HTML>
+<HEAD>
+<TITLE>Caching bei Browser und Proxy - Woher Seiten wirklich kommen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Nichts ist &auml;rgerlicher als wenn der Inhalt der Seiten nicht beim Kunden ankommt - weil im Transit Proxyserver die Inhalte cachen, oder der Browser falsch konfiguriert ist.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Browser,Proxy,Caching,IIS,ASP,Expires,Response,ExpiresAbsolute,Pragma,no-cache">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Caching bei Browser und Proxy - Woher Seiten wirklich kommen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=19990808"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Hatten Sie schon einmal ein Aha-Erlebnis der besonderen Art? Sie haben gerade die sch&ouml;nsten Internetseiten 
+voller Grafiken, mit Hintergrundmusik und anderen besonderen Features auf Ihren Webserver geladen und beim Aufruf 
+der Seiten mit Ihrem Browser sehen Sie trotzdem nur die alten Versionen Ihrer Seiten?
+Wenn dies geschieht dann ist nicht ihr FTP oder ihr Webserver kaputt, sondern Sie sehen tats&auml;chlich Ihre alten Seiten, 
+die zwar nicht mehr auf dem Webserver gespeichert sind, aber auf einem Proxy-Server liegen oder von Ihrem Browser 
+gecached worden sind. Anstatt sich f&uuml;rchterlich zu giften sollten Sie bei einer ASP Seite immer Befehle hinzuf&uuml;gen, 
+die ein solches "Caching" (sprich "K&auml;-tsching") verhindern oder zeitlich begrenzen.</p>
+<p>
+Folgende ASP Befehle sind uns dabei behilflich:
+</p>
+<p>
+<b>Response.Expires=0</b><BR>
+Dieser Befehl zeigt dem Browser an, da&szlig; der Inhalt der Webseite nur Null Minuten aktuell ist.
+Dies bewirkt bei Netscape Browsern und bei Internet Explorer der Versionen 3 und 4, da&szlig; die Webseite 
+nicht in den Cache geladen wird und bei jedem neuen Aufruf der Adresse direkt vom Server geladen wird.
+</p>
+<p>
+<b>Response.AddHeader "Pragma","no-cache"</b><br>
+Dieser Header zeigt Proxy Servern an, da&szlig; die betreffende Webseite nicht gecached werden darf.
+</p>
+<p>
+<b>Response.AddHeader "cache-control", "no-store"</b><br>
+Dies ist ein spezieller Befehl der verhindert, da&szlig; Internet Explorer 5 mit seinem besonders 
+intelligenten Cachesystem die Seite in den Cache l&auml;dt. Dies geschieht manchmal auch trotz Response.Expires =  0!
+</p>
+<p>
+<h3>Wo auf der ASP Seite kann man diese Befehle einsetzen?</h3>
+Man mu&szlig; die Befehle ausf&uuml;hren bevor irgendein Seiteninhalt zum Browser geschickt wird,
+sonst erh&auml;lt man eine Fehlermeldung. Dies liegt in der Natur der Sache da all diese Befehle sogenannte 
+HTTP-Header zum Browser schicken, die definitionsgem&auml;&szlig; vor dem Inhalt abgeschickt werden m&uuml;ssen 
+(darum hei&szlig;en sie auch "Header").
+</p>
+<p>
+Wenn Sie ein zeitlich begrenztes Caching Ihrer Seite zulassen wollen, so k&ouml;nnen Sie dies mit Hilfe folgender Befehle tun:
+<pre>
+Response.Expires = n	' in Minuten
+</pre>
+Erlaubt ein Caching f&uuml;r die Zeitdauer von n Minuten.
+<pre>
+Response.ExpiresAbsolute = CDate("01. Februar 2000")
+</pre>
+oder
+<pre>
+Response.ExpiresAbsolute = CDate("01.02.2000")
+</pre>
+Erlaubt die Angabe des Zeitpunktes, ab dem die Seite wieder vom Server zu laden ist.
+Anmerkung: Die Datumsangaben beziehen sich auf einen IIS mit deutschem Datumsformat,
+die englische Version der Befehle sieht so aus:
+<pre>
+Response.ExpiresAbsolute = CDate("February 1, 2000")
+Response.ExpiresAbsolute = CDate("02/01/2000")
+</pre>
+Und wenn sie es &uuml;berhaupt international machen wollen (unabh&auml;ngig von der Sprachversion des IIS), so empfehle ich diese Version:
+<pre>
+Response.Expires = #02/01/2000#  ' Amerikanisches Datumsformat
+</pre>
+</p>
+<p>
+Und was lernen wir daraus:<br>
+Nur mit den richtigen Befehlen werden deine ASP Seiten immer direkt von Server hei&szlig; serviert.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000511.htm">Automation - WSH versus Wget</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000511.htm</span><br>
+<a href="../artikel/20001027.htm">Eigene History</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001027.htm</span><br>
+<a href="../artikel/20010417.htm">Eine Umfrage in ASP erstellen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010417.htm</span><br>
+<a href="../artikel/20020320.htm">Flash Detection ohne Komponente</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020320.htm</span><br>
+<a href="../artikel/20020305.htm">Mitlauschen bei der Browser-Webserver Kommunikation</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020305.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eericsson%2Ede%2Fhighlights%2Fwap%2Ehtml">Ericsson WAP-Section</a><br>
+<SPAN class="content">http://www.ericsson.de/highlights/wap.html</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ewebfront%2Ede%2F">Gixum WAP-Katalog</a><br>
+<SPAN class="content">http://www.webfront.de/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ewap%2Dhomes%2Ede">Gratis Webspace f&uuml;r WAP-Seiten</a><br>
+<SPAN class="content">http://www.wap-homes.de</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Enokia%2Ede%2Fsystemloesungen%2Fwap%2Findex%2Ehtml">Nokia WAP-Section</a><br>
+<SPAN class="content">http://www.nokia.de/systemloesungen/wap/index.html</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ewapjag%2Ede%2Fcompany%2Fvirtualwapjagmain%2Ehtm">Online WAP-Browser</a><br>
+<SPAN class="content">http://www.wapjag.de/company/virtualwapjagmain.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ewap%2Dforum%2Ein%2Dx%2Ede%2Fgrl%5Fcode%2Ehtm">Verzeichnis der WML-Befehle</a><br>
+<SPAN class="content">http://www.wap-forum.in-x.de/grl_code.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwapyourself%2Ede%2F">WAP Developer Netzwerk</a><br>
+<SPAN class="content">http://wapyourself.de/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ewap%2Ede%2F">Wap.de</a><br>
+<SPAN class="content">http://www.wap.de/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ewap%2Ede%2F">WAP.de</a><br>
+<SPAN class="content">http://www.wap.de/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ewap%2Dforum%2Ein%2Dx%2Ede%2Fgrl%5Fdvlp%2Ehtm">WAP/WML-Einf&uuml;hrung f&uuml;r Entwickler</a><br>
+<SPAN class="content">http://www.wap-forum.in-x.de/grl_dvlp.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ewap%2Dde%2Ede%2F">Wap-de.de</a><br>
+<SPAN class="content">http://www.wap-de.de/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwap%2Egoemo%2Ede%2F">WAP-Entwicklung f&uuml;r Einsteiger</a><br>
+<SPAN class="content">http://wap.goemo.de/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ewapjag%2Ede%2F">WAP-Jaguar</a><br>
+<SPAN class="content">http://www.wapjag.de/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eakademie%2Ede%2Fgratiskurse%2Fwap%2F">WAP-Kurs</a><br>
+<SPAN class="content">http://www.akademie.de/gratiskurse/wap/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ewap%2Dmagazin%2Ede%2F">WAP-Magazin</a><br>
+<SPAN class="content">http://www.wap-magazin.de/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ewap%2Dforum%2Ein%2Dx%2Ede%2Fwbmp%5Farch%2Ehtm">WBMP-Grafik Archiv</a><br>
+<SPAN class="content">http://www.wap-forum.in-x.de/wbmp_arch.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ewap%2Dforum%2Ein%2Dx%2Ede%2Fprg%5Fgrph%2Ehtm">WBMP-Grafik Konvertierer</a><br>
+<SPAN class="content">http://www.wap-forum.in-x.de/prg_grph.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

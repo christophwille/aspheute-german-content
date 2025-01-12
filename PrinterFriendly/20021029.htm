@@ -1,0 +1,251 @@
+<HTML>
+<HEAD>
+<TITLE>Amazon.com Web Services 2.0</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Die Landschaft der verf&uuml;gbaren Web Services wird langsam bunter - neben den Google Web APIs hat auch ein weiterer Gro&szlig;er des Internets Web Services f&uuml;r uns Programmierer im Angebot - Amazon.com.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Amazon.com,Web Service,ASW 2.0,Programmierung,Client,Suche,Shopping Cart,Amazon.com Web Services 2.0,.NET,Proxy,Klasse,WebRequest,WebResponse">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Amazon.com Web Services 2.0</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Web%20Services.htm">Web Services</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20021029"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Die Landschaft der verf&uuml;gbaren Web Services wird langsam bunter - neben den <a href="../artikel/20020415.htm">Google Web APIs</a>
+hat auch ein weiterer "Gro&szlig;er" des Internets Web Services f&uuml;r uns Programmierer im Angebot - Amazon.com. Im heutigen
+Artikel werden wir uns mit der Suche nach B&uuml;chern besch&auml;ftigen, der gezeigte Code ist leicht auf andere Angebote Amazons
+umlegbar.
+</p>
+<p>
+Generell unterst&uuml;tzen die Amazon.com Web Services zwei gro&szlig;e Bereiche: das Anzeigen von Produkten, sowie das Verwalten von
+Shopping Carts. Bevor man die Services verwenden kann, mu&szlig; man sich unter <a href="http://www.amazon.com/webservices" target="_blank">http://www.amazon.com/webservices</a>
+registrieren, und sollte auch das entsprechende Developer Kit downloaden:
+</p>
+
+<IMG SRC="/artikel/Bilder/200210/20021029_2.png" width="884" height="760" alt="" border="0">
+
+<p>
+Im Developer Kit mit dabei ist die leider etwas schwachbr&uuml;stige Dokumentation. Viele Dinge mu&szlig; man sich mit Hilfe des VS.NET
+Class Browsers beziehungsweise der Java Samples zusammensuchen - es steht zu hoffen, da&szlig; in Zukunft diese Schwachstellen
+beseitigt werden.
+</p>
+
+<h2>Erstellen der Proxyklassen</h2>
+<p>
+Obwohl Visual Studio.NET das Erstellen von Web Service Proxies hervorragend beherrscht, ist es von Zeit zu Zeit nicht schlecht,
+mit den Tools des .NET SDK's zu &uuml;ben - denn die Kommandozeilenclients des SDK's k&ouml;nnen oft mehr als die Wizards des VS.NET.
+Hier ist die Befehlszeile zur Generierung eines C# Proxy's:
+</p>
+
+<pre style="background='silver';">
+wsdl /language:C# /namespace:Amazon.WebServices /protocol:SOAP /out:amazonws.cs 
+     http://soap.amazon.com/schemas2/AmazonWebServices.wsdl
+</pre>
+
+<p>
+Damit erhalten wir den Proxy in die Datei <b>amazonws.cs</b> generiert, und diese Datei k&ouml;nnen wir ab sofort in alle unsere
+Projekte einbinden.
+</p>
+
+<h2>Eine Applikation zur Buchsuche</h2>
+<p>
+Zur Demonstration wie die Amazon.com Web Services funktionieren, erstellen wir uns eine Applikation mit der man nach B&uuml;chern
+suchen kann, und zwar mittels Schl&uuml;sselwort. Die gefundenen Resultate sollen in einer ListView ausgegeben werden:
+</p>
+
+<IMG SRC="/artikel/Bilder/200210/20021029_3.png" width="818" height="616" alt="" border="0">
+
+<p>
+Die ListView besitzt drei Spalten - der Grund hierf&uuml;r ist, da&szlig; wir bei unserer Suchanfrage nur vier Werte immer erhalten werden:
+</p>
+
+<ul>
+	<li>URL
+	<li>ASIN
+	<li>ProductName
+	<li>Catalog 
+</ul>
+
+<p>
+Falls verf&uuml;gbar, bekommen wir auch folgende Werte geliefert:
+</p>
+
+<ul>
+	<li>Artists
+	<li>Authors
+	<li>ReleaseDate
+	<li>Manufacturer
+	<li>ImageUrlSmall
+	<li>ImageUrlMedium
+	<li>ImageUrlLarge
+	<li>ListPrice
+	<li>OurPrice
+	<li>UsedPrice
+</ul>
+
+<p>
+Daher habe ich mich f&uuml;r diese kleine Applikation auf die sichere Seite begeben, und stelle nur das dar, was mir auch immer
+sicher vom Web Service zur Verf&uuml;gung gestellt wird. Die einzigen optionalen Daten die die Applikation verwendet ist
+<i>ImageUrlMedium</i>, um den Cover des Buches nachzuladen, so er verf&uuml;gbar ist (wird in der PictureBox unterhalb der ListView
+dargestellt).
+</p>
+<p>
+Beginnen wir aber mit dem Code, der hinter dem Suchen-Button liegt:
+</p>
+
+<pre style="background='silver';">
+    private void btnSearch_Click(object sender, System.EventArgs e)
+    {
+      AmazonSearchService searchService = new AmazonSearchService();
+
+      KeywordRequest keywordReq = new KeywordRequest();
+      keywordReq.devtag = txtToken.Text;      // Token
+      keywordReq.keyword = txtKeyword.Text;   // Suchbegriff
+      keywordReq.type = "lite";               // Suchart
+      keywordReq.sort = "+salesrank";         // Art der Sortierung
+      keywordReq.mode = "books";              // Suchbereich
+      keywordReq.tag = "alphasierrapapa";     // Amazon Associate ID
+
+      ProductInfo pi = searchService.KeywordSearchRequest(keywordReq);
+
+      lvFoundItems.BeginUpdate();
+      lvFoundItems.Items.Clear();
+	  
+      // Anzahl der Records - kann man mit der KeywordRequest.page Eigenschaft
+      // zum Pagen durch die Resultate verwenden
+      labelTotalRecords.Text = "Total records: " + pi.TotalResults.ToString();
+
+      for (int i=0;i &lt; pi.Details.Length; i++)
+      {
+        ListViewItem lvi = new ListViewItem();
+        lvi.Text = pi.Details[i].Url;
+        lvi.SubItems.Add(pi.Details[i].Asin);
+        lvi.SubItems.Add(pi.Details[i].ProductName);
+        lvi.SubItems.Add(pi.Details[i].ImageUrlMedium);
+        lvFoundItems.Items.Add(lvi);
+      }
+
+      lvFoundItems.EndUpdate();
+    }
+</pre>
+
+<p>
+Alle Suchanfragen werden via <i>AmazonSearchService</i> abgewickelt, die Variation dabei ist die Methode (hier
+<i>KeywordSearchRequest</i>) sowie das zugeh&ouml;rige Suchrequest-Objekt (in diesem Beispiel <i>KeywordRequest</i>).
+Die Datenfelder sind in allen F&auml;llen einfache Strings, die Resultate werden im <i>ProductInfo.Details</i> Array
+geliefert.
+</p>
+<p>
+Wie man sieht, ist die Suche und das Darstellen der Resultate kein Problem. Um der ganzen Applikation etwas mehr
+"Coolness" zu verleihen, wollen wir noch das Bild des Covers darstellen, wie im folgenden Screenshot gezeigt:
+</p>
+
+<IMG SRC="/artikel/Bilder/200210/20021029_1.png" width="535" height="442" alt="" border="0">
+
+<p>
+Dazu m&uuml;ssen wir das <i>ItemActivate</i> Event behandeln. In diesem laden wir mit Hilfe der <i>WebRequest</i> und
+<i>WebResponse</i> Klassen das Bild vom Internet, und stellen es dann in der <i>PictureBox</i> dar - dank Streams
+im .NET Framework kein gro&szlig;es Problem wie der folgende Sourcecode zeigt:
+</p>
+
+<pre style="background='silver';">
+    private void lvFoundItems_ItemActivate(object sender, System.EventArgs e)
+    {
+      if (lvFoundItems.SelectedItems.Count == 0) return;
+      ListViewItem lvi = lvFoundItems.SelectedItems[0];
+      string strImageUrl = lvi.SubItems[3].Text;
+      if ("" == strImageUrl) return;
+
+      WebRequest wrq = WebRequest.Create(strImageUrl);
+      WebResponse wrp = wrq.GetResponse();
+
+      Bitmap bmp = new Bitmap(wrp.GetResponseStream());
+      picbox.Image = bmp;
+      picbox.Refresh();
+    }
+</pre>
+
+<p>
+Bei einer Webapplikation kann man direkt ein Image-Tag bauen, wodurch das Bild dann vom Client nachgeladen wird. Aber selbst
+programmiert macht es doch mehr Spa&szlig;, oder?
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die Amazon.com Web Services sind ein weiterer Web Service den man sinnvoll in seine eigene Web oder Windows Anwendung einbauen
+kann - angefangen von einer einfachen Buchsuche wie heute vorgestellt, bis hin zu komplexen Anwendungen, zB der automatisierte
+Einkauf von B&uuml;chern &uuml;ber eine Intranet-Verwaltungsapplikation.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20021029.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20021029.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020415.htm">Programmieren mit den Google Web APIs Beta 2</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020415.htm</span><br>
+<a href="../artikel/20000824.htm">Scrapen von Webseiten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000824.htm</span><br>
+<a href="../artikel/20010703.htm">Web Services einfach konsumieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010703.htm</span><br>
+<a href="../artikel/20010622.htm">Web Services in Anwendungen konsumieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010622.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eamazon%2Ecom%2Fwebservices">Amazon.com Web Services</a><br>
+<SPAN class="content">http://www.amazon.com/webservices</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

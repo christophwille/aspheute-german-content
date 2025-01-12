@@ -1,0 +1,186 @@
+<HTML>
+<HEAD>
+<TITLE>HTTP Komprimierung in IIS5</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Heute besch&auml;ftigen wir uns mit einem Feature des IIS 5, das wahrscheinlich kaum jemand kennt - HTTP Komprimierung. Dabei komprimiert IIS alle ausgehenden Dateien mit dem GZIP oder Deflate Algorithmus.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,GZIP,Deflate,Compression,Komprimierung,IIS5,IIS,Internet Information Server,ISM,Metabase,Metaedit,Resource Kit">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>HTTP Komprimierung in IIS5</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Optimierung.htm">Optimierung</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001115"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Heute besch&auml;ftigen wir uns mit einem Feature des IIS 5, das wahrscheinlich kaum jemand kennt - HTTP Komprimierung.
+Dabei komprimiert IIS alle ausgehenden Dateien mit dem GZIP oder Deflate Algorithmus, was speziell f&uuml;r Bandbreiten-beengte
+Server mit viel statischem Inhalt einen enormen Geschwindigkeitsgewinn bringt (eine HTML Seite kann sehr gut
+komprimiert werden).
+</p>
+<p>
+Die Komprimierung an sich ist kein Microsoft-spezifisches Feature, nein, alle modernen Browser die HTTP 1.1 verstehen,
+k&ouml;nnen mit den Komprimierungsalgorithmen GZIP oder Deflate umgehen. Allerdings fehlte bis IIS5 das Komprimierungsfeature
+am Server - nun ist es in Form eines Filters permanent installiert, allerdings standardm&auml;&szlig;ig deaktiviert.
+</p>
+
+<h2>Die Komprimierung aktivieren</h2>
+<p>
+Wie gesagt, standardm&auml;&szlig;ig ist die Komprimierung ausgeschaltet. Da sich jetzt einige wundern werden, wo Sie denn
+das Feature &uuml;bersehen haben, hier die Antwort - in den Standardeigenschaften des WWW Services in den Servereinstellungen.
+Also dort, wo man alle heiligen Zeiten einmal nachschaut.
+</p>
+<p>
+Daher alles sch&ouml;n Schritt f&uuml;r Schritt. Server ausw&auml;hlen, rechte Maustaste klicken, den Eintrag Properties ausw&auml;hlen.
+</p>
+<p><IMG SRC="/artikel/Bilder/200011/20001115_03.png" width="418" height="324" alt="" border="0"></p>
+<p>
+In der folgenden Dialogbox <b>WWW Service</b> in der Master Properties Dropdown ausgew&auml;hlt lassen, und Edit klicken.
+Nun sind wir in den Master Eigenschaften, und die Komprimierung versteckt sich gekonnt im Service Tab:
+</p>
+<p><IMG SRC="/artikel/Bilder/200011/20001115_04.png" width="461" height="453" alt="" border="0"></p>
+<p>
+Es gibt 2 Optionen, die f&uuml;r alle Sites des Servers Geltung erlangen:
+<ul>
+<li><b>Compress application files</b>: Ausgew&auml;hlt, wird der Output von dynamisch erstellten Inhalten (ASP, DLL, EXE) vor
+dem Versenden zum Client on-the-fly komprimiert. Nur dann ratsam, wenn man wirklich viel Rechenpower hat, aber eine
+kleine Leitung.
+<li><b>Compress static files</b>: Ausgew&auml;hlt, werden statische Inhalte komprimiert zum Client gesendet, allerdings wird
+die komprimierte Datei zur Optimierung in einem Cache gespeichert. Jeder weitere Aufruf wird aus dem Cache bedient.
+Standarm&auml;&szlig;ig werden Dateien mit den Endungen HTML, HTM und TXT komprimiert.
+</ul>
+</p>
+<p>
+Das Cacheverzeichnis f&uuml;r statische Dateien mu&szlig; auf einer NTFS Disk liegen, die Directory Compression ausgeschaltet hat.
+Dieses Verzeichnis dient nur f&uuml;r statische Dateien, da dynamische Inhalte generell nicht gecacht werden - hier wird per
+Request komprimiert.
+</p>
+
+<h2>Feineinstellungen</h2>
+<p>
+Die Auswahl der Dateitypen, die als komprimierbar eingestuft werden, k&ouml;nnte man als willk&uuml;rlich bezeichnen. Was zum 
+Beispiel ist mit XML? Oder Officedokumenten? Alle diese k&ouml;nnten bei Komprimierung die Bandbreite deutlich entlasten,
+und weil sie komprimiert gecacht werden, ist die Komprimierung keine gro&szlig;e Belastung f&uuml;r den Webserver.
+</p>
+<p>
+Die Einstellungen f&uuml;r den Komprimierungsfilter finden sich allesamt in der Metabase des IIS. Es gibt zwar 
+Administrationsscripts zur Manipulation von Eintr&auml;gen in der Metabase, allerdings bin ich zu faul, mir schon
+wieder irgendwelche Kommandozeilenparameter zu merken (wer es dennoch m&ouml;chte, die alternative Methode wird
+im referenzierten Artikel "Using HTTP Compression On Your IIS 5.0 Web Site" beschrieben).
+</p>
+<p>
+Ich habe mich f&uuml;r MetaEdit entschieden, ein Tool aus dem Windows 2000 Server Resource Kit (ohne Werbung zu machen,
+ein vern&uuml;nftiges &Uuml;berleben ohne Resource Kit ist unter Windows 2000 nicht m&ouml;glich). Man bekommt einen nette
+Baumstruktur der Metabase, und kann zum gew&uuml;nschten Branch navigieren (siehe auch Screenshot):
+<pre style="background='silver';">
+/LM/W3Svc/Filters/Compression/GZIP/HcFileExtensions 
+</pre>
+</p>
+<p><IMG SRC="/artikel/Bilder/200011/20001115_01.png" width="588" height="420" alt="" border="0"></p>
+<p>
+Ein einfacher Doppelklick, und schon kann man die Dateierweiterungen bequem editieren:
+</p>
+<p><IMG SRC="/artikel/Bilder/200011/20001115_02.png" width="363" height="352" alt="" border="0"></p>
+<p>
+<u>Achtung Falle:</u> da zwei Komprimierungsalgorithmen zur Anwendung kommen, mu&szlig; man den <i>HcFileExtensions</i> Eintrag
+sowohl in GZIP als auch Deflate updaten! Sonst gibt es unliebsame &Uuml;berraschungen - wie zB keinerlei sichtbaren Erfolg.
+</p>
+<p>
+Wenn man alle &Auml;nderungen durchgef&uuml;hrt hat, und MetaEdit wieder geschlossen hat, fehlt noch eine Kleinigkeit: man
+mu&szlig; den IIS veranlassen, die &Auml;nderungen zu laden. Dies macht man dann mit Hilfe des IISRESET Utilities (das ist bei
+Windows 2000 standardm&auml;&szlig;ig dabei):
+<pre style="background='silver';">
+IISreset.exe /restart 
+</pre>
+</p>
+<p>
+Nachtragen mu&szlig; ich noch den Eintrag f&uuml;r Dateiendungen der dynamischen Komprimierung: <i>HcScriptFileExtensions</i>.
+Wenn man spezielle ASP Dateien komprimieren m&ouml;chte, w&uuml;rde ich empfehlen, vorher eine neue Dateiendung auf die ASP
+Engine zu mappen, und dann hier einzutragen. Dadurch wird die Komprimierung nur f&uuml;r spezielle - nicht als ASP
+erkennbare - Dateien ausgef&uuml;hrt, und nicht f&uuml;r alle ASP Dateien (was performancem&auml;&szlig;ig einen Prozessor und somit
+den Webserver umbringen k&ouml;nnte).
+</p>
+
+<h2>Der Client</h2>
+<p>
+Um mir Anfragen der Leserschaft zu ersparen, hier die Beantwortung der Frage "Mu&szlig; man am Client
+etwas einstellen, damit das funktioniert?". Nein. Jeder HTTP 1.1 Client beantragt automatisch Komprimierung, und
+nun bekommt er sie auch von Ihrem Webserver. F&uuml;r den Benutzer ist alles v&ouml;llig transparent.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+F&uuml;r die Komprimierung von statischen Inhalten kann ich eine eindeutige Empfehlung aussprechen - hilft's nicht, so
+schadet es auch nicht. Bei der Komprimierung von dynamischen Inhalten mu&szlig; man sehr genau auf die Leistungsf&auml;higkeit
+des Servers achten, weil man k&ouml;nnte unter Umst&auml;nden mehr Unheil anrichten als Nutzen ziehen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20011008.htm">Output Caching 101</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011008.htm</span><br>
+<a href="../artikel/20000817.htm">Serverseitiges Caching mit XCache</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000817.htm</span><br>
+<a href="../artikel/20020731.htm">Trafficreduzierung mit XCompress</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020731.htm</span><br>
+<a href="../artikel/20030911.htm">Virtuelle Verzeichnisse umbenennen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20030911.htm</span><br>
+<a href="../artikel/20000814.htm">Webserver-Tuning mit XTune</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000814.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2FTechNet%2Fiis%2Fhttpcomp%2Easp">Using HTTP Compression On Your IIS 5.0 Web Site</a><br>
+<SPAN class="content">http://www.microsoft.com/TechNet/iis/httpcomp.asp</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,183 @@
+<HTML>
+<HEAD>
+<TITLE>Webpage-Grabbing mit dem XML Parser</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Das Grabben von Webinhalten von fremden Servern wird immer mehr zum Standardfeature einer Website. Heute zeige ich eine M&ouml;glichkeit, wie man das Grabbing gratis durchf&uuml;hren kann - mit dem Microsoft XML Parser.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,XML,XMLHTTP,ServerXMLHttp,WinInet,getAllResponseHeaders,getResponseHeader,open,send,MSXML,XML Parser,Grabbing,Fetching">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Webpage-Grabbing mit dem XML Parser</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010328"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Das Grabben von Webinhalten von fremden Servern wird immer mehr zum Standardfeature einer
+Website - sei es um Wetterdaten einzubinden, Kreditkartendaten zu verifizieren, oder auch nur
+zur &Uuml;berwachung des eigenen Servers. Heute zeige ich eine M&ouml;glichkeit, wie man das Grabbing
+gratis durchf&uuml;hren kann - mit dem Microsoft XML Parser.
+</p>
+<p>
+Auf den ersten Blick h&ouml;rt es sich komisch an, da&szlig; der XML Parser mit einem Tool ausgeliefert
+wird, das Webseiten grabben kann. Wenn man die Entstehungsgeschichte wei&szlig;, dann schon weniger:
+damit sollte es XML Programmierern erm&ouml;glicht werden, XML Dokument nicht nur von der lokalen
+Platte zu laden, sondern auch vom Webserver aus. Und da sowohl HTML Dokumente als auch XML
+&uuml;ber das gleiche Protokoll geholt werden k&ouml;nnen, wurde dann das f&uuml;r XML gedachte Feature nach
+und nach f&uuml;r HTML Grabbing eingesetzt.
+</p>
+<p>
+Irgendwann hat sich diese Methode weit herumgesprochen, und mehr und mehr Leute haben begonnen,
+die Klasse (Objekt) <i>XMLHTTP</i> zu verwenden. Wie bei der VBScript <i>Dictionary</i> Komponente allerdings
+haben die Programmierer bei Microsoft vorerst nur an ihre Verwendung am Client gedacht, nicht am Server (wo sie die
+ASP Programmierer dann haupts&auml;chlich eingesetzt haben).
+</p>
+<p>
+Die Implementierung von <i>XMLHTTP</i> ist f&uuml;r Webserver nicht "zutr&auml;glich", daher wurde in der Version 3.0
+des XML Parsers die <i>ServerXMLHTTP</i> Komponente miteingebaut, die mit der Skalierbarkeit eines Webserver
+im Gedanken entworfen wurde. Allerdings findet man den MSXML 3.0 auf keinem Windows 2000 Server
+standardm&auml;&szlig;ig installiert - er mu&szlig; separat downgeloadet werden (siehe Links am Ende des Artikels). Die
+gewonnene Performance wiegt die notwendige Installation aber locker wieder auf.
+</p>
+
+<p>
+Wie verwendet man nun das <i>ServerXMLHTTP</i> Objekt? Da&szlig; das nicht schwierig ist, zeigt der
+folgende Sourcecode (<b>ParserGrab.asp</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Set objXmlHttp = Server.CreateObject("MSXML2.ServerXMLHTTP")
+objXmlHttp.open "GET", "http://aspheute/", False
+objXmlHttp.send
+
+strHTML = objXmlHttp.responseText
+Set objXmlHttp = Nothing
+
+Response.Write strHTML
+%&gt;
+</pre>
+
+<p>
+Das Objekt wird instanziert, die Verbindung zum Server ge&ouml;ffnet, dann der Request geschickt. Die
+Abarbeitung erfolgt synchron, und die vom Server zur&uuml;ckgelieferten Informationen k&ouml;nnen via <i>responseText</i>
+abgeholt werden. Besprechen wir nun die verwendeten Methoden des Objekts genauer durch.
+</p>
+
+<p>
+Die <i>open</i> Methode wird wie folgt verwendet:
+</p>
+
+<pre style="background='silver';">
+objXmlHttp.open(strMethod, strUrl, bAsync, strUser,strPassword)
+</pre>
+
+<p>
+Ich habe nur die Methode, den URL und das Flag f&uuml;r asynchrones Grabben verwendet - Benutzername
+und Passwort kommen dann ins Spiel, wenn man gesicherte Dateien grabben m&ouml;chte. Als Methoden
+kommen GET, POST oder auch HEAD in Frage - und letztere k&ouml;nnte man dann so einsetzen:
+</p>
+
+<pre style="background='silver';">
+Set objXmlHttp = Server.CreateObject("MSXML2.ServerXMLHTTP")
+objXmlHttp.open "HEAD", "http://aspheute/", False
+objXmlHttp.send
+Response.Write objXmlHttp.getResponseHeader("Content-Length")
+</pre>
+
+<p>
+Damit kann man herausfinden, wie gro&szlig; eine Datei ist - ohne sie vom entfernten Webserver erst zu holen.
+Es werden nur die Header transferiert, keine Inhalte. Ein Blick auf die <i>responseText</i> Eigenschaft
+beweist es.
+</p>
+
+<p>
+Die <i>send</i> Methode schickt den Request samt allf&auml;lliger gesetzter Header zum Server, der dann
+die Antwort - in unserem Falle synchron - zur&uuml;ckschickt. Uns bleibt dann nur noch das Objekt zu zerst&ouml;ren.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Das ServerXMLHTTP Objekt kann nat&uuml;rlich noch einiges mehr - so zum Beispiel auch mit Cookies oder Proxy Servern 
+umgehen. Diese Information findet sich in der Dokumentation, den Link dazu in der Links
+Sektion des heutigen Artikels.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010328.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010328.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000508.htm">Erstellen eines HTTP Test Tools</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000508.htm</span><br>
+<a href="../artikel/20020411.htm">Kopieren verboten - Lizenzsicherung bei ASP Scripts</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020411.htm</span><br>
+<a href="../artikel/20000519.htm">Laden von Dateien aus dem Web mit ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000519.htm</span><br>
+<a href="../artikel/20010803.htm">Meta Tags von fremden Seiten parsen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010803.htm</span><br>
+<a href="../artikel/20000824.htm">Scrapen von Webseiten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000824.htm</span><br>
+<a href="../artikel/20011113.htm">Sonderzeichen korrekt grabben mit XmlHttp</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011113.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Fdownloads%2Fdefault%2Easp%3FURL%3D%2Fcode%2Fsample%2Easp%3Furl%3D%2Fmsdn%2Dfiles%2F027%2F001%2F596%2Fmsdncompositedoc%2Exml">MSXML Parser 3.0 Release</a><br>
+<SPAN class="content">http://msdn.microsoft.com/downloads../default.htm?URL=/code/sample.asp?url=/msdn-files/027/001/596/msdncompositedoc.xml</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Fxml%2Fdefault%2Easp">XML Developer Center</a><br>
+<SPAN class="content">http://msdn.microsoft.com/xml../default.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3FURL%3D%2Flibrary%2Fpsdk%2Fxmlsdk%2Fxmls6g53%2Ehtm">XML SDK Documentation</a><br>
+<SPAN class="content">http://msdn.microsoft.com/library../default.htm?URL=/library/psdk/xmlsdk/xmls6g53.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

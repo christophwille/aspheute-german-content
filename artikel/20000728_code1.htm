@@ -1,0 +1,56 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML>
+<HEAD>
+<TITLE> pagecounter.aspx </TITLE>
+<STYLE>
+BODY {
+  font-family: "sans-serif";
+  bgcolor: "#FFFFFF";
+}
+
+PRE {
+  font-family: "monospaced";
+  }
+
+#statement {
+  color: "#0000FF"; /* Color for Script Statements (things like Call, Dim, If...Then...Else, etc) */
+  }
+
+#function {
+  color: "#FF0000"; /* Color for Script Functions (things like Instr, Abs, etc) */
+  }
+
+#script {
+  color: "#800000"; /* Color for anything that is not in one of the above script categories, but is
+                      contained inside script delimeters */
+  }
+
+#scripton {
+  color: "#FF00FF"; /* Color for anything that is not in one of the above script categories, but is
+                      contained inside script delimeters, inside quotation marks */
+  }
+
+#html {
+  color: "#0000FF"; /* Color for any non-script html output */
+  }
+
+#base {
+  color: "#000000"; /* Color for any non-script, non-html output */
+  }
+
+#comment {
+  color: "#008000"; /* Color for any commented code */
+  }
+
+#linenum {
+  color: "#808080"; /* Color for the line numbers */
+  }
+</STYLE>
+</HEAD>
+
+<BODY>
+
+<pre><span id="linenum">001&nbsp;&nbsp;</span><span id="script">&lt;% @Page Language=<span id="scripton">"C#"</span> %&gt;</span><br><span id="linenum">002&nbsp;&nbsp;</span><span id="script">&lt;% @Import Namespace=<span id="scripton">"System.Drawing"</span> %&gt;</span><br><span id="linenum">003&nbsp;&nbsp;</span><span id="script">&lt;% @Import Namespace=<span id="scripton">"System.IO"</span> %&gt;</span><br><span id="linenum">004&nbsp;&nbsp;</span><span id="script">&lt;% @Import Namespace=<span id="scripton">"System.Drawing.Imaging"</span> %&gt;</span><br><span id="linenum">005&nbsp;&nbsp;</span><span id="script">&lt;%<br><span id="linenum">006&nbsp;&nbsp;</span>Response.Expires = 0;<br><span id="linenum">007&nbsp;&nbsp;</span>Bitmap newBitmap = null;<br><span id="linenum">008&nbsp;&nbsp;</span>Graphics g = null ;<br><span id="linenum">009&nbsp;&nbsp;</span><br><span id="linenum">010&nbsp;&nbsp;</span>string str2Render = Request.QueryString.Get(<span id="scripton">"HitCount"</span>);<br><span id="linenum">011&nbsp;&nbsp;</span>if (null == str2Render) str2Render = <span id="scripton">"no count specified"</span>;<br><span id="linenum">012&nbsp;&nbsp;</span>string strFont = Request.QueryString.Get(<span id="scripton">"HitFontName"</span>);<br><span id="linenum">013&nbsp;&nbsp;</span>if (null == strFont) strFont = <span id="scripton">"Lucida Sans Unicode"</span>;<br><span id="linenum">014&nbsp;&nbsp;</span><br><span id="linenum">015&nbsp;&nbsp;</span>int nFontSize = 12;<br><span id="linenum">016&nbsp;&nbsp;</span>try<br><span id="linenum">017&nbsp;&nbsp;</span>{<br><span id="linenum">018&nbsp;&nbsp;</span>	nFontSize = Int32.Parse(Request.QueryString.Get(<span id="scripton">"HitFontSize"</span>));<br><span id="linenum">019&nbsp;&nbsp;</span>}<br><span id="linenum">020&nbsp;&nbsp;</span>catch<br><span id="linenum">021&nbsp;&nbsp;</span>{<br><span id="linenum">022&nbsp;&nbsp;</span>	<span id="comment">// do nothing, just ignore</span><br><span id="linenum">023&nbsp;&nbsp;</span>}<br><span id="linenum">024&nbsp;&nbsp;</span><br><span id="linenum">025&nbsp;&nbsp;</span>string strBackgroundColorname = Request.QueryString.Get(<span id="scripton">"HitBackgroundColor"</span>);<br><span id="linenum">026&nbsp;&nbsp;</span>Color clrBackground = Color.White;<br><span id="linenum">027&nbsp;&nbsp;</span>try<br><span id="linenum">028&nbsp;&nbsp;</span>{<br><span id="linenum">029&nbsp;&nbsp;</span>	<span id="comment">// Format in the URL: %23xxXXxx</span><br><span id="linenum">030&nbsp;&nbsp;</span>	if (null != strBackgroundColorname)<br><span id="linenum">031&nbsp;&nbsp;</span>		clrBackground = ColorTranslator.FromHtml(strBackgroundColorname);<br><span id="linenum">032&nbsp;&nbsp;</span>}<br><span id="linenum">033&nbsp;&nbsp;</span>catch<br><span id="linenum">034&nbsp;&nbsp;</span>{<br><span id="linenum">035&nbsp;&nbsp;</span>}<br><span id="linenum">036&nbsp;&nbsp;</span><br><span id="linenum">037&nbsp;&nbsp;</span>string strFontColorName = Request.QueryString.Get(<span id="scripton">"HitFontColor"</span>);<br><span id="linenum">038&nbsp;&nbsp;</span>Color clrFont = Color.Black;<br><span id="linenum">039&nbsp;&nbsp;</span>try<br><span id="linenum">040&nbsp;&nbsp;</span>{<br><span id="linenum">041&nbsp;&nbsp;</span>	<span id="comment">// Format in the URL: %23xxXXxx</span><br><span id="linenum">042&nbsp;&nbsp;</span>	if (null != strFontColorName)<br><span id="linenum">043&nbsp;&nbsp;</span>		clrFont = ColorTranslator.FromHtml(strFontColorName);<br><span id="linenum">044&nbsp;&nbsp;</span>}<br><span id="linenum">045&nbsp;&nbsp;</span>catch<br><span id="linenum">046&nbsp;&nbsp;</span>{<br><span id="linenum">047&nbsp;&nbsp;</span>}<br><span id="linenum">048&nbsp;&nbsp;</span><br><span id="linenum">049&nbsp;&nbsp;</span>try <br><span id="linenum">050&nbsp;&nbsp;</span>{<br><span id="linenum">051&nbsp;&nbsp;</span>    Font fontCounter = new Font(strFont, nFontSize);<br><span id="linenum">052&nbsp;&nbsp;</span><br><span id="linenum">053&nbsp;&nbsp;</span>    <span id="comment">// calculate size of the string.</span><br><span id="linenum">054&nbsp;&nbsp;</span>    newBitmap = new Bitmap(1,1,PixelFormat.Format32bppArgb);<br><span id="linenum">055&nbsp;&nbsp;</span>    g = Graphics.FromImage(newBitmap);<br><span id="linenum">056&nbsp;&nbsp;</span>    SizeF stringSize = g.MeasureString(str2Render, fontCounter);<br><span id="linenum">057&nbsp;&nbsp;</span>    int nWidth = (int)stringSize.Width;<br><span id="linenum">058&nbsp;&nbsp;</span>    int nHeight = (int)stringSize.Height;<br><span id="linenum">059&nbsp;&nbsp;</span>    g.Dispose();<br><span id="linenum">060&nbsp;&nbsp;</span>    newBitmap.Dispose();<br><span id="linenum">061&nbsp;&nbsp;</span>	<br><span id="linenum">062&nbsp;&nbsp;</span>    newBitmap = new Bitmap(nWidth,nHeight,PixelFormat.Format32bppArgb);<br><span id="linenum">063&nbsp;&nbsp;</span>    g = Graphics.FromImage(newBitmap);<br><span id="linenum">064&nbsp;&nbsp;</span>    g.FillRectangle(new SolidBrush(clrBackground), new Rectangle(0,0,nWidth,nHeight));<br><span id="linenum">065&nbsp;&nbsp;</span><br><span id="linenum">066&nbsp;&nbsp;</span>    g.DrawString(str2Render, fontCounter, new SolidBrush(clrFont), 0, 0);<br><span id="linenum">067&nbsp;&nbsp;</span>    <br><span id="linenum">068&nbsp;&nbsp;</span>    MemoryStream tempStream = new MemoryStream();<br><span id="linenum">069&nbsp;&nbsp;</span>    newBitmap.Save(tempStream,ImageFormat.Png);<br><span id="linenum">070&nbsp;&nbsp;</span>    <br><span id="linenum">071&nbsp;&nbsp;</span>    Response.ClearContent();<br><span id="linenum">072&nbsp;&nbsp;</span>    Response.ContentType = <span id="scripton">"image/png"</span>;<br><span id="linenum">073&nbsp;&nbsp;</span>    Response.BinaryWrite(tempStream.To<span id="function">Array</span>());<br><span id="linenum">074&nbsp;&nbsp;</span>    Response.End();<br><span id="linenum">075&nbsp;&nbsp;</span>    <span id="comment">// newBitmap.Save(Response.OutputStream, ImageFormat.Png);</span><br><span id="linenum">076&nbsp;&nbsp;</span>    <span id="comment">// newBitmap.Save("o:\\TestApps\\TestServer\\test.png", ImageFormat.Png) ;</span><br><span id="linenum">077&nbsp;&nbsp;</span>} <br><span id="linenum">078&nbsp;&nbsp;</span>catch (Exception e)<br><span id="linenum">079&nbsp;&nbsp;</span>{<br><span id="linenum">080&nbsp;&nbsp;</span>    Response.Write(e.ToString());<br><span id="linenum">081&nbsp;&nbsp;</span>}<br><span id="linenum">082&nbsp;&nbsp;</span>finally <br><span id="linenum">083&nbsp;&nbsp;</span>{<br><span id="linenum">084&nbsp;&nbsp;</span>    if (null != g) g.Dispose();<br><span id="linenum">085&nbsp;&nbsp;</span>    if (null != newBitmap) newBitmap.Dispose();<br><span id="linenum">086&nbsp;&nbsp;</span>}<br><span id="linenum">087&nbsp;&nbsp;</span>%&gt;</span><br></pre>
+</BODY>
+</HTML>

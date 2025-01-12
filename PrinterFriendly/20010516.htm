@@ -1,0 +1,245 @@
+<HTML>
+<HEAD>
+<TITLE>Kommandozeilen-Programme aufrufen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel wollen wir uns nur mit der Ausf&uuml;hrung von Konsolenanwendungen besch&auml;ftigen, diese aber mittels WSH von ASP aus aufrufen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Console,Konsole,Anwendung,Anwendungsausführung,WSH,Windows Scripting Host">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Kommandozeilen-Programme aufrufen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010516"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wie (hoffentlich) allgemein bekannt ist, kann man u.a. mit dem Windows Scripting Host Programme ausf&uuml;hren lassen. 
+In diesem Artikel wollen wir uns aber nur mit der Ausf&uuml;hrung von Konsolenanwendungen besch&auml;ftigen, diese aber 
+mittels WSH von ASP aus aufrufen. Wir ordnen der Anwendung eine f&uuml;r jeden Benutzer separate Output-Pipe zu, die 
+den von der Anwendung produzierten Output in eine Datei schreibt. Diesen Inhalt wollen wir dann einfach in 
+ein Browserfenster dumpen. 
+</p>
+
+<p>
+Wir wollen uns also mit Kommandozeilenanwendungen besch&auml;ftigen, die einen Output erzeugen, allerdings keinen Input 
+(au&szlig;er Parameter) verlangen. Beispiele daf&uuml;r w&auml;ren die Befehle <i>dir</i>, <i>iisreset</i>, <i>ping</i>, etc. . Diesen Output wollen 
+wir mit Hilfe des Pipeoperators (>) in eine Textdatei umleiten. Damit jeder Benutzer - bei gleichzeitigem Zugriff mehrerer 
+Benutzer auf das ASP Skript - seinen Output auch erh&auml;lt, verwenden wir die GetTempName Methode um die Outputdatei 
+zu generieren. Diese Methode erstellt einen eindeutigen Dateinamen, und somit kann kein User den Output eines 
+anderen &uuml;berschreiben. 
+</p>
+
+<p>
+Da wir den Output nur in ein Browserfenster dumpen wollen, l&ouml;schen wir danach sofort wieder die zuvor 
+erstellte Datei. Auf das L&ouml;schen sollte man aber generell nicht vergessen, da sich sonst sehr viele Dateien 
+ansammeln k&ouml;nnten. 
+</p>
+
+<p>
+F&uuml;r das heutige Artikelbeispiel habe ich den <i>ping</i> Befehl ausgew&auml;hlt. Wichtig dabei ist, da&szlig; Sie das Beispiel 
+in Zusammenhang mit dem Pipeoperator nicht mit Win32 Applikationen wie Notepad oder ISM ausprobieren.
+Es k&ouml;nnte unter Umst&auml;nden zu eigenartigen Nebenwirkungen f&uuml;hren, die das System (mehr oder weniger) 
+beeintr&auml;chtigen k&ouml;nnten. 
+</p>
+
+<p>
+Der f&uuml;r den Aufruf ben&ouml;tigte Code ist nicht besonders kompliziert. Fangen wir daher gleich damit an (<b>CmdPiping.asp</b>): 
+</p>
+
+<pre style="background='silver';">
+&lt;% 
+Set fso = Server.CreateObject("Scripting.FileSystemObject")
+strPath = Server.MapPath("./")
+strTempName = fso.GetTempName
+strTempNameBat = fso.GetTempName
+strFileName= Replace(strTempName,".tmp",".txt")
+strBatFileName= Replace(strTempName,".tmp",".bat")
+strPathFile = strPath &amp; "\" &amp; strFileName
+strPathBatFile = strPath &amp; "\" &amp; strBatFileName
+
+Set objFile = fso.CreateTextFile(strPathFile, True)
+objFile.Close
+Set objBatFile = fso.CreateTextFile(strPathBatFile, True)
+objBatFile.WriteLine("D:\WINNT\system32\ping.exe inferis > " &amp; strPathFile)
+objBatFile.Close
+
+Set objWsh = Server.CreateObject("WScript.Shell")
+nRetVal = objWsh.Run(strPathBatFile, 1, True)
+</pre>
+
+<p>
+In diesem ersten Abschnitt instanzieren wir zun&auml;chst mit der <i>Server.CreateObject</i> Funktion das 
+FileSystemObject Objekt. Mit der S<i>erver.MapPath</i> Funktion lesen wir den aktuellen physikalischen Pfad, aus 
+dem das Script ausgef&uuml;hrt wurde. 
+</p>
+
+<p>
+Nun generieren wir mit Hilfe der <i>GetTempName</i> Methode einen eindeutigen Dateinamen f&uuml;r den Textoutput des 
+Ergebnisses des <i>ping</i> Befehls. Da die GetTempName Methode eigentlich erstrangig f&uuml;r das Generieren von 
+einzigartigen Tempor&auml;rdateien dient, m&uuml;ssen wir mit der <i>Replace</i> Funktion die Dateiendung ".tmp" in ".txt" umbenennen. 
+</p>
+
+<p>
+Den aus den beiden Variablen <i>strPath</i> und <i>strFileName</i> generierten Pfad weisen wir der Variablen strPathFile zu, 
+um den Sourcecode &uuml;bersichtlicher zu machen und auch die Ausf&uuml;hrung des Skriptes zu beschleunigen. Dies 
+wird durch die einmalige Ablegung des Pfades in der Variablen am Anfang des Scriptes erreicht. 
+</p>
+
+<p>
+Die Batchdatei die wir hier zus&auml;tzlich generieren (<i>strPathBatFile</i>, sp&auml;ter <i>objBatFile</i>), dient dazu 
+sicherzustellen, da&szlig; der Befehl auch den Output mittels Pipeoperator weitergibt. Dieser Winkelzug dient dazu, da&szlig; das Skript
+auf Rechnern mit verschiedenen Versionen von WSH l&auml;uft (einige Versionen erlauben den Direktaufruf, andere
+funktionieren wiederum nur mit der Batchdatei).
+</p>
+
+<p>
+Nun instanzieren wir das Windows Scripting Host Objekt. Daher k&ouml;nnen wir nun mit der <i>Run</i> Methode des Objektes 
+den <i>ping</i> Befehl ausf&uuml;hren - oder genauer gesagt, die Batchdatei, die das Ping ausf&uuml;hrt.
+</p>
+
+<p>
+Die <i>Run</i> Methode des WSH ben&ouml;tigt hier noch zwei zus&auml;tzliche Parameter. Der erste ist das <i>intWindowStyle</i>
+Argument. Dieses sorgt daf&uuml;r, da&szlig; ein Fenster aktiviert und aufgepopt wird. Das zweite Argument <i>bWaitOnReturn</i>
+ist in diesem Fall sehr wichtig, da hier erst zum Skript zur&uuml;ckgekehrt werden soll, wenn der Befehl erfolgreich 
+beendet ist. Wenn Sie dieses Argument weglassen, wird bei l&auml;ngeren Ausf&uuml;hrungszeiten kein Output in die Textdatei geschrieben
+(oder erst, wenn das ganze ASP Script bereits abgearbeitet ist).
+</p>
+
+<p>
+Hierbei ist zu beachten, da&szlig; Sie bei der Befehlsangabe den vollen Pfad, in welchem sich die Executable befindet, 
+angeben m&uuml;ssen. Weiters mu&szlig; der Benutzer - der dieses Script ausf&uuml;hrt - die entsprechenden Permissions haben. 
+Es wird ja durch den Pipeoperator eine Datei in einem (Unter)Verzeichnis des Webservers erstellt. 
+</p>
+
+<p>
+Nun wollen wir den Inhalt aus der am Webserver gespeicherten Datei Zeile f&uuml;r Zeile auslesen. Dies 
+geschieht mittels der Objekte und Methoden des FileSystemObject Objektes: 
+</p>
+
+<pre style="background='silver';">
+Set TextStream = fso.OpenTextFile(strPathFile, 1)
+
+strOutput = ""
+While Not TextStream.AtEndOfStream 
+   strOutput = strOutput &amp;  TextStream.ReadLine
+Wend
+
+Set MyDelFile = fso.GetFile(strPathFile)
+MyDelFile.Delete
+
+Set MyDelBatFile = fso.GetFile(strPathBatFile)
+MyDelBatFile.Delete
+</pre>
+
+<p>
+Die OpenTextFile Methode gibt einen Textstream zur&uuml;ck, welchen wir zum Lesen der Datei ben&ouml;tigen. Die 1 in der Zeile
+</p>
+
+<pre style="background='silver';">
+Set TextStream = fso.OpenTextFile(strPathFile, 1)
+</pre>
+
+<p>
+ist der numerische Wert f&uuml;r die <i>ForReading</i> Konstante. Diese ist wiederum ein Argument des <i>IOModes</i> der 
+OpenTextFile Methode. Der <i>IOMode</i> bestimmt die Eingabe/Ausgabe Operationen Lesen, Schreiben oder Hinzuf&uuml;gen. 
+</p>
+
+<p>
+Mit Hilfe einer while-Schleife lesen wir nun den Inhalt der Textdatei Zeile f&uuml;r Zeile bis zum Ende des 
+Streams (<i>AtEndOfStream</i>) ein. Jede gelesene Zeile wird der strOutput Variablen hinzugef&uuml;gt. Den Inhalt der 
+Variable dumpen wir sp&auml;ter in ein Browserfenster. 
+</p>
+
+<p>
+Zuvor l&ouml;schen wir aber die jetzt nicht mehr ben&ouml;tigte Text- und Batchdatei durch die <i>Delete</i> Methode des 
+FileSystemObject Objektes. Nun k&ouml;nnen wir den Inhalt der <i>strOutput</i> Variable zum Browser schicken: 
+</p>
+
+<pre style="background='silver';">
+&lt;pre&gt;
+&lt;%=strOutput%&gt;
+&lt;/pre&gt;
+</pre>
+
+<p>
+Wenn Sie das Beispiel - nat&uuml;rlich angepa&szlig;t an Ihre Verh&auml;ltnisse - auf einem Webserver ausf&uuml;hren, k&ouml;nnten Sie 
+z.B. so ein &auml;hnliches Ergebnis erzielen:
+</p>
+
+<p>
+<IMG SRC="/artikel/Bilder/200105/20010516_1.png" width="520" height="352" alt="" border="0">
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Dies war ein einfaches Beispiel um zu zeigen, wie man den Windows Scripting Host (WSH) verwenden kann, um eine Konsolenanwendung auszuf&uuml;hren. Solange man keinen Input an die Konsolenanwendung schicken mu&szlig;, ist 
+WSH ein probates Mittel um den Output von solchen Anwendungen abzufangen und an den Client zu senden.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010516.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010516.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010220.htm">Applikationen aus ASP.NET ausf&uuml;hren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010220.htm</span><br>
+<a href="../artikel/20000511.htm">Automation - WSH versus Wget</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000511.htm</span><br>
+<a href="../artikel/20000822.htm">Mailadressen-&uuml;berpr&uuml;fen f&uuml;r Fortgeschrittene</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000822.htm</span><br>
+<a href="../artikel/20010928.htm">Schlu&szlig; mit lustig Teil 3 - das Hfnetchk Tool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010928.htm</span><br>
+<a href="../artikel/20010419.htm">Site&uuml;berwachung mit Scheduled Tasks</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010419.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

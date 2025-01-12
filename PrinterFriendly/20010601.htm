@@ -1,0 +1,535 @@
+<HTML>
+<HEAD>
+<TITLE>Sicherheitsaspekte bei der Gestaltung von ASP Sites ohne Cookies</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Jeder, der sich mit der Erstellung komplexer ASP-Anwendungen besch&auml;ftigt, hat sich die Frage beantworten m&uuml;ssen, ob er denn nun Cookies einsetzt oder nicht.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Sicherheit,Aspekte der Sicherheit,Cookies,Cookiesicherheit,Querystring,URL,Sessionmanagement">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Sicherheitsaspekte bei der Gestaltung von ASP Sites ohne Cookies</H1>
+<p>
+Geschrieben von: <a href="../autoren/renedrescher-hackel.htm">Rene Drescher-Hackel</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010601"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Jeder, der sich mit der Erstellung komplexer ASP-Anwendungen besch&auml;ftigt, hat sich die Frage beantworten m&uuml;ssen, 
+ob er denn nun Cookies einsetzt oder nicht. Denn h&auml;ufig besteht das Problem, wie sich die ASP-Anwendung 
+z.B. den Anmeldestatus eines Besuchers der  Website merkt. Eine L&ouml;sung sind die Session-Variablen. Doch da 
+w&auml;ren wir wieder beim (tempor&auml;ren) Cookie. 
+</p>
+
+<p>
+Umgehen lie&szlig;e sich das Problem, wenn es eine M&ouml;glichkeit g&auml;be, den Besucher des Webangebotes an einem 
+eindeutigen Kennzeichen zu identifizieren - und dieses Kennzeichen auch nicht zwischen den Seiten verloren geht.
+Warum weit streifen, wenn das gute so nahe liegt: in der URL wird ein bestimmter - von der ASP-Anwendung 
+festgelegter - Parameter von Seite zu Seite &uuml;bergeben.
+</p>
+
+<h2>Parameterwahl</h2>
+
+<p>
+Doch was eignet sich als (eindeutiger) Parameterwert?
+</p>
+<ul>
+<li>Da w&auml;re die Zeit.</li>
+</ul>
+
+
+<p>
+Dies ist nicht ganz unproblematisch, da innerhalb einer Sekunde mehr als ein Benutzer das Angebot zeitgleich aufrufen k&ouml;nnten.
+</p>
+<ul>
+<li>Das Datum</li>
+</ul>
+
+<p>
+Scheidet noch viel eher aus als die Zeit - aus offensichtlichen Gr&uuml;nden.
+</p>
+<ul>
+<li>Eine Zufallszahl</li>
+</ul>
+
+<p>
+Diese k&ouml;nnte sich wiederholen, beziehungsweise es k&ouml;nnte der Grenzwert irgendwann erreicht sein.
+<li>Die IP des Benutzers</li>
+</p>
+
+<p>
+Nicht ganz unkritisch, wenn man bedenkt, da&szlig; viele Surfer &uuml;ber Provider ins Netz gehen, die ihrerseits 
+wiederum Proxies einsetzen. So k&ouml;nnte eine IP sich am Tag wiederholen, ohne da&szlig; es derselbe Benutzer ist.
+</p>
+
+<p>
+F&uuml;r sich alleine ist keiner dieser Parameter geeignet, einen Benutzer eindeutig zu identifizieren. 
+Hingegen eine Kombination aller hier vorgestellten Parameter ergibt jedoch eine derart lange Zeichenfolge, 
+die wohl durchaus einmalig sein d&uuml;rfte.
+</p>
+
+<p>
+Zur Sicherheit sollte man aber auch hier noch eine Duplikatspr&uuml;fung vornehmen, was ich auch empfehle. 
+Es k&ouml;nnte ja sein, da&szlig; zur exakt selben Zeit ein Benutzer &uuml;ber den exakt gleichen Proxy eines 
+Providers Seiten anfordert - und wir durch dummen Zufall die gleiche Zufallszahl generieren.
+</p>
+
+<p>
+Wie erstellen wir nun diese ID, die dann in der URL von Seite zu Seite mit gegeben werden soll? Hier das 
+entsprechende Code-Beispiel:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+    RANDOMIZE(TIME())
+    ' 1. Parameter - eine Zufallszahl bis 999.999.999
+    z = Int(999999999 * RND + 1)
+    ' 2. Parameter - eine Zahl aus der aktuellen Zeit erstellt
+    t = Replace(TIME(),":","")
+    ' 3. Parameter - eine Zahl aus dem aktuellen Datum erstellt
+    d = Replace(DATE(),".","")
+    ' 4. Parameter - eine Zahl aus der IP des Besuchers erstellt
+    ip = Replace(Request.ServerVariables("REMOTE_ADDR"),".","")
+    ' ID erzeugen
+    tempID = z &amp; t &amp; d &amp; ip
+%&gt;
+</pre>
+
+<p>
+Der Zufallsgenerator wird &uuml;ber den Zeitwert (TIME()), immer wieder neu angesto&szlig;en. Aus den Werten der 
+Zeit, des Datums und der IP des Benutzers wird mit der Replace-Anweisung die Punktierung entfernt.
+</p>
+
+<p>
+Anschlie&szlig;end  werden alle Werte aneinander gef&uuml;gt 
+</p>
+
+<pre style="background='silver';">
+&lt;%
+tempID = z &amp; t &amp; d &amp; ip
+%&gt;
+</pre>
+
+<p>
+W&uuml;rde man statt des &amp; ein + verwenden, so w&uuml;rden alle Zahlenwerte zusammenaddiert werden, was das 
+Risiko wieder mit sich br&auml;chte, da&szlig; die daraus resultierende Zahl nicht in jedem Fall eindeutig w&auml;re. 
+Unter Verwendung der oben angesprochenen Fehlerpr&uuml;fung, w&auml;re dies aber machbar.
+Eine solche <i>tempID</i> k&ouml;nnte dann folgenderma&szlig;en aussehen:
+</p>
+
+<pre style="background='silver';">
+641262233163400200501192168120254
+</pre>
+
+<h2>Parameterwert speichern</h2>
+
+<p>
+Die ID h&auml;tten wir. Nun ist die Frage, wo wir diese abspeichern. Sessionvariablen kommen klarerweise nicht 
+in Frage, somit bleibt uns nur eine Datenbank. 
+</p>
+
+<p>
+F&uuml;r den heutigen Artikel verwende ich eine Access 2000 Datenbank, in der ich eine Tabelle namens 
+<i>tblCount</i> erstellt habe.
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010601_1.png" width="538" height="177" alt="" border="0">
+
+<p>
+Um in der <i>INSERT</i>-Anweisung etwas Schreibarbeit zu sparen, habe ich f&uuml;r das Datum und die Zeit in den 
+Eigenschaften einen Standardwert vorgegeben.
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010601_2.png" width="360" height="208" alt="" border="0">
+<IMG SRC="/artikel/Bilder/200106/20010601_3.png" width="360" height="208" alt="" border="0">
+
+<p>
+Nun kann man die generierte  ID auch schon eintragen:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+    sql = "INSERT INTO tblCount(sessionid) VALUES(" &amp; tempID &amp; ");"
+    call dbconnect()
+    Conn.Execute(sql)
+    call dbclose()
+%&gt;
+</pre>
+
+<p>
+Das Erstellen der Datenbankverbindung habe ich hier aus Gr&uuml;nden der besseren Handhabung in zwei Unterroutinen "verpackt".
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Private Sub dbconnect()
+' Datenbankverbindung aufbauen (mit Fehlerpr&uuml;fung)
+    If IsObject("Conn") = FALSE Then	' Object erstellen
+        Set Conn = Server.CreateObject("ADODB.Connection")
+    Dim strConnStr	' Verbindungsinformation zur Datenbank(Connectin-String)
+        strConnStr = "Provider=Microsoft.Jet.OLEDB.4.0;" &amp;_
+                "Data Source=" &amp; Server.MapPath("db/aspproject.mdb")
+        Conn.Open strConnStr
+    End If
+End Sub
+
+Private Sub dbclose()
+' Datenbankverbindung schlie&szlig;en und Instanzen zerst&ouml;ren (mit Fehlerpr&uuml;fung)
+    If Conn.State = 1 Then	' Connection schlie&szlig;en
+        Conn.Close 
+        ' und Instanz zerst&ouml;ren
+        Set Conn = Nothing
+    End If
+End Sub  
+%&gt;
+</pre>
+
+<p>
+Ist alles ordnungsgem&auml;&szlig; eingetragen, erh&auml;lt man folgenden Eintrag in der Datenbank.
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010601_4.png" width="555" height="151" alt="" border="0">
+
+<p>
+Gut, wir haben die ID generiert und gespeichert. Nun sollten wir anfangen, diese auch zu verwenden.
+Unter Verwendung ist zu verstehen, da&szlig; die eben erzeugte ID auch allen Links "mitgegeben" wird.
+</p>
+
+<p>
+Die &Uuml;bergabe bei allen Links erfolgt dann nach folgendem Muster:
+</p>
+
+<pre style="background='silver';">
+&lt;a href="seite.asp?ID=&lt;%=ID%&gt;"&gt;Link&lt;/a&gt;
+</pre>
+
+<p>
+Wie das ganze geschieht, m&ouml;chte ich an einem kleinen Beispiel - einer User-Anmeldung - 
+verdeutlichen. Hierzu habe ich die Datei <b>anmeldung.asp</b>, die das Anmeldeformular enth&auml;lt und bei 
+erfolgter Anmeldung den Anmeldestatus anzeigt, sowie die Datei <b>cookiefree.asp</b>, in der die Logik 
+integriert ist. Damit die Funktionalit&auml;t der <b>cookiefree.asp</b> auch der <b>anmeldung.asp</b> zur 
+Verf&uuml;gung steht, wird diese in die anmeldung.asp per <i>#INCLUDE</i>-Anweisung eingeschlossen.
+</p>
+
+<pre style="background='silver';">
+&lt;!--#include file = "cookiefree.asp"--&gt;
+</pre>
+
+<p>
+Innerhalb der cookiefree.asp wird als erstes immer gepr&uuml;ft, ob &uuml;ber den URL eine ID mitgegeben wurde.
+Der entsprechende Code dazu sieht dann folgenderma&szlig;en aus:
+<p>
+
+<pre style="background='silver';">
+&lt;%
+' SeitenQuerEinstieg pr&uuml;fen
+ID = Request.QueryString("ID")
+
+If ID="" Then	' es wurde keine ID in der URL &uuml;bergeben -&gt; neue ID erzeugen
+    ' ID erzeugen durch Function-Aufruf
+        ID = ID_erzeugen()
+        Response.Redirect "anmeldung.asp?ID=" &amp; ID
+End If
+%&gt;
+</pre>
+
+<p>
+Zuerst wird die ID aus dem QueryString abgefragt. Ist keine &uuml;bergeben worden, dann wird diese erzeugt - 
+wie oben beschrieben - und dann mit <i>Response.Redirect</i> an die <b>anmeldung.asp</b> &uuml;bergeben. 
+(schlie&szlig;t man diese Funktionalit&auml;t auf allen Seiten ein, so empfiehlt sich immer ein <i>Response.Redirect</i>
+auf die ASP-Startseite der Anwendung).
+</p>
+
+<p>
+Wie erf&auml;hrt die ASP-Anwendung, da&szlig; der Benutzer der Seite auch tats&auml;chlich derjenige ist, der er vorgibt zu 
+sein z.B. nach dem Absenden eines Anmeldeformulars?
+</p>
+
+<p>
+Eine M&ouml;glichkeit: man f&uuml;gt in den URL einen weiteren Parameter ein, z.B. user = anton oder uid=1188 oder...usw.
+</p>
+
+<p>
+Hier erkennt man jedoch schnell, da&szlig; unliebsame Zeitgenossen es nicht lassen werden, eine uid=1188 gegen 
+uid=1187 oder uid=1189 auszutauschen. Das Ausspionieren von Kundendaten ist nicht gerade selten 
+und potentiell gef&auml;hrlich. Und gerade aus diesem Grund sollten Anmeldeprozeduren innerhalb dynamischer 
+Webanwendungen immer so gestaltet sein, da&szlig; eine Manipulation (weitgehend) ausgeschlossen werden kann. 
+</p>
+
+<p>
+Im vorliegenden Beispiel wird im Anmeldeformular die e-Mail-Adresse und ein Passwort abgefragt. 
+Die e-Mail-Adresse ist ebenfalls ein eindeutiger Wert, der sich somit immer als Benutzername eignet.  
+Nach M&ouml;glichkeit sollte clientseitig die Eingabe &uuml;berpr&uuml;ft werden, das hei&szlig;t, ob &uuml;berhaupt ein Wert 
+in den entsprechenden Feldern eingetragen wurde.
+</p>
+
+<p>
+Dann ergibt sich folgender HTML-Code f&uuml;r das Anmeldeformular (anmeldung.asp):
+</p>
+
+<pre style="background='silver';">
+&lt;HTML&gt;
+&lt;HEAD&gt;
+&lt;META NAME="GENERATOR" Content="Microsoft Visual Studio 6.0"&gt;
+&lt;SCRIPT LANGUAGE=javascript&gt;
+&lt;!--
+// Diese Function pr&uuml;ft lediglich, ob ein Wert f&uuml;r 
+// Benutzername und Kennwort eingegeben wurde.
+// Sie ist ggf. an die eigenen Bed&uuml;rfnisse anzupassen.
+function checkit()
+{
+if(document.anmeldung.benutzer.value=='')
+    {
+    alert("Sie m&uuml;ssen einen Benutzernamen eingeben!");
+    document.anmeldung.benutzer.focus();
+    return false;
+    }
+if(document.anmeldung.kennwort.value=='')
+    {
+    alert("Sie m&uuml;ssen einen Kennwort eingeben!");
+    document.anmeldung.kennwort.focus();
+    return false;
+    }
+else
+    {
+    document.anmeldung.submit();
+    }
+}
+//--&gt;
+&lt;/SCRIPT&gt;
+&lt;/HEAD&gt;
+&lt;BODY&gt;
+&lt;FORM action="" method=POST id=anmeldung name=anmeldung&gt;
+&lt;INPUT type="text" id=benutzer name=benutzer 
+    value="&lt;%=benutzer%&gt;"&gt;
+&lt;INPUT type="password" id=kennwort name=kennwort&gt;
+&lt;INPUT type="button" value="anmelden" id=anmelden 
+    name=anmelden onclick="JavaScript:checkit()"&gt;
+&lt;/FORM&gt;
+&lt;/BODY&gt;
+&lt;/HTML&gt;
+</pre>
+
+<p>
+Nachdem das Formular abgeschickt (hier an sich selbst) wurde, werden dann als erstes 
+die &uuml;bergebenen Werte ermittelt. Anschlie&szlig;end werden die &Uuml;bergabewerte entsprechend ausgewertet. 
+Zu diesem Zweck habe ich eine kleine Funktion erstellt, der beim Aufruf dann der Benutzername, das 
+Kennwort und die ID &uuml;bergeben werden:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Public Function anmeldung(benStr, kennStr, ID)
+...
+End Function
+%&gt;
+</pre>
+
+<p>
+In der Function wird dann erst einmal die
+</p>
+
+<pre style="background='silver';">
+anmeldung = False
+</pre>
+
+<p>
+gesetzt.
+</p>
+
+<p>
+Dann kann die eigentliche Pr&uuml;fung erfolgen:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+sql = "SELECT user_id FROM tblKunden "
+    sql = sql &amp; " WHERE mail ='" &amp; benStr &amp; "' "
+    sql = sql &amp; " AND pwd ='" &amp; kennStr &amp; "';"
+    Set temp = Conn.Execute(sql)
+    If temp.EOF Then	' Benutzerdaten stimmen nicht
+        ErrorTxt = "Ihre Registrierung konnte nicht durchgef&uuml;hrt werden.&lt;br&gt;"
+        ErrorTxt = ErrorTxt &amp; "&Uuml;berpr&uuml;fen Sie Ihre Eingaben noch einmal."
+        anmeldung = False
+    Else    ' Datensatz (login) aktuallisieren
+        sql = "UPDATE tblKunden SET "
+        sql = sql &amp; "login ='" &amp; ID &amp; "' "
+        sql = sql &amp; " WHERE user_id =" &amp; temp(0) &amp; ";"
+        Conn.Execute(sql)
+    anmeldung = True 
+    End If
+%&gt;
+</pre>
+
+<p>
+Hierbei wird als erstes der Benutzer ermittelt und die Eingaben werden mit den gefundenen Ergebnissen in 
+der Datenbank verglichen. Stimmen diese &uuml;berein, dann wird der Datensatz ge&auml;ndert, indem die aktuelle ID 
+(als Sitzungsvariable) zum User-Datensatz hinzugef&uuml;gt wird.  Andernfalls 
+</p>
+
+<pre style="background='silver';">
+&lt;% if temp.EOF then	' kein Datensatz gefunden %&gt;
+</pre>
+
+<p>
+wird das <i>UPDATE</i> auf den Userdatensatz nicht ausgef&uuml;hrt -  der eingangs zugewiesene Wert
+</p>
+
+<pre style="background='silver';">
+&lt;% anmeldung = FALSE %&gt;
+</pre>
+
+<p>
+bleibt erhalten.
+</p>
+
+<p>
+Da der Function "<i>anmeldung</i>" ein boolscher Wert zugewiesen wird, kann dann die Pr&uuml;fung der 
+(erfolgreichen) Anmeldung mit dem Aufruf der Function folgenderma&szlig;en durchgef&uuml;hrt werden:
+</p>
+
+<pre style="background='silver';">
+&lt;% If anmeldung(benutzer, kennwort, ID) Then %&gt;
+</pre>
+
+<p>
+In den nachfolgenden Grafiken wird deutlich, welchen Wert die Function anmeldung jeweils zur&uuml;ckgegeben hat, 
+bzw. zur&uuml;ckgeben kann.
+</p>
+
+<p>
+War der Wert "<i>True</i>", dann konnte dem User z.B. eine Mitteilung ausgegeben werden, da&szlig; die 
+Registrierung erfolgreich ausgef&uuml;hrt wurde.
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010601_5.png" width="538" height="172" alt="" border="0">
+
+<p>
+Ist der R&uuml;ckgabewert der Function "<i>False</i>", dann k&ouml;nnte man z.B. wieder das Anmeldeformular 
+anzeigen. Weiter ginge es dann erst, wenn der Wert "True" zur&uuml;ckgegeben wird.
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010601_6.png" width="538" height="363" alt="" border="0">
+
+<h2>Funktionalit&auml;t bereitstellen</h2>
+
+<p>
+&Uuml;ber eine weitere kleine Funktion kann ich jetzt jederzeit den Anmeldestatus ermitteln, wobei auch hier 
+mir ein boolscher Wert zur&uuml;ckgegeben wird:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Public Function angemeldet(ID)
+    ' &Uuml;berpr&uuml;fung, ob der User angemeldet ist
+    angemeldet = False
+    sql = "SELECT COUNT(user_id) FROM tblKunden WHERE "
+    sql = sql &amp; " login ='" &amp; ID &amp; "' ;"
+    call dbconnect()
+        angemeldet = cbool(Conn.Execute(sql)(0))
+    call dbclose()
+End Function
+%&gt;
+</pre>
+
+<p>
+Lediglich anhand der ID wird gepr&uuml;ft, ob eine Anmeldung erfolgreich durchgef&uuml;hrt wurde. Stimmt die in der 
+URL gef&uuml;hrte ID mit der in der Kundentabelle im Login gef&uuml;hrten ID &uuml;berein, so ist der User angemeldet 
+(angemeldet = <i>True</i>) andernfalls wird angemeldet = <i>False</i> zur&uuml;ck gegeben.
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010601_7.png" width="538" height="175" alt="" border="0">
+
+<p>
+Der Aufruf der Funktion erfolgt &auml;hnlich wie oben die Anmeldepr&uuml;fung:
+</p>
+
+<pre style="background='silver';">
+&lt;% If angemeldet(ID) Then %&gt;
+</pre>
+
+<h2>Zusammenfassung</h2>
+
+<p>
+Durch die doppelte Speicherung der ID kann man erreichen, da&szlig; selbst bei Manipulationen der ID 
+die damit abgesicherten Kundendaten gesch&uuml;tzt bleiben. Mir ist es bislang noch nicht untergekommen, 
+da&szlig; ein User es geschafft h&auml;tte, fremde Benutzerdaten auszuspionieren.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Sicherlich kann man die hier vorgestellte Funktionalit&auml;t in der einen oder anderen Art erweitern bzw. 
+den eigenen Bed&uuml;rfnissen anpassen. So k&ouml;nnte man die ganze Prozedur dahin erweitern, da&szlig; man die Vorteile 
+des RemoteScripting nutzt, um Manipulationen in der URL v&ouml;llig auszuschlie&szlig;en. Auch die Erzeugung der ID 
+k&ouml;nnte z.B. durch Bereitstellung der GUID erfolgen. Doch das bleibt letztlich dem einzelnen selbst 
+&uuml;berlassen. Dieser hier genannte L&ouml;sungsansatz soll in erster Linie eine Anregung darstellen, 
+ASP-Anwendungen im Hinblick auf kundenspezifische Daten sicher zu gestalten  - auch ohne Cookies.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010601.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010601.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010528.htm">Aber bitte mit Rijndael</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010528.htm</span><br>
+<a href="../artikel/20020429.htm">Benutzerverwaltung leicht gemacht: Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020429.htm</span><br>
+<a href="../artikel/20000531.htm">Generieren eines sicheren Pa&szlig;wortes</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000531.htm</span><br>
+<a href="../artikel/20010628.htm">Onlinestatus des Users &uuml;ber RemoteScripting ermitteln</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010628.htm</span><br>
+<a href="../artikel/20010330.htm">Passw&ouml;rter mit SHA1 absichern</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010330.htm</span><br>
+<a href="../artikel/20000505.htm">Session Variablen - Verwendung und Stolpersteine</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000505.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

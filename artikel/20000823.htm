@@ -1,0 +1,526 @@
+<HTML>
+<HEAD>
+<TITLE>Die Hashtable Klasse</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor, wie man die Hashtable Klasse in ASP.NET einsetzt. Die Hashtable Klasse funktioniert wie die Dictionary Komponente in ASP.NET, allerdings ist sie deutlich leistungsf&auml;higer.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Hashtable,ICollection,Collection,Dictionary,Hash,Provider,.NET,C#,ASP.NET,System.Collections">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Die Hashtable Klasse</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000823"></SCRIPT>
+</p>
+<p>
+Neben Arrays f&uuml;r Elementzugriff via Index konnte man in VBScript mit Hilfe der Dictionary 
+Komponente den Elementzugriff mittels Schl&uuml;ssels (Key) bewerkstelligen. Obwohl die Komponente
+ihren Zweck erf&uuml;llte, hatte sie einen gro&szlig;en Nachteil - sie war nicht f&uuml;r den Serverbetrieb
+entwickelt worden, und konnte schnell mal einen ASP Server in die Knie zwingen.
+</p>
+<p>
+Mit ASP.NET und dem .NET Framework kommen etliche neue Collection Klassen (diese sind
+freundlicherweise im <i>System.Collections</i> Namespace beheimatet). Unter anderem mit dabei ist
+die <i>Hashtable</i> Klasse, die einige neue (hilfreiche) Funktionen mitbringt, die ich Ihnen
+heute anhand von Beispielen n&auml;herbringen m&ouml;chte.
+</p>
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation des 
+Microsoft .NET Framework SDK's auf einem Webserver. Weiters setze ich voraus, da&szlig; der Leser die 
+Programmiersprache C# zu einem gewissen Grad beherrscht - es finden sich etliche Artikel auf diesem 
+Server, um das notwendige Wissen zu erlernen. 
+</p>
+
+<h2>Bef&uuml;llen und Auslesen</h2>
+<p>
+Starten wir mit den einfachen Dingen des Lebens - dem Bef&uuml;llen eines Hashtables sowie dem
+darauffolgenden Auslesen und Ausgeben der Schl&uuml;ssel/Wert Paare. Der folgende Sourcecode ist
+als Datei <b>dumptable.aspx</b> im Download des heutigen Artikels enthalten.
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Collections&quot; %&gt;
+&lt;%
+Hashtable table = new Hashtable();
+table.Add(&quot;aspgerman@ls.asplists.com&quot;,&quot;AspGerman&quot;);
+table.Add(&quot;aspdedotnet@ls.asplists.com&quot;,&quot;aspDEdotnet&quot;);
+table.Add(&quot;aspdedatabase@ls.asplists.com&quot;,&quot;aspDEdatabase&quot;);
+table.Add(&quot;aspdebeginners@ls.asplists.com&quot;,&quot;aspDEbeginners&quot;);
+
+Response.Write(&quot;&lt;table&gt;&lt;tr&gt;&lt;th&gt;Key&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;/tr&gt;&quot;);
+foreach (DictionaryEntry de in table)
+{
+	Response.Write(&quot;&lt;tr&gt;&lt;td&gt;&quot; + de.Key + 
+	   &quot;&lt;/td&gt;&lt;td&gt;&quot; + de.Value + 
+	   &quot;&lt;/td&gt;&lt;/tr&gt;&quot;);
+}
+Response.Write(&quot;&lt;/table&gt;&quot;);
+%&gt;
+</pre>
+
+<p>
+Zuerst importiere ich den <i>System.Collections</i> Namespace um die <i>Hashtable</i> Klasse verwenden zu k&ouml;nnen.
+In der ersten Zeile des tats&auml;chlichen Codes erzeuge ich eine Instanz der Klasse, und beginne danach
+den Hashtable mit Schl&uuml;ssel/Wert Paaren aufzuf&uuml;llen. Insgesamt speichere ich vier Eintr&auml;ge vom Typ
+<i>String</i>, allerdings nehmen alle Funktionen der Hashtable Klasse den Typ <i>object</i> entgegen - also man
+kann wirklich alles darin speichern.
+</p>
+<p>
+Das Auslesen funktioniert &uuml;ber das <i>ICollection</i> Interface der Hashtable Klasse. F&uuml;r jeden Eintrag
+bekomme ich eine <i>DictionaryEntry</i> Struktur geliefert, die zwei Eigenschaften f&uuml;r mich bereitstellt:
+<i>Key</i> und <i>Value</i>. Das reicht mir, um eine sch&ouml;ne Tabelle auszugeben.
+</p>
+<p>
+Es hei&szlig;t ja, da&szlig; viele Wege nach Rom f&uuml;hren. Stimmt. Also mu&szlig; es auch einen anderen Weg geben,
+um den Inhalt des Hashtables auszugeben. Dieser ist zwar etwas "steiniger", aber manchmal vielleicht
+sogar leistungsf&auml;higer (<b>dumptableviacoll.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Collections&quot; %&gt;
+&lt;%
+Hashtable table = new Hashtable();
+// bef&uuml;llen des hash tables - exkludiert
+
+ICollection iKeys = table.Keys;
+
+object[] arrValues = new object[table.Values.Count];
+table.Values.CopyTo(arrValues,0);
+
+int nElement = 0;
+Response.Write(&quot;&lt;table&gt;&lt;tr&gt;&lt;th&gt;Key&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;/tr&gt;&quot;);
+foreach(object theKey in iKeys)
+{
+	Response.Write(&quot;&lt;tr&gt;&lt;td&gt;&quot; + theKey + 
+	     &quot;&lt;/td&gt;&lt;td&gt;&quot; + arrValues[nElement++] + 
+		 &quot;&lt;/td&gt;&lt;/tr&gt;&quot;);
+}
+Response.Write(&quot;&lt;/table&gt;&quot;);
+%&gt;
+</pre>
+
+<p>
+Den Code f&uuml;r das Bef&uuml;llen habe ich in diesem Listing ausgelassen (ebenso in den folgenden, um 
+die &Uuml;bersichtlichkeit zu erh&ouml;hen). Das Hauptaugenmerk m&ouml;chte ich auf die Eigenschaften
+<i>Keys</i> und <i>Values</i> der Hashtable Klasse legen, welche mir beide ein ICollection Interface liefern,
+&uuml;ber das ich <i>object</i> Daten auslesen kann.
+</p>
+<p>
+Mit einer ICollection kann ich das foreach Statement ja locker verwenden, allerdings was ist, wenn
+ich 2 Collections gleichzeitig auslesen mu&szlig;? So einfach geht das dann nicht mehr.
+</p>
+<p>
+Es sind zwar beide Collections nicht sortiert, aber die zugeh&ouml;rigen Schl&uuml;ssel und Werte sind 
+immer an den gleichen Positionen. Und wenn ich eine Collection in ein Array umwandle, dann kann
+ich mir ja zum aktuellen Element der einen Collection das dazupassende aus dem Array der anderen
+holen. Und genau das macht mein Sourcecode (Kurzversion):
+</p>
+
+<pre style="background='silver';">
+ICollection iKeys = table.Keys;
+object[] arrValues = new object[table.Values.Count];
+table.Values.CopyTo(arrValues,0);
+
+int nElement = 0;
+foreach(object theKey in iKeys)
+{
+	Response.Write(theKey)
+	Response.Write(arrValues[nElement]);
+	nElement++;
+}
+</pre>
+
+<p>
+Die <i>CopyTo</i> Methode erwartet ein Array sowie den Index, ab dem aus der Collection kopiert werden
+soll. Ab dann ist es "nur" mehr ein etwas verwinkelter Code, aber mit dem Dictionary unter
+ASP mu&szlig;te man &auml;hnlich tricksen. Apropos: ich h&auml;tte auch beide Collections in Arrays umwandeln
+k&ouml;nnen, allerdings w&auml;re dann der Lerneffekt des Koppelns von Collection und Array ausgeblieben.
+</p>
+
+<h2>Suchen im Hashtable</h2>
+<p>
+Das simple Auslesen (aka Dumpen) habe ich jetzt gen&uuml;gend breitgetreten soda&szlig; wir uns nun
+dem Suchen von Werten in einem Hashtable widmen k&ouml;nnen. Das Besondere an Dictionaries bzw
+der Hashtable Klasse ist ja der, da&szlig; die Schl&uuml;ssel durch einen Hash repr&auml;sentiert werden, der
+extrem schnell auffindbar ist. Und genau das machen sich die nun vorgestellten Methoden
+zu Nutze (<b>lookups.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Collections&quot; %&gt;
+&lt;%
+Hashtable table = new Hashtable();
+// bef&uuml;llen des hash tables - exkludiert
+
+// Anzahl der Element in der Collection
+int nElementCount = table.Count;
+
+// existiert der Schl&uuml;ssel?
+bool bKeyCont = table.ContainsKey(&quot;aspgerman@ls.asplists.com&quot;);
+
+// existiert der Wert?
+bool bValueCont = table.ContainsValue(&quot;aspDEdotnet&quot;);
+
+// Element korrekt suchen
+if (true == bKeyCont)
+{
+  Response.Write(table[&quot;aspgerman@ls.asplists.com&quot;].ToString());
+}
+%&gt;
+</pre>
+
+<p>
+Zu Demonstrationszwecken lese ich in diesem Beispiel auch die Anzahl der Elemente aus - 
+mit Hilfe der <i>Count</i> Eigenschaft. Dann geht es aber schon zum Business: die Funktion
+<i>ContainsKey</i> liefert einen boolschen R&uuml;ckgabewert, der angibt, ob ein bestimmter Schl&uuml;ssel
+existiert. Diese Funktion sollte man unbedingt immer dann aufrufen, wenn man ein Element
+auslesen, l&ouml;schen oder updaten m&ouml;chte. Sonst droht eine Exception, falls das Element nicht
+da sein sollte (und sei es nur, weil man ein <i>null</i> Objekt dereferenziert).
+</p>
+<p>
+Eine Funktion, die hin und wieder auch ganz n&uuml;tzlich sein wird, ist <i>ContainsValue</i>. Damit kann
+man nach einem Wert suchen lassen, und anhand des R&uuml;ckgabewerts entscheiden, ob man ein Element
+schon im Hashtable hat oder nicht.
+</p>
+<p>
+Der interessante Part ist aber das Auslesen des Werts:
+<pre style="background='silver';">
+object var = table[key];
+</pre>
+</p>
+<p>
+Man geht einfach mit dem Schl&uuml;sselwert in den <i>Item</i> Indexer der Hashtable Klasse und bekommt den
+Wert oder eine Exception. Mit diesem Indexer kann man sowohl Werte auslesen als auch updaten -
+und damit kommen wir auch schon zur n&auml;chsten Sektion.
+</p>
+
+<h2>Updaten und L&ouml;schen</h2>
+<p>
+&Uuml;blicherweise bef&uuml;llt man eine Collection nicht nur, sondern man m&ouml;chte auch Werte &auml;ndern und
+sogar l&ouml;schen k&ouml;nnen. Das kann die Hashtable Klasse nat&uuml;rlich auch - wie im folgenden 
+Beispiel gezeigt (<b>various.aspx</b>).
+</p>
+<p>
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Collections&quot; %&gt;
+&lt;%
+Hashtable table = new Hashtable();
+// bef&uuml;llen des hash tables - exkludiert
+
+// existiert der Schl&uuml;ssel?
+bool bKeyCont = table.ContainsKey(&quot;aspgerman@ls.asplists.com&quot;);
+
+// Element korrekt updaten
+if (true == bKeyCont)
+{
+  table[&quot;aspgerman@ls.asplists.com&quot;] = &quot;Hot Topics&quot;;
+}
+
+// Element l&ouml;schen; existiert es nicht --&gt; Exception
+table.Remove(&quot;aspgerman@ls.asplists.com&quot;);
+
+// und jetzt l&ouml;schen wir alles
+table.Clear();
+%&gt;
+</pre>
+</p>
+<p>
+Die Methode <i>ContainsKey</i> ist bereits ein alter Bekannter, ebenso wie der Indexer - nur da&szlig; ich
+ihn hier zum &Auml;ndern des Wertes verwende. Ebenso einfach ist die Verwendung der <i>Remove</i> Methode,
+die ein einzelnes Element anhand des Schl&uuml;ssels aus dem Hashtable entfernt. Last but not least 
+bleibt mir die <i>Clear</i> Methode zu erkl&auml;ren: diese l&ouml;scht s&auml;mtliche Elemente aus dem Hashtable.
+</p>
+
+<h2>Ein Blick auf die Konstruktoren</h2>
+<p>
+Eigentlich sollte man Konstruktoren am Anfang erkl&auml;ren, da sie ja als erstes aufgerufen werden,
+wenn man eine Instanz einer Klasse erstellt. Im Falle der Hashtable Komponente sind diese aber
+etwas komplexer, und man wird au&szlig;er dem Standardkonstruktor die anderen im normalen Alltagsgebrauch
+nicht einsetzen - deshalb die Erkl&auml;rung sozusagen als Anhang.
+</p>
+<p>
+Die Hashtable Komponente hat im Moment elf verschiedene Konstruktoren. Die wichtigsten Merkmale
+dieser sind wie folgt:
+<ul>
+	<li>Man kann die anf&auml;ngliche Kapazit&auml;t definieren (um den Speicher besser zu nutzen)
+	<li>Der Load Factor kann definiert werden (balanciert Suchgeschwindigkeit und Speicherkonsumation)
+	<li>Der Hash Code Provider kann gew&auml;hlt werden (die Art und Weise, wie der Hash des Schl&uuml;ssels gerechnet wird)
+	<li>Der Vergleichsprovider kann gew&auml;hlt werden (f&uuml;r Zugriffe auf Elemente)
+	<li>Daten aus Dictionaries k&ouml;nnen &uuml;bernommen werden (aus Datenbankzugriffen, zB)
+</ul>
+</p>
+<p>
+Wie gesagt, diese Konstruktoren sind bei zu erwartender gr&ouml;&szlig;erer Auslastung des Hashtables
+auf alle F&auml;lle einen Blick wert.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Der heutige Artikel hat sich mit den Grundlagen einer der wichtigsten Collections unter dem
+.NET Framework gewidmet: der Hashtable Klasse. Diese wird immer dann zum Einsatz kommen,
+wenn man auf Elemente per Schl&uuml;ssel und nicht per Index zugreifen mu&szlig; - und das m&ouml;glichst
+schnell.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000823.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20020124.htm">Arrays mit Index und Schl&uuml;ssel</a><br>
+<a href="20000926.htm">Collections einmal anders: Stacks und Queues</a><br>
+<a href="20000720.htm">Das foreach Statement</a><br>
+<a href="20000726.htm">Datentypen in C#</a><br>
+<a href="20020401.htm">Debugging in der Tiefe</a><br>
+<a href="20000724.htm">Exception Handling in C#</a><br>
+<a href="20020906.htm">On-the-fly Erstellung von vCard's</a><br>
+<a href="20000731.htm">Verwendung von Arrays in C#</a><br>
+<a href="20000825.htm">WHOIS Abfragen a la .NET</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000823" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Die Hashtable Klasse"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000823.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20000823"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000823.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

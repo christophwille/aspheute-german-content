@@ -1,0 +1,319 @@
+<HTML>
+<HEAD>
+<TITLE>Update und UpdateBatch zum Einf&uuml;gen von Datens&auml;tzen in Datenbanken</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Das Einf&uuml;gen von Daten in Datenbanktabellen ist eine Basisoperation von 
+Webapplikationen mit Datenbankanbindung. In einem ASP Skript hat man die folgenden M&ouml;glichkeiten um einen Datensatz in eine Datenbank zu schreiben...">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Update,UpdateBatch,client-side,Cursor,CursorType,LockType,Locking,Access,SQL Server">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Update und UpdateBatch zum Einf&uuml;gen von Datens&auml;tzen in Datenbanken</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010213"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Das Einf&uuml;gen von Daten in Datenbanktabellen ist eine Basisoperation von 
+Webapplikationen mit Datenbankanbindung. In einem ASP Skript hat man die folgenden M&ouml;glichkeiten
+um einen Datensatz in eine Datenbank zu schreiben:
+</p>
+
+<ul>
+	<li><a href="../artikel/20001107.htm">Einf&uuml;gen eines Datensatzes mit
+	dem INSERT Statement</a>: Dies habe ich bereits in einem fr&uuml;heren Artikel beschrieben.</li>
+	<li>Benutzen der ADO Methoden <i>Update</i> oder <i>UpdateBatch</i>: 
+	Dabei wird eine (leeres) ADO Recordset
+	ge&ouml;ffnet, mittels der <i>AddNew</i> Methode ein neuer Datensatz oder mehrere
+	Datens&auml;tze angef&uuml;gt, und das ge&auml;nderte Recordset dann durch Ausf&uuml;hren 
+	der <i>Update</i> (bzw. <i>UpdateBatch</i>) Methode wieder in die Datenbank geschrieben.</li>
+</ul>
+
+<p>Um einen einzelnen Datensatz in die Datenbank einzuf&uuml;gen, mu&szlig; man anders vorgehen als
+wenn man mehrere Datens&auml;tze gleichzeitig in die Datenbank schreiben will.</p>
+
+<p>Das Einf&uuml;gen eines Datensatzes in die Datenbank wird mittels Aufruf der <i>Update</i> Funktion 
+erreicht. Um mehrere Datens&auml;tze gleichzeitig in die Datenbank zu schreiben benutzt man die 
+<i>UpdateBatch</i> Methode.</p>
+
+<p>Um die <i>Update</i> bzw. <i>UpdateBatch</i> Methoden benutzen zu k&ouml;nnen, mu&szlig; das
+Recordset updatef&auml;hig sein.</p>
+
+<p>Ein updatef&auml;higes Recordset hat die folgende Konfiguration:</p>
+
+<ul>
+	<li>Ein Keyset Cursor: Dazu wird der <i>CursorType</i> des Recordsets vor &Ouml;ffnen 
+	des Recordsets auf <i>adOpenKeyset</i> gesetzt.</li>
+	<li>Optimistic Locking: Dies ist ein Datenbank-Locking, das ein Benutzen der <i>Update</i> bzw.
+	<i>UpdateBatch</i> Methoden erlaubt, dabei wird die <i>LockType</i> Eigenschaft auf
+	<i>adLockOptimistic</i> (f&uuml;r <i>Update</i>) bzw. auf <i>adLockBatchOptimistic</i>
+	(f&uuml;r <i>UpdateBatch</i>) gesetzt.</li>
+</ul>
+
+<p><b>Anmerkung:</b> <i>Datenbank-Locking</i> bedeutet, da&szlig; w&auml;hrend des 
+&Auml;nderns von Datens&auml;tzen bzw. w&auml;hrend dem Einf&uuml;gen oder L&ouml;schen 
+von Datens&auml;tzen in der Datenbank bestimmte Datens&auml;tze der Datenbanktabelle 
+f&uuml;r andere Zugriffe gesperrt werden. 
+Dies hat den Zweck, da&szlig; zum Beispiel nicht ein und der selbe Datensatz von zwei verschiedenen 
+ASP Seiten gleichzeitig ge&auml;ndert werden kann, was in einem nicht-vorhersagbaren Verhalten der
+Datenbank und einen nicht definiertem Zustsand der Datenbanktabelle enden w&uuml;rde.</p>
+
+<p>In den folgenden Unterkapiteln wird das Einf&uuml;gen eines bzw. mehrerer Datens&auml;tz in
+die Northwind Datenbank gezeigt. Die Northwind Datenbank ist eine Beispieldatenbank,
+die mit Access 2000 und SQL Server 7.0 mitgeliefert wird.</p>
+
+
+<h2>Einf&uuml;gen eines einzelnen Datensatzes in die Datenbank</h2>
+
+
+<p>Zum Einf&uuml;gen eines einzelnen Datensatzes stellt man eine Datenbankverbindung zur Datenbank
+her. Dann bereitet man ein <i>Recordset</i> Objekt vor, soda&szlig; es einen Keyset Cursor und 
+Optimistic Locking (<i>LockType</i> = <i>adLockOptimistic</i>) benutzt.</p>
+
+
+<p>Nun &ouml;ffnet man das Recordset und f&uuml;gt mittels <i>AddNew</i> einen neuen Datensatz hinzu.
+Neue Daten f&uuml;r diesen Datensatz kann man einfach in die Felder des Records schreiben.
+Schlie&szlig;lich schreibt man die &Auml;nderungen in die Datenbank, dies geschieht durch Aufruf
+der <i>Update</i> Methode des <i>Recordset</i> Objektes.</p>
+
+
+<p>Hier ist ein Active Server Pages Beispielskript, das den folgenden Datensatz in die Tabelle namens 
+<i>Customers</i> der Access Northwind Datenbank schreibt:</p>
+
+<div align="center"><table>
+<tr>
+	<td><b>CustomerID</b>:</td>
+	<td>'AAAAA'</td>
+</tr>
+<tr>
+	<td><b>CompanyName</b>:</td>
+	<td>Name der Firma</td>
+</tr>
+</table></div>
+
+
+<p>Die Northwind Access Datenbank hat den Namen <i>Northwind.mdb</i> und wird normalerweise mit 
+Access 2000 mitinstalliert.</p>
+
+<p>Das folgende Listing ist unter dem Namen <i>Update_Access.asp</i> im Download zu diesem Artikel
+enthalten.</p>
+
+
+<p><pre style="background='silver';">
+&lt;%
+   Const adOpenKeyset = 1
+   Const adLockOptimistic = 3
+   Const adLockBatchOptimistic = 4
+   Const adUseServer = 2
+   Const adUseClient = 3
+ 
+ <i>  ' Connection String fuer Access Datenbank  </i>
+   strDatebase = "C:\Program Files\Microsoft Office\Office\Samples\Northwind.mdb"       
+   strConnectionString="Provider=Microsoft.Jet.OLEDB.4.0;" &amp; _ 
+     "Data Source=" &amp; strDatebase
+   
+<i>   ' Oeffne Datenbankverbindung</i>
+   Set conn = Server.CreateObject("ADODB.Connection")
+   conn.open strConnectionString
+   
+<i>   ' Definiere SQL Statement fuer leeres Recordset</i>
+   strSQL = "SELECT CustomerID, CompanyName FROM Customers " &amp; _ 
+         "WHERE CustomerID=' '"
+
+   Set rs = Server.CreateObject("ADODB.Recordset")
+<i>   ' Oeffne Recordset:
+   ' CursorType = adOpenKeyset
+   ' LockType = adLockOptimistic
+   ' Cursorlocation = adUseServer (per default)</i>
+   rs.LockType = adLockOptimistic
+   rs.CursorType = adOpenKeyset
+   rs.open strSQL, conn
+   
+<i>   ' Neuen Datensatz hinzufuegen:</i>
+   rs.AddNew
+   rs("CustomerID") = "AAAAA"          
+   rs("CompanyName") = "Name der Firma"  
+   rs.Update
+   
+   rs.Close
+   conn.close
+   
+   Set rs = Nothing
+   Set conn = Nothing
+   
+   Response.Write("Datensatz in Datenbank geschrieben!")
+%&gt;
+</pre></p>
+
+<p>Analog funktioniert auch das Einf&uuml;gen eines Datensatzes in eine SQL Server 7.0 oder 
+SQL Server 2000 Datenbank. Das entsprechende Listing finden Sie unter dem Namen 
+<i>Update_Access.asp</i> im Download.</p>
+
+
+<p>Sie haben gesehen, wie man einen einzelnen Datensatz mittels <i>AddNew</i> und <i>Update</i> in eine 
+Datenbank schreiben kann. Was aber, wenn man mehrere Datens&auml;tze auf einmal in 
+eine Datenbanktabelle zu schreiben hat? Dann benutzt man <i>Addnew</i> und die <i>UpdateBatch</i> 
+Methode (statt der <i>Update</i> Methode), wie in der folgenden Sektion beschrieben.</p>
+
+
+<h2>Einf&uuml;gen mehrerer Datens&auml;tze in die Datenbank</h2>
+
+
+<p>Zum Einf&uuml;gen mehrerer Datens&auml;tze in eine Datenbank sind &auml;hnliche Schritte
+n&ouml;tig, wie beim Einf&uuml;gen eines Datensatzes.</p>
+
+
+<p>Das Recordset mu&szlig; allerdings durch Setzen der <i>LockingType</i> Eigenschaft auf
+<i>adLockBatchOptimistic</i> richtig auf die Verwendung der <i>UpdateBatch</i> Methode 
+vorbereitet werden. Den <i>CursorType</i> kann man wieder auf <i>adOpenKeyset</i>
+setzen.</p>
+
+<p>Da nicht alle Datenbanken das gleichzeitige Einf&uuml;gen mehrerer Datens&auml;tze
+verwalten k&ouml;nnen, mu&szlig; man oft einen client-side Cursor f&uuml;r das <i>Recordset</i>
+Objekt benutzen. Dabei werden die &Auml;nderungen der Datens&auml;tze vom ADO Provider verwaltet,
+bis sie schlie&szlig;lich mittels Aufruf der <i>UpdateBatch</i> Methode in die Datenbank geschrieben 
+werden.</p>
+
+<p>F&uuml;r eine Access 2000 Datenbank ben&ouml;tigt man unbedingt einen client-side Cursor,
+w&auml;hrend die SQL Server 7.0/2000 Datenbank das Einf&uuml;gen mittels <i>UpdateBatch</i> auch bei
+server-side Cursor (der default Cursor) des Recordsets unterst&uuml;tzt.</p>
+
+<p>Das nachfolgende Skript (mit Namen <i>UpdateBatch_Access.asp</i>) zeigt, wie man zwei
+neue Datens&auml;tze in die <i>Customers</i> Tabelle der Northwind Access Datenbank schreibt.</p>
+
+
+<p><pre style="background='silver';">
+&lt;%
+   Const adOpenKeyset = 1
+   Const adLockOptimistic = 3
+   Const adLockBatchOptimistic = 4
+   Const adUseServer = 2
+   Const adUseClient = 3
+ 
+   ' Connection String fuer Access Datenbank  
+   strDatebase = "C:\Program Files\Microsoft Office\Office\Samples\Northwind.mdb"       
+   strConnectionString="Provider=Microsoft.Jet.OLEDB.4.0;" &amp; _ 
+     "Data Source=" &amp; strDatebase
+   
+   ' Oeffne Datenbankverbindung
+   Set conn = Server.CreateObject("ADODB.Connection")
+   conn.open strConnectionString
+   
+   ' Definiere SQL Statement fuer leeres Recordset
+   strSQL = "SELECT CustomerID, CompanyName FROM Customers " &amp; _ 
+         "WHERE CustomerID=' '"
+
+   Set rs = Server.CreateObject("ADODB.Recordset")
+   ' Oeffne Recordset:
+   ' CursorType = adOpenKeyset
+   ' LockType = adLockBatchOptimistic
+   ' Cursorlocation = adUseServer (per default)
+   rs.CursorLocation = adUseClient
+   rs.LockType = adLockBatchOptimistic
+   rs.CursorType = adOpenKeyset
+   rs.open strSQL, conn
+   
+   ' Neue Datensaetze hinzufuegen:
+   rs.AddNew
+   rs("CustomerID") = "AAAAA"          
+   rs("CompanyName") = "Name der Firma"  
+   
+   rs.AddNew
+   rs("CustomerID") = "AAAAB"          
+   rs("CompanyName") = "Another Company"  
+   
+   ' Schreiben der Datensaetze in die Datenbank
+   rs.UpdateBatch
+
+   rs.Close
+   conn.close
+   
+   Set rs = Nothing
+   Set conn = Nothing
+   
+   Response.Write("Datensaetze in Datenbank geschrieben!")
+%&gt;
+</pre></p>
+
+
+<p>Das im Download enthaltene ASP Skript namens <i>UpdateBatch_SQL.asp</i> f&uuml;hrt die selben 
+Aktionen wie das vorhergehende Skript durch, wobei es die zwei Datens&auml;tze in
+die SQL Server 7.0/2000 Northwind Datenbank schreibt.</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>Das Benutzen der Recordset Methoden <i>AddNew</i> und <i>Update</i> (oder <i>UpdateBatch</i>)
+ist etwas komplizierter als das Einf&uuml;gen eines Datensatzes in eine Datenbank mittels 
+SQL INSERT Statement.
+Daf&uuml;r mu&szlig; man sich nicht mehr so genau um die Datentypen der einzelnen
+Felder k&uuml;mmern, da man die Feldwerte einfach den Feldern des Recordsets zuweist.</p>
+
+<p>Wichtig ist, da&szlig; man schon vor oder w&auml;hrend des &Ouml;ffnens des Recordsets
+die Recordset Parameter <i>LockType</i>, <i>CursorType</i> und gegebenenfalls <i>CursorLocation</i>
+auf spezielle Werte setzt, soda&szlig; das erhaltene Recordset updatef&auml;hig wird.</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010213.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010213.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/19990825.htm">ADO und ASP - Datenbanken einmal n&auml;her betrachtet</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990825.htm</span><br>
+<a href="../artikel/20001124.htm">Aktualisieren von Daten mit dem UPDATE Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001124.htm</span><br>
+<a href="../artikel/20001127.htm">Datens&auml;tze mit dem DELETE Statement l&ouml;schen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001127.htm</span><br>
+<a href="../artikel/20001107.htm">Einf&uuml;gen eines Datensatzes mit dem INSERT Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001107.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

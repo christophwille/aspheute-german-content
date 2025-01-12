@@ -1,0 +1,469 @@
+<HTML>
+<HEAD>
+<TITLE>Auslesen von Emails aus einem POP3 Account</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Obwohl es auf den ersten Anschein komisch anmutet Emails via ASP auszulesen, so
+kann es f&uuml;r gewisse automatisierte Vorg&auml;nge doch sehr n&uuml;tzlich werden. Dieser Artikel zeigt, wie es geht.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,POP3,email,Emailserver,SMTP,Postoffice,Mail,Attachment,Auslesen,Komponente,ServerObjects">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Auslesen von Emails aus einem POP3 Account</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/Komponenten.htm">Komponenten</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000810"></SCRIPT>
+</p>
+<P>
+Obwohl es auf den ersten Anschein komisch anmutet Emails via ASP auszulesen, so
+kann es f&uuml;r gewisse automatisierte Vorg&auml;nge doch sehr n&uuml;tzlich werden (als Beispiel
+sei hier ein Web-basiertes Support-System genannt). Allerdings - um Emails auslesen zu k&ouml;nnen,
+braucht man eine Komponente, die das von den meisten Emailservern gesprochene POP3
+(PostOffice Protocol) Protokoll versteht. Mit ASP alleine geht es nicht.
+</P>
+<P>
+Dieser Artikel soll eine Einf&uuml;hrung in die Verwendung von POP3-Komponenten 
+geben, exemplarisch gezeigt an der AspPOP3 Komponente der Firma 
+<A HREF="http://www.serverobjects.com/" target="_blank">ServerObjects</A>. Diese Komponente 
+erlaubt das Auslesen von Emails (inklusive Attachments) von einem beliebigen
+POP3-Server &uuml;ber das Internet.
+</P>
+
+
+<H2>Installation der AspPOP3 Komponente</H2>
+<P>
+Um die Komponente von ASP (oder einem anderen Programm, das ActiveX 
+Komponenten unterst&uuml;tzt) nutzen zu k&ouml;nnen, mu&szlig; die Komponente mit Hilfe des 
+Regsvr32 Tools registriert werden.
+</P>
+<P>
+Dazu verschieben Sie die DLL <I>pop3svg.dll</I> in ein Unterverzeichnis Ihrer Wahl. 
+Danach gehen Sie in die Eingabeaufforderung und &auml;ndern das augenblickliche 
+Verzeichnis in das Unterverzeichnis, das die DLL enth&auml;lt. Rufen Sie nun Regsvr32 
+durch folgenden Befehl auf:
+<PRE style="BACKGROUND: silver">
+regsvr32 pop3svg.dll 
+</PRE>	
+</p>
+<P>
+Nun sollte die Komponente einsatzbereit sein.
+</P>
+<P>
+Wenn Sie auf einem fremden Server hosten, so mu&szlig; der Webmaster f&uuml;r Sie diese 
+Schritte erledigen.
+</P>
+
+
+<H2>Einfaches Auslesen einer Email</h2>
+<P>
+Zuerst will ich Ihnen vorf&uuml;hren, wie einfach es prinzipiell ist, eine Email 
+auszulesen. Dazu m&uuml;ssen Sie nur die folgenden Schritte ausf&uuml;hren:
+<UL>
+	<LI>Erstellen des AspPOP3 Objektes</LI>
+	<LI>Setzen der n&ouml;tigen Eigenschaften des Objektes</LI>
+	<LI>Aufruf der <I>Retrieve</I> Methode um die Email(s) zu lesen</LI>
+</UL>
+</P>
+<P>
+Das folgende kleine Beispiel liest eine Email aus und zeigt die einzelnen Teile 
+der Nachricht an:
+<PRE style="BACKGROUND: silver">
+&lt;%
+Set Mailer = Server.CreateObject("POP3svg.Mailer")
+Mailer.RemoteHost = "mail.domain.com"
+Mailer.UserName   = "Benutzername"
+Mailer.Password   = "Passwort"
+
+
+' Verbindung zum Server oeffnen
+Mailer.OpenPop3
+
+' Die Anzahl der Nachrichten pruefen:
+If Mailer.MessageCount &gt; 0 Then
+   ' erste Email auslesen:
+   Mailer.Retrieve 1
+
+   'Die einzelnen Teile der Nachricht auslesen:
+   strM = "Date: " &amp; Mailer.Date &amp; vbcrlf &amp; _
+   "Subject: " &amp; Mailer.Subject &amp; vbcrlf &amp; _
+   "From: " &amp; Mailer.FromName &amp; _
+   Mailer.FromAddress &amp; vbcrlf &amp; vbcrlf &amp; _
+   Mailer.BodyText &amp; vbcrlf
+End If
+
+strM = Server.HTMLEncode(strM)
+Response.Write(Replace(strM,vbcrlf,"&lt;BR&gt;" &amp; vbcrlf))
+%&gt;
+</PRE>	
+</p>
+<P>
+Die Nachricht, die die Methode <I>Retrieve</I> am Server ausliest,
+wird vom Parameter der Methode bestimmt. <I>Retrieve 1</I> liest die erste 
+Nachricht am Mailserver aus. Mit der Eigenschaft <I>MessageCount</I> kann
+man bestimmen, wieviele Nachrichten gesamt am Emailserver liegen - und somit
+den h&ouml;chsten Index ermitteln, der f&uuml;r die <i>Retrieve</i> Methode noch zul&auml;ssig ist.
+</P>
+<P>
+Um einen &Uuml;berblick &uuml;ber alle Nachrichten im Account zu geben, ist es 
+sinnvoll, nur Datum, Absender und Betreff (Subject) auszulesen und anzuzeigen. 
+Danach l&auml;&szlig;t man den Benutzer w&auml;hlen, welche Email er vollst&auml;ndig auslesen will. 
+Das folgende Script zeigt, wie man diesen Vorgang in ASP implementieren 
+kann:
+<PRE style="BACKGROUND: silver">
+&lt;%
+Set Mailer = Server.CreateObject("POP3svg.Mailer")
+Mailer.RemoteHost = "mail.domain.com"
+Mailer.UserName   = "Benutzername"
+Mailer.Password   = "Passwort"
+
+' Verbindung zum Server oeffnen
+Mailer.OpenPop3
+
+self = Request.ServerVariables("SCRIPT_NAME")
+id = Request.QueryString("Id")
+
+If id &lt;&gt; 0 Then
+   ' Spezifische Nachricht anzeigen
+   Mailer.Retrieve id
+   Response.Write("Datum: ")
+   Response.Write(Server.HTMLEncode(Mailer.Date) &amp; "&lt;BR&gt;")
+   Response.Write("Absender: ")
+   strAbsender = Mailer.FromAddress &amp; " " &amp;Mailer.FromName
+   Response.Write(Server.HTMLEncode(strAbsender) &amp; "&lt;BR&gt;")
+   Response.Write("CC: ")
+   strCC = Mailer.CC
+   Response.Write(Server.HTMLEncode(strCC) &amp; "&lt;BR&gt;")
+   ' Text:
+   Response.Write("&lt;BR&gt;&lt;BR&gt;")
+   strText = Server.HTMLEncode(Mailer.BodyText)
+   strText = Replace(strText,vbcrlf,"&lt;BR&gt;" &amp; vbcrlf)
+   Response.Write(strText)
+
+Else
+   ' Email Ueberblick anzeigen
+   Response.Write("&lt;TABLE&gt;" &amp; vbcrlf)
+   Response.Write("  &lt;TR&gt;" &amp; vbcrlf)
+   Response.Write("    &lt;TH&gt;" &amp; vbcrlf)
+   Response.Write("Datum")
+   Response.Write("    &lt;/TH&gt;" &amp; vbcrlf)
+   Response.Write("    &lt;TH&gt;" &amp; vbcrlf)
+   Response.Write("Absender")
+   Response.Write("    &lt;/TH&gt;" &amp; vbcrlf)
+   Response.Write("    &lt;TH&gt;" &amp; vbcrlf)
+   Response.Write("Betreff")
+   Response.Write("    &lt;/TH&gt;" &amp; vbcrlf)
+   Response.Write("    &lt;TH&gt;" &amp; vbcrlf)
+   Response.Write(" ")
+   Response.Write("    &lt;/TH&gt;" &amp; vbcrlf)
+   Response.Write("  &lt;/TR&gt;" &amp; vbcrlf)
+
+   For intI = 1 to Mailer.MessageCount 
+      Mailer.Retrieve intI
+      Response.Write("  &lt;TR&gt;" &amp; vbcrlf)
+      Response.Write("    &lt;TD&gt;" &amp; vbcrlf)
+      Response.Write(Server.HTMLEncode(Mailer.Date))
+      Response.Write("    &lt;/TD&gt;" &amp; vbcrlf)
+      Response.Write("    &lt;TD&gt;" &amp; vbcrlf)
+      Response.Write(Server.HTMLEncode(Mailer.FromAddress))
+      Response.Write("    &lt;/TD&gt;" &amp; vbcrlf)
+      Response.Write("    &lt;TD&gt;" &amp; vbcrlf)
+      Response.Write(Server.HTMLEncode(Mailer.Subject))
+      Response.Write("    &lt;/TD&gt;" &amp; vbcrlf)
+      Response.Write("    &lt;TD&gt;" &amp; vbcrlf)
+      Response.Write("&lt;A HREF=""" &amp; self &amp; "?id=" &amp; intI)
+      Response.Write("""&gt;Nachricht lesen&lt;/A&gt;" &amp; vbcrlf)
+      Response.Write("    &lt;/TD&gt;" &amp; vbcrlf)
+      Response.Write("  &lt;/TR&gt;" &amp; vbcrlf)
+   Next
+   
+   Response.Write("&lt;/TABLE&gt;")
+End If
+
+
+Mailer.ClosePop3
+Set Mailer = Nothing
+%&gt;
+</PRE>	
+</p>
+<P>
+Dieses ASP Script zeigt einen &Uuml;berblick &uuml;ber alle Emails, indem es Datum, Absender und 
+Betreff (Subject) jeder Email anzeigt (Else-Zweig des If-Konstrukts). 
+Will man eine spezifische Nachricht lesen, so klickt man im &Uuml;berblick auf 
+"Nachricht lesen" neben den Headern der Nachricht. Dadurch ruft man das Script 
+noch einmal auf, wobei die aufgerufene URL im QueryString die Nachrichten ID 
+enth&auml;lt.
+</P>
+<P>
+Bei jedem Aufruf des Scripts wird nun gepr&uuml;ft, ob sich eine Nachrichten-ID im 
+Querystring befindet. Dies geschieht durch Auslesen von 
+<I>Request.QueryString("id")</I> und Speichern des Wertes in der Variablen id. 
+Die entsprechende Nachricht wird dann durch <I>Retrieve id</I> vom POP3
+Server ausgelesen und der vollst&auml;ndige Inhalt angezeigt.
+</P>
+<P>
+Eine kleine Mahnung zur Vorsicht: Wenn sich sehr viele Emails auf dem Email-
+Account befinden, so kann das Auslesen aller Emails sehr lange dauern. Besser 
+ist es, nur eine bestimmte Anzahl von Emails auszulesen und dem Benutzer zu 
+pr&auml;sentieren. Dies gilt auch, wenn man eigentlich nur den Absender und den 
+Betreff der Emails anzeigen will.
+</P>
+
+
+<H2>Schlu&szlig;bemerkung</H2>
+<P>
+Neben dem Auslesen des Emailtextes und anderer einfacher Emaileigenschaften bietet die 
+AspPOP3 Komponente noch andere M&ouml;glichkeiten. So kann man Attachments auslesen und am 
+Webserver speichern, oder Nachrichten vom POP3-Server l&ouml;schen. Ein vollst&auml;ndiges
+Online-Emailmanagement in ASP ist damit in greifbarer N&auml;he.
+</P>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000810.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20021028.htm">ACT MetaMailer - Mails verschicken leicht gemacht</a><br>
+<a href="20010625.htm">Html Emails mit Dundas Mailer verschicken</a><br>
+<a href="20000912.htm">Mit PGP verschl&uuml;sselte e-Mails senden</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eserverobjects%2Ecom%2Fproducts%2Ehtm%23asppop3">AspPOP3 Komponente</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000810" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Auslesen von Emails aus einem POP3 Account"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000810.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Koller"><input type="hidden" name="AuthorEmail" value="christiank@aspexpert.com"><input type="hidden" name="Artikel" value="20000810"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000810.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

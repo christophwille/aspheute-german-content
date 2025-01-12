@@ -1,0 +1,282 @@
+<HTML>
+<HEAD>
+<TITLE>Crystal Reports mit DataSets bef&uuml;llen - Teil 1</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Nicht immer ist es optimal, einen Report direkt aus einer Datenbank zu bef&uuml;llen. Man w&uuml;nscht sich, Daten kurz vor dem Anzeigen noch zu manipulieren. Diese Artikelserie zeigt wie.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Crystal,Crystal Reports,CrystalReportViewer,Report,DataSet,ADO.NET,disconnected,in-memory,Performance,Geschwindigkeit,Design">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Crystal Reports mit DataSets bef&uuml;llen - Teil 1</H1>
+<p>
+Geschrieben von: <a href="../autoren/rudolfball.htm">Rudolf Ball</a><br>
+Kategorie: <a href="../kategorien/ADOdotNET.htm">ADO.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20030402"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Nicht immer ist es optimal, einen Report direkt aus einer Datenbank zu bef&uuml;llen. Man w&uuml;nscht sich, Daten kurz vor dem 
+Anzeigen noch zu manipulieren. Ob es sich nun um das Hinzuf&uuml;gen von Werten oder korrektes Runden handelt, in jedem Fall 
+ist das Unterlegen eines DataSets hinter Crystal Reports eine gelungene Alternative. Anhand eines durchg&auml;ngigen Beispiels 
+werden die Vorteile von DataSets und XML Schemas aufgezeigt.
+</p>
+<p>
+DataSets bieten sich als Quelle f&uuml;r den Inhalt eines Reports an, da sie von der Datenbank disconnected sind. Doch es ist 
+ein wenig knifflig, dieses DataSet hinter den Report zu schieben. Dies wird Ihnen anhand dieses Beispiels n&auml;hergebracht: 
+Es wird eine Kochrezeptdatenbank angelegt, und auf einer Website k&ouml;nnen Sie das zu kochende Gericht w&auml;hlen, welches Ihnen 
+als Report angezeigt wird.
+</p>
+
+<h2>System&uuml;berblick</h2>
+
+<IMG SRC="/artikel/Bilder/200304/20030402_1.png" width="621" height="308" alt="" border="0">
+
+<p>
+Auf der Seite Default.aspx haben wir die M&ouml;glichkeit, ein Rezept unserer Wahl auszuw&auml;hlen. Es wird die Seite Report.aspx 
+aufgerufen, welche einen <i>CrystalReportViewer</i> enth&auml;lt - dieser referenziert auf einen Report. Es wird eine Verbindung zu 
+einem SQL Server erzeugt, welcher ein DataSet zur&uuml;ckliefert. Bevor wir dieses DataSet hinter den Crystal Report legen, 
+manipulieren wir den Inhalt noch ein wenig.
+</p>
+<p>
+Ein Ziel des Beispiels war es, eine Master-Detail Beziehung im Report korrekt darzustellen. In unserem Fall handelt es sich um 
+die Beziehung "Rezept hat Zutaten". Das Datenbankdiagramm sieht wie folgt aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200304/20030402_2.png" width="362" height="268" alt="" border="0">
+
+<h2>Default.aspx</h2>
+<p>
+Die Seite Default.aspx enth&auml;lt eine Dropdownliste, welche die Rezepte anzeigt:
+</p>
+
+<IMG SRC="/artikel/Bilder/200304/20030402_3.png" width="533" height="276" alt="" border="0">
+
+<p>
+Als DataText Eigenschaft setzen wir den Wert "Rezeptname", als DataValue Eigenschaft jedoch die RezeptID, welche bei Klick des 
+"Anzeigen" Buttons als Parameter im Querystring mit&uuml;bergeben wird. Das PageLoad Event der Default.aspx Seite sieht wie folgt 
+aus:
+</p>
+
+<pre style="background='silver';">
+if (!Page.IsPostBack)
+{
+   DataSet4Report myDS4R = new DataSet4Report();
+   ddRezepte.DataSource = myDS4R.Rezepte();
+   ddRezepte.DataTextField = "Rezeptname";
+   ddRezepte.DataValueField = "RezeptID";
+   ddRezepte.DataBind();
+}
+</pre>
+
+<p>
+Als erstes fangen wir das PostBack Event ab. Nach Erzeugung eines neuen DataSet4Report Objekts (siehe n&auml;chste Sektion) weisen 
+wir den R&uuml;ckgabewert der Methode Rezepte(), ein DataReader, der Dropdownliste zu.
+</p>
+
+<h2>Die DataSet4Report Klasse</h2>
+<p>
+Um die Daten aus der Datenbank zu bekommen ben&ouml;tigen wir eine Datenklasse (<b>DataSet4Report.cs</b>). Wir werden exemplarisch die 
+Methode Kochrezept beschreiben, welche ein DataSet mit zwei Tabellen, Rezept und Zutaten, zur&uuml;ckliefert.
+</p>
+
+<pre style="background='silver';">
+public DataSet Kochrezept(int RezeptID)
+{
+   DataSet dsKochrezept = null;
+   SqlConnection mySqlConnection = null;
+   SqlCommand myCommand = null;		
+   SqlDataAdapter myDA = null;
+   DataRelation myDR = null;
+   DataColumn columnMaster = null;
+   DataColumn columnDetail = null;
+</pre>
+
+<p>
+Gleich am Anfang dieser Methode definieren wir alle Variablen, die wir sp&auml;ter noch ben&ouml;tigen. Die zwei DataColumns columnMaster 
+und columnDetail werden uns in der Relation myDR die Verbindung zwischen den zwei Tabellen (1:n) definieren.
+</p>
+
+<pre style="background='silver';">
+try
+{
+   dsKochrezept = new DataSet("Kochrezept");
+   mySqlConnection = new SqlConnection(connectionString);
+   string query = "SELECT * FROM Rezept WHERE RezeptID='" + RezeptID.ToString() + "';";
+   mySqlConnection.Open();
+   myCommand = new SqlCommand(query, mySqlConnection);
+   myDA = new SqlDataAdapter (myCommand);
+   myDA.Fill(dsKochrezept, "Rezept");
+   query = "SELECT * FROM Zutaten WHERE RezeptID='" + RezeptID.ToString() + "';";
+   myCommand = new SqlCommand(query, mySqlConnection);
+   myDA.SelectCommand = myCommand;
+   myDA.Fill(dsKochrezept, "Zutaten");
+   mySqlConnection.Close();
+</pre>
+
+<p>
+Nachdem wir das DataSet "Kochrezept" initialisiert haben, erzeugen wir eine SqlConnection zur Datenbank. Das dynamisch 
+erzeugte Command wird gegen die Datenbank abgesetzt. Ein DataAdapter erzeugt und f&uuml;llt die Tabelle "Rezept" in das DataSet. 
+Dieser Vorgang wird f&uuml;r die Tabelle "Zutaten" wiederholt. Da wir die Datenbankverbindung nun nicht mehr ben&ouml;tigen, schlie&szlig;en 
+wie sie.
+</p>
+
+<pre style="background='silver';">
+   columnMaster = dsKochrezept.Tables["Rezept"].Columns["RezeptID"];
+   columnDetail = dsKochrezept.Tables["Zutaten"].Columns["RezeptID"];
+   myDR = new DataRelation("RezeptZutaten", columnMaster, columnDetail);
+   dsKochrezept.Relations.Add(myDR);
+   return dsKochrezept;
+}
+catch (Exception ex)
+{
+   throw ex;
+}
+</pre>
+
+<p>
+Nun m&ouml;chten wir die Relation zwischen den Tabellen darstellen. Aus diesem Grund m&uuml;ssen wir die Schl&uuml;sselspalten (RezeptID) 
+definieren. Diese werden columnMaster und columnDetail bezeichnet. Auch die Relation wird dem DataSet "Kochrezept" hinzugef&uuml;gt, 
+welches wir retournieren. Die zweite Methode der Klasse DataSet4Report.cs namens "Rezepte" liefert als R&uuml;ckgabewert 
+einen DataReader mit der gesamten Tabelle "Rezept".
+</p>
+
+<h2>Report.aspx</h2>
+<p>
+Nachdem wir auf der Seite Default.aspx den Button "anzeigen" geklickt haben, werden wir auf die Seite Report.aspx gelinkt. 
+Diese Seite beinhaltet einen CrystalReportViewer, welcher per "Drag and Drop" von der Toolbox auf die Designansicht der 
+Seite gezogen werden kann.
+</p>
+
+<IMG SRC="/artikel/Bilder/200304/20030402_4.png" width="332" height="289" alt="" border="0">
+
+<p>
+Das PageLoad Event von Report.aspx sieht wie folgt aus:
+</p>
+
+<pre style="background='silver';">
+private void Page_Load(object sender, System.EventArgs e)
+{
+   try
+   {
+      this.RezeptID = Int32.Parse(Request.Params["RezeptID"]);
+   }
+   catch
+   {
+      Response.Redirect("default.aspx");
+   }
+}
+</pre>
+
+<p>
+Hier wird nur der Parameter RezeptID aus der URL ausgelesen und der privaten Eigenschaft RezeptID zugewiesen. Sollte jedoch 
+keine Zahl &uuml;bergeben werden wird eine Exception ausgel&ouml;st, der "catch" Abschnitt des "try" Blocks aufgerufen und auf die 
+Startseite default.aspx redirected. Als n&auml;chstes m&uuml;ssen wir den Load-Event des Reports implementieren. Diesen erzeugen wir 
+am einfachsten &uuml;ber die Eigenschaften des ReportViewers, wie folgendes Bild zeigt:
+</p>
+
+<IMG SRC="/artikel/Bilder/200304/20030402_5.png" width="332" height="349" alt="" border="0">
+
+<pre style="background='silver';">
+private void OnViewerLoad(object sender, System.EventArgs e)
+{
+   RezeptReport myReport = new RezeptReport();
+   DataSet4Report myDS4R = new DataSet4Report();
+   DataSet ReportSet = myDS4R.Kochrezept(this.RezeptID);
+</pre>
+
+<p>
+Hier wird eine neue Instanz unseres Reports "RezeptReport" sowie eine neue Instanz unserer Datenklasse erstellt. Ein DataSet 
+namens ReportSet wird mit Hilfe der Methode Kochrezept gef&uuml;llt. Da wir aber nicht das DataSet pur &uuml;bernehmen wollen, sondern 
+eine Manipulation vornehmen werden, f&uuml;gen wir im folgenden Code daf&uuml;r hinzu.
+</p>
+
+<pre style="background='silver';">
+   DataRow myNewRow = ReportSet.Tables["Zutaten"].NewRow();
+   myNewRow["RezeptID"] = this.RezeptID.ToString();
+   myNewRow["Zutat"] = "Gesamtkosten";
+   double kosten = 0;
+   foreach (DataRow x in ReportSet.Tables["Zutaten"].Rows)
+   {
+      kosten = kosten + double.Parse(x["Kosten"].ToString());
+   }
+   myNewRow["Kosten"] = kosten.ToString();
+   ReportSet.Tables["Zutaten"].Rows.Add(myNewRow);
+</pre>
+
+<p>
+Wir f&uuml;llen die Spalte "RezeptID", "Zutat" und "Kosten". Um die Gesamtkosten zu errechnen, durchlaufen wir das DataSet mit 
+einer foreach-Schleife und addieren die Einzelkosten der Zutaten. Am Schlu&szlig; f&uuml;gen wir die neue Reihe der DataSet Tabelle 
+"Zutaten" hinzu. Jetzt m&uuml;ssen wir nur noch das DataSet hinter den Report klemmen.
+</p>
+
+<pre style="background='silver';">
+   myReport.SetDataSource(ReportSet);
+   this.CrystalReportViewer1.ReportSource = myReport;
+}
+</pre>
+
+<p>
+Dem Report myReport wird als Datenquelle das DataSet zugewiesen, dem ReportViewer der Report. 
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Wie dieser Report erstellt wurde, sehen Sie in Teil 2 dieser Artikelserie. Bis dahin viel Spa&szlig; beim "Nachkochen" der heute
+vorgestellten Rezepte!
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20030403.htm">Crystal Reports mit DataSets bef&uuml;llen - Teil 2</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20030403.htm</span><br>
+<a href="../artikel/20001102.htm">Datenbankzugriff mittels ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001102.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

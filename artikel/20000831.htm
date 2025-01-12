@@ -1,0 +1,516 @@
+<HTML>
+<HEAD>
+<TITLE>Unicode und ASP (Einf&uuml;hrung)</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel erkl&auml;rt der Autor die Grundlagen von Unicode, und die grundlegende Verwendung in ASP. Dieser Artikel ist der Beginn einer Serie zu Unicode in Active Server Pages.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Unicode,ANSI,Ascii,CodePage,Character Set,Zeichensatz,Landeseinstellungen,Darstellung,DBCS,Double Byte character set">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Unicode und ASP (Einf&uuml;hrung)</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000831"></SCRIPT>
+</p>
+<p>
+Unicode ist ein weltweiter Zeichensatz-Standard, der die g&auml;ngigsten 
+Buchstaben und Zeichen enth&auml;lt, die weltweit in der  Gesch&auml;ftswelt Verwendung finden.
+Mit Hilfe von Systemen, die Unicode verarbeiten k&ouml;nnen, wird die 
+Erstellung und Verwaltung von Software f&uuml;r verschiedenste Sprachen stark vereinfacht.
+Anstatt f&uuml;r jede Sprache einen eigenen Zeichensatz einsetzen zu m&uuml;&szlig;en,
+erlaubt Unicode das Hantieren von mehrsprachigen Texten allein mit dem Unicode Zeichensatz.
+</p>
+<p>
+Unicode weist jedem Zeichen eine 2 Byte lange Nummer zu (von 0 bis 65535), soda&szlig;
+das Zeichen in der Computerwelt unabh&auml;ngig von Plattform, Programm und Sprache verwendet
+werden kann.
+</p>
+<p>
+Der Unicode Standard ist die Basis f&uuml;r weitere Standards wie XML, JavaScript oder WML.
+Die Entwicklung und Verbreitung des Unicode Standards wird vom 
+<a href="http://www.unicode.org" target="_blank">Unicode-Konsortium</a> betrieben.
+</p>
+<p>
+<i>Was hat nun Unnicode mit ASP zu tun, und wo wird Unicode heute schon auf breiter Basis
+in der Software-Entwicklung eingesetzt?</i>
+</p>
+<p>
+Active Server Pages (ASP) auf IIS 4.0 oder IIS 5.0 arbeitet intern mit Unicode 
+um Zeichen zu speichern und zu verarbeiten.
+Viele weitere Microsoft Produkte arbeiten bereits vollst&auml;ndig mit Unicode,
+oder sind zumindest Unicode kompatibel:
+</p>
+<p>
+<ul>
+	<li>Windows 2000</li>
+	<li>Office 2000 (mit Access 2000)</li>
+	<li>ASP</li>
+	<li>ADO</li>
+	<li>Index Server</li>
+	<li>SQL Server 7.0</li>
+	<li>Internet Explorer 5</li>
+</ul>
+</p>
+<p>
+<i>Wo kommt nun der ASP-Entwickler mit Unicode in Ber&uuml;hrung?</i>
+</p>
+<p>
+Je nach Einstellung des Webservers benutzt die ASP Engine eine
+bestimmte "Codepage". Diese Codepage legt fest, wie der Ascii-Code eines
+Zeichens zu interpretieren ist. Es gibt Codepages f&uuml;r Westeurop&auml;ische Sprachen,
+Griechisch, Kyrillisch, Chinesisch, Japanisch usw.
+</p>
+<p>
+In jedem ASP Script werden Strings in Variablen gespeichert und zum Browser geschrieben. 
+Jedesmal, wenn ASP ein Zeichen zu interpretieren hat, sei es nun, weil es in einer
+Variablen gespeichert wird, oder weil es mittels <i>Response.Write</i> zum 
+Browser geschrieben wird, konvertiert ASP das Zeichen von Unicode zur eingestellten Codepage.
+</p>
+<p>
+Die Codepage kann man unter ASP mittels der <i>@Codepage</i> Direktive oder mittels
+<i>Session.Codepage</i> einstellen.
+</p>
+<p>
+Da&szlig; ASP intern Unicode zum Speichern von Strings verwendet wurde bereits erw&auml;hnt,
+daneben gibt es aber beim Schreiben von ASP-Seiten auch folgende
+Ber&uuml;hrungspunkte mit Unicode-Einstellungen und -Parametern:
+</p>
+<p>
+<ul>
+	<li><i>@CODEPAGE </i>und <i>Session.CodePage</i> : Einstellungen zur Interpretation von 
+	Strings. ASP benutzt diese Einstellungen um die intern gespeicherten Unicode Strings
+	in Ascii Zeichen gem&auml;&szlig; der eingestellten Codepage auszugeben, oder um
+	Zeichen zur internen Speicherung in Unicode umzuwandlen.</li>
+	<li><i>FileSystemObject</i> Objekt: Beim Erstellen und &Ouml;ffnen von Textdateien
+	mittels <i>FileSystemObject</i> kann man zum Beispiel einstellen, ob man Textstreams als 
+	Unicode auslesen will, oder ob man eine Datei als Unicode (anstatt Ansi) auf der
+	Festplatte speichern will.</li>
+	<li><i>ActiveX Data Objects (ADO)</i> erlaubt Zugriff auf Strings die in Datenbanken gespeichert
+	sind. Die Datenbank (Access 2000 oder SQL Server 7.0) kann dabei intern den String,
+	je nach Tabellendefinition, als Ansi-Code oder als Unicode speichern.
+	Mittels der Eigenschaften eines ADO <i>Field</i> Objektes kann man herausfinden,
+	ob ein Datenbankfeld nun Unicode speichert oder nicht. Bei Datenbankafragen mittels
+	SQL Kommando ist es in SQL Server 7.0 n&ouml;tig, die String Werte als Unicode
+	zu kennzeichnen um eine korrekte Verarbeitung der Kommandos zu gew&auml;hrleisten.
+	Das ADO <i>Stream</i> Objekt l&auml;&szlig;t sich konfigurieren um Unicode Daten zu verarbeiten.
+	Weiters kann man unter ADOX Tabellen mit Unicode-Feldern erstellen.</li>
+	<li>Bei der Programmierung von Index Server Abfragen mu&szlig; man darauf achten,
+	da&szlig; man entweder Unicode Zeichen f&uuml;r die Abfrage benutzt, oder
+	den richtigen Zeichensatz in der ASP Seite und dem Indexserver einstellt.</li>
+	<li>Beim Ausgeben von HTML Seiten in bestimmten Sprachen (oder in Unicode) gibt
+	man mittels &lt;META HTTP-EQUIV&gt; Tag die gew&auml;hlte Codepage (auch Unicode) an.</li>
+	<li>Beim Generieren und Schreiben von standardkonformen XML Daten aus ASP mu&szlig;
+	man das XML Dokument als Unicode-Dokument erstellen und zum Client schreiben.</li>
+	<li>Die VBScript Funktionen <i>AscW</i> und <i>ChrW</i> erlauben direkte Manipulation von 
+	Unicode-Zeichen.</li>
+</ul>
+</p>
+<p>
+All dies wird in nachfolgenden Artikeln dieser Artikelreihe <i>Unicode und ASP</i>
+ausf&uuml;hrlich und detailliert erkl&auml;rt werden. Probleme, Bugs und
+Fallen in der Programmierung werden erl&auml;utert und L&ouml;sungen zu
+Aufgabenstellungen pr&auml;sentiert werden.
+</p>
+<p>
+Zum Abschlu&szlig; dieses Artikels m&ouml;chte ich noch mit einem kleinen Beispiel demonstrieren,
+da&szlig; ASP intern Unicode benutzt, und die gespeicherten Daten mittels
+Codepage Einstellung interpretiert:
+</p>
+<p>
+<pre style="background='silver';">
+&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"&gt;
+
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Beispiel&lt;/title&gt;
+&lt;!-- Griechischer Zeichensatz im Browser benutzen - ISO --&gt;  
+&lt;META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-7"&gt;  
+&lt;/head&gt;
+
+&lt;body&gt;
+&lt;%
+' Speichern der Original Codepage
+Session("OriginalCodePage") = Session.CodePage
+
+' Griechische Codepage einstellen
+Session.CodePage = 1253
+
+Response.Write("Codepage = " &amp; Session.Codepage)
+Response.Write("&lt;br&gt;")
+
+strA = Chr(&amp;HC1) &amp; _
+  Chr(&amp;HD3) &amp; _
+  Chr(&amp;HD0)
+  
+Response.Write(strA &amp; "&lt;br&gt;")
+
+Response.Write("Asc Werte(Ansi): &lt;br&gt;")
+For intI = 1 to Len(strA)
+  Response.Write(Asc(Mid(strA,intI,1)) &amp; " ")
+Next
+Response.Write("&lt;br&gt;&lt;br&gt;")
+
+Response.Write("AscW Werte (Unicode): &lt;br&gt;")
+For intI = 1 to Len(strA)
+  Response.Write(AscW(Mid(strA,intI,1)) &amp; " ")
+Next
+Response.Write("&lt;br&gt;&lt;br&gt;&lt;br&gt;")
+
+' Westeuropaeische Codepage: 
+' Verschiebt Interpretation des Unicodes
+Session.CodePage = 1252
+
+Response.Write("Codepage = " &amp; Session.Codepage)
+Response.Write("&lt;br&gt;")
+
+Response.Write(strA &amp; "&lt;br&gt;")
+
+Response.Write("Asc Werte(Ansi): &lt;br&gt;")
+For intI = 1 to Len(strA)
+  Response.Write(Asc(Mid(strA,intI,1)) &amp; " ")
+Next
+Response.Write("&lt;br&gt;&lt;br&gt;")
+
+Response.Write("AscW Werte (Unicode): &lt;br&gt;")
+For intI = 1 to Len(strA)
+  Response.Write(AscW(Mid(strA,intI,1)) &amp; " ")
+Next
+Response.Write("&lt;br&gt;&lt;br&gt;")
+
+Response.Write("Darstellung mittles HTML-Syntax &amp;amp#xxx; :&lt;br&gt;")
+For intI = 1 to Len(strA)
+  Response.Write("&amp;#" &amp; AscW(Mid(strA,intI,1)) &amp; ";")
+Next
+
+%&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+
+&lt;%
+' Zuruecksetzen der Codepage Einstellungen
+Session.CodePage =  Session("OriginalCodePage")
+%&gt;
+</pre>
+</p>
+<p>
+Die Ausgabe des Scripts im Browser ist im folgenden Screenshot gezeigt:
+</p>
+<p><IMG SRC="Bilder/200008/20000831_01.png" width=313 height=385 alt="" border="0"></p>
+<p>
+Nun aber zur Analyse des Sourcecodes.
+Der META HTTP-EQUIV Code zeigt dem Browser an, den HTML Inhalt mit dem Griechischen
+Zeichensatz zu interpretieren: 
+</p>
+<p>
+<pre style="background='silver';">
+&lt;META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-7"&gt;  
+</pre>
+</p>
+<p>
+Danach wird der Wert (Integer) der augenblicklichen Codepage aus 
+<i>Session.Codepage</i> ausgelesen und in 
+der Sessionvariablen <i>Session("OriginalCodePage")</i> gespeichert.
+</p>
+<p>
+Die griechische Codepage hat den Wert 1253. Um die griechische Codepage
+f&uuml;r Ein- und Ausgaben des ASP-Skripts einzustellen, wird 
+<i>Session.Codepage</i> der Wert 1253 zugewiesen.
+</p>
+<p>
+Im String strA werden die griechischen Zeichen <i>Alpha</i>, <i>Sigma</i>, <i>Pi</i> 
+als Unicode gespeichert. Dies erreicht man durch Verwendung der <i>ChrW</i> Funktion
+und der entsprechenden Unicodes f&uuml;r die einzelnen Zeichen.
+</p>
+<p>
+Danach wird der String <i>strA</i> zum Browser geschrieben und dort
+als griechische Schrift angezeigt (vorausgesetzt, der Browser stellt
+die griechischen Buchstaben zur Verf&uuml;gung).
+</p>
+<p>
+Die nachfolgenden Schleifen schreiben die 
+ANSI Werte (entsprechend der eingestellten Codepage) und die Unicode Werte 
+des Strings <i>strA</i> zum Browser.
+</p>
+<p>
+Nun stellt das Skript die Codepage 1252 ein, die alle Zeichen der 
+westeurop&auml;ischen Sprachen beinhaltet. Als nun strA zum Browser geschickt wird,
+kann ASP die als Unicode gespeicherten Zeichen nicht richtig als Zeichen der 
+eingestellten Codepage interpretieren (weil griechische Zeichen nicht
+in der westeurop&auml;ischen Codepage vorgesehen sind).
+Das Skript hat versucht, die Zeichen in <i>strA</i> von Unicode
+in die Ansi-Werte zu &uuml;bersetzen, wie die ge&auml;nderten Asc Werte anzeigen.
+Intern speichert ASP den String aber immer noch als den gleichen Unicode,
+wie die unver&auml;nderten Unicode-Werte anzeigen, die die <i>AscW</i> Funktion ausgibt.
+</p>
+<p>
+Zum Schlu&szlig; schreibt das Skript noch die einzelnen Zeichen des Strings
+in der HTML-kodierten Form &amp;#xxx; zum Browser. Dadurch kann man sozusagen
+sowohl die eingestellte Codepage des ASP-Skripts als auch die verwendete
+Codepage des Browsers umgehen!
+</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Unicode wird immer wichtiger, wie seine wachsende Verbreitung in 
+professioneller Software bereits zeigt.
+In ASP-Seiten gibt es einige Ber&uuml;hrungspunkte mit Unicode
+und der jeweiligen Interpretation gem&auml;&szlig; der eingestellten Codepage
+des Webservers bzw. des Browsers.
+</p>
+<p>
+Beim Zugriff von ASP auf andere Datenquellen (wie Dateien, Datenbanken, XML oder Streams)
+ist es unbedingt n&ouml;tig, auch mit Unicode-codierten Daten umgehen zu k&ouml;nnen.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000831.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20001010.htm">Fern&ouml;stliche Formulare / Unicode die Zweite</a><br>
+<a href="20020704.htm">Zahl, Datum und W&auml;hrung korrekt formatiert ausgeben</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eunicode%2Eorg">Unicode.org</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000831" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Unicode und ASP (Einf&uuml;hrung)"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000831.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Koller"><input type="hidden" name="AuthorEmail" value="christiank@aspexpert.com"><input type="hidden" name="Artikel" value="20000831"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000831.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

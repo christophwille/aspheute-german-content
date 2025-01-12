@@ -1,0 +1,246 @@
+<HTML>
+<HEAD>
+<TITLE>Dateien lesen in ASP.NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Heute werden wir uns mit den Inhalten der Dateien besch&auml;ftigen, und zwar wie man Dateien ausliest. Und das sowohl f&uuml;r Textdateien als auch Bin&auml;rdateien.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,FileSystemObject,StreamReader,StreamWriter,BinaryReader,Read,Stream,ToArray,byte,BinaryWrite,OutputStream,ASP.NET">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Dateien lesen in ASP.NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000929"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Im Artikel <a href="../artikel/20000804.htm">Directory Browsing a la .NET</a> haben wir uns
+bereits das erste Mal mit dem <i>System.IO</i> Namespace vertraut gemacht, der uns die Klassen f&uuml;r die
+Dateiverwaltung zur Verf&uuml;gung stellt. Heute werden wir uns mit den Inhalten der Dateien besch&auml;ftigen,
+und zwar wie man Dateien ausliest. Und das sowohl f&uuml;r Textdateien als auch Bin&auml;rdateien - was unter
+ASP mit dem <i>FileSystemObject</i> ja nicht m&ouml;glich war.
+</p>
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation des 
+Microsoft .NET Framework SDK's auf einem Webserver. Weiters setze ich voraus, da&szlig; der Leser die 
+Programmiersprache C# zu einem gewissen Grad beherrscht - es finden sich etliche Artikel auf 
+diesem Server, um das notwendige Wissen zu erlernen 
+</p>
+
+<h2>Auslesen einer Textdatei</h2>
+<p>
+Die h&auml;ufigste Aufgabe ist sicher das Auslesen von Textdateien. Und "innerhalb" dieses Aufgabenbereichs
+gibt es auch noch eine andere H&auml;ufigkeit: das Auslesen von gesamten Zeilen. Der folgende
+Sourcecode (<b>textreader2.aspx</b>) zeigt genau dies, und gibt sich selbst am Browser wieder aus (eine absichtliche
+"Sicherheitsl&uuml;cke").
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.IO&quot; %&gt;
+&lt;%
+StreamReader stmReader = File.OpenText(Server.MapPath(&quot;textreader2.aspx&quot;));
+string strLine;
+
+while (null != (strLine = stmReader.ReadLine()))
+{
+  strLine = Server.HtmlEncode(strLine);
+  Response.Write(strLine +&quot;&lt;br&gt;\r\n&quot;);
+}
+stmReader.Close();
+%&gt;
+</pre>
+
+<p>
+Das Ergebnis sieht wie folgt aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200009/20000929_1.png" width="548" height="392" alt="" border="0">
+
+<p>
+Nun aber zur&uuml;ck zum Sourcecode, um ihn einer genaueren Untersuchung zu unterziehen. Da&szlig; wir den
+<i>System.IO</i> Namespace importieren m&uuml;ssen, ist hoffentlich mittlerweile bei jedem in Fleisch und
+Blut &uuml;bergegangen. Interessanter ist dann auch schon, wie ich an die Datei komme:
+</p>
+
+<pre style="background='silver';">
+StreamReader stmReader = File.OpenText(Server.MapPath(&quot;textreader2.aspx&quot;));
+</pre>
+
+<p>
+Ich bediene mich hier des <i>StreamReader</i> Objekts, welches ein bequemes textuelles Auslesen einer
+Datei erlaubt - ich k&ouml;nnte sogar automatische Zeichensatzkonvertierungen anfordern! An diesen
+StreamReader komme ich &uuml;ber die statische <i>OpenText</i> Methode des <i>File</i> Objekts, welche als Parameter nur
+den absoluten (physikalischen) Pfad der Datei erwartet.
+</p>
+<p>
+Das Auslesen der Zeilen der Datei bewerkstelligt man mit Hilfe der <i>ReadLine</i> Methode und einer
+simplen <i>while</i> Schleife. Die Endbedingung (Dateiende erreicht) ist die, da&szlig; die <i>ReadLine</i> Methode
+<i>null</i> zur&uuml;ckliefert:
+</p>
+
+<pre style="background='silver';">
+while (null != (strLine = stmReader.ReadLine()))
+{
+  strLine = Server.HtmlEncode(strLine);
+  Response.Write(strLine +&quot;&lt;br&gt;\r\n&quot;);
+}
+</pre>
+
+<p>
+Als guter B&uuml;rger schlie&szlig;t man zu guter Letzt noch den verwendeten StreamReader, und das war es 
+dann auch schon.
+</p>
+
+<pre style="background='silver';">
+stmReader.Close();
+</pre>
+
+
+<h2>Auslesen einer Bin&auml;rdatei</h2>
+<p>
+Ich habe es in der Einleitung ja bereits erw&auml;hnt - Bin&auml;rdateien waren mit dem FileSystemObject
+eines der "Geht nicht!" Themen. Bei ASP.NET und .NET ist dem nicht l&auml;nger so, man hat sogar soviel
+Auswahl, da&szlig; ich heute nur auf eine der vielen M&ouml;glichkeiten eingehen m&ouml;chte.
+</p>
+<p>
+Im Beispiel <b>binarydump.aspx</b> lese ich die Bilddatei <i>test.png</i> ein (diese stammt
+original aus dem Artikel <a href="../artikel/20000728.htm">On-the-fly Generierung von Graphiken</a>), 
+und gebe Sie bin&auml;r an den Client mittels <i>Response.BinaryWrite</i> zur&uuml;ck:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.IO&quot; %&gt;
+&lt;%
+string strFile = Server.MapPath("test.png");
+Stream stmRead = File.OpenRead(strFile);
+
+int nBufferSize = 255, nReadBytes = 0, nTotalBytes = 0;
+byte[] arrByte = new byte[nBufferSize];
+
+Response.ClearContent();
+Response.ContentType = &quot;image/png&quot;;
+
+while (0 != (nReadBytes = stmRead.Read(arrByte, 0 , nBufferSize-1)))
+{
+   nTotalBytes += nReadBytes;
+   if (nReadBytes == nBufferSize)
+      Response.BinaryWrite(arrByte);
+   else
+   {
+      byte[] arrCopy = new byte[nReadBytes];
+      Array.Copy(arrByte, 0, arrCopy, 0, nReadBytes);
+      Response.BinaryWrite(arrCopy);
+   }
+}
+
+Response.End();
+%&gt;
+</pre>
+
+<p>
+Da&szlig; es funktioniert hat, beweist der folgende Screenshot:
+</p>
+
+<IMG SRC="/artikel/Bilder/200009/20000929_2.png" width="416" height="238" alt="" border="0">
+
+<p>
+Im Sourcecode m&ouml;chte ich speziell auf den <i>if</i> Block im <i>while</i> Statement eingehen:
+</p>
+
+<pre style="background='silver';">
+   if (nReadBytes == nBufferSize)
+      Response.BinaryWrite(arrByte);
+   else
+   {
+      byte[] arrCopy = new byte[nReadBytes];
+      Array.Copy(arrByte, 0, arrCopy, 0, nReadBytes);
+      Response.BinaryWrite(arrCopy);
+   }
+</pre>
+
+<p>
+Der Grund f&uuml;r diesem Heck-Meck ist der, da&szlig; die <i>BinaryWrite</i> Methode nur ein ganzes Array schicken
+kann, allerdings keine Teile (in der Art: Startindex + Anzahl der zu schickenden Bytes aus dem Array).
+Aus diesem Grund mu&szlig; ich f&uuml;r den letzten Datenblock, der ja (fast) immer kleiner als mein Buffer
+ist, eine Umkopierroutine auf ein Array der richtigen Gr&ouml;&szlig;e einbauen. Es ist zwar nicht "sch&ouml;n", 
+erf&uuml;llt aber den Zweck mehr als ausreichend.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Obwohl ich heute nur jeweils eine von vielen M&ouml;glichkeiten des Dateiauslesens besprochen habe, zeigen
+bereits diese Beispiele, da&szlig; ASP.NET gerade im Hinblick auf das Arbeiten mit Dateien die bessere, neue
+Zukunft ist.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000929.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000929.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010220.htm">Applikationen aus ASP.NET ausf&uuml;hren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010220.htm</span><br>
+<a href="../artikel/20010221.htm">Dateien auslesen mit VB.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010221.htm</span><br>
+<a href="../artikel/20020409.htm">Dateien umbenennen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020409.htm</span><br>
+<a href="../artikel/20000804.htm">Directory Browsing a la .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000804.htm</span><br>
+<a href="../artikel/20021105.htm">Online File Management System mit ASP.NET und C# - Teil 2</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021105.htm</span><br>
+<a href="../artikel/20000728.htm">On-the-fly Generierung von Graphiken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000728.htm</span><br>
+<a href="../artikel/20020225.htm">Thumbnailgenerierung in .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020225.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

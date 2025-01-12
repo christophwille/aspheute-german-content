@@ -1,0 +1,324 @@
+<HTML>
+<HEAD>
+<TITLE>Thumbnails mit ASP generieren</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel soll Ihnen anhand von Beispielen zeigen, wie man Thumbnails mit ASP und der ASPImage Komponente von ServerObjects dynamisch erstellen kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Thumbnail,Vorschaubild,dynamische Bildgenerierung,AspImage,Resizing,Resampling">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Thumbnails mit ASP generieren</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Komponenten.htm">Komponenten</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010212"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wenn man auf einer Webseite Bilder darstellt, z.B. f&uuml;r die Pr&auml;sentation von Produkten, wird man bei 
+steigender Bilderanzahl, nicht alle Bilder 1:1 darstellen, weil sonst die Download-Performance der Seite 
+stark darunter leiden w&uuml;rde. Deshalb erstellt man kleinere, als Vorschau gedachte Bilder - eben Thumbnails.
+Dieser Artikel soll Ihnen anhand von Beispielen zeigen, wie man solche Thumbnails mit ASP und der
+<i><a href="http://www.serverobjects.com/products.htm#aspimage" target="_blank">ASPImage</a></i> 
+Komponente von <a href="http://www.serverobjects.com" target="_blank">ServerObjects</a> dynamisch erstellen kann.
+</p>
+
+<p>
+Einerseits gibt es nat&uuml;rlich Grafikprogramme, mit denen man die Thumbnails erstellen k&ouml;nnte,  
+andererseits k&ouml;nnte man einen Batch-Proze&szlig; &uuml;ber alle Bilder laufen, f&uuml;r den Fall, da&szlig; es das Programm 
+unterst&uuml;tzt.
+Die genannten M&ouml;glichkeiten haben aber Nachteile. Zum einen, da&szlig; bei einer gr&ouml;&szlig;eren Anzahl von Bildern 
+die Offline-Erstellung der einzelnen Thumbnails zunehmend m&uuml;hsam wird. Zum anderen hat man dann doppelt soviel
+Dateien wie vorher, was manchmal zu einem Engpa&szlig; f&uuml;hren kann.
+</p>
+
+<p>
+Bei der Verwendung der Komponente in Zusammenhang mit ASP kann man diese Nachteile elegant und vor allem einfach
+umgehen. Damit kann man einfach von mehreren Bildern Thumbnails erstellen. F&uuml;r den Fall, da&szlig; zuviele Dateien
+erstellt werden w&uuml;rden, kann man nach der Erstellung des Thumbnails durch die Komponente das Bild per
+<i>BinaryWrite</i> direkt zum Client schreiben. Bei Verwendung dieser Methode wird keine Datei auf den
+Webserver geschrieben.
+</p>
+
+<h2>Installation der Komponente</h2>
+
+<p>
+Nach dem Download der <a href="http://www.serverobjects.com/products.htm#aspimage" target="_blank">ASPImage</a> Komponente
+registrieren Sie diese mit <i>regsvr32 aspimage.dll</i> auf dem Web Server - ein Setupprogramm gibt es nicht. Aber
+nichts desto trotz - die Komponente ist einsatzbereit, und wir k&ouml;nnen unsere ASP Scripts schreiben.
+</p>
+
+<h2>Generieren der Thumbnails</h2>
+
+<p>
+Das nun folgende Beispiel erzeugt aus einem vorhandenen Bild (zB vom Kunden upgeloadet) einen Thumbnail und speichert ihn in das angegebene 
+Verzeichnis am Web Server. Da ja logischerweise ein Thumbnail kleiner als das Original ist, m&uuml;ssen wir die
+Abmessungen des Originales verkleinern. Die <i>ASPImage</i> Komponente unterst&uuml;tzt zwei Methoden, die f&uuml;r das
+Verkleinern eines Bildes zust&auml;ndig sind - <i>Resize</i> und <i>ResizeR</i>.
+</p>
+
+<p>
+Die <i>Resize</i> Methode ist dabei die schnellste. Daf&uuml;r mu&szlig; man aber an der Qualit&auml;t des erzeugten Thumbnails
+Abstriche machen. Die andere Methode - <i>ResizeR</i> (Resize mit &quot;Resampling&quot;) - resampled den
+Thumbnail zus&auml;tzlich, was sich in einem deutlichen Qualit&auml;tsunterschied bemerkbar macht. Siehe dazu die 
+folgende beiden Screenshots:
+</p>
+
+
+<table cellpadding="2" cellspacing="5" border="0">
+<tr>
+    <td>
+    <IMG SRC="/artikel/Bilder/200102/20010212_1.png" width="225" height="215" alt="" border="0">
+    </td>
+    <td>
+    <IMG SRC="/artikel/Bilder/200102/20010212_2.png" width="226" height="218" alt="" border="0">   
+    </td>
+</tr>
+<tr>
+    <td>
+    Resizing ohne Resampling
+    </td>
+    <td>
+    Resizing <b>mit</b> Resampling
+    </td>
+</tr>
+</table>
+
+<p>
+Sehen wir uns nun den Sourcecode an. Zuallererst instanzieren wir klarerweise ein Objekt mit VBScript
+und der <i>Server.CreateObject</i> Methode, und benennen die Instanz <i>MyImage</i>.
+</p>
+
+<pre style="background='silver';">
+Set MyImage = Server.CreateObject("AspImage.Image")
+</pre>
+
+<p>
+Danach laden wir das Orginalbild mit der <i>LoadImage</i> Methode:
+</p>
+
+<pre style="background='silver';">
+MyImage.LoadImage strOriginal
+</pre>
+
+<p>
+Die Variable <i>strOriginal</i> enth&auml;lt hierbei den vollst&auml;ndigen, physikalischen Serverpfad und den
+Bilddateinamen des Originals. Nun k&ouml;nnen wir eigentlich schon mit dem Generieren des Thumbnails beginnen.
+<b>Aber:</b> Wenn wir das Bild verkleinern,  wird es unweigerlich verzerrt, was wiederum unerw&uuml;nscht ist.
+</p>
+
+<p>
+Daher ver&auml;ndern wir nur die eine Seite des Bildes und passen mit einer Funktion die andere an, um so eine
+Verzerrung des Bildes zu vermeiden. Bevor wir aber mit dieser Funktion beginnen k&ouml;nnen m&uuml;ssen wir nat&uuml;rlich
+die Originalgr&ouml;&szlig;e des Bildes genau kennen. 
+</p>
+
+<p>
+Da wir dies nat&uuml;rlich nur programmatisch tun wollen, verwenden wir die <i>GetImageFileSize</i> 
+Methode der Komponente. Die Methode hat als Parameter den vollst&auml;ndigen Pfad samt Dateinamen des Bildes und
+gibt seine Abmessungen zur&uuml;ck:
+</p>
+
+<pre style="background='silver';">
+MyImage.GetImageFileSize strOriginal, X, Y
+MyImage.MaxX = X
+MyImage.MaxY = Y
+</pre>
+
+<p>
+Jetzt k&ouml;nnen wir mit dem Verkleinern anfangen, wobei wir die Orignalverh&auml;ltnisse Breite zu H&ouml;he nat&uuml;rlich 
+unver&auml;ndert lassen. F&uuml;r dieses Beispiel habe ich die <i>Resize mit Resampling</i> Methode verwendet:
+</p>
+
+<pre style="background='silver';">
+'maintain aspect ratio
+ResizedY = (ResizedX / MyImage.MaxX) * MyImage.MaxY
+MyImage.ResizeR ResizedX, ResizedY
+</pre>
+
+<p>
+Nach der erfolgten Verkleinerung speichern wir noch den Thumbnail am Web Server ab. Dies geschieht mit der
+<i>SaveImage</i> Methode der Komponente:
+</p>
+
+<pre style="background='silver';">
+'saving thumbnail to disk
+MyImage.ImageFormat = 3
+MyImage.FileName= strThumb
+MyImage.SaveImage
+</pre>
+
+<p>
+F&uuml;r die Darstellung im Browserfenster brauchen wir noch:
+</p>
+
+<pre style="background='silver';">
+Response.Write "&lt;img src=" &amp; strThumbName &amp; "&gt;&lt;br&gt;"
+</pre>
+
+<p>
+Nachdem wir nun das <i>MyImage</i> Objekt eigenlich nicht mehr brauchen, k&ouml;nnen wir es sicher zerst&ouml;ren:
+</p>
+
+<pre style="background='silver';">
+Set MyImage = Nothing
+</pre>
+
+<p>
+Wenn Sie die <b>GenThumb.asp</b> Datei, die diesen Beispielcode enth&auml;lt (im Download) ausf&uuml;hren, erhalten Sie
+folgendes Ergebnis in einem Web-Browser:
+</p>
+
+<IMG SRC="/artikel/Bilder/200102/20010212_3.png" width="487" height="270" alt="" border="0">
+
+<p>
+Zus&auml;tzlich gebe ich, wie Sie hier sehen k&ouml;nnen, auch noch die Originalbild und Thumbnail Bildgr&ouml;&szlig;en an. 
+Dies ist einfach durch eine Verk&uuml;pfung der verwendeten Variablen und <i>Response.Write</i> Statements zu l&ouml;sen.
+</p>
+
+<p>
+Das waren also die Schritte, um ein Thumbnail auf die Platte abzulegen - von wo es sp&auml;ter beliebig oft abgerufen
+werden kann. Hat man oft ver&auml;nderliche Daten, oder will aus anderen Gr&uuml;nden keine Thumbnails auf der Platte ablegen,
+dann empfiehlt sich die dynamische Generierung des Thumbnails In-Memory, und das direkte Schreiben an den Client
+mittels <i>Response.BinaryWrite</i>.
+</p>
+
+<h2>On-the-fly Generierung von Thumbnails</h2>
+<p>
+Das Szenario haben wir im obigen Absatz schon besprochen - also wie schwierig ist es? Nun, alles was Sie tun m&uuml;ssen,
+ist den Aufruf <i>SaveImage</i> Methode mit dem Aufruf von <i>Response.BinaryWrite</i> auszutauschen:
+</p>
+
+<pre style="background='silver';">
+Response.BinaryWrite MyImage.Image
+</pre>
+
+<p>
+Die <i>ASPImage</i> Komponente stellt f&uuml;r solche Aktionen die <i>Image</i> Eigenschaft
+zur Verf&uuml;gung. <i>Image</i> ist eine read-only Eigenschaft, die die Bildinformationen in bin&auml;rer Form
+enth&auml;lt.
+</p>
+
+<p>
+Zum Abschlu&szlig; pr&auml;sentiere ich Ihnen <b>BinWriteThumb.asp</b> in seiner vollen L&auml;nge:
+</p>
+
+<pre style="background='silver';">
+&lt;% @LANGUAGE = VBScript %&gt;
+&lt;% 
+Set MyImage = Server.CreateObject(&quot;AspImage.Image&quot;)
+
+'filename of original image w/ extension
+Dim strOrigImg
+strOrigImg = &quot;aspheute.png&quot;
+
+'filename of thumbnail w/ extension
+Dim strThumbName
+strThumbName = &quot;thumb.png&quot;
+
+'full path of original image
+Dim strOrigImgFullPath 
+strOrigImgFullPath =&quot;G:\LocalSites\TestRoot\Artikel_ASPImage\&quot;
+
+'full path of generated thumbnail
+Dim strThumbFullPath
+strThumbFullPath = &quot;G:\LocalSites\TestRoot\Artikel_ASPImage\&quot;
+
+Dim strOriginal, strThumb, ResizedX,ResizedY
+strOriginal = strOrigImgFullPath &amp; strOrigImg
+strThumb = strThumbFullPath &amp; strThumbName
+
+'load original image
+MyImage.LoadImage strOriginal
+
+'Resize factor
+ResizedX = 150
+MyImage.GetImageFileSize strOriginal, X, Y
+MyImage.MaxX = X
+MyImage.MaxY = Y
+
+'maintain aspect ratio
+ResizedY = (ResizedX / MyImage.MaxX) * MyImage.MaxY
+MyImage.ResizeR ResizedX, ResizedY
+
+'writing thumbnail directly to client
+Response.BinaryWrite MyImage.Image
+
+'Cleanup
+Set MyImage = Nothing
+%&gt;
+</pre>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Die <i>ASPImage</i> Komponente bietet nat&uuml;rlich nicht nur diese Funktionalit&auml;t. Ich habe in diesem Artikel
+nur die f&uuml;r die Problemstellung erforderlichen Methoden der Komponente verwendet.
+Sie k&ouml;nnen mit dieser Komponente auch bereits erstellte Bilder (JPG, BMP, PNG, TGA and PCX) bearbeiten,
+v&ouml;llig neue Bilder zu erstellen, als auch animierte GIFs zu handhaben.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010212.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010212.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001130.htm">Bildinformationen selbst ermitteln</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001130.htm</span><br>
+<a href="../artikel/20020703.htm">Eine kleine Bilddatenbank, Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020703.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eserverobjects%2Ecom%2Fproducts%2Ehtm%23aspimage">AspImage Komponente</a><br>
+<SPAN class="content">http://www.serverobjects.com/products.htm#aspimage</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

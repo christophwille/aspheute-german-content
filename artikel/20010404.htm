@@ -1,0 +1,359 @@
+<HTML>
+<HEAD>
+<TITLE>Sonderzeichen f&uuml;r Forms decodieren</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wenn Sie die im Querystring abgelegten Informationen in Forms weiterverarbeiten m&ouml;chten, m&uuml;ssen Sie diese Zeichen &quot;decodieren&quot;. Dieser Artikel zeigt Ihnen eine server-seitige L&ouml;sung wie Sie dieses Problem angehen k&ouml;nnen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,UrlEncode,UrlDecode,Sonderzeichen,Decodierung,hexadezimal">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Sonderzeichen f&uuml;r Forms decodieren</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010404"></SCRIPT>
+</p>
+<p>
+Bei Datenbankabfragen oder Webseitennavigation &uuml;ber Querystrings enthalten diese Strings meist URL-encodierte Zeichen
+(hexadezimale, zweistellige ASCII Codes),
+mit denen client-seitige Forms nichts anfangen k&ouml;nnen. Wenn Sie also die im Querystring abgelegten Informationen in Forms 
+weiterverarbeiten m&ouml;chten, m&uuml;ssen Sie diese Zeichen &quot;decodieren&quot;. Dieser Artikel zeigt Ihnen eine
+server-seitige L&ouml;sung wie Sie dieses Problem angehen k&ouml;nnen.
+</p>
+
+<p>
+Wenn man <i>Request.QueryString(Variablenname)</i> aufruft, so wird die Decodierung automatisch von ASP
+f&uuml;r uns durchgef&uuml;hrt. Greift man selbst auf den Querystring zu, dann steht man vor dem heute thematisierten
+Problem: es gibt keine eingebaute Funktion zum decodieren eines individuellen Querystrings.
+</p>
+
+<p>
+Das hier pr&auml;sentierte Script (erstellt von <a href="http://www.emsi.at/" target="_blank">Christian Mairoll</a>) ist quasi die umgekehrte Aktion der <i>Server.URLEncode</i> Methode. 
+Es generiert z.B. aus dem URL-encodeten String <i>http%3A%2F%2Fwww%2Easpheute%2Ecom</i> den u.a. auch f&uuml;r 
+Forms lesbaren String <i>http://www.aspheute.com</i>.
+</p>
+
+<p>
+Sehen wir uns das Script einmal n&auml;her an. Beginnen wir mit der server-seitigen Funktion <i>DecodeURL</i>:
+</p>
+<pre style="background='silver';">
+Function DecodeURL(strQuery)
+    strQuery = Replace(strQuery, "+", " ")
+    arTeile = Split(strQuery, "%")
+    y = 0
+    For Each strTeil In arTeile
+        y = y + 1
+        If y &gt; 1 Then
+            Teil1 = Left(strTeil, 2)
+            Teil2 = Mid(strTeil, 3)
+            x = "&amp;H" &amp; Teil1
+            x = CInt(x)
+            strQueryString = strQueryString &amp; Chr(x) &amp; Teil2
+        Else
+            strQueryString = strQueryString &amp; strTeil
+        End If
+    Next
+DecodeURL = strQueryString
+End Function
+</pre>
+
+<p>
+Zuerst werden aus dem der <i>DecodeURL</i> Funktion &uuml;bergebene Querystring (strQuery) die Pluszeichen (+) herausgesucht und
+durch die <i>Replace</i> Function durch ein Leerzeichen ersetzt. Pluszeichen in Querystrings entsprechen normalen
+Wortabst&auml;nden und keiner boolschen Addition (AND). D.h. w&uuml;rde im Querystring &quot;Active+Server+Pages&quot; stehen,
+w&uuml;rde das einfach <i>Active Server Pages</i> bedeuten.
+</p>
+
+<p>
+Als n&auml;chstes werden die zweistelligen hexadezimalen ASCII Code Zeichen in ihre &auml;quvivalenten Sonderzeichen umgewandelt. Vor jedem
+einzelnen zweistelligen ASCII Zahlencode, der ein Sonderzeichen repr&auml;sentiert,  erfolgt immer eine Trennung mit einem Prozentzeichen (%). Daher liegt es nahe, mit der 
+<i>Split</i> Function zuerst die einzelnen Zeichen des Querystrings (strQuery) - vor der Umwandlung in ihr &Auml;quvivalent -
+zu trennen bzw. zu gruppieren. Da die <i>Split</i> Function ein Array zur&uuml;ck gibt, weisen wir ihr auch ein Array (<i>arTeile</i>) zu.
+</p>
+
+<p>
+Im <i>For ... Each</i> Statement werden, falls mit einem Prozentzeichen getrennte Sonderzeichen (die ja noch in Form eines hexadezimalen
+ASCII Codes vorhanden sind) gefunden wurden,
+umgewandelt. Um die Umwandlung durchf&uuml;hren zu k&ouml;nnen suchen wir uns vorerst mit Hilfe der <i>Left</i> Function die vorher getrennten zweistelligen ASCII Codes 
+aus dem Array heraus. Diese herausgesuchten Zahlencodes werden dann mit dem Pr&auml;fix <i>&amp;H</i> versehen um das hexadezimale 
+Zahlensystem zu signalisieren. Danach werden sie mit der <i>CInt</i> Funktion in ihre Integerwerte umgerechnet.
+</p>
+
+<p>
+Die Umrechnung in Integerwerte hat den Sinn, da&szlig; man sie der <i>Chr</i> Function &uuml;bergeben kann. Die Chr Function
+gibt dann das entsprechende - nun lesbare - Sonderzeichen zur&uuml;ck. F&uuml;r den Fall, da&szlig; der Querystring neben den Sonderzeichen auch andere
+bzw. nur normale Zeichen (z.B Buchstaben) enth&auml;lt tritt die Alternative der If-Verzweigung in Kraft.
+</p>
+
+<p>
+Was noch fehlt ist die Kombination mit einem client-seitigen Formular. Dies ist der 
+Einfachheit halber sehr simpel gehalten:
+</p>
+
+<pre style="background='silver';">
+&lt;form method=GET&gt;
+    String mit Sonderzeichen eingeben:
+    &lt;input type="text" name="Eingabe"&gt;
+    &lt;input type="submit" value="OK"&gt;
+&lt;/form&gt;
+</pre>
+
+<p>
+Wenn Sie diese Beispieldatei (<b>DecodeURL.asp</b>) auf einem Web Server ablaufen lassen, sowie der Function einen
+Querystring &uuml;bergeben, so erhalten Sie folgendes Resultat (mit dem essentiellen Teil des Querystings in der Adresszeile):
+</p>
+
+<IMG SRC="Bilder/200104/20010404_1.png" width="585" height="213" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Das gezeigte Beispielscript zeigt eine simple Methode wie man einen kryptischen Querystring der aus Sonderzeichen
+in Form von ASCII Codes besteht wieder in die u.a. auch f&uuml;r Forms verst&auml;ndliche Art konvertiert.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010404.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20000522.htm">&Uuml;berpr&uuml;fen von HTML-Formularen mit ASP</a><br>
+<a href="20000406.htm">Auswertung von HTML Formularen mit ASP</a><br>
+<a href="20000503.htm">Einfache String Operationen</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20010404" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Sonderzeichen f&uuml;r Forms decodieren"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20010404.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Holm"><input type="hidden" name="AuthorEmail" value="office@holmcs.com"><input type="hidden" name="Artikel" value="20010404"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20010404.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

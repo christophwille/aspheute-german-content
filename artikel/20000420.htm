@@ -1,0 +1,416 @@
+<HTML>
+<HEAD>
+<TITLE>Speichern von Recordsets in Application-Variablen (Teil&nbsp;I)</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch¸tzt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In einer ASP Anwendung kann es von Vorteil sein, Datenbankwerte, die nicht (oder nur sehr selten) ver&auml;ndert werden, in einer Application Variablen zu speichern. Dieser Artikel zeigt zwei M&ouml;glichkeiten auf...">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ADO,Application,ASP,Lock,Unlock,Recordset,Thread,IIS5,GetRows,GetString,XML">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Speichern von Recordsets in Application-Variablen (Teil&nbsp;I)</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000420"></SCRIPT>
+</p>
+<p>In einer ASP Anwendung kann es von Vorteil sein,
+Datenbankwerte, die nicht (oder nur sehr selten) ver&auml;ndert werden,
+in einer <i>Application</i> Variablen zu speichern.
+Auf solch' eine <i>Application</i> Variable kann dann
+jedes ASP-Skript der selben Website zugreifen
+(solang' es besondere Umst‰nde nicht daran hindern).<br><br>
+<i>Application-Variablen</i> werden wie folgt gesetzt und gelesen:</p>
+
+<pre style="background='silver';">
+<b>' Application Variable setzen:</b>
+Application.Lock
+Application("VariablenName") = VariablenWert
+Application.UnLock
+
+<b>' Application Variable auslesen:</b>
+Variable = Application("VariablenName")</pre>
+
+<p>Den Wert einer <i>Application-Variable</i> setzt man am besten in 
+der Unterroutine (engl. <i>Sub</i>) <i>Application_OnStart</i> der <u>Global.asa</u>. 
+Die <u>Global.asa</u> ist eine Text Datei (&auml;hnlich einer <i>.asp</i>-Datei),
+die im Root-Verzeichnis der Website liegt. 
+In der <u>Global.asa</u> stehen die Definitionen der Unterroutinen
+<i>Application_OnStart</i> und <i>Application_OnEnd</i>, die beim Starten und
+Beenden der Website-Applikation abgearbeitet werden.</p>
+
+<p>Ausserdem kann die <u>Global.asa</u> noch die Unterroutinen <i>Session_OnStart</i>
+und <i>Session_OnEnd</i> enthalten, die beim Starten und Beenden einer User-Session 
+in der Website-Applikation ausgef&uuml;hrt werden.<br><br> 
+Das Grundger&uuml;st der <u>Global.asa</u> ist wie folgt:</p>
+
+<pre style="background='silver';">
+&lt;SCRIPT LANGUAGE="VBScript" RUNAT="SERVER"&gt;
+Sub Application_OnStart
+	' Wird beim Starten der Website Applikation ausgef&uuml;hrt
+	' Hier werden normalerweise Application-Variablen gesetzt
+	Application("Variablenname")= VariablenWert
+	...
+End Sub
+
+Sub Application_OnEnd
+	' Wird beim Beenden der Website Applikation ausgef&uuml;hrt
+	...
+End Sub
+
+Sub Session_OnStart
+	' Wird beim Starten einer Session ausgef&uuml;hrt
+	...
+End Sub
+
+Sub Session_OnEnd
+	' Wird beim Beenden einer Session ausgef&uuml;hrt
+	...
+End Sub
+&lt;/SCRIPT&gt;</pre>
+
+<p>Welche M&ouml;glichkeiten hat man, wenn man ein <i>Recordset</i> in einer 
+<i>Application-Variablen</i> speichern will? 
+Man k&ouml;nnte ein <i>Disconnected Recordset</i> nehmen (das keine permanente 
+Datenbank Verbindung braucht) und es in einer <i>Application-Variablen</i> speichern 
+- Dies war unter IIS 4.0 m&ouml;glich, wird jedoch auf einem IIS 5.0 (Windows 2000)
+unter Ausgabe einer Fehlermeldung verweigert.</p>
+
+<p><b><u>Anmerkung:</u></b> <font size="-1">Auch auf einer IIS 4.0 
+ASP-Applikation war es nicht ratsam ein Recordset Objekt 
+(oder irgendein anderes Objekt) in einer Application-Variablen zu speichern,
+da jede ASP-Seite, die das Recordset dann benutzte, im selben
+"Thread"-Kontext wie das Recordset Objekt laufen muﬂte. 
+Dies hatte vereinfacht gesagt zur Folge, da&szlig; der Webserver seine Kapazit&auml;ten
+nicht aussch&ouml;pfen konnte, da alle ASP-Skripts nur einzeln nacheinander abgearbeitet
+werden k&ouml;nnen.
+Da das Abarbeiten einer ASP-Seite, durch die Client-Server Architektur des Internetes 
+bedingt, durchaus mehrere Sekunden dauern konnte, war eine betr&auml;chtliche
+Performance Einbu&szlig;e schon bei mittelgro&szlig;en
+Internet-Applikationen zu beobachten.</font></p>
+
+<p>Eine weitere M&ouml;glichkeit den <i>Recordset</i> Inhalt in einer 
+<i>Application-Variablen</i> zu speichern ist, das <i>Recordset</i> in
+ein <i>Array</i> umzuwandeln, um dann dieses <i>Array</i> in einer <i>Application-Variablen</i> 
+zu speichern.
+Dies l&auml;&szlig;t sich einfach mit der <i>GetRows</i> Methode des <i>Recordset</i>
+Objektes verwirklichen. 
+Dabei werden die Daten in einem zwei-dimensionalen Array mit 0-basierendem
+Index gespeichert (erste Dimension ist Feld, zweite Dimension die Datensatznummer):</p>
+
+<pre style="background='silver';">
+&lt;%
+...
+rs.MoveFirst
+arrRecordset = rs.GetRows()
+
+Application.Lock
+Application("RecordsetArray")= arrRecordset
+Application.UnLock
+
+' Alle Datensaetze des Arrays durchlaufen
+For intI = 0 to UBound(arrRecordset, 2)
+	strErstesFeld = arrRecordset(0,intI)
+	strZweitesFeld = arrRecordset(1,intI)
+	...
+Next
+%&gt;</pre>
+
+<p>Einen anderen Weg beschreitet man, wenn man den Inhalt des <i>Recordsets</i>
+unter Verwendung der <i>GetString</i> Methode in einer String (Text) Variablen 
+speichert.
+Diese Text Variable kann dann in einer <i>Application Variablen</i> gespeichert
+und bei Bedarf wieder ausgelesen werden.
+Zum Auslesen des <i>Recordset</i> Inhaltes aus der Text-Variablen ist es oft
+hilfreich, den Text in ein <i>Array</i> &uuml;berzuf&uuml;hren, 
+und dann die Daten aus dem <i>Array</i> zu lesen:</p>
+
+<pre style="background='silver';">
+&lt;%
+' Recordset in String Speichern
+' Als Begrenzungszeichen fuer Records (oder Rows) wird die 
+'   Zeilenschaltung (Konstante VbCrLf in VBScript),  
+'   und zur Begrenzung der Salten (oder Columns) 
+'   das "|"-Zeichen verwendet
+strRecordsetInhalt = rs.GetString(2, , "|", VbCrLf, "(null)")   
+     ' 2 = adClipString
+
+' Speichern des Recordset Inhaltes als String 
+'   in einer Application Variablen
+Application.Lock
+Application("RecordsetString")= strRecordsetInhalt
+Application.UnLock
+
+' Auslesen der Daten aus dem String durch
+'   Ueberfuehren in ein Array
+arrRecords = Split(strRecordsetInhalt, VbCrLf)
+For intI = 0 to UBound(arrRecords) - 1 
+  Response.Write intI+1 & ". Datensatz:&lt;br&gt;" & VbCrLf
+  arrFields = Split(arrRecords(intI), "|")
+  For intK = 0 to UBound(arrFields)
+    Response.Write "&nbsp;&nbsp;" & intK+1 & ". Feld = " 
+    Response.Write arrFields(intK) & "&lt;br&gt;" & VbCrLf
+  Next
+Next
+%&gt;
+</pre>
+
+<p>Weitaus komfortabler als ein <i>Recordset</i> in Form
+eines <i>Arrays</i> oder <i>Strings mit Begrenzungszeichen</i> zu speichern
+ist es jedoch, wenn man ein <i>Recordset</i> als <u>XML</u>-String in 
+einer <i>Application</i> Variablen speichert.</p>
+
+<p>Dies hat den Vorteil, da&szlig; man das <u>XML</u> wieder einfach in ein
+<i>Recordset</i> Objekt umwandeln kann.
+Mit diesem <i>Recordset</i> Objekt kann man nat&uuml;rlich alle 
+<i>Recordset</i> Operationen ausf&uuml;hren, den Inhalt lesen, das <i>Recordset</i> 
+sortieren, oder nach bestimmten Werten suchen.</p>
+
+<p>Weiters kann man das <i>Recordset</i> &auml;ndern, in einen 
+<u>XML</u>-String &uuml;berf&uuml;hren, und den <u>XML</u>-String wieder in 
+die <i>Application</i> Variable zur&uuml;ckschreiben. 
+Wie dies im Detail funktioniert lesen Sie in Teil II.</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000420.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20001018.htm">Global.asa: Verwendung, Events und Probleme</a><br>
+<a href="20000425.htm">Speichern von Recordsets in Application-Variablen (Teil&nbsp;II)</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000420" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Speichern von Recordsets in Application-Variablen (Teil&nbsp;I)"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000420.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Koller"><input type="hidden" name="AuthorEmail" value="christiank@aspexpert.com"><input type="hidden" name="Artikel" value="20000420"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000420.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

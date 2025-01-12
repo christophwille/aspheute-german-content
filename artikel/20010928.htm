@@ -1,0 +1,562 @@
+<HTML>
+<HEAD>
+<TITLE>Schlu&szlig; mit lustig Teil 3 - das Hfnetchk Tool</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Die Vorg&auml;ngerversion, das IIS 5.0 Hotfix Checking Tool, hatte den Nachteil da&szlig; nur der IIS auf das Vorhandensein von Hotfixes hin uuml;berpr&uuml;ft wurde. Das Hfnetchk Tool hingegen kann nun einiges mehr.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Hfnetchk,Sicherheit,Check,Hotfix,Bugfix,Scan,Scanning,Security,Scanner,Patch,IIS,SQL Server,Windows 2000">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Schlu&szlig; mit lustig Teil 3 - das Hfnetchk Tool</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010928"></SCRIPT>
+</p>
+<p>
+Im dritten Teil dieser "Wie sichere ich meinen Web Server gegen 'Se Evil Folks' ab" Serie stelle ich Ihnen das
+Hfnetchk Tool oder ausgeschrieben das Microsoft Network Security Hotfix Checker Tool vor. Die
+Vorg&auml;ngerversion, das "IIS 5.0 Hotfix Checking Tool", hatte den Nachteil da&szlig; "nur" der IIS auf das
+Vorhandensein von Hotfixes hin &uuml;berpr&uuml;ft wurde. Das Hfnetchk Tool hingegen kann nun einiges mehr.
+Dies und wie man eine &Uuml;berpr&uuml;fung automatisert bzw. per Email versenden kann, lesen Sie in diesem
+Artikel.
+</p>
+
+<p>
+Im Moment arbeiten Microsoft und Shavlik Technologies an einer neueren Version des Kommandozeilentools die von der
+<a href="http://ntbugtraq.ntadvice.com../default.htm?sid=1&pid=55&did=37" target="_blank">NTBugTraq</a> Web Site downgeloadet 
+werden kann. Diese befindet sich allerdings noch im Beta Stadium. Eine (&auml;ltere) offizielle
+Releaseversion k&ouml;nnen Sie direkt bei Microsoft unter 
+<a href="http://support.microsoft.com/support/kb/articles/q303/2/15.asp?id=303215&sd=tech#Download" target="_blank">diesem Link</a>
+downloaden. Beginnen wir aber mit den Features der offizielle Releaseversion. Diese kann im Vergleich zum
+IIS 5.0 Hotfix Checking Tool eben nicht nur den IIS (jetzt auch Version 4) scannen sondern auch folgende 
+Microsoft Produkte:
+</p>
+
+<ul>
+<li>Windows NT 4.0 and Windows 2000 Betriebssysteme</li>
+<li>MS SQL Server 7/2000 (inklusive Microsoft Data Engine (MSDE)</li>
+<li>Internet Explorer Versionen ab 5.01</li>
+</ul>
+
+<p>
+Neu ist auch die M&ouml;glichkeit da&szlig; diese Produkte sich auch auf Remote Computern, also im Netzwerk befinden k&ouml;nnen.
+Zus&auml;tzlich zur Netzwerkfunktionalit&auml;t k&ouml;nnen Sie nun auch IP-Ranges angeben um mehrere Adressen innerhalb
+eines Tasks scannen zu lassen. Die Betaversion, die Sie unter der angegebenen 
+<a href="http://ntbugtraq.ntadvice.com../default.htm?sid=1&pid=55&did=37" target="_blank">NTBugTraq</a> 
+Adresse downloaden k&ouml;nnen, scannt den oder die angegebenen Computer bzw. Server zus&auml;tzlich auf das Vorhandensein
+einiger Dateien die mit dem Nimda Virus in Zusammenhang stehen:
+</p>
+
+<ul>
+<li>admin.dll</li>
+<li>root.exe</li>
+<li>readme.eml</li>
+<li>readme.exe</li>
+</ul>
+
+<p>
+Diese Dateien sucht das Kommandozeilentool in diversen Windows bzw. Web Server Standardverzeichnissen. Alle beide
+Versionen k&ouml;nnen <i>kostenlos</i> unter den genannten Links downgeloaded werden. Wie gesagt, ist es ein 
+Kommandozeilentool, d.h. auf eine komfortable GUI m&uuml;ssen Sie verzichten. Dies gilt genauso f&uuml;r die Auswertung
+des Reports der wahlweise entweder einfach nur in der Kommandozeile (<b>cmd.exe</b>) eingesehen werden kann oder 
+Sie lassen sich per optionalen Parameter den Report in eine Datei speichern. Wenn Ihnen das aber zuwenig ist
+m&uuml;ssen Sie sich entweder eine GUI bzw. ein Auswertungstool selber programmieren oder Sie schauen bei 
+Shavlik Technologies vorbei und bestellen sich unter <a href="http://www.shavlik.com/nshc.htm" target="_blank">diesem Link</a>
+die "Shavlik GUI" (diese ist nicht gratis).
+</p>
+
+<p>
+Befassen wir uns aber mit der von Microsoft 
+<a href="http://support.microsoft.com/support/kb/articles/q303/2/15.asp?id=303215&sd=tech#Download" target="_blank">downloadbaren</a> 
+Version. Nach dem Download und Extrahieren in ein beliebiges Verzeichnis der <b>hfnetchk.zip</b> Datei k&ouml;nnen
+Sie auf dem Kommandozeilenprompt gleich loslegen. Wie bei (fast) jedem Kommandozeilentool k&ouml;nnen Sie
+mit 
+</p>
+
+<pre style="background='silver';">
+hfnetchk -?
+</pre>
+
+<p>
+den genauen Syntax des Tools und eine Auflistung der verf&uuml;gbaren Parameter einsehen. Bevor wir zu
+einer webgest&uuml;tzten Ausf&uuml;hrung bzw. einer Automatisierung des Tools mit Hilfe eines Scheduled Tasks &uuml;bergehen, 
+nur kurz die Basics und die wichtigsten Parameter.
+</p>
+
+<p>
+Das Tool sucht am lokalen Computer bzw. Servern im Netzwerk nach den installierten Patches. Hierbei vergleicht
+es die gefundenen Patches mit einer XML-Datei namens <b>mssecure.xml</b>. Diese XML Datei enth&auml;lt neben den 
+aktuellen Versionsnummern der Patches auch ihre Pr&uuml;fsummen um so virale Ver&auml;nderungen zu erkennen.
+</p>
+
+<p>
+Da die XML immer am neuesten Stand gehalten wird, ist diese im Download nicht inkludiert. Das bedeutet Sie m&uuml;ssen 
+bei der erstmaligen Ausf&uuml;hrung dieses Tools eine aktive Verbindung zum Internet haben. Ein Beispiel. Sie wechseln in
+das Unterverzeichnis in welches das Tool installiert wurde und geben einfach
+</p>
+
+<pre style="background='silver';">
+hfnetchk
+</pre>
+
+<p>
+ein. Dies bewirkt da&szlig; eine digital signierte (um F&auml;lschungen auszuschlie&szlig;en) Cabinet-Datei (.cab) namens
+<b>mssecure.cab</b> von einem Microsoft Server downgeloaded wird. Hierbei erhalten Sie eine Sicherheitsinformation
+&uuml;ber die digitale Signatur der Datei, die Sie falls authentisch, mit "Yes" best&auml;tigen m&uuml;ssen um fortzufahren:
+</p>
+
+<IMG SRC="Bilder/200109/20010928_1.png" width="666" height="451" alt="" border="0">
+
+<p>
+Da wir keine zus&auml;tzlichen Parameter und auch keine Hostnamen angegeben haben, wird sogleich der lokale Computer
+&uuml;berpr&uuml;ft.
+</p>
+
+<h2>Anwendungsbeispiele</h2>
+
+<p>
+Scannen mehrerer Computer durch Angabe ihrer NetBIOS Namen (getrennt durch Beistriche):
+</p>
+
+<pre style="background='silver';">
+hfnetchk -h kilauea,hamunaptra,bluescreen,coruscant
+</pre>
+
+<p>
+Scannen von einzelnen IP-Adressen (wieder getrennt durch Beistriche) bzw. IP-Ranges:
+</p>
+
+<pre style="background='silver';">
+hfnetchk -h 192.168.200.10,192.168.200.20,192.168.200.30
+<i>bzw.</i>
+hfnetchk -h 192.168.200.10-192.168.200.70
+</pre>
+
+<p>
+Scannen von Domains und zus&auml;tzliches Anzeigen der installierten Hotfixes (Parameter <i>-a</i>)
+sowie mit Information &uuml;ber die installierten und fehlenden Hotfixes (Zusatz <i>b</i>):
+</p>
+
+<pre style="background='silver';">
+hfnetchk -d dev.sirefnicks -a b
+</pre>
+
+<p>
+Scannen des Servers "kilauea", Ausgabe des Reports in die <b>MyReport.txt</b> Datei (Parameter <i>-o</i>, hier zus&auml;tzlich 
+Trennung der Eintr&auml;ge durch Tabulatoren) und Verwendung der bereits downgeloadeten <b>mssecure.xml</b> Datei 
+(Parameter <i>-x</i>):
+</p>
+
+<pre style="background='silver';">
+hfnetchk -h kilauea -o tab &gt; MyReport.txt -x mssecure.xml
+</pre>
+
+<p>
+Da hier bei den Dateiangaben keine Pfade angegeben wurden, wird die <b>MyReport.txt</b> Datei in das 
+Rootverzeichnis der lokalen C: Partition kopiert und die <b>mssecure.xml</b> Datei mu&szlig; im gleichen Verzeichnis wie 
+die <b>hfnetchk.exe</b> Datei liegen. Mit Pfadangaben k&ouml;nnen Sie nat&uuml;rlich auf andere Speicherorte der beiden 
+Dateien verweisen (auch auf Netzlaufwerke):
+</p>
+
+<pre style="background='silver';">
+hfnetchk -h kilauea -o tab &gt; C:\HFnetchkTool\Reports\MyReport.txt -x http://192.168.200.10/_
+	HFnetchkTool/XML/mssecure.xml
+</pre>
+
+<p>
+Als Abschlu&szlig;beispiele habe ich zum einen eine Ausf&uuml;hrung in ASP und eine automatisierte Ausf&uuml;hrung der Datei
+durch einen Scheduled Task vorbereitet. Sehen wir uns zun&auml;chst die ASP Datei an (<b>HFCheck.asp</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Set fso = Server.CreateObject("Scripting.FileSystemObject")
+
+strXmlFile = "mssecure.xml"
+strFileSpecs = Server.MapPath(strXmlFile)
+strMyReport = "MyReport.txt"
+strMyReportSpecs = Server.MapPath(strMyReport)
+strMailFrom = "admin@sirefnicks.com"
+strMailTo = "jsirefnicks@sirefnicks.com"
+strMailSubject = "HFCheck Tool Report" &amp; Now
+
+If (fso.FileExists(strFileSpecs)) Then
+    strCommand = Server.MapPath("hfnetchk.exe") &amp; " -o tab &gt; " &amp; _
+                     Server.MapPath(strMyReport) &amp; " -x " &amp; strXmlFile
+Else
+    strCommand = Server.MapPath("hfnetchk.exe") &amp; " -o tab &gt; " &amp; _
+                     Server.MapPath(strMyReport)
+End If
+Response.Write strCommand
+
+Set objWsh = Server.CreateObject("WScript.Shell")
+nRetVal = objWsh.Run(strCommand, 1, True)
+Set objWsh = Nothing
+
+If (fso.FileExists(strFileSpecs)) Then
+	
+    Set objCDONTS = Server.CreateObject("CDONTS.NewMail")
+	
+    objCDONTS.From = strMailFrom
+    objCDONTS.To = strMailTo
+    objCDONTS.Subject = strMailSubject
+    objCDONTS.AttachFile strMyReportSpecs
+    objCDONTS.Send
+    Set objCDONTS = Nothing
+	
+    If Err.Number &lt;&gt; 0 Then
+        Response.Write "&lt;b&gt;Error(s) during SendMail:&lt;/b&gt;"
+        Response.Write "Fehlercode: " &amp; Err.Number &amp; "&lt;br&gt;"
+        Response.Write "Quelle: " &amp; Err.Source &amp; "&lt;br&gt;"	
+        Response.Write "Beschreibung: " &amp; Err.Description &amp; "&lt;br&gt;"
+    End If
+Else
+    Response.Write "Couldn't send Mail - No Report File"
+End If		
+Set fso = Nothing
+%&gt;
+</pre>
+
+<p>
+Nicht allzu komplex - einfach je nach Vorhandensein der <b>mssecure.xml</b> den Syntax f&uuml;r das Tool zusammengesetzt
+und dann mit Hilfe der <i>Run</i> Methode des Windows Scripting Host das Tool aufgerufen. Dabei wird gem&auml;&szlig; der
+angegebenen Parameter der Report in eine Datei (MyReport.txt) geschrieben. Diese kann dann entweder im Browser 
+selbst optisch aufbereitet werden, oder wie hier per CDONTS als Emailattachment an die genannte Adresse versandt 
+werden.
+</p>
+
+<p>
+Um up-to-date zu bleiben kann man auch einen Scheduled Task einrichten. Hierf&uuml;r erstellt man zun&auml;chst ein
+Windows Script File (.wsf), welches wie oben die gleiche Aufgabe erf&uuml;llt, nur mit entsprechendem Syntax
+<b>HFChk.wsf</b>:
+</p>
+
+<pre style="background='silver';">
+&lt;package&gt;
+&lt;Job id="HFCheck"&gt;
+&lt;script language="VBScript"&gt;
+
+Set fso = CreateObject("Scripting.FileSystemObject")
+
+strXmlFile = "mssecure.xml"
+strFileSpecs = "C:\LocalSites\TestRoot\HFCheck" &amp; strXmlFile
+strMyReport = "MyReport.txt"
+strMyReportSpecs = "C:\LocalSites\TestRoot\HFCheck" &amp; strMyReport
+strMailFrom = "jsirefnicks@holmcs.com"
+strMailTo = "office@holmcs.com"
+strMailSubject = "HFCheck Tool Report" &amp; Now
+
+If (fso.FileExists(strFileSpecs)) Then
+    strCommand = "C:\LocalSites\TestRoot\HFCheck\hfnetchk.exe" &amp; " -o tab &gt; 
+        " &amp; "C:\LocalSites\TestRoot\HFCheck\" &amp; strMyReport &amp; " 
+        -x " &amp; strXmlFile
+Else
+    strCommand = "C:\LocalSites\TestRoot\HFCheck\hfnetchk.exe" &amp; " -o tab &gt; " 
+        &amp; "C:\LocalSites\TestRoot\HFCheck\" &amp; strMyReport
+End If
+
+Set objWsh = CreateObject("WScript.Shell")
+
+nRetVal = objWsh.Run(strCommand, 1, True)
+
+Set objWsh = Nothing
+
+If (fso.FileExists(strFileSpecs)) Then
+	Set objCDONTS = CreateObject("CDONTS.NewMail")
+    objCDONTS.From = strMailFrom
+    objCDONTS.To = strMailTo
+    objCDONTS.Subject = strMailSubject
+    objCDONTS.AttachFile strMyReportSpecs
+    objCDONTS.Send
+    Set objCDONTS = Nothing
+End If		
+Set fso = Nothing
+&lt;/script&gt;
+&lt;/Job&gt;
+&lt;/package&gt; 
+</pre>
+
+<p>
+Damit diese wsf-Datei auch einfach ausgef&uuml;hrt werden kann, habe ich eine Batch-Datei 
+(<b>HFChkExec.bat</b>) erstellt, die folgendes enth&auml;lt:
+</p>
+
+<pre style="background='silver';">
+cscript //Job:HFCheck HFChk.wsf
+</pre>
+
+<p>
+Nun mu&szlig; diese Batch-Datei noch in die Scheduled Taskliste (Start|Settings|Control Panel|Scheduled Tasks|
+Add Scheduled Task) eingetragen und Startzeit, etc. angegeben werden.
+Hierbei ist aber zu beachten, da&szlig; w&auml;hrend der Ausf&uuml;hrung dieses Tasks (falls notwendig) eine Netzwerkverbindung
+vorhanden sein mu&szlig;.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Mit dem Hfnetchk Tool haben Sie immer eine &Uuml;bersicht auf die aktuellen Patches, die zur Zeit verf&uuml;gbar sind.
+Dieses Tool l&auml;&szlig;t sich neben der einfachen Handhabung auch leicht in ASP einbauen um z.B. eine GUI f&uuml;r den
+erstellten Report zu kreieren, per Email zu versenden, etc. oder es auch automatisiert per Scheduled
+Task ablaufen zu lassen. Der Programmieraufwand hierf&uuml;r ist relativ gering, Ihre Web Server sind 
+immer up-to-date und daher vor "Se Evil Folks" sicher.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010928.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20010220.htm">Applikationen aus ASP.NET ausf&uuml;hren</a><br>
+<a href="20000511.htm">Automation - WSH versus Wget</a><br>
+<a href="20020412.htm">Der Microsoft Baseline Security Analyzer (MBSA) 1.0</a><br>
+<a href="20010516.htm">Kommandozeilen-Programme aufrufen</a><br>
+<a href="20010926.htm">Schlu&szlig; mit lustig - das IIS Lockdown Tool</a><br>
+<a href="20010927.htm">Schlu&szlig; mit lustig Teil 2 - das URLScan Tool</a><br>
+<a href="20011119.htm">Schritt-f&uuml;r-Schritt Debuggen von Sicherheitsproblemen</a><br>
+<a href="20010419.htm">Site&uuml;berwachung mit Scheduled Tasks</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fntbugtraq%2Entadvice%2Ecom%2Fdefault%2Easp%3Fsid%3D1%26pid%3D55%26did%3D37">HFNetChk 3.2 beta build 9/20/2001</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsupport%2Emicrosoft%2Ecom%2Fsupport%2Fkb%2Farticles%2Fq303%2F2%2F15%2Easp%3Fid%3D303215%26sd%3Dtech%23Download">Microsoft Network Security Hotfix Checker</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eshavlik%2Ecom%2Fnshc%2Ehtm">Shavlik Network Security Hotfix Checker</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20010928" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Schlu&szlig; mit lustig Teil 3 - das Hfnetchk Tool"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20010928.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Holm"><input type="hidden" name="AuthorEmail" value="office@holmcs.com"><input type="hidden" name="Artikel" value="20010928"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20010928.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

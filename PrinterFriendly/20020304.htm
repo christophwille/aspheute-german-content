@@ -1,0 +1,210 @@
+<HTML>
+<HEAD>
+<TITLE>Unerw&uuml;nschte Referer sperren</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Der heutige Artikel zeigt die grunds&auml;tzliche Vorgehensweise, wie man eine in ASP.NET programmierte Site vor unerw&uuml;nschten Links sch&uuml;tzt. Der Weg zum Ziel ist die Verwendung eines Http Modules">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,IHttpModule,Uri,UrlReferrer,Referer,http module,ISAPI Filter,Schutz,Security,ASP.NET">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Unerw&uuml;nschte Referer sperren</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020304"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Vielen von uns ist es nur recht, wenn jemand zu unseren Sites beziehungsweise zu den Sites unserer
+Kunden linkt - es bringt ja Traffic. Andererseits gibt es aber Leute, die glauben f&uuml;r einen Link
+zu ihrer Site Geld kassieren zu k&ouml;nnen - mit dem Argument, da&szlig; man seine Site durch den Link zu ihrer
+Site ja aufwertet. Nur wenn der Inhalt ihrer Site ach so wertvoll ist, dann ist es in ihrer Verantwortung
+den Inhalt vor unerw&uuml;nschten Referern zu sperren - und nicht nachtr&auml;glich von jederman zu kassieren (versuchen).
+</p>
+<p>
+Der heutige Artikel zeigt die grunds&auml;tzliche Vorgehensweise, wie man eine in ASP.NET programmierte Site
+vor unerw&uuml;nschten Links sch&uuml;tzt. Der Weg zum Ziel ist die Verwendung eines Http Modules (im Prinzip
+nichts anderes als eine Klasse die das Interface <i>IHttpModule</i> implementiert), das jeden Request
+&uuml;berwacht - passt der Referer nicht, wird die Anfrage abgelehnt.
+</p>
+<p>
+<b>Sicherheit der L&ouml;sung</b> Grunds&auml;tzlich lassen sich Referer beliebig ver&auml;ndern, allerdings nicht wenn
+ein User im Browser direkt auf einen Link klickt. Damit erf&uuml;llt die L&ouml;sung unseren Sicherheitsanspr&uuml;chen,
+ein Problem gibt es aber: ein Http Module kann nur Dateien von ASP.NET sch&uuml;tzen, nicht aber klassisches
+ASP oder HTML Dateien - in diesem Fall mu&szlig; man einen ISAPI Filter einsetzen.
+</p>
+
+<h2>Das Http Module</h2>
+<p>
+Ich habe das Http Module mit Absicht einfach gestaltet, das hei&szlig;t, die Liste der erlaubten Referer kommt
+nicht aus einer Datenbank oder XML Datei, sondern ist im Konstruktor hardcodiert. Die beiden Methoden
+<i>Init</i> und <i>Dispose</i> stammen vom <i>IHttpModule</i> Interface, und m&uuml;ssen auch wenn keine Implementierung gemacht
+werden mu&szlig;, zumindest deklariert werden (<b>RefererModule.cs</b>):
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.Web; 
+using System.Collections.Specialized;
+
+public class RefererCheckModule: IHttpModule
+{
+  protected StringCollection AllowedHosts;
+
+  public RefererCheckModule()
+  {
+    // do init here (XML or database would be more appropriate)
+    AllowedHosts = new StringCollection();
+    AllowedHosts.Add("sleeper");
+    AllowedHosts.Add("localhost");
+  }
+
+  public void Init(HttpApplication theApp)
+  {
+    theApp.BeginRequest += (new EventHandler(this.Application_BeginRequest));
+  }
+
+  public void Dispose()
+  {
+    // we have nothing to dispose (yet)
+  }
+
+  private void Application_BeginRequest(object source, EventArgs e) 
+  {
+    if (null == source) return;
+
+    HttpApplication theApp = (HttpApplication)source;
+    HttpContext context = theApp.Context;
+    Uri urlref = context.Request.UrlReferrer;
+    if (null == urlref) return;      // no referer at all
+    string strReferer = urlref.Host;
+    
+    bool bFound = AllowedHosts.Contains(strReferer.ToLower());
+    if (!bFound)
+    {
+      context.Response.Redirect("/AspHeute/LinkingHostNotAllowed.htm", true);
+      // and log the referer (to a database table)
+    }
+  }
+}
+</pre>
+
+<p>
+Die Abarbeitung jedes Requests beginnt in unserem <b>Application_BeginRequest</b> Event Handler. Dort
+wird aus dem <i>HttpContext</i> der <i>UrlReferrer</i> ausgelesen, von dem dieses Module nur am <i>Host</i>
+interessiert ist. Dieser Host wird gegen unsere Liste von erlaubten Hosts (<i>AllowedHosts</i>) gecheckt,
+und falls der Host nicht eingetragen ist, wird der User dar&uuml;ber informiert, da&szlig; die Website bei der er
+auf den Link geklickt hat, nicht um Erlaubnis f&uuml;r diesen Link gefragt hat. 
+</p>
+<p>
+So einfach ist das.
+</p>
+
+<h2>Aktivieren des Http Modules</h2>
+<p>
+Das Module wird kompiliert und in das <b>bin</b> Verzeichnis der Website kopiert. Um das Module zu 
+aktivieren, mu&szlig; man einen Eintrag in der <b>web.config</b> machen:
+</p>
+
+<pre style="background='silver';">
+&lt;configuration&gt;
+   &lt;system.web&gt;
+        &lt;customErrors mode="Off"/&gt;
+        &lt;httpModules&gt;
+            &lt;add name="RefererCheck" type="RefererCheckModule,RefererCheckModule" /&gt;
+        &lt;/httpModules&gt;
+        &lt;compilation debug="true" /&gt;
+   &lt;/system.web&gt;
+&lt;/configuration&gt;
+</pre>
+
+<p>
+Ein Eintrag im <i>httpModules</i> Teil ist notwendig. Da es auf den ersten Blick einige zuviele
+"ReferCheck" Strings gibt, hier die Aufschl&uuml;sselung, wof&uuml;r jeder Parameter dient:
+</p>
+
+<pre style="background='silver';">
+        &lt;httpModules&gt;
+            &lt;add name="<i>Name</i>" type="<i>Type</i>, <i>Module</i>" /&gt;
+        &lt;/httpModules&gt;
+</pre>
+
+<p>
+Und damit ist das Http Module bereits in Betrieb. Alle Requests (das ist von ASP.NET garantiert) laufen
+zuallererst &uuml;ber unser Module, und erst wenn es das OK gibt, l&auml;uft die angeforderte Seite.
+</p>
+<p>
+Wer es auf dem eigenen Server versuchen m&ouml;chte:
+nicht vergessen, <i>localhost</i>, <i>www.servername.tld</i> und <i>ipadresse</i> auf alle F&auml;lle
+in die <i>AllowedList</i> einzutragen!
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dieser Artikel beweist - wer Content hat, den er f&uuml;r sch&uuml;tzenwert h&auml;lt mu&szlig; nicht durch brennende
+Reifen springen um ihn vor ungewolltem Zugriff zu sch&uuml;tzen. Eher darf man die Motive hinterfragen,
+solche Schutzmechanismen nicht einzubauen wenn man linkende Sites abkassieren m&ouml;chte.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020304.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020304.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020305.htm">Mitlauschen bei der Browser-Webserver Kommunikation</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020305.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Ffuturezone%2Eorf%2Eat%2Ffuturezone%2Eorf%3Fread%3Ddetail%26id%3D113633%26tmp%3D82703">Klage, Kulanz und Hyperlinks</a><br>
+<SPAN class="content">http://futurezone.orf.at/futurezone.orf?read=detail&id=113633&tmp=82703</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

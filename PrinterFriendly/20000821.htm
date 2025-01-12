@@ -1,0 +1,305 @@
+<HTML>
+<HEAD>
+<TITLE>Streams in NTFS Dateien</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel stellt der Autor das NTFS-Feature der Streams vor, und wie man diese in ASP dazu verwenden kann, Daten zu verstecken, oder verwandte Daten gruppiert zu speichern.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Streams,NTFS,file system,security,$DATA,FileSystemObject,ReadAll,Write">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Streams in NTFS Dateien</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000821"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Im heutigen Artikel m&ouml;chte ich etwas in die Untiefen von NTFS (NT File System) abtauchen,
+und ein interessantes Feature besprechen: Streams. Zuerst werde ich mich mit den 
+Grundlagen besch&auml;ftigen, und dann Beispiele bringen, wie man in Streams schreibt, und Daten
+aus Streams ausliest. Das Sch&ouml;ne ist, da&szlig; man keinerlei zus&auml;tzliche Komponenten braucht, um
+dieses Feature des Betriebssystems zu seinen Gunsten zu verwenden.
+</p>
+
+<h2>Streams - die Grundlagen</h2>
+<p>
+Was sind Streams? Vereinfacht gesagt kann eine Datei auf einer NTFS Partition in mehrere 
+"Unterbereiche" (Streams) aufgeteilt werden, die separat ansprechbar 
+sind - wobei allerdings nur einer davon standardm&auml;&szlig;ig sichtbar (=lesbar) ist - der unbenannte 
+Standardstream. Das folgende Bild zeigt schematisch eine Datei und ihre Streams.
+</p>
+<p><IMG SRC="/artikel/Bilder/200008/20000821_2.png" width="225" height="244" border="0" alt=""></p>
+<p>
+Wie bereits erw&auml;hnt mu&szlig; nur der Standardstream existieren, alle weiteren Streams sind optional.
+Der Zugriff via zB FileSystemObject auf den Standardstream erfolgt einfach &uuml;ber den Dateinamen: <b>myfile.ext</b>. Bei
+Streams stellt sich nur eine kleine &Auml;nderung ein: <b>myfile.ext:streamname</b>. An den eigentlichen
+Dateinamen wird mit Doppelpunkt der Streamname angeh&auml;ngt.
+</p>
+<p>
+Die Daten des jeweiligen Streams werden intern vom Betriebssystem wie folgt angesprochen:
+<pre style="background='silver';">
+myfile.ext:mystream:$DATA
+</pre>
+</p>
+<p>
+Ich hoffe, mit dem $DATA habe ich jetzt bei einigen Herrschaften eine Glocke gel&auml;utet - es gab
+bei IIS mit ASP den sogenannten <b>::$DATA </b>Bug, der es erlaubte, an der ASP Engine vorbei den 
+Sourcecode einer ASP Datei downzuloaden - und zwar genau &uuml;ber das Standardstreamfeature von NTFS,
+das von IIS nicht korrekt abgeblockt wurde. 
+</p>
+<p>
+Weil wir gerade beim Thema Sicherheit sind: wof&uuml;r soll denn nun f&uuml;r einen ASP Programmierer
+das Streams Feature von Nutzen sein? Nun, wenn nur der Standardstream sichtbar ist, hei&szlig;t das, 
+da&szlig; ich sensitive Informationen in weiteren Streams ablegen kann. Und das Beste ist, da&szlig; weder 
+&uuml;ber FTP, einen Web Browser und festhalten - noch &uuml;ber den Windows Explorer - diese Streams 
+sichtbar werden! Wer also bestimmte Daten nicht nur vor Hackern sondern auch vor seinem Provider 
+verstecken will, der liegt mit Streams genau richtig.
+</p>
+<p>
+Ein weiteres Anwendungsgebiet von Streams w&auml;re zum Beispiel, da&szlig; man eine Datei f&uuml;r Lesen
+und Schreiben gleichzeitig aufmachen kann - das Locking funktioniert per Stream. Anwendung
+k&ouml;nnte das f&uuml;r Datei-basierte Foren und so weiter finden.
+</p>
+<p>
+Da wir nun die Anwendungsgebiete im Groben mal abgesteckt haben, kommen wir zu einem wichtigen
+Punkt der impliziert ist, aber auch explizit erw&auml;hnt werden sollte: das Streams Feature ist nur 
+auf NTFS vorhanden ist (ergo Windows NT/2000). Will man eine Datei, die mehrere Streams enth&auml;lt, 
+auf eine andere Partition kopieren (FAT, FAT32), so werden die zus&auml;tzlichen Streams nicht
+mitgenommen - man wird allerdings davor gewarnt:
+</p>
+<p><IMG SRC="/artikel/Bilder/200008/20000821_1.png" width="419" height="240" border="0" alt=""></p>
+<p>
+Aus diesem Grund sollte man sich r&uuml;ckversichern, da&szlig; die aktuelle Partition Streams unterst&uuml;tzt
+- m&ouml;glichst bevor man Streams herumspielt. Die folgende Funktion ist Teil der Datei
+<b>StreamLibrary.asp</b>, die als Include in allen anderen Beispielen verwendet wird (auch Teil des
+Downloads).
+</p>
+<p>
+<pre style="background='silver';">
+Function IsDriveNTFSDrive(strDriveLetter)
+  Dim fsObj, drvObj, strTypeOfFS
+  IsDriveNTFSDrive = False
+  
+  Set fsObj = CreateObject(&quot;Scripting.FileSystemObject&quot;)
+  Set drvObj = fsObj.GetDrive(strDriveLetter)
+  strTypeOfFS = drvObj.FileSystem
+  
+  If (0 = StrComp(&quot;NTFS&quot;, strTypeOfFS)) Then
+    IsDriveNTFSDrive = True
+  End If
+End Function
+</pre>
+</p>
+<p>
+Diese Funktion verwendet die <i>FileSystem</i> Eigenschaft des <i>Drive</i> Objekts um den Typ des Dateisystems
+zu ermitteln. Bei NTFS liefert sie True, ansonsten immer False.
+</p>
+
+<h2>Schreiben von Streams</h2>
+<p>
+Die Voraussetzungen sind abgekl&auml;rt, jetzt geht es um's Schreiben in die Datei. Dazu habe ich
+auch eine universell einsetzbare Funktion gebaut: <b>WriteStreamData</b>.
+</p>
+<p>
+<pre style="background='silver';">
+Sub WriteStreamData(strTargetFile, strTargetStream, strStreamData)
+  Dim fsObj, objTextStream, strFullStreamedName
+  
+  Set fsObj = CreateObject(&quot;Scripting.FileSystemObject&quot;)
+  
+  ' der default stream mu&szlig; zwar nicht explizit generiert werden, es 
+  ' empfiehlt sich aber sehr!
+  If (Not fsObj.FileExists(strTargetFile)) Then
+    Set objTextStream = fsObj.CreateTextFile(strTargetFile)
+    objTextStream.Write &quot;Mehrfach-Stream Datei&quot;
+    objTextStream.Close
+    Set objTextStream = Nothing
+  End If
+  
+  strFullStreamedName = strTargetFile &amp; &quot;:&quot; &amp; strTargetStream
+  Set objTextStream = fsObj.CreateTextFile(strFullStreamedName)
+  objTextStream.Write strStreamData
+  objTextStream.Close
+  
+  Set objTextStream = Nothing
+  Set fsObj = Nothing
+End Sub
+</pre>
+</p>
+<p>
+Etwas, das ich nicht tun m&uuml;&szlig;te, ist den Standardstream mit Daten anzuf&uuml;llen - es dient nur
+dazu, da&szlig; die Datei nicht 0 Byte lang ist. Der Grund warum sie 0 Byte w&auml;re ist der, da&szlig; 
+nur der Standardstream zur Gr&ouml;&szlig;enkalkulation herangezogen werden kann (also wer seinem 
+Systemadministrator ein Ei legen will, der kann mehrere MB's in Dateien der L&auml;nge 0
+verstecken...). Auch wenn die Gr&ouml;&szlig;e vom Standardstream gerechnet wird, werden alle Streams
+bei einem Backup gesichert - also um die Daten in den zus&auml;tzlichen Streams mu&szlig; man sich
+nicht f&uuml;rchten.
+</p>
+<p>
+Das eigentliche Schreiben in einen Stream ist sehr simpel - nur 4 Zeilen inklusive des Erstellens
+eines Strings mit dem Streamnamen und dem Schlie&szlig;en der Datei. Schon hat man Daten erfolgreich
+versteckt.
+</p>
+<p>
+Verwendet wird die Funktion wie folgt (<b>WriteStream.asp</b>):
+</p>
+<p>
+<pre style="background='silver';">
+&lt;!--#include file=&quot;StreamLibrary.asp&quot;--&gt;
+&lt;%
+Dim strFile, strStream
+strFile = Server.MapPath(&quot;demo.txt&quot;)
+strStream = &quot;mystream&quot;
+
+If IsDriveNTFSDrive(&quot;d&quot;) Then
+  WriteStreamData strFile, strStream, &quot;some data you won't see on disk&quot;
+End If
+%&gt;
+</pre>
+</p>
+<p>
+Das Beispiel ist wirklich sehr straight-forward: die Datei wird definiert, das Dateisystem
+auf NTFS gecheckt, und dann die Daten geschrieben. Sollte alles gutgehen, bekommt man eine
+leere Seite pr&auml;sentiert (das sollte man unter Umst&auml;nden &auml;ndern), sonst eine Fehlermeldung.
+</p>
+<p>
+Wer m&ouml;chte, kann die Datei nun in Notepad &ouml;ffnen - er wird nur den Standardtext aus der
+Funktion <i>WriteStreamData</i> erhalten. Um die Daten des zus&auml;tzlichen Streams zu sehen, mu&szlig; man mit
+Doppelpunkt hinter dem Dateinamen den Streamnamen angeben, und schon sieht man die Daten auch
+in Notepad - aber wie gesagt, man mu&szlig; den Namen des Streams kennen.
+</p>
+
+<h2>Lesen von Streams</h2>
+<p>
+Da unsere Daten nun sicher in einem Stream liegen, stellt sich noch die Frage, wie man sie
+wieder auslesen kann. Diese Frage beantwortet der Sourcecode zur Funktion <b>ReadStreamData</b>:
+</p>
+<p>
+<pre style="background='silver';">
+Function ReadStreamData(strFileName, strStreamName)
+  Dim fsObj, objTextStream, strContent
+  Set fsObj = CreateObject(&quot;Scripting.FileSystemObject&quot;)
+  
+  If Not fsObj.FileExists(strFileName) Then
+    Err.Raise vbObjectError+1, &quot;Datei existiert nicht!&quot;
+  End If
+  
+  Set objTextStream = fsObj.OpenTextFile(strFileName &amp; &quot;:&quot; &amp; strStreamName)
+  strContent = objTextStream.ReadAll()
+  objTextStream.Close
+  Set objTextStream = Nothing
+  Set fsObj = Nothing
+  
+  ReadStreamData = strContent
+End Function
+</pre>
+</p>
+<p>
+Wieder passiert hier eigentlich nichts aufregendes - ich habe nur eine kleine Sicherheitsma&szlig;nahme
+eingebaut: das Checken, ob die Datei existiert. Allerdings k&uuml;mmere ich mich nicht um die Fehler,
+die entstehen falls der Stream nicht existiert - das ist Aufgabe des Lesers!
+</p>
+<p>
+Anwendung findet die Funktion in der Datei <b>ReadStreams.asp</b>:
+</p>
+<p>
+<pre style="background='silver';">
+&lt;!--#include file=&quot;StreamLibrary.asp&quot;--&gt;
+&lt;%
+Dim strFile, strStream
+strFile = Server.MapPath(&quot;demo.txt&quot;)
+strStream = &quot;mystream&quot;
+
+If IsDriveNTFSDrive(&quot;d&quot;) Then
+  Response.Write ReadStreamData(strFile, strStream)
+End If
+%&gt;
+</pre>
+</p>
+<p>
+Das Lesen funktioniert im Grunde genauso einfach wie das Schreiben. 
+</p>
+<p>
+Mit der Library die ich 
+Ihnen in diesem Artikel vorgestellt habe, kann man bequem mit Streams arbeiten - und diese
+zum "Verstecken" von Daten oder zum Speichern von verwandten Daten in einer einzigen Datei
+verwenden.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Wichtig zu bemerken ist unbedingt, da&szlig; man mit dem FileSystemObject keine M&ouml;glichkeit hat,
+alle Streams, die in einer Datei vorhanden sind, einfach aufzulisten. Man mu&szlig; wissen, da&szlig; ein
+Stream existiert (auch nicht schlecht von der Perspektive der Sicherheit). Wer allerdings
+einen C++ Compiler hat, der kann mit WIN32 API Funktionen sehr wohl alle Streams auflisten
+und anzeigen lassen - also 100% sicher sind die Daten nicht, das w&uuml;rde nur mit 
+Verschl&uuml;sselung stimmen (wenn sie richtig angewendet ist).
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000821.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000821.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000523.htm">Dateiattribute unter ASP auslesen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000523.htm</span><br>
+<a href="../artikel/20000530.htm">Lesen von Textdateien</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000530.htm</span><br>
+<a href="../artikel/20030324.htm">Minigolf - 99 Bottles of Beer</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20030324.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2Ftechnet%2Fsecurity%2Fbulletin%2Fms98%2D003%2Easp">File Access Issue with Windows NT Internet Information Server ($DATA Bug)</a><br>
+<SPAN class="content">http://www.microsoft.com/technet/security/bulletin/ms98-003.asp</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

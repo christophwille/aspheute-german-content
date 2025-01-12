@@ -1,0 +1,221 @@
+<HTML>
+<HEAD>
+<TITLE>In VB Komponenten auf ASP Objekte zugreifen (Variante 1)</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wie aus dem Titel ersichtlich ist, kann man aus Komponenten generell auf mehrere Arten und Weisen auf die ASP Objekte wie Request oder Response zugreifen. Heute bespreche ich den Einsatz der Page-Level Event Methoden...">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Page-Level,OnStartPage,OnEndPage,ScriptingContext,IScriptingContext,MTS,event methods,Response,Request,Server,Komponente,Visual Basic">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>In VB Komponenten auf ASP Objekte zugreifen (Variante 1)</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Komponenten.htm">Komponenten</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010320"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wie aus dem Titel ersichtlich ist, kann man aus Komponenten generell (und im heutigen Artikel
+Visual Basic im speziellen) auf mehrere Arten und Weisen auf die ASP Objekte wie Request oder Response
+zugreifen. Heute bespreche ich den Einsatz der Page-Level Event Methoden, ein weiterer Artikel wird sich
+dann mit der moderneren Methode des ObjectContexts auseinandersetzen.
+</p>
+<p>
+Die angesprochenen Page-Level Event Methoden sind <i>OnStartPage</i> und <i>OnEndPage</i>. Wie aus den
+Namen bereits hervorgeht, wird die erstere aufgerufen wenn die Bearbeitung der ASP Seite beginnt, und
+die letztere wenn alle Scriptbl&ouml;cke zu laufen aufgeh&ouml;rt haben. An <i>OnStartPage</i> wird ein Objekt
+namens <i>ScriptingContext</i> &uuml;bergeben, aus dem man die ASP Objekte "extrahieren" - und ab dann
+genauso wie in ASP mit VBScript verwenden kann. <i>OnEndPage</i> dient haupts&auml;chlich zum CleanUp und
+kann optional implementiert werden.
+</p>
+
+<h2>Eine Hello World Komponente erstellen</h2>
+<p>
+Wieder einmal ist "Hello World!" das Opfer unserer ersten Gehversuche am Weg zur ersten eigenen 
+Komponente. Diese wird eine simple Methode namens <i>SayHello</i> haben, um den Zugriff auf die
+ASP Objekte zu verdeutlichen (ohne durch zuviel an Funktionalit&auml;t den Blick auf das wichtige zu
+verstellen).
+</p>
+
+<p>
+Zuallererst m&uuml;ssen wir uns ein Projekt in Visual Basic erstellen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200103/20010320_01.png" width="446" height="426" alt="" border="0">
+
+<p>
+Durch Auswahl des Projekttyps <b>ActiveX DLL</b> wird ein Projekt plus einer leeren Klasse f&uuml;r
+uns erzeugt, was bereits f&uuml;r unsere Zwecke mehr als ausreicht. Benennen Sie das Projekt auf <b>AspHeute</b>,
+und die Klasse auf <b>DemoComponent</b> um.
+</p>
+
+<p>
+Da wir auf ASP Objekte zugreifen, m&uuml;ssen wir unserem VB Projekt sagen, wie diese definiert sind - dies
+geschieht indem man einen Verweis auf die Typenbibliothek von ASP legt (Men&uuml; Project/References):
+</p>
+
+<IMG SRC="/artikel/Bilder/200103/20010320_02.png" width="449" height="357" alt="" border="0">
+
+<p>
+Nun sind wir sozusagen "all set" und k&ouml;nnen zum Code schreiben anfangen. Das nachfolgende Listing
+zeigt alle ben&ouml;tigten Zeilen unserer Hello World Komponente (im Klassenmodul von <i>DemoComponent</i>
+einf&uuml;gen):
+</p>
+
+<pre style="background='silver';">
+Dim objResponse As ASPTypeLibrary.Response
+
+Public Sub OnStartPage(sc As ScriptingContext)
+  Set objResponse = sc.Response
+End Sub
+
+Public Sub SayHello()
+  objResponse.Write "Hello World"
+End Sub
+</pre>
+
+<p>
+Da die Komponente einfach gehalten ist, sticht der Infrastrukturcode in <i>OnStartPage</i> deutlich
+heraus. Diese Funktion wird bei der Instanzierung des Objekts aufgerufen, und referenziert aus dem
+<i>ScriptingContext</i> das <i>Response</i> Objekt (erspart sp&auml;ter Zugriffe auf diese Eigenschaft und ist somit
+schneller). <i>SayHello</i> bedient sich dann der Variable <i>objResponse</i>, um auf das ASP <i>Response</i>
+Objekt durchzugreifen - alle anderen Objekte w&uuml;rden auch funktionieren (aber eines mu&szlig;te ich mir 
+herauspicken).
+</p>
+
+<p>
+Im Editor sieht das dann wie folgt aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200103/20010320_03.png" width="704" height="534" alt="" border="0">
+
+<p>
+Bevor wir das Projekt kompilieren, g&ouml;nnen wir uns noch einen kleinen "Luxus", und deklarieren die
+Komponente korrekt f&uuml;r <i>Unattended Execution</i> (Men&uuml; Project/Properties):
+</p>
+
+<IMG SRC="/artikel/Bilder/200103/20010320_04.png" width="418" height="377" alt="" border="0">
+
+<p>
+Diese Einstellung ist f&uuml;r Serverkomponenten extrem wichtig, da somit unsichtbare, nicht-anklickbare
+Fehlerdialogboxen vollst&auml;ndig unterbunden werden. Ohne dieser Einstellung kann man schon mal den IIS
+"einfrieren" (diesen Zustand kann man unter IIS5 mit <i>iisreset.exe /restart</i> beheben, IIS4 hat leider
+kein vergleichbares Utility).
+</p>
+
+<p>
+Die Komponente ist fertig - was fehlt ist nur der Aufruf von <i>File/Make AspHeute.dll</i> und die
+nachfolgende Registrierung mit <i>regsvr32.exe aspheute.dll</i> - und schon ist die Komponente 
+einsatzbereit.
+</p>
+
+<h2>Die Komponente verwenden</h2>
+<p>
+Der einfachste Code zur Verwendung unserer neuen Komponente braucht nur zwei Zeilen lang zu sein -
+die Instanzierung und der Aufruf der <i>SayHello</i> Methode:
+</p>
+
+<pre style="background='silver';">
+Set xObj = CreateObject("AspHeute.DemoComponent")
+xObj.SayHello
+</pre>
+
+<p>
+Wenn man diese Seite aufruft, bekommt man allerdings eine Fehlermeldung die irritierend sein k&ouml;nnte:
+</p>
+
+<pre style="background='silver';">
+AspHeute error '800a005b' 
+Object variable or With block variable not set 
+/aspheute/oldcomponent/sonicht.asp, line 3 
+</pre>
+
+<p>
+Dieser Fehler kommt aus der <i>SayHello</i> Funktion - da VBScript's <i>CreateObject</i> die
+<i>OnStartPage</i> Methode nicht aufruft, ist die Variable <i>objResponse</i> nicht gesetzt.
+Dieser Fehler kann einem auch bei kommerziellen Komponenten passieren, die die <i>OnStartPage</i>
+Methode verwenden!
+</p>
+
+<p>
+Um diese Fehlermeldung zu umgehen, mu&szlig; man Objekte, die eine <i>OnStartPage</i> Methode haben, mittels
+<i>Server.CreateObject</i> instanzieren - weil nur <i>Server.CreateObject</i> die Page-Level Event
+Methoden aufruft. Da <i>Server.CreateObject</i> sowieso schneller ist als <i>CreateObject</i>,
+gibt es eigentlich eh' keinen Grund, dies nicht zu machen (<b>korrekt.asp</b>):
+</p>
+
+<pre style="background='silver';">
+Set xObj = Server.CreateObject("AspHeute.DemoComponent")
+xObj.SayHello
+</pre>
+
+<p>
+Die Response an den Client ist "Hello World", was beweist, da&szlig; unsere kleine Komponente brav ihren
+Dienst verrichtet.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Wir haben heute eine kleine Komponente erstellt, die sich der Page-Level Event Methoden bedient.
+Aus Gr&uuml;nden der Performance soll man diese Variante aber nicht mehr exzessiv verwenden - und
+statt dessen den <i>ObjectContext</i>. Aber das ist ein anderes Thema (eines weiteren Artikels).
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010320.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010320.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010322.htm">In VB Komponenten auf ASP Objekte zugreifen (Variante 2)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010322.htm</span><br>
+<a href="../artikel/20020408.htm">Klassenauflistungen mit dem Dictionary-Objekt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020408.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

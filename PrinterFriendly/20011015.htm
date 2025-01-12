@@ -1,0 +1,244 @@
+<HTML>
+<HEAD>
+<TITLE>Der SQL UNION Operator</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel stellt Ihnen den T-SQL UNION Operator in Anwendung und Funktion vor. Im Gegensatz zur Verwendung von JOIN werden hier die Ergebnisse von zwei oder mehreren Queries (Abfragen) kombiniert angezeigt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,UNION,UNION ALL,aggregiert,Aggregat,SQL,JOIN,View,Datenbank,Instanz,SQL Server">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Der SQL UNION Operator</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20011015"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Dieser Artikel stellt Ihnen den T-SQL UNION Operator in Anwendung und Funktion vor. Im Gegensatz zur Verwendung von 
+JOIN werden hier die Ergebnisse von zwei oder mehreren Queries (Abfragen) kombiniert angezeigt. Der UNION Operator 
+findet also Anwendung z.B. wo die WHERE Clause in Verbindung mit den logischen Operatoren keine Ergebnisse liefern kann oder
+wenn Views erstellt werden sollen, die sich auf mehrere Datenbanken oder SQL-Server Instanzen beziehen.
+</p>
+
+<p>
+Die Beispielqueries, die in diesem Artikel gezeigt werden, demonstrieren folgende Anwendungen:
+</p>
+
+<ul>
+<li>Finden eines Suchbegriffs in mehreren Tabellen</li>
+<li>Finden eines Suchbegriffs in mehreren Datenbanken oder wenn eine Datenbank 
+    geclustert ist (auf mehrere Instanzen verteilt)</li>
+</ul>
+
+<p>
+Bevor ich mit den Beispielen beginne, nat&uuml;rlich die syntaktisch richtige Verwendung des UNION Operators zuallererst:
+</p>
+
+<pre style="background='silver';">
+Query_1
+UNION [ALL]
+Query_2
+...
+UNION [ALL]
+Query_n
+</pre>
+
+<p>
+Der Ausdruck <i>Query</i> repr&auml;sentiert hier eine beliebige SQL-Abfrage. Mit UNION k&ouml;nnen je nach Erfordernis beliebig viele
+Queries verbunden werden. Wenn das optionale <i>ALL</i>-Keyword verwendet wird, werden auch duplikate Datens&auml;tze
+im Ergebnis mitangezeigt. Nat&uuml;rlich m&uuml;ssen Sie bei der Verwendung des Operators auch einiges beachten:
+</p>
+
+<ul>
+<li>Die Datentypen der Spalten m&uuml;ssen kompatibel sein, d.h. es mu&szlig; entweder ein impliziter Cast (z.B. int auf double)
+m&ouml;glich sein, oder wenn dies nicht m&ouml;glich ist, mu&szlig; ein expliziter Cast erfolgen. - dies bezieht sich auch auf die
+Anordnung der Spalten in der Abfrage.</li>
+</ul>
+
+<p>
+Beispiel:
+</p>
+
+<table cellpadding="2" cellspacing="2" border="2">
+<tr>
+   <th colspan="2">Tabelle Sales2000</th> <th colspan="2">Tabelle Sales2001</th>
+</tr>
+<tr>
+<td>Quarter</td>
+<td>Amount</td>
+<td>Amount</td>
+<td>Quarter</td>
+</tr>
+<tr>
+<td>1</td>
+<td>2421</td>
+<td>3654</td>
+<td>1</td>
+</tr>
+<tr>
+<td>2</td>
+<td>2023</td>
+<td>1265</td>
+<td>2</td>
+</tr>
+</table>
+
+<pre style="background='silver';">
+SELECT Quarter, Amount FROM Sales2000
+UNION
+SELECT Quarter, Amount FROM Sales2001 /* Reihenfolge der Tabelle in der Resultatanzeige ge&auml;ndert */
+</pre>
+
+<ul>
+<li>Alle Queries die mit Union verbunden werden m&uuml;ssen die gleiche Anzahl von Ausdr&uuml;cken (z.B. Feldnamen) haben</li>
+</ul>
+
+<p>
+Beispiel:
+</p>
+
+<pre style="background='silver';">
+SELECT Feld1, Feld2, Feld_n FROM Table/DB/Instance
+UNION
+SELECT Feld1, Feld2, Feld_m FROM Table/DB/Instance /* wobei n gleich m */
+</pre>
+
+<ul>
+<li>Die Spalten f&uuml;r das Resultat werden von der ersten Abfrage genommen, d.h. wenn in zwei unterschiedlichen
+Tabellen zwar sinngem&auml;&szlig; gleichartige Spalten vorhanden sind, aber mit unterschiedlichem Namen dann mu&szlig; eine Referenz
+erstellt werden.</li>
+</ul>
+
+<p>
+Beispiel:
+</p>
+
+<pre style="background='silver';">
+SELECT SurName AS LastName FROM Table/DB/Instance
+UNION
+SELECT LastName FROM Table/DB/Instance
+</pre>
+
+<p>
+Nach dieser Einf&uuml;hrung in Syntax und Verwendung, folgt nun die Implementierung der 
+eingangs erw&auml;hnten Problemstellungen:
+</p>
+
+<h3>Finden eines Suchbegriffs in mehreren Tabellen</h3>
+<p>
+Angenommen, Sie wollen die Gesamtanzahl aller verkauften Produkte Ihrer Firma anzeigen. Da aber jede Produktionsst&auml;tte 
+(A,B,C), wo die Produkte hergestellt werden, eine eigene Tabelle besitzt, m&uuml;ssen Sie in mehreren Tabellen nach den verkauften Produkten 
+suchen. Da Duplikate m&ouml;glich sind (jede Produktionsst&auml;tte kann ja dieselben Produkte erstellen), ist die Verwendung von
+ALL notwendig:
+</p>
+
+<pre style="background='silver';">
+SELECT ProductName, UnitsSold FROM Facts_Divison_A
+UNION ALL
+SELECT ProductName, UnitsSold FROM Facts_Divison_B
+UNION ALL
+SELECT ProductName, UnitsSold FROM Facts_Divison_C
+</pre>
+
+
+<h3>Finden eines Suchbegriffs in mehreren Datenbanken oder Instanzen</h3>
+<p>
+Nat&uuml;rlich k&ouml;nnen die die einzelnen Tabellen aus dem vorigen Beispiel auch auf verschiedenen Instanzen verteilt sein:
+</p>
+
+<pre style="background='silver';">
+SELECT ProductName, UnitsSold FROM SVR_USA.MyCompanyDB.dbo.Facts_Divison_A
+UNION ALL
+SELECT ProductName, UnitsSold FROM SVR_EUROPE.MyCompanyDB.dbo.Facts_Divison_B
+UNION ALL
+SELECT ProductName, UnitsSold FROM SVR_ASIA.MyCompanyDB.dbo.Facts_Divison_C
+</pre>
+
+<h3>Erstellen eines Views</h3>
+
+<p>
+Mit Views k&ouml;nnen Sie Daten aggregieren, die z.B. auf mehrere SQL-Server Instanzen aufgeteilt sind. Die Erstellung
+einer View (Division_Cluster) unter Verwendung des UNION Operators k&ouml;nnte dann so aussehen:
+</p>
+
+<pre style="background='silver';">
+CREATE VIEW Division_Cluster AS
+SELECT ProductName, UnitsSold FROM SVR_USA.MyCompanyDB.dbo.Facts_Divison_A
+UNION ALL
+SELECT ProductName, UnitsSold FROM SVR_EUROPE.MyCompanyDB.dbo.Facts_Divison_B
+UNION ALL
+SELECT ProductName, UnitsSold FROM SVR_ASIA.MyCompanyDB.dbo.Facts_Divison_C
+</pre>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Dieser Artikel zeigte Ihnen anhand von einfachen Beispielen die Verwendung des UNION SQL-Operators und die
+hierf&uuml;r einzuhaltenden Regeln. Mit dem UION Operator m&uuml;ssen die Abfragen nicht mehr auf eine Tabelle beschr&auml;nkt werden
+sondern es k&ouml;nnen mit einem Job mehrere Tabellen, Datenbanken oder auch Instanzen abgefragt werden.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001124.htm">Aktualisieren von Daten mit dem UPDATE Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001124.htm</span><br>
+<a href="../artikel/20001023.htm">Das SQL Join Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001023.htm</span><br>
+<a href="../artikel/20001201.htm">Die SQL ORDER BY Clause</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001201.htm</span><br>
+<a href="../artikel/20001107.htm">Einf&uuml;gen eines Datensatzes mit dem INSERT Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001107.htm</span><br>
+<a href="../artikel/20020903.htm">Stored Procedures einfach erstellt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020903.htm</span><br>
+<a href="../artikel/20011017.htm">T-SQL Clauses: GROUP BY und HAVING</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011017.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

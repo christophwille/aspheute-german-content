@@ -1,0 +1,399 @@
+<HTML>
+<HEAD>
+<TITLE>Global.asa: Verwendung, Events und Probleme</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel befa&szlig;t sich mit der Global.asa unter ASP. Der Autor beschreibt die Verwendung, die Events, sowie die Probleme die auftreten k&ouml;nnen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP,Global.asa,Global,Events,IIS,Server Application,Session Event,Application_OnStart,Application_OnEnd">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Global.asa: Verwendung, Events und Probleme</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001018"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>Die Global.asa ist eine praktische Funktionalit&auml;t des IIS 4.0 und IIS 5.0.
+Alle ASP Seiten einer virtuellen Website unter IIS laufen 
+(f&uuml;r gew&ouml;hnlich) in einem gemeinsamen Proze&szlig;, der <b>Server Application</b>. 
+&Ouml;ffnet man im Internet Services Manager (ISM) f&uuml;r eine Website
+das Properties Fenster (Bild 1), so findet man unter der Karteikarte 
+"Home Directory" die Einstellungen der Application (Bild 2).</p>
+
+<p><IMG SRC="/artikel/Bilder/200010/20001018_websiteProperties.png" width=463 height=499 alt="" border="0">
+<br>
+<i>Bild 1: Website Eigenschaften Fenster</i></p>
+
+<p><IMG SRC="/artikel/Bilder/200010/20001018_HomeDirectoryTab.png" width=463 height=499 alt="" border="0">
+<br>
+<i>Bild 2: Home Directory Karteikarte</i></p>
+
+
+<p>Wie wichtig diese Application zur Ausf&uuml;hrung von ASP Seiten ist, 
+merkt man sp&auml;testens dann, wenn man die Application entfernt
+(durch Aktivieren von "Remove"). 
+Die entfernte und damit deaktivierte Application wird im Website 
+Properties Fenster durch Abwesenheit des <i>Application Name</i> und 
+des <i>Application Starting Point</i> angezeigt (siehe Bild 3).</p>
+
+
+<p><IMG SRC="/artikel/Bilder/200010/20001018_websitePropertiesWOApp.png" width=463 height=499 alt="" border="0">
+<br>
+<i>Bild 3: Application deaktiviert</i></p>
+
+<p>Will man nun irgendeine ASP Seite von diesem Webserver aufrufen,
+erh&auml;lt man nur die Meldung <i>Server Application Error</i>.</p>
+
+
+<p><IMG SRC="/artikel/Bilder/200010/20001018_ServerApplicationError.png" width=601 height=303 alt="" border="0">
+<br>
+<i>Bild 4: Server Application Error</i></p>
+
+<p>Ein neuerliches Erstellen der Application geschieht durch Klicken auf den 
+"Create" Button.</p>
+
+
+<h2>Die Application</h2>
+
+<p>Die Application kann man sich als Verwaltungsinstanz f&uuml;r alle ASP Seiten 
+vorstellen. Alle ASP Seiten in der Application zusammen ergeben die ASP Application.</p>
+
+<p>Im Internet Services Manager (Windows 2000) bzw. IIS Manager (Windows NT 4.0)
+hat man die &Uuml;bersicht &uuml;ber alle Websites, die auf dem Webserver laufen
+(siehe Bild 5).</p>
+
+<p><IMG SRC="/artikel/Bilder/200010/20001018_ISM.png" width=587 height=364 alt="" border="0">
+<br>
+<i>Bild 5: Internet Services Manager</i></p>
+
+<p>Alle ASP Seiten einer Website laufen f&uuml;r gew&ouml;hnlich in einer Application 
+und haben damit zum Beispiel die selben Application Variablen,
+den selben Pool von Session Variablen, und greifen auf die selbe <i>Global.asa</i> zu.</p>
+
+<p>Damit die Application die <b>Global.asa</b> findet, mu&szlig; die 
+<b>Global.asa</b> Datei im sogenannten Starting Point der Application sein, 
+also f&uuml;r gew&ouml;hnlich im Hauptverzeichnis der Website.</p>
+
+
+
+<h2>Die Datei Global.asa</h2>
+
+<p>Will man die Datei Global.asa einsetzen, so mu&szlig; man diese 
+in den Starting Point der Webserver Application (meist ins
+Hauptverzeichnis des Webservers) legen.</p>
+
+<p>Was ist nun die Aufgabe der Global.asa, was kann man in Ihr tun?</p>
+
+<p><ul>
+<li>In die Global.asa schreibt man die Subroutinen, die jeweils ausgef&uuml;hrt 
+werden wenn:
+<ul>
+<li><b>Die Application startet</b>: Der Webserver wird hochgefahren und die
+Application wird initialisiert. Dies bewirkt die Ausf&uuml;hrung
+der <i>Application_OnStart</i> Subroutine in der Global.asa.</li>
+
+<li><b>Die Application endet</b>: Der Webserver wird hinuntergefahren, die 
+Ausf&uuml;hrung der Website Application wird vom Administrator gestoppt,	
+usw. Dies bewirkt die Ausf&uuml;hrung der <i>Application_OnEnd</i> 
+Subroutine.</li>
+
+<li><b>Eine Session startet</b>: Ein neuer User ruft eine ASP Seite auf.
+Dies startet die <i>Session_OnStart</i> Subroutine der Global.asa.</li>
+
+<li><b>Eine Session endet</b>: Der Besucher hat seit zwanzig Minuten
+(oder einem anderen in <i>Session.Timeout</i> spezifizierten Wert) keine
+ASP Seite mehr aufgerufen, oder das Kommando <i>Session.Abandon</i>
+wurde ausgef&uuml;hrt. Daher wird die <i>Session_OnEnd</i>
+Subroutine aufgerufen.</li>
+</ul>
+</li>
+
+<li>Ausserdem kann man in der Global.asa Objekte definieren,
+die f&uuml;r alle ASP Seiten der Application verf&uuml;gbar sind.</li>
+
+</ul></p>
+
+
+
+
+<h2>Die Application-Events der Global.asa</h2>
+
+<p>Jedesmal wenn die Application startet und endet werden die 
+<i>Application_OnStart</i> und <i>Application_OnEnd</i> "getriggert".
+Dies bedeutet, da&szlig; die <i>Application_OnStart</i> und 
+<i>Application_OnEnd</i> Subroutinen ausgef&uuml;hrt werden.</p>
+
+<p>Wie sehen diese Routinen in der Global.asa aus?
+Die Routinen werden als ganz normale Subs in &lt;SCRIPT&gt;
+Bl&ouml;cken (<i>Runat="SERVER"</i>) definiert:</p>
+
+
+<p><pre style="background='silver';">
+&lt;script language="VBScript" runat="SERVER"&gt;
+Sub Application_OnStart()
+   ...
+End Sub
+
+Sub Application_OnEnd()
+   ...
+End Sub
+&lt;/script&gt;
+</pre></p>
+
+
+
+<h3>Application_OnStart</h3>
+
+
+<p>Wie schon erw&auml;hnt wird die <i>Application_OnStart</i>
+Subroutine ausgef&uuml;hrt wenn die Application startet.
+Dies ist genaugenommen mit dem ersten Aufruf einer dynmischen Internetseite 
+(.asp, .shtml, ...) von der Website der Fall.</p>
+
+<p>In der <i>Application_OnStart</i> kann man zum Beispiel bestimmte
+Parameter in Application Variablen schreiben, die von allen ASP Seiten aus
+zug&auml;nglich sind.
+In der Subroutine <i>Application_OnStart</i> sind von den IIS-eigenen Objekten
+nur das <i>Application</i> und das <i>Server</i> Objekt benutzbar.
+Jeder Zugriff auf ein <i>Session</i>, <i>Request</i> oder <i>Response</i> Objekt 
+wird mit einem Laufzeitfehler quittiert.</p>
+
+
+
+<h3>Application_OnEnd</h3>
+
+<p>Die <i>Application_OnEnd</i> Routine wird ausgef&uuml;&uuml;hrt wenn
+die Website Application beendet wird.
+Man kann nicht immer davon ausgehen, da&szlig; die 
+<i>Application_OnEnd</i> Routine ausgef&uuml;hrt wird. 
+Bei einem Absturz des Servers (Stromsausfall oder Virus zum Beispiel) wird
+der Event nicht mehr ausgef&uuml;hrt.</p>
+
+<p><u>Anmerkung</u>: Die <i>Server.MapPath</i> Methode kann in der <i>Application_OnEnd</i>
+Routine nicht verwendet werden.</p>
+
+
+<h2>Die Session-Events der Global.asa</h2>
+
+<p>Die zwei Session Events <i>Session_OnStart</i> und <i>Session_OnEnd</i>
+k&ouml;nnen in der Global.asa angegeben sein:</p>
+
+<p><pre style="background='silver';">
+&lt;script language="VBScript" runat="SERVER"&gt;
+' --- Application Events: ---
+Sub Application_OnStart()
+   ...
+End Sub
+
+Sub Application_OnEnd()
+   ...
+End Sub
+
+' --- Session Events: ---
+Sub Session_OnStart()
+   ...
+End Sub
+
+Sub Session_OnEnd()
+   ...
+End Sub
+&lt;/script&gt;
+</pre></p>
+
+
+<p><i>Session_OnStart</i> wird immer dann ausgef&uuml;hrt, wenn ein neuer User
+eine ASP Seite der Website (genauer gesagt der Website Application) aufruft.</p>
+
+<p>Dabei wird dem Browser des Users ein Session Cookie gesendet, der 
+verschl&uuml;sselt die ID der Session enth&auml;lt.
+Wenn der Browser den Session Cookie nicht speichert, so wird bei jedem
+neuen ASP Seitenaufruf des Users eine neue Session gestartet und
+damit auch die <i>Session_OnStart</i> Routine in der
+Global.asa ausgef&uuml;hrt (siehe auch 
+<nobr>"<a href="../artikel/20000505.htm">Session Variablen - Verwendung und Stolpersteine</a>"</nobr>).</p>
+
+<p>Nimmt der Browser den Session Cookie an, so z&auml;hlen alle weiteren
+Aufrufe von ASP Seiten der selben Website (bzw. der selben
+Website Applicatio) zur selben Session und somit wird die
+<i>Session_OnStart</i> Routine nur beim Aufruf der ersten ASP Seite 
+der Session ausgef&uuml;hrt.</p>
+
+<p>Im <i>Session_OnStart</i> Skript kann man alle IIS Objekte
+(<i>Server</i>, <i>Application</i>, <i>Session</i>, <i>Request</i>, <i>Response</i>
+und <i>ObjectContext</i>) ohne Einschr&auml;nkungen verwenden.</p>
+
+<p>Die <i>Session_OnEnd</i> Routine wird schlie&szlig;lich aufgerufen wenn
+die Session des Benutzers beendet wird. Dies ist im allgemeinen 20 Minuten
+nach dem letzen Aufruf einer ASP Seite der Fall. Die Zeitspanne
+bis zum "Timeout" der Session kann man mittels 
+<i>Session.Timeout</i> Eigenschaft auslesen oder setzen.</p>
+
+<p>&Uuml;blicherweise wird zu jedem <i>Session_OnStart</i> Event 
+nach Beenden der Session ein zugeh&ouml;riger <i>Session_OnEnd</i>
+Event mit der zugeh&ouml;rigen Routine der Global.asa aufgerufen.</p>
+
+<p><u>Anmerkung</u>: Die Verwendung der <i>Server.MapPath</i> Methode ist 
+im <i>Session_OnEnd</i> Skript nicht m&ouml;glich.</p>
+
+<p>In den <i>Session_OnStart</i> und <i>Session_OnEnd</i> Routinen
+der Global.asa kann man Application Variablen setzen oder deren Werte ver&auml;ndern,
+Session Variablen setzen usw.</p>
+
+
+
+
+<h2>Globale Objekte in der Global.asa definieren</h2>
+
+<p>Mit Hilfe des &lt;OBJECT&gt; Tags ist es m&ouml;glich in der Global.asa
+Objekte zu definieren, die auf jeder ASP Seite der Application 
+direkt verf&uuml;gbar sind. Der &lt;OBJECT&gt; Tag mu&szlig; ausserhalb
+des &lt;SCRIPT&gt; Blocks stehen. Der Syntax zum Erstellen
+eines in allen ASP Seiten derApplication global einsetzbaren
+Objektes lautet:</p>
+
+<p><pre style="background='silver';">
+&lt;<b>OBJECT</b> <b>RUNAT=Server</b> SCOPE=<b>Application</b> 
+ID=<i>Identifier</i> PROGID="<i>progID</i>"&gt;
+&lt;/OBJECT&gt;
+</pre></p>
+
+
+<p>Um zum Beispiel ein gemeinsames <b>AdRotator</b> Objekt 
+(siehe auch "<a href="../artikel/20000711.htm">Bannerwerbung mit ASP</a>")
+f&uuml;r alle ASP Seiten und ASP Sessions zu definieren, w&uuml;rden man 
+ein Kommando wie folgt benutzen:</p>
+
+
+<p><pre style="background='silver';">
+&lt;OBJECT RUNAT=Server SCOPE=Application ID=AdRotator Conn PROGID="MSWC.AdRotator""&gt;
+&lt;/OBJECT&gt;
+</pre></p>
+
+
+<p>Oft ist es erw&uuml;nscht, da&szlig; f&uuml;r verschiedene Sessions
+verschiedene Objekte (gleichen Namens) zur Verf&uuml;gung stehen.
+Zum Beispiel ist es sinnvoll, f&uuml;r jede Session ein
+eigenes Browser Type Objekt zu erzeugen. Dies wird durch
+das Setzen des <i>Scope</i> Parameters auf "Session" erreicht:</p>
+
+
+<p><pre style="background='silver';">
+&lt;OBJECT RUNAT=Server SCOPE=Session ID=BrowserType Conn PROGID="MSWC.BrowserType""&gt;
+&lt;/OBJECT&gt;
+</pre></p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>In der Global.asa definiert man die vier Subroutinen, die beim Starten und Beenden
+einer Website Application und User-Session ausgef&uuml;hrt werden.</p>
+
+<p>Man mu&szlig; sich im Klaren dar&uuml;ber sein, wann die einzelnen Subroutinen
+ausgef&uuml;hrt werden um sie korrekt einsetzen zu k&ouml;nnen.
+So wird die <i>Session_OnEnd</i> Routine nicht sofort nach Schlie&szlig;en des Browsers
+ausgef&uuml;hrt, sondern erst wenn die Session beendet wird, also meist
+20 Minuten nach dem letzen Aufruf einer ASP Seite.</p>
+
+<p>Will man globale Objekte definieren, die f&uuml;r eine Session
+oder f&uuml;r eine Application in allen ASP Seiten der Application
+benutzt werden k&ouml;nnen, so verwendet man den &lt;OBJECT&gt; Tag:</p>
+
+<p><pre style="background='silver';">
+&lt;OBJECT RUNAT=Server SCOPE=Application ID=AdRotator Conn PROGID="MSWC.AdRotator""&gt;
+&lt;/OBJECT&gt;
+
+&lt;OBJECT RUNAT=Server SCOPE=Session ID=BrowserType Conn PROGID="MSWC.BrowserType""&gt;
+&lt;/OBJECT&gt;
+
+
+&lt;script language="VBScript" runat="SERVER"&gt;
+' --- Application Events: ---
+Sub Application_OnStart()
+   ...
+End Sub
+
+Sub Application_OnEnd()
+   ...
+End Sub
+
+' --- Session Events: ---
+Sub Session_OnStart()
+   ...
+End Sub
+
+Sub Session_OnEnd()
+   ...
+End Sub
+&lt;/script&gt;
+</pre></p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000818.htm">Debuggen von ASP Skripts - Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000818.htm</span><br>
+<a href="../artikel/20000412.htm">Pr&uuml;fen ob ein Browser Cookies annimmt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000412.htm</span><br>
+<a href="../artikel/20000505.htm">Session Variablen - Verwendung und Stolpersteine</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000505.htm</span><br>
+<a href="../artikel/20000420.htm">Speichern von Recordsets in Application-Variablen (Teil&nbsp;I)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000420.htm</span><br>
+<a href="../artikel/20011112.htm">Strukturierter Aufbau in der ASP-Programmierung</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011112.htm</span><br>
+<a href="../artikel/20010529.htm">Wieviele User sind online?</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010529.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fpsdk%2Fiisref%2Fglob63vp%2Ehtm">Global.asa Reference</a><br>
+<SPAN class="content">http://msdn.microsoft.com/library/psdk/iisref/glob63vp.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,469 @@
+<HTML>
+<HEAD>
+<TITLE>Ver- und entschl&uuml;sseln von Texten mit PGP</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel erkl&auml;rt wie man die Funktionalit&auml;t der NSDPGP Komponente dazu benutzt, um beliebige PGP-verschl&uuml;sselte Texte entschl&uuml;sselt,
+oder Texte mittels PGP verschl&uuml;sselt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP, PGP, Pretty Good Privacy, verschlüsseln, Public Key, Key, Private Key">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Ver- und entschl&uuml;sseln von Texten mit PGP</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000921"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>Man kann in ASP Seiten mit Hilfe einer Komponente Texte mittels PGP ver- und 
+entschl&uuml;sseln. Leider ist mir keine ActiveX-Komponente bekannt, die diese
+Funktionalit&auml;t direkt integriert hat.
+Jedoch kann man die Funktionalit&auml;t der NSDPGP Komponente dazu benutzen, 
+um beliebige PGP-verschl&uuml;sselte Texte zu entschl&uuml;sseln,
+oder Texte mittels PGP zu verschl&uuml;sseln.</p>
+
+
+<p>Die Installation und Verwendung der NSDPGP Komponente k&ouml;nnen Sie im Artikel 
+<a href="../artikel/20000920.htm">PGP-Verschl&uuml;sselung bei Dateien</a> nachlesen.</p>
+
+<p>Die NSDPGP Komponente erlaubt es, Dateien mittels PGP zu verschl&uuml;sseln.
+Au&szlig;erdem kann man Dateien, die mittels PGP verschl&uuml;sselte Text enthalten,
+mit der NSDPGP Komponente wieder entschl&uuml;sseln.</p>
+
+<p>Leider kann NSDPGP nur Dateien und keine Textstrings direkt bearbeiten. Sowohl
+der verschl&uuml;sselte als auch der entschl&uuml;sselte Text m&uuml;ssen
+auf der Festplatte liegen, egal ob man mittels NSDPGP eine PGP-Verschl&uuml;sselung
+oder eine PGP-Entschl&uuml;sselung durchf&uuml;hrt.</p>
+
+<p>Man kann aber unter ASP einen beliebigen Text auf der Festplatte speichern.
+Dies erm&ouml;glicht das FileSystemObject Objekt, das fixer Bestandteil von
+VBScript und JScript ist - damit kann man in ASP Dateien schreiben und wieder lesen.
+Daher ist es, wenn auch &uuml;ber Umwege, m&ouml;glich, mittels ASP beliebige Texte
+mittels PGP zu manipulieren.</p>
+
+
+<h2>Verschl&uuml;sseln beliebiger Texte</h2>
+
+<p>Damit eine ASP Seite &uuml;berhaupt die PGP Algorithmen anwenden kann,
+mu&szlig; sowohl <a href="http://www.pgpi.org/products/pgp/versions/freeware/" target="_blank">PGP</a>
+(Version 6.5.1 oder h&ouml;her) sowie die 
+<a href="http://community.wow.net/grt/nsdpgp.html" target="_blank">NSDPGP Komponente</a> 
+am Webserver installiert sein.</p>
+
+<p>Das folgende ASP-Skript benutzt den PGP Schl&uuml;ssel 
+&quot;<i>TestPGP &lt;testpgp@aspexpert.com&gt;</i>&quot; mit der Key ID=<i>0xD6863683</i>
+um einen vom User eingegebenen Text zu verschl&uuml;sseln.
+Der PGP Key ist im Download zu diesem Artikel in der Datei <i>TestPGP.asc</i>
+enthalten, wobei der darin enthaltene Schl&uuml;ssel mittels Doppelklick auf die 
+Datei in die am Computer installierten PGP Keys &uuml;bernommen werden kann. 
+Die Passphrase f&uuml;r den Schl&uuml;ssel ist "<i>Pass</i>".</p>
+
+<p>Nat&uuml;rlich k&ouml;nnen Sie auch einen anderen PGP Key zur 
+Verschl&uuml;sselung benutzen. Dazu mu&szlig; der "Private Key" des PGP Keys
+am Webserver vorhanden sein. Die PGP Key IDs k&ouml;nnen Sie im Programm
+<i>PGPKeys</i> (in der Programmgruppe PGP des Start Men&uuml;s) 
+herausfinden, indem Sie mit der rechten Maustaste auf einen Schl&uuml;ssel klicken 
+und Key Properties w&auml;hlen.</p>
+
+<p>Das folgenden Skript nimmt die Usereingaben (PGP Key ID, Passphrase
+und zu verschl&uuml;sselnder Text) entgegen. Der Text wird in eine 
+Datei auf die Festplatte geschrieben, dort mittels NSDPGP Komponente
+verschl&uuml;sselt und in einer anderen Datei gespeichert.</p>
+
+<p>Die verschl&uuml;sselte Ergebnisdatei wird vom ASP Skript ausgelesen
+und beide tempor&auml;ren Dateien mittels NSDPGP unwiederbringlich
+gel&ouml;scht.</p>
+
+<p>Das nachfolgende Listing ist ein Auszug aus dem Skript <i>encodepgp.asp</i>,
+dessen Sourcecode Sie im Download finden:</p>
+
+<p><pre style="background='silver';">
+&lt;% @LANGUAGE="VBscript" %&gt;
+ &lt;%
+ ' Funktionen zum PGP Ver- und Entschluesseln:
+ Function EncodePGP(strText, PGPKey, ByRef strPGPEncodedText)
+    Dim FolderPhys, FileNameSource, FileNameEnc
+    Dim FilePhysSource, FilePhysEnc
+    Dim bWrite, bRead
+    ' Dateiordner, in dem die Dateien temporaer gespeichert werden:
+    FolderPhys = "C:\Temp\"
+ 
+    FileNameSource = GetTempFileName
+    FileNameEnc = FileNameSource &amp; ".pgp"
+ 
+    FilePhysSource = FolderPhys &amp; FileNameSource
+    FilePhysEnc = FolderPhys &amp; FileNameEnc
+    
+    bWrite = WriteTextFile(FilePhysSource, strText)
+    EncodePGPFile FilePhysSource, FilePhysEnc, PGPKey
+    
+    bRead = ReadTextFile(FilePhysEnc, strPGPEncodedText)
+ 
+    ' Aufraeumen
+    If bWrite Then
+       PGPWipeFile FilePhysSource
+    End If
+    If bRead Then
+       PGPWipeFile FilePhysEnc
+    End If
+    
+    EncodePGP = bRead And bWrite
+ End Function
+ ' ----------------------------------------------------
+ Function EncodePGPFile(FileNameSource, FileNameEnc, PGPKey)
+    Dim objPGP
+    
+    ' PGP Objekt instanzieren
+    Set objPGP = CreateObject("NSDPGP")
+    ' Datei mit PGP verschluesseln
+    ' Syntax: objPGP.EncryptFileEx Signfile, _
+    '  Quelldatei, PGP_ErgebnisDatei, Pa&szlig;wort
+    ' Anmerkung: Der Inhalt des Pa&szlig;worts wird
+    ' nur benoetigt um den Inhalt mittels PGP zu "signen"
+    objPGP.EncryptFileEx PGPKey, "NOSIGN", _
+       FileNameSource , FileNameEnc, ""
+ 
+    Set objPGP = Nothing
+ End Function
+ ' ----------------------------------------------------
+ Function PGPWipeFile(FileName)
+    Set objPGP = CreateObject("NSDPGP")
+    ' Datei unwiederbringlich loeschen
+    objPGP.WipeFile FileName
+    Set objPGP = Nothing
+ End Function
+ 
+ ' ... 
+ 
+ ' ----------------------------------------------------
+ ' Hauptprogramm:
+ ' ----------------------------------------------------
+ 
+ Dim strPassphrase, strText, strPGPText
+ 
+ If Request.ServerVariables("CONTENT_LENGTH") &lt;&gt; 0 Then
+    isPostBack = True
+    strText = Trim(Request.Form("Text"))
+    strPGPKeyID = Trim(Request.Form("PGPKeyID"))
+ Else
+    isPostBack = False
+    strText = "Dieser Text wird mittels PGP verschluesselt!"
+    strPGPKeyID = "0xD6863683"
+ End If
+ 
+ If isPostBack = False then
+    ' Formular ausgeben:
+    %&gt;
+ &lt;form action="&lt;%= Request.ServerVariables("SCRIPT_NAME") %&gt;"
+    method="POST"&gt;
+    PGP Key ID:
+    &lt;input type="Text" name="PGPKeyID" value="&lt;%= strPGPKeyID %&gt;"&gt;
+    &lt;br&gt;
+    &lt;textarea name="text" cols="40" rows="10" wrap="VIRTUAL"&gt;&lt;%= strText %&gt;
+    &lt;/textarea&gt;&lt;br&gt;
+    &lt;input type="Submit" name="Submit" value="Submit"&gt;
+ &lt;/form&gt;
+    &lt;%
+ Else
+    ' Text verschluesseln und darstellen
+    bOK = EncodePGP(strText, strPGPKeyID, strPGPText)
+    If bOK Then
+       Response.Write("&lt;b&gt;Der verschl&amp;uuml;sselte Text lautet:" & _
+      "&lt;/b&gt;&lt;BR&gt;&lt;br&gt;")
+       Response.Write("&lt;pre&gt;" & strPGPText & "&lt;/pre&gt;")
+    Else
+       Response.Write("Es ist ein Fehler aufgetreten, " &amp; _
+          "der Text konnte nicht verschl&amp;uuml;sselt werden!&lt;BR&gt;")
+    End If
+    Response.Write("&lt;BR&gt;")
+    Response.Write("&lt;a href=""" &amp; Request.ServerVariables("SCRIPT_NAME") &amp; _
+       """&gt;Zur&amp;uuml;ck&lt;/a&gt;")
+ End If
+ %&gt;
+</pre></p>
+
+<p>Dieses ASP Skript &uuml;bernimmt die vom Benutzer geposteten Eingaben
+(PGP Key ID, Passphrase und Text wie in Bild 1 dargestellt) und ruft die Funktion 
+<i>EncodePGP</i> auf, die sich um die Verschl&uuml;sselung des Textes k&uuml;mmert.</p>
+
+<p><IMG SRC="/artikel/Bilder/200009/20000921_formenc.png" width=414 height=311 alt="" border="0">
+<br>
+<i>Bild 1: Eingabeformular zum Verschl&uuml;sseln des Textes</i></p>
+
+<p><i>EncodePGP</i> schreibt den zu verschl&uuml;sselnden Text mittels der Funktion
+<i>WriteTextFile</i> in eine Datei (<i>FilePhysSource</i>). 
+Der Aufruf der Funktion <i>EncodePGPFile</i> bewirkt, da&szlig; die unverschl&uuml;sselte 
+Datei (<i>FilePhysSource</i>) von der NSDPGP Komponente
+verschl&uuml;sselt, und der verschl&uuml;sselte Text in eine weitere Datei 
+(<i>FilePhysEnc</i>) geschrieben wird.</p>
+
+<p>Die Funktion <i>EncodePGP</i> ruft danach die Funktion <i>ReadTextFile</i> auf,
+die den verschl&uuml;sselten Inhalt der zweiten Datei (<i>FilePhysEnc</i>) ausliest.
+Danach werden beide tempor&auml;ren Dateien mittels der Funktion <i>PGPWipeFile</i> 
+wieder von der Festplatte gel&ouml;scht. Die Funktion <i>PGPWipeFile</i> 
+bedient sich dabei der <i>WipeFile</i> Methode des NSDPGP Objektes,
+um eine Datei unwiederbringlich von der Festplatte zu l&ouml;schen.</p>
+
+<p>Das Ergebnis der Verschl&uuml;sselung sieht dann &auml;hnlich wie in Bild 2 aus.</p>
+
+<p><IMG SRC="/artikel/Bilder/200009/20000921_outenc.png" width=560 height=473 alt="" border="0">
+<br>
+<i>Bild 2: Ausgabe des verschl&uuml;sselten Textes</i></p>
+
+<p>Schwierigkeiten k&ouml;nnen bei Benutzung des <i>FileSystemObject</i> Objektes
+auftreten, da zum Schreiben von Dateien aus ASP die Schreibberechtigung f&uuml;r den 
+Benutzer IUSR_<i>MachineName</i>, in dessem Kontext ASP Seiten ausgef&uuml;hrt werden,
+gesetzt sein mu&szlig. Eine ausf&uuml;hrliche Diskussion dieser Thematik
+finden Sie im AspHeute Artikel 
+<a href="../artikel/20000725.htm">Schreiben einer Textdatei auf den Server</a>.</p>
+
+
+<h2>Entschl&uuml;sseln beliebiger Texte</h2>
+
+<p>Auf die selbe Art und Weise wie das Verschl&uuml;sseln funktioniert auch das
+Entschl&uuml;sseln.</p>
+
+<p>Das Skript <i>decodepgp.asp</i> demonstriert, wie dies mittels ASP
+funktioniert. Hier ein Auszug aus diesem Skript:</p>
+
+<p><pre style="background='silver';">
+ &lt;% @LANGUAGE="VBscript" %&gt;
+ &lt;%
+ Function DecodePGP(strPGPEncodedText, Passphrase, ByRef strDecodedText)
+    Dim FolderPhys, FileNameSource, FileNameDec
+    Dim FilePhysSource, FilePhysDec
+    Dim bWrite, bRead
+    ' Dateiordner, in dem die Dateien temporaer gespeichert werden:
+    FolderPhys = "C:\Temp\"
+ 
+    FileNameDec = GetTempFileName
+    FileNameSource = FileNameDec &amp; ".pgp"
+ 
+    FilePhysSource = FolderPhys &amp; FileNameSource
+    FilePhysDec = FolderPhys &amp; FileNameDec
+    <i>' Datei auf Server schreiben</i>
+    bWrite = WriteTextFile(FilePhysSource, strPGPEncodedText)
+ 
+    <i>' Datei mittels PGP entschluesseln</i>
+    DecodePGPFile FilePhysSource, FilePhysDec, Passphrase
+    
+    <i>' Entschluesselte Datei lesen</i>
+    bRead = ReadTextFile(FilePhysDec, strDecodedText)
+ 
+    <i>' Aufraeumen, temporaere Dateien loeschen</i>
+    If bWrite Then
+       PGPWipeFile FilePhysSource
+    End If
+    If bRead Then
+       PGPWipeFile FilePhysDec
+    End If
+    
+    DecodePGP = bRead And bWrite
+ End Function
+ <i>' ----------------------------------------------------</i>
+ Function DecodePGPFile(FileNameSource, FileNameDec, Passphrase)
+    Dim objPGP
+    
+    <i>' PGP Objekt instanzieren</i>
+    Set objPGP = CreateObject("NSDPGP")
+ 
+    ' Datei mit PGP entschluesseln:
+    ' Syntax: objPGP.DecryptFileEx Signfile, _
+    '  PGP_Quelldatei, ErgebnisDatei, Pa&szlig;wort
+    objPGP.DecryptFileEx "NOSIGN", _
+       FileNameSource , FileNameDec, Passphrase
+ 
+    Set objPGP = Nothing
+ End Function
+ <i>' ----------------------------------------------------</i>
+
+  ...
+ 
+ <i>' ----------------------------------------------------
+ ' Hauptprogramm:
+ ' ----------------------------------------------------</i>
+ 
+ Dim Passphrase, strPGP
+ Dim strPassphrase, strText, strPGPText
+ 
+ <i>' Hier default PGP Nachricht einfuegen:</i>
+ strPGP = _
+ "-----BEGIN PGP MESSAGE-----" &amp; vbcrlf &amp; _
+ ...
+ "-----END PGP MESSAGE-----" &amp; vbcrlf
+ 
+ If Request.ServerVariables("CONTENT_LENGTH") &lt;&gt; 0 Then
+    isPostBack = True
+    strPGPText = Trim(Request.Form("PGPText"))
+    strPassphrase = Trim(Request.Form("Passphrase"))
+ Else
+    isPostBack = False
+    strPGPText = strPGP
+    strPassphrase = "Pass"
+ End If
+ 
+ If isPostBack = False then
+    <i>' Formular ausgeben:</i>
+    %&gt;
+ &lt;form action="&lt;%= Request.ServerVariables("SCRIPT_NAME") %&gt;" 
+    method="POST"&gt;
+    Passphrase: 
+    &lt;input type="Text" name="Passphrase" value="&lt;%= strPassphrase %&gt;"&gt;
+    &lt;br&gt;
+    &lt;textarea name="PGPText" cols="70" rows="20" wrap="VIRTUAL"&gt;
+    &lt;%= strPGPText %&gt;&lt;/textarea&gt;&lt;br&gt;
+    &lt;input type="Submit" name="Submit" value="Submit"&gt;
+ &lt;/form&gt;
+    &lt;%
+ Else
+    <i>' Text entschluesseln und darstellen</i>
+    bEncrypted = DecodePGP (strPGPText, strPassphrase, strDecText)
+    If bEncrypted Then
+       Response.Write("&lt;b&gt;Der entschl&amp;uuml;sselte Text lautet:&lt;/b&gt;" & _
+      "&lt;BR&gt;&lt;br&gt;")
+       Response.Write("&lt;pre&gt;" & strDecText & "&lt;/pre&gt;")		 
+    Else
+       Response.Write("Es ist ein Fehler aufgetreten, " &amp; _
+          "der Text konnte nicht entschl&amp;uuml;sselt werden!&lt;BR&gt;")
+    End If
+    Response.Write("&lt;BR&gt;")
+    Response.Write("&lt;a href=""" &amp; Request.ServerVariables("SCRIPT_NAME") &amp; _
+       """&gt;Zur&amp;uuml;ck&lt;/a&gt;")
+ End If
+ %&gt;
+</pre></p>
+
+
+<p>Das Skript pr&auml;sentiert ein Formular, in das der Benutzer
+die PGP verschl&uuml;sselte Nachricht und die Passphrase zum Entschl&uuml;sseln
+eingibt (siehe Bild 3).</p>
+
+<p><IMG SRC="/artikel/Bilder/200009/20000921_formdec.png" width=560 height=504 alt="" border="0">
+<br>
+<i>Bild 3: Formular zum Entschl&uuml;sseln</i></p>
+
+<p>Die Formularwerte werden von ASP ausgelesen und der verschl&uuml;sselte Text in 
+der Funktion namens <i>DecodePGP</i> entschl&uuml;sselt. 
+Dazu verwendet die Funktion <i>DecodePGP</i>, die wiederum 
+die Funktion <i>DecodePGPFile</i> aufruft. 
+In der Funktion <i>DecodePGPFile</i> wird der verschl&uuml;sselte Text in eine Datei
+geschrieben und danach diese Datei mittels der <i>DecryptFileEx</i>
+Methode der NSDPGP Komponente entschl&uuml;sselt. Da NSDPGP den
+entschl&uuml;sselten Text wieder in einer Datei auf der Festplatte speichert,
+liest das ASP Skript den Inhalt dieser Datei aus, bevor es schlie&szlig;lich
+beide tempor&auml;re Dateien mittels <i>WipeFile</i> Funktion der NSDPGP
+Komponente l&ouml;scht.</p>
+
+<p>Der entschl&uuml;sselte Text wird schlie&szlig;lich wieder im Browser 
+ausgegeben, siehe auch Bild 4.</p>
+
+<p><IMG SRC="/artikel/Bilder/200009/20000921_outdec.png" width=634 height=270 alt="" border="0">
+<br>
+<i>Bild 4: Ausgabe des entschl&uuml;sselten Textes</i></p>
+
+<p>Die Funktionen, die zum Schreiben und Lesen der Dateien zust&auml;ndig sind
+k&ouml;nnen Sie im vollen Sourcecode lesen, der im Download zu diesem Artikel
+enthalten ist.</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>Das Entschl&uuml;sseln von beliebigen PGP-verschl&uuml;sselten Texten 
+ist unter ASP m&ouml;glich. Die einzig mir bekannte Komponente,
+die ein COM-Interface zum Ver- und Entschl&uuml;sseln mittels PGP
+zur Verf&uuml;gung stellt, ist die NSDPGP Komponente.</p>
+
+<p>Die Einschr&auml;nkungen der NSDPGP Komponente kann man elegant umgehen,
+indem man das FileSystemObject Objekt benutzt, das in den Skriptsprachen
+VBScript und JScript, und damit auch unter ASP zur Verf&uuml;fung steht.</p>
+
+<p>Um die PGP Funktionalit&auml;t am Webserver einzurichten, mu&szlig; man
+PGP Version 6.5.1 oder h&ouml;her, sowie die Komponente NSDPGP installieren.</p>
+
+<p>Nat&uuml;rlich m&uuml;ssen zum Verschl&uuml;sseln die dazu 
+n&ouml;tigen "Public Keys" in PGP vorhanden sein. Zum Entschl&uuml;sseln
+ben&ouml;tigt man dar&uuml;ber hinaus noch den "Private Key" und das Pa&szlig;wort
+in Form der sogenannten Passphrase.</p>
+
+<p>Will man das PGP Ver- und Entschl&uuml;sseln wie in diesem Artikel beschrieben
+einsetzen, so gilt es zu bedenken, da&szlig; das Schreiben und Lesen von Dateien
+nicht nur relativ langsam funktioniert, sondern auch die Schreib- und 
+Leseberechtigung f&uuml;r den IUSR_<i>MachineName</i> Account f&uuml;r die Verzeichnisse
+gesetzt sein mu&szlig;, in die ein ASP Skript Dateien schreibt bzw. Dateien liest.</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000921.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000921.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010528.htm">Aber bitte mit Rijndael</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010528.htm</span><br>
+<a href="../artikel/20020115.htm">CAPICOM One</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020115.htm</span><br>
+<a href="../artikel/20010330.htm">Passw&ouml;rter mit SHA1 absichern</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010330.htm</span><br>
+<a href="../artikel/20040105.htm">Passw&ouml;rter speichern - aber richtig!</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040105.htm</span><br>
+<a href="../artikel/20000920.htm">PGP-Verschl&uuml;sselung bei Dateien</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000920.htm</span><br>
+<a href="../artikel/20000725.htm">Schreiben einer Textdatei auf den Server</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000725.htm</span><br>
+<a href="../artikel/20010924.htm">Unknackbare Verschl&uuml;sselung mit Onetime Pads</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010924.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fcommunity%2Ewow%2Enet%2Fgrt%2Fnsdpgp%2Ehtml">NSDPGP Komponente</a><br>
+<SPAN class="content">http://community.wow.net/grt/nsdpgp.html</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Epgpi%2Eorg%2Fproducts%2Fpgp%2Fversions%2Ffreeware">PGP</a><br>
+<SPAN class="content">http://www.pgpi.org/products/pgp/versions/freeware</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

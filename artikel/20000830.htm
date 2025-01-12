@@ -1,0 +1,678 @@
+<HTML>
+<HEAD>
+<TITLE>Session State bei parallelen Browser-Frames und Fenstern</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel beschreibt der Autor, wie man ohne das Session Objekt das Auslangen finden kann, vor allem dann, wenn man mu&szlig;: in Framesets.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Cookie,QueryString,Session,Application,User,Tracking,Tracing,Verfolgung,Check">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Session State bei parallelen Browser-Frames und Fenstern</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000830"></SCRIPT>
+</p>
+<p>Das Session Objekt und der Session State in ASP sind vielf&auml;ltig einsetzbar.
+Sei es nun zur Absicherung eines Administrationsbereiches einer Website,
+zur Identifikation von Ben&uuml;tzern allgemein, zum Personalisieren von Sites
+oder einfach nur zum Speichern von Userbezogenen Daten und Ergebnissen f&uuml;r
+die Dauer eines Websitebesuches.</p>
+
+<p>Wie manch einer schon mit Bedauern feststellen mu&szlig;te, funktioniert
+eine Session nur dann sehr gut, wenn der User von einer einfachen Seite zur
+n&auml;chsten Seite geht. Arbeitet man jedoch mit Framesets, so taucht
+ein Problem auf.
+Wird in einer ASP-Seite, die Bestandteil eines Framesets ist, der 
+Session Variablen ein Wert zugewiesen, so ist dieser Wert in einer 
+anderen ASP-Seite des Framesets nicht auslesbar.</p>
+
+<p>Was ist der Grund f&uuml;r dieses Verhalten?</p>
+
+<p>Das Session Objekt identifiziert den Besucher, wie im Artikel 
+<a href="20000505.htm">Session Variablen - Verwendung und Stolpersteine</a>
+beschrieben, &uuml;ber einen tempor&auml;ren Cookie, der w&auml;hrend des
+Besuches der Website vom Browser gespeichert wird.</p>
+
+<p>Viele Browser, wie Microsoft Internet Explorer 4.x und 5.0, speichern
+einen tempor&auml;ren Cookie (wie den Session Cookie) 
+im Speicher des Prozesses, der die Webseite gerade anzeigt.
+Bei einem Frameset wird jeder Frame von einem eigenen Proze&szlig; verwaltet
+und daher hat auch jeder Frame seine eigenen tempor&auml;ren Cookies.
+So schickt auch der Webserver beim Aufruf mehrerer ASP Seiten im
+Frameset zu jeder ASP Seite einen eigenen Session Cookie mit und generiert
+f&uuml;r jede ASP Seite ein <u>eigenes</u> Session Objekt. Das ist der Grund 
+daf&uuml;r, da&szlig; man von einer ASP Seite des Framesets keinen
+Zugriff auf Session Variablen einer anderen ASP Seite des Framesets mehr hat.
+(Vergleiche auch MSDN Artikel "Session Variables Lost When ASP is Located in Frameset")</p>
+
+<p>Noch komplexer wird die Problematik, wenn man unterschiedliche
+Frame-Seiten nicht nacheinander aufruft, sondern quasi gleichzeitig.
+Dies ist im speziellen der Fall, wenn das Frameset das erste Mal geladen wird.
+Es ist m&ouml;glich, da&szlig; zuerst die ASP-Seite Nr. 1 geladen wird und dann
+die ASP-Seite Nr. 2. Auch der umgekehrte Fall ist m&ouml;glich. 
+Es ist sogar wahrscheinlich, da&szlig; der Browser beide Seiten parallel
+vom Webserver l&auml;dt.</p>
+
+<p>Wie l&auml;&szlig;t sich nun dieses Problem l&ouml;sen?</p>
+
+<p>Folgende Ans&auml;tze bieten sich an, um Session Informationen f&uuml;r
+alle ASP-Seiten im Frameset verf&uuml;gbar zu machen:</p>
+
+<p>
+<ol>
+<li>Werte in Cookies anstatt in Session Variablen speichern</li>
+<li>Simulieren eines Session States mit QueryStrings</li>
+</ol>
+</p>
+
+
+<h2>1. Werte in Cookies anstatt in Session Variablen speichern</h2>
+
+<p>Dabei speichert man keine Werte in Session Variablen, sondern direkt
+in Cookies, die ein definiertes "Ablaufdatum" (engl. Expiration Date) haben.
+Da "permanente" Cookies an einem zentralen Ort auf der Festplatte
+des Benutzers gespeichert werden, stehen die Cookies und deren
+Werte f&uuml;r alle ASP-Seiten der selben Website
+und damit auch f&uuml;r die ASP Seiten innerhalb eines Framesets zur 
+Verf&uuml;gung.</p>
+
+<p>Wenn man sichergehen m&ouml;chte, da&szlig; die Cookies bereits
+vor dem Laden der einzelnen Frames gesetzt sind und somit allen ASP-Dateien 
+im Frameset zur Verf&uuml;gung stehen, ist es ratsam, die Cookies bereits
+in der Frameset-Hauptseite zu setzen. Die Frameset-Hauptseite mu&szlig;
+dazu nat&uuml;rlich auch eine ASP-Seite sein.</p>
+
+<p>Wenn man also bisher einen Wert in einer Session Variablen
+gespeichert hat, so setzt man dazu nun einen Wert f&uuml;r einen Cookie.</p>
+
+<p><u>Vorher</u>: Zuweisen eines Wertes zu einer Session Variablen.</p>
+<p>
+<pre style="background='silver';">
+Session("VariablenName") = Wert
+</pre>
+</p>
+<p><u>Jetzt</u>: Setzen eines Wertes f&uuml;r einen permanenten Cookie
+(mit Ablaufdatum).</p>
+<p>
+<pre style="background='silver';">
+Response.Cookies("VariablenName") = Wert
+' ### Ablaufdatum auf 24 Stunden von jetzt setzen:
+Response.Cookies("VariablenName").Expires = Now() + 1
+</pre>
+</p>
+<p><u>Achtung</u>: Da der IIS den Cookie als HTTP Header zum Browser schickt
+mu&szlig; dieser Befehl ausgef&uuml;hrt werden, bevor ein normaler 
+Webseiteninhalt zum Browser &uuml;bertragen wird. Daf&uuml;r gibt es 2
+M&ouml;glichkeiten:</p>
+
+<p>
+<ol>
+	<li>Ausf&uuml;hren des Befehls vor jedem HTML oder <i>Response.Write</i>
+	Befehl.</li>
+	<li>Setzen des Output Buffers am Webserver durch <i>Response.Buffer = True</i>
+	am Anfang der ASP Seite (unter IIS 5.0 ist der Output Buffer 
+	standardm&auml;&szlig;ig eingeschalten).</li>
+</ol>
+</p>
+
+<p>
+<u>Anmerkung</u>: Nat&uuml;rlich lassen sich in Cookies keine Objekte 
+(wie <i>Recordsets</i>, <i>Connections</i> oder <i>Dictionary</i> Objekte) speichern.
+</p>
+
+
+<p>Wie liest man nun den Wert des Cookies wieder aus?</p>
+
+<p><u>Bisher</u>: Auslesen eines Wertes aus einer Session Variablen.</p>
+<p>
+<pre style="background='silver';">
+Wert = Session("VariablenName")
+</pre>
+</p>
+<p><u>Stattdessen</u>: Das Auslesen eines Cookie-Wertes.</p>
+<p>
+<pre style="background='silver';">
+Wert = Request.Cookies("VariablenName")
+</pre>
+</p>
+<p><b>Vorteile</b> dieser Methode: Wenig Programmieraufwand. Man kann
+bestehende ASP-Seiten einfach umschreiben.</p>
+
+<p><b>Nachteile</b>: Man kann einen Cookie-Wert nur dann an beliebiger
+Stelle im Script setzen, wenn man den Output Buffer des Webservers
+f&uuml;r die ASP-Seite aktiviert hat.<br>
+Die Werte der Cookies bleiben auch gespeichert,
+wenn der Benutzer alle Browserfenster geschlossen hat.
+Daher dauert die Session nicht 20 Minuten bzw. bis zum
+Schlie&szlig;en aller Browserfenster, sondern bis
+zum Ablauf des G&uuml;ltigkeitsdatums des Cookies.</p>
+
+
+
+<h2>2. Simulieren eines Session States mit QueryStrings</h2>
+
+<p>Da manche Benutzer immer noch Abneigungen gegen Cookies haben,
+bleibt oftmals nur die M&ouml;glichkeit, f&uuml;r einen Benutzer 
+w&auml;hrend seines Besuches der Website eine
+Identifikationsnummer (&auml;hnlich wie ein Session Cookie)
+im QueryString der URL mitzuf&uuml;hren.</p>
+
+<p>Man kann dann Werte f&uuml;r diesen Benutzer f&uuml;r die 
+Dauer seines Besuches in einer Datenbank oder in Application Variablen
+speichern und anhand der Identifikationsnummer eindeutig
+dem Benutzer (und seiner Session) zuordnen.</p>
+
+<p>Wie funktioniert nun der Trick mit dem QueryString genau?</p>
+
+<p>Ein QueryString ist nichts anderes als eine Zeichenkette,
+die mit einem Fragezeichen (?) beginnt und an die URL
+(Adresse der Webseite) angeh&auml;ngt wird. Der QueryString
+enth&auml;lt dann ein oder mehrere Paare von Namen und Werten.</p>
+
+<p>F&uuml;r unser spezielles Problem ist es zielf&uuml;hrend 
+im QueryString die Identifikationsnummer f&uuml;r den Besucher speichern. 
+Eine URL mit QueryString (fett) k&ouml;nnte also folgenderma&szlig;en aussehen:</p>
+<p>
+<pre style="background='silver';">
+http://www.aspheute.com/Seite.asp?<b>IdNr=12345</b>
+</pre>
+</p>
+<p>Wenn der Besucher das erste Mal auf eine Seite der Website
+kommt, so hat er noch keinen (oder m&ouml;glicherweise einen
+alten) QueryString in der aufrufenden URL.<br>
+<u>Daher m&uuml;ssen beim Aufruf einer beliebigen ASP-Seite 
+immer folgende Schritte gesetzt werden</u>:</p>
+
+<p>
+<ul>
+	<li>Pr&uuml;fen, ob die URL der aufgerufenen Seite eine Identifikationsnummer
+	(IdNr) im QueryString enth&auml;lt.</li>
+	<li>Auslesen der Identifikationsnummer aus dem QueryString und speichern
+	in einer ASP Variablen (z.B. <i>SessionIdNr</i>)</li>
+	<li>Liegt keine (oder eine ung&uuml;ltige) Id vor, so wird eine neue 
+	Id generiert und in einer ASP Variablen (<i>SessionIdNr</i>) gespeichert.</li>
+</ul>
+</p>
+
+<p><u>In der ASP Seite selbst sind folgende Dinge wichtig</u>:</p>
+
+<p>
+<ul>
+	<li><u>Jeder</u> Link der auf die eigenen Website verweist 
+	mu&szlig; im QueryString der URL die Identifikationsnummer 
+	aus der ASP Variablen (z.B. SessionIdNr) enthalten 
+	(dies gilt stenggenommen nicht f&uuml;r URLs von
+	statischen .htm/.html Seiten und Grafiken).
+	Dabei ist es egal, ob es sich um einen Textlink, Bild-Link, 
+	URL in <i>Response.Redirect</i>, Link in JavaScript (statisch und dynamisch),
+	Frame URLs oder URLs in Formularen handelt.</li>
+	<li>Die Funktionen, die anhand der Identifikationsnummer 
+	das "Speichern" und "Auslesen" von session-spezifischen Werten aus 
+	einer Datenbank oder aus Application Variablen erlauben, 
+	m&uuml;&szlig;en in jeder ASP Seite, die Zugriff auf diese Werte 
+	nehmen will, verf&uuml;gbar sein.
+	Die einfachste L&ouml;sung ist es, die Funktionen in einer
+	eigenen ASP Datei zu definieren und mittels <i>Inlcude</i> Direktive 
+	in jede ASP Seite einzubinden.</li>
+</ul>
+</p>
+
+<p><u>Weiters ist zu beachten</u>:</p>
+
+<p>Der Mechanismus, der f&uuml;r das "Zuweisen" und "Lesen"
+der Variablen zust&auml;ndig ist, mu&szlig; effizient programmiert 
+sein um den Webserver nicht zu sehr zu belasten.</p>
+
+<p>Wenn auf Werte eines bestimmten Benutzers eine
+definierte Zeitdauer lang nicht mehr zugegriffen wurde,
+so sind alle gespeicherten Werte der Benutzer Session zu l&ouml;schen.
+Ansonsten w&uuml;rde die Datenbank (oder das Application Objekt) 
+in einer riesigen, speicherfressenden Sammlung von nicht
+mehr ben&ouml;tigten Daten enden.</p>
+
+
+<h3>Beispiel f&uuml;r den QueryString Mechanismus</h3>
+<p>
+Im folgenden skizziere ich die Implementation des QueryString
+Mechanismus, wie also eine Benutzer ID generiert und von
+Seite zu Seite weitergegeben wird.
+</p>
+
+
+<h4>Einfache ASP Seite</h4>
+
+<p>Die folgende Beispielseite, die auch Teil
+eines Framesets sein kann, liest die Benutzer ID aus dem QueryString,
+speichert den Wert in einer Variablen und h&auml;ngt dann die Benutzer ID
+an jede auf der Seite vorkommende URL im QueryString an.</p>
+<p>
+<pre style="background='silver';">
+&lt;%
+<b>SessionIdNr = Request.QueryString("IdNr")</b>
+
+If <b>SessionIdNr</b> = "" Then
+   ' ### Keine Id im QueryString, 
+   ' ### generiere Id
+   <b>SessionIdNr = Session.SessionID</b>
+End If
+%&gt;
+
+&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"&gt;
+
+&lt;html&gt;
+&lt;head&gt;
+	&lt;title&gt;&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+
+&lt;!-- <b>Textlink</b> --&gt;
+Klicken Sie 
+&lt;a href="seite1.asp<b>?IdNr=&lt;%= SessionIdNr %&gt;</b>"&gt;hier&lt;/a&gt;
+&lt;br&gt;
+
+&lt;!-- <b>Textlink, der bereits Werte im QueryString hat</b> --&gt;
+&lt;a href="seite2.asp?Name=Wert<b>&amp;IdNr=&lt;%= SessionIdNr %&gt;</b>"&gt;
+Neue Seite&lt;/a&gt;
+&lt;br&gt;
+
+&lt;!-- <b>Link bei einem Image Tag</b> --&gt;
+&lt;a href="seite3.asp<b>?IdNr=&lt;%= SessionIdNr %&gt;</b>"&gt;
+&lt;img src="bild.png" border=0 alt=""&gt;&lt;/a&gt;
+
+&lt;!-- <b>Formular mit POST</b> --&gt;
+&lt;form action="seite5.asp<b>?IdNr=&lt;%= SessionIdNr %&gt;</b>" method="POST"&gt;
+&lt;input type="Text" name="Name"&gt;&lt;br&gt;
+&lt;input type="Submit" name="Submit" value="Absenden"&gt;
+&lt;/form&gt;
+&lt;br&gt;
+
+&lt;!-- <b>Formular mit GET</b> --&gt;
+&lt;form action="seite6.asp" method="GET"&gt;
+<b>&lt;input type="Hidden" name="IdNr" value="&lt;%= SessionIdNr %&gt;"&gt;</b>
+&lt;input type="Text" name="Name"&gt;&lt;br&gt;
+&lt;input type="Submit" name="Submit" value="Absenden"&gt;
+&lt;/form&gt;
+&lt;br&gt;
+
+&lt;!-- <b>Link in einem JavaScript Event</b> --&gt;
+&lt;a onClick="window.open('seite4.asp<b>?IdNr=&lt;%= SessionIdNr %&gt;</b>');"&gt;
+Neues Fenster&lt;/a&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</p>
+<p><u>Das Skript beinhaltet die folgenden Operationen:</u></p>
+
+<p>Die <i>IdNr</i> aus dem QueryString wird mit Hilfe der
+<i>QueryString</i> Collection des <i>Request</i> Objektes ausgelesen.</p>
+
+<p>Wenn Sie eine neue Id generieren,
+so k&ouml;nnen Sie den Wert aus <i>Session.SessionID</i> nur
+dann verwenden, wenn sie die Werte f&uuml;r die Session des 
+Benutzers im Application Object speichern.</p>
+
+<p>Speichern Sie allerdings die Session Werte in einer Datenbank,
+so sollten Sie die eindeutige Id von der Datenbank selbst generieren
+lassen. Microsoft SQL Server 7.0 oder Access 2000 Datenbanken stellen
+zu diesem Zweck die Identity bzw. Autonumber Felder zur Verf&uuml;gung
+(Siehe auch Artikel 
+<a href="20000606.htm">Zugriff auf autom. generierte ID beim Einf&uuml;gen eines Datensatzes</a>). 
+Sonst kann es passieren, wenn der Webserver kurzzeitig 
+ausf&auml;llt oder die Webserver Applikation einen Neustart 
+durchf&uuml;hrt, da&szlig; eine <i>SessionID</i> generiert wird, 
+die bereits von einem anderen Benutzer gehalten wird. Damit
+ist die "Id" nicht mehr eindeutig und das Chaos w&auml;re perfekt.</p>
+
+<p>In gew&ouml;hnlichen Links wird einfach der Wert
+aus der Variablen <i>SessionIdNr</i> im QueryString
+unter dem Namen <i>IdNr</i> angeh&auml;ngt.</p>
+
+<p>In Formularen, die mit POST geschickt werden, wird 
+der Wert der Variablen <i>SessionIdNr</i> im QueryString
+der Empf&auml;nger URL (Parameter <i>Action</i> im &lt;FORM&gt; Tag)
+unter dem Namen <i>IdNr</i> angeh&auml;ngt.</p>
+
+<p>Bei Formularen, die mittels GET zum Webserver gesendet werden,
+ist es n&ouml;tig, ein verborgenes Feld (engl. Hidden Field) 
+in das Formular (zwischen &lt;FORM&gt; und &lt;/FORM&gt;) einzuf&uuml;gen.
+Dieses Feld bewirkt, da&szlig; der Name und der Wert des Feldes
+zum Webserver geschickt werden:</p>
+<p>
+<pre style="background='silver';">
+&lt;input type="Hidden" name="<b>IdNr</b>" value="<b>&lt;%= SessionIdNr %&gt;</b>"&gt;
+</pre>
+</p>
+<p>Was dieses Beispiel nicht zeigt ist, wie man nun,
+anhand dieser Benutzer Id, Zugriff auf Werte der Benutzer 
+Session erh&auml;lt.
+Die von Seite zu Seite weitergegebene Benutzer Id 
+(<i>IdNr</i> im QueryString, <i>SessionIdNr</i> im ASP Skript)
+identifiziert den Benutzer eindeutig. 
+Anhand dieser eindeutigen Id kann man nun Werte in einer Datenbank oder 
+in der Application Variablen speichern und wieder auslesen. 
+Die genaue Beschreibung der Implementation solch eines Algorithmus in ASP 
+w&uuml;rde allerdings den Rahmen dieses Artikels sprengen.
+Insbesondere ist darauf zu achten, da&szlig; Daten von 
+inaktiven Benutzer-Sessions nach einer bestimmten Zeit gel&ouml;scht
+werden um Speicherplatz fressenden Datenm&uuml;ll zu vermeiden.</p>
+
+
+<h4>Frameset</h4>
+
+<p>Um in einem <b>Frameset</b> die Benutzer ID an die Unter-Frames
+weiterzugeben, f&uuml;gt man in die Benutzer ID
+nach bekanntem Muster in alle QueryStrings der URL 
+(in den <i>SRC</i> Parametern der <i>&lt;Frame&gt;</i> Tags) ein:</p>
+<p>
+<pre style="background='silver';">
+&lt;%
+<b>SessionIdNr = Request.QueryString("IdNr")</b>
+
+If <b>SessionIdNr</b> = "" Then
+   ' ### Keine Id im QueryString, 
+   ' ### generiere Id
+   <b>SessionIdNr = Session.SessionID</b>
+End If
+%&gt;
+
+&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"&gt;
+
+&lt;html&gt;
+&lt;head&gt;
+	&lt;title&gt;Frameset&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;!-- frames --&gt;
+&lt;frameset  rows="50%,*"&gt;
+    &lt;frame name="Frame 1" src="frame1.asp<b>?IdNr=&lt;%= SessionIdNr %&gt;</b>"&gt;
+    &lt;frame name="Frame 2" src="frame2.asp<b>?IdNr=&lt;%= SessionIdNr %&gt;</b>"&gt;
+&lt;/frameset&gt;
+&lt;/html&gt;
+</pre>
+</p>
+
+<p><b>Die Vorteile des QueryString Mechanismus</b>:
+Der simulierte Session State bleibt nur f&uuml;r die
+Dauer des Besuches erhalten. Es werden keine Cookies gesetzt.</p>
+
+
+<p><b>Nachteile</b>: Der Programmieraufwand ist sehr gro&szlig;.
+Zum einen mu&szlig; an jeden Link
+(ob Textlink, Link hinter einem Bild, JavaScript Link, oder
+Link in einem Formular) dynamisch ein QueryString angeh&auml;ngt werden.
+Daher m&uuml;&szlig;en alle Seiten, die Links (oder Formulare) enthalten,
+ASP Seiten sein, ansonsten lassen
+sich die im QueryString gespeicherten Werte nicht dynamisch auslesen 
+und in Links einf&uuml;gen. Weiters mu&szlig; man f&uuml;r das Management
+der Benutzersessions (und der w&auml;hrend der Session gespeicherten 
+Benutzer Werte) die Funktionalit&auml;t selber implementieren. Dies
+erfordert, je nach Ansatz, fundiertes Wissen &uuml;ber 
+das <i>Application</i> Objekt, &uuml;ber Datenbanken oder andere
+M&ouml;glichkeiten, Daten so zu speichern, da&szlig; der Webserver 
+unter Angabe der Benutzer ID und des Variablennamens einen Zugriff
+auf den zugeh&ouml;rigen Wert der Benutzer Session hat.</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Der Verzicht auf den Einsatz des <i>Session</i> Objektes in 
+Webprojekten mit Frames ist ein immer wieder auftauchendes
+und ernstes Problem. Die M&ouml;glichkeiten, diese 
+Browserunzul&auml;nglichkeiten zu umgehen, sind vielf&auml;ltig.
+In diesem Artikel wurden das Speichern von Session Werten als 
+Cookie Werte sowie das Mitf&uuml;hren einer Benutzer Id im
+QueryString aller URLs der Website dargestellt.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000830.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20010530.htm">Redirects mit Frame-Targets</a><br>
+<a href="20000505.htm">Session Variablen - Verwendung und Stolpersteine</a><br>
+<a href="20000606.htm">Zugriff auf autom. generierte ID beim Einf&uuml;gen eines Datensatzes</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsupport%2Emicrosoft%2Ecom%2Fsupport%2Fkb%2Farticles%2Fq178%2F0%2F37%2Easp">Session Variables Lost When ASP is Located in Frameset</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000830" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Session State bei parallelen Browser-Frames und Fenstern"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000830.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Koller"><input type="hidden" name="AuthorEmail" value="christiank@aspexpert.com"><input type="hidden" name="Artikel" value="20000830"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000830.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

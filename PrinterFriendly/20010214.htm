@@ -1,0 +1,295 @@
+<HTML>
+<HEAD>
+<TITLE>Eine Supportdatenbank in ASP erstellen - Teil 2</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im heutigen 2. Teil m&ouml;chte ich Ihnen nun zeigen, wie zB. ein Supportmitarbeiter eine Supportanfrage, die ein Besucher der Website gepostet hat, beantworten kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Website,FAQ,Support,Supportdatenbank,Emailanfrage,Anfrageformular,Helpdesk,SFA">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Eine Supportdatenbank in ASP erstellen - Teil 2</H1>
+<p>
+Geschrieben von: <a href="../autoren/klausaschenbrenner.htm">Klaus Aschenbrenner</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010214"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Herzlich Willkommen zum 2. Teil dieser Serie, die aus 3 Teilen besteht. Im 2. Teil m&ouml;chte ich Ihnen nun zeigen, 
+wie zB. ein Supportmitarbeiter eine Supportanfrage, die ein Besucher der Website gepostet hat, beantworten 
+kann. Diese Antwort wird in der Datenbank gespeichert und per Email an den Anfragenden gesendet.
+</p>
+
+<p>
+Im 3. Teil werden Sie dann sehen, wie man aus diesen Fragen und Antworten eine FAQ-Datenbank aufbaut, 
+welche dann User bequem ansehen k&ouml;nnen. Au&szlig;erdem k&ouml;nnen die Besucher dann eigene L&ouml;sungen f&uuml;r die Probleme 
+verfassen.
+</p>
+
+<h2>Login in den Administrationsbereich der Supportdatenbank</h2>
+
+<p>
+Als erstes m&ouml;chte ich Ihnen in der nachfolgenden Grafik zeigen, wie sich ein Supportmitarbeiter in den 
+Administrationsbereich einloggen kann:
+</p>
+
+<p>
+<IMG SRC="/artikel/Bilder/200102/20010214_1.png" width="468" height="406" alt="" border="0">
+</p>
+
+<p>
+Das Loginformular wird in der Datei <b>"login.asp"</b> realisiert. Der Supportmitarbeiter mu&szlig; sein Benutzerkonto und 
+sein Passwort eingeben. Hier wird wieder &uuml;ber eine JavaScript-Funktion clientseitig &uuml;berpr&uuml;ft, ob alle Felder 
+ausgef&uuml;llt wurden. (Zeile 57 - 81). 
+</p>
+
+<p>
+Als erstes wird hier nochmals &uuml;berpr&uuml;ft, ob alle Felder ausgef&uuml;llt wurden, da es vorkommen kann, da&szlig; man 
+JavaScript im Browser deaktiviert hat. (Zeile 57 - 81). Im Rest der Datei wird nur &uuml;berpr&uuml;ft, ob das 
+Benutzerkonto vorhanden ist und ob das zugeh&ouml;rige Passwort stimmt. Wenn diese Bedingungen erf&uuml;llt sind, 
+wird zur Datei <b>"problems.asp"</b> verzweigt (Zeile 38 in login.asp).
+</p>
+
+<p>
+Wenn der User noch kein Benutzerkonto besitzt, kann er &uuml;ber den Link <b>"Neues Administratorenkonto"</b> ein 
+Benutzerkonto anlegen. Dies wird in der Datei <b>"newaccount.asp"</b> durchgef&uuml;hrt:
+</p>
+
+<p>
+<IMG SRC="/artikel/Bilder/200102/20010214_2.png" width="497" height="406" alt="" border="0">
+</p>
+
+<p>
+Hier mu&szlig; der Supportmitarbeiter seinen Benutzernamen und sein gew&uuml;nschtes Passwort eingeben. Hier wird wieder 
+clientseitig mit einer JavaScript-Funktion &uuml;berpr&uuml;ft, ob alle Felder ausgef&uuml;llt sind (Zeile 82 - 120). 
+Mit dem ASP-Script in der Datei <b>"registeraccount.asp"</b> wird anschlie&szlig;end das neue Benutzerkonto in der 
+Tabelle <b>"Users"</b> gespeichert.
+</p>
+
+<p>
+Zuerst wird per JavaScript nochmals &uuml;berpr&uuml;ft, ob alle Felder ausgef&uuml;llt sind (Zeile 8 - 15). 
+Anschlie&szlig;end wird &uuml;berpr&uuml;ft, ob der Benutzername schon vorhanden ist (Zeile 16 - 32). Trifft dies zu, 
+wird eine entsprechende Meldung angezeigt. Anschlie&szlig;end wird ein neuer Datensatz mit den Daten des 
+Benutzerkontos hinzugef&uuml;gt.
+</p>
+
+<p>
+Nachdem Sie oben den Aufbau des Formulars gesehen haben, k&ouml;nnen wir nun daraus unser Tabellenschema f&uuml;r 
+die Benutzerkonten ableiten. Es sieht in Access 2000 bzw. SQL Server 2000 folgenderma&szlig;en aus:
+</p>
+
+<p>
+<IMG SRC="/artikel/Bilder/200102/20010214_3.png" width="485" height="368" alt="" border="0">
+</p>
+
+<p>
+<IMG SRC="/artikel/Bilder/200102/20010214_4.png" width="433" height="224" alt="" border="0">
+</p>
+
+<p>
+Die Tabelle habe ich einfach <b>Users</b> genannt. Anschlie&szlig;end hier die Feldbeschreibungen mit den entsprechenden 
+Datentypen (SQL Server 2000 und Access 2000 Datentypen sind angegeben):
+</p>
+
+<ul>
+<li>Username: char (50) oder Text 50, Name des Benutzerkontos</li>
+<li>Passwort: char (50) oder Text 50, Passwort des Benutzerkontos</li>
+<li>ID: int (mit Identity) oder Autonumber, ID der Datens&auml;tze der Tabelle</li>
+</ul>
+
+<p>
+Den Ablauf zum Anmelden und zur Anlegung eines neuen Benutzerkontos habe ich in der folgenden Grafik 
+dargestellt:
+</p>
+
+<IMG SRC="/artikel/Bilder/200102/20010214_5.png" width="407" height="490" alt="" border="0">
+
+<p>
+<b>Hier nochmals die Erkl&auml;rung des Ablaufs:</b> Wenn der Supportmitarbeiter noch kein Benutzerkonto hat, kann er 
+sich &uuml;ber den Link <b>"Neues Administratorenkonto"</b> ein neues Konto anlegen. Ist dies geschehen, oder ist bereits 
+ein Konto vorhanden, kann man sich in der <b>"login.asp"</b> in den Administrationsbereich der Supportdatenbank 
+einloggen.
+</p>
+
+<h2>Administrationsbereich der Supportdatenbank</h2>
+
+<p>
+Der Administrationsbereich der Supportdatenbank wird in der Datei <b>"problems.asp"</b> realisiert. 
+In den Zeilen 22 - 35 wird eine Datenbankverbindung zu der Tabelle <b>"Support"</b> aufgebaut, in welcher die 
+Supportanfragen gespeichert sind. Die Speicherung der Supportanfragen habe ich im 1. Teil meiner 3-teiligen 
+Serie besprochen.
+</p>
+
+<p>
+Die Supportanfragen werden mit Hilfe eines Paging-Mechanismuses  in einer Tabelle dargestellt:
+</p>
+
+<IMG SRC="/artikel/Bilder/200102/20010214_6.png" width="790" height="284" alt="" border="0">
+
+
+<p>
+Daf&uuml;r wird f&uuml;r jeden Datensatz in der Tabelle <b>"Support"</b> eine neue Zeile in der Tabelle angelegt. 
+Dies geschieht in den Zeilen 43 - 60. Es wird einfach das Recordset durchge-laufen, und die Felder 
+Name, Email, Programm, Problem in der Tabelle ausgegeben. Au&szlig;erdem wird f&uuml;r die Beantwortung des Problems ein 
+Link mit dem Titel <b>"Antworten"</b> erzeugt. Dieser verweist auf die Datei <b>"reply.asp"</b>. Als Parameter 
+wird die <b>ID</b> der Supportanfrage &uuml;bergeben, &uuml;ber welche die Anfrage eindeutig identifiziert wird, im 
+Querystring &uuml;bergeben.
+</p>
+
+<h2>Beantworten der Supportanfrage</h2>
+
+<p>
+Die Beantwortung der Supportanfrage wird in der Datei <b>"reply.asp"</b> durchgef&uuml;hrt. Das Argument <b>"ID"</b> beinhaltet die 
+ID der Supportanfrage, welche beantwortet wird. &Uuml;ber diese ID werden in den Zeilen 1 - 23 die Felder <b>Name</b>, 
+<b>Email</b>, <b>Programm</b> und <b>Problem</b> aus der Tabelle <b>"Support"</b> ausgelesen. Diese werden dann in einer Tabelle ausgegeben, 
+in welcher der Supportmitarbeiter die L&ouml;sung verfassen kann:
+</p>
+
+<IMG SRC="/artikel/Bilder/200102/20010214_7.png" width="568" height="402" alt="" border="0">
+
+<p>
+Hier wird wiederum clientseitig per JavaScript-Funktion &uuml;berpr&uuml;ft, ob der Supportmitarbeiter eine L&ouml;sung verfa&szlig;t 
+hat. Anschlie&szlig;end wird der Formularinhalt in der Datei <b>"send.asp"</b> &uuml;bergeben.
+</p>
+
+<h2>Supportanfrage speichern und versenden</h2>
+
+<p>
+In der Datei <b>"send.asp"</b> wird die L&ouml;sung in der Datenbank gespeichert und anschlie&szlig;end per Email an den 
+Anfragenden versendet.  Die L&ouml;sung des Problems wird in der Tabelle <b>"Loesungen"</b> gespeichert. Anschlie&szlig;end 
+hier die Feldbeschreibungen mit den entsprechenden Datentypen (SQL Server 2000 und Access 2000 Datentypen 
+sind angegeben):
+</p>
+
+<ul>
+<li>Loesung: text  oder Memo, L&ouml;sung des Problems</li>
+<li>SupportID: int oder Zahl, ID der Supportanfrage</li>
+</ul>
+
+<p>
+Das Tabellenschema f&uuml;r die Tabelle "L&ouml;sungen" in Access 2000 und SQL Server 2000 sieht folgenderma&szlig;en aus:
+</p>
+
+<p>
+<IMG SRC="/artikel/Bilder/200102/20010214_8.png" width="555" height="392" alt="" border="0">
+</p>
+
+<p>
+<IMG SRC="/artikel/Bilder/200102/20010214_9.png" width="801" height="197" alt="" border="0">
+</p>
+
+<p>
+Jetzt werden Sie sich vielleicht fragen, warum ich f&uuml;r die SupportID keinen Autowert verwendet habe? 
+Die L&ouml;sung ist ganz einfach: &Uuml;ber das SupportID-Feld werden die beiden Tabellen <b>"Support"</b> (Spalte ID) 
+und <b>"Loesungen"</b> (Spalte SupportID) verkn&uuml;pft. Es ist somit also m&ouml;glich, da&szlig; es f&uuml;r eine Supportanfrage mehrere 
+L&ouml;sungen gibt, was in der Computerindustrie nat&uuml;rlich nicht so abwegig ist....
+</p>
+
+<p>
+In den Zeilen 5 - 8 werden die Variablen f&uuml;r den Email-Versand initialisiert. Der Email-Versand wird &uuml;ber 
+die Komponente ASPMail durchgef&uuml;hrt. Sie k&ouml;nnen diese Komponente von der Adresse 
+<a href="http://www.serverobjects.com">http://www.serverobjects.com</a> 
+beziehen. Sie m&uuml;ssen diese 3 Variablen an Ihre Bed&uuml;rfnisse anpassen! Anschlie&szlig;end wird in den Zeilen 10 - 31 
+die L&ouml;sung des Problems in der Tabelle <b>"Loesungen"</b> gespeichert.  In den Zeilen 34 - 60 wird dann die 
+L&ouml;sung per Email an den Anfragenden versendet. Dies geschieht in 2 Schritten:
+</p>
+
+<ul>
+<li>In den Zeilen 34 - 42 werden der Name und die Email-Adresse des Anfragenden aus der Tabelle 
+<b>"Support"</b> ermittelt. Hierf&uuml;r wird die Variable <b>"SupportID"</b> verwendet.</li>
+<li>Anschlie&szlig;end wird in den Zeilen 45 - 62 das eigentliche Email versendet.</li>
+</ul>
+
+<p>
+<b>Hier nochmals die Erkl&auml;rung des Ablaufs:</b> In der Datei <b>"problems.asp"</b> w&auml;hlt der Supportmitarbeiter den Link 
+<b>"Antworten"</b> der entsprechenden Supportanfrage aus. Danach kann er in der Datei <b>"reply.asp"</b> die L&ouml;sung f&uuml;r 
+das Problem verfassen. Anschlie&szlig;end wird diese L&ouml;sung in der Tabelle <b>"Loesung"</b> gespeichert und an den 
+Anfragenden versendet.
+</p>
+
+<p>
+Den Ablauf f&uuml;r die Beantwortung einer Anfrage habe ich in der folgenden Grafik dargestellt:
+</p>
+
+<IMG SRC="/artikel/Bilder/200102/20010214_10.png" width="608" height="500" alt="" border="0">
+
+<h2>Zusammenfassung</h2>
+
+<p>
+Sie haben im 2. Teil meiner 3-teiligen Serie einerseits gesehen, wie ein Supportmitarbeiter eine Supportanfrage 
+beantworten kann, und andererseits haben Sie gelernt, wie man einen einfachen Passwortschutz auf einer 
+Webseite implementiert.
+</p>
+
+<p>
+Au&szlig;erdem habe ich Ihnen gezeigt, wie Sie mit der ASPMail-Komponente bequem Emails von Ihrer Webseite 
+verschicken k&ouml;nnen. 
+</p>
+
+<p>
+Im letzten Teil meiner Serie werden Sie dann sehen, wie aus den beiden Tabellen <b>"Support"</b> und <b>"Loesungen"</b> 
+eine FAQ-Datenbank aufgebaut wird. Ich hoffe, wir "lesen" uns wieder!
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010214.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010214.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000915.htm">Eine Supportdatenbank in ASP erstellen (1/3)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000915.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eserverobjects%2Ecom%2F">ASPMail</a><br>
+<SPAN class="content">http://www.serverobjects.com/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

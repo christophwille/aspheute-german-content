@@ -1,0 +1,681 @@
+<HTML>
+<HEAD>
+<TITLE>Benutzerverwaltung leicht gemacht: Teil 1</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel m&ouml;chte ich Ihnen einen relativ einfachen Weg zeigen, mit dem auch Sie eine gro&szlig;e Anzahl von Benutzern innerhalb Ihrer Internet-Applikation leicht verwalten und in Ihr System integrieren k&ouml;nnen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Applikation,Userverwaltung,Benutzerverwaltung,Status,Benutzerdatenbank,Login,Logon,Validierung,Benutzer">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Benutzerverwaltung leicht gemacht: Teil 1</H1>
+<p>
+Geschrieben von: <a href="../autoren/simondotschuweit.htm">Simon Dotschuweit</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020429"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+In diesem Artikel m&ouml;chte ich Ihnen einen relativ einfachen Weg zeigen, mit dem auch Sie eine gro&szlig;e Anzahl von 
+Benutzern innerhalb Ihrer Internet-Applikation leicht verwalten und in Ihr System integrieren k&ouml;nnen. Schlie&szlig;lich 
+kommt irgendwann einmal der Zeitpunkt, wo eine simple Pa&szlig;wortabfrage nicht mehr ausreicht. Vielleicht m&ouml;chten sie 
+ja auch, da&szlig; nur Benutzer die &uuml;ber einen bestimmten Status verf&uuml;gen Zugriff auf spezielle Seiten haben, die 
+von anderen nicht gesehen werden sollen.
+</p>
+
+<p>
+Es gibt viele Beispiele, bei denen solche Systeme zwingende Voraussetzung sind:
+</p>
+
+<ul>
+<li>In allen Foren die z.B. zwischen Benutzer, Moderatoren und Administratoren unterscheiden m&uuml;&szlig;en, 
+damit ein reibungsloser Ablauf gew&auml;hrleistet ist.</li>
+<li>Bei Content-Management Systemen ist es ebenfalls wichtig zu wissen, wer was erstellen, editieren 
+oder l&ouml;schen darf.</li>
+<li>Shopping-Systeme, bei denen z.B. Gro&szlig;- und Privatkunden verschiedene Kaufoptionen 
+zur Verf&uuml;gung stehen.</li>
+<li>etc.</li>
+</ul>
+
+<p>
+Man sieht also, da&szlig; effiziente Benutzerverwaltung das A und O jeder komplexeren Web-Applikation ist 
+und eine Menge Zeit sparen kann.
+</p>
+
+<p>
+Im ersten Teil dieser Serie werden wir uns zuerst um die administrative Seite k&uuml;mmern, d.h. um die 
+reine Erstellung des Verwaltungssystems, im zweiten Teil folgt dann die Einbindung und Anwendung 
+des Benutzersystems.
+</p>
+
+<h2>Liste der Scripts</h2>
+
+<p>
+Hier eine &Uuml;bersicht &uuml;ber alle Scripts, die f&uuml;r die Benutzerverwaltung gebraucht werden und die wir 
+im Anschlu&szlig; auch gleich erstellen werden:
+</p>
+
+<p>
+Hier eine &Uuml;bersicht &uuml;ber alle Scripts, die f&uuml;r die Benutzerverwaltung gebraucht werden und die 
+wir im Anschlu&szlig; auch gleich erstellen werden:
+</p>
+
+<ul>
+<li><b>main.asp</b> (src/user/main.asp) - Das Herz unserer Verwaltung, hier k&ouml;nnen wir alle wichtigen 
+Daten s&auml;mtlicher Benutzer auf einen Blick einsehen.</li>
+<li><b>dbconn.asp</b> (src/dbconn.asp) -K&uuml;mmert sich um die Datenbankverbindung.</li>
+<li><b>cookies.asp</b> (src/cookies.asp) - Verwaltet den Zwischenspeicher unserer Eingabemasken.</li>
+<li><b>validate.asp</b> (src/validate.asp) - Enth&auml;lt s&auml;mtliche Funktionen, um Benutzereingaben, bzw. 
+Benutzerdaten zu &uuml;berpr&uuml;fen.</li>
+<li><b>newuser.asp</b> (src/user/newuser.asp) - Die Eingabemaske f&uuml;r einen neuen Benutzer.</li>
+<li><b>newuser2.asp</b> (src/user/newuser2.asp) - Dieses Script pr&uuml;ft die eingegebenen Daten und f&uuml;gt 
+sie in die Datenbank ein.</li>
+<li><b>edituser.asp</b> (src/user/edituser.asp) - Eine modifizierte Version des newuser Scripts, es 
+l&auml;dt beim Aufruf alle Daten des gew&uuml;nschten Benutzers und stellt sie zum Editieren bereit.</li>
+<li><b>edituser2.asp</b> (src/user/edituser2.asp) - Von der Funktion her ist dieses Script fast 
+genauso wie newuser2 aufgebaut.</li>
+<li><b>deluser.asp</b> (src/user/deluser.asp) - L&ouml;scht einen bestimmten Benutzer.</li>
+<li><b>logoutuser</b> (src/user/logoutuser.asp) - Loggt einen Benutzer aus dem System.</li>
+</ul>
+
+<p>
+Au&szlig;erdem ben&ouml;tigen wir folgende Scripts noch f&uuml;r die Benutzerstatusverwaltung:
+</p>
+
+<ul>
+<li><b>main.asp</b> (src/status/main.asp} - Das Zentrum der Statusverwaltung, hier wird eine &Uuml;bersicht 
+&uuml;ber alle Benutzerstati gegeben (z.B: admin, user oder host).</li>
+<li><b>newstatus.asp</b> (src/status/newstatus.asp} - Die Eingabemaske f&uuml;r einen neuen Status.</li>
+<li><b>newstatus2.asp</b> (src/status/newstatus2.asp} - Dieses Script pr&uuml;ft die eingegebenen Daten und 
+f&uuml;gt sie in die Datenbank ein.</li>
+<li><b>editstatus.asp</b> (src/status/editstatus.asp} - Eine modifizierte Version des newstatus Scripts, 
+es l&auml;dt beim Aufruf alle Daten des gew&uuml;nschten Status und stellt sie zum Editieren bereit.</li>
+<li><b>editstatus2.asp</b> (src/status/editstatus2.asp} - Von der Funktion her ist dieses Script fast 
+genauso wie newstatus2 aufgebaut.</li>
+<li><b>delstatus.asp</b> (src/status/delstatus.asp} - L&ouml;scht einen bestimmten Status.</li>
+</ul>
+
+<p>
+Die Scripts zur Benutzerstatusverwaltung werden nicht eingehend erl&auml;utert, da sie technisch fast 
+identisch mit den Benutzerverwaltungsscripts sind (<b>newstatus.asp</b> ~ <b>newuser.asp</b>).
+</p>
+
+<h2>Die Datenbank</h2>
+
+<p>
+Nat&uuml;rlich ben&ouml;tigen wir auch noch eine Datenbank, die s&auml;mtliche Informationen der 
+Benutzer speichert. F&uuml;r diesen Artikel werde ich eine Accessdatenbank verwenden, die zwei Tabellen 
+beinhaltet.  Wir nennen die erste Tabelle "Benutzer", die zweite hei&szlig;t "Status"; alle Felder, die 
+wir ben&ouml;tigen, werden in der folgenden &Uuml;bersicht aufgelistet:
+</p>
+
+<table border="1" cellspacing="2" cellpadding="2">
+<tr>
+	<td><b>Tabelle</b></td>
+	<td><b>Feld</b></td>
+	<td><b>Typ</b></td>
+	<td><b>Beschreibung</b></td>
+</tr>
+<tr>
+	<td><b>Benutzer</b></td>
+	<td>ID</td>
+	<td>Autowert</td>
+	<td>Einsprungspunkt f&uuml;r den Datenbankzugriff.</td>
+</tr>
+<tr>
+	<td>"</td>
+	<td>Name</td>
+	<td>Text</td>
+	<td>Der Name des Benutzers.</td>
+</tr>
+<tr>
+	<td>"</td>
+	<td>Pa&szlig;wort</td>
+	<td>Text</td>
+	<td>Das Pa&szlig;wort des Benutzers.</td>
+</tr>
+<tr>
+	<td>"</td>
+	<td>StatusID</td>
+	<td>Zahl</td>
+	<td>Verbindungspunkt mit der Statustabelle.</td>
+</tr>
+<tr>
+	<td>"</td>
+	<td>Online</td>
+	<td>Ja/Nein</td>
+	<td>Gibt an, ob der Benutzer gerade Online ist.</td>
+</tr>
+<tr>
+	 <td>"</td>
+	 <td>Notizen</td>
+	 <td>Text</td>
+	 <td>Verschiedene Informationen zum Benutzer.</td>
+</tr>
+<tr>
+	<td>----------</td>
+	<td>----------</td>
+	<td>-----------</td>
+	<td>----------------------------------------------------</td>
+</tr>
+<tr>
+	<td><b>Status</b></td>
+	<td>ID</td>
+	<td>Autowert</td>
+	<td>Einsprungspunkt f&uuml;r den Datenbankzugriff.</td>
+</tr>
+<tr>
+	<td>"</td>
+	<td>SID</td>
+	<td>Text</td>
+	<td>AbfrageID des Status.</td>
+</tr>
+<tr>
+	<td>"</td>
+	<td>Name</td>
+	<td>Text</td>
+	<td>Der Name des Status.</td>  
+</tr>
+<tr>
+	<td>"</td>
+	<td>Notizen</td>
+	<td>Text</td>
+	<td>Kann z.B. eine Beschreibung des Status sein.</td>
+</tr>
+</table>
+
+<p>
+Nat&uuml;rlich kann die Benutzertabelle auch noch andere Informationen, wie z.B. Adresse, Interessen o.&auml;.
+aufnehmen. Das sind jedoch f&uuml;r unser Beispiel nicht relevante Daten, die erst bei der konkreten 
+Anwendung eventuell n&ouml;tig werden k&ouml;nnten.
+</p>
+
+<p>
+Die Verbindung zur Datenbank wird im Skript DbConn.asp hergestellt - wer die Datenbank in andere 
+Verzeichnisse legen m&ouml;chte als im Artikel, mu&szlig; in diesem Skript Anpassungen vornehmen.
+</p>
+
+<h2>NewUser - Wie f&uuml;llen wir die Datenbank?</h2>
+
+<p>
+K&uuml;mmern wir uns als erstes um die Eingabemaske. Es wird lediglich eine simple Form 
+benutzt, folgende Modifikationen sind aber interessant:
+</p>
+
+<pre style="background='silver';">
+Response.Write "&lt;input type='text' value='" &amp; _
+        Session( SeID &amp; "_newuser_xxx") &amp; "'&gt;"
+</pre>
+
+<p>
+Um den Komfort zu erh&ouml;hen, werden die Daten der Eingabemaske in den Session-Zwischenspeicher 
+geschrieben. Bei Fehleingaben wird dem Benutzer die Maske bereits komplett ausgef&uuml;llt pr&auml;sentiert, 
+damit dieser nicht s&auml;mtliche Daten wieder eingeben mu&szlig; und wom&ouml;glich den gleichen Fehler noch 
+einmal macht. Damit der Zwischenspeicher auch mit mehreren gleichzeitig offenen Browserfenster 
+immer noch funktioniert und es nicht zu Problemen kommt, wird zus&auml;tzlich noch eine Session 
+ID vergeben. Diese besteht aus mehreren Zufallszahlen und der aktuellen Zeit, die zuf&auml;llig zu 
+unserer ID zusammengew&uuml;rfelt werden um identische IDs m&ouml;glichst auszuschlie&szlig;en.
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020429_1.png" width="590" height="337" alt="" border="0">
+
+<p>
+Eine weitere Besonderheit ist das Eingabeelement "Status" - eine Dropdownliste, die aus der 
+Status-Tabelle generiert wird:
+</p>
+
+<pre style="background='silver';">
+Dim SQL
+SQL="SELECT Name, ID " 
+SQL=SQL &amp; "FROM Status"
+									
+Call DBOpen()
+Set Status = Conn.Execute(SQL)
+
+Response.Write "&lt;SELECT Name='status'&gt;"					
+If Session("newuser_sID") = "" Then     
+    Response.Write "&lt;OPTION SELECTED value=1&gt;"
+Else
+    Response.Write "&lt;OPTION value=1&gt;"
+End If
+Response.Write "Neuen Status erstellen&lt;/OPTION&gt;"
+										
+Do While Not Status.Eof
+    If Cstr(Session("newuser_status")) = Cstr(Status(1)) Then              
+        Response.Write "&lt;OPTION SELECTED value='"
+Else
+        Response.Write "&lt;OPTION value='"
+End If
+Response.Write Status(1) &amp; "'&gt;" &amp; Status(0) &amp; "&lt;/OPTION&gt;"
+Status.MoveNext
+Loop
+   
+Response.Write "&lt;/SELECT&gt;"
+    
+Status.Close
+Set Status = Nothing
+Call DBClose()
+</pre>
+
+<p>
+Die Liste wird speziell gef&uuml;llt - wenn im  Session-Zwischenspeicher ein Wert enthalten ist, wird 
+der vom User selektierte Status ausgew&auml;hlt angezeigt, ansonsten wird die Option "Neuen Status 
+erstellen" angezeigt. 
+</p>
+
+<p>
+Wichtig f&uuml;r den Vergleich der gespeicherten ID mit der gerade in der Abfrage ausgew&auml;hlten ID ist 
+der Befehl <i>CStr(Variable)</i>. Dieser Befehl konvertiert die Variable in einen String, denn unser 
+Vergleich funktioniert nur, wenn wir gleiche Datentypen benutzen und durch diesen Befehl wird dies 
+zwangsweise sichergestellt.
+</p>
+
+<p>
+Vom Formular <b>newuser.asp</b> geht es nach Klick auf den Submit Button zu <b>newuser2.asp</b>. Dieses 
+Script testet die Daten auf Fehler (wie z.B. auf bereits vorhandene Benutzernamen oder frei 
+gelassene Eingabefelder) und speichert die Daten, sollte der Fehlercheck negativ gewesen sein, in 
+der Datenbank. Sollte ein Fehler auftauchen, wird dieser dem Benutzer angezeigt, und mit dem 
+Zur&uuml;ck-Button kann er die Fehleingabe korrigieren.
+</p>
+
+<p>
+Hat der Benutzer in <b>newuser.asp</b> die Option zur Erstellung eines neuen Status gew&auml;hlt, wird er zu 
+<b>newstatus.asp</b> umgeleitet, allerdings m&uuml;ssen daf&uuml;r vorher noch einige Variablen gesetzt werden.
+</p>
+
+<pre style="background='silver';">
+If status = "-1" Then 
+    Session("newstatus_refer") = "/user/newuser.asp"   
+    Session("newstatus_refervar") = "newuser_status" 
+    Response.Redirect "/status/newstatus.asp" 
+End If
+</pre>
+
+<p>
+Die Variable "newstatus_refer" beinhaltet die URL, die nach der Erstellung des neuen Status 
+angesteuert werden soll. Das ist notwendig, damit der Benutzer sofort wieder zur Ausgangsseite, 
+<b>newuser.asp</b>, gelangt.  In "newstatus_refervar" wird der Variablenamen definiert, in dem 
+die ID des neu erstellten Status gespeichert werden soll, damit auf der Ausgangsseite der neue 
+Status als Standardauswahl angezeigt wird.
+</p>
+
+<p>
+Wichtig ist ebenfalls der Test auf einen schon vorhandenen Benutzernamen, damit Doppelnamen 
+vermeidet werden k&ouml;nnen:
+</p>
+
+<pre style="background='silver';">
+'Erstellung der Auswahlmaske 
+SQL="SELECT Name " 
+SQL=SQL &amp; "FROM Benutzer " 
+SQL=SQL &amp; "WHERE Name='" &amp; username &amp; "'" 
+
+'Ausf&uuml;hren der Auswahlmaske 
+Set User = Conn.Execute(SQL) 
+
+If User.BoF And User.EoF Then
+    'Hier erfolgt die Speicherung des Benutzers in der       
+    'Datenbank mittels des INSERT-Befehls.
+Else 
+Response.Write "Ein Benutzer mit diesem Namen" &amp; _
+            "ist schon vorhanden"
+End If
+</pre>
+
+<p>
+Sollte also ein Benutzer, dessen Name mit dem Namen des neuen Benutzers &uuml;bereinstimmt, in der 
+Datenbank gefunden werden, mu&szlig; ein neuer Benutzername gew&auml;hlt werden.
+</p>
+
+<h2>Main - Das Zentrum der Macht</h2>
+
+<p>
+Da wir nun einen oder mehrere Benutzer in der Datenbank haben, werden wir uns nun um die 
+&Uuml;bersicht k&uuml;mmern, in der wir alle Benutzer einsehen und verwalten k&ouml;nnen. Sie besteht, im 
+Grunde lediglich aus einer Tabelle, in der jede Spalte einen Anzeigetyp, wie z.B. Name, Status 
+etc, und jede Zeile einen Benutzer repr&auml;sentiert.
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020429_2.png" width="590" height="286" alt="" border="0">
+
+<p>
+In der ersten Zeile sind die Spalten&uuml;berschriften, die mit Hilfe von Bildern aufgebaut sind.
+Weiters wird viel mit Icons gearbeitet, die sowohl als Statusindikatoren und auch als Buttons 
+verwendet werden.
+</p>
+
+<p>
+Rein technisch gesehen ist dieses Script relativ einfach und simpel gestrickt. &Uuml;ber diesen 
+SQL-Befehl
+</p>
+
+<pre style="background='silver';">
+SQLUSER="SELECT Benutzer.ID, Benutzer.Name, Status.Name, "
+SQLUSER=SQLUSER &amp; "Online, Benutzer.Notizen "
+SQLUSER=SQLUSER &amp; "FROM Benutzer, Status " 
+SQLUSER=SQLUSER &amp; "WHERE Benutzer.StatusID = Status.ID"
+</pre>
+
+<p>
+werden alle Benutzer aus der Datenbank ausgew&auml;hlt. Dabei wird anhand der StatusID der Statusname 
+aus der Statustabelle mitermittelt.
+</p>
+
+<p>
+Im Anschlu&szlig; wird die Tabelle in einem Loop gef&uuml;llt, wobei je nach Zustand der "Online" 
+Variable verschiedene Bilder bzw. Texte zum Einsatz kommen. Anhand der ID werden die Links 
+zum Bearbeiten, L&ouml;schen und Ausloggen erstellt, mit denen die Buttons belegt sind:
+</p>
+
+<pre style="background='silver';">
+Response.Write "&lt;a href='deluser.asp?ID=" &amp; User(0) &amp;"'&gt;X&lt;/a&gt;"
+</pre>
+
+<p>
+Und damit sind wir schon fertig mit diesem Script.
+</p>
+
+<h2>EditUser - Alles kann sich &auml;ndern</h2>
+
+<p>
+Die "edituser"-Scripts sind im Prinzip nur einen Modifikation der "newuser"-Scripts und 
+deshalb werden wir auch nur auf die Modifikationen eingehen.
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020429_3.png" width="590" height="333" alt="" border="0">
+
+<p>
+Die gravierendste &Auml;nderung besteht darin, da&szlig; zu Anfang des "<b>edituser.asp</b>"-Scripts ein 
+Datenbankzugriff erfolgt, der die Daten des gew&uuml;nschten Benutzers ausliest und sie in die 
+Eingabemaske schreibt, die dann bearbeitet werden kann; dabei sind 2 Optionen m&ouml;glich:
+</p>
+
+<pre style="background='silver';">
+If Request.QueryString("GetMem") Then 
+    username = Session("edituser_name") 
+    password = Session("edituser_password") 
+    stat = Session("edituser_status")
+    notizen = Session("edituser_notizen") 
+Else 
+    username = User(1) 
+    password = User(2) 
+    stat = User(3) 
+    notizen = User(4) 
+End If 
+</pre>
+
+<p>
+Wenn das Script normal aufgerufen wird, werden die Daten aus der Datenbank verwendet (Else). 
+Sollte es jedoch mit der Option "GetMem=True" geladen werden, dann werden die Werte aus dem 
+Session-Zwischenspeicher verwendet, aber warum das alles? Nun, der Benutzer k&ouml;nnte doch, wie 
+auch im "newuser"-Script, Eingabefehler gemacht haben, soda&szlig; er auf die vorherige Seite 
+zur&uuml;ckzukehren w&uuml;nscht um die Fehler zu beheben. Dabei w&uuml;rden ihm ohne diese Option alle 
+Ver&auml;nderungen verloren gehen.
+</p>
+
+<p>
+Damit sind wir schon fast mit diesem Script fertig, ein wichtiger Wert mu&szlig; allerdings noch 
+gespeichert werden damit die &Uuml;berpr&uuml;fung auf Doppelnamen im nachfolgenden Script korrekt 
+durchgef&uuml;hrt werden kann. Dazu ben&ouml;tigen wir noch den Originalnamen des Benutzers, den wir in 
+einem Zwischenwert festhalten:
+</p>
+
+<pre style="background='silver';">
+Session("edituser_oldname") = User(1)
+</pre>
+
+<p>
+Einen Klick auf den Submit Button weiter befinden wir uns auf der Seite "<b>edituser2.asp</b>" - 
+hier m&uuml;ssen wir lediglich die &Uuml;berpr&uuml;fung auf Doppelnamen etwas ver&auml;ndern. Denn wir wollen nicht, 
+da&szlig; die SQL-Abfrage auch den Originalnamen des Benutzers nicht mehr akzeptiert, da der ja schon 
+in der Datenbank vorhanden ist:
+</p>
+
+<pre style="background='silver';">
+'Erstellung der Auswahlmaske 
+SQL="SELECT Name " 
+SQL=SQL &amp; "FROM Benutzer " 
+SQL=SQL &amp; "WHERE Name='" &amp; username &amp; "' AND Not " 
+SQL=SQL &amp;  "(Name='" &amp; Session("edituser_oldname") &amp; "')"
+
+'Ausf&uuml;hren der Auswahlmaske 
+Set User = Conn.Execute(SQL) 
+
+If User.BoF And User.EoF Then
+    'Hier erfolgt die &Auml;nderung des Benutzers in der       
+    'Datenbank mittels des UPDATE-Befehls.
+Else 
+Response.Write "Ein Benutzer mit diesem Namen" &amp; _
+        "ist schon vorhanden"
+End If
+</pre>
+
+<p>
+Mit dem "Not"-Befehl schlie&szlig;en wir also aus, da&szlig; die Abfrage auch den alten Namen findet. 
+</p>
+
+<p>
+&Uuml;brigens hat sich auch die Art der Speicherung ver&auml;ndert: Wir benutzen nicht mehr das 
+"INSERT"-Verfahren, sondern "UPDATE"n unseren Benutzer einfach.
+</p>
+
+<h2>Logout/ und DelUser - Und Tsch&uuml;&szlig;!</h2>
+
+<p>
+Beide Scripts kann man wohl zu Recht als die simpelsten in der ganzen Benutzerverwaltung 
+ansehen, denn beide f&uuml;hren nur einen einfachen Datenbankzugriff aus, wobei das eine einen 
+Benutzer l&ouml;scht:
+</p>
+
+<pre style="background='silver';">
+SQLDEL="DELETE FROM Benutzer " 
+SQLDEL=SQLDEL &amp; "WHERE ID=" &amp; ID 
+
+Conn.Execute(SQLDEL)
+</pre>
+
+<p>
+Das andere Script setzt die "online" Variable auf False, 
+damit wird der Benutzer als "Offline" betrachtet:
+</p>
+
+<p>
+SQLLOG="UPDATE Benutzer SET Online=false " 
+SQLLOG=SQLLOG &amp; "WHERE ID=" &amp; ID 
+
+Conn.Execute(SQLLOG) 
+</p>
+
+<p>
+Damit haben wir alle Scripts der Benutzerverwaltung besprochen. Nun fehlt noch die Statusverwaltung. 
+</p>
+
+<p>
+Da ihre Scripts aber beinahe identisch mit denen sind, die wir schon kennen, werden nur Scripts 
+mit einer wesentlichen Ver&auml;nderung vorgestellt.
+</p>
+
+<h2>NewStatus2 - Wo geht's denn jetzt eigentlich hin?</h2>
+
+<p>
+Bei dem zweiten "NewStatus"-Script taucht das Problem auf, da&szlig; das vorherige Script, "<b>newstatus.asp</b>"
+von verschiedenen Seiten aus aufgerufen werden kann. Da wir den Benutzer nach der Erstellung des neuen
+Status zu der Seite zur&uuml;ckschicken m&ouml;chten, von der er kam, m&uuml;ssen wir diese Information irgendwo 
+abrufen k&ouml;nnen. Und da die Seite zu der nun der Link f&uuml;hren soll eventuell auch noch die neue ID 
+des Status bekannt sein sollte, mu&szlig; dieser Wert erst einmal ermittelt und anschlie&szlig;end gespeichert 
+werden.
+</p>
+
+<p>
+Wir brauchen nun also die Zwischenwerte, die auf der vorherigen Seite definiert wurden 
+(siehe <b>NewUser</b>).
+</p>
+
+<pre style="background='silver';">
+'Zuerst erfolgt die Speicherung in der Datenbank, dann folgen 'diese Abfragen.
+
+If Session("newstatus_refervar") &lt;&gt; "" Then 
+    Session(Session("newstatus_refervar")) = GetNewID() 
+End If  
+If Session("newstatus_refer") &lt;&gt; "" Then 
+    Response.Redirect Session("newstatus_refer") 
+Else 
+    Response.Redirect "main.asp"
+End If
+</pre>
+
+<p>
+Sollte eine andere Seite einen Variablennamen in "newstatus_refervar" gespeichert haben, wird
+die neue ID &uuml;ber die GetNewID() Funktion ermittelt und dann in der Zielvariablen gespeichert. 
+Danach wird entschieden, ob die Standardseite, also "<b>main.asp</b>", aufgerufen werden soll, oder 
+ob der Benutzer zu der in "newstatus_refer" definierten Seite umgeleitet werden soll.
+</p>
+
+<h2>DelStatus - Safety first!</h2>
+
+<p>
+Wenn wir einen Status l&ouml;schen wollen, k&ouml;nnen wir nicht so unbesonnen vorgehen, wie wir es bei 
+dem L&ouml;schen der Benutzer getan haben. Der Grund daf&uuml;r ist, da&szlig; jedem Benutzer eine Status ID 
+zugewiesen ist. Sollte diese ID nun nicht mehr in der Datenbank existieren, k&ouml;nnen schwere Fehler 
+auftreten. Wir m&uuml;ssen also &uuml;berpr&uuml;fen, ob die ID des Status, den wir l&ouml;schen wollen, von 
+irgendeinem Benutzer gebraucht wird:
+</p>
+
+<pre style="background='silver';">
+SQLSEARCH="SELECT ID, Name " 
+SQLSEARCH=SQLSEARCH &amp; "FROM Benutzer " 
+SQLSEARCH=SQLSEARCH &amp; "WHERE StatusID=" &amp; ID 
+Set User = Conn.Execute(SQLSEARCH) 
+If User.BoF And User.EoF Then 
+    'Hier wird der Status aus der Datenbank gel&ouml;scht.
+Else
+    Response.Write "Folgende Benutzer belegen diesen Status:&lt;br&gt;&lt;br&gt;"
+    Response.Write "&lt;table border='0'&gt;"
+    Session("editstatus_refer") = "/status/delstatus.asp?ID=" &amp; ID
+    Do While Not User.Eof 
+        Response.Write "&lt;tr&gt;&lt;td&gt;&lt;b&gt;" &amp; User(1) &amp; "&lt;/b&gt;" &amp; _ "&lt;/td&gt;&lt;td&gt; -&gt; 
+            &lt;a href='/user/edituser.asp?ID=" &amp; _User(0) 
+                &amp; "'&gt;Status &auml;ndern.&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;"
+        User.MoveNext
+    Loop
+    Response.Write "&lt;/table&gt;&lt;br&gt;"
+    Response.Write "Der Status kann nicht bel&ouml;scht werden," &amp; _ 
+        "solange ein Benutzer diesem Status zugewiesen ist."
+End If
+</pre>
+
+<p>
+Wir verwenden die gleiche Methode wie bei der &Uuml;berpr&uuml;fung auf Doppelnamen, in diesem Fall durchsuchen 
+wir aber die Datenbank nach  Benutzern,  die die gew&uuml;nschte Status ID besitzen.
+Sollte keiner gefunden werden, wird der Status gel&ouml;scht, ansonsten wird ein Hinweis ausgegeben,
+der Links zur Bearbeitung der gefundenen Benutzer enth&auml;lt.
+</p>
+
+<h2>Cookies - Zu guter Letzt immer aufr&auml;umen!</h2>
+
+<p>
+Dieses Script stellt eine Funktion zum Reset der Daten bereit. Da viele andere Scripts darauf 
+Zugriff erlangen m&uuml;ssen, wurde sie isoliert und in dieses Script gestellt, welches nun von jedem 
+anderen mittels der "Include" Methode genutzt werden kann.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Damit sind wir am Ende des ersten Artikels in dieser Reihe angelangt. Ich m&ouml;chte Ihnen aber hier 
+schon einmal einen Ausblick auf den zweiten Teil geben: haupts&auml;chlich wird es um die Einbindung des 
+Systems in vorhandene Webapplikationen gehen, bei denen Sicherheits- und Protokollfragen sowie vieles 
+mehr gekl&auml;rt werden m&uuml;ssen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020429.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020429.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000529.htm">&Uuml;bergeben von Informationen von einer ASP-Seite zur n&auml;chsten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000529.htm</span><br>
+<a href="../artikel/20000522.htm">&Uuml;berpr&uuml;fen von HTML-Formularen mit ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000522.htm</span><br>
+<a href="../artikel/20000418.htm">ADO Feld-Abfragen Optimierung</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000418.htm</span><br>
+<a href="../artikel/20000518.htm">ADO Konstanten und die Datei Adovbs.inc</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000518.htm</span><br>
+<a href="../artikel/20001124.htm">Aktualisieren von Daten mit dem UPDATE Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001124.htm</span><br>
+<a href="../artikel/20000406.htm">Auswertung von HTML Formularen mit ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000406.htm</span><br>
+<a href="../artikel/20010329.htm">Auto-Generierung von performantem Abfragecode</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010329.htm</span><br>
+<a href="../artikel/20001206.htm">Benutzerverfolgung in ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001206.htm</span><br>
+<a href="../artikel/20020115.htm">CAPICOM One</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020115.htm</span><br>
+<a href="../artikel/20001023.htm">Das SQL Join Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001023.htm</span><br>
+<a href="../artikel/20001127.htm">Datens&auml;tze mit dem DELETE Statement l&ouml;schen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001127.htm</span><br>
+<a href="../artikel/20001201.htm">Die SQL ORDER BY Clause</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001201.htm</span><br>
+<a href="../artikel/20001107.htm">Einf&uuml;gen eines Datensatzes mit dem INSERT Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001107.htm</span><br>
+<a href="../artikel/20011031.htm">Gegengifte f&uuml;r SQL Injection</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011031.htm</span><br>
+<a href="../artikel/20000531.htm">Generieren eines sicheren Pa&szlig;wortes</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000531.htm</span><br>
+<a href="../artikel/20010330.htm">Passw&ouml;rter mit SHA1 absichern</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010330.htm</span><br>
+<a href="../artikel/20000505.htm">Session Variablen - Verwendung und Stolpersteine</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000505.htm</span><br>
+<a href="../artikel/20010601.htm">Sicherheitsaspekte bei der Gestaltung von ASP Sites ohne Cookies</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010601.htm</span><br>
+<a href="../artikel/20011030.htm">SQL Injection</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011030.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

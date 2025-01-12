@@ -1,0 +1,75 @@
+<table>
+<tr>
+	<td>
+
+<p><pre style="background='silver';">
+&lt;%
+' ScriptTimeout und Session.Timeout setzen, sodass ein Download 
+' nicht durch eine Timeout des Scripts unterbrochen wird.
+Server.ScriptTimeout = 600   ' Sekunden
+Session.TimeOut = 20      ' Minuten
+
+strID = Trim(Request.QueryString("ID"))
+
+If isNumeric(strID) Then
+   lngID = CLng(strID)
+Else
+   lngID = - 1
+End If
+      
+' Auslesen des Bildes mit der ID lngID aus der Datenbank
+
+strDatabase = Server.MapPath(strCurrentDir &amp; "uploadDB.mdb")
+strUserName = ""
+strPasswort = ""
+ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" &amp; _
+   strDatabase &amp; ";User ID=" &amp; strUserName &amp; _
+   ";Password=" &amp; strPasswort &amp; ";"
+
+' Datenbankverbindung oeffnen:
+Set conn = Server.CreateObject("ADODB.Connection")
+conn.Open ConnectionString
+
+' Recordset fuer Zugriff auf Tabellendaten oeffnen:
+Set rs = CreateObject("ADODB.Recordset")
+rs.CursorLocation = 2   ' adUseServer
+rs.CursorType     = 0   ' adOpenForwardOnly
+rs.LockType       = 1   ' adLockReadOnly
+
+' In Select Statement: BLOB Felder immer zum Schluss angeben,
+' Das BLOB Feld hier ist "Datei"
+strSQL = "SELECT ID, Dateiname, DateiContentType, Datei " &amp; _
+   "FROM tUpload WHERE ID = " &amp; lngID
+
+' Verbindung zu Tabelle tUpload aufbauen:
+rs.Open strSQL, conn
+
+' Pruefen ob Datei vorhanden
+If Not rs.EOF Then
+   ' Namen der Datei auslesen
+   strFileName = rs("Dateiname")
+   ' Content Type der Datei auslesen
+   strContentType = rs("DateiContentType")
+   ' HTTP Header setzen und Datei zum Browser senden
+   Response.ContentType = strContentType
+   Response.AddHeader "Content-Disposition", _
+      "inline; filename=" &amp; strFileName
+   Response.BinaryWrite rs("Datei").GetChunk(rs("Datei").ActualSize)
+   Response.Flush
+Else
+   Response.Write("Kein Datensatz mit ID '" &amp; strID &amp; _
+      "' verhanden!&lt;br&gt;")
+End If
+
+' Schliessen des Recordsets und der Connection
+rs.Close
+conn.Close
+Set rs = Nothing
+Set conn = Nothing
+%&gt;
+
+</pre></p>
+
+</td>
+</tr>
+</table>

@@ -1,0 +1,698 @@
+<HTML>
+<HEAD>
+<TITLE>Erstellung eines Intranets in ASP - Grundlagen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Herzlich willkommen zum ersten Teil einer mehrteiligen Artikelserie zur Erstellung eines Intranets in ASP am Beispiel von ASPIntranet.de. In diesem Teil werden wir auf die Anforderungen und Grundlagen unseres Intranets eingehen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASPIntranet.de,ASPIntranet,Intranet,Serie,Artikel,ASP,Grundlagen,Design,Planung,Erstellung,Implementierung,Deployment">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Erstellung eines Intranets in ASP - Grundlagen</H1>
+<p>
+Geschrieben von: <a href="../autoren/alexanderzeitler.htm">Alexander Zeitler</a><br>
+Kategorie: <a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010917"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Herzlich willkommen zum ersten Teil einer mehrteiligen Artikelserie zur Erstellung eines Intranets 
+in ASP am Beispiel von <a href="http://www.aspintranet.de/" target="_blank">ASPIntranet</a>. In diesem Teil werden 
+wir auf die Anforderungen und Grundlagen unseres Intranets eingehen. Au&szlig;erdem werden wir unseren Server 
+konfigurieren, die Tabellenstruktur erarbeiten und einige grundlegende Prozeduren und 
+Funktionen erstellen.
+</p>
+
+<p>
+Die zur Installation und Verwendung von ASPIntranet notwendigen Systemvorraussetzungen finden Sie 
+<a href="http://www.aspintranet.de/aspintranet/system../default.htm?a=84" target="_blank">hier</a>. Alle in den 
+Artikeln erw&auml;hnten Dateien zum Download finden Sie am Ende des jeweiligen Artikels.
+</p>
+
+
+<h2>Grundlagen und Anforderungen an das Intranet</h2>
+
+<p>
+Definieren wir zun&auml;chst unsere W&uuml;nsche an das Intranet:
+</p>
+
+<ul>
+<li>Das Intranet soll leicht bedienbar sein. Hieraus ergibt sich, da&szlig; es sinnvoll ist, das 
+Intranet vom Look&rsquo;n&rsquo;Feel an die Produkte von Microsoft Office anzupassen. Es soll weiterhin 
+m&ouml;glich sein, zwischen den Anwendungen ohne gro&szlig;en Aufwand zu wechseln und ohne Daten manuell 
+(zwischen-)speichern zu m&uuml;ssen. Au&szlig;erdem soll die Anmeldung &uuml;ber das Netzwerk funktionieren, 
+das hei&szlig;t der Benutzer soll sich nicht am Intranet anmelden m&uuml;ssen.
+</li>
+<li>Das Intranet soll leicht erweiterbar sein, das hei&szlig;t neue Seiten m&uuml;ssen sich leicht in die 
+Men&uuml;struktur integrieren lassen. Auch hier stand ein Office-Produkt von Microsoft „Pate&ldquo;: 
+Microsoft Outlook
+</li>
+<li>Es sollen individuelle Berechtigungen f&uuml;r verschiedene Benutzer existieren, um zu 
+gew&auml;hrleisten, da&szlig; jeder Benutzer nur die Daten „sieht&ldquo;, die f&uuml;r ihn bestimmt sind.
+</li>
+<li>Jede Anwendung bzw. Seite soll die M&ouml;glichkeit zum Ausdruck bieten.</li>
+<li>Die Navigation innerhalb des Intranets soll unabh&auml;ngig von den vom Browser zur Verf&uuml;gung 
+gestellten Navigationsm&ouml;glichkeiten funktionieren.</li>
+</ul>
+
+<p>
+Das Ergebnis unserer &Uuml;berlegungen f&uuml;hrt zu folgendem „Ergebnis&ldquo;:
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_1.png" width="644" height="544" alt="" border="0">
+
+<p>
+Lassen Sie uns nun daran gehen, unsere Ideen in die Tat umzusetzen.
+</p>
+
+<h2>Anlegen der Verzeichnisstruktur</h2>
+
+<p>
+Zun&auml;chst ben&ouml;tigen wir die unten dargestellte Verzeichnisstruktur. Diese beinhaltet folgende 
+Verzeichnisse:
+</p>
+
+<ul>
+<li>myaspintranet.: das Hauptverzeichnis f&uuml;r das Intranet innerhalb Ihres Root-Verzeichnisses 
+des Webservers</li>
+<li>~db: Datenbank</li>
+<li>~include: Include-Dateien f&uuml;r h&auml;ufig ben&ouml;tigte Funktionen</li>
+<li>~olmenu: Daten f&uuml;r das im vorigen Screenshot dargestellte Grundger&uuml;st</li>
+<li>~setup: Daten f&uuml;r das Setup von ASPIntranet</li>
+</ul>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_2.png" width="256" height="271" alt="" border="0">
+
+<h2>Einrichten des Hostheaders</h2>
+
+<p>
+Um das Intranet f&uuml;r jeden Mitarbeiter schnell und einfach zug&auml;nglich zu machen, richten wir
+f&uuml;r unser Intranet einen Hostheader ein. Die Theorie und weitere Vorgehensweisen zur 
+Einrichtung eines Hostheaders finden Sie <a href="../artikel/20000801.htm">hier</a>. 
+</p>
+
+<p>
+F&uuml;r unsere Zwecke gen&uuml;gt eine Kurzanleitung in Form einiger Screenshots:
+Zun&auml;chst legen wir im DNS-Manager einen neuen Host an....
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_3.png" width="191" height="279" alt="" border="0">
+
+<p>
+In unserem Fall nennen wir ihn &ldquo;aspintranet&rdquo;. Die IP-Adresse ist identisch mit der des Webservers.
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_4.png" width="347" height="314" alt="" border="0">
+
+<p>
+Danach erscheint unser neuer Eintrag in der Liste:
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_5.png" width="588" height="431" alt="" border="0">
+
+<p>
+Im Internetdienste-Manager erstellen wir eine neue Website mit dem Namen &ldquo;aspintranet&rdquo;:
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_6.png" width="482" height="374" alt="" border="0">
+
+<p>
+Dieser ordnen wir den Hostheader und die IP Adresse zu, die wir vorher im DNS eingetragen haben:
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_7.png" width="482" height="374" alt="" border="0">
+
+<p>
+Das zugeordnete Verzeichnis ist das Verzeichnis "myaspintranet", das wir am Anfang erstellt haben.
+</p>
+
+<p>
+Nachdem wir den "Assistent f&uuml;r neue Website" erfolgreich beendet haben, k&ouml;nnen wir nun die 
+Windows-Authentifizierung des IIS aktivieren.
+</p>
+
+<h2>Aktivierung der Windows-Authentifizierung</h2>
+
+<p>
+Im noch ge&ouml;ffneten "Internetdienste-Manager" aktivieren wir nun im Men&uuml;punkt 
+"Verzeichnissicherheit" die Windows-Authentifizierung. Diese erm&ouml;glicht uns sp&auml;ter das 
+Auslesen des Windows-Benutzernamens.
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_8.png" width="393" height="335" alt="" border="0">
+
+<p>
+Tiefergehende Informationen zum Thema "Verzeichnissicherheit mit NTFS und IIS Authentifizierung"
+finden Sie <a href="../artikel/20001109.htm">hier</a>.
+</p>
+
+<h2>Datenbankdesign</h2>
+
+<p>
+Jetzt, da wir unseren Server vorbereitet haben, k&ouml;nnen wir uns der Einrichtung unserer 
+Datenbank f&uuml;r das Intranet widmen. Wie bereits erw&auml;hnt, speichern wir unsere Datenbank mit dem 
+Namen "aspintranet.mdb" in dem Unterverzeichnis "~db".
+</p>
+
+<p>
+Doch welche Tabellen ben&ouml;tigen wir &uuml;berhaupt? 
+</p>
+
+<p>
+Zun&auml;chst w&auml;re hier eine Tabelle organisatorischer Art: Betriebsdaten - hier befinden sich 
+Informationen zu Ihrem Unternehmen, die h&auml;ufig ben&ouml;tigt werden, z.B. f&uuml;r Arbeitsvertr&auml;ge o.&auml;.
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_9.png" width="516" height="241" alt="" border="0">
+
+<p>
+Eng verkn&uuml;pft in diesem Zusammenhang sind die Tabellen f&uuml;r weitergehende betriebsinterne Informationen, 
+wie Telefonnummern, Abteilungen etc.
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_10.png" width="535" height="113" alt="" border="0">
+
+<p>
+Tabelle Abteilungen
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_11.png" width="584" height="100" alt="" border="0">
+
+<p>
+Tabelle EmailAdressen
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_12.png" width="565" height="99" alt="" border="0">
+
+<p>
+Tabelle FaxNummern
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_13.png" width="554" height="100" alt="" border="0">
+
+<p>
+Tabelle MobilNummern
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_14.png" width="570" height="99" alt="" border="0">
+
+<p>
+Tabelle NetzwerkUser
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_15.png" width="591" height="100" alt="" border="0">
+
+<p>
+Tabelle TelefonNummern
+</p>
+
+<p>
+Was nat&uuml;rlich nicht fehlen darf, sind die Mitarbeiter Ihres Unternehmens. 
+Auch f&uuml;r sie legen wir eine Tabelle an:
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_16.png" width="564" height="392" alt="" border="0">
+
+<p>
+Weiterhin gibt es die Tabellen "Abteilungsleiter" (zur Definition der Abteilungsleiter 
+Ihres Unternehmens) und "Feiertage" (f&uuml;r Kalender/Urlaubsplaner &ouml;.&auml;.).
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_17.png" width="519" height="100" alt="" border="0">
+
+<p>
+Tabelle Abteilungsleiter
+</p>
+
+<h2>Theorie und weiteres Datenbankdesign</h2>
+
+<p>
+Wie in der ersten Grafik des Artikels zu sehen ist, besitzt das Intranet ein an das 
+Look&rsquo;n Feel von Microsoft Outlook angepasstes Men&uuml;. Dieses erlaubt die Definition von 
+Rechten f&uuml;r jeden einzelnen Anwender des Intranets. Hieraus ergibt sich die Notwendigkeit 
+f&uuml;r zwei weitere Tabellen in unserer Datenbank:
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_18.png" width="525" height="156" alt="" border="0">
+
+<p>
+Die erste Tabelle ist die Tabelle  "OLMenue": in ihr werden die Eintr&auml;ge des Men&uuml;s gespeichert. 
+Hierbei stellen Eintr&auml;ge mit dem Wert "0" im Feld "IstUntermenuevon" die verschiedenen Men&uuml;gruppen 
+dar. Die Anwendungen der jeweiligen Gruppen enthalten dann in "IstUntermenuevon" die "ID" der 
+&uuml;bergeordneten Gruppe.
+</p>
+
+<p>
+Bei der zweiten Tabellen handelt es sich um die Tabelle "OLMenueRechte". Wie der Name bereits 
+verr&auml;t, werden hier die Rechte der Benutzer f&uuml;r die in der Tabelle "OLMenue" gespeicherten 
+Men&uuml;punkte hinterlegt.
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_19.png" width="623" height="114" alt="" border="0">
+
+<p>
+Um den Zusammenhang zwischen den Tabellen "NetzwerkUser", "OLMenue" und "OLMenueRechte" zu 
+verdeutlichen, sehen Sie nachfolgend die Beziehungen f&uuml;r die drei Tabellen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_20.png" width="258" height="268" alt="" border="0">
+
+<p>
+Das Problem, das nun besteht, ist da&szlig; zum Zeitpunkt der "Installation" unseres Intranets noch 
+keine Benutzer angelegt sind, die Zugriff auf das Intranet haben. Einzig der Benutzer "Administrator"
+ist (bzw. sollte) bei einem funktionierendem Windows-2000 (oder NT 4.0)-Server bereits vorhanden.
+</p>
+
+<p>
+Deshalb steht dieser bereits in den Tabellen "NetzwerkUser" bzw. "Administratoren". Weiterhin sind 
+die Felder "IstLoeschbar" und "IstAenderbar" f&uuml;r diesen Benutzer in beiden Tabellen auf <i>false</i>
+gesetzt. So wird vermieden, da&szlig; in der in einem sp&auml;teren Teil besprochenen Benutzer- bzw. 
+Mitarbeiterverwaltung der Administrator gel&ouml;scht werden kann.
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_21.png" width="422" height="102" alt="" border="0">
+
+<p>
+Tabelle NetzwerkUser mit dem bereits angelegten Benutzer "Administrator"
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_22.png" width="423" height="102" alt="" border="0">
+
+<p>
+Tabelle Administratoren mit dem zugewiesenen Standard-Administrator
+</p>
+
+<p>
+Um nun zu gew&auml;hrleisten, da&szlig; man nicht st&auml;ndig als Administrator angemeldet sein mu&szlig;, erstellen wir 
+uns eine Routine (Setup), die es dem Administrator erm&ouml;glicht, einen Benutzer anzulegen, der 
+berechtigt ist, weitere Benutzer und Mitarbeiter anzulegen. Au&szlig;erdem legt der Administrator die 
+grundlegenden Betriebsdaten f&uuml;r Ihr Unternehmen an - auch dies passiert Setup-gesteuert.
+</p>
+
+<p>
+Die Grundlage f&uuml;r das Anlegen weiterer Mitarbeiter durch einen Nicht-Administrator bildet 
+die Tatsache, da&szlig; eben dieser Benutzer Zugriff auf den Bereich "Mitarbeiter" in der Gruppe 
+"Verwaltung" erh&auml;lt. Deshalb sind f&uuml;r diese beiden Men&uuml;punkte in der Tabelle "OLMenue" bereits 
+Eintr&auml;ge vorhanden - auch diese sind nicht l&ouml;schbar:
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_23.png" width="686" height="120" alt="" border="0">
+
+<p>
+Das Setup mu&szlig; nun also nur noch daf&uuml;r sorgen, da&szlig; der neue Mitarbeiter bzw. NetzwerkUser in der 
+Tabelle "OLMenue_Rechte" f&uuml;r diese beiden Eintr&auml;ge gespeichert wird. Doch dazu kommen wir 
+sp&auml;ter - zun&auml;chst m&uuml;ssen wir wissen, ob das Setup bereits ausgef&uuml;hrt wurde.
+</p>
+
+<p>
+Sie ahnen es bereits: auch hierf&uuml;r gibt es eine Tabelle. Diese mit einem Feld zugegebenerma&szlig;en 
+kleinen Tabelle beinhaltet ein Ja/Nein-Feld namens "SetupIsOK", welches im True-Zustand anzeigt, 
+da&szlig; das Setup erfolgreich durchgef&uuml;hrt wurde:
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_24.png" width="125" height="102" alt="" border="0">
+
+<p>
+Die &Uuml;berpr&uuml;fung, ob dieses Feld „true&ldquo; beinhaltet, stellt neben der Verbindung zur Datenbank 
+sowie dem Abschalten des Cachings die ersten programmiertechnischen Handlungen an unserem Intranet 
+dar.
+</p>
+
+<h2>Grundlegende Programmierung</h2>
+
+<p>
+Beginnen wir mit dem Abschalten des Cachings. Dieses wird in jeder Seite ben&ouml;tigt, weshalb es 
+sich empfiehlt, diesen Vorgang in einer Subroutine auszulagern. Da wir im weiteren Verlauf der 
+Entwicklung unseres Intranets erwartungsgem&auml;&szlig; sehr viele Funktionen und Subs erstellen werden, 
+empfiehlt es sich, die Routinen und deren Aufruf in getrennte Dateien zu verpacken. Somit ergeben 
+sich zwei Dateien <b>functions.asp</b> (f&uuml;r die Funktionen und Subs) und <b>callfunctions.asp</b>
+(f&uuml;r den Aufruf von Funktionen und Subs, die in jeder Seite ben&ouml;tigt werden), welche sich in 
+dem Unterverzeichnis <i>/~include</i> befinden.
+</p>
+
+<p>
+Das Abschalten des Cachings befindet sich in der Sub <i>DisableCaching</i>, welche wie folgt 
+aussieht:
+</p>
+
+<pre style="background='silver';">
+Sub DisableCaching
+  Response.Expires=0
+  Response.AddHeader "Pragma","no-cache"
+  Response.AddHeader "cache-control", "no-store"
+End Sub
+</pre>
+
+<p>
+Eine weitere, in jeder Seite ben&ouml;tigte "Anwendung" ist der Zugriff auf die Datenbank, welche sich 
+in der Sub <i>MakeDBConn</i> befindet:
+</p>
+
+<pre style="background='silver';">
+Sub MakeDBConn
+  Dim StrConn
+  Set Conn = Server.CreateObject("ADODB.Connection")
+  strConn = "Driver={Microsoft Access Driver (*.mdb)};DriverID=25;DBQ="
+  strConn = strConn &amp; Server.MapPath("/~db/aspintranet.mdb")
+  strConn = strConn &amp; ";FIL=MS Access;MaxBufferSize=512;PageTimeout=5;"
+  Conn.Open strConn
+End Sub
+</pre>
+
+<p>
+Als n&auml;chste Aufgabe steht die &Uuml;berpr&uuml;fung des Setups an. Da wir hier eine R&uuml;ckmeldung ben&ouml;tigen, 
+verwenden wir eine Funktion namens <i>Check_Setup</i>:
+</p>
+
+<pre style="background='silver';">
+Function Check_Setup
+  Dim StrSQL
+  Dim rs
+  strSQL = "SELECT SetupIsOK FROM Setup"
+  Set rs = Conn.Execute(strSQL)
+  If rs.Eof Then 
+    Check_Setup = False
+  ElseIf rs("SetupIsOK") = False Then
+    Check_Setup = False
+  Else
+    Check_Setup = True
+  End If
+  rs.Close
+  Set rs = Nothing
+End Function
+</pre>
+
+<p>
+Zun&auml;chst wird &uuml;berpr&uuml;ft, ob ein Eintrag f&uuml;r den Status des Setups in der Tabelle vorhanden ist. 
+Ist dies nicht der Fall, wird <i>False</i> zur&uuml;ckgeliefert. Selbiges gilt f&uuml;r den Fall, da&szlig; der 
+Wert von "SetupIsOK" <i>False</i> ist, also das Setup noch nicht ausgef&uuml;hrt wurde. Wurde das Setup 
+korrekt ausgef&uuml;hrt, so steht in „SetupIsOK&ldquo; der Wert <i>True</i>, welchen die Funktion dann 
+zur&uuml;ckliefert.
+</p>
+
+<p>
+Bevor wir einem Benutzer Zugang zu unserem Intranet gew&auml;hren, m&uuml;ssen wir feststellen, mit welchem 
+Benutzernamen dieser am Rechner (bzw. Netzwerk) angemeldet ist. Unsere Funktion hierf&uuml;r tr&auml;gt den 
+Namen <i>Check_User</i>.
+</p>
+
+<p>
+Die Grundlagen, um unser Vorhaben zu realisieren, haben wir mit der Aktivierung der 
+Windows-Authentifizierung geschaffen. Um diese vom Server zur Verf&uuml;gung gestellten Informationen 
+auslesen zu k&ouml;nnen, bedienen wir uns der Servervariable "LOGON_USER".
+</p>
+
+<pre style="background='silver';">
+StrUserName = Request.ServerVariables("LOGON_USER")
+</pre>
+
+<p>
+Da uns diese allerdings den UNC-Namen des Users liefert, m&uuml;ssen wir den "Serveranteil" noch aus 
+dem String &ldquo;eliminieren&rdquo;. Hierzu verwenden wir den Befehl Split:
+</p>
+
+<pre style="background='silver';">
+ArrUser = Split(StrUserName, "\", -1, 1)
+StrLogged_In_User = ArrUser(1)
+</pre>
+
+<p>
+In der Variable „StrLogged_In_User&ldquo; befindet sich nun der Benutzername des am Intranet 
+anzumeldenden Benutzers.
+</p>
+
+<p>
+Da wir nun wissen, wer aktuell eingeloggt ist, m&uuml;ssen wir feststellen, ob dieser User &uuml;berhaupt 
+Zugriff auf das Intranet haben soll, was bedeuten w&uuml;rde, da&szlig; zumindest ein Eintrag f&uuml;r diesen 
+Benutzer in der Tabelle "NetzwerkUser" vorhanden ist:
+</p>
+
+<pre style="background='silver';">
+StrSQL = "SELECT ID FROM NetzwerkUser WHERE NetzwerkUser = '" &amp; StrLogged_In_User &amp; "'"
+Set rs = Conn.Execute(StrSQL)
+If rs.Eof Then
+    Check_User = False
+Else
+    Session("Logged_In_User_ID") = rs("ID")
+    Check_User = True
+End If
+rs.Close
+Set rs = Nothing
+</pre>
+
+<p>
+Ist f&uuml;r den aktuellen eingeloggten Netzwerkuser kein Eintrag vorhanden (= <i>rs.Eof</i>), liefert unsere 
+Funktion „False&ldquo; zur&uuml;ck, andernfalls wird in der Sessionvariable "Logged_In_User_ID" die ID des 
+Netzwerkusers aus der Tabelle "NetzwerkUser" gespeichert. Au&szlig;erdem liefert die Funktion 
+<i>Check_User</i> den Wert <i>True</i> zur&uuml;ck.
+</p>
+
+<p>
+Doch was n&uuml;tzen die besten Funktionen, wenn diese nicht aufgerufen werden? Diesen Mi&szlig;stand werden 
+wir jetzt beseitigen, indem wir uns unserer ersten Seite im Intranet widmen, der Datei <b>default.asp</b>
+im Hauptverzeichnis (<i>myaspintranet</i>).
+</p>
+
+<p>
+Der erste Befehl dieser Seite ist die Anweisung 
+<a href="http://msdn.microsoft.com/scripting/vbscript/doc/vsstmOptionExplicit.htm" target="_blank">Option Explicit</a>,
+welche eine explizite Deklaration aller Variablen in einem Skript mittels 
+<a href="http://msdn.microsoft.com/scripting/vbscript/doc/vsstmDim.htm" target="_blank">Dim</a>, 
+<a href="http://msdn.microsoft.com/scripting/vbscript/doc/vsstmPrivate.htm" target="_blank">Private</a>,
+<a href="http://msdn.microsoft.com/scripting/vbscript/doc/vsstmPublic.htm" target="_blank">Public</a> oder 
+<a href="http://msdn.microsoft.com/scripting/vbscript/doc/vsstmReDim.htm" target="_blank">ReDim</a> erzwingt. 
+Die Verwendung dieser Anweisung erleichtert uns sp&auml;ter die Fehlersuche, wenn wir z.B. 
+Schreibfehlern bei Variablen o.&auml;. auf die Spur kommen wollen. 
+</p>
+
+<p>
+Danach inkludieren wir unsere bisher erstellten Subs und Funktionen:
+</p>
+
+<pre style="background='silver';">
+&lt;!--#include virtual="/~include/functions.asp"--&gt;
+</pre>
+
+<p>
+Direkt im Anschlu&szlig; folgt der Aufruf der Subroutine "DisableCaching".
+</p>
+
+<p>
+Nachdem wir dann unsere Verbindung mit dem Namen <i>Conn</i> deklariert haben, rufen wir die 
+Subroutine <i>MakeDBConn</i> auf. Die Deklaration mittels <i>Dim Conn</i> au&szlig;erhalb der Subroutine 
+ist notwendig, um die Verbindung zur Datenbank innerhalb des kompletten Scripts <b>default.asp</b>
+zur Verf&uuml;gung zu stellen. 
+</p>
+
+<p>
+Der Aufruf der Funktion <i>Check_Setup</i> ist der n&auml;chste Schritt in unserem Script:
+</p>
+
+<pre style="background='silver';">
+If Check_Setup = False Then 
+    Response.Redirect("/~include/error.asp?Error=1")
+    Response.End
+End If
+</pre>
+
+<p>
+Wir &uuml;berpr&uuml;fen das Ergebnis unserer Funktion - ist dieses <i>False</i>, so leiten wir den User 
+auf eine Seite <b>error.asp</b>. An diese &uuml;bergeben wir die Fehlernummer "1". Doch dazu sp&auml;ter mehr.
+</p>
+
+<p>
+Sollte das Ergebnis der Pr&uuml;fung von "Check_Setup" <i>True</i> lauten, wenden wir uns der 
+&Uuml;berpr&uuml;fung unserer Funktion "Check_User" zu:
+</p>
+
+<pre style="background='silver';">
+If Check_User = False Then 
+    Response.Redirect("/~include/error.asp?Error=2")
+    Response.End
+End If
+</pre>
+
+<p>
+Auch hier leiten wir im Fehlerfalle (entspricht <i>False</i>) zu der Datei <b>error.asp</b> mit 
+Angabe einer Fehlernummer weiter.
+</p>
+
+<p>
+War auch diese Pr&uuml;fung positiv (also <i>True</i>), so wird der Rest des Scripts ausgef&uuml;hrt, 
+welcher zun&auml;chst aus der Tabelle "Betriebsdaten" den Firmennamen ausliest und diesen als Titel 
+des generierten Framesets anzeigt. N&auml;her befassen wir uns mit der Datei <b>default.asp</b> im Moment
+nicht.
+</p>
+
+<h2>Fehlerbehandlung</h2>
+
+<p>
+Bei der &Uuml;berpr&uuml;fung der Funktionen "Check_Setup" und "Check_User" haben wir im Fehlerfall auf eine 
+Datei namens <b>error.asp</b> weitergeleitet - diese wollen wir nun n&auml;her betrachten.
+</p>
+
+<p>
+Hintergrund der Datei <b>error.asp</b> ist, da&szlig; im laufenden Betriebs des Intranets immer wieder 
+Fehlerzust&auml;nde auftreten k&ouml;nnen, die es erfordern, den Betrieb des Intranets bis auf weiteres 
+komplett zu unterbinden. Zwei dieser Zust&auml;nde haben wir bereits kennengelernt: das Setup wurde 
+nicht ausgef&uuml;hrt oder der aktuell angemeldete User ist nicht berechtigt, das Intranet zu nutzen. 
+Um den User &uuml;ber den Fehler ohne kryptische Fehlermeldungen zu informieren, integrieren wir 
+deshalb die Seite „error.asp&ldquo;. Diese gibt je nach (abfangbarem) Fehler eine verst&auml;ndliche 
+Fehlermeldung und eine oder mehrere L&ouml;sungsm&ouml;glichkeiten aus.
+</p>
+
+<p>
+Aus dem theoretischen Aufbau der Seite ergibt sich, da&szlig; wir auch hierf&uuml;r eine Tabelle in unserer 
+Datenbank anlegen - die Tabelle "Errors":
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010917_25.png" width="603" height="114" alt="" border="0">
+
+<p>
+In der Datei <b>error.asp</b> erzwingen wir zun&auml;chst - wie in allen anderen Seiten des Intranets, 
+die wir noch behandeln werden - mittels Option Explicit die Deklaration von Variablen. Nach der 
+Deklaration derselben lesen wir aus dem QueryString die ErrorID. Dies ist die Nummer, die wir 
+in der Datei <b>default.asp</b> &uuml;bergeben haben. Wir &uuml;berpr&uuml;fen dann, ob diese Fehlernummer in der 
+Tabelle "Errors" vorhanden ist. Ist dies der Fall, so wird der entsprechende Fehler angezeigt. 
+Sollte die Fehlernummer nicht in der Tabelle existieren, so hat der Benutzer die Fehlernummer von 
+Hand manipuliert, oder die Datenbank ist besch&auml;digt - beides ist ein Grund, um den Administrator 
+des Intranets zu verst&auml;ndigen, was dem Benutzer auch mitgeteilt wird:
+</p>
+
+<pre style="background='silver';">
+ErrorID = Request.QueryString("Error")
+If (ErrorID &lt;&gt; "") AND (IsNumeric(ErrorID) = True) Then
+    Dim Conn
+    MakeDBConn
+    StrSQL = "SELECT * FROM Errors WHERE ID = " &amp; ErrorID &amp; ""
+    Set rs = Conn.Execute(StrSQL)
+    If Not rs.Eof Then
+        Response.Write rs("Ueberschrift") &amp; "&lt;br&gt;&lt;br&gt;"
+        Response.Write "Fehler:&amp;nbsp;" &amp; rs("Fehler") &amp; "&lt;br&gt;&lt;br&gt;"
+        Response.Write "L&ouml;sung:&amp;nbsp;" &amp; rs("Loesung")
+    Else
+        Response.Write "Schwerwiegender Fehler - verst&auml;ndigen Sie den Administrator"
+    End If
+Else
+    Response.Write "Schwerwiegender Fehler - verst&auml;ndigen Sie den Administrator"
+End If
+</pre>
+
+<p>
+Sicher fragen Sie sich, weshalb au&szlig;er der &Uuml;berpr&uuml;fung, ob die via Querystring &uuml;bergebene Error-ID 
+leer ist, auch eine Pr&uuml;fung mittels IsNumeric (ist die Error-ID eine Zahl?) durchgef&uuml;hrt wird. 
+Der Grund daf&uuml;r l&auml;sst sich wohl am einfachsten mit einem Beispiel zeigen. Angenommen der 
+Benutzer w&uuml;rde die URL wie folgt &auml;ndern:
+</p>
+
+<pre style="background='silver';">
+http://myaspintranet/~include/error.asp?Error=1 OR 1=1
+</pre>
+
+<p>
+Das Ergebnis w&auml;re eine ver&auml;nderte SQL-Abfrage, welche nun wie folgt lauten w&uuml;rde:
+</p>
+
+<pre style="background='silver';">
+SELECT * FROM Errors WHERE ID = 1 OR 1=1
+</pre>
+
+<p>
+Hierdurch w&auml;re es m&ouml;glich, alle Daten der Tabelle aufzulisten - eine Sicherheitsl&uuml;cke, die 
+wir unbedingt vermeiden wollen.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Nachdem wir nun die ersten theoretischen und auch praktischen Grundlagen f&uuml;r unser Intranet 
+geschaffen haben, beenden wir hiermit den ersten Artikel zur Erstellung eines Intranets mit ASP.
+Gleichzeitig lade ich Sie zum zweiten Teil der Artikelserie ein, welcher morgen ver&ouml;ffentlicht 
+wird. Dort besch&auml;ftigen wir uns unter anderem mit der Programmierung des Setups und dem Aufbau 
+des "Outlook-Men&uuml;s".
+</p>
+
+<h4>Redaktioneller Hinweis</h4>
+<p>
+Aufgrund des Umfanges des Intranets - und der damit m&ouml;glichen Fehlerquellen bei der Umsetzung auf den unterschiedlichen
+Serverkonfigurationen der Leser - bittet der Autor, die Anfragen &uuml;ber &ouml;ffentliche Foren
+(so zum Beispiel <a href="http://www.aspgerman.com/aspgerman/listen/anmelden/aspGerman.asp" target="_blank">aspGerman</a>)
+oder die <a href="http://www.aspintranet.de/aspintranet/mailingliste../default.htm?a=106" target="_blank">ASPIntranet Mailingliste</a>
+abzuwickeln. Fehler in ASPIntranet können Sie auf der 
+<a href="http://www.aspintranet.de/aspintranet/reportabug../default.htm?a=109" target="_blank">Bugreport-Seite</a> 
+von ASPIntranet melden.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010917.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010917.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000801.htm">Eine IP Adresse f&uuml;r mehrere Websites</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000801.htm</span><br>
+<a href="../artikel/20010918.htm">Erstellung eines Intranets in ASP (Teil 2) - Setup</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010918.htm</span><br>
+<a href="../artikel/20010919.htm">Erstellung eines Intranets in ASP (Teil 3) - Navigation</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010919.htm</span><br>
+<a href="../artikel/20010920.htm">Erstellung eines Intranets in ASP (Teil 4) - Mitarbeiter</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010920.htm</span><br>
+<a href="../artikel/20010921.htm">Erstellung eines Intranets in ASP (Teil 5) - Application Day</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010921.htm</span><br>
+<a href="../artikel/20001109.htm">Verzeichnissicherheit mit NTFS und IIS Authentifizierung</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001109.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpintranet%2Ede%2F">AspIntranet.de</a><br>
+<SPAN class="content">http://www.aspintranet.de/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpintranet%2Ede%2Faspintranet%2Fsystem%2Fdefault%2Easp%3Fa%3D84">Systemvoraussetzungen AspIntranet.de</a><br>
+<SPAN class="content">http://www.aspintranet.de/aspintranet/system../default.htm?a=84</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

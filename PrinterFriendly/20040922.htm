@@ -1,0 +1,285 @@
+<HTML>
+<HEAD>
+<TITLE>Mehrsprachige Applikationen in .Net</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Sicher sind die meisten schon einmal vor der Aufgabe gestanden, eine Applikation mehrsprachig umzusetzen. M&ouml;gliche L&ouml;sungsans&auml;tze gibt es daf&uuml;r mehr als genug: Ressource-Files, Xml-Files, Flat-Files, Datenbanken, Usw.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,XML,Cache,HttpContext,Flat,Internationalisierung,Translation,Übersetzung,StringTable,Mehrsprachig">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Mehrsprachige Applikationen in .Net</H1>
+<p>
+Geschrieben von: <a href="../autoren/danimeier.htm">Dani Meier</a><br>
+Kategorie: <a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20040922"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Sicher sind die meisten schon einmal vor der Aufgabe gestanden, eine Applikation mehrsprachig umzusetzen. 
+M&ouml;gliche L&ouml;sungsans&auml;tze gibt es daf&uuml;r mehr als genug:
+</p>
+
+<ul>
+	<li>Ressource-Files
+	<li>Xml-Files
+	<li>Flat-Files
+	<li>Datenbanken
+	<li>Usw.
+</ul>
+
+<p>
+Datenbanken haben den Nachteil, dass man seine Strings nicht mal einfach so dem &Uuml;bersetzer geben kann. Und 
+Flat-Files sind wie der Name schon sagt, einfach zu flach - da mit normalem Aufwand keine strukturierte 
+Ablage (und vor allem Abfrage) der Strings m&ouml;glich ist, verliert man schnell den &Uuml;berblick. Ressource-Files 
+(.resx) liegen sehr nahe, da der Zugriff auf diese bereits vom Framework bereitgestellt wird, und da 
+Ressource-Files XML-Files sind, ist auch der Umgang mit ihnen kein Problem; es gibt aber durchaus Situationen, 
+wo "normale" XML-Files besser am Platz w&auml;ren - z.B. wenn Plattform-Unabh&auml;ngigkeit eine Rolle spielt. Wie eine 
+L&ouml;sung damit aussehen k&ouml;nnte, wird in diesem Artikel beschrieben.
+</p>
+
+<h2>Die Idee</h2>
+<p>
+Die Anforderungen sind folgende:
+</p>
+
+<ul>
+<li>1-n Sprachen werden unterst&uuml;tzt (muss soweit skalierbar sein, dass neue Sprachen jederzeit hinzugef&uuml;gt 
+	werden k&ouml;nnen, ohne dass die Applikation angepasst werden muss).
+<li>Die Strings m&uuml;ssen in verschiedene Bereiche unterteilt werden k&ouml;nnen - sonst verliert man schnell den 
+	&Uuml;berblick &uuml;ber die verwalteten Strings
+<li>Das Source-File sollte "Notepad-kompatibel" sein
+</ul>
+
+<h2>Die L&ouml;sung</h2>
+<p>
+Wenn Ressource-Files wegfallen, liegen "normale" XML-Files nahe. Alle Strings werden in ein zentrales XML-File 
+geladen. Das XML-File wird eingelesen und entsprechend gecached - mittels einer CacheDependency auf dem XML-File 
+wird sichergestellt, dass bei jeder Aktualisierung des Files der Cache ebenfalls erneuert wird - so l&auml;uft man 
+auch bei sehr vielen Strings nicht Gefahr, Performance-Probleme zu erhalten. Der Zugriff auf die Strings 
+funktioniert &uuml;ber eine zentrale Klasse, die die ganze Zugriffs- und Caching-Logik kapseln soll.
+</p>
+
+<h2>Datenmodell</h2>
+<p>
+Die XML-Datenstruktur sieht exemplarisch wie folgt aus:
+</p>
+
+<pre style="background='silver';">
+&lt;StringPool&gt;
+&lt;Region name="Administration"&gt;
+    &lt;Text key="CommitButton"&gt;
+      &lt;D&gt;Best&auml;tigen&lt;/D&gt;
+      &lt;F&gt;Confirmer&lt;/F&gt;
+    &lt;/Text &gt;
+    &lt;Text key="DeleteButton"&gt;
+      &lt;D&gt;L&ouml;schen&lt;/D&gt;
+      &lt;F&gt;Supprimer&lt;/F&gt;
+    &lt;/ Text&gt;
+&lt;/Region&gt;
+&lt;Region name="Gallery"&gt;
+    &lt;Text key="PictureInit"&gt;
+      &lt;D&gt;Bild&lt;/D&gt;
+      &lt;F&gt;Image&lt;/F&gt;
+    &lt;/Text&gt;
+&lt;/Region&gt;
+&lt;/StringPool&gt;
+</pre>
+
+<p>
+Die Unterteilung in die Region-Nodes erm&ouml;glicht es, eine gewisse Struktur in das XML-File zu bringen - so beh&auml;lt man 
+auch bei hunderten von Texten den &Uuml;berblick. Die Sprachen k&ouml;nnen frei erg&auml;nzt werden - die Bezeichnung des Sprach-Nodes 
+(hier D, F) ist dabei egal, da dessen Bezeichnung dann einfach als Parameter mitgegeben wird (dazu sp&auml;ter mehr). Und 
+da es sich hierbei augenscheinlich um ein ganz normales XML-File handelt, kann dieses nat&uuml;rlich auch einfach 
+mit Notepad bearbeitet werden.
+</p>
+<p>
+Als Datenspeicher f&uuml;r die Daten bieten sich durch das Key / Value - Verfahren Dictionary-Objekte an. Jede 
+Hierarchie-Stufe (Region, Text, [Sprache]) wird in ein eigenes Dictionary-Objekt gespeichert - und diese werden dann 
+entsprechend verschachtelt.
+</p>
+<p>
+F&uuml;r die beiden Stufen Regionen und Text werden HashTables verwendet - f&uuml;r die Texte ein StringDictionary; da auf dieser 
+Ebene nur Strings abgelegt werden, bietet sich dieses durch seine verbesserte Performance gegen&uuml;ber einer HashTable an.
+</p>
+<p>
+Das Datenmodell der StringPool-Klasse:
+</p>
+
+<IMG SRC="/artikel/Bilder/200409/20040922.png" width="590" height="316" alt="" border="0">
+
+<h2>Real-Life</h2>
+<p>
+So weit die Theorie - aber wie programmiert man dies nun in C#?
+</p>
+<p>
+Die Klasse StringPool - die das ganze heavy lifting f&uuml;r uns machen wird - hat folgende Signatur:
+</p>
+
+<pre style="background='silver';">
+public class StringPool
+{
+  public void LoadStrings()
+
+  private XmlDocument LoadSourceFile(string file)
+
+  public string GetString(string region, string key, string language)
+
+  public StringPool GetInstance()
+}
+</pre>
+
+<p>
+Vier einfache Methoden reichen also bereits:
+</p>
+
+<ul>
+<li><b>LoadStrings</b>
+L&auml;dt die Strings aus dem XML-File in das beschriebene Datenmodell
+<li><b>LoadSourceFile</b>
+Wird nur dazu verwendet, das XML-File in eine XmlDocument-Instanz zu laden, die dann anschliessend in der 
+LoadStrings-Methode verarbeitet wird.
+<li><b>GetString</b>
+&Uuml;ber diese Methode k&ouml;nnen wir auf unsere Strings zugreifen. Als Parameter wird der Region-Name, der Name des 
+Text-Keys sowie nat&uuml;rlich die gew&uuml;nschte Sprache &uuml;bergeben; wenn eine ung&uuml;ltige Sprache &uuml;bergeben wird, verwendet 
+die Methode die definierte Default-Sprache.
+<li><b>GetInstance</b>
+Diese Methode liefert uns ein Objekt der StringPool-Klasse &uuml;ber das wir dann unsere Strings beziehen k&ouml;nnen. Dabei 
+achtet die Methode darauf, dass erstens immer nur eine Instanz von StringPool besteht (Singleton-Pattern) und zweitens 
+diese Instanz jeweils &uuml;ber das Cache[]-Objekt bezogen wird und nicht etwa jedes mal neu erstellt werden muss (siehe 
+n&auml;chster Abschnitt).
+</ul>
+
+<h2>Single-Leben</h2>
+<p>
+Nun w&auml;re es nat&uuml;rlich nicht sehr klug, bei jedem String-Request das ganze XML-File in die Datenstruktur zu laden, 
+nur um danach einen einzigen String zu verwenden und dann das ganze Objekt wieder zu "zerstampfen"…
+</p>
+<p>
+Ziel muss es also sein, die StringPool-Instanz anfangs einmal zu erstellen, und dann f&uuml;r alle User &uuml;ber ein 
+geschicktes Caching-Verfahren m&ouml;glichst performant verf&uuml;gbar zu machen - wobei es nat&uuml;rlich keinen Sinn macht, f&uuml;r 
+jeden User ein eigenes StringPool-Objekt zu f&uuml;hren.
+</p>
+<p>
+Mit einem Singleton-Pattern k&ouml;nnen wir genau das sicherstellen - n&auml;mlich dass zu jedem Zeitpunkt immer nur genau ein 
+StringPool-Objekt besteht - egal wieviele User die Applikation gerade nutzen. Diese eine Instanz wird dann gecached, 
+und jeweils neu erstellt, wenn &Auml;nderungen am XML-File gemacht wurden.
+</p>
+<p>
+F&uuml;r WebApplikationen bietet sich hier nat&uuml;rlich das Cache[]-Objekt an - aber was ist mit WinForms? Das Cache[]-Objekt 
+befindet sich im Namespace System.Web.Caching - h&ouml;rt sich also nicht passend f&uuml;r eine WinForm-Anwendung an - ist es 
+aber absolut! &Uuml;ber die Klasse System.Web.HttpRuntime kann man f&uuml;r WinForm- (oder nat&uuml;rlich auch andere) Applikationen 
+ein Cache[]-Objekt erstellen.
+</p>
+
+<pre style="background='silver';">
+if(HttpContext.Current == null)
+  myCache = HttpRuntime.Cache;
+else
+  myCache = HttpContext.Current.Cache;
+</pre>
+
+<p>
+In ersterem Fall (betrifft alle nicht ASP.NET-Anwendungen) beziehen wir unser Cache-Objekt also &uuml;ber die 
+HttpRuntime-Klasse, im zweiten (ASP.NET-Anwendungen) &uuml;ber den aktuellen HttpContext.
+</p>
+<p>
+Jetzt muss die Methode f&uuml;r uns noch pr&uuml;fen, ob im Cache bereits eine Instanz von StringPool besteht - wenn nicht 
+wird diese erstellt, die Strings geladen und dann in den Cache gespeichert.
+</p>
+
+<pre style="background='silver';">
+if(myCache[CACHE_KEY] == null) {
+  // Erstelle StringPool-Instanz und lade Strings
+  StringPool sp = new StringPool();
+  sp.LoadStrings();
+				
+  // Cache neu f&uuml;llen
+  myCache.Insert(CACHE_KEY, sp, new CacheDependency(SourceFile));
+}
+</pre>
+
+<p>
+Damit die Klasse nicht anderweitig instanziert werden kann (also unseren Singleton umgehen), definieren wir einen 
+privaten Konstruktor.
+</p>
+
+<h2>Praxis</h2>
+<p>
+Nun ist unsere Klasse schon bereit, genutzt zu werden; wir k&ouml;nnen unsere Strings &uuml;ber die GetString-Methode 
+abfragen - ohne jemals Gefahr zu laufen, dass wir auf ein nicht instanziertes Objekt zugreifen und somit 
+eine NullRefereceException werfen:
+</p>
+
+<pre style="background='silver';">
+String myString = StringPool.GetInstance().GetString("Administration", "CommitButton", "D");
+</pre>
+
+<p>
+Sollte die &uuml;bergebene Sprache (hier: "D") in unserer Datenquelle nicht vorhanden sein, wird eine im .config-File 
+definierte Default-Sprache verwendet. Ein Aufruf ohne den Sprachparameter funktioniert dank einer &Uuml;berladung der 
+GetString()-Methode ebenfalls - auch dort wird dann jeweils die definierte Default-Sprache verwendet.
+</p>
+
+<pre style="background='silver';">
+String myString = StringPool.GetInstance().GetString("Administration", "CommitButton");
+</pre>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dieser Artikel soll einen einfachen, aber dennoch praktikablen Ansatz bieten, mehrsprachige Applikationen in .Net
+zu entwickeln. Vorteile dieses Ansatzes liegen sicherlich in der einfachen Handhabung des XML-Files - es werden keine 
+speziellen Programme oder User-Interfaces ben&ouml;tigt, um die Strings anzupassen - und in der Plattformunabh&auml;ngigkeit. 
+Das hier verwendete Konzept kann ohne Probleme auch auf andere Datenquellen (z.B. eine Datenbank) angewendet werden - 
+eine Anpassung der LoadStrings()-Methode gen&uuml;gt.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20040922.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20040922.zip</span></p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

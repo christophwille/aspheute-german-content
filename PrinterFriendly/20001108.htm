@@ -1,0 +1,240 @@
+<HTML>
+<HEAD>
+<TITLE>SQL Server Objekte scripten</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im heutigen Artikel besch&auml;ftigen wir uns damit, wie man von existierenden Objekten in SQL Server Datenbanken ein Script erstellen kann, das man dann auf einem anderen Server verwenden kann, um idente Objekte zu erstellen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SQLDMO,SQL Server,SQL Server 2000,Scripting,Enterprise Manager,Generate SQL Script">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>SQL Server Objekte scripten</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001108"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Im heutigen Artikel besch&auml;ftigen wir uns damit, wie man von existierenden Objekten in SQL Server
+Datenbanken ein Script erstellen kann, das man dann auf einem anderen Server verwenden kann, um idente Objekte
+zu erstellen (Schema, nicht Daten). Dazu werde ich zwei Wege beschreiben - der interaktive Weg &uuml;ber den
+Enterprise Manager, als auch wie man es programmatisch erledigen kann.
+</p>
+
+<h2>Scripting im Enterprise Manager</h2>
+<p>
+Die Variante, die jeder Datenbankadministrator sicher schon einmal verwendet hat, ist Generate <i>SQL Scripts</i>.
+Dazu selektiert man ein Objekt in der Datenbank (in diesem Fall eine Tabelle), klickt mit der rechten Maustaste, und
+w&auml;hlt den entsprechenden Befehl im Kontextmen&uuml;:
+</p>
+<p><IMG SRC="/artikel/Bilder/200011/20001108_01.png" width="590" height="427" alt="" border="0"></p>
+<p>
+Damit &ouml;ffnet sich die Dialogbox <i>Generate SQL Scripts</i>. Hier ist standardm&auml;&szlig;ig nur das zuvor selektierte
+Objekte gew&auml;hlt, klickt man allerdings auf <i>Show All</i> kann man alle Tables, Views, Stored Procedures etc.
+scripten.
+</p>
+<p><IMG SRC="/artikel/Bilder/200011/20001108_02.png" width="544" height="417" alt="" border="0"></p>
+<p>
+Es gibt etliche Formatierungsoptionen f&uuml;r das zu generierende Script. Standardm&auml;&szlig;ig sollte man sich ein DROP
+Statement generieren lassen, das allf&auml;llig existierende Objekte gleichen Namens (und nat&uuml;rlich Typs) l&ouml;scht.
+Da das ein Screenshot f&uuml;r SQL Server 2000 ist, hat man hier zus&auml;tzlich die Option, nur SQL 7.0 kompatible
+Statements generieren zu lassen.
+</p>
+<p><IMG SRC="/artikel/Bilder/200011/20001108_03.png" width="544" height="417" alt="" border="0"></p>
+<p>
+In den Optionen wird es dann so richtig interessant. Hier kann man Roles und Users scripten lassen, die Indexes
+und Triggers mitscripten (f&uuml;r Tabellen wichtig!), als auch Prim&auml;rschl&uuml;ssel und Fremdschl&uuml;ssel - ebenfalls f&uuml;r
+Tabellen.
+</p>
+<p><IMG SRC="/artikel/Bilder/200011/20001108_04.png" width="544" height="417" alt="" border="0"></p>
+<p>
+Klickt man nun auf OK, wird man noch nach einem Dateinamen f&uuml;r das Skript gefragt, und schon generiert der 
+Enterprise Manager das SQL Script. Beispielsweise k&ouml;nnte es so aussehen:
+<pre style="background='silver';">
+if exists (select * from dbo.sysobjects where 
+   id = object_id(N'[dbo].[FK_Products_Categories]') 
+   and OBJECTPROPERTY(id, N'IsForeignKey') = 1)
+ALTER TABLE [dbo].[Products] DROP CONSTRAINT FK_Products_Categories
+GO
+
+if exists (select * from dbo.sysobjects where 
+   id = object_id(N'[dbo].[Categories]') 
+   and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+drop table [dbo].[Categories]
+GO
+
+CREATE TABLE [dbo].[Categories] (
+	[CategoryID] [int] IDENTITY (1, 1) NOT NULL ,
+	[CategoryName] [nvarchar] (15) COLLATE 
+         SQL_Latin1_General_CP1_CI_AS NOT NULL ,
+	[Description] [ntext] COLLATE SQL_Latin1_General_CP1_CI_AS NULL ,
+	[Picture] [image] NULL 
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+</pre>
+</p>
+<p>
+Dieses Script kann man nun auf einen beliebigen anderen Server transferieren, dort im Query Analyzer &ouml;ffnen
+und ausf&uuml;hren - und schon hat man dort eine Tabelle <i>Categories</i>.
+</p>
+<p>
+Wie generiert der Enterprise Manager dieses Script? Mit Hilfe von Stored Procedures? Weit gefehlt! Es gibt die
+SQL Distributed Management Objects (SQLDMO), welche die gesamte Palette an Funktionen unterst&uuml;tzen - der 
+Enterprise Manager verpackt diese "nur" in einem netten User Interface. Aber jeder - sogar ASP - kann auf SQLDMO
+durchgreifen, und Objekte nach Belieben scripten lassen.
+</p>
+
+<h2>Scripting in ASP mit SQLDMO</h2>
+<p>
+Da wir jetzt wissen, wozu SQLDMO genutzt werden kann, schauen wir uns ein Beispiel an, das die Categories Tabelle
+scriptet. Ich habe die Konstantennamen 1:1 aus der Dokumentation von SQL Server 2000 herausgenommen, damit man 
+leichter danach suchen kann. Die Liste ist nat&uuml;rlich nicht vollst&auml;ndig, soll aber grunds&auml;tzlich zeigen, worauf der
+Enterprise Manager aufsetzt - auf einer Liste simpler Konstanten!
+</p>
+<p>
+<pre style="background='silver';">
+&lt;%
+Const SQLDMOScript_Drops = 1
+Const SQLDMOScript_Default = 4
+Const SQLDMOScript_UseQuotedIdentifiers = -1
+Const SQLDMOScript_IncludeHeaders = 131072
+
+Const SQLDMOScript_Indexes = 73736
+Const SQLDMOScript_Triggers = 16
+
+Const SQLDMOScript_DRI_All = 532676608 ' all of the below
+Const SQLDMOScript_DRI_AllConstraints = 520093696
+Const SQLDMOScript_DRI_ForeignKeys = 134217728
+Const SQLDMOScript_DRI_PrimaryKey = 268435456
+
+strFile = Server.MapPath(&quot;/sqldmo/demo.sql&quot;)
+
+Set sql = Server.CreateObject(&quot;SQLDMO.SQLServer&quot;)
+sql.LoginSecure = False ' we are not using NTLM
+sql.LoginTimeout = 5 ' seconds
+sql.Connect &quot;STRANGELOVE&quot;, &quot;sa&quot;, &quot;&quot;
+
+Set db = sql.Databases(&quot;Northwind&quot;, &quot;dbo&quot;)
+Set oTable = db.Tables(&quot;Categories&quot;)
+
+nOptions = SQLDMOScript_Drops Or SQLDMOScript_Default
+strResult = oTable.Script(nOptions, strFile)
+
+Response.Write &quot;&lt;PRE&gt;&quot; &amp; strResult &amp; &quot;&lt;/PRE&gt;&quot;
+%&gt;
+</pre>
+</p>
+<p>
+Das eigentlich Herzst&uuml;ck des Sourcecodes ist die <i>Script</i> Methode. Diese gibt es f&uuml;r (fast) alle Objekte in 
+der SQLDMO Objekthierarchie (Stored Procedures, Views, etc), und erzeugt je nach Konstantenkombination das gew&uuml;nschte
+SQL Script - sowohl als R&uuml;ckgabestring, und optional in eine Datei. In unserem Beispiel generiert der Code das
+schon bekannte SQL Script:
+</p>
+<p><IMG SRC="/artikel/Bilder/200011/20001108_05.png" width="590" height="375" alt="" border="0"></p>
+<p>
+Wer &uuml;brigens zu faul ist, die Konstanten einzutippen, der kann die SQLDMO Type Library einbinden.
+Zum Beweis, da&szlig; es funktioniert, hier der entsprechende Sourcecode - es werden keine DROP Statements
+generiert, und es wird keine Datei generiert.
+<pre style="background='silver';">
+&lt;!--METADATA NAME=&quot;Microsoft SQLDMO Object Library&quot; 
+	TYPE=&quot;TypeLib&quot; 
+	UUID=&quot;{10010001-E260-11CF-AE68-00AA004A34D5}&quot;
+--&gt;
+&lt;%
+Set sql = Server.CreateObject(&quot;SQLDMO.SQLServer&quot;)
+
+sql.LoginSecure = False ' we are not using NTLM
+sql.LoginTimeout = 5 ' seconds
+sql.Connect &quot;STRANGELOVE&quot;, &quot;sa&quot;, &quot;&quot;
+
+Set db = sql.Databases(&quot;Northwind&quot;, &quot;dbo&quot;)
+Set oTable = db.Tables(&quot;Categories&quot;)
+
+nOptions = SQLDMOScript_Default
+strResult = oTable.Script(nOptions)
+
+Response.Write &quot;&lt;PRE&gt;&quot; &amp; strResult &amp; &quot;&lt;/PRE&gt;&quot;
+%&gt;
+</pre>
+</p>
+<p>
+Ich habe die <i>Script</i> Methode hier anhand des <i>Table</i> Objekts gezeigt. Man kann nat&uuml;rlich so weit
+gehen, und die gesamte <i>Generate SQL Scripts</i> Dialogbox in ASP nachbauen. Das ist aber dann die 
+Hausaufgabe des Lesers.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Als Abschlu&szlig; m&ouml;chte ich noch darauf hinweisen, da&szlig; man mit
+SQLDMO nicht nur SQL Scripts erstellen kann - man kann in ASP fast den gesamten SQL Server Enterprise 
+Manager nachbauen. Wer also ein Feature gerne Web-enabled h&auml;tte, der sollte sich mit SQLDMO besch&auml;ftigen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001108.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20001108.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020322.htm">Query Express f&uuml;r MSDE</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020322.htm</span><br>
+<a href="../artikel/20020903.htm">Stored Procedures einfach erstellt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020903.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easptoday%2Ecom%2Farticles%2F19991123%2Ehtm">SQL Administration over the Web</a><br>
+<SPAN class="content">http://www.asptoday.com/articles/19991123.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2FIisDev%2FArticles%2FSQLAdmin%2F">SQL Server 6.5 Web Manager</a><br>
+<SPAN class="content">http://www.alphasierrapapa.com/IisDev/Articles/SQLAdmin/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easptoday%2Ecom%2Farticles%2F19991104%2Ehtm">The Power of SQL-DMO with ASP</a><br>
+<SPAN class="content">http://www.asptoday.com/articles/19991104.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

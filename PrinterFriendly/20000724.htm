@@ -1,0 +1,336 @@
+<HTML>
+<HEAD>
+<TITLE>Exception Handling in C#</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Unter C# funktioniert die Fehlerbehandlung viel angenehmer als in VBScript: man hat Exceptions zur Verf&uuml;gung, die deutlich einfacher zu handhaben sind, als On Error Resume Next in VBScript.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Csharp,C#,Microsoft .NET Framework,.NET,Dot NET,Framework,exception, exception handling,try,catch,finally,on error,resume,on error resume next,ASP.NET">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Exception Handling in C#</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000724"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Ich nehme an, da&szlig; jeder VBScript Programmierer schon mindestens einmal die sehr eingeschr&auml;nkten
+M&ouml;glichkeiten der Fehlerbehandlung in das Land des Pfeffers gewunschen hat - ein einfaches
+<i>On Error Resume Next</i> ist nun wirklich nicht gerade das, was man unter zeitgem&auml;&szlig;er Fehlerbehandlung
+verstehen sollte. Aber man mu&szlig;te damit leben, immer <i>Err.Number</i> auszulesen, oder zu riskieren, da&szlig;
+der Benutzer einen nicht abgefangenen Fehler zu Gesicht bekommt.
+</p>
+<p>
+Die gute Nachricht ist, da&szlig; das Microsoft .NET Framework f&uuml;r alle Programmiersprachen ein
+einheitliches Fehlermangagement zur Verf&uuml;gung stellt: Exceptions ("Ausnahmen"). Dadurch, da&szlig; es ein
+fixer Teil des Frameworks ist, k&ouml;nnen Exceptions in einer Komponente ausgel&ouml;st, und im aufrufenden
+Programm auch abgefangen werden - und das, wie immer im Framework, &uuml;ber die Grenzen der Programmiersprachen
+hinweg. Das bedeutet auch das Ende f&uuml;r die von vielen "hei&szlig;geliebten" 8000er Fehlermeldungen.
+</p>
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation des <i>Microsoft .NET Framework SDK's</i> auf
+einem Webserver. Weiters setze ich voraus, da&szlig; der Leser bereits eine Programmiersprache beherrscht - deshalb
+ist die Information auch in sehr komprimierter Form gehalten.
+</p>
+
+<h2>Minimales Exception Handling</h2>
+<p>
+Bevor wir uns die Befehle f&uuml;r das Exception Handling anschauen, m&ouml;chte ich ein nettes kleines
+Beispiel produzieren, das uns mit Exceptions versorgt. Schauen wir uns dazu ein harmlos
+aussehendes Programm an (<b>requestget.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;%
+string strReqItem = Request.QueryString.Get(&quot;ReqItem&quot;);
+Response.Write(strReqItem);
+%&gt;
+</pre>
+
+<p>
+Wenn man dieses Programm ohne Querystring aufruft, bekommt man keine Ausgabe am Bildschirm.
+&Uuml;bergibt man einen korrekten Querystring, wird der Wert f&uuml;r <b>ReqItem</b> ausgegeben, so zum Beispiel:
+</p>
+
+<pre style="background='silver';">http://localhost/RequestGet.aspx?ReqItem=Hello+World</pre>
+
+<p>
+Auch wenn man sich sehr anstrengt, wird das keine Exception ausl&ouml;sen. Wie kommen wir also zu einer
+Exception? Indem wir den &uuml;bergebenen Wert auf einen <i>int</i> umwandeln wollen (<b>requestget_cast2int.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;%
+string strReqItem = Request.QueryString.Get(&quot;ReqItem&quot;);
+int nReqItem = Int32.Parse(strReqItem);
+Response.Write(nReqItem.ToString());
+%&gt;
+</pre>
+
+<p>
+Die Sache hat nicht nur einen, sondern gleich 2 Haken: wenn wir keinen Querystring &uuml;bergeben, hat
+<i>strReqItem</i> den Wert <i>null</i> - und mit einem <i>null</i>-Objekt macht man in der <i>Parse</i> Methode
+keinen Staat -  und man bekommt folgenden Fehler:
+</p>
+
+<IMG SRC="/artikel/Bilder/200007/20000724.png" width="569" height="401" alt="" border="0">
+
+<p>
+Das ist die <i>ArgumentNullException</i> weil kein Wert &uuml;bergeben wurde. Wenn man einen Wert &uuml;bergibt, der 
+Wert allerdings mit <i>ToInt32</i> nicht auf <i>int</i> umgewandelt werden kann, dann steht einem die 
+<i>FormatException</i> ins Haus - der Haken numero due. Ausl&ouml;sen kann man diesen Fehler mit folgender URL:
+</p>
+
+<pre style="background='silver';">http://localhost/RequestGet_Cast2Int.aspx?ReqItem=NaN</pre>
+
+<p>
+So - jetzt haben wir unsere Exception. Uns bleibt sozusagen "nur noch" die Aufgabe, die Exception
+ordnungsgem&auml;&szlig; zu behandeln. Und dazu stellt uns C# das <i>try-catch-finally</i> Konstrukt zur Verf&uuml;gung.
+Wer C++ programmiert hat, dem wird das sehr bekannt vorkommen, da es SEH (structured exception
+handling) nachempfunden ist. Das Gute daran - es ist sehr einfach es anzuwenden.
+</p>
+<p>
+Es gibt gute und schlechte Beispiele, und ich m&ouml;chte jetzt ausnahmsweise ein "schlechtes" aus dem
+&Auml;rmel zaubern (<b>try-one.aspx</b>). Das ist das minimale Beispiel, wie man Exception Handling
+vielleicht doch nicht implementieren soll:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;%
+string strReqItem = Request.QueryString.Get(&quot;ReqItem&quot;);
+try
+{
+	int nReqItem = Int32.Parse(strReqItem);s
+}
+// entweder catch oder finally mu&szlig; nach try kommen
+finally
+{
+}
+%&gt;
+</pre>
+
+<p>
+Warum ist das ein schlechtes Beispiel? Nun ja, es kompiliert und l&auml;uft zwar, der Haken ist 
+allerdings das <i>finally</i> Statement: dieses wird nach <i>try</i> immer aufgerufen, ob eine Exception ausgel&ouml;st
+wurde oder nicht (dort sollte also der Code hinein, der in beiden F&auml;llen ausgef&uuml;hrt werden soll). 
+Das ist noch nicht das Schlechte an der Sache - das Problem ist, da&szlig; "niemand"
+die Exceptions abf&auml;ngt, die wir schon diskutiert haben. Der "Niemand" ist aber ASP.NET - immer wenn
+eine unbehandelte Exception auftritt, bekommt man wieder die ASP.NET Fehlermeldung wie schon im vorangegangenen
+Bild gezeigt. Also nicht unbedingt die leise Fehlerbehandlung, die wir im Sinne hatten.
+</p>
+<p>
+Daher sollte man anstatt des <i>finally</i> Statements f&uuml;r minimales Exception Handling
+doch eher zuerst zu <i>catch</i> greifen.
+</p>
+
+<h2>Das catch Statement</h2>
+<p>
+Also k&uuml;mmern wir uns um die Exceptions, und zwar diesmal "leise" (<b>try-two.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;%
+string strReqItem = Request.QueryString.Get(&quot;ReqItem&quot;);
+try
+{
+	int nReqItem = Int32.Parse(strReqItem);
+}
+catch
+{
+}
+%&gt;
+</pre>
+
+<p>
+Wenn jetzt ein Fehler auftritt, wird er geschluckt, weil unser <i>catch</i> Block keine Fehlermeldung
+ausgibt. Das, was dieses Beispiel imitiert ist die Verwendung von <i>On Error Resume Next</i> ohne
+jemals den Error Code auszulesen.
+</p>
+<p>
+Das folgende leicht modifizierte Beispiel f&auml;ngt die Exception im <i>catch</i> Statement ab, und der
+Fehlertext wird zum Benutzer geschickt - die minimale Variante dessen, was die ASP.NET Error Page
+unter anderem auch macht:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;%
+string strReqItem = Request.QueryString.Get(&quot;ReqItem&quot;);
+try
+{
+	int nReqItem = Int32.Parse(strReqItem);
+}
+catch(Exception e)
+{
+	Response.Write(e.ToString());
+}
+%&gt;
+</pre>
+
+<p>
+Dies ist nat&uuml;rlich auch nicht im Sinne des Erfinders - man sollte sinnvolle Dinge mit Exceptions 
+machen, und sei es "nur", dem Benutzer eine sinnvolle Fehlermeldung zu pr&auml;sentieren, was im n&auml;chsten
+Abschnitt beschrieben wird.
+</p>
+
+<h2>Abfrage verschiedener Exceptions</h2>
+<p>
+Das Sch&ouml;ne am <i>catch</i> Statement ist, da&szlig; man es mehrmals verwenden darf - um Exceptions verschiedenen
+Typs unterschiedlich zu behandeln. F&uuml;r unser Beispiel w&auml;re das, zuerst zu &uuml;berpr&uuml;fen ob etwas
+&uuml;bergeben wurde, danach ob die Konvertierung funktioniert hat, und schlie&szlig;lich werden noch etwaige 
+andere Fehler abgefangen (<b>try-three.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;%
+string strReqItem = Request.QueryString.Get(&quot;ReqItem&quot;);
+int nReqItem = 0;
+try
+{
+	nReqItem = Int32.Parse(strReqItem);
+}
+catch(ArgumentNullException e)
+{
+	Response.Write(&quot;Sie m&uuml;ssen den Parameter &lt;b&gt;ReqItem&lt;/b&gt; angeben!&quot;);
+}
+catch(FormatException e)
+{
+	Response.Write(&quot;Der Parameter &lt;b&gt;ReqItem&lt;/b&gt; mu&szlig; eine Zahl sein!&quot;);
+}
+catch(Exception e)
+{
+	Response.Write(&quot;Fehler aufgetreten: &quot; + e.ToString());
+}
+finally
+{
+	Response.Write(&quot;&lt;br&gt;Fehler oder nicht - hier sind wir!&quot;);
+}
+%&gt;
+</pre>
+
+<p>
+Bevor die Frage auftaucht, ob man die Reihenfolge der catch Statements umdrehen kann, m&ouml;chte
+ich sie auch gleich beantworten - ja und nein. Man darf zwar <i>ArgumentNullException</i> und <i>FormatException</i>
+tauschen, allerdings kann man <i>Exception</i> vor keine der beiden anderen reihen. Der Grund daf&uuml;r ist, da&szlig; 
+die allgemeine <i>Exception</i> Klasse alle spezielleren (in unserem Fall die ersten beiden) &uuml;berlagert.
+Allerdings wird man niemals diesen Fehler machen - der Compiler beschwert sich heftigst, wenn man
+die Reihenfolge falsch hat.
+</p>
+<p>
+Wie dieses Beispiel zeigt, kann man mit Exception Handling den Sourcecode deutlich fehlertoleranter
+gestalten. Obwohl ich nur eine Zeile im <i>try</i> Block hatte, ist man nat&uuml;rlich auf keinerlei Limit
+an Code im <i>try</i> Block eingeschr&auml;nkt. Und wie man den Fehler im Endeffekt behandelt, bleibt
+dem Anwendungsfall &uuml;berlassen.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Nat&uuml;rlich kann man nicht nur Exceptions abfangen, sondern Exceptions selbst werfen (mit dem
+<i>throw</i> Statement). Dabei mu&szlig; man nicht auf vorgefertige vom Framework zur Ver&uuml;gung gestellte 
+zur&uuml;ckgreifen, man kann auch eigene, spezialisierte, erstellen und verwenden.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000724.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000724.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020318.htm">Das using Schl&uuml;sselwort</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020318.htm</span><br>
+<a href="../artikel/20020409.htm">Dateien umbenennen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020409.htm</span><br>
+<a href="../artikel/20000802.htm">Dateiupload mit ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000802.htm</span><br>
+<a href="../artikel/20020206.htm">Der ODBC .NET Data Provider</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020206.htm</span><br>
+<a href="../artikel/20020507.htm">Deutsche Personalausweisnummern verifizieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020507.htm</span><br>
+<a href="../artikel/20000823.htm">Die Hashtable Klasse</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000823.htm</span><br>
+<a href="../artikel/20000804.htm">Directory Browsing a la .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000804.htm</span><br>
+<a href="../artikel/20020226.htm">Ein Touch-Utility in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020226.htm</span><br>
+<a href="../artikel/20001024.htm">Exception Handling in Visual Basic.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001024.htm</span><br>
+<a href="../artikel/20020705.htm">Formularbasierte Authentifizierung in f&uuml;nf Minuten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020705.htm</span><br>
+<a href="../artikel/20021107.htm">Index Server Abfragen per Web Service</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021107.htm</span><br>
+<a href="../artikel/20021031.htm">Online File Management System mit ASP.NET und C# - Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021031.htm</span><br>
+<a href="../artikel/20000728.htm">On-the-fly Generierung von Graphiken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000728.htm</span><br>
+<a href="../artikel/20020902.htm">Regex'en zu Assemblies kompilieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020902.htm</span><br>
+<a href="../artikel/20000824.htm">Scrapen von Webseiten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000824.htm</span><br>
+<a href="../artikel/20001019.htm">Sichere Konvertierungen von Referenztypen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001019.htm</span><br>
+<a href="../artikel/20010911.htm">Webseiten automatisiert scrapen, Teil 2</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010911.htm</span><br>
+<a href="../artikel/20000825.htm">WHOIS Abfragen a la .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000825.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpgerman%2Ecom%2Faspgerman%2Flisten%2Fanmelden%2Faspdedotnet%2Easp">Die aspDEdotnet Liste</a><br>
+<SPAN class="content">http://www.aspgerman.com/aspgerman/listen/anmelden/aspdedotnet.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eamazon%2Ecom%2Fexec%2Fobidos%2FASIN%2F0672320371%2Falphasierrapapa">Presenting C#</a><br>
+<SPAN class="content">http://www.amazon.com/exec/obidos/ASIN/0672320371/alphasierrapapa</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

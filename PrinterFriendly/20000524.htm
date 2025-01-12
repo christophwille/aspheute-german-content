@@ -1,0 +1,192 @@
+<HTML>
+<HEAD>
+<TITLE>Arbeiten mit Index Server Catalogs</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wenn eine Website aus mehrheitlich statischen Seiten besteht - so wie AspHeute - dann bietet es sich an, den mit IIS gelieferten Index Server zu verwenden, um die Site f&uuml;r Besucher suchbar zu machen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Index Server,Catalog,Index,Indexkorpus,IXXSO,Query,IDQ,Tracking">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Arbeiten mit Index Server Catalogs</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Server.htm">Server</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000524"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wenn eine Website aus mehrheitlich statischen Seiten besteht - so wie AspHeute - dann bietet es sich an,
+den mit IIS gelieferten Index Server zu verwenden, um die Site f&uuml;r Besucher suchbar zu machen.
+</p>
+<p>
+Um die Suche zu erm&ouml;glichen, mu&szlig; man einige Setuph&uuml;rden nehmen, die leider nach wie vor schlecht dokumentiert sind. 
+Standardm&auml;&szlig;ig indiziert der Index Server n&auml;mlich nur die Default Web Site - damit man in der IIS Hilfe suchen kann. 
+Wenn man weitere Websites anlegt, werden diese nicht automatisch in den Indexkorpus (<i>Catalog</i>) aufgenommen - eine Suche mit
+den Standardsuchformularen verl&auml;uft erfolglos.
+</p>
+<p>
+Zwar k&ouml;nnte man dem Standardcatalog die Verzeichnisse der eigenen Website hinzuf&uuml;gen, allerdings handelt man sich
+dadurch Scoping Probleme ein - wie suche ich nur &uuml;ber die Verzeichnisse meiner Website? Und au&szlig;erdem werden virtuelle Verzeichnisse
+nicht automatisch mitaufgenommen - man m&uuml;&szlig;te sie h&auml;ndisch eintragen. Daher ist es eleganter, sich
+pro Website einen eigenen Catalog zu generieren, und nur &uuml;ber diesen zu suchen.
+</p>
+
+<h2>Erstellen eines neuen Index Server Catalogs</h2>
+<p>
+Um einen neuen Index Server Catalog namens <b>AspHeute</b> zu erstellen, m&uuml;ssen Sie folgende
+Schritte durchf&uuml;hren:
+<ol>
+<li>Im Start Men&uuml; w&auml;hlen Sie Programs / Administrative Tools / Computer Management (f&uuml;r NT4: es gibt
+es ein eigenes Index Server Management Tool)
+<li>Gehen Sie in der Baumansicht zu Services and Applications / Indexing Service. Sie sehen eine Liste der
+bereits angelegten Catalogs. Auf Windows 2000 sind dies <b>System</b> (der Festplattenindex) und <b>Web</b> (Default Website).
+<dd><IMG SRC="/artikel/Bilder/200005/20000524_1.png" width="506" height="392" border="0" alt="Computer Management"></dd>
+<li>Um nun einen neuen Catalog anzulegen, rechts-klicken Sie auf Indexing Service und w&auml;hlen New / Catalog vom
+Kontextmen&uuml; aus.
+<li>In der Add Catalog Dialogbox benennen Sie den Catalog <b>AspHeute</b>. Geben Sie an, wo Sie den Catalog speichern
+m&ouml;chten, zB: <b>d:\Catalog</b>.
+<dd><IMG SRC="/artikel/Bilder/200005/20000524_2.png" width="347" height="165" border="0" alt="Add Catalog"></dd>
+<li>Sie erhalten die Meldung, da&szlig; dieser Catalog solange offline (=nicht verf&uuml;gbar) bleibt, bis der Index
+Service neu gestartet wird. Um den Index Service neu zu starten, w&auml;hlen Sie zuerst <i>Stop</i> aus dem <i>Action</i> Men&uuml;,
+danach <i>Start</i>. Der Katalog ist nun online.</li>
+</ol>
+</p>
+<p>
+Welche Inhalte indiziert dieser Catalog? Im Moment noch gar nichts - man mu&szlig; ihm zuerst eine Website zuweisen.
+</p>
+
+<h2>Zuweisen der zu indizierenden Website</h2>
+<p>
+Wie bereits erw&auml;hnt, mu&szlig; man einem Catalog mitteilen, welche Inhalte er beeinhalten soll. Der erste Schritt
+f&uuml;r einen Website Catalog ist, die entsprechende Website als Indizierungsziel einzutragen:
+<ol>
+<li>In der Computer Management Console, selektieren Sie den AspHeute Katalog.
+<li>Rechts-klicken Sie und w&auml;hlen <i>Properties</i> aus dem Kontextmen&uuml;.
+<li>Wechseln Sie zum <i>Tracking</i> Tab (Reiter). Hier k&ouml;nnen Sie den <i>WWW Server</i> ausw&auml;hlen (siehe Screenshot).
+Im Normalfall kann man die Standardeinstellung <i>Inherit Settings</i> akzeptieren - dadurch werden virtuelle
+Verzeichnisse, die auf anderen Servern liegen, automatisch mitindiziert.
+<dd><IMG SRC="/artikel/Bilder/200005/20000524_3.png" width="395" height="419" border="0" alt="Catalog Properties"></dd>
+<li>Durch einen Klick auf <i>OK</i> werden die neuen Einstellungen &uuml;bernommen.
+</ol>
+</p>
+
+<p>
+Mit dieser einen &Auml;nderung hat man bereits einen funktionierenden Catalog, allerdings gibt es 2 Einstellungen,
+die man immer im Hinterkopf behalten sollte:
+<ul>
+<li>Index Files with unknown extensions
+<li>Generate abstracts
+</ul>
+</p>
+<p>
+Diese finden sich im Generation Tab der Catalog Eigenschaften, und beeinflussen welche Dateitypen indiziert
+werden, und ob von der jeweiligen Datei eine Kurzzusammenfassung generiert werden soll. M&ouml;glicherweise
+sollte man hier auf <i>Inherit Settings</i> verzichten, besonders wenn man bei einem ISP hostet.
+</p>
+<p><IMG SRC="/artikel/Bilder/200005/20000524_4.png" width="395" height="419" border="0" alt="Generation Properties"></p>
+
+<h2>Die Falle - Websiteeigenschaften</h2>
+<p>
+Ich habe es allzuoft erlebt, da&szlig; Administratoren die bisher beschriebenen Schritte richtig durchgef&uuml;hrt
+haben, dann allerdings an einer Kleinigkeit - einer einzelnen Websiteeigenschaft - fast gescheitert w&auml;ren:
+</p>
+<p><IMG SRC="/artikel/Bilder/200005/20000524_5.png" width="461" height="453" border="0" alt="Index this resource setting"></p>
+<p>
+Der "Leger" ist die Eigenschaft <i>Index this resource</i>. Wenn diese abgew&auml;hlt ist, dann werden Dokumente nicht
+indiziert, auch wenn ein Catalog existiert! Also diese Eigenschaft immer kontrollieren - und sie auch zum
+eigenen Vorteil einsetzen, um bestimmte Verzeichnisse oder Dateien vom Index explizit auszuschlie&szlig;en.
+</p>
+
+<h2>Den Catalog verwenden</h2>
+<p>
+Man kann den Catalog direkt in der Computer Management Console verwenden, indem man den Zweig des Catalogs
+in der linken Baumansicht expandiert und <i>Query the Catalog</i> ausw&auml;hlt. Man erh&auml;lt ein Abfrageformular, das
+v&ouml;llig identisch zu den einfachen Beispielabfrageformularen funktioniert.
+</p>
+<p><IMG SRC="/artikel/Bilder/200005/20000524_6.png" width="422" height="182" border="0" alt="query form"></p>
+
+<p>
+F&uuml;r die Abfrage mit IDQ Dateien (mein pers&ouml;nlicher Favorit), ist die &Auml;nderung eigentlich sehr, sehr einfach: Man
+mu&szlig; in die IDQ Datei nur die Zeile
+<pre style="background=silver;">CiCatalog=<i>Catalogpfad</i></pre>
+einf&uuml;gen, und schon laufen die Abfragen nicht mehr &uuml;ber den Standardcatalog, sondern &uuml;ber den neu angelegten. 
+&Uuml;brigens: <i>Catalogpfad</i> ist jener Pfad, den man beim Erstellen des Catalogs angegeben hat, nicht
+der Pfad zum Unterverzeichnis <i>catalog.wci</i> (dies ist ein beliebter Fehler!).
+</p>
+<p>
+Auch in ASP-basierten Formularen ist nicht sehr viel umzustellen, man mu&szlig; nur den Namen des Catalogs in die
+<i>Catalog</i> Eigenschaft speichern und dann die Anfrage ausf&uuml;hren:
+<pre style="background=silver;">
+Set Q = Server.CreateObject("ixsso.Query")
+Q.Query = strSearchString
+Q.Catalog = "AspHeute" 
+Q.SortBy = "rank[d]"
+Q.Columns = "DocTitle, vpath, filename, size, write, characterization, rank"
+Q.MaxRecords = RankBase 
+Set RS = Q.CreateRecordSet("nonsequential")
+</pre>
+</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Weitere Artikel werden sich dann mit der Erstellung von interessanten Suchformularen widmen.
+Um aber sofort starten zu k&ouml;nnen und nicht das Rad neu erfinden zu m&uuml;ssen, kann man Beispiele zu IDQ und ASP Abfrageformularen 
+im Verzeichnis <b>drive:\WINNT\help\iisHelp\iis\misc</b> finden. 
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010403.htm">Objektbasierte Index Server Suche</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010403.htm</span><br>
+<a href="../artikel/20010914.htm">PDF Dokumente suchbar machen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010914.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

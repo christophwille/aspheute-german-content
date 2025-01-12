@@ -1,0 +1,401 @@
+<HTML>
+<HEAD>
+<TITLE>Unerw&uuml;nschte Referer sperren</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Der heutige Artikel zeigt die grunds&auml;tzliche Vorgehensweise, wie man eine in ASP.NET programmierte Site vor unerw&uuml;nschten Links sch&uuml;tzt. Der Weg zum Ziel ist die Verwendung eines Http Modules">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,IHttpModule,Uri,UrlReferrer,Referer,http module,ISAPI Filter,Schutz,Security,ASP.NET">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Unerw&uuml;nschte Referer sperren</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020304"></SCRIPT>
+</p>
+<p>
+Vielen von uns ist es nur recht, wenn jemand zu unseren Sites beziehungsweise zu den Sites unserer
+Kunden linkt - es bringt ja Traffic. Andererseits gibt es aber Leute, die glauben f&uuml;r einen Link
+zu ihrer Site Geld kassieren zu k&ouml;nnen - mit dem Argument, da&szlig; man seine Site durch den Link zu ihrer
+Site ja aufwertet. Nur wenn der Inhalt ihrer Site ach so wertvoll ist, dann ist es in ihrer Verantwortung
+den Inhalt vor unerw&uuml;nschten Referern zu sperren - und nicht nachtr&auml;glich von jederman zu kassieren (versuchen).
+</p>
+<p>
+Der heutige Artikel zeigt die grunds&auml;tzliche Vorgehensweise, wie man eine in ASP.NET programmierte Site
+vor unerw&uuml;nschten Links sch&uuml;tzt. Der Weg zum Ziel ist die Verwendung eines Http Modules (im Prinzip
+nichts anderes als eine Klasse die das Interface <i>IHttpModule</i> implementiert), das jeden Request
+&uuml;berwacht - passt der Referer nicht, wird die Anfrage abgelehnt.
+</p>
+<p>
+<b>Sicherheit der L&ouml;sung</b> Grunds&auml;tzlich lassen sich Referer beliebig ver&auml;ndern, allerdings nicht wenn
+ein User im Browser direkt auf einen Link klickt. Damit erf&uuml;llt die L&ouml;sung unseren Sicherheitsanspr&uuml;chen,
+ein Problem gibt es aber: ein Http Module kann nur Dateien von ASP.NET sch&uuml;tzen, nicht aber klassisches
+ASP oder HTML Dateien - in diesem Fall mu&szlig; man einen ISAPI Filter einsetzen.
+</p>
+
+<h2>Das Http Module</h2>
+<p>
+Ich habe das Http Module mit Absicht einfach gestaltet, das hei&szlig;t, die Liste der erlaubten Referer kommt
+nicht aus einer Datenbank oder XML Datei, sondern ist im Konstruktor hardcodiert. Die beiden Methoden
+<i>Init</i> und <i>Dispose</i> stammen vom <i>IHttpModule</i> Interface, und m&uuml;ssen auch wenn keine Implementierung gemacht
+werden mu&szlig;, zumindest deklariert werden (<b>RefererModule.cs</b>):
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.Web; 
+using System.Collections.Specialized;
+
+public class RefererCheckModule: IHttpModule
+{
+  protected StringCollection AllowedHosts;
+
+  public RefererCheckModule()
+  {
+    // do init here (XML or database would be more appropriate)
+    AllowedHosts = new StringCollection();
+    AllowedHosts.Add("sleeper");
+    AllowedHosts.Add("localhost");
+  }
+
+  public void Init(HttpApplication theApp)
+  {
+    theApp.BeginRequest += (new EventHandler(this.Application_BeginRequest));
+  }
+
+  public void Dispose()
+  {
+    // we have nothing to dispose (yet)
+  }
+
+  private void Application_BeginRequest(object source, EventArgs e) 
+  {
+    if (null == source) return;
+
+    HttpApplication theApp = (HttpApplication)source;
+    HttpContext context = theApp.Context;
+    Uri urlref = context.Request.UrlReferrer;
+    if (null == urlref) return;      // no referer at all
+    string strReferer = urlref.Host;
+    
+    bool bFound = AllowedHosts.Contains(strReferer.ToLower());
+    if (!bFound)
+    {
+      context.Response.Redirect("/AspHeute/LinkingHostNotAllowed.htm", true);
+      // and log the referer (to a database table)
+    }
+  }
+}
+</pre>
+
+<p>
+Die Abarbeitung jedes Requests beginnt in unserem <b>Application_BeginRequest</b> Event Handler. Dort
+wird aus dem <i>HttpContext</i> der <i>UrlReferrer</i> ausgelesen, von dem dieses Module nur am <i>Host</i>
+interessiert ist. Dieser Host wird gegen unsere Liste von erlaubten Hosts (<i>AllowedHosts</i>) gecheckt,
+und falls der Host nicht eingetragen ist, wird der User dar&uuml;ber informiert, da&szlig; die Website bei der er
+auf den Link geklickt hat, nicht um Erlaubnis f&uuml;r diesen Link gefragt hat. 
+</p>
+<p>
+So einfach ist das.
+</p>
+
+<h2>Aktivieren des Http Modules</h2>
+<p>
+Das Module wird kompiliert und in das <b>bin</b> Verzeichnis der Website kopiert. Um das Module zu 
+aktivieren, mu&szlig; man einen Eintrag in der <b>web.config</b> machen:
+</p>
+
+<pre style="background='silver';">
+&lt;configuration&gt;
+   &lt;system.web&gt;
+        &lt;customErrors mode="Off"/&gt;
+        &lt;httpModules&gt;
+            &lt;add name="RefererCheck" type="RefererCheckModule,RefererCheckModule" /&gt;
+        &lt;/httpModules&gt;
+        &lt;compilation debug="true" /&gt;
+   &lt;/system.web&gt;
+&lt;/configuration&gt;
+</pre>
+
+<p>
+Ein Eintrag im <i>httpModules</i> Teil ist notwendig. Da es auf den ersten Blick einige zuviele
+"ReferCheck" Strings gibt, hier die Aufschl&uuml;sselung, wof&uuml;r jeder Parameter dient:
+</p>
+
+<pre style="background='silver';">
+        &lt;httpModules&gt;
+            &lt;add name="<i>Name</i>" type="<i>Type</i>, <i>Module</i>" /&gt;
+        &lt;/httpModules&gt;
+</pre>
+
+<p>
+Und damit ist das Http Module bereits in Betrieb. Alle Requests (das ist von ASP.NET garantiert) laufen
+zuallererst &uuml;ber unser Module, und erst wenn es das OK gibt, l&auml;uft die angeforderte Seite.
+</p>
+<p>
+Wer es auf dem eigenen Server versuchen m&ouml;chte:
+nicht vergessen, <i>localhost</i>, <i>www.servername.tld</i> und <i>ipadresse</i> auf alle F&auml;lle
+in die <i>AllowedList</i> einzutragen!
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dieser Artikel beweist - wer Content hat, den er f&uuml;r sch&uuml;tzenwert h&auml;lt mu&szlig; nicht durch brennende
+Reifen springen um ihn vor ungewolltem Zugriff zu sch&uuml;tzen. Eher darf man die Motive hinterfragen,
+solche Schutzmechanismen nicht einzubauen wenn man linkende Sites abkassieren m&ouml;chte.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020304.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20020305.htm">Mitlauschen bei der Browser-Webserver Kommunikation</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Ffuturezone%2Eorf%2Eat%2Ffuturezone%2Eorf%3Fread%3Ddetail%26id%3D113633%26tmp%3D82703">Klage, Kulanz und Hyperlinks</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20020304" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Unerw&uuml;nschte Referer sperren"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20020304.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20020304"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20020304.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

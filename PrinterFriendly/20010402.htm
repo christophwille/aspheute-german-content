@@ -1,0 +1,278 @@
+<HTML>
+<HEAD>
+<TITLE>NT Account Management via ASP</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Die heute vorgestellte AspUser Komponente bietet die M&ouml;glichkeit Benutzerkonten zu managen. Das Anlegen und Konfigurieren eines Benutzerkontos, sowie dessen L&ouml;schung wird heute programmiert.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,User,Account Management,Security,Sicherheit,Benutzerkonten,AspUser">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>NT Account Management via ASP</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010402"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Suchen Sie nach einer einfachen M&ouml;glichkeit Windows NT/2000 Benutzerkonten mittels ASP zu verwalten? Wenn ja, 
+dann bietet dieser Artikel genau das, wonach Sie suchen. Die heute vorgestellte AspUser Komponente bietet die M&ouml;glichkeit 
+Benutzerkonten lokal oder auf einem Remote Server zu managen - nat&uuml;rlich auch Dom&auml;nenbenutzerkonten.
+Der heutige Artikel beschreibt die grundlegendsten Funktionen der Komponente - also das Anlegen und Konfigurieren eines Benutzerkontos,
+sowie dessen L&ouml;schung.
+</p>
+
+<p>
+Die 30-Tage Evaluierungsversion der <i>AspUser 1.1 Komponente</i> von Persits Software, Inc. k&ouml;nnen Sie <a href="http://www.aspuser.com" target="_blank">hier</a> 
+kostenlos downloaden. Die Komponente kann per Server oder per Enterprise erworben werden, was sich auch auf den
+Preis entsprechend auswirkt.
+</p>
+
+<h2>Anlegen eines Benutzerkontos</h2>
+
+<p>
+Die Komponente ist sehr komfortabel und der Programmieraufwand ist gering. Nach der Installation sind eigentlich schon 
+alle Vorbereitungen f&uuml;r die Erstellung einer ASP Account Management Seite getroffen. Beginnen wir also gleich mit der Besprechung des
+Sourcecodes. Mit dem vorbereiteten Beispielscript k&ouml;nnen Sie einen neuen Benutzer anlegen und die wichtigsten Optionen
+f&uuml;r das Konto setzen. Das Script legt den neuen Benutzer am lokalen Server an. Nat&uuml;rlich kann man das Script leicht 
+ab&auml;ndern um neue Benutzer auf einem anderen Server als dem lokalen zu erstellen.
+</p>
+
+<pre style="background='silver';">
+Set AspUser = Server.CreateObject("Persits.AspUser")
+AspUser.LogonUser "", "Administrator", "ValidPWDHere"
+</pre>
+
+<p>
+Zuerst m&uuml;ssen wir uns einloggen um &uuml;berhaupt ein Konto erstellen zu k&ouml;nnen. Die Parameterreihenfolge ist
+<i>DomainName</i>, <i>Benutzer</i>, <i>Pa&szlig;wort</i>. Wie ich schon erw&auml;hnt habe, logge ich mich am lokalen Server ein - daher
+bleibt auch der <i>Domainname</i> leer.
+</p>
+
+<p>
+Bevor ich nun die Eingabewerte der Komponente &uuml;bergebe, validiere ich die Eingaben gegen die wichtigsten Anforderungen.
+Hier &uuml;berpr&uuml;fe ich ob der Benutzer bereits angelegt wurde:
+</p>
+
+<pre style="background='silver';">
+For Each User In AspUser.LocalUsers
+    If Request("Name") = User.Name Then
+        Response.Write "User already exists"
+        Response.End
+    End If
+Next
+</pre>
+
+<p>
+Es folgen Validierungen auf die G&uuml;ltigkeit des Pa&szlig;wortes:
+</p>
+
+<pre style="background='silver';">
+If Request("PWD") = "" And Request("CannotChangePwd") = 1 Then
+  Response.Write "Settings require to enter a password"
+  Response.End
+End If
+</pre>
+
+<p>
+Wenn die Einstellung <i>User Cannot Change Password</i> gesetzt wurde, verlange ich zwingend nach einem Pa&szlig;wort. Ohne
+Pa&szlig;wort habe ich eigentlich nichts auf Windows NT/2000 verloren.
+</p>
+
+<p>
+Beherzigen Sie das eben festgestellte - jedem Benutzer sein Pa&szlig;wort - dann k&ouml;nnen Sie durch eine strikte Forderung
+nach einer bestimmten Pa&szlig;wortl&auml;nge den vorigen Code durch diesen ersetzen:
+</p>
+
+<pre style="background='silver';">
+If Len(Request("PWD")) &lt; 8  Then
+  Response.Write "Password must have at least 8 chars"
+  Response.End
+End If
+</pre>
+
+<p>
+F&uuml;r den Fall, da&szlig; man sich vertippt hat, und das Pa&szlig;wort mit der Best&auml;tigung nicht &uuml;bereinstimmt, so wird dies
+durch folgende Validierung ber&uuml;cksichtigt:
+</p>
+
+<pre style="background='silver';">
+If Request("PWD") &lt;&gt; Request("CPWD") Then
+  Response.Write "Password confirmation failed."
+  Response.End
+End If
+</pre>
+
+<p>
+Nun &uuml;bergeben wir die Eingabewerte der Komponente, die daraufhin das Benutzerkonto anlegt:
+</p>
+
+<pre style="background='silver';">
+   Set NewUser = AspUser.AddLocalUser(Request("Name"), Request("PWD"), Request("Description"))
+
+   NewUser.Fullname = Request("Fullname")
+   NewUser.MustChangePassword = (Request("MustChangePwd") &lt;&gt; "")
+   NewUser.CannotChangePassword = (Request("CannotChangePwd") &lt;&gt; "")
+   NewUser.PasswordNeverExpires = (Request("PwdNeverExpires") &lt;&gt; "")
+   NewUser.Accountdisabled = (Request("Disabled") &lt;&gt; "")
+   NewUser.AddToGroup(Request("MemberOf"))
+   NewUser.SetInfo
+</pre>
+
+<p>
+Nach erfolgreicher Erstellung des neuen Kontos wir ddiese Meldung mit Hinweis auf den Benutzernamen ausgegeben:
+</p>
+
+<pre style="background='silver';">
+    Response.Write "User &lt;b&gt;" &amp; Request("Name") &amp; "&lt;/b&gt; added.&lt;hr&gt;"
+</pre>
+
+<p>
+Da die ASP Seite auf sich selbst einen PostBack t&auml;tig, k&ouml;nnen Sie nun weitere Benutzer eingeben. Der n&auml;chste Screenshot
+zeigt die auf einem Server ausgef&uuml;hrte <b>AddUser.asp</b> Datei mit bereits eingegebenen Daten.
+</p>
+
+<p>
+<IMG SRC="/artikel/Bilder/200104/20010402_1.png" width="457" height="586" alt="" border="0">
+</p>
+
+<p>
+Die Auswahl der Zugeh&ouml;rigkeit zu einer Benutzergruppe erfolgt durch eine Auswahl in der <i>Is member of</i>
+DropDown Combobox.
+</p>
+
+<p>
+Im MMC Snap-In <i>Local Users and Groups</i> finden wir dann auch den neuen Benutzter (hier: &quot;John Doe&quot;):
+</p>
+
+<p>
+<IMG SRC="/artikel/Bilder/200104/20010402_2.png" width="404" height="447" alt="" border="0">
+</p>
+
+<p>
+Der umgekehrte Vorgang zum Hinzuf&uuml;gen ist der des L&ouml;schens - und folgt sogleich.
+</p>
+
+<h2>L&ouml;schen eines Benutzers</h2>
+
+<p>
+Es soll vorkommen, da&szlig; manche Konten nicht mehr gebraucht werden und aus Sicherheitsgr&uuml;nden nicht einfach deaktiviert
+werden k&ouml;nnen, sondern g&auml;nzlich gel&ouml;scht werden m&uuml;ssen. F&uuml;r diesen Fall ist folgendes ASP-Script zust&auml;ndig 
+(<b>DeleteUser.asp</b>):
+</p>
+
+<pre style="background='silver';">
+Set AspUser = Server.CreateObject("Persits.AspUser")
+AspUser.LogonUser "", "Administrator", "ValidPWDHere"
+
+If Request("Delete") &lt;&gt; "" Then
+    AspUser.DeleteLocalUser Request("Users")
+End If
+</pre>
+
+<p>
+Die endg&uuml;ltige L&ouml;schung erfolgt durch die <i>DeleteLocalUser</i> Methode und Angabe des Benutzernamens. In diesem Script
+habe ich auf triviale Weise vermieden, da&szlig; die standardm&auml;&szlig;ig installierten Konten bei der Auswahl angezeigt werden:
+</p>
+
+<pre style="background='silver';">
+&lt;select NAME="Users"&gt;
+    &lt;option selected&gt;-Select User-&lt;/option&gt;
+    &lt;%
+    For Each User in AspUser.LocalUsers 
+        If InStr(User.Comment,"account") = 0 Then
+        %&gt;
+            &lt;option&gt;&lt;%= User.Name %&gt;&lt;/option&gt;
+        &lt;% 
+        End If
+    Next 
+    %&gt;
+&lt;/select&gt;
+</pre>
+
+<p>
+Im Browser pr&auml;sentiert sich dieses Script folgenderma&szlig;en:
+</p>
+
+<p>
+<IMG SRC="/artikel/Bilder/200104/20010402_3.png" width="454" height="323" alt="" border="0">
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Dies war ein schneller Einblick in die AspUser Komponente, der Ihnen die wichtigsten Funktionen f&uuml;r das 
+browserunterst&uuml;tzte Benutzermanagement erkl&auml;rt hat. Wie gesagt lassen sich mit der Komponente auch Benutzer
+innerhalb von Domains verwalten. Die Komponente ist einfach zu gebrauchen und verf&uuml;gt &uuml;ber eine Vielzahl von
+Einstellungsm&ouml;glichkeiten. Aber Achtung - ohne SSL transportiert man wichtige NT Kontendaten ungesch&uuml;tzt
+&uuml;ber das Netzwerk!
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010402.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010402.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010508.htm">Dateizugriff auf Netzlaufwerken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010508.htm</span><br>
+<a href="../artikel/20020123.htm">Impersonation mit ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020123.htm</span><br>
+<a href="../artikel/20011119.htm">Schritt-f&uuml;r-Schritt Debuggen von Sicherheitsproblemen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011119.htm</span><br>
+<a href="../artikel/20010507.htm">Web-basiertes Dateimanagement mit dem ASP FileMan</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010507.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpuser%2Ecom%2F">AspUser Komponente</a><br>
+<SPAN class="content">http://www.aspuser.com/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,319 @@
+<HTML>
+<HEAD>
+<TITLE>Die Xtensible Shopping Bag Komponente in Aktion</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel zeigt, wie man mit der Xtensible Shopping Bag Komponente selbst ohne gro&szlig;en Aufwand einen eigenen Internetshop/Einkaufl&ouml;sung aufbauen kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Xtensible Shopping Bag,XSB,shopping,einkaufswagen,XML,Kunden,GetRows">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Die Xtensible Shopping Bag Komponente in Aktion</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Komponenten.htm">Komponenten</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010406"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Sie wollen Ihre Produkte &uuml;ber das Internet vertreiben, wissen aber nicht wie und vor allem welche Shop-L&ouml;sung Sie
+verwenden wollen? Warum keinen eigenen bauen? Vor allem, wenn fast alles an Funktionalit&auml;t in der leicht konfigurierbaren
+<i>Xtensible Shopping Bag</i> Komponente von AlphaSierraPapa vorhanden ist - einer ASP Komponente, die kostenlos zum Download
+zur Verf&uuml;gung steht.
+</p>
+
+<p>
+Die Xtensible Shopping Bag Komponente in der aktuellen Version 1.0 bietet das Grundger&uuml;st f&uuml;r einen virtuellen
+Einkaufswagen. Sie ben&ouml;tigen lediglich die Komponente und je nach Anzahl Ihrer Produkte MS Access oder einen 
+"richtigen" Datenbankserver. Die Komponente k&ouml;nnen Sie <a href="http://www.alphasierrapapa.com/IisDev/Components/XSB/" target="_blank">hier</a> 
+bei <a href="http://www.alphasierrapapa.com" target="_blank">AlphaSierraPapa</a> kostenlos downloaden.
+Die Webseite der Komponente bietet auch einige Beispiele, mit denen Sie die Komponente sofort testen k&ouml;nnen - auch der heute
+vorgestellte Code ist zu gro&szlig;en Teilen von dort "abgeschaut".
+</p>
+
+<p>
+Nach dem Download der Komponente und Extrahierung der Dateien aus dem Zip-Archiv mu&szlig; nur noch die f&uuml;r die
+Komponente notwendige <i>SoftwingXSB.dll</i> Datei am Server mit <i>regsrv32</i> registriert werden. Achtung:
+wer keine Visual Basic Runtime am Server installiert hat, mu&szlig; sich das gesamte Setup downloaden!
+</p>
+
+<p>
+Heute m&ouml;chte ich Ihnen einen &quot;under the hood&quot; Einblick in die Ben&uuml;tzung der Komponente geben, also 
+wie der Client eine Produktauswahl treffen kann und wenn n&ouml;tig die Bestellmenge &auml;ndern kann. Als Produktdatenbank dient die
+Northwind Datenbank, welche standardm&auml;&szlig;ig den Beispielen von MS Access oder dem MS SQL Server beiliegt.
+</p>
+
+<p>
+Die Produkte werden mittels SQL Statement aus der Datenbank (hier Northwind) geholt. Nun m&uuml;ssen die r&uuml;ckgelieferten 
+Daten in einer &uuml;bersichtlichen Art dem Client pr&auml;sentiert werden. Optisch nicht aufwendig, aber einfach und funktionell
+- und f&uuml;r diese Pr&auml;sentation ausreichend - werden diese in einem HTML-Table verfrachtet:
+</p>
+
+<pre style="background='silver';">
+Response.Write "&lt;table cellpadding=""2"" cellspacing=""2"" border=""1""&gt;"
+For FieldIndex = 1 To objRS.Fields.Count - 1
+   Response.Write "  &lt;th&gt;" &amp; objRS.Fields(FieldIndex).Name &amp;"&lt;/th&gt; "
+Next
+
+While Not objRS.EOF 
+   Response.Write "&lt;tr&gt;&lt;td&gt;&lt;a href=""bag.asp?id=" & objRS(0) & """&gt;"
+   Response.Write Server.HtmlEncode(objRS(1)) & "&lt;/a&gt;&lt;/td&gt;"
+
+   For FieldIndex = 2 To objRS.Fields.Count - 1
+       Response.Write "&lt;td&gt;" & objRS(FieldIndex) & "&lt;/td&gt;"
+   Next
+   
+   Response.Write "&lt;/tr&gt;" & vbCrLf
+   objRS.MoveNext
+Wend
+
+Response.Write "&lt;/table&gt;"
+</pre>
+
+<p>
+Dieser Sourcecode generiert je nach Anzahl der vorhandenen Datenspalten einen passenden HTML Table. Der Prim&auml;rschl&uuml;ssel
+(hier im nullten Element des Recordsetobjektes <i>objRS</i> abgelegt) dient als Identifikation eines Produkts 
+im Shopping Bag. Diese wird mittels eines Anchor-Tags der Datei <b>bag.asp</b> &uuml;bergeben, die unseren
+Shopping Bag repr&auml;sentiert. Warum nur die ID &uuml;bermittelt wird, dazu komme ich noch.
+</p>
+
+<p>
+In einem Webbrowser k&ouml;nnte unser simpler Produktkatalog folgenderma&szlig;en aussehen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200104/20010406_1.png" width="731" height="350" alt="" border="0">
+
+<p>
+Als n&auml;chstes folgt der wichtigste Teil - der Shopping Bag selbst. Hier werden die vom Client ausgew&auml;hlten Produkte
+aufgelistet und gegebenenfalls in ihrer Menge ver&auml;ndert. Hier kommt dann auch die XSB Komponente zum
+Einsatz.
+</p>
+
+<p>
+Das hier gezeigte Beispiel eines (einfachen) Shopping Bags enth&auml;lt die wichtigsten Funktionen: Laden oder Erstellen des Bags,
+eine M&ouml;glichkeit
+weitere Waren dem Bag hinzuzuf&uuml;gen, und das &Auml;ndern der Menge. Da der Check-out, also der "Weg zur Kassa" nicht direkter 
+Bestanteil des Bags ist, fehlt er hier.
+</p>
+
+<p>
+Zuerst m&uuml;ssen wir &uuml;berpr&uuml;fen ob entweder bereits ein Sopping Bag existiert oder wir einen neuen anlegen m&uuml;ssen. Dies
+geschieht in einer separaten Funktion <i>LoadXSB</i>. Nach dem Erstellen des Shopping Bag Objektes mit 
+<i>Server.CreateObject</i> sehen wir nach ob der Bag &uuml;berhaupt Produkte enth&auml;lt (Sessionvariable <i>BagItems</i>). 
+Wenn bereits ein Bag existiert, dann wird dieser mit den enthaltenden Produkten mittels der <i>LoadBag</i> Methode 
+der Komponente geladen.
+</p>
+
+<pre style="background='silver';">
+Function LoadXSB()
+    Set myBag = Server.CreateObject("SoftwingXSB.ShoppingBag")
+    If Not IsEmpty(Session("BagItems")) Then
+        myBag.LoadBag CStr(Session("BagItems"))
+    Else
+        myBag.InitBag
+    End If
+    Set LoadXSB = myBag
+End Function
+</pre>
+
+<p>
+Falls noch kein Bag exisitiert wird ein neuer Bag mit der <i>InitBag</i> Methode erstellt. Wer sich jetzt
+fr&auml;gt, wie die Komponente den Shopping Bag speichert, hier die Antwort: als XML. Damit erreicht man ein gute Skalierbarkeit
+des Webservers, weil kein Objekt im Session State gespeichert werden mu&szlig;. Und man kann nat&uuml;rlich den Bag auch 
+in eine Datenbank verfrachten (falls der Session-State dort abgelegt wird).
+</p>
+
+<p>
+Als n&auml;chstes implementieren wir eine Funktion, um Produkte dem Bag hinzuf&uuml;gen zu k&ouml;nnen.
+Wir bekommen eine Produkt-Id &uuml;bergeben - mit Hilfe einer Datenbankabfage sehen wir nach, ob das Produkt 
+in der Datenbank auch tats&auml;chlich vorhanden ist:
+</p>
+
+<pre style="background='silver';">
+If "" = nProductId Or Not IsNumeric(nProductId) Then
+        bValid = False
+    Else
+        Set objConn = Server.CreateObject("ADODB.Connection")
+        objConn.Open "provider=sqloledb.1;user id=sa;password=;initial _
+            catalog=Northwind;data source=BLUESCREEN"
+        Set objRS = Server.CreateObject("ADODB.Recordset")
+        Set objRS.ActiveConnection = objConn
+        objRS.Open "SELECT ProductID, ProductName, QuantityPerUnit, UnitPrice FROM _
+            Products WHERE ProductId=" &amp; nProductId
+        If objRS.EOF And objRS.BOF Then
+            bValid = False
+        Else
+            avarProduct = objRS.GetRows()
+        End If
+        objConn.Close
+        Set objRS = Nothing
+        Set objConn = Nothing
+    End If
+</pre>
+
+<p>
+Um die Resourcen, die von der Datenbankabfrage ben&ouml;tigt werden, schnell wieder freigeben zu k&ouml;nnen, holen wir uns
+die Produktdaten mit der <i>GetRows</i> Methode des Recordsetobjektes und weisen sie einem Array <i>avarProduct</i>
+zu. Danach k&ouml;nnen wir die Verbindung zur Datenbank wieder trennen und die ben&ouml;tigten Objektresourcen wieder freigeben.
+Falls dieser Schritt erfolgreich war, sehen wir nach ob das Produkt nicht schon im Bag vorhanden ist:
+</p>
+
+<pre style="background='silver';">
+If Not myBag.IsProductInBag(nProductId) Then
+    myBag.LineItems.AddLineItem avarProduct(0,0), Server.HtmlEncode(avarProduct(1,0)), _
+    Server.HtmlEncode(avarProduct(2,0)), avarProduct(3,0), 1
+End If
+</pre>
+
+<p>
+Mit der <i>AddLineItem</i> Methode der <i>LineItems</i> Collection f&uuml;gen wir das neue Produkt, dessen Daten in dem
+Array namens <i>avarProduct</i> abgelegt sind, dem Bag hinzu. Damit es keine Probleme mit etwaigen Sonderzeichen (z.B. Umlaute)
+gibt, verwenden wir unter anderem f&uuml;r die Produktbezeichnung die <i>HtmlEncode</i> Methode.
+</p>
+
+<p>
+Der n&auml;chste Schritt ist den Inhalt des Shopping Bags zum Client-Browser zu schicken. Hierf&uuml;r &uuml;bergeben wir der 
+<i>PrintBag</i> Prozedur das Shopping Bag Objekt welches nat&uuml;rlich die vom Client ausgew&auml;hlten Produkte enth&auml;lt:
+</p>
+
+<pre style="background='silver';">
+Sub PrintBag(myBag)
+    Out "&lt;FORM METHOD=""POST"" ACTION="""
+    Out Request.ServerVariables("SCRIPT_NAME") &amp; """&gt;"
+    Out "&lt;TABLE&gt;&lt;TR&gt;&lt;TH&gt;Units&lt;/TH&gt;&lt;TH COLSPAN=2&gt;"
+    Out "Product&lt;/TH&gt;&lt;TH&gt;Unit Price&lt;/TH&gt;&lt;TH&gt;Price&lt;/TH&gt;"
+    Out "&lt;/TR&gt;" &amp; vbCrLf
+    For Each item In myBag.LineItems
+        Out "&lt;TR&gt;&lt;TD&gt;&lt;input type=""TEXT"" name=""Qty"
+        Out item.ProductId
+        Out """ VALUE=""" &amp; item.QuantityInBag &amp; """ SIZE=""3""&gt;" 
+        Out "&lt;TD&gt;" &amp; item.ProductName
+        Out "&lt;/TD&gt;&lt;TD&gt;" &amp; item.QuantityPerUnit &amp; "&lt;/TD&gt;"
+        Out "&lt;TD&gt;" &amp; FormatCurrency(item.PricePerUnit) &amp; "&lt;/TD&gt;"
+        Out "&lt;TD&gt;&lt;B&gt;" &amp; FormatCurrency(item.Total) &amp; "&lt;/B&gt;&lt;/TD&gt;"
+        Out "&lt;/TR&gt;" &amp; vbCRLF
+    Next
+    Out "&lt;TR&gt;&lt;TD COLSPAN=5&gt;&lt;HR&gt;&lt;/TD&gt;&lt;/TR&gt;"
+    Out "&lt;TR&gt;&lt;TD COLSPAN=3&gt;&lt;/TD&gt;&lt;TD&gt;&lt;B&gt;Total:&lt;/B&gt;&lt;/TD&gt;"
+    Out "&lt;TD>&lt;B>" &amp; FormatCurrency(myBag.Total) &amp; "&lt;/B>&lt;/TD>&lt;/TR>" &amp; vbCrLf
+    Out "&lt;TR>&lt;TD COLSPAN=5 ALIGN=""RIGHT""&gt;"
+    Out "&lt;INPUT TYPE=SUBMIT NAME=""DO"" VALUE=""Continue Shopping""&gt;&amp;nbsp;"
+    Out "&lt;INPUT TYPE=SUBMIT NAME=""DO"" VALUE=""Recalculate""&gt;&amp;nbsp;"
+    Out "&lt;INPUT TYPE=SUBMIT NAME=""DO"" VALUE=""Check out""&gt;"
+    Out "&lt;/TD&gt;&lt;/TR&gt;&lt;/TABLE&gt;&lt;/FORM&gt;"
+End Sub
+</pre>
+
+<p>
+Die Ausgabe der einzelnen Posten erfolgt mit der <i>LineItem</i> Property der <i>LineItems</i> Collection. Mit einem
+<i>For ... Each</i> Statement wird durch die einzelnen Posten iteriert. Damit auch die Preise w&auml;hrungsm&auml;&szlig;ig richtig
+dargestellt werden, verwenden wir die <i>FormatCurrency</i> Function.
+</p>
+
+<p>
+Pro Produkt wird ein Eingabefeld erzeugt, und dessen Name aus der Produkt-Id hergeleitet. Warum habe ich
+nur das Produkt-Id Feld in diesem Formular? Nun, einige unvorsichtige Shops tragen alle Felder (inklusive
+Preis) ein - was dazu f&uuml;hrt, da&szlig; Hacker mit Hilfe von Frontpage ihnen genehme Preise eintragen k&ouml;nnen, was nicht im Sinne
+des Shopbetreibers ist. Deswegen machen wir es extra-sicher.
+</p>
+
+<p>
+Da der Shopping Bag nat&uuml;rlich auch Control Elemente (hier Schaltfl&auml;chen) enthalten soll, damit der Client weitere
+Produkte hinzuf&uuml;gen oder &Auml;nderungen vornehmen kann, sind die drei Buttons <i>Continue Shopping</i>,
+<i>Recalculate</i> und <i>Check out</i> (vorgesehen f&uuml;r die Implementierung der Zahlungsabwicklung) hier inkludiert.
+</p>
+
+<p>
+Als letzter Punkt sei noch die <i>RecalcBag</i> Prozedur angef&uuml;hrt, die es dem Client erm&ouml;glicht die Menge eines zu
+bestellenden Produktes zu &auml;ndern. Auch dies ist nicht weiter schwierig:
+</p>
+
+<pre style="background='silver';">
+For Each item in myBag.LineItems
+    nQty = Trim(Request.Form("Qty" &amp; item.ProductId))
+    If "" &lt;&gt; nQty And IsNumeric(nQty) Then
+        If nQty &lt; 1 Then
+            myBag.LineItems.Remove item.ProductId
+        Else
+            item.QuantityInBag = nQty
+        End If
+	End If
+Next
+</pre>
+
+<p>
+Diese Prozedur aktualisiert den gesamten Shopping Bag. F&uuml;r den Fall, da&szlig; &Auml;nderungen in der Menge gemacht wurden und
+diese sinnvollerweise auch numerisch eingetragen wurden, wird der neue Wert mit Hilfe der <i>QuantityInBag</i>
+Property des <i>LineItem</i> Objektes zugewiesen.
+</p>
+
+<p>
+Tritt der Fall ein, da&szlig; der Client bei einer Mengenangabe <i>0</i> eingibt, so wird das jeweilige Produkt mit der 
+<i>Remove</i> Methode der <i>LineItems</i> Collection aus dem Bag entfernt.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Dieser Artikel gab Ihnen einen Einblick in die Programmierung eines Shopping Bags mit der 
+<i>Xtensible Shopping Bag Komponente</i>. Die offene Schnittstelle der Komponente und die einfache Programmierung
+erm&ouml;glichen einen schnellen Einsatz auf Ihrer Website.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010406.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010406.zip</span></p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2F">AlphaSierraPapa</a><br>
+<SPAN class="content">http://www.alphasierrapapa.com/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2FIisDev%2FComponents%2FXSB%2F">Download Xtensible Shopping Bag Komponente</a><br>
+<SPAN class="content">http://www.alphasierrapapa.com/IisDev/Components/XSB/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,280 @@
+<HTML>
+<HEAD>
+<TITLE>Formular-basierte Basic Authentication</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Die im heutigen Artikel gezeigte Methode soll  zwei entscheidende Nachteile von Basic Authentication beheben: die unsch&ouml;ne Login-Dialogbox und die Verzeichnisauswahl via URL.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Basic Authentication,Login,Userverwaltung,Community,Gesperrte Bereiche,Formular">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Formular-basierte Basic Authentication</H1>
+<p>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010608"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Basic Authentication ist an und f&uuml;r sich eine sehr praktische und einfache M&ouml;glichkeit ganze Verzeichnisse (und deren 
+Inhalt - unabh&auml;ngig welchen Dateiformats) zu sch&uuml;tzen. Die im nachfolgenden gezeigte Methode soll nun zwei 
+entscheidende Nachteile von Basic Authentication beheben: die unsch&ouml;ne Login-Dialogbox und die Verzeichnisauswahl 
+via URL.
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010608_1.png" width="562" height="462" alt="" border="0">
+
+
+<h2>Unser Login Formular</h2>
+
+<p>
+Als erstes ben&ouml;tigen wir ein Formular, in das durch den Benutzer die zum Login ben&ouml;tigten Parameter eingegeben 
+und &uuml;bertragen werden k&ouml;nnen. Wichtig f&uuml;r die einwandfreie Zusammenarbeit mit dem im n&auml;chsten Abschnitt 
+gezeigten ASP Script (<b>login.asp</b>) sind folgende Punkte:
+</p>
+
+<ul>
+<li>Die &Uuml;bertragungsmethode mu&szlig; POST sein (method="post")</li>
+<li>Der Name des aufzurufenden Scripts (ACTION="login.asp")</li>
+<li>Die Namen der Texteingabefelder (txtDirectory, txtUser, txtPassword)</li>
+</ul>
+
+<p>
+Die Gestaltung des Formulars ist selbstverst&auml;ndlich v&ouml;llig frei. Hier eben ein simples Formular, das man leicht 
+graphisch anpassen kann (<b>form.asp</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;&lt;/title&gt;
+&lt;/head&gt;
+&lt;body bgcolor="#FFFFFF"&gt;
+&lt;form name="forLogin" method="post" action="login.asp"&gt;
+  &lt;table width="180" border="0" cellspacing="0" cellpadding="0"&gt;
+    &lt;tr&gt; 
+      &lt;td align="left"&gt;Directory:&lt;/td&gt;
+      &lt;td align="right"&gt; 
+        &lt;input type="text" name="txtDirectory" size="12" maxlength="20"&gt;
+      &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt; 
+      &lt;td align="left"&gt;User:&lt;/td&gt;
+      &lt;td align="right"&gt; 
+        &lt;input type="text" name="txtUser" size="12" maxlength="20"&gt;
+      &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt; 
+      &lt;td align="left"&gt;Password:&lt;/td&gt;
+      &lt;td align="right"&gt; 
+        &lt;input type="text" name="txtPassword" size="12" maxlength="20"&gt;
+      &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt; 
+      &lt;td align="left"&gt;&amp;nbsp;&lt;/td&gt;
+      &lt;td align="right"&gt; 
+        &lt;input type="submit" value="Login"&gt;
+      &lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/table&gt;
+&lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Und so sieht dann unser Loginformular im Browserfenster aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010608_2.png" width="562" height="462" alt="" border="0">
+
+<h2>Unser Login Script</h2>
+
+<p>
+Beginnen wir mit einem Blick auf den Sourcecode am Anfang des Scripts, der uns einiges an sp&auml;teren 
+Kopfschmerzen ersparen wird:
+</p>
+
+<pre style="background='silver';">
+&lt;%@Language="VBScript" EnableSessionState="False"%&gt;
+&lt;%
+Option Explicit
+Response.Buffer = True
+Response.AddHeader "cache-control", "no-store"
+Response.AddHeader "pragma", "no-cache"
+Response.ExpiresAbsolute = Now() - 1
+Response.Expires = 0
+</pre>
+
+<p>
+In der ersten Zeile legen wir die verwendete Scriptsprache fest, und verhindern, da&szlig; f&uuml;r unser Script unn&ouml;tige 
+Sessions auf dem Server erzeugt werden. Durch <i>Option Explicit</i> wird die ausschlie&szlig;liche Verwendung der durch 
+uns explizit deklarierten Variablen erzwungen. Mit <i>Response.Buffer</i> und den erweiterten Headern ersparen wir 
+uns Caching-Probleme bei Browser und Proxy.
+</p>
+
+<p>
+Nun werden die drei ben&ouml;tigten Variablen deklariert , und ihnen mittels Request.Form die mit dem Formular 
+(<b>form.asp</b>) &uuml;bergebenen Werte zugewiesen:
+</p>
+
+<pre style="background='silver';">
+Dim strUser, strPassword, strDirectory
+
+strUser = Request.Form("txtUser")
+strPassword = Request.Form("txtPassword")
+strDirectory = Request.Form("txtDirectory")
+</pre>
+
+<p>
+Im Nachfolgenden wird die Verbindung zur Datenbank aufgebaut und ein Recordset erzeugt. Gesucht wird hier mittels 
+einer SQL-Abfrage nach einer Zeile in der Tabelle ("YourTable"), die exakt die vom Formular (<b>form.asp</b>) 
+&uuml;bergebenen drei Parameter in den entsprechenden Spalten aufweist:
+</p>
+
+<pre style="background='silver';">
+Dim rsUser
+Set rsUser = Server.CreateObject("ADODB.Recordset")
+    rsUser.ActiveConnection = "Driver={Microsoft Access Driver (*.mdb)}; DBQ=" &amp; _
+        Server.MapPath("YourDataBase.mdb") &amp; "; UID=; PWD=YourPassword"
+    rsUser.Source = "SELECT COUNT (*) FROM YourTable WHERE Directory = '" &amp; (strDirectory) &amp; _
+        "' AND User = '" &amp; (strUser) &amp; "' AND Password = '" &amp; (strPassword) &amp; "'"
+    rsUser.CursorType = 0 'adOpenForwardOnly
+    rsUser.CursorLocation = 2 'adUseServer
+    rsUser.LockType = 3 'adLockOptimistic
+    rsUser.Open
+</pre>
+
+<p>
+Wenn die Abfrage eine entsprechend g&uuml;ltige Zeile als Ergebnis hat, setzt das Script mit dem n&auml;chsten Block fort :
+</p>
+
+<pre style="background='silver';">
+If rsUser.Fields(0).Value = 1 Then
+</pre>
+
+<p>
+Soweit war das nun alles nichts Neues, der kleine "Kniff",  mit dem wir es schaffen, dem Browser die vom User 
+eingegeben Parameter (Verzeichnis, Benutzer, Kennwort) zu &uuml;bergeben, folgt in diesem Teil des Scripts. Hier 
+wird dem Browser als Antwort eine minimale HTML-Datei geschickt, deren einzige Aufgabe darin besteht, unmittelbar 
+folgende URL aufzurufen: <i>http://User:Password@YourDomain.com/Directory</i>
+</p>
+
+<p>
+Auf diese Weise werden alle ben&ouml;tigten Daten an den Server &uuml;bergeben, und die l&auml;stige und unsch&ouml;ne Pa&szlig;wort 
+Dialogbox unterdr&uuml;ckt:
+</p>
+
+<pre style="background='silver';">
+Response.Write "&lt;html&gt;"
+Response.Write "&lt;head&gt;"
+Response.Write "&lt;title&gt;&lt;/title&gt;"
+Response.Write "&lt;meta http-equiv=""refresh"" content=""0; url=http://" &amp; _
+    (strUser) &amp; ":" &amp; (strPassword) &amp; "@YourDomain.com/" &amp; _
+    (strDirectory) &amp; """" &amp; "&gt;"
+Response.Write "&lt;/head&gt;"
+Response.Write "&lt;body&gt;"
+Response.Write "&lt;/body&gt;"
+Response.Write "&lt;/html&gt;"
+</pre>
+
+<p>
+Sollten die vom Nutzer eingegebenen Daten (Verzeichnis, Benutzer, Kennwort) keine Entsprechung in der 
+Datenbank gefunden haben, wird er hier im Beispiel einfach wieder mit <i>Response.Redirect("form.asp")</i> auf das 
+Login_Formular zur&uuml;ckgeschickt:
+</p>
+
+<pre style="background='silver';">
+Else 
+    Response.Redirect("form.asp")
+End If
+</pre>
+
+<p>
+Zuletzt wird das Recordset wieder geschlossen und auch der Speicherbereich geleert:
+</p>
+
+<pre style="background='silver';">
+rsUser.Close
+Set rsUser = Nothing
+%&gt;
+</pre>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Die heute vorgestellte Methode hat einen Nachteil: Alle Benutzer m&uuml;ssen zus&auml;tzlich in einer Datenbank (oder 
+Flatfile) gef&uuml;hrt werden. Allerdings, einen gro&szlig;en Vorteil hat sie auch: Nicht alle .asp-Dateien m&uuml;ssen im 
+Gegensatz zu einer rein ASP-basierten Authentication L&ouml;sung mit einem zus&auml;tzlichen Include versehen werden, 
+es werden alle Dateitypen im Verzeichnis gesch&uuml;tzt, es werden keine Servererweiterungen ben&ouml;tigt, die 
+meist Geld kosten und bei gemietetem Webspace ohnehin nicht installiert sind.
+</p>
+
+<p>
+Es gibt auch einige Erweiterungsm&ouml;glichkeiten, so kann zB die Sicherheit durch Verwendung eines SSL 
+gesch&uuml;tzten Bereiches deutlich gesteigert werden. Zudem k&ouml;nnte man fehlerhafte Loginversuche mit Angabe von 
+(Verzeichnis, Benutzer, Kennwort, IP-Adresse, Datum, Uhrzeit) erfassen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010608.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010608.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010521.htm">ASP-basierte Basic Authentication</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010521.htm</span><br>
+<a href="../artikel/20011207.htm">On Demand Zugriffsrechte f&uuml;r Web Sites vergeben</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011207.htm</span><br>
+<a href="../artikel/20010330.htm">Passw&ouml;rter mit SHA1 absichern</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010330.htm</span><br>
+<a href="../artikel/20000630.htm">Verwendung von SSL Test-Certificates</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000630.htm</span><br>
+<a href="../artikel/20001109.htm">Verzeichnissicherheit mit NTFS und IIS Authentifizierung</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001109.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,255 @@
+<HTML>
+<HEAD>
+<TITLE>Speichern von Recordsets in Application-Variablen (Teil&nbsp;II)</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Mit ADO 2.5 (oder h&ouml;her) kann man das Stream Objekt benutzen, um das Recordset als XML im Stream Objekt zu speichern, und von dort als Textvariable wiederrum problemlos in einer Application- oder Session-Variable speichern.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ADO,XML,Recordset,disconnected,IMDB,caching,Stream,persistance,storage">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Speichern von Recordsets in Application-Variablen (Teil&nbsp;II)</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000425"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>Wie bereits im <a href="../artikel/20000420.htm">Teil I der Artikelserie</a> besprochen,
+gibt es verschiedene Wege, ein <i>Recordset</i> in einer <i>Application</i> Variablen
+zu speichern.</p>
+
+<p>Man kann das <i>Recordset</i> mit der <i>GetRows</i> Methode in ein <i>Array</i>
+umwandeln, oder die <i>GetString</i> Methode benutzen um eine Text-Variable mit dem 
+Inhalt des <i>Recordsets</i> zu erhalten.
+Sowohl <i>Array</i> als auch Text-Variable kann man dann in einer <i>Application</i> 
+Variable speichern.</p>
+
+<p>Mit ADO 2.5 (oder h&ouml;her) steht eine weitere M&ouml;glichkeit offen.
+Man kann das <i>Stream</i> Objekt benutzen, um das <i>Recordset</i> als <u>XML</u> 
+im <i>Stream</i> Objekt zu speichern.
+Mit der <i>ReadText</i> Methode des <i>Stream</i> Objektes kann man dann das gesamte 
+<u>XML</u>-Recordset in einer Text-Variablen speichern.
+Diese Text-Variable wiederrum ist problemlos in einer <i>Application-</i>
+oder <i>Session-Variable</i> zu speichern.</p>
+
+<p><b><u>Anmerkung:</u></b> 
+Um zu testen, welche ADO Version auf Ihrem Server installiert ist,
+f&uuml;hren Sie folgendes Visual Basic (Word, Excel, Access)
+oder VBScript Programm (ASP-Seite, WSH-Script) aus; die gew&uuml;nschte
+Information befindet sich dann in der Textvariablen <i>strADOVersion</i>.
+</p>
+
+<pre style="background='silver';">
+Dim conn
+Set conn = CreateObject("ADODB.Connection")
+strADOVersion = "ADO Version " & conn.Version & " ist installiert."
+Set conn = Nothing
+...
+</pre>
+
+<p>Weiters k&ouml;nnen Sie das gratis erh&auml;ltliche
+<a href="../artikel/20000329.htm">Component Checker Tool</a> benutzen, um zweifelsfrei 
+festzustellen, welche ADO Version auf einem Computer installiert ist.
+</p>
+
+<p>Um nun aus dem <u>XML-Recordset</u> in Form einer Text-Variablen wieder ein 
+ADO <i>Recordset</i> Objekt zu erhalten, &ouml;ffen Sie ein <i>Stream</i> Objekt,
+und schreiben das <u>XML</u> mittles der <i>WriteText</i> Methode in den <i>Stream</i>.</p>
+
+<p>Damit man nach dieser Schreiboperation wieder auf den Inhalt
+des <i>Stream</i> Objektes zugreifen kann, ist es notwendig,
+den <i>Stream</i> Cursor wieder auf den Anfang des <i>Stream</i> Inhaltes zu setzen -
+dies geschieht durch Zuweisung des Wertes <i>0</i> zur <i>Position</i> Eigenschaft 
+des <i>Streams</i>.</p>
+
+<p>Wie die oben beschriebenen Operationen in einem VBScript Programm
+unter ASP aussehen k&ouml;nnen, zeigt das folgende Skript:</p>
+
+<pre style="background='silver';">
+&lt;%
+Dim rs, conn, stream, strRsXML 
+Set conn = CreateObject("ADODB.Connection")
+
+' Oeffnen einer Connection zur Access Northwind Datenbank
+'  mit dem OLE DB Provider fuer Jet 4.0
+conn.open "Provider=Microsoft.Jet.OLEDB.4.0;" & _
+  "Data Source=E:\Program Files\Microsoft Office\" & _
+  "Office\Samples\Northwind.mdb;User ID=admin;Password=;"
+
+Response.Write "ADO-Version: " & conn.Version & "&lt;br&gt;&lt;br&gt;"
+' Pruefen der ADO/MDAC-Version
+' Stream Objekt sowie Save Methode des Recordset Objektes erst ab 
+'   ADO Version 2.5 verfuegbar
+If (conn.Version) &gt;= "2.5" Then
+  ' ADO Version 2.5 oder hoeher
+
+  ' Begin des Schreibens des Recordsets in die Application Variable
+  Set rs = CreateObject("ADODB.Recordset")
+  Set stream = CreateObject("ADODB.Stream")
+  ' Recordset oeffnen und mit Daten fuellen
+  rs.Open "SELECT EmployeeID, LastName, FirstName FROM Employees", conn
+
+  ' Recordset in Stream Objekt als XML speichern
+  rs.Save stream, 1  ' 1 = adPersistXML
+
+  ' Als XML gespeichertes Recordset aus dem Stream Objekt auslesen
+  '  und als String (Zeichenkette) in der Variablen strRsXML speichern
+  strRsXML = stream.ReadText(-1) ' -1 = adReadAll
+  
+  ' Recordset und Connection Objekt werden nun nicht mehr gebraucht
+  ' Stream Objekt wird nicht mehr benoetigt
+  rs.Close
+  Set rs = nothing
+  conn.close
+  Set conn = Nothing
+  stream.Close
+  Set stream = Nothing
+  
+  ' Speichern des als XML-String formatierten Recordsets 
+  ' in einer Application Variablen
+  Application.Lock
+  Application("AspAktuell_RsXML") = strRsXML
+  Application.UnLock
+  
+  ' Ausgeben des XML:
+  Response.Write Replace(Server.HTMLEncode(strRsXML),VbCrLf,"&lt;br&gt;"&VbCrLf)
+  Response.Write "&lt;br&gt;&lt;br&gt;" & VbCrLf
+  strRsXML = ""
+  
+  ' Ende des Schreibens des Recordsets in die Application Variable
+
+
+  ' Begin des Auslesens des Recordsets aus der Application Variable
+  
+  ' Auslesen des XML-Recordsets aus der Application Variablen 
+  '  und speichern in einem Disconnected Recordset
+
+  ' Disconnected Recordset rs anlegen aber nicht oeffnen
+  Set rs = CreateObject ("ADODB.Recordset")
+  rs.CursorLocation = 3  ' 3 = adUseClient
+  rs.LockType = 4      ' 4 = adLockBatchOptimistic
+  rs.CursorType = 3    ' 3 = adOpenStatic
+
+  ' Auslesen des XML-Strings aus der Application Variablen
+  strRsXML = Application("AspAktuell_RsXML")
+
+  ' Stream Object anlegen und oeffnen
+  Set stream = CreateObject("ADODB.Stream")
+  stream.open
+  
+  ' XML-String in Stream Objekt schreiben
+  stream.WriteText strRsXML, 0  ' 0 = adWriteChar
+  
+  ' Der Cursor des Stream Objektes ist am Ende des Datenstromes,
+  ' daher Cursor auf Anfang des Datenstromes setzen
+  stream.Position = 0
+  
+  ' Oeffnen des Disconnected Recordset (client-seitig, statisch, 
+  '  Daten koennen gelesen und veraendert werden), Datenquelle ist
+  '  das Stream Objekt
+  rs.Open stream
+  Set rs.ActiveConnection = Nothing ' Nicht explicit notwendig, 
+              ' hier nur der Vollstaendigkeit halber
+
+  ' Stream Objekt wird nicht mehr benoetigt
+  stream.close
+  Set stream = Nothing
+
+  ' Beispiel, dass das Disconnected Recordset veraendert werden kann:
+  ' Erster Datensatz veraendern
+  rs("LastName") = "Familienname"
+  rs("FirstName") = "Vorname"
+  
+  ' Alle Datensaetze anzeigen
+  While not rs.EOF
+    Response.Write rs("EmployeeID") & " " & rs("LastName")
+    Response.Write rs("FirstName") & "&lt;br&gt;" & VbCrLf
+    rs.MoveNext
+  Wend
+
+  ' Nach dem Aendern kann das Recordset Objekt wieder als XML
+  '  in einem Stream Objekt gespeichert werden.
+  '  Aus dem Stream Objekt kann das XML als String (Text) in einer 
+  '  String Variablen (auch Application Variablen) gespeichert werden
+  
+  ' Recordset wird nicht mehr benoetigt
+  rs.Close
+  Set rs = Nothing
+Else
+  ' ADO Version 2.1 oder niedriger
+  conn.Close
+  Set conn = Nothing
+  Response.Write "Nur mit ADO/MDAC Version 2.5 "
+  Response.Write "oder h&ouml;her ausf&uuml;hrbar...&lt;br&gt;" & VbCrLf
+End If
+%&gt;
+
+</pre>
+
+<p>
+Warum soll man sich diese Arbeit &uuml;berhaupt machen - das Speichern eines Recordsets als XML? Der Grund ist
+einfach: Geschwindigkeit. Das vorgestellte Verfahren ist zwar nicht so schnell wie die von MS aus Windows
+2000 wieder entfernte IMDB (InMemory Database), allerdings zeigt sich ein sehr deutlicher Geschwindigkeitsgewinn
+gegen&uuml;ber einem Datenbankzugriff.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000425.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000425.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000516.htm">Einsatz des Recordset Objektes als Multifunktionaler Datenspeicher</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000516.htm</span><br>
+<a href="../artikel/20011113.htm">Sonderzeichen korrekt grabben mit XmlHttp</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011113.htm</span><br>
+<a href="../artikel/20000420.htm">Speichern von Recordsets in Application-Variablen (Teil&nbsp;I)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000420.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

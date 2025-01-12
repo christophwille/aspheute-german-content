@@ -1,0 +1,235 @@
+<HTML>
+<HEAD>
+<TITLE>Variable Parameterlisten in Funktionen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In den meisten aller F&auml;lle wei&szlig; man im vorhinein, wieviele Parameter an eine Funktion &uuml;bergeben werden sollen. Wenn nicht, dann stellt uns C# das params Schl&uuml;sselwort zur Verf&uuml;gung.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,params,ParamArrayAttribute,ParamArray attribute,Parameter Array,Parameterliste,optionale Parameter">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Variable Parameterlisten in Funktionen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020125"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+In den meisten aller F&auml;lle wei&szlig; man im vorhinein, wieviele Parameter an eine Funktion &uuml;bergeben
+werden sollen. Was aber, wenn bestimmte Parameter optional sein sollen, oder die Funktion ihre
+Arbeit an 1 bis n gleichartigen Parametern durchf&uuml;hren soll? In diesem Fall stellt uns C# das
+<i>params</i> Schl&uuml;sselwort zur Verf&uuml;gung.
+</p>
+
+<p>
+Nehmen wir doch gleich den zuletzt angef&uuml;hrten Anwendungsfall: ich m&ouml;chte die Funktion so auslegen,
+da&szlig; sie ihre Arbeit an beliebig vielen Parametern durchf&uuml;hren kann. Das sieht dann so aus (<b>sample.cs</b>):
+</p>
+
+<pre style="background='silver';">
+using System;
+
+public class SimpleSample
+{
+ public void TakeParams(params object[] list)
+ {
+   foreach (object obj in list)
+   {
+     Console.WriteLine(obj.ToString());
+   }
+ }
+ 
+ public static void Main()
+ {
+   SimpleSample ss = new SimpleSample();
+   ss.TakeParams(1, "Test", 3.455);
+ }
+}
+</pre>
+<p>
+Die Funktion, die wir mit dem <i>params</i> Schl&uuml;sselwort versehen haben ist <i>TakeParams</i>. Dieser
+kann man nun eine beliebige Anzahl von Parametern &uuml;bergeben - hier in diesem Beispiel mit drei demonstriert,
+der Leser kann nach Lust und Laune die Anzahl ver&auml;ndern - es wird weiterhin funktionieren.
+</p>
+<p>
+Was man auch ver&auml;ndern kann, ist der Datentyp des Parameter Arrays - ich habe <i>object</i> gew&auml;hlt, weil
+ich damit einfach alles &uuml;bergeben kann, was es an Datentypen so gibt. Weis man im vorhinein, da&szlig; man zB
+nur Integers &uuml;bergeben wird, sollte man das Parameter Array auch dementsprechend deklarieren.
+</p>
+<p>
+Bevor ich nun mit weiteren Beispielen aufwarte, m&ouml;chte ich den technischen Hintergrund hinter Parameter 
+Arrays beleuchten, und wie .NET (und damit jede beliebige Sprache) erkennt, da&szlig; das Array hier ein Parameter
+Array ist. Dazu sehe ich mir meine kleine Beispielanwendung in <b>ildasm.exe</b> an:
+</p>
+
+<IMG SRC="/artikel/Bilder/200201/20020125.png" width="454" height="278" alt="" border="0">
+
+<p>
+Sieht doch irgendwie nach einfachem Object-Array aus, was die <i>TakeParams</i> Methode da annimmt, oder?
+Durch Doppelklick auf die <i>TakeParams</i> Methode bekomme ich Einblick in den IL Assembler:
+</p>
+
+<pre style="background='silver';">
+.method public hidebysig instance void  TakeParams(object[] list) cil managed
+{
+  .param [1]
+  .custom instance void [mscorlib]System.ParamArrayAttribute::.ctor() = ( 01 00 00 00 ) 
+  // Code size       32 (0x20)
+  .maxstack  2
+  .locals init (object V_0,
+           object[] V_1,
+           int32 V_2)
+</pre>
+
+<p>
+Um niemand mit IL zu langweilen: der interessante Part ist <i>ParamArrayAttribute</i>. Dieses
+Attribut (auch auffindbar in der SDK Dokumentation) wird auf den letzten Parameter der Methode
+angewendet - und damit wei&szlig; .NET, da&szlig; es sich um kein gew&ouml;hnliches Array handelt, sondern um ein
+Parameter Array. Und dank dieser Information k&ouml;nnen alle Programmiersprachen damit umgehen.
+</p>
+
+<p>
+Wer jetzt auf die Idee kommt, das Attribut selbst statt <i>params</i> zu verwenden (ich wei&szlig; nicht
+wer au&szlig;er mir noch auf eine solche Idee kommen w&uuml;rde...)
+</p>
+
+<pre style="background='silver';">
+public static void TakeParams([ParamArray()]object[] list)
+</pre>
+<p>
+bekommt eine Compilerfehlermeldung pr&auml;sentiert:
+</p>
+<pre style="background='silver';">
+error CS0674: Do not use 'System.ParamArrayAttribute'. Use the 'params' keyword instead.
+</pre>
+<p>
+Na gut, na gut, bleiben wir halt bei <i>params</i> ;-) Aber der technische Hintergrund ist jetzt klar, oder?
+</p>
+
+<h2>Weitere Anwendungen</h2>
+<p>
+Nat&uuml;rlich kann man an eine Funktion auch nicht-optionale Parameter mitgeben, zus&auml;tzlich zum Parameter
+Array. Wichtig ist, da&szlig; diese nicht-optionalen Parameter vor dem Parameter Array &uuml;bergeben werden
+m&uuml;ssen - das Parameter Array mu&szlig; immer am Schlu&szlig; der Methodendeklaration sein. Der folgende Code
+stammt aus <b>MoreSamples.cs</b>:
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.Text;
+
+public class SimpleSample
+{
+ public static void TakeParams3(string strSeparator, 
+                                out string strBuild,
+                                params object[] list)
+ {
+   StringBuilder strBuilder = new StringBuilder();
+   for (int i=0; i &lt; list.GetLength(0); i++)
+   {
+     strBuilder.Append(list[i].ToString() + strSeparator);
+   }
+   strBuild = strBuilder.ToString();
+ }
+
+ public static void Main()
+ {
+   string strOut = "";
+   TakeParams3("-", out strOut, "param1", 900, "param3");
+   Console.WriteLine(strOut);
+ }
+}
+</pre>
+
+<p>
+Das stellt also auch keine Schwierigkeit dar.
+</p>
+
+<p>
+In der Einleitung habe ich erw&auml;hnt, da&szlig; man mit Parameter Arrays optionale Parameter implementieren kann. Wie
+geht das? Im Prinzip kann man das auf zwei Arten implementieren: 
+</p>
+
+<ul>
+<li>Optionale Parameter sind nur von rechts nach links zul&auml;ssig (d.h. man kann nur am Ende der Liste auslassen,
+    nicht irgendwo in der Mitte)
+<li>Man &uuml;bergibt f&uuml;r einen auszulassenden Parameter die <i>null</i>, falls dahinter noch ein weiterer Parameter
+    kommt, den man &uuml;bergeben m&ouml;chte. Der Rest wird wie bei Option 1 gehandhabt - die &auml;u&szlig;erst rechten k&ouml;nnen
+    entfallen.
+</ul>
+
+<p>
+Je nach Anwendungsfall kann man sich entscheiden, wobei die erste Option mit weniger Aufwand zu implementieren ist.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Damit h&auml;tten wir die Parameter Arrays abgehakt, die sich des &ouml;fteren als n&uuml;tzlich erweisen k&ouml;nnen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020125.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020125.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000720.htm">Das foreach Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000720.htm</span><br>
+<a href="../artikel/20000726.htm">Datentypen in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000726.htm</span><br>
+<a href="../artikel/20000803.htm">Die String Klasse in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000803.htm</span><br>
+<a href="../artikel/20001019.htm">Sichere Konvertierungen von Referenztypen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001019.htm</span><br>
+<a href="../artikel/20020207.htm">Unions in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020207.htm</span><br>
+<a href="../artikel/20000731.htm">Verwendung von Arrays in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000731.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

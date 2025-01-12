@@ -1,0 +1,892 @@
+<HTML>
+<HEAD>
+<TITLE>Administration von MySQL unter Windows 2000</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wer den MySQL-Datenbankserver erfolgreich installiert hat, sucht mehr oder weniger verzweifelt eine entsprechende graphische Oberfl&auml;che - wie man sie von MS-SQL-Server her kennt. Dieser Artikel zeigt, welche Tools es gibt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,mySQL,phpMyAdmin,MySQL-Front,Administration,MySQLManager,MySQL Manager,Frontend,Management,Datenbank,Tool">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Administration von MySQL unter Windows 2000</H1>
+<p>
+Geschrieben von: <a href="../autoren/renedrescher-hackel.htm">Rene Drescher-Hackel</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010730"></SCRIPT>
+</p>
+<p>
+Wer den MySQL-Datenbankserver erfolgreich installiert hat, sucht mehr oder weniger verzweifelt eine 
+entsprechende graphische Oberfl&auml;che - wie man sie von Access oder dem MS-SQL-Server her kennt. Leider findet 
+man hierzu nur den "SQLManager", der in seiner Bedienung und von der Oberfl&auml;che her alles andere als 
+komfortabel ist. Unter 
+<a href="http://www.mysql.com/downloads/os-win32.html" target="_blank">www.mysql.com/downloads/os-win32.html</a>
+findet man jedoch diverse Tools, die einem den Umgang mit MySQL unter Windows ein wenig erleichtern. 
+</p>
+
+<p>
+Bei allem, was die einzelnen Programme k&ouml;nnen, m&ouml;chte ich Ihnen jedoch folgenden Hinweis vorweg geben: 
+Lesen Sie regelm&auml;&szlig;ig im MySQL-Online-Manual, das Sie unter der folgenden Adresse finden:
+<a href="http://www.mysql.com/documentation/mysql/full/" target="_blank">www.mysql.com/documentation/mysql/full/</a>
+</p>
+
+<p>
+Neben der zahlreichen Literatur, die es zu MySQL  gibt, h&auml;lt das Online-Manual Sie stets auf dem neusten Stand 
+der Entwicklung. Einige Tools, die f&uuml;r Windows angeboten werden, sind nicht immer auf dem neuesten Stand, soda&szlig; 
+Sie bei Problemen in der Anwendung durchaus auch im MySQL-Manual die eine oder andere Antwort finden k&ouml;nnen.
+</p>
+
+<p>
+Weiterhin sollte jedem klar sein, da&szlig; die hier vorgestellten graphischen Oberfl&auml;chen weder perfekt sind, 
+noch den Anspruch darauf erheben. Alle Programme sind i.d.R. "Freeware" unterliegen aber dennoch einzelnen 
+Lizenzbestimmungen (meistens der <a href="http://www.gnu.org/copyleft/gpl.html" target="_blank">GPL - General Public License</a>), 
+die Sie auf jeden Fall beachten sollten.
+</p>
+
+<p>
+Als erstes m&ouml;chte ich Ihnen ein mit der Installation des MySQL-Servers bereitgestelltes Programm vorstellen 
+<i>mysqladmin.exe</i>, dessen Anwendung Sie im wesentlichen kennen sollten, da Sie dies sowohl unter Windows 
+als auch unter LINUX vorfinden und die Handhabung im wesentlichen gleich ist.
+</p>
+
+<h2>mysqladmin.exe</h2>
+
+<p>
+Mit diesem Dienstprogramm sind Sie in der Lage, eine Reihe von administrativen Aufgaben am SQL-Server 
+(es ist im nachfolgenden immer der MySQL-Datenbankserver gemeint) wahrzunehmen. Die nachfolgende Grafik zeigt im 
+Schnell&uuml;berblick, mit welchen Optionen Sie mysqladmin.exe vom DOS-Prompt aus starten k&ouml;nnen:
+</p>
+
+<IMG SRC="Bilder/200107/20010730_1.png" width="669" height="332" alt="" border="0">
+
+<p>
+Die Eingabe erfolgt dabei nach dem Muster
+</p>
+
+<pre style="background='silver';">
+mysqladmin.exe Optionsname
+</pre>
+
+<p>
+Die Anweisung
+</p>
+
+<pre style="background='silver';">
+mysqladmin.exe create testdb
+</pre>
+
+<p>
+erzeugt z.B. eine Datenbank mit dem Namen "testdb".
+</p>
+
+<p>
+F&uuml;r sp&auml;tere Scriptanwendungen soll die nachstehende Tabelle zum einen einen &Uuml;berblick &uuml;ber die 
+mysqladmin-Optionen geben und zum anderen gleichzeitig das jeweilige SQL-Statement mit anzeigen.
+</p>
+
+<table clellpadding="4" cellspacing="4" border="0">
+<tr>
+    <th>mysqladmin</th>
+    <th>Beschreibung</th>
+    <th>SQL-Anweisung</th>
+</tr>
+<tr>
+    <td>create <i>Datenbankname</i></td>
+    <td>Erstellt eine Datenbank mit dem angegebenen Namen</td>
+    <td>CREATE DATABASE <i>Datenbankname</i></td>
+</tr>
+<tr>
+    <td>drop <i>Datenbankname</i></td>
+    <td>L&ouml;scht die angegebene Datenbank und alle in ihr vorhandenen Tabellen</td>
+    <td>DROP DATABASE <i>Datenbankname</i></td>
+</tr>
+<tr>
+    <td>extended-status</td>
+    <td>Zeigt Namen und Werte der Statusvariablen des Servers an</td>
+    <td>SHOW STATUS</td>
+</tr>
+<tr>
+    <td>flush-host</td>
+    <td>Leert den Host Cache</td>
+    <td>FLUSH HOST</td>
+</tr>
+<tr>
+    <td>flush-privileges</td>
+    <td>L&auml;dt die Benutzertabelle neu </td>
+    <td>FLUSH PRIVILEGES</td>
+</tr>
+<tr>
+    <td>flush-status</td>
+    <td>L&ouml;scht die Statusvariablen</td>
+    <td>FLUSH STATUS</td>
+</tr>
+<tr>
+    <td>flush-tables</td>
+    <td>Leert den Tabellen-Cache</td>
+    <td>FLUSH TABLES</td>
+</tr>
+<tr>
+    <td>kill id,…</td>
+    <td>L&ouml;scht den &uuml;ber die ID spezifizierten Server-Thread</td>
+    <td>KILL</td>
+</tr>
+<tr>
+    <td>password new password</td>
+    <td>&Auml;ndert das Passwort unter deren Benutzernamen Sie mit dem Server verbunden sind</td>
+    <td>SET PASSWORD</td>
+</tr>
+<tr>
+    <td>ping</td>
+    <td>Pr&uuml;ft, ob der Server l&auml;uft</td>
+    <td></td>
+</tr>
+<tr>
+    <td>processlist</td>
+    <td>Zeigt eine Liste, aller z.Z. aktiven Threads an</td>
+    <td>SHOW PROCESSLIST</td>
+</tr>
+<tr>
+    <td>refresh</td>
+    <td>Leert den Tabellen Cache und &ouml;ffnet die Log-Dateien neu</td>
+    <td></td>
+</tr>
+<tr>
+    <td>reload</td>
+    <td>L&auml;dt die Berechtigungstabelle neu</td>
+    <td>FLUSH PRIVILEGES</td>
+</tr>
+<tr>
+    <td>shutdown</td>
+    <td>F&auml;hrt den Server runter</td>
+    <td></td>
+</tr>
+<tr>
+    <td>status</td>
+    <td>Zeigt eine Statusmeldung vom Server an</td>
+    <td></td>
+</tr>
+<tr>
+    <td>variables</td>
+    <td>Zeigt Namen und Werte der Systemvariablen an</td>
+    <td>SHOW VARIABLES</td>
+</tr>
+<tr>
+    <td>version</td>
+    <td>Zeigt die Versioninformationen des Servers an</td>
+    <td></td>
+</tr>
+</table>
+
+<p>
+Hierbei k&ouml;nnen Sie sehen, wie sich fast alle Informationen, die Sie mit dem Programm 
+<b>mysqladmin.exe</b> vom SQL-Server abfragen k&ouml;nnen, durch die jeweiligen SQL-Statements ermitteln 
+lassen. Ist die Datenbankverbindung scriptseitig mit entsprechenden administrativen Privilegien hergestellt 
+worden, so kann man entsprechend scriptseitig administrative Aufgaben am SQL-Server vornehmen. 
+</p>
+
+<p>
+Ein weiteres Tool - und unter Windows eines der wichtigsten, die man kennen sollte - ist das Programm 
+WinMySQLAdmin.exe.
+</p>
+
+<h2>WinMySQLAdmin.exe</h2>
+
+<p>
+In der Version 3.23 inzwischen zur Standardauslieferung geh&ouml;rend leistet das Programm <b>WinMySQLAdmin.exe</b> 
+sehr gute Dienste. Das Programm finden Sie - wie fast alle MySQL-Tools - 
+im Unterverzeichnis /bin Ihres MySQL-Installationsverzeichnisses.
+Sollten Sie <b>WinMySQLAdmin.exe</b> nicht im /bin-Verzeichnis finden, so k&ouml;nnen Sie es im Internet unter der 
+Adresse <a href="http://www.mysql.com/downloads/os-win32.html" target="_blank">www.mysql.com/downloads/os-win32.html</a>
+herunterladen.
+</p>
+
+<p>
+Nachdem Sie das Programm gestartet haben &ouml;ffnet sich folgender Bildschirm, der Sie zur Eingabe des Benutzernamens 
+und des Passwortes auffordert.
+</p>
+
+<IMG SRC="Bilder/200107/20010730_2.png" width="487" height="289" alt="" border="0">
+
+<p>
+Sollten Sie diesen Bildschirm nicht erhalten, so suchen Sie bitte die Datei <b>my.ini</b> (in der Regel im 
+Windows-Verzeichnis zu finden) und benennen Sie diese um, z.B. in <b>_my.ini</b>.
+</p>
+
+<p>
+Die Angaben zum User und zum Password werden dann auch in die Tabelle f&uuml;r die Benutzerverwaltung (<i>user</i>) in 
+der <b>mysql</b>-Datenbank &uuml;bernommen. Mit dem Start des WinMySQLAdmin wird auf Ihrem System - in der Regel im 
+Windows-Stammverzeichnis - die Optionsdatei <b>my.ini</b> erzeugt. Je nach dem auf welchem System Sie MySQL 
+installiert haben bzw. je nach Version des SQL-Servers erhalten Sie dann eine my.ini-Datei mit 
+unterschiedlichen Eintr&auml;gen.
+</p>
+
+<p>
+Ausgehend vom Installationsverzeichnis E:\mysqlserver\mysql sollte die <i>my.ini</i> Datei folgende Eintr&auml;ge 
+beinhalten:
+</p>
+
+<pre style="background='silver';">
+[mysqld]
+basedir = E:/mysqlserver/mysql
+datadir = E:/mysqlserver/mysql/data
+language = E:/mysqlserver/mysql/share/german
+port = 3306 
+user = root 
+password = geheim
+[WinMySQLAdmin]
+Server=E:/mysqlserver/mysql/bin/mysqld-nt.exe
+</pre>
+
+<p>
+Die my.ini unterteilt sich dabei in einzelne Bl&ouml;cke, die ihrerseits mit einem Namen in eckigen Klammern 
+gekennzeichnet sind, z.B. 
+</p>
+
+<pre style="background='silver';">
+[mysqld]
+</pre>
+
+<p>
+oder
+</p>
+
+<pre style="background='silver';">
+[client]
+</pre>
+
+<p>
+Diese Namen entsprechen - mit Ausnahme von [client] - den Programmnamen, die auf die my.ini 
+zugreifen und hier dann entsprechende Informationen erwarten bzw. suchen.
+</p>
+
+<p>
+Die Gruppe [client] wird in den meisten F&auml;llen von Clientprogrammen durchsucht. 
+</p>
+
+<p>
+Die Programme <b>mysql, mysqladmin, mysqld, mysqldump, mysqlimport</b> - um nur einige zu nennen - k&ouml;nnen die 
+my.ini auslesen. Speichern Sie hier Informationen, die Sie bei jedem Programmaufruf von der Kommandozeile 
+eingeben m&uuml;&szlig;ten. Das Arbeiten mit der Optionsdatei erspart so mitunter einiges an Schreibarbeit. 
+</p>
+
+<p>
+M&ouml;chten Sie einzelne Optionen au&szlig;er Kraft setzen, so f&uuml;gen Sie am Beginn der jeweiligen Zeile ein 
+# (Kanalgitter) ein:
+</p>
+
+<pre style="background='silver';">
+# datadir = E:/mysqlserver/mysql/data
+</pre>
+
+<p>
+Oder ein ; (Semikolon):
+</p>
+
+<pre style="background='silver';">
+; datadir = E:/mysqlserver/mysql/data
+</pre>
+
+<p>
+Starten Sie von der Kommandozeile, so k&ouml;nnen Sie auch hier einzelne Optionen au&szlig;er Kraft setzen, indem Sie 
+einfach den neuen Wert auf der Kommandozeilenebene mit angeben.
+</p>
+
+<p>
+Wenn Sie sich unsicher sind, wie Sie Ihre <b>my.ini</b> (my.cnf - Linux) aufbauen sollten, so schauen Sie sich die 
+Datei <b>my-excample.cnf</b> mit einem Editor einmal an. Sie finden diese Datei im MySQL-Installationsverzeichnis.
+</p>
+
+<p>
+Sollten Sie den SQL-Server in einem anderen Verzeichnis als C:\mysql installiert haben, so geben Sie in der 
+Optionsdatei unbedingt das Basisverzeichnis und das Datenbankverzeichnis an.
+</p>
+
+<pre style="background='silver';">
+[mysqld]
+basedir = E:/mysqlserver/mysql
+datadir = E:/mysqlserver/mysql/data
+</pre>
+
+<p>
+Schauen wir uns die graphische Oberfl&auml;che einmal genauer an:
+</p>
+
+<IMG SRC="Bilder/200107/20010730_3.png" width="798" height="514" alt="" border="0">
+
+<p>
+Zu 1.)<br>
+Hier geben Sie das Basisverzeichnis an. W&auml;hlen Sie das MySQL-Installationsverzeichnis aus indem Sie rechts auf 
+die Schaltfl&auml;che klicken. Achten Sie bitte darauf, da&szlig; hier Backslashes benutzt werden, im Eintrag der 
+my.ini-Datei (rechts im Bild) jedoch mit Slashes das Verzeichnis eingetragen wird.
+</p>
+
+<p>
+Zu 2.)<br>
+W&auml;hlen Sie hier Ihren SQL-Server aus. F&uuml;r Windows-NT und Windows 2000 ist es in der Regel "mysqld-nt". 
+Windows 9x - User w&auml;hlen regelm&auml;&szlig;ig "mysqld-opt".
+</p>
+
+<p>
+Zu 3.)<br>
+Wollen Sie Ihre my.ini-Datei bearbeiten, sollten Sie vorerst diese Schaltfl&auml;che bet&auml;tigen. Anschlie&szlig;end k&ouml;nnen 
+Sie &Auml;nderungen (rechts im Bild) an der my.ini vornehmen. 
+</p>
+
+<p>
+Zu 4.)<br>
+Wenn Sie alle Eintragungen vorgenommen haben, sollten Sie die &Auml;nderungen auf jeden Fall speichern. 
+Best&auml;tigen Sie Ihre &Auml;nderungen durch Anklicken dieser Schaltfl&auml;che.
+</p>
+
+<p>
+Zu 5.)<br>
+Dies ist der Editorbereich der my.ini-Datei. Damit der SQL-Server alle &Auml;nderungen &uuml;bernimmt, sollten 
+Sie &uuml;ber das Kontexmen&uuml; den Dienst erst einmal anhalten und anschlie&szlig;end wieder neu starten. &Uuml;ber "Hide me" 
+im Kontexmen&uuml; wird das WinMySQLAdmin-Fenster minimiert und sie sehen nur noch den SQL-Serverstatus &uuml;ber ein 
+kleines Symbol in Form einer Ampel. Gr&uuml;n signalisiert Ihnen, da&szlig; Ihr SQL-Server l&auml;uft, w&auml;hrend ein rotes 
+Aufleuchten Ihnen mitteilt, da&szlig; der SQL-Server nicht betriebsbereit ist.
+</p>
+
+<IMG SRC="Bilder/200107/20010730_4.png" width="224" height="44" alt="" border="0">
+
+<p>
+Wenn Sie den Mauszeiger &uuml;ber das Ampelsymbol bewegen und anschlie&szlig;end das Kontexmen&uuml; aufrufen, k&ouml;nnen Sie &uuml;ber 
+den Men&uuml;punkt "WinNT"  den SQL-Server als Dienst starten ("Start the Service"), sofern der SQL-Server noch 
+nicht als Dienst gestartet wurde. Haben Sie den Dienst angehalten, so k&ouml;nnen Sie ihn dann entfernen 
+("Remove the Service").
+</p>
+
+<IMG SRC="Bilder/200107/20010730_5.png" width="353" height="149" alt="" border="0">
+
+<p>
+Andernfalls k&ouml;nnen Sie den Dienst hier anhalten ("Stop the Service"). 
+</p>
+
+<IMG SRC="Bilder/200107/20010730_6.png" width="297" height="149" alt="" border="0">
+
+<p>
+Ist der SQL-Server noch nicht als Dienst installiert worden, so wird Ihnen das ebenfalls &uuml;ber 
+das Kontexmen&uuml; angezeigt, und Sie k&ouml;nnen entscheiden, ob Sie den SQL-Server mit der Option "Standalone" 
+starten, oder ob Sie den Dienst installieren ("Install the Service") wollen. Haben Sie den Dienst 
+installiert, so m&uuml;ssen Sie diesen dann anschlie&szlig;end noch starten (siehe oben).
+</p>
+
+<IMG SRC="Bilder/200107/20010730_7.png" width="353" height="149" alt="" border="0">
+
+<p>
+Durch den Aufruf des Programmes "WinMySQLAdmin.exe" wird im Autostartverzeichnis eine Verkn&uuml;pfung auf 
+das Programm angelegt, so da&szlig; das WinMySQLAdmin-Programm bei jedem Neustart des Systems selbst&auml;ndig aufgerufen 
+wird.
+</p>
+
+<h2>MySQLManager.exe</h2>
+<p>
+Ein weiteres Tool, das Sie kennen sollten ist der MySQLManager. Leider h&auml;lt der Name (noch) nicht das, 
+was man vermuten m&ouml;chte - es ist keine Managementoberfl&auml;che zum SQL-Server.
+Sie finden dieses Programm wieder im /bin-Verzeichnis Ihrer SQL-Server-Installation. Wenn Sie das Programm 
+gestartet haben, erhalten Sie folgendes Bild:
+</p>
+
+<IMG SRC="Bilder/200107/20010730_8.png" width="763" height="534" alt="" border="0">
+
+<p>
+Durch Doppelklick auf  das Verzeichnis "MySQL" werden Ihnen die Datenbanken des SQL-Servers angezeigt. 
+Haben Sie Ihren SQL-Server inzwischen so konfiguriert, da&szlig; der <b>root</b>-User (der Standard-Administrator 
+am SQL-Server) sich mit einem Password anmelden mu&szlig;, so werden Sie zuvor aufgefordert, sich am SQL-Server 
+anzumelden. Sie erhalten dann folgende Dialogbox angezeigt: 
+</p>
+
+<IMG SRC="Bilder/200107/20010730_9.png" width="763" height="534" alt="" border="0">
+
+<p>
+Nach erfolgreicher Anmeldung k&ouml;nnen Sie sich dann alle Datenbanken anzeigen lassen.
+</p>
+
+<IMG SRC="Bilder/200107/20010730_10.png" width="553" height="344" alt="" border="0">
+
+<p>
+Wie man schnell erkennen kann, ist die Oberfl&auml;che des <i>mysqlmanager</i> nicht besonders funktionell. Das Programm 
+ist aber sehr hilfreich, wenn Sie mal eben schnell eine Verbindung zu Ihrem SQL-Server ben&ouml;tigen und dieser unter 
+Umst&auml;nden dann auch noch auf dem LINUX-System l&auml;uft. Man k&ouml;nnte auch simpel sagen, da&szlig; der <i>mysqlmanager</i> das 
+Windows-Gegenst&uuml;ck zum DOS-Prompt ist.
+</p>
+
+<p>
+Doch schauen wir uns das Programm einmal n&auml;her an:
+</p>
+
+<p>
+W&auml;hlen Sie die Datenbank aus, an die Sie z.B. eine SQL-Anfrage senden wollen. Rufen Sie &uuml;ber die rechte 
+Mause-Taste das Kontextmen&uuml; auf und w&auml;hlen Sie hier "SQL-Query" 
+</p>
+
+<IMG SRC="Bilder/200107/20010730_11.png" width="239" height="394" alt="" border="0">
+
+<p>
+Dabei &ouml;ffnet sich wieder ein kleines Fenster.
+</p>
+
+<IMG SRC="Bilder/200107/20010730_12.png" width="687" height="318" alt="" border="0">
+
+<p>
+Unterhalb der "Query" wird die SQL-Abfrage eingetragen. Die Ausf&uuml;hrung der Abfrage erfolgt dann duch 
+Anklicken des kleinen gr&uuml;nen Dreiecks. In jedem Fall wird anschlie&szlig;end die "Results"-Karte aufgerufen, 
+wobei Ihnen dann das Ergebnis Ihrer Abfrage mitgeteilt wird.
+</p>
+
+<IMG SRC="Bilder/200107/20010730_13.png" width="687" height="318" alt="" border="0">
+
+<p>
+Jeder, der sich mit der Administration von MySQL auseinander gesetzt hat, kennt dann auch schon das 
+n&auml;chste Tool - den <i>phpMyAdmin</i>.
+</p>
+
+<h2>PHPmyAdmin</h2>
+
+<p>
+Der PHPmyAdmin ist kein Programm im eigentlichen Sinne, sondern eher ein browserbasierendes Frontend zum 
+SQL-Server. Mit diesem Tool kann man alle wesentlichen Aufgaben am SQL-Server ausf&uuml;hren (lassen). Der 
+deutlichste Vorteil f&uuml;r dieses Frontend liegt darin, da&szlig; es sowohl unter Windows als auch unter LINUX 
+gleicherma&szlig;en funktioniert.
+</p>
+
+<p>
+Problematisch ist jedoch mit Blick auf Windows, da&szlig; PHP-Unterst&uuml;tzung am Windowsrechner installiert sein mu&szlig;.
+Dies l&auml;&szlig;t sich einerseits &uuml;ber den IIS als ISAPI-Filter konfigurieren oder andererseits durch die zus&auml;tzliche 
+Installation des Apache-Servers. Hier sind dann die entsprechenden Konfigurationen am Apache-Server vorzunehmen.
+</p>
+
+<p>
+Wem jedoch dies alles nicht zusagt, dem sei das folgende Programm empfohlen:
+</p>
+
+<h2>MySQLFront.exe</h2>
+
+<p>
+MySQLFront ist zum Zeitpunkt der Artikelerstellung wohl eines der gelungensten Tools, um MySQL unter 
+Windows zu visualisieren.
+</p>
+
+<p>
+Dieses Programm ist Freeware und kann von der Adresse
+<a href="http://www.anse.de/mysqlfront/" target="_blank">www.anse.de/mysqlfront/</a>
+heruntergeladen werden. Zum Zeitpunkt der Artikelerstellung war die Version 1.22 die aktuellste Version. Die 
+Installation ist denkbar einfach - Sie extrahieren das Programm einfach in ein Verzeichnis Ihrer Wahl. Von dort 
+starten Sie das Programm <b>mysqlfront.exe</b>.
+</p>
+
+<p>
+Wenn Sie mysqlfront das erste Mal starten, m&uuml;ssen Sie erst eine g&uuml;ltige Verbindung definieren. Klicken Sie auf 
+die "New" Schaltfl&auml;che und geben Sie eine Beschreibung f&uuml;r die zu definierende Verbindung an. Nach der 
+Best&auml;tigung durch "OK" erhalten Sie dann folgende Anzeige:
+</p>
+
+<IMG SRC="Bilder/200107/20010730_14.png" width="493" height="351" alt="" border="0">
+
+<p>
+Zum Zeitpunkt der Artikelerstellung konnte die Version 1.22 noch nicht die Angaben der my.ini-Optionsdatei 
+nutzen, so wie es weiter oben beschrieben wurde. Standardm&auml;&szlig;ig ist daher "localhost" f&uuml;r den SQL-Server-Host und 
+"root" f&uuml;r den User eingetragen. Haben Sie jedoch Ihre Userberechtigungen am SQL-Server schon einmal ge&auml;ndert 
+(localhost, root und leeres Password entspricht einem Standardeintrag in der Usertabelle der MySQL-Datenbank), so 
+m&uuml;ssen Sie hier nat&uuml;rlich die aktuellen Werte eintragen. Das gleiche gilt nat&uuml;rlich auch f&uuml;r den Host, wenn der 
+SQL-Server auf einem anderen Rechner als dem lokalem installiert ist.
+</p>
+
+<p>
+Haben Sie alle Angaben korrekt eingetragen und abgespeichert (Schaltf&auml;che "Save"), so stellen Sie die 
+Verbindung zum SQL-Server &uuml;ber die Schaltfl&auml;che "Connect!" her und erhalten dann - wenn die Verbindung 
+hergestellt werden konnte - die folgende Anzeige:
+</p>
+
+<IMG SRC="Bilder/200107/20010730_15.png" width="500" height="353" alt="" border="0">
+
+<p>
+Jetzt haben Sie eine visuelle Oberfl&auml;che des SQL-Servers, die die Bedienung um ein vielfaches vereinfacht. 
+Im linken Bereich sehen Sie oben den Benutzer und den Hostnamen. Darunter sind die Datenbanken des 
+SQL-Servers eingerichtet. Durch Doppelklick auf einen Datenbanknamen bzw. Einfachklick auf das davor stehende 
+"+" &ouml;ffnet sich der Tabellenbaum und im rechten Fenster werden ebenfalls die Tabellen der ausgew&auml;hlten 
+Datenbank angezeigt, hier jedoch mit den erweiterten Angaben zum Tabellentyp, dem Erstellungsdatum, der Gr&ouml;&szlig;e, 
+der Anzahl der Datens&auml;tze und dem Kommentar. 
+</p>
+
+<IMG SRC="Bilder/200107/20010730_16.png" width="702" height="264" alt="" border="0">
+
+<p>
+Durch Doppel-/Einfachklick auf den Tabellennamen, werden die Spaltendeklarationen angezeigt.
+</p>
+
+<IMG SRC="Bilder/200107/20010730_17.png" width="702" height="264" alt="" border="0">
+
+<p>
+Durch einen weiteren Doppelklick auf eine der Spaltenbezeichnungen &ouml;ffnet sich das folgende Fenster, 
+und Sie k&ouml;nnen dann Ihre Einstellungen zur Spaltentypdefinition vornehmen.
+</p>
+
+<IMG SRC="Bilder/200107/20010730_18.png" width="308" height="352" alt="" border="0">
+
+<p>
+Eine weitere interessante M&ouml;glichkeit, die Ihnen <b>mysqlfront</b> anbietet ist der Benutzermanager, 
+den Sie oben in der Men&uuml;leiste als Symbol finden (unterhalb des roten Punktes).
+</p>
+
+<IMG SRC="Bilder/200107/20010730_19.png" width="500" height="50" alt="" border="0">
+
+<p>
+Nach Aufruf des Benutzermangers &ouml;ffnet sich die folgende Dialogbox.
+</p>
+
+<IMG SRC="Bilder/200107/20010730_20.png" width="550" height="405" alt="" border="0">
+
+<p>
+Bitte beachten Sie, da&szlig; Sie als Benutzer mit G<i>rant Privileges</i> am SQL-Server angemeldet sind, da Sie sonst keine 
+Berechtigung besitzen um selber Berechtigungen festzulegen (wo k&auml;men wir denn da auch hin, wenn dies 
+jeder k&ouml;nnte).
+</p>
+
+<p>
+Unter dem Punkt <i>Credentials</i> tragen Sie den Benutzernamen, Host und ggf. das Password des Benutzers ein, 
+f&uuml;r den Sie die Berechtigungen festlegen bzw. &auml;ndern wollen. 
+</p>
+
+<p>
+Im Bereich <i>Privileges</i> k&ouml;nnen Sie in Analogie zu den verschiedenen (wichtigsten) SQL-Befehlen die Berechtigungen 
+des Benutzers festlegen. Mit "All Privileges" geben Sie dem Benutzer alle Berechtigungen mit Ausnahme der 
+"With Grant Option ", die Sie explizit festlegen m&uuml;ssen. Im rechten Auswahlfenster k&ouml;nnen Sie dann noch 
+die Berechtigungen bis auf  Tabellenebene durch entsprechende Auswahl einschr&auml;nken/festlegen.
+<p>
+
+<p>
+Wenn Sie die Option "Create Connection-Account for MySQL-Front" markieren und eine entsprechende Beschreibung 
+mit angeben, dann wird gleichzeitig eine Verbindungseigenschaft in der Startmaske von <i>mysqlfront</i> angelegt. 
+Bedenken Sie aber, da&szlig; die Eintragungen in der User-Tabelle der MySQL-Datenbank erfolgen und der Benutzer sich 
+auch sonst - entsprechend seiner Berechtigungen - am SQL-Server anmelden kann.
+</p>
+
+<p>
+Haben Sie &uuml;ber "Add User" den Benutzer angelegt, dann m&uuml;ssen Sie dem SQL-Server noch mitteilen, da&szlig; es einen 
+neuen Benutzer gibt, bzw. da&szlig; sich die Berechtigungen eines bestehenden Benutzers ge&auml;ndert haben. Der SQL-Server 
+erf&auml;hrt dies immer durch das Einlesen der Berechtigungstabellen. Regelm&auml;&szlig;ig geschieht dies beim Start des 
+SQL-Servers, doch k&ouml;nnen Sie ja nicht immer wieder den SQL-Server neu starten. Gerade in einem Live-System 
+w&auml;ren die Folgen st&auml;ndiger Neustarts doch recht fatal. 
+</p>
+
+<p>
+Um den laufenden Betrieb des SQL-Servers nicht zu unterbrechen, veranlassen Sie das erneute Einlesen der 
+Berechtigungstabelle mit der Anweisung
+</p>
+
+<pre style="background='silver';">
+FLUSH PRIVILEGES
+</pre>
+
+<p>
+Alle M&ouml;glichkeiten, die Ihnen <b>mysqlfront</b> bietet, hier aufzuzeigen w&uuml;rde den Rahmen des Artikels sprengen. 
+Lassen Sie mich aber abschlie&szlig;end noch auf zwei Dinge aufzeigen:
+</p>
+
+<p>
+1) Im unteren Programmfenster werden Ihnen alle SQL-Anweisungen angezeigt, die durch die jeweiligen Aktionen 
+ausgel&ouml;st wurden, wenn Sie z.B. eine &Auml;nderung in einer Tabelle vorgenommen haben oder &auml;hnliches. Dies ist 
+soweit eine gute Hilfe, wenn man selbst noch nicht so fit in der SQL-Syntax ist.
+</p>
+
+<p>
+2) Sie k&ouml;nnen aber auch eigene SQL-Abfragen formulieren und an den SQL-Server absenden. Hierzu finden Sie im 
+oberen Bereich die Auswahlkarte "Query".
+</p>
+
+<IMG SRC="Bilder/200107/20010730_21.png" width="369" height="122" alt="" border="0">
+
+<p>
+Das Absenden der SQL-Abfrage erfolgt dann &uuml;ber die Schaltfl&auml;che "Run" oder &uuml;ber die Funktionstaste F9. Bevor 
+Sie aber eine SQL-Abfrage formulieren und absenden k&ouml;nnen, m&uuml;ssen Sie links die Datenbank  ausw&auml;hlen, die 
+das SQL-Statement erhalten soll. Die Markierung der Datenbank erkennen Sie an dem gelben Datenbankzylindersymbol.
+</p>
+
+<p>
+Am rechten Rand des Programmfensters (hier rot gekennzeichnet) finden Sie noch weitere Schaltfl&auml;chen:
+</p>
+
+<IMG SRC="Bilder/200107/20010730_22.png" width="699" height="460" alt="" border="0">
+
+<p>
+"Run(F9)" f&uuml;hrt Ihre selbstdefinierte SQL-Abfrage aus. "Load SQL" l&auml;d eine *.sql-Datei und "Save SQL" speichert 
+Ihre selbstdefinierte SQL-Abfrage in einer *.sql-Datei ab.
+</p>
+
+<p>
+Die interessanteste Schaltfl&auml;che ist hier noch "Functions". Hier werden Ihnen so ziemlich alle 
+Funktionen, die Sie in SQL-Anweisungen verwenden k&ouml;nnen, aufgelistet. 
+</p>
+
+<IMG SRC="Bilder/200107/20010730_23.png" width="380" height="379" alt="" border="0">
+
+<p>
+Sie werden in Ihrer t&auml;glichen Arbeit mit <b>mysqlfront</b> sicher feststellen, was alles noch an Funktionalit&auml;t anders 
+oder besser gemacht werden k&ouml;nnte. Unter der oben genannten Adresse finden Sie immer die aktuellste Version des 
+mysqlfront-Programms. Der regelm&auml;&szlig;ighe Besuch lohnt sich daher sicherlich.
+</p>
+
+<h2>Zusammenfassung</h2>
+
+<p>
+Der Artikel sollte Ihnen heute nur einen kleinen Ausblick darauf geben, wie einfach man den MySQL-Datenbankserver 
+administrieren kann. Alle Einzelheiten hier zu besprechen w&uuml;rde den Rahmen sprengen. Wenn Sie aber die 
+eingangs gemachten Ausf&uuml;hrungen mit den Ausf&uuml;hrungen zum letzten Programm (mysqlfront.exe) vergleichen, so 
+werden Sie sehen, da&szlig; der MySQL-Server sich sehr gut (und auch leicht) &uuml;ber die Datenbankabfragesprache SQL 
+steuern l&auml;&szlig;t. Ein solides SQL-Grundwissen ist daher sicherlich von Vorteil.
+</p>
+
+<p>
+In einem weiteren Artikel werde ich ihnen dann aufzeigen, wie Sie innerhalb von ASP-Anwendungen die 
+Verbindung zum MySQL-Server herstellen k&ouml;nnen.
+</p><h2>Verwandte Artikel</h2>
+<p>
+<a href="20010731.htm">Datenimport von Access nach MySQL</a><br>
+<a href="20010618.htm">Installation und Konfiguration von MySQL unter Windows 2000 Professional</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emysql%2Ecom%2Fdownloads%2Fos%2Dwin32%2Ehtml">MySQL Downloads for Win32</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emysql%2Ecom%2Fdocumentation%2Fmysql%2Ffull%2F">MySQL Reference Manual</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eanse%2Ede%2Fmysqlfront%2F">MySQL-Front</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fphpmyadmin%2Esourceforge%2Enet%2F">phpMyAdmin</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ekoehntopp%2Ede%2Fkris%2Fartikel%2Fmysql%2Deinfuehrung%2Fsld004%2Ehtm">SQL für Dummies</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20010730" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Administration von MySQL unter Windows 2000"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20010730.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Rene Drescher-Hackel"><input type="hidden" name="AuthorEmail" value="rene@drescher-hackel.de"><input type="hidden" name="Artikel" value="20010730"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20010730.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

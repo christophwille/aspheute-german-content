@@ -1,0 +1,476 @@
+<HTML>
+<HEAD>
+<TITLE>Mit ASP ein Word Dokument am Server generieren</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Mit dem Microsoft Word Object Modell lassen sich z.B. Word Dokumente auf einem Server generieren, die dann von einem Client weiter verwendet werden k&ouml;nnen. Dies kann sich bei der Generierung von Flyern, Intranetdokumenten oder Produktdaten..">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Word,Objektmodell,Vorlage,Template,Word instanzieren,Word in ASP,Word aufrufen,Word starten">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Mit ASP ein Word Dokument am Server generieren</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010319"></SCRIPT>
+</p>
+<p>
+Mit dem Microsoft Word Object Modell lassen sich z.B. Word Dokumente auf einem Server generieren, die dann
+von einem Client weiter verwendet werden k&ouml;nnen. Dies kann sich bei der Generierung von Flyern, Intranetdokumenten
+oder Produktdaten als sehr n&uuml;tzlich erweisen. Der Weg durch den Word Object &quot;Dschungel&quot; ist aber
+bei anspruchsvolleren Aufgaben oftmals steinig.
+</p>
+
+<p>
+Damit die Beispiele auf Ihrem Web Server laufen, m&uuml;ssen einige Vorbereitungen getroffen werden. Zuerst einmal
+mu&szlig; nat&uuml;rlich Microsoft Word am Server installiert sein. Die Permissions f&uuml;r den Schreibzugriff und das 
+Ausf&uuml;hren von Scripts m&uuml;ssen ebenfalls f&uuml;r das Web Server Verzeichnis gegeben sein.
+</p>
+
+<p>
+Falls Sie beim Ausf&uuml;hren der Beispiele die sinnvolle Fehlermeldung <i>Error 800A175D - Could Not Open Macro Storage</i>
+erhalten, finden Sie im <a href="http://support.microsoft.com/support/kb/articles/Q224/3/38.ASP" target="_blank">KB Artikel Q224338</a> auf der 
+Microsoft MSDN Site die n&ouml;tige Abhilfe um diesen zu beseitigen. Die Bemerkung &quot;sinnvoll&quot; habe ich mir
+deshalb erlaubt, da die Meldung nicht eindeutig auf das Problem hinweist, sondern von mehreren Ursachen folgen kann.
+</p>
+
+<h2>Das 101er Beispiel</h2>
+
+<p>
+Das erste Beispiel ist sehr einfach gehalten. Es wird lediglich ein Word Dokument erstellt, ein unformatierter Text
+eingef&uuml;gt und dann im Web Server Verzeichnis gespeichert. Die Schritte, die hierf&uuml;r n&ouml;tig sind zeigt das nun folgende
+Listing der <b>GenWord101Sample.asp</b> Datei:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+   Set objWordApp = Server.CreateObject(&quot;Word.Application&quot;)
+   
+   objWordApp.Documents.Add
+   
+   objWordApp.Selection.TypeText &quot;This is a plain text that you'll see in word.&quot;
+   
+   objWordApp.ActiveDocument.SaveAs Server.MapPath(&quot;MyDocument.doc&quot;)   
+   objWordApp.Quit
+   
+   Set objWordApp = Nothing
+%&gt;
+</pre>
+
+<p>
+Wenn Sie die aus diesem Script generierte Datei <i>MyDocument.doc</i> in Word &ouml;ffnen, k&ouml;nnen Sie den
+durch die <i>TypeText</i> Methode erstellten Text sehen. Da dies aber noch nicht alles ist, werden wir 
+die Aufgabenstellung erweitern.
+</p>
+
+<h2>Ergebnisse aus einer Datenbankabfrage in Word darstellen</h2>
+
+<p>
+Nat&uuml;rlich k&ouml;nnen Sie wie mit Microsoft Excel auch eine Datenbankabfrage ausf&uuml;hren und das Ergebnis dem Word Objekt
+&uuml;bergeben. Als Datenbank habe ich die MS Access <i>Northwind</i> Datenbank (wird standardm&auml;&szlig;ig mit Access oder
+mit dem SQL Server mitinstalliert) herangezogen, die sich f&uuml;r &Uuml;bungszwecke 
+hervorragend eignet. Damit sich die retournierten Datens&auml;tze in Grenzen halten, habe ich eine spezielle Auswahl 
+mittels SQL Statements erstellt. Die Daten werden im Word Dokument in einer Tabelle gespeichert. Zweckm&auml;&szlig;ig verwendet
+das Script eine Dokumentenvorlage (<b>POView01.dot</b>) die eine formatierte Kopf- und Fu&szlig;zeile beinhaltet.
+</p>
+
+<p>
+Im Script (<b>GenWordSample.asp</b>) beginne ich mit der Datenbankabfrage. Ich hole mir die durch das SQL 
+Statement bestimmten Daten aus der Northwind Datenbank:
+</p>
+
+<pre style="background='silver';">
+Set objConn = Server.CreateObject("ADODB.Connection")
+Set objRS = Server.CreateObject("ADODB.Recordset") 
+
+strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source="
+strConn = strConn &amp; Server.MapPath("Northwind.mdb") 
+strSQL ="SELECT Products.ProductName, Products.UnitPrice "
+strSQL = strSQL &amp; "FROM Products "
+strSQL = strSQL &amp; "WHERE Products.UnitPrice &lt;= 15 "
+strSQL = strSQL &amp; "ORDER BY Products.ProductName ASC"
+
+objConn.Open strConn
+
+objRS.Open strSQL, objConn
+
+If Not objRS.EOF and Not objRS.BOF Then
+  arrData = objRS.GetRows()
+End If 
+
+objRS.Close
+objConn.Close
+Set objRS = Nothing
+Set objConn = Nothing
+</pre>
+
+<p>
+Die Trennung von Datenbeschaffung und Word Dokument Generierung hat den Sinn, da&szlig; wenn bei der Datenbeschaffung
+etwas schief geht, ich leicht die weiterfolgende Instanzierung des Word Objekts verhindern kann. So wird auch
+vermieden, da&szlig; das Word Objekt unt&auml;tig im Speicher verbleibt und auf die Daten wartet. Wenn Sie dies nicht beachten, 
+k&ouml;nnen sich schnell mehrere Instanzen - durch folgende Requests auf die ASP Seite - des Word Objektes im Speicher sammeln und den Web Server in die Knie zwingen
+oder gar zum Absturz bringen.
+</p>
+
+<p>
+Die angeforderten Daten speichere ich in einem Array namens <i>arrData</i>. Daher kann ich nach erfolgreicher 
+Beendigung der Datenbankfrage die hierf&uuml;r ben&ouml;tigten Objekte wieder freigeben.
+</p>
+
+<p>
+Als n&auml;chstes wird das Word Dokument mit den Daten bef&uuml;llt. Da Word mehrere Konstanten verwendet, die in VBScript
+als Zahlenwerte anzugeben sind, deklariere ich zun&auml;chst diese. Nat&uuml;rlich k&ouml;nnte man dort, wo sie ben&ouml;tigt werden
+auch sofort ihre Zahlenwerte einsetzen. Um aber sp&auml;ter &Auml;nderungen leichter durchf&uuml;hren zuk&ouml;nnen, gebe ich diese lieber so an:
+</p>
+
+<pre style="background='silver';">
+Const wdAlignParagraphCenter = 1
+Const wdAlignParagraphLeft = 0
+Const wdParagraph = 4
+Const wdHorizontalPositionMargin = 0
+Const wdTableLeft = -999998
+Const wdCollapseEnd = 0
+</pre>
+
+<p>
+Nun ist es Zeit das Word Objekt mithilfe von <i>Server.CreateObject</i> zu instanzieren, ein neues Dokument
+zu erstellen und die Dokumentvorlage (<i>POView01.dot</i>) anzugeben:
+</p>
+
+<pre style="background='silver';">
+Set WdApp = Server.CreateObject("Word.Application")
+WdApp.Application.Visible = False
+
+Set objDocument = WdApp.Documents.Add(Server.MapPath("POView01.dot"))
+</pre>
+
+<p>
+Mithilfe des erstellten Range Objektes (<i>objRange</i>) k&ouml;nnen wir das Dokumentschriftbild dezent formatieren:
+</p>
+
+<pre style="background='silver';">
+Set objRange = objDocument.Range
+
+With objRange
+    .ParagraphFormat.Alignment = wdAlignParagraphCenter
+    .Font.Size = 12
+    .Font.Name = "Arial"
+    .InsertAfter("Current Sales Report")
+    .MoveEnd(wdParagraph)
+    .Collapse(wdCollapseEnd)
+End With
+</pre>
+
+<p>
+Es sind nun alle Vorbereitungen getroffen. Die Daten, die in dem Array <i>arrData</i> gespeichert sind
+k&ouml;nnen nun eingef&uuml;gt werden. Um sie wie gesagt &uuml;bersichtlicher darzustellen, schreiben wir sie in eine Tabelle.
+Dazu m&uuml;ssen wir ein neues Tabellenobjekt namens <i>objTable</i> erstellen:
+</p>
+
+<pre style="background='silver';">
+Set objTable = WdApp.ActiveDocument.Tables.Add (objRange, Ubound(arrData,2), 2,1,1)
+</pre>
+
+<p>
+Die Tabelle wird innerhalb des im Range-Objekt <i>objRange</i> angegebenen Bereichs erstellt. Hierbei k&ouml;nnen auch die
+vorherig definierten Formatoptionen &uuml;bernommen werden. Die Tabelle wird dann mit der <i>Add</i> Methode der 
+<i>Tables Collection</i> erstellt.
+</p>
+
+<p>
+Um nicht zuviel oder zuwenig Tabellenreihen zu erstellen, finde ich mit der <i>UBound</i> Function die obere Grenze
+des Arrays, in dem die Daten gespeichert sind. Dieser Wert bestimmt die maximale Reihenanzahl der Tabelle.
+Die letzten beiden optionalen Parameter sind <i>DefaultTableBehavior</i> und <i>AutoFitBehavior</i>:
+</p>
+
+<p>
+<i>DefaultTableBehavior</i> gibt an, ob Word die Zellen der Tabelle an ihren Inhalt anpassen soll (<i>AutoFit</i>).
+<i>AutoFitBehavior</i> setzt die AutoFit Regeln fest, die von Word angeboten werden.
+</p>
+ 
+<p>
+Jetzt wird der Inhalt des Arrays <i>arrData</i> in die Tabelle eingef&uuml;gt:
+</p>
+
+<pre style="background='silver';">
+For i = 0 To Ubound(arrData,2)
+   objTable.Cell(i,1).Range.InsertAfter(arrData(0,i))
+   objTable.Cell(i,2).Range.InsertAfter(arrData(1,i))
+Next
+</pre>
+
+<p>
+Abschlie&szlig;end kann nun das Dokument im Web Server Verzeichnis gespeichert und dann die Applikation
+beendet werden:
+</p>
+
+<pre style="background='silver';">
+objDocument.SaveAs Server.MapPath("Sales.doc")
+objDocument.Close 
+
+WdApp.Application.Quit
+</pre>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Dies war eine kleine Einf&uuml;hrung in die vielen M&ouml;glichkeiten, die das Word Objekt bietet. So einfach dies auch klingen mag,
+durch die M&ouml;glichkeit der Verwendung von zwei unterschiedlichen Sprachformen (VBA und VBScript) mit diesem Objekt, 
+passieren oft f&uuml;r einen Web Server fatale Fehler.
+</p>
+
+<p>
+Wenn man aber die hier angef&uuml;hrten Hinweise beachtet, kann man sich viele Stunden in der Programmierung und
+sp&auml;ter durch die Verwendung des Scriptes sparen.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010319.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20010305.htm">Ein Excel-Sheet am Server generieren und zum Client schicken</a><br>
+<a href="20020128.htm">Serverdaten clientseitig in Exceltemplates importieren</a><br>
+<a href="20010925.htm">Verwendung von XML-Schemas (XSD)</a><br>
+<a href="20020122.htm">Wordfiles richtig &ouml;ffnen!</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsupport%2Emicrosoft%2Ecom%2Fsupport%2Fkb%2Farticles%2FQ224%2F3%2F38%2EASP">PRB: Error 800A175D - Could Not Open Macro Storage</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20010319" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Mit ASP ein Word Dokument am Server generieren"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20010319.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Holm"><input type="hidden" name="AuthorEmail" value="office@holmcs.com"><input type="hidden" name="Artikel" value="20010319"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20010319.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

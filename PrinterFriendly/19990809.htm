@@ -1,0 +1,165 @@
+<HTML>
+<HEAD>
+<TITLE>Email versenden mit AspMail</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Webemailformulare sind so ziemlich das erste, das ein neuer ASP Programmierer zu bew&auml;ltigen hat. Hier gibt es Informationen wie man es richtig macht.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Email,AspMail,AspQMail,IIS,ASP,AspMail,CDO,SMTP,Formular">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Email versenden mit AspMail</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Komponenten.htm">Komponenten</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=19990809"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Das ber&uuml;hmt-ber&uuml;chtigte "Anfrageformular" kommt auf (fast) jeder Internetsite vor, und
+wird meist so gel&ouml;st, da&szlig; an die zust&auml;ndige Personen eine Email mit den vom User
+eingegeben Formularwerten abgeschickt wird. Auch wir verwenden auf dieser Seite ein solches <a href="http://www.aspgerman.com/aspgerman/kontakt.asp">Formular</a>,
+und ich werde heute aufdecken, was Email-technisch dahinter steckt.
+</p>
+<p>
+Zum Aufw&auml;rmen, hier einmal der HTML-Code eines einfachen (also unserem) Anfrageformular:
+<pre>
+&lt;FORM ACTION=&quot;&lt;%=Request.ServerVariables(&quot;SCRIPT_NAME&quot;)%&gt;&quot; 
+	METHOD=POST&gt;
+&lt;INPUT TYPE=TEXT NAME=&quot;Anfragesteller&quot; VALUE=&quot;&quot; SIZE=40&gt;
+&lt;INPUT TYPE=TEXT NAME=&quot;Emailadresse&quot; VALUE=&quot;&quot; SIZE=40&gt;
+&lt;TEXTAREA NAME=&quot;Anfrage&quot; COLS=40 ROWS=10&gt;&lt;/TEXTAREA&gt;
+&lt;INPUT TYPE=SUBMIT VALUE=&quot;Abschicken&quot;&gt;
+&lt;/FORM&gt;
+</pre>
+Ich habe alle Formatierungen herausgenommen, drinnengeblieben ist nur das, was f&uuml;r das Funktionieren
+des Formulars lebenswichtig ist. Ein ASP-Trick des t&auml;gichen Lebens ist hier auch versteckt: die ACTION des
+FORMs wird dynamisch mit der SCRIPT_NAME Variable bef&uuml;llt - der Dateiname des aktuellen Formulars (oder ASP Datei).
+Und das Umbenennen des Formulars wird somit nicht mehr zur Katastrophe!
+</p>
+<p>
+Jetzt aber zu Wichtigerem; dem Code zum Abschicken einer Email. Von uns gerne verwendet wird die AspMail
+Komponente von ServerObjects, da sie sehr lange am Markt, schnell und zuverl&auml;ssig ist (am Schlu&szlig;
+des Artikels habe ich eine Liste von alternativen Komponenten zusammengetragen).
+</p>
+<p>Warum ich nicht die mit IIS mitgelieferte CDONTS (Collaboration Data Objects NT Server) 
+verwende? Die funktionieren nur dann, wenn am Webserver auch ein SMTP Server installiert ist - 
+und zwar der vom NT Option Pack. Nicht gerade praktikabel im t&auml;glichen Einsatz.
+</p>
+<p>
+Der Benutzer hat also das Formular abgeschickt - hier nun der Code, der am Server abl&auml;uft.
+<pre>
+If Request.ServerVariables(&quot;Content_Length&quot;)&gt;0 Then
+ Set Mailer = Server.CreateObject(&quot;SMTPsvg.Mailer&quot;)
+ Mailer.FromName = &quot;ASPGERMAN Forum&quot;
+ Mailer.FromAddress = &quot;webmaster@alphasierrapapa.com&quot;
+ Mailer.RemoteHost = &quot;pop3.bitshop.com&quot;
+ Mailer.Recipient = &quot;christophw@alphasierrapapa.com&quot;
+ Mailer.Subject = &quot;Anfrageformular&quot;
+	
+ strBody = &quot;Von: &quot; &amp; Request.Form(&quot;Anfragesteller&quot;) &amp; vbCRLF
+ strBody = strBody &amp; &quot;Email: &quot; &amp; Request.Form(&quot;Emailadresse&quot;) &amp; vbCRLF
+ strBody = strBody &amp; &quot;Anfrage: &quot; &amp; Request.Form(&quot;Anfrage&quot;) _
+   &amp; vbCRLF &amp; vbCRLF
+ strBody = strBody &amp; &quot;IP: &quot; &amp; Request.ServerVariables(&quot;REMOTE_HOST&quot;) _
+   &amp; vbCRLF
+ Mailer.BodyText = strBody
+ 
+ If Mailer.SendMail Then
+  Response.Write &quot;Ihre Anfrage wurde erfolgreich weitergeleitet!&quot;
+ Else
+  Response.Write &quot;W&amp;auml;hrend der Bearbeitung Ihrer Anfrage ist&quot; &amp; _
+   &quot; ein Fehler aufgetreten. Bitte wenden Sie sich an &quot; &amp; _
+   &quot;webmaster@alphasierrapapa.com.&quot;
+ End If
+End If
+</pre>
+Zuallererst checke ich, ob &uuml;berhaupt Daten geschickt wurden (CONTENT_LENGTH liefert die L&auml;nge der
+geposteten Daten). Danach erstelle ich das Objekt, und setze diverse Eigenschaften (Name von, Emailadresse von, SMTP Server,
+Empf&auml;nger, Betreff). Nach diesen Initialisierungen mu&szlig; ich nur noch den Text der Email erstellen,
+und zwar bediene ich mich hier einer lokalen Variable, die ich mit den Daten des Benutzers zusammenstelle.
+Zus&auml;tzlich schicke ich mir noch die IP Adresse des Computers, von dem die Anfrage aus gepostet wurde 
+(der Surfcomputer also).
+</p>
+<p>
+Abgeschickt wird die Email mit <i>SendMail</i>, das einen Boolschen Wert ob des Erfolgs liefert. Abh&auml;ngig davon
+kann man eine Erfolgsmeldung oder Informationsmeldung mit Fehlerbeschreibung ausgeben. So einfach kann das
+Versenden von Emails in ASP Seiten sein!
+</p>
+<p>
+Einen letzten Pluspunkt der AspMail Komponente m&ouml;chte ich noch erw&auml;hnen: es gibt sie in der Ausf&uuml;hrung AspQMail, einer
+Mail Queuing Komponente. Das bedeutet, die Email wird nicht sofort geschickt, sondern in eine Queue gesteckt,
+die bei Freiwerden von Rechnerresourcen die Emails abarbeitet und schickt (als NT Service implementiert). 
+Kann ich absolut f&uuml;r Sites empfehlen, die eine hohe Last auszuhalten haben.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20021028.htm">ACT MetaMailer - Mails verschicken leicht gemacht</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021028.htm</span><br>
+<a href="../artikel/20001009.htm">Das Versenden von Emails selbst programmieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001009.htm</span><br>
+<a href="../artikel/20000515.htm">Emails senden mit CDONTS</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000515.htm</span><br>
+<a href="../artikel/20010219.htm">Emails versenden mit ASPEmail</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010219.htm</span><br>
+<a href="../artikel/20010625.htm">Html Emails mit Dundas Mailer verschicken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010625.htm</span><br>
+<a href="../artikel/20000912.htm">Mit PGP verschl&uuml;sselte e-Mails senden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000912.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpin%2Ecom%2Findex%2Fdefault%2Easp%3Ftree%3Daspin%2Fcomponents%2Femail">AspIN - Liste der Emailkomponenten</a><br>
+<SPAN class="content">http://www.aspin.com/index../default.htm?tree=aspin/components/email</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eserverobjects%2Ecom%2Fproducts%2Ehtm%23Aspmail">AspMail</a><br>
+<SPAN class="content">http://www.serverobjects.com/products.htm#Aspmail</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

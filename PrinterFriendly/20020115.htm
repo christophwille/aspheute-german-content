@@ -1,0 +1,233 @@
+<HTML>
+<HEAD>
+<TITLE>CAPICOM One</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Relativ unbemerkt hat Microsoft im Vorjahr CAPICOM - einen COM Client f&uuml;r das CryptoAPI - released. Dabei handelt sich um ein Set sehr n&uuml;tzlicher kryptographischer Komponenten...">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,CryptoAPI,CAPICOM,RC2,3DES,Encryption,Decryption,Security,COM,Automation,Sicherheit,Verschlüsselung">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>CAPICOM One</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020115"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Relativ unbemerkt hat Microsoft im Vorjahr CAPICOM - einen COM Client f&uuml;r das CryptoAPI - im "Windschatten" von
+Windows XP released. Dabei handelt sich um ein Set sehr n&uuml;tzlicher kryptographischer Komponenten, die in jeder Programmiersprache mit
+Automation Unterst&uuml;tzung verwendet werden k&ouml;nnen - von Visual Basic bis hin zur kleinen Verwandtschaft in ASP, VBScript.
+</p>
+<p>
+CAPICOM bietet Komponenten zur Ver- und Entschl&uuml;sselung (in der Version 1.0 sind nur symmetrische Algorithmen
+mit dabei), Komponenten zur Signierung von Daten und der bequemen Handhabung von Zertifikaten (mit und 
+ohne User Interface, je nach Wunsch). Im heutigen Artikel beschr&auml;nke ich mich auf Ver- und Entschl&uuml;sselung,
+da dies speziell f&uuml;r ASP ein gr&ouml;&szlig;eres Anwendungsgebiet findet.
+</p>
+
+<h2>Installation</h2>
+<p>
+Der erste Schritt ist der Download des CAPICOM Redistributables als Teil des Platform SDK's. Von der
+<a href="http://www.microsoft.com/downloads/release.asp?releaseid=30316" target="_blank">Downloadseite</a>
+holen wir uns ein selbstextrahierendes Archiv, das die Datei <b>capicom.dll</b> im <b>x86</b> Unterverzeichnis
+des Zielverzeichnisses speichert. Diese <b>capicom.dll</b> kopiert man in <b>system32</b> Verzeichnis, und f&uuml;hrt dann
+noch folgenden Befehl aus:
+</p>
+
+<pre style="background='silver';">
+regsvr32 capicom.dll 
+</pre>
+
+<p>
+Wenn man Anwendungen verteilt, kann man diese DLL in das Setup aufnehmen, und am Zielrechner automatisch
+registrieren lassen.
+</p>
+
+<h2>Verschl&uuml;sseln von Daten</h2>
+<p>
+CAPICOM ist erfolgreich installiert - nun hei&szlig;t es, sich mit den neuen Komponenten vertraut zu machen.
+Was ist da besser, als ein kleines Beispiel zu programmieren: es soll Text mit Triple-DES verschl&uuml;sseln,
+und an den Client ausgeben. Da&szlig; dies wirklich leicht implementiert werden kann, zeigt der Sourcecode
+von <b>encrypt.asp</b>:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Const CAPICOM_ENCRYPTION_ALGORITHM_RC2 = 0 ' Use RSA RC2 encryption. 
+Const CAPICOM_ENCRYPTION_ALGORITHM_RC4 = 1 ' Use RSA RC4 encryption. 
+Const CAPICOM_ENCRYPTION_ALGORITHM_DES = 2 ' Use DES encryption. 
+Const CAPICOM_ENCRYPTION_ALGORITHM_3DES = 3 ' Use triple DES encryption. 
+
+strTestMessage = "Hello World!"
+strPassphrase = "A#0x?\$dE&lt;"	' NIEMALS die Passphrase "herumliegen" lassen
+
+Set xEncrypt = Server.CreateObject("CAPICOM.EncryptedData")
+xEncrypt.Content = strTestMessage
+xEncrypt.SetSecret strPassphrase
+xEncrypt.Algorithm.Name = CAPICOM_ENCRYPTION_ALGORITHM_3DES
+strEncryptedMsg = xEncrypt.Encrypt()
+
+Response.Write strEncryptedMsg
+%&gt;
+</pre>
+
+<p>
+Zuerst erstellt man das Objekt, weist den zu verschl&uuml;sselnden Text der Eigenschaft <i>Content</i> zu,
+setzt das Secret mittels <i>SetSecret</i> Methode, und dann m&uuml;&szlig;te man nur noch <i>Encrypt</i> aufrufen.
+Um festzulegen, mittels welchem Algorithmus verschl&uuml;sselt wird, bedient man sich der <i>Algorithm</i>
+Eigenschaft, die ein gleichnamiges Objekt liefert, das die <i>Name</i> Eigenschaft besitzt - und hier
+kann man dann aus vier Algorithmen w&auml;hlen: RC2, RC4, DES und Triple-DES.
+</p>
+<p>
+Wer jemals in das normale C API des CryptoAPI hineingeschnuppert hat, der wird ob der leichten 
+Verwendbarkeit entz&uuml;ckt sein. Und es wird auch nicht schwieriger, wenn man einstellen will, welche
+Schl&uuml;ssell&auml;nge f&uuml;r den jeweiligen Algorithmus verwendet werden soll. Ein paar Konstanten mehr, sonst
+nichts, wie der Code in <b>highencpack.asp</b> demonstriert:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Const CAPICOM_ENCRYPTION_ALGORITHM_RC2 = 0 ' Use RSA RC2 encryption. 
+Const CAPICOM_ENCRYPTION_ALGORITHM_RC4 = 1 ' Use RSA RC4 encryption. 
+Const CAPICOM_ENCRYPTION_ALGORITHM_DES = 2 ' Use DES encryption. 
+Const CAPICOM_ENCRYPTION_ALGORITHM_3DES = 3 ' Use triple DES encryption. 
+
+Const CAPICOM_KEY_LENGTH_MAXIMUM = 0 ' Use the maximum key length available...
+Const CAPICOM_KEY_LENGTH_40_BITS = 1 ' Use 40-bit keys. 
+Const CAPICOM_KEY_LENGTH_56_BITS = 2 ' Use 56-bit keys if available. 
+Const CAPICOM_KEY_LENGTH_128_BITS = 3 ' Use 128-bit keys if available 
+
+strTestMessage = "Hello World!"
+strPassphrase = "A#0x?\$dE&lt;"	' NIEMALS die Passphrase "herumliegen" lassen
+
+Set xEncrypt = Server.CreateObject("CAPICOM.EncryptedData")
+xEncrypt.Content = strTestMessage
+xEncrypt.SetSecret strPassphrase
+
+' Key lengths for DES and 3DES encryption are standard and the key length 
+' property is ignored when these algorithms are used. 
+xEncrypt.Algorithm.Name = CAPICOM_ENCRYPTION_ALGORITHM_RC4
+xEncrypt.Algorithm.KeyLength = CAPICOM_KEY_LENGTH_128_BITS
+
+strEncryptedMsg = xEncrypt.Encrypt()
+
+Response.Write strEncryptedMsg
+%&gt;
+</pre>
+
+<h2>Entschl&uuml;sseln</h2>
+<p>
+Fast selbstverst&auml;ndlich funktioniert das Entschl&uuml;sseln &auml;hnlich einfach wie das Verschl&uuml;sseln. Der
+Unterschied ist, da&szlig; man die Funktion <i>Decrypt</i> mit dem Ciphertext "f&uuml;ttern" mu&szlig;, und bei der 
+<i>Content</i> Eigenschaft kommt dann der Plaintext wieder heraus (<b>decrypt.asp</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Const CAPICOM_ENCRYPTION_ALGORITHM_3DES = 3 ' Use triple DES encryption. 
+
+strCipherText = "MGoGCSsGAQQBgjdYA6BdMFsGCisGAQQBgjdYAwGgTTBLAgMBAAACAmYDAgIAwAQI" &amp; vbCrlf &amp; _
+   "JZjDl4H5hRIEEOdot2WroaM35Vr5FVAl/e8EIL7qaJJeuMBQC4625aKdH8u8hgd5" &amp; vbCrlf &amp; _
+   "rsyBD3jAok7fbdCG"
+
+strPassphrase = "A#0x?\$dE&lt;"	' NIEMALS die Passphrase "herumliegen" lassen
+
+Set xEncrypt = Server.CreateObject("CAPICOM.EncryptedData")
+xEncrypt.SetSecret strPassphrase
+xEncrypt.Algorithm.Name = CAPICOM_ENCRYPTION_ALGORITHM_3DES
+xEncrypt.Decrypt(strCipherText)
+strPlainText = xEncrypt.Content
+
+Response.Write strPlainText
+%&gt;
+</pre>
+
+<p>
+Zur Aufl&ouml;sung - es kommt nat&uuml;rlich "Hello World!" beim Client an.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Ver- und Entschl&uuml;sseln ist nur ein Feature von CAPICOM - ein sehr n&uuml;tzliches. F&uuml;r eine
+Besprechung der weiteren Features empfehle ich die Links am Ende dieses Artikels.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020115.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020115.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010528.htm">Aber bitte mit Rijndael</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010528.htm</span><br>
+<a href="../artikel/20020429.htm">Benutzerverwaltung leicht gemacht: Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020429.htm</span><br>
+<a href="../artikel/20010330.htm">Passw&ouml;rter mit SHA1 absichern</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010330.htm</span><br>
+<a href="../artikel/20040105.htm">Passw&ouml;rter speichern - aber richtig!</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040105.htm</span><br>
+<a href="../artikel/20000920.htm">PGP-Verschl&uuml;sselung bei Dateien</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000920.htm</span><br>
+<a href="../artikel/20010924.htm">Unknackbare Verschl&uuml;sselung mit Onetime Pads</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010924.htm</span><br>
+<a href="../artikel/20000921.htm">Ver- und entschl&uuml;sseln von Texten mit PGP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000921.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fen%2Dus%2Fsecurity%2FSecurity%2Fcapicom%5Fstart%5Fpage%2Easp">CAPICOM Dokumentation</a><br>
+<SPAN class="content">http://msdn.microsoft.com/library/en-us/security/Security/capicom_start_page.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3Furl%3D%2Flibrary%2Fen%2Dus%2Fdnsecure%2Fhtml%2Fintcapicom%2Easp">Introducing CAPICOM</a><br>
+<SPAN class="content">http://msdn.microsoft.com/library../default.htm?url=/library/en-us/dnsecure/html/intcapicom.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2Fdownloads%2Frelease%2Easp%3Freleaseid%3D30316">Platform SDK Redistributable: CAPICOM 1.0A</a><br>
+<SPAN class="content">http://www.microsoft.com/downloads/release.asp?releaseid=30316</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

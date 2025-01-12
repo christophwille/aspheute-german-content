@@ -1,0 +1,305 @@
+<HTML>
+<HEAD>
+<TITLE>Web Services in Anwendungen konsumieren</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Heute begeben wir uns auf die andere Seite der Web Services Front, n&auml;mlich auf die Kundenseite: wir wollen lernen, wie man einen Web Service anspricht und seine Funktionen aufruft - ihn konsumiert.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Web Service,WebService,C#,Csharp,C Sharp,VB,VB.NET,Consumer,WSDL,SOAP,Wsdl.exe,assembly,assemblies,bin">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Web Services in Anwendungen konsumieren</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Web%20Services.htm">Web Services</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010622"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Im Artikel <a href="../artikel/20010621.htm">Web Services 101 in ASP.NET</a> habe ich gezeigt, wie 
+einfach es ist, einen Web Service zu programmieren. Heute begeben wir uns auf die andere Seite der Front,
+n&auml;mlich auf die Kundenseite: wir wollen lernen, wie man einen Web Service anspricht und seine Funktionen
+aufruft - ihn "konsumiert".
+</p>
+<p>
+Ich m&ouml;chte speziell darauf hinweisen, da&szlig; obwohl wir heute exemplarisch einen in .NET geschriebenen Web
+Service konsumieren, die vorgestellte Vorgehensweise f&uuml;r alle zu SOAP und WSDL kompatiblen Web Service
+Implementierungen gilt: sei dieser in Perl auf Linux, Java auf Solaris oder welcher Kombination Sprache
+und Betriebssystem auch immer programmiert.
+</p>
+<p>
+Um den heute vorgestellten Code ausf&uuml;hren zu k&ouml;nnen, mu&szlig; ASP.NET am Server installiert sein. F&uuml;r das
+Erstellen von Assemblies ben&ouml;tigt man das vollst&auml;ndige .NET SDK (nicht notwendigerweise am Server,
+allerdings auf der Maschine, auf der die Assembly kompiliert werden soll).
+</p>
+
+<h2>Unser Web Service</h2>
+<p>
+Bevor man einen Web Service konsumieren kann, braucht man zuerst einen solchen. Damit wir ein nettes kleines Beispiel
+zum Probieren haben, wiederverwende ich die VB Implementierung unserer Services aus dem Artikel
+<a href="../artikel/20010621.htm">Web Services 101 in ASP.NET</a>. Hier nochmals der Web Service
+(<b>SampleVBService.asmx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;%@ WebService Language="VB" Class="DemoVBService" %&gt;
+Imports System
+Imports System.Web.Services
+
+Public Class DemoVBService : Inherits WebService
+ &lt;WebMethod()&gt; Public Function SayHello(strName As System.String) As System.String
+  SayHello = "Hello " &amp; strName &amp; " from VB" 
+ End Function
+End Class
+</pre>
+
+<p>
+Legen Sie diese ASMX Datei auf Ihrem Web Server ab, und wir k&ouml;nnen beginnen.
+</p>
+
+<h2>Der Web Service Proxy</h2>
+<p>
+Wer COM mit C++ programmiert hat, kennt das Prinzip der <i>Proxies</i> und <i>Stubs</i>: ein Objekt "lebt" auf einer
+einzigen (Server-)Maschine, und um es auf anderen Maschinen gleich aufrufen zu k&ouml;nnen wie wenn es lokal installiert
+w&auml;re, gibt es Proxies und Stubs - und diese funktionieren wie folgt: auf der lokalen Maschine wird von COM ein
+Proxy erstellt, der f&uuml;r den Client wie das echte Objekt aussieht. Aber eben nur so aussieht. Hinter jeder Funktion steht
+COM, das den Aufruf an die Maschine marshalled (weiterleitet), auf der das echte Objekt lebt. Dort nimmt
+der von COM erstellte Stub die Daten an, und spricht mit dem Objekt wie wenn es der Client w&auml;re. Ist der Aufruf
+beendet, gehen die R&uuml;ckgabewerte den Weg Objekt-Stub-Proxy-Client zur&uuml;ck. Und der Client wu&szlig;te nie von seinem
+Gl&uuml;ck.
+</p>
+<p>
+Eine Frage dr&auml;ngt sich auf - woher wei&szlig; COM, welche Funktionen f&uuml;r das Objekt existieren, um die Dummyfunktionen
+des Proxy's und des Stub's zu erstellen? Nun, daf&uuml;r gibt es die Type Libraries. Diese enthalten Informationen &uuml;ber
+die Typen und Methoden der Objekte, und aus diesen Informationen kann COM die Proxies und Stubs automatisch erstellen.
+</p>
+<p>
+Wieso dieser Ausflug nach COM? Nun, bei .NET Web Services l&auml;uft die Sache n&auml;mlich sehr &auml;hnlich ab. Wie wir wissen,
+ist jeder Web Service &uuml;ber WSDL definiert - und dieses WSDL ist das Type Library-&Auml;quivalent von COM, mit dem
+.NET f&uuml;r uns einen Web Service Proxy am Client erstellt.
+</p>
+<p>
+Dieses Erstellen des Proxy's l&auml;uft allerdings (meist) vor dem Benutzen des Services ab, da im Gegensatz zur Type
+Library von COM das WSDL nicht am Client vorliegt - und extra daf&uuml;r erst aufs Web zu gehen ist ineffizient. Daher
+wird der Proxy vorgeneriert, und zwar mit Hilfe des <b>Wsdl.exe</b> Utility's (<b>CreateProxy.bat</b> als Beispiel):
+</p>
+
+<pre style="background='silver';">
+Wsdl /language:cs  /protocol:soap /namespace:AspHeuteProxy /out:AspHeuteProxy.cs 
+     http://192.168.1.203/ConsumeService/SampleVBService.asmx
+</pre>
+
+<p>
+Was ist nun beim Aufruf von <b>Wsdl.exe</b> zu beachten? Nun, der URL des Web Services ist das absolut wichtigste
+dabei, weil er in die Proxyklasse (in unserem Fall in C# erstellt, im Namespace <i>AspHeuteProxy</i>, Name ident
+zum Klassennamen des Web Services) aufgenommen wird. Was ich damit sagen will ist da&szlig; wenn sich der URL eines
+Web Services &auml;ndert, ich die Klasse regenerieren mu&szlig;. Das sollte man nie vergessen.
+</p>
+
+<p>
+Die Datei <b>AspHeuteProxy.cs</b> ist jeder eingeladen, sich durchzusehen. Ich hingegen werde mit der Implementierung
+der Clients anfangen.
+</p>
+
+<h2>Ein Kommandozeilen Client</h2>
+<p>
+Beginnen wir einfach - eine kleine Kommandozeilenapplikation in C# geschrieben, die den Service aufruft, und
+das Ergebnis an der Console ausgibt. Dazu habe ich wieder einmal <a href="http://www.icsharpcode.net/opensource/sd/" target="_blank">SharpDevelop</a>
+verwendet, das ein Template f&uuml;r Konsolenanwendungen hat. Man mu&szlig; nur die Datei <b>AspHeuteProxy.cs</b> zum
+Projekt hinzuf&uuml;gen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010622_2.png" width="701" height="499" alt="" border="0">
+
+<p>
+Dann gehe ich daran, die vorgenerierte <b>Main.cs</b> zu ver&auml;ndern (&Auml;nderungen kursiv):
+</p>
+
+<pre style="background='silver';">
+using System;
+<i>using AspHeuteProxy;</i>
+
+class MainClass
+{
+  public static void Main(string[] args)
+  {
+    <i>DemoVBService myService = new DemoVBService();</i>
+    <i>Console.WriteLine(myService.SayHello("Christoph"));</i>
+  }
+}
+</pre>
+
+<p>
+Nur drei Zeilen sind notwendig, um einen Web Service aufzurufen! Den Rest erledigt der Proxy von .NET
+im Hintergrund f&uuml;r uns, und f&uuml;r uns sieht es aus, als w&uuml;rden wir mit einer lokal installierten Komponente
+arbeiten. Und ja, f&uuml;r nicht .NET Web Services funktioniert das genau gleich.
+</p>
+
+<h2>Eine ASP.NET Seite als Client</h2>
+<p>
+Nun, eine Kommandozeilenapplikationen ist zwar nett und sch&ouml;n, aber wie w&auml;r's, wenn wir den Web Service
+in unseren ASP.NET Seiten einsetzen k&ouml;nnten? Aber sicher doch. Dazu mu&szlig; man aber den Verwendungsansatz
+des Proxy's leicht ver&auml;ndern - man mu&szlig; ihn in eine Assembly verpacken. Dies geht jedoch sehr, sehr einfach
+(<b>Compile.bat</b>)
+</p>
+
+<pre style="background='silver';">
+csc.exe /target:library AspHeuteProxy.cs
+</pre>
+
+<p>
+Die resultierende <b>AspHeuteProxy.dll</b> Assembly verfrachtet man dann in das <b>bin</b> Verzeichnis der
+gew&uuml;nschten Web Applikation, und schon kann man den Web Service aufrufen. Ich habe dazu ein minimales
+Formular mit einer Textbox, Schaltfl&auml;che und Label gebaut (der Label dient der Anzeige des R&uuml;ckgabeergebnisses
+des Web Services):
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010622_1.png" width="492" height="239" alt="" border="0">
+
+<p>
+Und hier nun der Code dazu (<b>CallService.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Import Namespace="AspHeuteProxy" %&gt;
+&lt;script language="C#" runat="server"&gt;
+void btnPress_Click(Object Sender, EventArgs E)
+{
+  DemoVBService myService = new DemoVBService();
+  lblHelloOut.Text = myService.SayHello(txtMessage.Text);
+}
+&lt;/script&gt;
+
+&lt;html&gt;
+&lt;body&gt;
+
+&lt;form runat="server"&gt;
+
+&lt;asp:textbox id="txtMessage" runat="server"/&gt;
+&lt;asp:Button id="btnPress" text="Say Hello!" onClick="btnPress_Click" runat="server" /&gt;
+
+&lt;p&gt;
+&lt;asp:Label id="lblHelloOut" text="" runat="server" /&gt;
+&lt;/p&gt;
+
+&lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Der Code ist der gleiche wie der der Kommandozeilenapplikation, nur befindet er sich in der Ereignisprozedur
+des Buttons des Formulars. Alles, was ich tun mu&szlig;te, war das <b>@Import</b> Statement f&uuml;r den Namespace
+des Proxy's einzuf&uuml;gen. &Uuml;blicherweise w&uuml;rde der Benutzer vom Aufruf eines Web Services nichts mitbekommen
+(zB Kreditkartenvalidierung in Echtzeit), aber heute begn&uuml;gen wir uns mal mit einer "interaktiven Spielwiese"
+f&uuml;r den Web Service.
+</p>
+
+<p>
+&Uuml;brigens - da der Proxy jetzt als Assembly vorliegt, kann ich die ASP.NET Seite klarerweise auch in VB.NET
+schreiben (<b>CallService_vbnet.aspx</b> - der Formularcode ist identisch):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Import Namespace="AspHeuteProxy" %&gt;
+&lt;script language="VB" runat="server"&gt;
+Sub btnPress_Click(Sender as Object, E as EventArgs)
+  Dim myService As DemoVBService 
+  myService = New DemoVBService
+  lblHelloOut.Text = myService.SayHello(txtMessage.Text)
+End sub
+&lt;/script&gt;
+</pre>
+
+<p>
+Der Web Service ist in VB.NET implementiert, der Proxy in C# erstellt, und die ASP.NET Seite l&auml;uft wieder
+in VB.NET. Ein netter Sprachenmix, der zeigt, wie "freundlich" .NET gegen&uuml;ber Teams mit unterschiedlichen
+Sprachpr&auml;ferenzen ist.
+</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Damit h&auml;tten wir den ersten Schritt zur Verwendung von Web Services getan. Uns fehlt etwas, das ein sp&auml;terer
+Artikel nachholen wird: Fehlerbehandlung f&uuml;r den Fall, da&szlig; der Server mit dem Web Service nicht erreichbar
+sein sollte.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010622.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010622.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20021029.htm">Amazon.com Web Services 2.0</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021029.htm</span><br>
+<a href="../artikel/20030429.htm">Authentifizierung in Web Services - Windows Integrated</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20030429.htm</span><br>
+<a href="../artikel/20021107.htm">Index Server Abfragen per Web Service</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021107.htm</span><br>
+<a href="../artikel/20020415.htm">Programmieren mit den Google Web APIs Beta 2</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020415.htm</span><br>
+<a href="../artikel/20010627.htm">Session State in ASP.NET Web Services</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010627.htm</span><br>
+<a href="../artikel/20010208.htm">Web Projekte mit SharpDevelop erstellen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010208.htm</span><br>
+<a href="../artikel/20010621.htm">Web Services 101 in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010621.htm</span><br>
+<a href="../artikel/20010629.htm">Web Services mit dem SOAP Toolkit erstellen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010629.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Edotnetgerman%2Ecom%2F">DotNetGerman Diskussionslisten</a><br>
+<SPAN class="content">http://www.dotnetgerman.com/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eicsharpcode%2Enet%2Fopensource%2Fsd%2F">SharpDevelop</a><br>
+<SPAN class="content">http://www.icsharpcode.net/opensource/sd/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

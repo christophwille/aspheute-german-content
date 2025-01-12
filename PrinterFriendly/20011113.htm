@@ -1,0 +1,217 @@
+<HTML>
+<HEAD>
+<TITLE>Sonderzeichen korrekt grabben mit XmlHttp</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Manches Mal kommt man sich als Entwickler f&uuml;r nicht-englische Sites leicht verlassen vor, da viel Software nur auf Englisch als Sprache ausgerichtet zu sein scheint. Wie zum Beispiel beim Seitengrabbing mit der XmlHttp Komponente des MSXML Parsers.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,XML,MSXML,XMLHTTP,Webpage,grabbing,Sonderzeichen,Umlaute,Konvertierung,ADODB.Stream,Charset,Zeichensatz,Character Set">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Sonderzeichen korrekt grabben mit XmlHttp</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Komponenten.htm">Komponenten</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20011113"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Manches Mal kommt man sich als Entwickler f&uuml;r nicht-englische Sites leicht verlassen vor, da viel
+Software nur auf Englisch als Sprache ausgerichtet zu sein scheint. Und darunter f&auml;llt auch, da&szlig; in
+vielen F&auml;llen die von uns Deutschsprachigen so geliebten Sonderzeichen (Umlaute und dergleichen) des
+&ouml;fteren scheint's "verschluckt" werden - wie zum Beispiel beim Seitengrabbing mit der XmlHttp Komponente
+des MSXML Parsers.
+</p>
+
+<p>
+F&uuml;r den heutigen Artikel habe ich den MSXML Parser 4.0 verwendet. Dieser kann von MSDN
+<a href="http://msdn.microsoft.com/downloads../default.htm?url=/downloads/sample.asp?url=/msdn-files/027/001/766/msdncompositedoc.xml" target="_blank">Microsoft XML Core Services 4.0 RTM </a>downgeloadet werden.
+</p>
+
+<p>
+Um zu zeigen, was ich mit "verschlucken" von Sonderzeichen meine, habe ich eine sehr minimale Seite (<b>demo.asp</b>)
+geschrieben, die einige Umlaute beinhaltet:
+</p>
+
+<pre style="background='silver';">
+&lt;html&gt;
+  &lt;head&gt;&lt;title&gt;Demoseite&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;p&gt;
+Alt&ouml;tting bei M&uuml;nchen
+&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Im Normalfall versucht man es mit der k&uuml;rzest m&ouml;glichen Variante, wie schon im Artikel
+<a href="../artikel/20010328.htm">Webpage-Grabbing mit dem XML Parser</a> demonstriert. Ich habe
+den Code in die Datei <b>grabplain.vbs</b> verpackt, um ausnahmsweise auf der Kommandozeile testen
+zu k&ouml;nnen (eine entsprechend programmierte ASP Seite ist im Download auch vorhanden):
+</p>
+
+<pre style="background='silver';">
+Dim objXmlHttp
+Set objXmlHttp = CreateObject("MSXML2.ServerXMLHTTP.4.0")
+objXmlHttp.open "GET", "http://127.0.0.1/aspheute/xmlhttp/demo.asp", False
+objXmlHttp.send
+
+Wscript.Echo objXmlHttp.responseBody
+Set objXmlHttp = Nothing
+</pre>
+
+<p>
+Nun, der Output enth&auml;lt verd&auml;chtig viele Fragezeichen: die zur&uuml;ckgelieferte Response wird definitiv
+mit dem falschen Zeichensatz interpretiert. Die n&auml;chste Sektion zeigt, wie man es l&ouml;sen kann.
+</p>
+
+<h2>Richtig mit Character Set</h2>
+<p>
+Wer denkt, eine einfache Einstellung am XmlHttp Objekt selbst hilft, irrt in diesem Falle leider. Man
+mu&szlig; sich des <i>Stream</i> Objekts von ADO bedienen, das eine Zeichensatzkonvertierung beherrscht. Der
+entsprechende Sourcecode sieht dann so aus (<b>grabumlauts.asp</b>, eine VBS Datei ist im Download
+mit dabei):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Language=VBScript %&gt;
+&lt;%
+Option Explicit
+
+Const adTypeText = 2
+Const adReadAll = -1
+Dim objXmlHttp, objStream
+
+Set objXmlHttp = Server.CreateObject("MSXML2.ServerXMLHTTP.4.0")
+objXmlHttp.open "GET", "http://127.0.0.1/aspheute/xmlhttp/demo.asp", False
+objXmlHttp.send
+
+Set objStream = Server.CreateObject("ADODB.Stream")
+objStream.Open
+objStream.Type = adTypeText
+
+objStream.WriteText (objXmlHttp.responseBody)
+objStream.Position = 0
+objStream.Charset = "latin1"
+
+Response.Write objStream.ReadText(adReadAll)
+
+objStream.close
+Set objStream = Nothing
+
+Set objXmlHttp = Nothing
+%&gt;
+</pre>
+
+<p>
+Der Code zum Grabben der Seite ist gleich geblieben, was dazugekommen ist ist das <i>Stream</i> Objekt. 
+Diesem wird der gegrabbte Inhalt &uuml;bergeben (mittels <i>WriteText</i>), und nach dieser &Uuml;bergabe gehen
+wir wieder an den Anfang des Streams (<i>Position=0</i>).
+</p>
+
+<p>
+Und der interessanteste Part ist dann <i>objStream.Charset = "latin1"</i>. Hier wird das Character Set
+(Zeichensatz) eingestellt, mit dem die geschriebenen Daten wieder ausgelesen werden sollen, was f&uuml;r
+unseren Kulturkreis <i>latin1</i> ist. Nach dieser Einstellung kann der korrekt konvertierte Text mittels
+<i>ReadText</i> ausgelesen werden, und wir haben statt Sonderzeichen unsere Umlaute erhalten (gilt auch
+f&uuml;r andere Sonderzeichen).
+</p>
+
+<p>
+Wie findet man heraus, welche Einstellungen man f&uuml;r <i>Charset</i> treffen kann? Eine Variante ist die
+Registry:
+</p>
+
+<IMG SRC="/artikel/Bilder/200111/20011113_1.png" width="623" height="232" alt="" border="0">
+
+<p>
+Unter <i>HKCR\MIME\Database\Charset</i> findet sich eine Auflistung der Charsets. Wer nicht gerne in der Registry
+herumsucht, kann sich auch in der MSDN schlau machen:
+<a href="http://msdn.microsoft.com/library../default.htm?url=/workshop/Author/dhtml/reference/charsets/charset4.asp" target="_blank">Character Set Recognition</a>.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Wie man sieht ist die <i>ADODB.Stream</i> Klasse nicht nur im Kontext von Datenbanken ein &auml;u&szlig;erst praktischer
+Gehilfe.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20011113.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20011113.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020411.htm">Kopieren verboten - Lizenzsicherung bei ASP Scripts</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020411.htm</span><br>
+<a href="../artikel/20000519.htm">Laden von Dateien aus dem Web mit ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000519.htm</span><br>
+<a href="../artikel/20010803.htm">Meta Tags von fremden Seiten parsen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010803.htm</span><br>
+<a href="../artikel/20000824.htm">Scrapen von Webseiten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000824.htm</span><br>
+<a href="../artikel/20000425.htm">Speichern von Recordsets in Application-Variablen (Teil&nbsp;II)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000425.htm</span><br>
+<a href="../artikel/20010328.htm">Webpage-Grabbing mit dem XML Parser</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010328.htm</span><br>
+<a href="../artikel/20010910.htm">Webseiten automatisiert scrapen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010910.htm</span><br>
+<a href="../artikel/20010911.htm">Webseiten automatisiert scrapen, Teil 2</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010911.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3Furl%3D%2Fworkshop%2FAuthor%2Fdhtml%2Freference%2Fcharsets%2Fcharset4%2Easp">Character Set Recognition</a><br>
+<SPAN class="content">http://msdn.microsoft.com/library../default.htm?url=/workshop/Author/dhtml/reference/charsets/charset4.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Fdownloads%2Fdefault%2Easp%3Furl%3D%2Fdownloads%2Fsample%2Easp%3Furl%3D%2Fmsdn%2Dfiles%2F027%2F001%2F766%2Fmsdncompositedoc%2Exml">Microsoft XML Core Services 4.0 RTM</a><br>
+<SPAN class="content">http://msdn.microsoft.com/downloads../default.htm?url=/downloads/sample.asp?url=/msdn-files/027/001/766/msdncompositedoc.xml</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

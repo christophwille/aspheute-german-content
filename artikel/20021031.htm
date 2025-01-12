@@ -1,0 +1,634 @@
+<HTML>
+<HEAD>
+<TITLE>Online File Management System mit ASP.NET und C# - Teil 1</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Es gibt eine komfortable M&ouml;glichkeit, seine Daten, Dateien und Verzeichnisse online zu verwalten: ein Online File Management System (im weiteren nur mehr OFMS).">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,OFMS,Online File Management System,CMS,Content Management System,ASP.NET,Webapplikation,Web Forms,Webformulare">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Online File Management System mit ASP.NET und C# - Teil 1</H1>
+<p>
+Geschrieben von: <a href="../autoren/rudolfball.htm">Rudolf Ball</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20021031"></SCRIPT>
+</p>
+<p>
+Websites werden im Laufe der Zeit ver&auml;ndert, und wenn man nicht gerade ein CMS (Content Management System) einsetzt, dann 
+bedeutet das in den meisten F&auml;llen da&szlig; &Auml;nderungen durch Dateiupload mit FTP auf die Website kommen. Es gibt aber noch eine 
+andere, komfortablere M&ouml;glichkeit, seine Daten, Dateien und Verzeichnisse online zu verwalten: ein Online File Management 
+System (im weiteren nur mehr OFMS).
+</p>
+<p>
+In dieser Artikelserie m&ouml;chte ich Ihnen zeigen, wie man ein solches System mit ASP.NET und C# entwickelt. Es soll uns folgende
+Aktionen online zur Verf&uuml;gung stellen:
+</p>
+
+<ul>
+	<li>Unsere Dateien und Verzeichnisse sollen online angesehen werden k&ouml;nnen, mehr dazu in der Sektion "Verzeichnisse 
+		browsen"
+	<li>Wir sollen die M&ouml;glichkeit haben, Dateien hinzuzuf&uuml;gen (Upload) oder sie herunterzuladen (Download), siehe Sektion 
+		"Bestandsver&auml;nderungen" im zweiten Teil der Artikelserie
+	<li>Textfiles wie etwa .aspx oder .html Dateien sollen online ver&auml;ndert werden k&ouml;nnen. Au&szlig;erdem sollen wir neue Dateien 
+		erzeugen k&ouml;nnen. Mehr dazu in der Sektion "Facelifting" im zweiten Teil der Artikelserie
+</ul>
+
+<p>
+Damit kann unser OFMS einiges mehr als ein normaler FTP Client. Und weitere Vorteile gewinnen wir ebenfalls: auf Reisen haben 
+wir nicht immer einen FTP Client zur Hand, zB im Internetcaf&eacute;, aber OFMS ist immer f&uuml;r uns da. 
+</p>
+
+<h2>Verzeichnisse browsen</h2>
+<p>
+Um unsere Verzeichnisstruktur mit all den Dateien online ansehen zu k&ouml;nnen, m&uuml;ssen wir uns ein Bild davon machen, was wir 
+eigentlich erzeugen wollen. Der Screenshot unten stellt dar, wie unser OFMS am Ende dieses Artikels aussehen soll.
+</p>
+
+<IMG SRC="Bilder/200210/20021031_1.png" width="855" height="644" alt="" border="0">
+
+<p>
+Aus diesem Screenshot kann man leicht die Struktur des OFMS entnehmen. Ganz oben befindet sich unsere Toolbox, welche uns die 
+M&ouml;glichkeit bieten soll, Dateien upzuloaden und neue Dateien bei Bedarf zu erzeugen. Gleich darunter befindet sich der Label 
+<i>Physischer_und_Logischer_Pfad</i>, welcher den aktuellen physischen Pfad auf der Serverfestplatte und den logischen Pfad in unserer 
+Website anzeigt. In unserem Fall handelt es sich physisch um "C:\inetpub\wwwroot\OFMS" und logisch um "/OFMS". 
+</p>
+<p>
+Direkt darunter (und noch nicht sichtbar) versteckt sich der Label <i>StatusMessage</i>, welcher bei Bedarf eine Fehlermeldung anzeigt.
+Als letzter und gr&ouml;&szlig;ter Block schl&auml;gt die Auflistung der Verzeichnisse und Dateien zu Buche. Diese ist dreigeteilt. Erstens 
+ben&ouml;tigen wir einen "eine Verzeichnisebene h&ouml;her"-Link, welcher uns von einem Unterverzeichnis in das &uuml;bergeordnete Verzeichnis 
+bringt. Zweitens listen wir Verzeichnisse auf. Bei den Verzeichnissen geben wir auch die Gr&ouml;&szlig;e des Verzeichnisses an, welche 
+der Gr&ouml;&szlig;e der Dateien sowie der Unterverzeichnisse entspricht. Bei den Dateien geben wir weiters das Erstellungsdatum sowie 
+das Datum der letzten &Auml;nderung an. Dies ist die Struktur, die wir im Folgenden darstellen wollen.
+</p>
+<p>
+Unsere OFMS.aspx Seite beinhaltet zun&auml;chst nur die oben genannten WebControls. Diese w&auml;ren ein Label f&uuml;r den logischen und 
+physischen Pfad, ein Label f&uuml;r eventuelle Meldungen und ein leerer Table. Diese Tabelle wird Zeile f&uuml;r Zeile mit den Namen 
+der Unterverzeichniss und den Namen der Dateien, welche unser aktuelles Verzeichnis enth&auml;lt, gef&uuml;llt.
+</p>
+
+<pre style="background='silver';">
+&lt;asp:table id="DateienUndVerzeichnisse" Runat="server" Width="800px"&gt;
+   &lt;asp:TableRow&gt;
+      &lt;asp:TableCell Width="40px"&gt;&lt;/asp:TableCell&gt;
+      &lt;asp:TableCell Width="240px" Text="Index"&gt;&lt;/asp:TableCell&gt;
+      &lt;asp:TableCell Width="40px"&gt;&lt;/asp:TableCell&gt;
+      &lt;asp:TableCell Width="40px"&gt;&lt;/asp:TableCell&gt;
+      &lt;asp:TableCell Width="40px"&gt;&lt;/asp:TableCell&gt;
+      &lt;asp:TableCell Width="100px" HorizontalAlign="Center" Text="Gr&ouml;sse"&gt;&lt;/asp:TableCell&gt;
+      &lt;asp:TableCell Width="150px" HorizontalAlign="Center" Text="erstellt am"&gt;&lt;/asp:TableCell&gt;
+      &lt;asp:TableCell Width="150px" HorizontalAlign="Center" Text="ge&auml;ndert am"&gt;&lt;/asp:TableCell&gt;
+   &lt;/asp:TableRow&gt;
+&lt;/asp:table&gt;
+</pre>
+
+<p>
+Bei jedem PageLoad-Event werden wir diesen Table dynamisch und Zeile f&uuml;r Zeile f&uuml;llen. Unser PageLoad-Event sieht 
+wie folgt aus:
+</p>
+
+<pre style="background='silver';">
+if (!Page.IsPostBack)
+{
+   VerzeichnisPfad = Request.Params["Verzeichnis"];
+   if (VerzeichnisPfad == null || VerzeichnisPfad == "/")
+   {
+      VerzeichnisPfad = Request.ApplicationPath.ToString();
+   }
+   else if (VerzeichnisPfad.EndsWith("/"))
+   {
+      VerzeichnisPfad = VerzeichnisPfad.Substring(0,VerzeichnisPfad.Length - 1);
+   }
+
+   Physicher_und_Logischer_Pfad.Text = "Virtueller Pfad: " + VerzeichnisPfad +
+   "&lt;br&gt;Physischer Pfad: " + Server.MapPath(VerzeichnisPfad);
+   
+   TabelleDateienUndVerzeichnisseFuellen();
+}
+</pre>
+
+<p>
+Sollte es sich um kein Postback-Event handeln, weisen wir der Variable <i>VerzeichnisPfad</i> einen Wert aus dem Querystring zu. Es 
+wird gepr&uuml;ft, ob der <i>VerzeichnisPfad</i> leer oder ein Slash ("/") ist, was dem Rootverzeichnis entsprechen w&uuml;rde. In diesem Fall 
+weisen wir der Variable <i>VerzeichnisPfad</i> das Ergebnis aus Request.ApplicationPath zu, welches dem logischen Rootverzeichnis 
+unseres Webs entspricht ("/OFMS"). Sollte andererseits <i>VerzeichnisPfad</i> mit einem Slash enden, und somit kein Rootverzeichnis, 
+aber ein Unterverzeichnis sein, so wird der Variable der finale Slash abgeschnitten. In weiterer Folge weisen wir dem Label 
+<i>Physicher_und_Logischer_Pfad</i> als logischen Teil die Variable <i>VerzeichnisPfad</i> zu, physisch ermitteln wir die Position durch 
+den R&uuml;ckgabewert aus <i>Server.MapPath</i>. 
+</p>
+<p>
+Zu guter letzt rufen wir die umfangreiche Funktion <i>TabelleDateienUndVerzeichnisseFuellen</i> auf, welche den Table 
+<i>DateienUndVerzeichnisse</i> f&uuml;llt. Diese Funktion wird im Folgenden erl&auml;utert.
+</p>
+
+<pre style="background='silver';">
+private void TabelleDateienUndVerzeichnisseFuellen()
+{
+   string Ort;
+   DirectoryInfo ueberVerzeichnis;
+   DirectoryInfo[] unterVerzeichnisse;
+   FileInfo[] unterDateien;
+   TableCell ZelleIcon;
+   TableCell ZelleGroesse;
+   TableCell ZelleErzeugt;
+   TableCell ZelleVeraendert;
+   System.Web.UI.WebControls.Image DateiIcon;
+</pre>
+
+<p>
+Im ersten Teil definieren wir die Variable Ort, welche den aktuellen Pfad halten wird. Die DirectoryInfos <i>ueberVerzeichnis</i> und 
+<i>unterVerzeichnis</i> werden unser Superverzeichnis und eine Menge von Subverzeichnissen beinhalten. Das FileInfo <i>unterDateien</i> 
+wird die Menge aller Dateien eines Verzeichnisses beinhalten. Die vier Zellen <i>ZelleIcon</i>, <i>ZelleGroesse</i>, <i>ZelleErzeugt</i> und 
+<i>ZelleVeraendert</i> werden eine Zelle einer bestimmten Zeile unserer Tabelle <i>DateienUndVerzeichnisse</i> entsprechen. Das Bild 
+<i>DateiIcon</i> wird f&uuml;r die verschiedenen Datei Icons ben&ouml;tigt.
+</p>
+
+<pre style="background='silver';">
+try
+{
+   ueberVerzeichnis = new DirectoryInfo(Server.MapPath(VerzeichnisPfad));
+   unterVerzeichnisse = ueberVerzeichnis.GetDirectories();
+   unterDateien = ueberVerzeichnis.GetFiles();
+}
+catch (Exception ex)
+{
+   StatusMessage.Text = ex.Message;
+   StatusMessage.Visible = true;
+   return;
+}
+</pre>
+
+<p>
+Wir versuchen nun, Verzeichnisse und Dateien einzulesen. Aus diesem Grund nutzen wir die Klasse DirectoryInfo. Die Variable 
+<i>ueberVerzeichnis</i> repr&auml;sentiert das Verzeichnis, in welchem wir uns gerade befinden. Wir lesen es als "new DirectoryInfo" ein, 
+als Eingabeparameter gilt die Variable <i>VerzeichnisPfad</i>. Die Arrays <i>unterVerzeichnisse</i> und <i>unterDateien</i> werden mit der 
+Funktion GetDirectories oder GetFiles bestimmt. Im Falle eines Fehlers fangen wir ihn ab und schreiben ihn in den vormals 
+unsichtbaren Label <i>StatusMessage</i>, welcher nun sichtbar wird.
+</p>
+
+<pre style="background='silver';">
+TableRow Zeile;
+TableCell ZelleLink;
+HyperLink Link;
+</pre>
+
+<p>
+Nun ben&ouml;tigen wir drei Variablen. <i>Zeile</i> definiert eine Tabellenzeile, <i>ZelleLink</i> eine Zelle f&uuml;r einen Hyperlink
+und <i>Link</i> den Hyperlink.
+</p>
+
+<pre style="background='silver';">
+Style StyleVerzeichnisse = new Style();
+StyleVerzeichnisse.BackColor = Color.Gainsboro;
+StyleVerzeichnisse.Font.Name = "Verdana";
+StyleVerzeichnisse.Font.Bold = true;
+StyleVerzeichnisse.Font.Underline = false;
+StyleVerzeichnisse.Font.Size = 8;
+StyleVerzeichnisse.ForeColor = Color.Black;
+...
+</pre>
+
+<p>
+Wir definieren auch die Styles f&uuml;r die einzelnen Zellen. In diesem exemplarischen Codeausschnitt erzeugen wir einen neuen 
+Style (new Style) und weisen ihm eine Reihe von Werten zu, zB Schriftart und Gr&ouml;&szlig;e. Im Sourcecode werden Sie sehen, da&szlig; es 
+auch eine Definition f&uuml;r Dateien (<i>StyleDateien</i>) und HyperLinks (<i>StyleLink</i>) gibt. Somit haben wir den allgemeinen 
+Definitionsteil hinter uns gelassen und k&ouml;nnen damit beginnen, die Zeilen der Tabelle nach und nach mit Werten zu f&uuml;llen. 
+Als erstes besch&auml;ftigen wir uns mit der Tabellenzeile, die uns eine Verzeichnisebene nach oben bringt.
+</p>
+
+<pre style="background='silver';">
+if (VerzeichnisPfad != "/")
+{
+   Zeile = new TableRow();
+   ZelleLink = new TableCell();
+   Link = new HyperLink();
+   ZelleIcon = new TableCell();
+   ZelleGroesse = new TableCell();
+   DateiIcon = new System.Web.UI.WebControls.Image();
+</pre>
+
+<p>
+Sollte der <i>VerzeichnisPfad</i> ungleich dem Wurzelverzeichnis ("/") sein, erzeugen wir ein neues Objekt einer Zeile, einer 
+LinkZelle, eines Hyperlinks usw.
+</p>
+
+<pre style="background='silver';">
+DateiIcon.ImageUrl = "./Bilder/Ebene_hoeher.gif";
+ZelleIcon.Controls.Add(DateiIcon);
+ZelleIcon.HorizontalAlign = HorizontalAlign.Center;
+</pre>
+
+<p>
+Wir weisen dem Image <i>DateiIcon</i> das Symbol 
+</p>
+
+<IMG SRC="Bilder/200210/20021031_2.png" width="16" height="16" alt="" border="0">
+
+<p>
+zu. Mittels Contols.Add f&uuml;gen wir der Zelle <i>ZelleIcon</i> das Image <i>DateiIcon</i> hinzu. Nach diesem System werden wir auch die 
+anderen Zellen f&uuml;llen. Als zus&auml;tzliches Attribut weisen wir der Zelle eine horizontale Ausrichtung zu.
+</p>
+
+<pre style="background='silver';">
+Link.Text = "...";
+int letzterSlash = VerzeichnisPfad.LastIndexOf("/");
+Ort = VerzeichnisPfad.Substring(0,letzterSlash);
+
+if (Ort.Length == 0)
+{
+   Ort = "/";
+}
+
+Link.NavigateUrl = "OFMS.aspx?Verzeichnis=" + Ort;
+Link.ApplyStyle(StyleLink);
+ZelleLink.Controls.Add(Link);
+</pre>
+
+<p>
+Dem Link geben wir als Text drei Punkte. Der Variable <i>letzterSlash</i> weisen wir den Indexwert des letzten Slashs in unserem 
+Verzeichnispfad zu. Diese Information ben&ouml;tigen wir zum Abschneiden. Anschlie&szlig;end schneiden wir den Verzeichnispfad bis zum 
+letzten Slash ab. Unser Ort ist nun das &uuml;bergeordnete Verzeichnis. Nun pr&uuml;fen wir, ob der Ort das Wurzelverzeichnis ist, um 
+ihm gegebenenfalls den Wert "/" zuzuweisen. Wir erzeugen eine NavigateUrl f&uuml;r unseren Hyperlink, welcher wir dem Attribut 
+Verzeichnis die Variable Ort zuweisen, unser Zielverzeichnis. Auch weisen wir dem Hyperlink den hartcodierten Style 
+StyleLink zu und f&uuml;gen es der Zelle hinzu.
+</p>
+
+<pre style="background='silver';">
+ZelleGroesse = new TableCell();
+ZelleGroesse.Text = "";
+ZelleErzeugt = new TableCell();
+ZelleErzeugt.Text = "";
+ZelleVeraendert = new TableCell();
+ZelleVeraendert.Text = "";
+</pre>
+
+<p>
+Da wir f&uuml;r diese Zeile - sie linkt uns ja eine Verzeichnisebene nach oben - weder eine Gr&ouml;&szlig;e noch ein Erzeugungs- oder 
+Ver&auml;nderungsdatum besitzen erzeugen wir drei Dummyzellen, welche nur dazu dienen, keine L&ouml;cher in unserer Tabelle entstehen 
+zu lassen.
+</p>
+
+<pre style="background='silver';">
+Zeile.Cells.Add(ZelleIcon);
+Zeile.Cells.Add(ZelleLink);
+Zeile.Cells.Add(ZelleGroesse);
+Zeile.Cells.Add(ZelleErzeugt);
+Zeile.Cells.Add(ZelleVeraendert);
+...
+Zeile.ApplyStyle(StyleVerzeichnisse);
+DateienUndVerzeichnisse.Rows.Add(Zeile);
+}
+</pre>
+
+<p>
+Im letzten Schritt unserer Startzeile f&uuml;gen wir die Zelle mit dem Icon und die Zelle mit dem Link sowie die Dummyzellen der 
+Zeile hinzu, binden den Style <i>StyleVerzeichnisse</i> an die Zeile und f&uuml;gen die Zeile der Tabelle hinzu. Somit haben wir die 
+erste Zeile eingef&uuml;gt.
+</p>
+
+<pre style="background='silver';">
+foreach(DirectoryInfo unterVerzeichnis in unterVerzeichnisse)
+{
+   Zeile = new TableRow();
+   ZelleLink = new TableCell();
+   Link = new HyperLink();
+   ...
+</pre>
+
+<p>
+Als zweite Zeilenart in unserer Tabelle werden wir die Verzeichnisse auflisten. Da dieser Teil des Codes sehr dem der "eine 
+Verzeichnisebene h&ouml;her" Zeile &auml;hnelt, werden wir uns nur auf Ver&auml;nderungen im Code beziehen. Der beigelegte, vollst&auml;ndige 
+Sourcecode ist sehr ausf&uuml;hrlich dokumentiert und somit auch leicht verst&auml;ndlich.
+</p>
+
+<pre style="background='silver';">
+Link.Text = unterVerzeichnis.Name;
+Ort = VerzeichnisPfad;
+
+if (Ort.EndsWith("/"))
+{
+   Ort += unterVerzeichnis.Name;
+}
+else
+{
+   Ort += "/" + unterVerzeichnis.Name;
+}
+</pre>
+
+<p>
+Ein Klick auf den Namen des Unterverzeichnisses soll dieses f&uuml;r uns &ouml;ffnen. Daher sieht der Code f&uuml;r die Bestimmung der 
+Variable Ort ein wenig anders aus. Ort wird anf&auml;nglich mit dem <i>VerzeichnisPfad</i> belegt. Sollte dieser keinen finalen Slash 
+besitzen, wird er hinzugef&uuml;gt. Ansonsten wird zum VerzeichnisPfad noch der Name des Unterverzeichnisses angef&uuml;gt. Somit 
+wird als Ort der vollst&auml;ndige Pfadname des Unterverzeichnisses dem Querystring &uuml;bergeben.
+</p>
+
+<pre style="background='silver';">
+ZelleGroesse.Text =
+     DateiGroesseFormat(VerzeichnisGroesse(unterVerzeichnis.FullName));
+</pre>
+
+<p>
+Um die Gr&ouml;&szlig;e des Unterverzeichnisses zu ermitteln, bedarf es ein wenig Programmieraufwand. Wie wir hier sehen, rufen wir zwei 
+Subfunktionen auf. <i>DateiGroesseFormat</i> formatiert einen Gr&ouml;&szlig;enwert in Bytes, Kilobytes und Megabytes. <i>VerzeichnisGroesse</i> 
+ermittelt den Gr&ouml;&szlig;enwert aus dem Unterverzeichnis. Diese rekursive Funktion folgt im Anschlu&szlig; an den Code zum F&uuml;llen der 
+Tabelle. Auch bei den Dateien ist der Code recht einsichtig, als einzige Neuerung f&uuml;llen wir die Zellen "Datum der 
+Erstellung" und "letzte Ver&auml;nderung".
+</p>
+
+<pre style="background='silver';">
+ZelleErzeugt.Text = String.Format("{0:MM/dd/yy hh:mm}", unterDatei.CreationTime);
+ZelleVeraendert.Text = String.Format("{0:MM/dd/yy hh:mm}", unterDatei.LastWriteTime);
+</pre>
+
+<p>
+Die Eigenschaft CreationTime und LastWriteTime der jeweiligen Datei liefern das gew&uuml;nschte Ergebnis. Zur Formatierung der 
+Zeitangabe verwenden wir String.Format, als Formatierungsstring "dd.MM.yyyy hh:mm", was beispielsweise den Output 
+"01.09.2002 12:33" erzeugen w&uuml;rde. Zu guter Letzt m&ouml;chte ich noch die Funktion <i>VerzeichnisGroesse</i> unter die Lupe nehmen.
+</p>
+
+<pre style="background='silver';">
+protected long VerzeichnisGroesse(string Pfad)
+{
+   long Groesse = 0;
+   DirectoryInfo VerzeichnisInfo = new DirectoryInfo(Pfad);
+   
+foreach(FileInfo Datei in VerzeichnisInfo.GetFiles())
+{
+   Groesse += Datei.Length;
+}
+
+foreach (DirectoryInfo Unterverzeichnis in VerzeichnisInfo.GetDirectories())
+{
+   Groesse += VerzeichnisGroesse(Unterverzeichnis.FullName);
+}
+
+return Groesse;
+}
+</pre>
+
+<p>
+Als Eingabeparameter nehmen wir den Pfad des Verzeichnisses, welches wir "wiegen" wollen. Neben einer Variable Groesse 
+erzeugen wir eine DirectoryInfo auf das Verzeichnis. Da nun die Gesamtgr&ouml;&szlig;e des Verzeichnisses die Summe aller Dateigr&ouml;&szlig;en 
+und Verzeichnisgr&ouml;&szlig;en ist, ben&ouml;tigen wir einen rekursiven Aufruf. Die Dateigr&ouml;&szlig;en werden einfach addiert. Bei den 
+Verzeichnisgr&ouml;&szlig;en entspricht die Gr&ouml;&szlig;e eines Verzeichnisses wieder dem Prozeduraufruf mit entsprechender Pfadangabe. 
+Somit laufen wir den Verzeichnisbaum hinab, bis wir keine Unterverzeichnisse mehr finden k&ouml;nnen. Diese Summe aller 
+Summen retournieren wir dann.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Im n&auml;chsten Artikel werden wir uns mit Bestandsver&auml;nderungen - Upload und Download - sowie dem Online-Editieren
+von Textdateien besch&auml;ftigen. Damit aus dem Browser ein richtiges Online-Administrationstool wird.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20021031.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20000804.htm">Directory Browsing a la .NET</a><br>
+<a href="20020226.htm">Ein Touch-Utility in C#</a><br>
+<a href="20000724.htm">Exception Handling in C#</a><br>
+<a href="20021105.htm">Online File Management System mit ASP.NET und C# - Teil 2</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20021031" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Online File Management System mit ASP.NET und C# - Teil 1"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20021031.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Rudolf Ball"><input type="hidden" name="AuthorEmail" value="rball@edu.uni-klu.ac.at"><input type="hidden" name="Artikel" value="20021031"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20021031.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

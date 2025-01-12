@@ -1,0 +1,286 @@
+<HTML>
+<HEAD>
+<TITLE>Dateityp-Ermittlung in Managed C++</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im gestrigen Artikel habe ich gezeigt, wie man mit Hilfe einer COM+ Komponente herausfinden kann, ob eine Datei eine Datei ist. Heute sehen wir uns die Thematik in .NET an, und machen gleich ein paar Aufw&auml;rm&uuml;bungen in Managed C++.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Managed C++,GC,Garbage Collector,__gc,__value,using,COM+,.NET,cl.exe,File.Exists,__nogc,Marshal,Unicode,GetFileType">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Dateityp-Ermittlung in Managed C++</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020201"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Im gestrigen Artikel <a href="../artikel/20020131.htm">Vorsicht Falle: Dateien, die keine sind</a> habe ich gezeigt, wie man
+mit Hilfe einer in C++ geschriebenen COM+ Komponente herausfinden kann, ob es sich bei der Datei die
+man verwenden m&ouml;chte um eine "echte" oder "nur" um Devices und Named Pipes handelt. Heute sehen wir uns
+die Thematik in .NET an, und machen gleich ein paar Aufw&auml;rm&uuml;bungen in Managed C++.
+</p>
+<p>
+Bevor wir zum harten Kern des Themas kommen, eine erfreuliche Nachricht vorweg: unter .NET liefert die
+<i>File.Exists</i> Methode nur dann True, wenn es sich um eine Datei auf einem Laufwerk handelt - COM
+Ports und andere Devices liefern False. Die Verwendung demonstriert das folgende Beispiel (<b>fileexists.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Page Language="C#" %&gt;
+&lt;%@ Import Namespace="System.IO" %&gt;
+&lt;script language="C#" runat="server"&gt;
+void Page_Load(Object sender, EventArgs e) 
+{
+  bool bResult = File.Exists("c:\\COM1");
+  idOutput.Text = bResult.ToString();
+}
+&lt;/script&gt; 
+&lt;html&gt; 
+&lt;body&gt; 
+	&lt;asp:label id="idOutput" runat="server"/&gt;
+&lt;/body&gt; 
+&lt;/html&gt;
+</pre>
+
+<p>
+Damit haben wir schon die halbe Miete - den zuverl&auml;ssigen Check, ob auf eine Datei lesend zugegriffen werden
+kann. Will man eine neue Datei erstellen, dann hilft <i>File.Exists</i> keineswegs - weil die Datei sowohl
+g&uuml;ltig als auch ung&uuml;ltig ein False retourliefern wird. Hier m&uuml;ssen wir uns etwas anderes ausdenken.
+</p>
+
+<h2>Plan B - Dateityp ermitteln</h2>
+<p>
+Man k&ouml;nnte die Komponente aus dem gestrigen Artikel <a href="../artikel/20020131.htm">Vorsicht Falle: Dateien, die keine sind</a>
+ja ohne weiteres nach Anleitung des Artikels <a href="../artikel/20000828.htm">Verwenden von COM Komponenten in ASP.NET</a> mittels
+eines RTCW (Runtime Callable Wrapper) einbinden. Die Sache hat einen Nachteil - man verliert f&uuml;r eine Komponente
+mit so geringer Funktionalit&auml;t unsinnigerweise viel Performance.
+</p>
+<p>
+Ergo werden wir die Komponente .NET-tauglich machen. Und was w&auml;re besser geeignet als Managed C++, wenn
+der Compiler daf&uuml;r sogar gratis im .NET SDK mit dabei ist? Gestern konnten nur die Visual Studio 6
+Besitzer die Komponente selbst kompilieren, heute kann es jeder der das SDK am Rechner hat!
+</p>
+
+<h2>Die Komponente</h2>
+<p>
+Aus Spa&szlig; an der Freude habe ich mich mit Managed C++ anhand dieses Projekts richtig zu besch&auml;ftigen
+begonnen. Im Endeffekt hat das Umschreiben und Einlernen in Managed C++ weniger als eine Stunde ben&ouml;tigt,
+und die Komponente ist sogar deutlich einfacher zu verwenden als zuvor. Beginnen wir in der Datei
+<b>secenhance.cpp</b> (&uuml;brigens die einzige f&uuml;r das gesamte Komponentenprojekt!) ganz oben:
+</p>
+
+<pre style="background='silver';">
+#include "windows.h"
+
+#using &lt;mscorlib.dll&gt;
+using namespace System;
+using namespace System::Runtime::InteropServices;
+
+namespace SecurityEnhance
+{
+__value public enum FileType {undefined=-1, unknown=0, disk=1, character=2, pipe=3};
+</pre>
+
+<p>
+Wenn man fl&uuml;chtig genug hinsieht, s&auml;he das beinahe aus wie C# Code. Allerdings komme ich um das
+<i>#include</i> f&uuml;r die Windowsfunktionen nicht herum, und ich mu&szlig; mich explizit darum k&uuml;mmern,
+da&szlig; der Compiler die MetaData von .NET erh&auml;lt - mittels <i>#using</i> Statements. Ach ja, noch
+ein kleiner Unterschied - anstatt des Punkts werden zwei Doppelpunkte eingesetzt (bei <i>System.Runtime.InteropServices</i>).
+</p>
+<p>
+In der unmanaged C++ Komponente habe ich die (Datei)Typen mittels in <i>#define</i> Statements deklarierten
+Konstanten zur&uuml;ckgeliefert, jetzt habe ich das auf eine <i>enum</i> umgebaut. Das coole an der Sache ist, da&szlig; wenn ich den Namespace <i>SecurityEnhance</i> in eine
+Anwendung importiere, ist die Enum dort genauso verwendbar - keine <i>const</i> Statements mehr! Und typsicher
+ist es so nebenbei auch noch.
+</p>
+<p>
+Sehen wir uns nun die Klasse <i>FileUtilities</i> an:
+</p>
+
+<pre style="background='silver';">
+__gc public class FileUtilities
+{
+public:
+   FileUtilities(){}
+     
+public:
+   FileType GetFileType(System::String *sFileName, System::Int32 *Win32ErrorCode)
+   {
+     wchar_t __nogc* pszFileName = static_cast&lt;wchar_t*&gt;
+                         (Marshal::StringToHGlobalUni(sFileName).ToPointer());
+     FileType theType = FileType::undefined;
+     *Win32ErrorCode = 0;
+
+     // open the file for generic reading
+     HANDLE hFile = ::CreateFileW(pszFileName, 
+                         GENERIC_READ,
+                         FILE_SHARE_READ | FILE_SHARE_WRITE, 
+                         NULL, 
+                         OPEN_EXISTING, 
+                         0, 
+                         NULL );
+
+     if (INVALID_HANDLE_VALUE == hFile)
+     {
+          DWORD dwError = ::GetLastError();
+          *Win32ErrorCode = (long)dwError;
+     }
+     else
+     {
+          DWORD dwFileType = ::GetFileType(hFile);
+          switch (dwFileType)
+          {
+          case FILE_TYPE_UNKNOWN: theType = FileType::unknown; break;
+          case FILE_TYPE_DISK: theType = FileType::disk; break;
+          case FILE_TYPE_CHAR: theType = FileType::character; break;
+          case FILE_TYPE_PIPE: theType = FileType::pipe; break;
+          default: theType = FileType::undefined;
+          }
+          ::CloseHandle(hFile);
+     }
+     Marshal::FreeHGlobal(pszFileName);
+     return theType;
+   }
+};
+</pre>
+<p>
+Alle Schl&uuml;sselw&ouml;rter in Managed C++ die f&uuml;r .NET neu eingef&uuml;hrt wurden, beginnen mit zwei Unterstrichen.
+Ein <i>__value</i> aus der Enumdefinition bedeutet, da&szlig; es sich um einen Value-Type handelt. Das <i>__gc</i>
+hingegen zeigt an, da&szlig; es sich um eine Garbage-Collected Klasse handelt. Somit ergibt sich irgendwie zwingend,
+da&szlig; Variablen die mit <i>__nogc</i> verziert sind, nicht von .NET verwaltet werden.
+</p>
+<p>
+Eine solche ist <i>pszFileName</i>. Diese brauche ich, weil ich mit der String Klasse aus .NET nicht direkt
+in das WIN32 API hineingehen kann - zuerst mu&szlig; ich den String auf einen "normalen" Unicode String konvertieren
+lassen, wobei mir die <i>Marshal</i> Klasse aus <i>System.Runtime.InteropServices</i> unter die Arme greift.
+</p>
+<p>
+Nach dieser Konvertierung verwende ich im Prinzip den identen Sourcecode von gestern. Nur der R&uuml;ckgabewert
+ist diesmal eine typsichere Enum, und der WIN32 Fehlercode kommt als per Rerferenz &uuml;bergebene Integer Variable zur&uuml;ck.
+</p>
+<p>
+Kompiliert wird mittels <b>cl.exe</b>, ich habe entsprechende Batchdateien zur einfachen Verwendung mitgegeben.
+&Uuml;brigens: die erzeugte Assembly kann man genauso in <i>ildasm.exe</i> betrachten wie C# Anwendungen auch:
+</p>
+
+<IMG SRC="/artikel/Bilder/200202/20020201.png" width="532" height="483" alt="" border="0">
+
+<h2>Einsatz der Komponente</h2>
+<p>
+Da wir eine .NET Assembly vor uns haben, darin eine richtige .NET Klasse plus Enumeration vorhanden ist,
+stellt sich eine kleine Konsolenanwendung sehr einfach dar (<b>filetype.cs</b>):
+</p>
+
+<pre style="background='silver';">
+// Kompilieren mit "csc filetype.cs /r:secenhance.dll"
+using System;
+using SecurityEnhance;
+
+public class MainClass
+{
+public static void Main()
+{
+  FileUtilities fu = new FileUtilities();
+  int Win32ErrorCode = 0;
+  FileType f = fu.GetFileType("c:\\COM1", ref Win32ErrorCode);
+  Console.WriteLine(f.ToString() + " " + Win32ErrorCode.ToString());
+}
+}
+</pre>
+<p>
+Und schon wissen wir, da&szlig; obwohl <i>File.Exists</i> uns ein False liefert, es sich um eine Datei vom
+Typ 3, also Character beziehungsweise Device handelt. Und auf sowas greift man nat&uuml;rlich nicht zu! Weder
+lesend, noch schreibend.
+</p>
+<p>
+Der Vollst&auml;ndigkeit halber nun noch das obige Beispiel als ASP.NET Script (<b>filetype.aspx</b>). Die Assembly mu&szlig;
+man wie immer ins <i>bin</i> Verzeichnis kopieren:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Page Language="C#" %&gt;
+&lt;%@ Import Namespace="SecurityEnhance" %&gt;
+&lt;script language="C#" runat="server"&gt;
+void Page_Load(Object sender, EventArgs e) 
+{
+  FileUtilities fu = new FileUtilities();
+  int Win32ErrorCode = 0;
+  FileType f = fu.GetFileType("c:\\COM1", ref Win32ErrorCode);
+  idOutput.Text = f.ToString() + " " + Win32ErrorCode.ToString();
+}
+&lt;/script&gt; 
+&lt;html&gt; 
+&lt;body&gt; 
+	&lt;asp:label id="idOutput" runat="server"/&gt;
+&lt;/body&gt; 
+&lt;/html&gt;
+</pre>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+In bestimmten F&auml;llen kann Managed C++ zum Retter in der Not werden - vor allem dann, wenn man eine
+bestehende Applikation oder Teile davon .NET-tauglich machen m&ouml;chte. Mit C# h&auml;tte ich sicher deutlich
+l&auml;nger gebraucht, den C++ Code zu portieren.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020201.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020201.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020226.htm">Ein Touch-Utility in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020226.htm</span><br>
+<a href="../artikel/20000828.htm">Verwenden von COM Komponenten in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000828.htm</span><br>
+<a href="../artikel/20020131.htm">Vorsicht Falle: Dateien, die keine sind</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020131.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

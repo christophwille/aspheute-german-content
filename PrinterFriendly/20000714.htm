@@ -1,0 +1,285 @@
+<HTML>
+<HEAD>
+<TITLE>Kontrollstatements in C#</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel m&ouml;chte ich die beiden C# Kontrollstatements if und switch vorstellen, und zwar mit besonderem Fokus darauf, was man als VBScript Programmierer beachten mu&szlig;, um nicht in Fallen zu tappen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,C#,Csharp,C Sharp,If,Switch,Case,control statements,ASP.NET,.NET">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Kontrollstatements in C#</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000714"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+In diesem Artikel m&ouml;chte ich die beiden C# ("C Sharp") Kontrollstatements <i>if</i> und <i>switch</i> vorstellen, und zwar mit
+besonderem Fokus darauf, was man als VBScript Programmierer beachten mu&szlig;, um nicht in Fallen zu tappen. Wer
+bereits C++ oder JScript programmiert hat, wird die neuen <i>if</i> und <i>switch</i> Statements sehr einfach erlernen k&ouml;nnen,
+da sie beinahe ident zu den bereits erlernten sind.
+</p>
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation des <i>Microsoft
+.NET Framework SDK's</i> auf
+einem Webserver. Weiters setze ich voraus, da&szlig; der Leser bereits eine Programmiersprache beherrscht - deshalb
+ist die Information auch in sehr komprimierter Form gehalten.
+</p>
+
+<h2>Das if Statement</h2>
+<p>
+Schauen wir uns einmal das <i>If</i> Statement in VBScript nochmals an:
+</p>
+
+<pre style="background='silver';">
+If (Boolscher Ausdruck) Then
+...
+Else
+...
+End If
+</pre>
+
+<p>
+Ich habe einen boolschen Ausdruck, der bestimmt, welcher Zweig des <i>If</i> Statements ausgef&uuml;hrt. In C# sieht
+das Ganze nicht viel anders aus:
+</p>
+
+<pre style="background='silver';">
+if (Boolscher Ausdruck) statement
+</Pre>
+
+<p>
+Der Unterschied ist, da&szlig; das <i>if</i>-Keyword in Kleinbuchstaben zu schreiben ist (C# ist Case-Sensitive!), und da&szlig;
+das <i>Then</i> Keyword fehlt. Sollen mehrere Statements in einem <i>if</i> Block ausgef&uuml;hrt werden, so mu&szlig; man
+diesen Block in geschwungenen Klammern einschlie&szlig;en:
+</p>
+
+<pre style="background='silver';">
+if (Boolscher Ausdruck)
+{
+}
+</pre>
+
+<p>
+C++ Programmierer kennen das ja schon - alle Codeblocks m&uuml;ssen in geschwungenen Klammern eingeschlossen werden.
+Wenn man die geschwungenen Klammern vergisst, dann wird nur das erste Statement ausgef&uuml;hrt. Also aufpassen!
+</p>
+<p>
+Kommen wir nun zu einem praktischen Beispiel - wir bauen eine ASP.NET Seite, lesen einen Querystringparameter aus,
+und geben je nach Wert eine entsprechende Meldung aus:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;%
+string strQString = Request.QueryString.Get(&quot;TestParam&quot;);
+int nValue = Convert.ToInt32(strQString);
+
+if (5 == nValue)
+{
+  Response.Write(&quot;Sie haben die Zahl 5 eingegeben!&quot;);
+}
+else
+{
+  Response.Write(&quot;Die Zahl ist verschieden von 5!&quot;);
+}
+%&gt;
+</pre>
+
+<p>
+Speichern Sie diese Datei unter dem Namen <b>iftest.aspx</b> auf dem Webserver, auf dem Sie das .NET Framework installiert 
+haben. Der Aufruf sieht wie folgt aus:
+</p>
+
+<pre style="background='silver';">
+http://localhost/iftest.aspx?TestParam=5
+</pre>
+
+<p>
+Sollten Sie vergessen, die Seite mit dem Parameter aufzurufen, dann wird automatisch der Wert 0 
+angenommen, weil an <i>Convert.ToInt32</i> ein <i>null</i> Objekt &uuml;bergeben wird.
+</p>
+<p>
+In der ersten Zeile definiere ich, da&szlig; ASP.NET diese Seite mit C# kompilieren soll (<b>@Page</b> Direktive).
+Danach lese ich den Parameter <b>TestParam</b> ein, weise das Ergebnis einer Stringvariablen zu, um es dann
+in der n&auml;chsten Zeile in eine Integervariable zu konvertieren (Details dazu in sp&auml;teren Artikeln). Man k&ouml;nnte 
+zwar mit dem Typ <i>object</i> dieser Konvertierung entgehen, allerdings sollte man sich das gar nicht erst 
+anfangen.
+</p>
+<p>
+Das if Statement ist nicht kompliziert, nur speziell hinweisen mu&szlig; ich auf den Vergleichoperator ==. In C# wird
+der Vergleich mit doppelten Ist-Gleich Zeichen durchgef&uuml;hrt, nicht mit einem einfachen wie in VBScript! Folgende
+Vergleichsoperatoren gilt es zu beachten:
+</p>
+
+<ul>
+	<li><b>==</b> Gleichheit (VBScript: =)
+	<li><b>!=</b> Ungleich (VBScript: &lt;&gt;)
+</ul>
+
+<p>
+Der Rest ist bereits bekannt aus VBScript.
+</p>
+<p>
+Wie sieht es nun aber aus, wenn man UND beziehungsweise ODER Verkn&uuml;pfungen machen m&ouml;chte? Zum Beispiel (Pseudocode)
+</p>
+
+<pre style="background='silver';">
+Falls (Tag ist Dienstag UND Tageszeit > Mittags)
+</pre>
+
+<p>
+In VBScript w&uuml;rde das so aussehen:
+</p>
+
+<pre style="background='silver';">
+If (nDay = vbTuesday And dTime > 12) Then
+</pre>
+
+<p>
+Der einzige Unterschied in C# ist, da&szlig; das <i>And</i> durch <i>&amp;&amp;</i> ersetzt werden mu&szlig;:
+</p>
+
+<pre style="background='silver';">
+if (nDay == vbTuesday &amp&amp; dTime > 12)
+</pre>
+
+<p>
+Folgende Operatoren gibt es:
+</p>
+
+<ul>
+	<li><b>&amp;&amp;</b> UND (VBScript: <i>And</i>)
+	<li><b>||</b> ODER (VBScript: <i>Or</i>)
+</ul>
+
+<p>
+Damit haben wir alle Unterschiede besprochen, die das <i>if</i> Statement von C# mit sich bringt, und k&ouml;nnen
+mit dem n&auml;chsten Kontrollstatement weitermachen: <i>switch</i>.
+</p>
+
+<h2>Das switch Statement</h2>
+<p>
+Obwohl einem dieses Statement nicht auf Anhieb bekannt vorkommt, ist es das C# &Auml;quivalent zu <i>Select Case</i>:
+</p>
+
+<pre style="background='silver';">
+Select Case nNote
+  Case 1
+  	Response.Write "Sehr gut!"
+  Case 5
+  	Response.Write "Bombastisch!"
+  Case Else
+    ' alles andere interessiert uns nicht
+End Select
+</pre>
+
+<p>
+Umgebaut in C# sieht es wie folgt aus:
+</p>
+
+<pre style="background='silver';">
+switch (nNote)
+{
+  case 1:
+    Response.Write("Sehr gut!");
+    break;
+  case 5:
+    Response.Write("Bombastisch!");
+    break;
+  default:
+    // alles andere interessiert uns nicht
+    break;
+}
+</pre>
+
+<p>
+Der wichtige Unterschied ist, da&szlig; man hinter das letzte Statement eines <i>case</i> Labels ein <i>break</i> Statement
+schreiben mu&szlig; (in VBScript ist das nicht n&ouml;tig). Man mu&szlig; sich also nur die neue Syntax merken, und schon kann
+man auch das <i>switch</i> Statement verwenden.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die <i>if</i> und <i>switch</i> Statements bergen keine gro&szlig;en &Uuml;berraschungen, man mu&szlig; nur aufpassen und bei der Syntax
+am Anfang mitdenken, da die Gleichheits- bzw. Ungleichheitsoperatoren im <i>if</i> Statement doch deutlich verschieden sind.
+Zum Trost: der Compiler klopft einem doch deutlich und bestimmt auf die Finger...
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000714.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000714.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000713.htm">A Brief History of C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000713.htm</span><br>
+<a href="../artikel/20000720.htm">Das foreach Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000720.htm</span><br>
+<a href="../artikel/20000802.htm">Dateiupload mit ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000802.htm</span><br>
+<a href="../artikel/20020507.htm">Deutsche Personalausweisnummern verifizieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020507.htm</span><br>
+<a href="../artikel/20020705.htm">Formularbasierte Authentifizierung in f&uuml;nf Minuten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020705.htm</span><br>
+<a href="../artikel/20000717.htm">Schleifenbefehle in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000717.htm</span><br>
+<a href="../artikel/20020905.htm">Wochenberechnung mit .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020905.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpgerman%2Ecom%2Faspgerman%2Flisten%2Fanmelden%2FaspDEdotnet%2Easp">Die aspDEdotnet Diskussionsliste</a><br>
+<SPAN class="content">http://www.aspgerman.com/aspgerman/listen/anmelden/aspDEdotnet.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eamazon%2Ecom%2Fexec%2Fobidos%2FASIN%2F0672320371%2Falphasierrapapa">Presenting C#</a><br>
+<SPAN class="content">http://www.amazon.com/exec/obidos/ASIN/0672320371/alphasierrapapa</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

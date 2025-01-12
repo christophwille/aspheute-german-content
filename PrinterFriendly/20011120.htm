@@ -1,0 +1,382 @@
+<HTML>
+<HEAD>
+<TITLE>Ein Popup-Kalender im Einsatz</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Online-Buchungssysteme sind weit verbreitet, allerdings bereitet die Datumseingabe immer wieder Probleme. Um das Problem elegant zu umschiffen bietet es sich an, dem User einen Popup-Kalender in die Hand zu geben.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Kalender,Buchung,Buchungssystem,Popupkalender,Datumseingabe,visueller Kalender,Datumsauswahl">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Ein Popup-Kalender im Einsatz</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20011120"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Online-Buchungssysteme sind weit verbreitet, allerdings bereitet die Datumseingabe immer wieder Probleme. 
+Vor allem bei Hotelzimmer- oder Flugticketreservierungen ist es notwendig, da&szlig; das Datum korrekt
+eingegeben wird - bei all den verschiedenen internationalen Formaten, die man antreffen k&ouml;nnte. Um das
+Problem elegant zu umschiffen bietet es sich an, dem User einen Kalender in die Hand zu geben, aus dem
+er bequem das Datum w&auml;hlen kann: einen Popup-Kalender.
+</p>
+
+<p>
+Der in diesem Artikel vorgestellte L&ouml;sungsansatz kommt ohne zus&auml;tzliche Komponente aus, und ist
+in ASP bzw. JavaScript ausgef&uuml;hrt. Die Demo zeigt eine M&ouml;glichkeit einer datumsabh&auml;ngigen Zimmerreservierung eines 
+Hotels. Der Code wurde von <a href="mailto:hotel-andre@t-online.de">Andr&eacute; Scheres</a> erstellt, und AspHeute
+f&uuml;r einen Artikel zur Verf&uuml;gung gestellt.
+</p>
+
+<p>
+Die Beispieldateien sind wie immer im Download enthalten. Extrahieren
+Sie die Zip-Datei in ein beliebiges virtuelles Verzeichnis auf dem Web Server. Das Demo hat folgende 
+Verzeichnisstruktur in einem virtuellen Verzeichnis:
+</p>
+
+<ul>
+<li>Root (Inhalt: <b>favicon.ico</b>, <b>style.css</b>)</li>
+<li>/calendar (Inhalt: <b>calabreis.asp</b>, <b>calanreis.asp</b>, <b>calendar.asp</b>): Hier befinden sich die ASP Dateien die den sp&auml;teren Kalender generieren</li>
+<li>/formular (Inhalt: <b>anfrage.asp</b>): In diesem Verzeichnis ist das Formular abgelegt, in dem Sie die Reservierungsdaten 
+eintragen m&uuml;ssen</li>
+<li>/images : Hier befinden sich die ben&ouml;tigten Bilder</li>
+<li>/includes (Inhalt: <b>start.asp</b>, <b>subs.asp</b>): Dieses Verzeichnis enth&auml;lt die "Business Logik", also u.a. die 
+Weiterverarbeitung der Eingabewerte (z.B. in eine Datenbank schreiben)</li>
+</ul>
+
+<h2>Das Buchungsformular (anfrage.asp)</h2>
+
+<p>
+In diesem Formular werden der An- und Abreisetag, sowie die Anzahl und Kategorie (Einzelzimmer, etc.) der Zimmer
+bekanntgegeben:
+</p>
+
+<IMG SRC="/artikel/Bilder/200111/20011120_1.png" width="480" height="262" alt="" border="0">
+
+<p>
+Beim Aufruf des Formulars (<b>anfrage.asp</b>) wird &uuml;berpr&uuml;ft, ob Daten gesendet worden sind.
+Wenn dies nicht der Fall ist, wird das Formular angezeigt und wenn Popup Fenster im Browser erlaubt sind, &ouml;ffnet sich 
+eines - der "Kalender".  Dieser schlie&szlig;t sich automatisch, wenn die ben&ouml;tigten Datumswerte ausgew&auml;hlt worden 
+sind.
+</p>
+
+<p>
+Wird der Kalender nicht ben&ouml;tigt, schlie&szlig;t es sich automatisch nach einer vorgegebenen Zeit (nach 10 Sekunden). Nach dem 
+Absenden wird es per "post" an sich selbst gesendet und validiert die Eingaben auf Richtigkeit. Die Logik f&uuml;r das Validieren
+ist daher auch in der <b>anfrage.asp</b> inkludiert. Bei falschen Eingaben kommt eine Fehlermeldung und das Formular 
+wird nebst Kalender wieder angezeigt.
+</p>
+
+<h2>Aufbau des Kalenders</h2>
+
+<p>
+Die f&uuml;r den Kalender (Popup-Fenster) ben&ouml;tigten Dateien befinden sich im <i>/calendar</i> Unterverzeichnis.
+Dort finden sich je nach Erfordernis drei Dateien. Die <b>calanreis.asp</b> Datei zeigt einen Kalender in dem man
+das Anreisedatum ausw&auml;hlen kann. Dieses Fenster wird ge&ouml;ffnet, wenn Sie auf das Kalender-Icon rechts neben der 
+Jahresauswahl klicken. &Auml;hnlich funktioniert die <b>calabreis.asp</b> Datei, die ein Popup-Fenster &ouml;ffnet, wo das 
+Abreisedatum einzugeben ist. Die <b>calendar.asp</b> Datei &ouml;ffnet sich wie gesagt sobald man auf das Formular
+zugreift und/oder noch keine Daten beim Post &uuml;bergeben wurden. Dieses Popup-Fenster bietet die M&ouml;glichkeit
+beide Daten (An- und Abreise) einzutragen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200111/20011120_2.png" width="226" height="450" alt="" border="0">
+
+<p>
+Sehen wir uns nun die <b>calendar.asp</b> Datei einmal an:
+</p>
+
+<pre style="background='silver';">
+&lt;!--#include file = "../includes/start.asp" --&gt;
+&lt;!--#include file = "../includes/subs.asp" --&gt;
+&lt;%
+WindowTimeOut 10000
+scriptFormfuellen "Anreise",0
+scriptFormfuellen "Abreise",1	
+
+%&gt;
+&lt;title&gt;Kalender&lt;/title&gt;
+&lt;/head&gt;
+&lt;body bgcolor='#ffffff' text='#0a0b68'&gt;
+
+&lt;%
+If Request.Form.Count &gt; 0 then
+    monat = Request.Form("month")
+    my_month = Request.Form("month")
+    my_year = Request.Form("year")
+    my_come_Day = 1
+    my_go_day = 2
+elseif Request.QueryString.Count &gt; 0 and Request.Form.Count = 0 then
+    monat = Request.QueryString("month")
+    my_month = Request.QueryString("month")
+    my_year = Request.QueryString("year")
+    my_come_Day = 1
+    my_go_day = 2
+elseif Request.QueryString.Count = 0 and Request.Form.Count = 0 then
+    my_come_Day = day(date)
+    my_go_day = my_come_day + 1
+    my_year = year(date)
+    my_month = month(date)
+end if
+
+WriteCalender my_come_day,my_month,my_year,vbMonday,"Anreisedatum"
+WriteCalender my_go_day,my_month,my_year,vbMonday,"Abreisedatum"
+selFormCalendar
+
+%&gt;
+</pre>
+
+<p>
+Alle Funktionalit&auml;t kommt aus <b>subs.asp</b>.
+Diese Include-Datei enth&auml;lt die Anpassung des Kalenders an die jeweilige Landesinformation (LCID),
+und es wird eine eventuell n&ouml;tige Umlautkonvertierung vorgenommen. Die <b>subs.asp</b> Datei werden wir uns in wenigen 
+Augenblicken ansehen. Es wird das Timeout zum Schlie&szlig;en des Popup-Fensters definiert, sowie die Funktionen (<i>scriptFormfuellen</i>) aufgerufen, die
+die im Popup eingetragenen Datumswerte in das Formular (<b>anfrage.asp</b>) &uuml;bertragen. Zus&auml;tzlich wird noch das aktuelle Datum ermittelt.
+Abschlie&szlig;end wird mit der Funktion <i>WriteCalender</i> der/die Kalender generiert.
+</p>
+
+<h2>Die Funktionen und Routinen der subs.asp Datei</h2>
+
+<p>
+Diese Datei enth&auml;lt also die n&ouml;tigen Routinen um die L&auml;nderinformationen festzustellen, die Datumswerte in das Buchungsformular 
+zu &uuml;bertragen und die Kalender-Popups zu generieren. Sehen wir uns die <b>subs.asp</b> Datei st&uuml;ckweise an:
+</p>
+
+<pre style="background='silver';">
+Session.LCID = 1031
+
+function SQLdate(datum)
+    sTag = Day(datum)
+    sMonat = Month(datum)
+    sJahr = Year(datum)
+    if sTag &lt; 10 then sTag = "0" &amp; sTag
+    if sMonat &lt; 10 then sMonat = "0" &amp; sMonat
+    SQLdate = sMonat &amp; "/" &amp; sTag &amp; "/" &amp; sJahr
+end function
+</pre>
+
+<p>
+Die erste Zeile stellt sicher, da&szlig; die Seite nach dem deutschen Datumsformat verarbeitet wird. Die <i>SQLdate</i>
+Funktion erstellt ein Datenbank-taugliches (amerikanisches) Datumsformat (mm/dd/yyyy) aus dem in Europa &uuml;blichen 
+Format.
+</p>
+
+<pre style="background='silver';">
+sub AddEntry(Frage_name, Frage_inhalt)
+    set formular = Server.CreateObject("Scripting.Dictionary")
+
+    if formular.Exists(Frage_name) then
+        formular(Frage_name) = formular(Frage_name) &amp; Frage_inhalt
+    else
+        formular.Add Frage_name, Frage_inhalt
+    end if
+end sub
+</pre>
+
+<p>
+Mit dieser Routine werden gleiche Werte des Request.Form und des Request.QueryString addiert und k&ouml;nnen bei Bedarf mit 
+der Split() Function in ein Array umgewandelt werden.
+</p>
+
+<pre style="background='silver';">
+function GetLastDay(datum)
+    for n_day = 28 to 32
+        n_date = dateserial(my_year, Cdbl(my_month), n_day)
+        if not month(n_date) = Cdbl(my_month) then
+        	GetLastDay = n_day - 1
+            exit for
+        end if
+    next
+end function
+</pre>
+
+<p>
+Diese Funktion findet den letzten Tag des Monats, der angezeigt werden soll. 
+</p>
+<p>
+Nun kommen wir zu einem weiteren interessanten
+Abschnitt - die Daten aus dem generierten Popup in das Formular (<b>anfrage.asp</b>) zu &uuml;bertragen:
+</p>
+
+<pre style="background='silver';">
+sub scriptFormFuellen(Art,windowClose)
+    If Art = "Anreise" then
+        Art = "SetDateAn"
+        SelectTag = "tt"
+        SelectMonat = "mm"
+        SelectJahr = "jj"
+    else
+        Art = "SetDateAb"
+        SelectTag = "tt1"
+        SelectMonat = "mm1"
+        SelectJahr = "jj1"
+    end if
+    
+    if windowClose == 1 then 
+        popupClose = "window.close();"
+    else
+        popupClose = ""
+    end if
+    %&gt;
+    
+    &lt;Script language="Javascript"&gt;
+    
+    function &lt;%= Art %&gt; (y, m, d)
+    {    
+        window.opener.document.DateSelect.&lt;%=Selecttag%&gt;.selectedIndex = d-1;
+        window.opener.document.DateSelect.&lt;%=SelectMonat%&gt;.selectedIndex = m-1;
+        intLen = window.opener.document.DateSelect.&lt;%= SelectJahr %&gt;.length;
+        	for (i = 0; i &lt; intLen; i++)
+    	    {
+                if (window.opener.document.DateSelect.&lt;%=SelectJahr%&gt;[i].value == y)
+                {
+                    window.opener.document.DateSelect.&lt;%=SelectJahr%&gt;.selectedIndex = i;
+    		    	break;
+    		    }
+    	    }
+    	&lt;%= popupClose %&gt;
+    }
+    &lt;/SCRIPT&gt;
+    &lt;%
+end sub
+</pre>
+
+<p>
+Hier werden zun&auml;chst die einzelnen Datumsgr&ouml;&szlig;en (Tag, Monat, Jahr) getrennt in Variablen geschrieben.
+Danach werden diese Werte mittels Javascript in das Formular &uuml;bertragen und das Popup wieder geschlossen.
+</p>
+
+<p>
+In der Prozedur <i>WriteCalender</i> wird dann der eigentliche Kalender generiert. Die
+Prozedur &uuml;bernimmt die Datumswerte, den Wochenbeginn und die Art des &uuml;bergebenen Datums. Weiters unterscheidet
+die Prozedur welche Art von Kalender generiert werden soll, also entweder den An-, Abreise- oder beide Kalender
+im Popup.
+</p>
+
+<pre style="background='silver';">
+Sub WriteCalender(my_day,my_month,my_year,wochenbeginn,ArtDatum)
+   ' voller Code im Download enthalten
+End Sub
+</pre>
+
+<p>
+Die in <i>WriteCalender</i> ben&uuml;tzte Funktion <i>html</i> ist der &Uuml;bersicht halber nur ein K&uuml;rzel f&uuml;r ein <i>Response.Write</i>.
+</p>
+<p>
+Um das gew&uuml;nschte Datum auch per Select-Box auszuw&auml;hlen und alle restlichen Tables ordungsgem&auml;&szlig; zu 
+schlie&szlig;en folgt <i>selFormCalendar</i>:
+</p>
+
+<pre style="background='silver';">
+                sub selFormCalendar()
+                %&gt;
+                &lt;tr&gt;
+                &lt;td align=center&gt;
+                    &lt;table width='100%' border='0' cellpadding='1' cellspacing='0'&gt;
+                        &lt;form method='post'&gt;
+                        &lt;tr&gt;
+                            &lt;td class='selbox' valign='top' align='right'&gt;
+                            &lt;select class='selbox' name='month' valign='top'&gt;
+                                &lt;%
+                                    for i = 1 to 12
+                                    html "&lt;option value='" &amp; i &amp; "'&gt;" &amp; monthName(i) &amp; 
+                                    "&lt;/option&gt;" &amp; vbCRLF
+                                    next
+                                %&gt;
+                            &lt;/select&gt;
+                            &lt;/td&gt;
+                            &lt;td class='selbox' valign='top'&gt;
+                            &lt;select name='year' class='selbox'&gt;
+                            &lt;%
+                                for i = 0 to 2	
+                                html "&lt;option value='" &amp; year(date) + i &amp; "'&gt;" &amp; 
+                                year(date)+ i &amp; "&lt;/option&gt;" &amp; vbCRLF
+                                next
+                            %&gt;
+                            &lt;/select&gt;
+                            &lt;/td&gt;  
+                            &lt;td class='selbox' valign='top'&gt;
+                            &lt;input type='image' src='../images/go.gif' width='24' height='24' border='0' 
+                            name='Zeige Datum' alt='Zeige Datum'&gt;
+                            &lt;/td&gt;
+                        &lt;/tr&gt;
+                        &lt;/form&gt;
+                    &lt;/table&gt;
+                &lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/table&gt;
+        &lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+&lt;%
+end sub
+%&gt;
+</pre>
+
+<p>
+Damit h&auml;tten wir alle Funktionen besprochen, die den Kalender f&uuml;r das Reservierungsformular zum Leben
+erwecken.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dieser Artikel zeigte eine einfache M&ouml;glichkeit um den Benutzern das Reservieren einer bestimmten Zeitperiode
+mittels einem mit ASP und JavaScript generierten Kalenders wesentlich zu vereinfachen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20011120.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20011120.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020319.htm">Ein einfacher Eventkalender f&uuml;r Projektteams</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020319.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

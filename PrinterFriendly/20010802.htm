@@ -1,0 +1,388 @@
+<HTML>
+<HEAD>
+<TITLE>Web.Config 101</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Die web.config Datei ist eine auf XML basierende, hierarchisch aufgebaute Textdatei die eine Vielzahl von Einstellungsm&ouml;glichkeiten f&uuml;r Ihre ASP.NET Applikationen erlaubt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,XML,ASP.NET,web.config,section handler,machine.config,appSettings,authentication,authorization,compilation,httpRuntime">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Web.Config 101</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010802"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Die web.config Datei ist eine auf XML basierende, hierarchisch aufgebaute Textdatei die eine Vielzahl 
+von Einstellungsm&ouml;glichkeiten f&uuml;r Ihre ASP.NET Applikationen erlaubt. Angefangen von Applikationseinstellungen, 
+&uuml;ber DSN bis hin zu
+Optionen f&uuml;r Web Services. Der hierachische Aufbau erlaubt eine &uuml;bersichtliche Gliederung und somit wird
+die Anpassung der web.config zum Kinderspiel. Da&szlig; dies nicht nur ein Marketingschlagwort ist, soll dieser 
+Einf&uuml;hrungsartikel zeigen.
+</p>
+
+<p>
+Die web.config ist zusammen mit der machine.config das Herzst&uuml;ck jeder ASP.NET Applikation. Die
+machine.config ist dabei die Hauptkonfigurationsdatei von der sich alle anderen ASP.NET Konfigurationsdateien
+ableiten. Daher existiert die machine.config auch nur einmal auf dem Computer. Diese enth&auml;lt die
+standardm&auml;&szlig;igen Einstellungen f&uuml;r den jeweiligen Computer.
+</p>
+
+<p>
+Die web.config, welche sich wie vorher schon erw&auml;hnt von der machine.config ableitet, kann je nach Bedarf
+beliebig oft auf dem ASP.NET Webserver existieren. Das bedeutet, Sie k&ouml;nnen f&uuml;r jede ASP.NET Applikation eine
+speziell angepa&szlig;te Konfigurationsdatei erstellen, da ASP.NET w&auml;hrend der Laufzeit nach diesen Dateien sucht und 
+die enthaltenen Einstellungen f&uuml;r jedes Verzeichnis extra und unabh&auml;ngig parst. 
+</p>
+
+<p>
+Die hierachische Ableitung erfolgt von der ASP.NET Hauptkonfigurationsdatei (machine.config) bis in die einzelnen
+virtuellen Verzeichnisse jeder einzelnen am .NET Webserver befindlichen Applikation. Bildlich gesprochen sieht
+dies f&uuml;r einen Beispiel-.NET Webserver so aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200108/20010802_1.png" width="590" height="398" alt="" border="0">
+
+<p>
+Nat&uuml;rlich k&ouml;nnte z.B. die MyWebApp1 auch in einem anderen physikalischen Pfad liegen. Beachten Sie, da&szlig; die 
+Erstellung der web.config optional ist, d.h. wenn in einem Verzeichnis keine vorhanden ist, so werden die Einstellungen der 
+&uuml;bergeordneten Ebene verwendet.
+</p>
+
+<p>
+Die ASP.NET Runtime arbeitet diese Struktur bei einem URL Request ab. Nat&uuml;rlich wird dies nur einmal ausgef&uuml;hrt, 
+da diese Einstellungen nach dem ersten Request im Cache abgelegt werden. Damit &Auml;nderungen nach dem ersten Durchlauf 
+ber&uuml;cksichtigt werden k&ouml;nnen, setzt die ASP.NET Runtime einen Filewatcher auf diese Dateien und aktualisiert die 
+gecacheten Dateien falls erforderlich.
+</p>
+
+<p>
+Da die web.config auf XML basiert, kann diese auch XML Dokumentelemte enthalten, also auch neben den obligaten
+well-formed Tags auch Kommentare oder CData Sektionen. Die Codierung der Datei ist hierbei unwesentlich da 
+ASP.NET diese automatisch erkennt und anpa&szlig;t. Die Codierung mu&szlig; lediglich einem der g&auml;ngigen Standards 
+(z.B. UTF-8 oder Unicode) entsprechen.
+</p>
+
+<p>
+Was kann die web.config nun alles enthalten? Dies ist eine ganze Menge: Applikationeinstellungen, 
+sicherheitssensitive Einstellungen (Authentifikation und Autorisierung von Usern), 
+Datenbankverbindungseinstellungen, 
+Browsereinstellungen, Debugeinstellungen, Einstellungen f&uuml;r ASP.NET Web Services und mehr.
+</p>
+
+<p>
+Alle diese Einstellungen sind &uuml;bersichtlich in einzelne Sektionen unterteilt. Die web.config besitzt ein
+Hauptelement oder Tag - &lt;configuration&gt;. Dieser Tag kann drei unterschiedliche Elementtypen enthalten,
+welche innerhalb des &lt;configuration&gt;-Tags geschachtelt werden:
+</p>
+
+<ul>
+<li><b>Configuration section handlers:</b> benutzt von .NET Framework Klassen, die das 
+<i>IConfigurationSectionHandler</i> Interface verwenden. Configuration section handlers werden durch
+&lt;configSections&gt; in der web.config angegeben</li>
+<li><b>Configuration section groups:</b> Dienen der hierarchischen Gruppierung zusammengeh&ouml;riger Elemente. Die 
+Angabe dieser Section Groups erfolgt durch &lt;sectionGroup&gt;</li>
+<li><b>Configuration sections:</b> Hier werden die eigentlichen Section Handler mittels
+&lt;section name="..." type="..."&gt; eingetragen</li>
+</ul>
+
+<p>
+Bevor ich Ihnen eine &Uuml;bersicht &uuml;ber die m&ouml;glichen ASP.NET Section Handlers gebe, noch eine Anmerkung zum 
+Casing in der web.config. Abgesehen davon, da&szlig; die XML Tags well-formed sein m&uuml;ssen, haben die Tags, Attributnamen
+und ihre Werte eine strikte Schreibweise:
+</p>
+
+<ul>
+<li>Tags, Attributnamen: der erste Buchstabe ist klein zu schreiben, und falls es ein zusammengesetzter
+String ist, ist der erste Buchstabe des folgenden Wortes wieder gro&szlig;zuschreiben (z.B. &lt;appSettings&gt;),
+d.h. es ist Camel Casing anzuwenden.</li>
+<li>Attributwerte aus Enumerations: hier ist sowohl der erste Buchstabe als auch der erste Buchstabe in einem 
+zusammengesetzten String gro&szlig; zu schreiben (z.B. OutputCache), d.h. es ist Pascal Casing anzuwenden. 
+Ausnahmen sind <i>true</i> und <i>false</i>, die immer klein zu schreiben sind.</li>
+</ul>
+
+<p>
+Nun eine &Uuml;bersicht zu den ASP.NET Section Handlern:
+</p>
+
+<table cellpadding="2" cellspacing="2" border="2">
+<tr>
+    <th>Section Name</th>
+    <th>Beschreibung</th>
+</tr>
+<tr>
+    <td>&lt;appSettings&gt; </td>
+    <td>Hier k&ouml;nnen Sie benutzerdefinierte Eintr&auml;ge wie DSNs eintragen. Dieser Handler ist sowohl in der machine.config 
+        als auch in allen web.configs zul&auml;ssig</td>
+</tr>
+<tr>
+    <td>&lt;authentication&gt; </td>
+    <td>Einstellungen f&uuml;r die ASP.NET Authentifizierungsunterst&uuml;tzung; notwendig um einen User durch einen Login
+         eindeutig zu identifizieren</td>
+</tr>
+<tr>
+    <td>&lt;authorization&gt;</td>
+    <td>Einstellungen f&uuml;r die ASP.NET Autorisierungsunterst&uuml;tzung; weist einem User anhand seiner Credentials 
+     den ihm zugewiesenen Bereich der Web Site zu</td>
+</tr>
+<tr>
+    <td>&lt;browserCaps&gt; </td>
+    <td>Einstellungen f&uuml;r Browsereigenschaften</td>
+</tr>
+<tr>
+    <td>&lt;compilation&gt; </td>
+    <td>Enth&auml;lt Einstellungen f&uuml;r die ASP.NET Kompilierungsoptionen</td>
+</tr>
+<tr>
+    <td>&lt;customErrors&gt;</td>
+    <td>Hier k&ouml;nnen Sie benutzerdefinierte Fehlermeldungen definieren, d.h. bei einem aufgetretenen, 
+     spezifischen Fehler wird per Redirect zu der eigens erstellten Seite gelinkt</td>
+</tr>
+<tr>
+    <td>&lt;globalization&gt;</td>
+    <td>Enth&auml;lt l&auml;nderspezifische Einstellungen, wie z.B. Zeichens&auml;tze und L&auml;ndercodes (LCID,
+      LoCale IDentifier)</td>
+</tr>
+<tr>
+    <td>&lt;httpHandlers&gt;</td>
+    <td>Mappt Seiten-Requests auf das jeweilige Interface (IHttpHandler oder IHttpHandlerFactory)</td>
+</tr>
+<tr>
+    <td>&lt;httpModules&gt;</td>
+    <td>Organisiert HTTP Module (eine Klasse oder Assembly (dll)) einer Applikation</td>
+</tr>
+<tr>
+    <td>&lt;httpRuntime&gt;</td>
+    <td>Enth&auml;lt die Einstellungen f&uuml;r die ASP.NET HTTP Runtime. Dieser Handler ist sowohl in der machine.config 
+        als auch in allen web.configs zul&auml;ssig</td>
+</tr>
+<tr>
+    <td>&lt;identity&gt;</td>
+    <td>Steuert die Application Identity mittels Client Impersonation</td>
+</tr>
+<tr>
+    <td>&lt;machineKey&gt;</td>
+    <td>Einstellungen f&uuml;r die Erstellung von Schl&uuml;sseln anhand von Algorithmen (SHA1, MD5 3DES)
+       welche &uuml;ber den RNGCryptoServiceProvider erstellt werden</td>
+</tr>
+<tr>
+    <td>&lt;pages&gt;</td>
+    <td>Hier k&ouml;nnen Webseiten-spezifische Einstellungen gemacht werden</td>
+</tr>
+<tr>
+    <td>&lt;processModel&gt;</td>
+    <td>Einstellungen f&uuml;r das ASP.NET Process Model des IIS. Z.b. f&uuml;r Timeouts, Request Limits</td>
+</tr>
+<tr>
+    <td>&lt;securityPolicy&gt;</td>
+    <td>Definiert die Mappings f&uuml;r Policy Dateien. Dieser Handler ist sowohl in der machine.config 
+        als auch in allen web.configs zul&auml;ssig</td>
+</tr>
+<tr>
+    <td>&lt;sessionState&gt;</td>
+    <td>Konfiguriert den Session State des HTTP Modules</td>
+</tr>
+<tr>
+    <td>&lt;trace&gt; </td>
+    <td>Einstellungen f&uuml;r die ASP.NET Trace Services. Diese Einstellungen sind ausschlie&szlig;lich f&uuml;r Testzwecke, also 
+    wenn Sie die ASP.NET Applikation entwickeln bzw. testen, da diese sensitive Daten enth&auml;lt. Hat also im
+    tats&auml;chlichen Einsatz nichts verloren</td>
+</tr>
+<tr>
+    <td>&lt;trust&gt; </td>
+    <td>Legt die Code Access Permissions f&uuml;r eine bestimmte Applikation fest. Diesen Einstellungen liegen wieder
+    Policy Dateien zugrunde. Dieser Handler ist sowohl in der machine.config als auch in allen web.configs 
+    zul&auml;ssig</td>
+</tr>
+<tr>
+    <td>&lt;webServices&gt; </td>
+    <td>Beinhaltet Einstellungen f&uuml;r Web Services. Z.b. f&uuml;r die Festlegung der Protokolltypen, MIME Typen oder
+        f&uuml;r die SOAP Extensions</td>
+</tr>
+</table>
+
+<p>
+Abschlie&szlig;end m&ouml;chte ich noch auf ein paar Section Handlers mit einem Beispiel n&auml;her eingehen. Beginnen wir mit 
+den &lt;appSettings&gt;. Diese k&ouml;nnte man in einer Beispiel web.config so verwenden, um einen DSN einer ASP.NET Site 
+zur Verf&uuml;gung zu stellen:
+</p>
+
+<pre style="background='silver';">
+&lt;configuration&gt;
+  &lt;system.web&gt;
+  &lt;appSettings&gt;
+    &lt;add key="Northwind" value="server=(local)\NetSDK;database=Northwind;Trusted_Connection=yes;" /&gt;
+  &lt;/appSettings&gt;
+  &lt;/system.web&gt;
+&lt;/configuration&gt;
+</pre>
+
+<p>
+Um dann diesen DSN in einer ASP.NET Seite n&uuml;tzen zu k&ouml;nnen, ist zus&auml;tzlich der <i>System.Configuration</i>
+Namspace einzubinden, und folgender Code zu verwenden (siehe Beispiel). In diesem Beispiel baue ich die Verbindung mittels dem
+<i>SqlDataAdapter</i> auf und gehe wie gewohnt vor (der Einfachheit halber habe ich nur den serverseitigen 
+Scriptblock angef&uuml;hrt):
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Import Namespace="System.Data" %&gt;
+&lt;%@ Import Namespace="System.Data.SqlClient" %&gt;
+&lt;%@ Import Namespace="System.Configuration" %&gt;
+
+&lt;html&gt;
+
+&lt;script language="C#" runat="server"&gt;
+
+    void Page_Load(Object Src, EventArgs E ) {
+
+        String MyDSN = ConfigurationSettings.AppSettings["Northwind"];
+
+        SqlConnection myConnection = new SqlConnection(MyDSN);
+        SqlDataAdapter myCommand = new SqlDataAdapter("SELECT * FROM Products", myConnection);
+
+        DataSet ds = new DataSet();
+        myCommand.Fill(ds, "Products");
+
+        MyDataGrid.DataSource=new DataView(ds.Tables[0]);
+        MyDataGrid.DataBind();
+    }
+&lt;/script&gt;
+</pre>
+
+<p>
+Weiters m&ouml;chte ich ein Beispiel f&uuml;r den &lt;authentication&gt; Section Handler geben. Wie in der 
+Gegen&uuml;berstellung schon erw&auml;hnt, kann man hiermit eine Formular-basierde Authentifikation realisieren.
+Der folgende Ausschnitt aus einer web.config soll die notwendigen Einstellungen verdeutlichen:
+</p>
+
+<pre style="background='silver';">
+&lt;configuration&gt;
+&lt;system.web&gt;
+    &lt;authentication mode="Forms"&gt;
+    
+       &lt;forms name="lg000" loginUrl="admin/Login/login.aspx" 
+          protection="All" timeout="20" path="/" &gt;
+    
+          &lt;credentials passwordFormat="MD5"&gt;
+             &lt;user name="JDoe" password="nevergiveupneversurrender" /&gt;
+          &lt;/credentials&gt;  
+       &lt;/forms&gt;
+    
+    &lt;/authentication&gt;
+&lt;/system.web&gt;
+&lt;/configuration&gt;
+</pre>
+
+<p>
+&lt;authentication mode&gt; setzt den Authentication Modus und ist hier auf Formular-basierend gesetzt. 
+Dieser kann aber auch auf Windows Authentication, Microsoft Passport oder auf Anonym (None) gesetzt werden.
+</p>
+
+<p>
+Der &lt;forms&gt; Tag enth&auml;lt den Namen des Cookies (lg000), der f&uuml;r die Authentifizierung verwendet 
+werden soll; den Redirect auf jene Seite, wenn der Login fehlschl&auml;gt (admin/Login/login.aspx); und
+die Sicherheitsstufe, wie der Cookie gesch&uuml;tzt werden soll. Andere g&uuml;ltige Einstellungen sind noch
+Encryption, Validation oder None. Zus&auml;tzlich kann man noch einen Timeout (in Minuten) angeben, wann der Cookie 
+abl&auml;uft, sowie den Pfad wo sich der Cookie befindet.
+</p>
+
+<p>
+Unter &lt;credentials&gt; k&ouml;nnen die Credentials f&uuml;r die User eingetragen werden. Stattdessen kann aber auch
+eine Datenbankquelle f&uuml;r die einzelnen User angegeben werden (ist irgendwie bequemer).
+</p>
+
+<p>
+Wie Sie durch das obige Beispiel sicherlich erkannt haben, k&ouml;nnen in der web.config auch Sicherheits-sensitive 
+Daten als Klartext angef&uuml;hrt sein. Aus diesem Grund konfiguriert ASP.NET den IIS, da&szlig; ein Browser
+auf Dateien mit der Endung .config nicht direkt zugreifen kann und somit nicht in falsche H&auml;nde kommt.
+Wer es dennoch versucht, erh&auml;lt folgenden Fehler:
+</p>
+
+<IMG SRC="/artikel/Bilder/200108/20010802_2.png" width="532" height="336" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Dies war ein kurzer &Uuml;berblick &uuml;ber die M&auml;chtigkeit der Einstellungen in der web.config. Durch die einfache
+Handhabung der XML basierten Datei ist die Konfigurierung und Absicherung von ASP.NET Applikationen sehr einfach
+und l&auml;&szlig;t kaum W&uuml;nsche offen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010802.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010802.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001102.htm">Datenbankzugriff mittels ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001102.htm</span><br>
+<a href="../artikel/20000726.htm">Datentypen in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000726.htm</span><br>
+<a href="../artikel/20020206.htm">Der ODBC .NET Data Provider</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020206.htm</span><br>
+<a href="../artikel/20011122.htm">Einstellungssache - Applikationsdaten in web.config</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011122.htm</span><br>
+<a href="../artikel/20031010.htm">Einstieg in Visual Studio.NET - die erste Webanwendung mit Visual C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20031010.htm</span><br>
+<a href="../artikel/20020321.htm">Flash Movies einbetten einfach gemacht</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020321.htm</span><br>
+<a href="../artikel/20020705.htm">Formularbasierte Authentifizierung in f&uuml;nf Minuten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020705.htm</span><br>
+<a href="../artikel/20021107.htm">Index Server Abfragen per Web Service</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021107.htm</span><br>
+<a href="../artikel/20020801.htm">MS IE WebControls 101</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020801.htm</span><br>
+<a href="../artikel/20001006.htm">Tracing in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001006.htm</span><br>
+<a href="../artikel/20040303.htm">Vergleich von DataGrid, DataList und Repeater-Control - was verwende ich wann?</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040303.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

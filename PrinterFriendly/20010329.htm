@@ -1,0 +1,298 @@
+<HTML>
+<HEAD>
+<TITLE>Auto-Generierung von performantem Abfragecode</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel zeigt Ihnen wie man mit Hilfe eines server-seitigen Code Generators eine Datenbankabfrage erstellt, die einiges an Performance bietet. Der Code Generator ist dabei unabh&auml;ngig von der Struktur der Datenbank.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Disconnected,ActiveConnection,Client-side,adUseClient,adLockBatchOptimistic,Fields,Performance,Geschwindigkeit">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Auto-Generierung von performantem Abfragecode</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010329"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Dieser Artikel zeigt Ihnen wie man mit Hilfe eines server-seitigen Code Generators eine Datenbankabfrage erstellt,
+die einiges an Performance bietet. Der Code Generator ist dabei unabh&auml;ngig von der Struktur der Datenbank. Den
+generierten Code k&ouml;nnen Sie danach als ASP-Datei abspeichern - und er ist sofort einsatzbereit.
+</p>
+
+<p>
+Der Code Generator &uuml;bernimmt lediglich zwei Werte - den <i>Connection</i> String und den f&uuml;r die Abfrage notwendigen 
+<i>Query</i> String - die Arbeit erledigt der Generator. Das Interface ist von der Struktur her dasselbe wie
+aus dem Artikel <a href="../artikel/20010327.htm">Code Generator f&uuml;r die AddNew Methode</a>. 
+Deshalb will ich heute auch nur das Kernst&uuml;ck des ASP-Scripts - die einzelnen Functions des Generators - besprechen.
+</p>
+
+<p>
+Als Testumgebung habe ich die MS Internet Information Services in der Version 5 und den MS SQL Server 2000 verwendet.
+Die Testdatenbank ist wieder einmal Northwind. Der Generator aber funktioniert mit Access oder anderen Datenbanken ebenso.
+</p>
+
+<p>
+Um den ASP Code f&uuml;r die Datenbankabfrage zu erstellen besitzt der Generator mehrere VBScript Funktionen, die ich Ihnen 
+im einzelnen nun vorstellen werde, und wir beginnen mit der Hauptfunktion: <i>GenerateCode</i>.
+</p>
+
+<h2>Die GenerateCode Funktion</h2>
+<p>
+Diese Funktion erledigt die Generierung des notwendigen ADO/ASP Codes.
+Zuerst werden die f&uuml;r die Abfrage erforderlichen Codezeilen in die Ausgabevariable <i>strOutput</i> geschrieben. 
+</p>
+
+<pre style="background='silver';">
+Function GenerateCode(ByVal strConn, ByVal strSQLStmt)
+ Dim strOutput, objRS, fld, strFieldObjects
+ strOutput =  WriteMetadata() &amp; vbCrlf &amp; "&lt;" &amp; "%" &amp; vbCrlf
+ strOutput = strOutput &amp; "Set objRS = Server.CreateObject(""ADODB.Recordset"")" &amp; vbCrlf
+ strOutput  = strOutput &amp; "strSQLStmt = """ &amp; strSQLStmt &amp; """" &amp; vbCrlf
+ strOutput  = strOutput &amp; "strConn = """ &amp; strConn &amp; """" &amp; vbCrlf
+ strOutput  = strOutput &amp; "objRS.CursorLocation = adUseClient" &amp; vbCrlf
+ strOutput  = strOutput &amp; "objRS.CursorType = adOpenStatic" &amp; vbCrlf
+ strOutput  = strOutput &amp; "objRS.LockType = adLockBatchOptimistic" &amp; vbCrlf
+ strOutput  = strOutput &amp; "objRS.Open strSQLStmt, strConn" &amp; vbCrlf
+ strOutput  = strOutput &amp; "Set objRS.ActiveConnection = Nothing" &amp; vbCrlf
+</pre>
+
+<p>
+Der generierte Code beginnt mit der Funktion <i>WriteMetadata</i>, die uns, wie sp&auml;ter genauer gezeigt, die ADO Konstanten
+mittels eines METADATA Statements einbindet. Danach geht es weiter mit der Initialisierung des Recordset Objekts - um
+die h&ouml;chste Performance zu erhalten, lege ich ein client-seitiges (disconnected) Recordset an, das ich sofort nach Aufruf der <i>Open</i>
+Methode von der Datenquelle trennen kann (<i>ActiveConnection = Nothing</i>). Dadurch wird der SQL Server sofort entlastet, und
+ich kann so lange (oder langsam) mit den Daten weiterarbeiten, wie es mir Freude macht.
+</p>
+
+<p>
+Im n&auml;chsten Abschnitt wird der Code erstellt, der f&uuml;r die Ausgabe der einzelnen Records verantwortlich ist.
+Dies geschieht aber nicht auf die herk&ouml;mmliche Art und Weise. Denn ich erstelle eine Objektreferenz auf jede
+Spalte (repr&auml;sentiert durch ein <i>Field</i> Objekt), die es mir erlaubt, sp&auml;ter ohne Zugriff auf die <i>Fields</i> Collection
+auszukommen. In einer While Schleife mit hunderten Records bringt diese Art der Programmierung einiges an Performance
+zus&auml;tzlich.
+</p>
+
+<pre style="background='silver';">
+Set objRS = Server.CreateObject("ADODB.Recordset")
+objRS.Open strSQLStmt, strConn
+ 
+ strOutput = strOutput &amp; vbCrlf &amp; "If Not objRS.EOF Then" &amp; vbCrLf
+ For Each fld in objRS.Fields
+   strFieldObjects = strFieldObjects &amp; "  Set obj" &amp; GenerateFieldname(fld.Name)
+   strFieldObjects = strFieldObjects &amp; " = objRS.Fields(""" &amp; fld.Name &amp; """)" &amp; vbCrlf
+ Next
+ strOutput = strOutput &amp; strFieldObjects
+ strOutput = strOutput &amp; "End If" &amp; vbCrLf &amp; vbCrlf
+</pre>
+
+<p>
+Die Generierung der Referenzen ist in einer <i>If</i> Bedingung geschachtelt - was ist, wenn keine Records zur Laufzeit geliefert
+werden? Wozu sollte ich Zeit verschwenden, Referenzen zu legen, die dann sowieso niemand verwendet.
+F&uuml;r die Referenz ben&ouml;tige ich einen sinnvollen, eindeutigen Objektnamen. Diesen erstelle ich mit der <i>GenerateFieldname</i>
+Function, der ich den Namen der SQL Spalte aus dem Recordset &uuml;bergebe. Sie ist verantwortlich, in VBScript
+Variablennamen nicht vertr&auml;gliche Spaltennamen zu "korrigieren" - derzeit behandle ich nur das Leerzeichen.
+</p>
+
+<p>
+Um auch die Verwendung der Referenzen zu verdeutlichen, ist in der abschlie&szlig;enden <i>While</i> Schleife ein auskommentiertes
+Beispiel mit dabei. Das sieht dann so aus:
+</p>
+
+<pre style="background='silver';">
+ strOutput = strOutput &amp; "While Not objRS.EOF" &amp; vbCrlf
+ strOutput = strOutput &amp; "   ' SAMPLE CODE: Response.Write(objFieldname.Value)" &amp; vbCrlf
+ strOutput = strOutput &amp; "   objRS.MoveNext" &amp; vbCrlf
+ strOutput = strOutput &amp; "Wend" &amp; vbCrlf &amp; vbCrlf
+
+ strOutput = strOutput &amp; "Set objRS = Nothing" &amp; vbCrlf
+
+ strOutput = strOutput &amp; "%" &amp; ">" &amp; vbCrlf
+ GenerateCode = strOutput
+End Function
+</pre>
+
+<p>
+Damit h&auml;tten wir die <i>GenerateCode</i> Funktion fertig durchbesprochen - jetzt zeige ich Ihnen noch, wie die in
+<i>GenerateCode</i> verwendeten Hilfsfunktionen Ihre Arbeit verrichten. Beginnen wir mit der <i>GenerateFieldname</i> Funktion.
+</p>
+
+<h2>Die GenerateFieldname Funktion</h2>
+
+<p>
+Da wie schon erw&auml;hnt der Fieldname manchmal etwas Kosmetik ben&ouml;tigt, da er Sonderzeichen, Leerzeichen etc. enthalten kann,
+erledige ich dies mit dieser Funktion. Allerdings Vorsicht - da wir keine Sonderzeichen verwenden, habe ich nur das auff&auml;lligste
+korrigiert, n&auml;mlich Leerzeichen - weil in der Northwind Datenbank solche vorkommen k&ouml;nnen.
+</p>
+
+<pre style="background='silver';">
+Function GenerateFieldname(strSQLFieldName)
+ Dim strFieldname
+ strFieldname = Replace(strSQLFieldName, " ", "_")
+ GenerateFieldname = strFieldname
+End Function
+</pre>
+
+<h2>ADO Konstanten einbinden - Mal 2</h2>
+<p>
+Da der generierte ASP Code ADO Konstanten verwendet, mu&szlig; ich diese irgendwie definieren. Dies kann auf
+zwei Arten erfolgen: entweder ich inkludiere adovbs.inc, oder ich verwende ein METADATA Statement f&uuml;r die
+Type Library (der heute vorgestellte Code verwendet per Default die Typenbibliothek). Um es einfach austauschbar
+zu halten, habe ich die Einbindungen modular in Funktionen verpackt:
+</p>
+
+<h3>WriteAdovbsInc</h3>
+
+<pre style="background='silver';">
+Function WriteAdovbsInc()
+ WriteAdovbsInc = "&lt;" &amp; "!-- #inc" &amp; "lude file=""adovbs.inc"" -" &amp; "-&gt;"
+End Function
+</pre>
+
+<h3>WriteMetadata</h3>
+
+<pre style="background='silver';">
+Function WriteMetadata()
+  Dim strMD  
+  strMD = "&lt;" &amp; "!--METADATA NAME=""Microsoft ActiveX Data Objects 2.5 Library"" "
+  strMD = strMD &amp; "TYPE=""TypeLib"" "
+  strMD = strMD &amp; "UUID=""{00000205-0000-0010-8000-00AA006D2EA4}""--&gt;"
+  WriteMetadata = strMD
+End Function
+</pre>
+
+<p>
+Beide Funktionen erf&uuml;llen die Aufgabe auf gleiche Weise: sie setzen den ben&ouml;tigten Code aus einzelnen 
+Fragmenten zusammen, soda&szlig; der ASP Parser diese nicht mi&szlig;interpretiert.
+</p>
+
+<h2>Das Resultat</h2>
+<p>
+Wenn Sie nun den Code Generator (<b>CodeGenSpeedyLoop.asp</b>) auf einem Webserver ausf&uuml;hren, und Zugang zu einem Datenbank Server haben,
+erhalten Sie folgendes Resultat in einem Web Browser:
+</p>
+
+<IMG SRC="/artikel/Bilder/200103/20010329_1.png" width="590" height="607" alt="" border="0">
+
+<p>
+Abschlie&szlig;end habe ich noch, sozusagen als Funktionstest den vom Generator erstellten Code als ASP Datei abgespeichert und
+ebenfalls ablaufen lassen. Dabei habe ich mir den Firmennamen (CompanyName) aus der <i>Shippers</i> Tabelle anzeigen 
+lassen:
+</p>
+
+<pre style="background='silver';">
+&lt;!--METADATA NAME="Microsoft ActiveX Data _
+Objects 2.5 Library" TYPE="TypeLib" _
+UUID="{00000205-0000-0010-8000-00AA006D2EA4}"--&gt;
+
+&lt;%
+Set objRS = Server.CreateObject("ADODB.Recordset")
+strSQLStmt = "SELECT * FROM Suppliers"
+strConn = "Provider=SQLOLEDB;server=bluescreen;uid=sa;pwd=;Initial Catalog=Northwind;"
+objRS.CursorLocation = adUseClient
+objRS.CursorType = adOpenStatic
+objRS.LockType = adLockBatchOptimistic
+objRS.Open strSQLStmt, strConn
+Set objRS.ActiveConnection = Nothing
+
+If Not objRS.EOF Then
+  Set objSupplierID = objRS.Fields("SupplierID")
+  Set objCompanyName = objRS.Fields("CompanyName")
+  Set objContactName = objRS.Fields("ContactName")
+  Set objContactTitle = objRS.Fields("ContactTitle")
+  Set objAddress = objRS.Fields("Address")
+  Set objCity = objRS.Fields("City")
+  Set objRegion = objRS.Fields("Region")
+  Set objPostalCode = objRS.Fields("PostalCode")
+  Set objCountry = objRS.Fields("Country")
+  Set objPhone = objRS.Fields("Phone")
+  Set objFax = objRS.Fields("Fax")
+  Set objHomePage = objRS.Fields("HomePage")
+End If
+
+While Not objRS.EOF
+   Response.Write(objCompanyName.Value &amp; "&lt;br&gt;")
+   objRS.MoveNext
+Wend
+
+Set objRS = Nothing
+%&gt;
+</pre>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Dieser (weitere) Code Generator hilft wieder dabei, l&auml;stige Schreibarbeit bei umfangreichen Datenbankaufgaben
+abzunehmen. Da der Generator nur den Connection- und den Query Sting &uuml;bernimmt, ist er f&uuml;r jede beliebige 
+Datenbankstruktur anwendbar. Obendrein wird noch ein sehr leistungsf&auml;higer Code produziert.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010329.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010329.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020429.htm">Benutzerverwaltung leicht gemacht: Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020429.htm</span><br>
+<a href="../artikel/20010327.htm">Code Generator f&uuml;r die AddNew Methode</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010327.htm</span><br>
+<a href="../artikel/20010308.htm">Der ADO Command Code Generator</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010308.htm</span><br>
+<a href="../artikel/20010522.htm">Die SQL2Table Komponente</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010522.htm</span><br>
+<a href="../artikel/20010620.htm">Intelligente Meta-Tags</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010620.htm</span><br>
+<a href="../artikel/20040901.htm">Optimiertes Erstellen von DropDowns</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040901.htm</span><br>
+<a href="../artikel/20020903.htm">Stored Procedures einfach erstellt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020903.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

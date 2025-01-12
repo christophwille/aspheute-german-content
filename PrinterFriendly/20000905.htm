@@ -1,0 +1,583 @@
+<HTML>
+<HEAD>
+<TITLE>Beteiligte Komponenten bei SET Transaktionen (Teil&nbsp;2)</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser SET (Secure Electronic Transaction) Artikel erklärt den Begriff Point Of  Sale, kurz POS genannt, genauer.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO, Point Of  Sale, SET, Payment, e-commerce, Kreditkarte, ASP, POS, Visa, Mastercard, Wallet, Payment Gateway, Brand, Bank, Zertifikat, CA">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Beteiligte Komponenten bei SET Transaktionen (Teil&nbsp;2)</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianweissengruber.htm">Christian Weissengruber</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000905"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Im letzten Artikel, <a href="../artikel/20000904.htm">Beteiligte Komponenten bei SET Transaktionen (Teil 1)</a>, haben wir das Gateway und das 
+Wallet kennengelernt. Jetzt kommen wir zum "Zentrum" der gesamten SET-Trilogie, dem Point Of  Sale, kurz POS genannt.
+</p>
+<h2>Die H&auml;ndlersoftware (Payware)</h2>
+<p>
+Ich werde immer wieder gefragt ob es m&ouml;glich sei, diesen Teil selber zu programmieren z.B. f&uuml;r eine Linux-Plattform 
+oder sich so die Kosten f&uuml;r die Software zu ersparen. Nat&uuml;rlich ist nichts unm&ouml;glich. Nach Hinterlegung einer 
+Anmeldegeb&uuml;hr von US$ 50.000,- steht es jedem frei, eine entsprechende Software zu entwickeln und deren Zertifizierung 
+bei SETCO zu erreichen.
+</p>
+<p>
+Die notwendigen Spezifikationen gibt es bei:
+</p>
+<p>
+<a href="http://www.setco.org/download.html">http://www.setco.org/download.html</a>
+</p>
+<p>
+Der rein technische Teil umfa&szlig;t:
+</p>
+<p>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr><td><a href="http://www.setco.org/download/set_bk1.pdf">The SET Standard Book 1 Business Description</a></td></tr> 
+<tr><td><a href="http://www.setco.org/download/set_bk2.pdf">The SET Standard Book 2 Programmer's Guide</a></td></tr> 
+<tr><td><a href="http://www.setco.org/download/set_bk3.pdf">The SET Standard Book 3 Formal Protocol Definitions</a></td></tr>
+<tr><td><a href="http://www.setco.org/download/set_glossary.pdf">SET Glossary</a></td></tr>
+<tr><td><a href="http://www.setco.org/download/set_eig.pdf">External Interface Guide</a></td></tr>
+</table>
+</p>
+<p>
+Aber auch wenn man die Software nicht selbst entwickeln will, ist die Lekt&uuml;re der oben angef&uuml;hrten Dokumente f&uuml;r
+Integratoren von SET empfehlenswert.
+</p>
+<p>
+Auf jeden Fall ben&ouml;tigt der H&auml;ndler eine Software: die sogenannte Payware oder POS (Point Of Sale)-Software. Die
+wichtigsten Lieferanten in Europa daf&uuml;r sind: Globeset, Trintech, IBM.
+</p>
+<p>
+Eine Matrix &uuml;ber die jeweils angebotenen Produkte, auch anderer Hersteller gibt es ebenfalls bei <a href="http://www.setco.org/cgi-bin/vsm.cgi">SETCO</a>. 
+</p>
+<p>
+Zus&auml;tzlich zu der verwendeten Software ben&ouml;tigt der H&auml;ndler auch ein Zertifikat des Acquirers. Dieses erh&auml;lt er im
+Zusammenhang mit seinem H&auml;ndlervertrag.
+Im Normalfall gibt es einen Zusatzvertrag zur Abwicklung von Mail/Telefon-Order und  SET-Transaktionen
+(nur bei Verwendung von zertifizierter Software).
+</p>
+<p>
+POS-Systeme sind virtuelle Point-Of-Sale-Anwendungen, die das H&auml;ndlersystem
+sowohl mit dem Kunden-Wallet (elektronische Brieftasche) als auch mit dem
+Zahlungssystem der Bank (Payment Gateway) verbinden. Sie arbeiten mit allen g&auml;ngigen SET-konformen Applikationen
+anderer Hersteller sowie mit popul&auml;ren Shopsystemen zusammen, um die Autorisierung und den Zahlungsverkehr sicher
+abzuwickeln. Neben den neuen SET-Transaktionen (3KP), werden au&szlig;erdem weitere Features, wie z.B. certless 
+(certificate-less) und walletless angeboten, soda&szlig; der Anwender kein Zertifikat und / oder Wallet besitzen mu&szlig;. 
+</p>
+<p>
+Die folgende Erkl&auml;rung des POS-Systems basiert auf dem Netlife/Globeset POS 1.4, ist jedoch aufgrund der 
+Spezifikationen von SETCO f&uuml;r alle anderen Systeme gleichwertig.
+</p>
+<p>
+Das Netlife/Globeset POS ist erh&auml;ltlich f&uuml;r Windows NT und Sun/Solaris (Sparc).
+Die API's und Adapter gibt es f&uuml;r C (Windows-Dll's) und Perl-scripts.
+</p>
+<p>
+Als Datenbanken kommen zum Einsatz: MS-SQL, Oracle. Auch wenn MS-Access &uuml;ber ODBC angesprochen wird - MS-Access ist 
+keine aktive Datenbank (da sie ohne die n&ouml;tige Jet-Engine nicht funktioniert) und ist daher f&uuml;r das POS nicht 
+verwendbar.
+</p>
+<p>
+MySql kann &uuml;ber eine ODBC-Schnittstelle verwendet werden, es gibt jedoch keinerlei offiziellen Support. Von der 
+Verwendung anderer Datenbanksysteme wie Progress, Sybase oder Informix rate ich wegen des nicht vorhersehbaren 
+Integrationsaufwandes ab.
+</p>
+<h2>Bestandteile des POS</h2>
+<p>
+Basis des Netlife POS ist die SET-Protokollkomponente. An diese gegliedert
+sind Netzwerkschnittstellen, Datenbanken und zus&auml;tzliche funktionale Komponenten. Die folgende Abbildung zeigt eine 
+&Uuml;bersicht der Interaktion dieser Bestandteile.
+</p>
+<p><IMG SRC="/artikel/Bilder/200009/20000905_pos.png" width=585 height=385 border=0 alt=""></p>
+<h2>Shopping-Schnittstelle (POS Adapter)</h2>
+<p>
+Die Shopping-Schnittstelle stellt einen Mechanismus f&uuml;r Online-Shopping-
+Systeme zur Einleitung von Kauftransaktionen bereit. Mittels dieser Schnittstelle sendet das Shopping-System
+Bestellinformationen an das POS, das anschlie&szlig;end das Wallet im Browser des Kunden startet. Netlife liefert ein 
+POS API, das die Anbindung einer Online-Shopping-Anwendung an das Netlife POS erm&ouml;glicht. Es werden auch fertige 
+Adapter f&uuml;r OpenShop und InterShop angeboten.
+</p>
+<h2>SET-Schnittstelle</h2>
+<p>
+Die SET-Schnittstelle erm&ouml;glicht einen Zugriff auf andere SET-konforme
+Applikationen. Sie besteht aus einem TCP/IP-Server-Port,
+der SET-Nachrichten vom Kreditkarteninhaber (Wallet) empf&auml;ngt,
+H&auml;ndlerinformationen hinzuf&uuml;gt und s&auml;mtliche Nachrichten &uuml;ber das SET-Protokoll an die Schnittstelle zum Acquirer 
+(Payment Gateway) sendet.
+</p>
+<h2>Administrationsschnittstelle</h2>
+<p>
+Die Administrationsschnittstelle ist eine Schnittstelle zum Netlife
+POS, auf die mit einem Standard-Browser zugegriffen werden kann.
+Diese Verbindung wird &uuml;ber eine SSL-Verschl&uuml;sselung gesch&uuml;tzt.
+</p>
+<p>
+Folgende administrative Funktionen k&ouml;nnen durchgef&uuml;hrt werden:
+</p>
+<p>
+<ul>
+<li>Start, Stop, Wiederanlauf und &Uuml;berwachung des Status des POS-Servers
+<li>&Uuml;berpr&uuml;fung der zur Verf&uuml;gung stehenden Zertifikate
+<li>Konfiguration der Server-Logdateien, URL-Daten, Ports und Datenbanken
+<li>Konfiguration und &Uuml;berwachung der aktuellen H&auml;ndler
+<li>Manuelle Stapel- und Transaktionsverarbeitung zur Durchf&uuml;hrung der Zahlungsabwicklung
+</ul>
+</p>
+<h2>POS-Datenbank</h2>
+<p>
+Nach der Installation auf der Web-Site des H&auml;ndlers benutzt das POS dessen Datenbank-Server, um auf mehrere Datenbanken w&auml;hrend des Normalbetriebs zugreifen zu k&ouml;nnen. Diese sind: 
+</p>
+<p>
+<ul>
+<li>Transaction database
+<li>Authorization database
+<li>Batch database
+<li>Certificate database
+<li>Key database
+</ul>
+</p>
+<p><IMG SRC="/artikel/Bilder/200009/20000905_posdbconfig.png" width=590 height=483 border=0 alt=""></p>
+<p>
+Diese Datenbanken werden bei der Installation erzeugt. H&auml;ndler k&ouml;nnen sie mit den Tools Dritter abfragen, um
+zus&auml;tzliche Berichte zu jenen des POS zu generieren. Es macht beispielsweise durchaus Sinn f&uuml;r eine &Uuml;bernahme in die 
+Finanzbuchhaltung mittels SQL Buchungss&auml;tze aller tats&auml;chlich durchgef&uuml;hrten Transaktionen der einzelnen 
+Kreditkartenorganisationen zu erstellen, oder auch nur eine Liste zur Saldenabstimmung zu erzeugen. Auch eine 
+Auswertung der Transaktionen abh&auml;ngig von der eigenen Kunden-Datenbank kann f&uuml;r Fakturierung und Warenwirtschaft 
+notwendig sein.
+</p>
+<h2>Datenbankstruktur</h2>
+<p>
+Die Schl&uuml;sseltabelle (Zertifikatsregistrierung) dient zum Speichern der privaten Schl&uuml;ssel des H&auml;ndlers und zur 
+Information &uuml;ber die Zertifikatsregistrierung. 
+Private Schl&uuml;ssel sind durch ein vom H&auml;ndler bestimmtes Pa&szlig;wort gesch&uuml;tzt.
+Zertifikatstabellen werden zum Speichern aller Zertifikate verwendet.
+</p>
+<p>
+Transaktionstabellen dienen zum Speichern des Transaktionsstatus und werden im Zusammenhang mit der Autorisierung 
+sowie mit Stapeltabellen benutzt.
+</p>
+<p>
+Autorisierungstabellen verwendet man zum Speichern aller Informationen zur Zahlungsautorisierung und -erfassung.
+In Stapeltabellen werden Stapelinformationen gespeichert (Batches).
+</p>
+<h2>POS-Nachrichtenverlauf</h2>
+<p>
+Der Ablauf der Zahlungsverarbeitung im SET-Protokoll beruht auf Nachrichtenpaaren zwischen sowohl dem Karteninhaber 
+und dem H&auml;ndler als auch dem H&auml;ndler und dem Payment Gateway. Nachfolgend wird anhand eines Diagrammes der 
+Nachrichtenverlauf erl&auml;utert.
+</p>
+<p><IMG SRC="/artikel/Bilder/200009/20000905_transaktion.png" width=557 height=337 border=0 alt=""></p>
+<p>
+<ol>
+<li>Der Kunde f&uuml;llt den Warenkorb.
+<li>Er best&auml;tigt die Bestellinformationen und w&auml;hlt eine Bezahlungsmethode
+aus. Das Shopping-System erstellt eine Kickoff-Nachricht.
+<li>Das Shopping-System sendet die Kickoff-Nachricht an das POS.
+<li>Das POS erstellt eine Wakeup-Nachricht und sendet sie zur&uuml;ck
+an das Shopping-System.
+<li>Die Wakeup-Nachricht gelangt &uuml;ber den Webserver zum
+Browser.
+<li>Der Browser wurde dem SET-Standard gem&auml;&szlig; so konfiguriert,
+da&szlig; er beim Erhalt der Wakeup-Nachricht das Wallet aufruft.
+<li>Das Wallet nimmt mittels der URL der Wakeup-Nachricht
+Kontakt zum POS auf.
+<li>Das POS antwortet auf die Anforderung der Kaufinitialisierung.
+<li>Das Wallet sendet eine Kaufanforderung an den H&auml;ndler.
+<li>Das POS schickt eine Autorisierungsanforderung an das
+Payment Gateway.
+<li>Das Gateway sendet eine Autorisierungsantwort zur&uuml;ck zum
+POS.
+<li>Das POS sendet die Autorisierungsantwort an das Shopping-System.
+<li>Das POS sendet eine Erfolgs- oder Fehlermeldung an das
+Wallet.
+</ol>
+</p>
+<p>Weil das Thema Sicherheit gerade bei Kreditkarten eine gewichtige Rolle spielt, hier noch ein paar Worte zur 
+Verschl&uuml;sselung. Die SET Spezifikationen basieren auf folgenden Algorithmen und Mechanismen:
+</p>
+<p>
+<table border="0" cellspacing="5" cellpadding="5">
+<tr>
+<th align="left">SICHERHEITSMECHANISMUS</th>
+<th align="left">ALGORITHMUS</th>
+<th align="left">STANDARD</th>
+<th align="left">SCHL&Uuml;SSELL&Auml;NGE</th>
+</tr>
+<tr align="left">
+<td>Signatur</td>
+<td><b>RSA</b></td>
+<td>PKCS 7</td>
+<td>1024 Bit</td>
+</tr>
+<tr align="left">
+<td>Duale Signatur</td>
+<td><b>RSA</b></td>
+<td>Neuentwicklung f&uuml;r SET</td>
+<td>1024 Bit</td>
+</tr>
+<tr align="left">
+<td>Datenverschl&uuml;sselung</td>
+<td><b>DES</b></td>
+<td>PKCS 7</td>
+<td>56 Bit</td>
+</tr>
+<tr align="left">
+<td>Hashing</td>
+<td><b>SHA</b></td>
+<td>SHA-1</td>
+<td>1024 Bit</td>
+</tr>
+<tr align="left">
+<td>Asymmetrische Verschl&uuml;sselung</td>
+<td><b>RSA</b></td>
+<td>PKCS 1</td>
+<td>768 (Merchant) und 1024 (Payment Gateway)</td>
+</tr>
+<tr align="left">
+<td>Zertifikate</td>
+<td><b>RSA</b></td>
+<td>X.509 v 3</td>
+<td>1024</td>
+</tr>
+</table>
+</p>
+<p>
+Soviel zum allgemeinen Teil.
+</p>
+<p>
+Wenn sich also ein H&auml;ndler entschlie&szlig;t, seinen Kunden Kreditkartenzahlungen anzubieten, sollte er folgende Punkte
+beachten:
+</p>
+<p>
+(*) Der Betrieb eines POS ist mit einem gewissen finanziellen Mindestaufwand verbunden.
+</p>
+<p>
+Soferne der Shop bei einem ISP gehostet wird, sollte dieser die Installation von Fremdsoftware gestatten, die n&ouml;tigen
+Datenbanksysteme unterst&uuml;tzen, Zugriff auf Log-Dateien gew&auml;hren, allenfalls Software-Updates erm&ouml;glichen.
+Dies ist nat&uuml;rlich mit laufenden Kosten verbunden (vor allem die Datenbanken). Bei Betrieb auf einem eigenen Server
+fallen diese Punkte weitgehend weg, es sollte nat&uuml;rlich ein Administrator mit dem POS-System vertraut sein.
+</p>
+<p>
+Auch wenn die angebotenen Adapter nur mehr "mit Parametern versorgt werden m&uuml;ssen", bzw. das API f&uuml;r Programmierer 
+keine Hindernissse darstellt, darf man den Integrationsaufwand nicht vernachl&auml;ssigen.
+</p>
+<p>
+(*) Hat man jetzt sein POS auf einem Rechner installiert, so ist es bis zum reibungslosen Funktionieren desselben nur 
+mehr ein ganz kleines St&uuml;ck Arbeit.
+Eine entsprechende Datenbank ist anzulegen, um die Tabellen k&uuml;mmert sich dann das POS.
+</p>
+<p>
+(*) Eine ODBC-Schnittstelle (bei SQL) ist zu definieren oder ein Oracle Client ist einzurichten.
+</p>
+<p>
+(*) Das POS ist mit den Datenbankinformationen zu versorgen.
+</p>
+<p>
+(*) Der H&auml;ndler mit seinen Basisdaten und den notwendigen Acquirer-Zertifikaten (von Visa und/oder Mastercard) ist
+anzulegen.
+</p>
+<p><IMG SRC="/artikel/Bilder/200009/20000905_admin.png" width=590 height=483 border=0 alt=""></p>
+<p>
+Nach Erhalt der H&auml;ndler- und Acquirer-Zertifikate &uuml;ber das Gateway ist das POS betriebsbereit und mit Hilfe der zur
+Verf&uuml;gung gestellten Demo-Applikation, der ASP-Demo, den Perl-Scripts oder dem C-Interface k&ouml;nnen SET oder 2KP 
+Transaktionen durchgef&uuml;hrt werden.
+</p>
+<p>
+Jetzt folgt noch die Integration in die Shop-Umgebung des H&auml;ndlers mit dem entsprechenden Adapter oder einem API 
+und ein weiterer SET-Shop ist online.
+Bei Verwendung  eines generischen Perl-Adapters ist es auch m&ouml;glich Shops auf Linux-Servern mit SET-Funktionalit&auml;t
+auszustatten.
+</p>
+<h2>Adapter/API:</h2> 
+<p>
+Folgende Adapter gibt es f&uuml;r Windows NT:
+</p>
+<p>
+<ul>
+<li>ASP-Adapter
+<li>Intershop-Cartridge
+<li>OpenShop-Cartridge
+<li>C- oder Perl- API
+</ul>
+</p>
+<p>
+Der Unterschied zwischen Adapter und Cartridge besteht darin, da&szlig; der Adapter universell einsetzbar ist und daher 
+f&uuml;r jede Shopl&ouml;sung unter ASP geeignet ist (z.B.: Site/Commerce-Server von Microsoft und  eigene L&ouml;sungen), wogegen 
+die Cartridge fix mit dem dazugeh&ouml;rigen Produkt verbunden ist und auch die Lizenzierung abh&auml;ngig von den jeweiligen 
+Produkten erfolgt.
+</p>
+<p>
+Folgende Adapter gibt es f&uuml;r Sun/Solaris:
+</p>
+<p>
+<ul>
+<li>Intershop-Cartridge
+<li>OpenShop-Cartridge
+<li>C- oder Perl- API
+</ul>
+</p>
+<p>
+Ein generischer Adapter besteht aus einem StoreFront-Adapter (SA) und einem POS-Adapter (PA), die auf verschiedenen 
+Servern mit unterschiedlichen Plattformen laufen k&ouml;nnen. Das bedeutet, da&szlig;  der SA in Perl unter Linux laufen kann, 
+und mit einem PA auf WinNT kommuniziert.
+</p>
+<h2>Transaktionen</h2>
+<p>
+Eine Kreditkartentransaktion besteht <b>immer</b> aus 2 Schritten.
+</p>
+<p>
+<ol>
+<li>die reine Autorisierung
+<li>die nachfolgende Buchung, wobei der Buchungsbetrag vom Autorisierungsbetrag abweichend sein kann.
+</ol>
+</p>
+<p>
+Der klassische Fall f&uuml;r einen abweichenden Buchungsbetrag ist eine Hoteltransaktion: Der Kunde checkt im Hotel f&uuml;r 
+3 N&auml;chte ein, es werden <b>sofort</b> 3.000,- autorisiert. Beim Auschecken nach 2 N&auml;chten werden jedoch nur 2.000,- gebucht.
+Beim Auschecken nach 4 N&auml;chten werden dann  4.000,- gebucht. Die Transaktion ist erst nach der erfolgten Buchung 
+abgeschlossen, und der H&auml;ndler erh&auml;lt auch den tats&auml;chlich gebuchten Betrag.
+</p>
+<p>
+Im POS erfolgt die Autorisierung immer Online (im Zuge der Einkaufstransaktion)
+Die Buchung (Capture) kann zu einem sp&auml;teren Zeitpunkt (nach Warenversand) durchgef&uuml;hrt werden.
+</p>
+<p>
+Es besteht auch die M&ouml;glichkeit, Autorisierung und Buchung gleichzeitig durchzuf&uuml;hren. Dies ist zweckm&auml;&szlig;ig bei 
+"virtuellen Waren" (z.B.: Software-Download oder Informationszugang) wo der Kunde seine Ware sofort erh&auml;lt und 
+auch keine Teillieferungen m&ouml;glich sind.
+</p>
+<p>
+Abh&auml;ngig von der Art der gebotenen Waren oder Dienstleistungen k&ouml;nnen 2 verschiedene Transaktionstypen verwendet werden.
+Aufgrund des Transaktionstyps wird im POS die Unterscheidung getroffen ob eine sp&auml;tere Buchung m&ouml;glich ist oder ob 
+die Buchung (Capture) sofort durchgef&uuml;hrt wird.
+</p>
+<p>
+F&uuml;r physikalischen Warenversand empfiehlt sich:
+</p>
+<p>
+<b>Autorisierung</b> durchf&uuml;hren und in einer sp&auml;teren Transaktion (&uuml;ber Software oder POS-Administration) das 
+dazugeh&ouml;rige Capture durchzuf&uuml;hren.
+</p>
+<p>
+F&uuml;r virtuelle Waren oder Dienstleistungen (Download...) empfiehlt sich:
+Autorisierung und Capture in einer Transaktion durchzuf&uuml;hren.
+</p>
+<p>
+<b>Capture:</b> Erst durch das Capture wird aus einer Autorisierung eine tats&auml;chliche Transaktion, die in einem 
+"Batch" &uuml;ber das Gateway an das Kreditkarteninstitut gesandt wird.
+</p>
+<p>
+<b>Batch:</b> Zu einem definierten Zeitpunkt (oder manuell) sollte periodisch ein sogenannter Batch an die 
+Acquirer gesandt werden. Dieser Batch entspricht im realen Leben dem Kassenabschlu&szlig; am Terminal und bewirkt die
+Auszahlung (Verrechnung) der Zahlbetr&auml;ge an den H&auml;ndler durch das Kreditkarteninstitut.
+</p>
+<p><IMG SRC="/artikel/Bilder/200009/20000905_batch.png" width=590 height=451 border=0 alt=""></p>
+<p>
+Jede Transaktion ist im POS mit allen notwendigen (bzw. vom Shop zur Verf&uuml;gung gestellten) Informationen 
+abgespeichert.
+</p>
+<p><IMG SRC="/artikel/Bilder/200009/20000905_lidm.png" width=590 height=140 border=0 alt=""></p>
+<p>
+Unabh&auml;ngig von der TransaktionsID des Shops wird im POS eine Local ID Merchant of the transaction (LIDM genannt) 
+gebildet. Diese LIDM begleitet die SET-Transaktion durch alle Instanzen, d.h. sie ist im Wallet (soferne verwendet)
+am Gateway und im Host des Kreditkarteninstitutes. Im Falle eines Einspruches oder Reklamation kann &uuml;ber diese LIDM 
+die Transaktion rekonstruiert werden. Die LIDM kann neben der Shop Transaction ID nat&uuml;rlich auch als Referenz zu 
+H&auml;ndler-eigenen Kundendatenbanken herangezogen werden.
+</p>
+<p>
+Stornos (reversal) , Gutschriften (debit) oder Betrags&auml;nderungen (adjustment) bei Teillieferungen oder 
+&Uuml;berlieferungen sind &uuml;ber die POS-Administration m&ouml;glich.
+</p>
+<p>
+Je nach Transaktions-Anfall bietet sich nat&uuml;rlich die M&ouml;glichkeit eine Batch-Applikation zur Verf&uuml;gung zu stellen, 
+die unabh&auml;ngig von der POS- Administration deren Funktionalit&auml;ten zur Verf&uuml;gung stellt. Der H&auml;ndler erh&auml;lt von 
+den Kreditkarteninstituten verschiedene H&auml;ndlernummern zugeteilt unter denen er seine Transaktionen mittels Batch 
+einreicht. Er erh&auml;lt je nach Vertrag und Periodizit&auml;t der Batches entsprechend seine Kontoausz&uuml;ge von den 
+Kreditkarteninstituten. Diese verschiedenen H&auml;ndlernummern erleichtern die Abstimmung von 2KP-, 3KP- Transaktionen 
+und Transaktionen in verschiedenen W&auml;hrungen mit dem jeweiligen Kontoauszug.
+</p>
+<h2>Payment-Service</h2>
+<p>
+Wenn der Aufwand f&uuml;r eine eigene POS-Installation zu gro&szlig; ist oder der ISP das nicht zul&auml;sst, gibt es auch noch 
+die M&ouml;glichkeit der Miete eines POS-Services.
+</p>
+<p>
+Was ist das Payment-Service und was bringt mir dieses Service?
+</p>
+<p>
+Ganz einfach: der H&auml;ndler m&ouml;chte seinen Online-Kunden nat&uuml;rlich auch die sichere Zahlungsm&ouml;glichkeit SET<sup>TM</sup> (Secure Electronic Transaction) anbieten, findet aber, da&szlig; der Kauf einer eigenen Software (POS) zu aufwendig ist.
+Das Payment-Service ist funktional die gleiche Software wie das MerchantPOS,
+nur da&szlig; mehrere Shops ein und dasselbe Service nutzen (mieten) und trotzdem nicht auf die Daten des anderen Shopbetreibers zugreifen k&ouml;nnen. Jeder Shop hat einen eigenen Zugang zum POS, und da man sich das POS nun mit mehreren Shopbesitzern teilt bleiben die Kosten auch geringer.
+</p>
+<p>
+Vorteile
+</p>
+<p>
+<ul>
+<li>Keine zus&auml;tzlichen monatlichen Providerkosten
+<li>Keine eigene Dom&auml;ne n&ouml;tig
+<li>F&uuml;r jeden Shopbetreiber leistbar
+<li>Keine Wartungskosten
+<li>Geringere Aufwendung f&uuml;r Integration (tats&auml;chlich liegt der Integrationsaufwand f&uuml;r das Miet-POS h&auml;ndlerseitig 
+im Stunden-Bereich.)
+</ul>
+</p>
+<p>
+Von SET4U gibt es 3 Varianten des Payment-Services:
+</p>
+<h2>SET-light</h2>
+<p>
+Dieses Service beinhaltet die Miete des POS und des Store Front-Adapters, die "Bezahlseite" wird von SET4U 
+&uuml;ber eine sichere Verbindung zur Verf&uuml;gung gestellt. Auf der Bezahlseite wird ein Logo des H&auml;ndlers eingebunden, 
+die Bezahlseite l&auml;uft allerdings auf Servern von SET4U. 
+</p>
+<h2>SET-light+</h2>
+<p>
+Dieses Service entspricht SET-light mit einigen "kosmetischen" Zusatzfeatures. Die "Bezahlseite" wird von SET4U 
+nach Angaben des H&auml;ndlers gestaltet oder wird vom H&auml;ndler zur Verf&uuml;gung gestellt. Die Seite liegt wie bei SET-light 
+auf den Servern von SET4U. Grunds&auml;tzlich ist also mit SET-light+ eine 
+Anpassung an die Corporate Identity (CI) m&ouml;glich.
+</p>
+<p>
+Technische Voraussetzung f&uuml;r die Durchf&uuml;hrung ist ein Link (SSL) von z.B. dem Button "Zur Kassa" auf die Bezahlseite.
+Um die Transaktionen durchzuf&uuml;hren ben&ouml;tigt die Bezahlsoftware (POS) einige Informationen wie den Betrag, 
+Auftragsbeschreibung, W&auml;hrung, die der Shop &uuml;ber eine sichere Verbindung an das POS &uuml;bergibt.
+</p>
+<p>
+Der Ablauf einer Transaktion gestaltet sich wie folgt
+</p>
+<p><ol>
+<li>Shop --> Store Adapter (gemietet)
+<li>Store Adapter --> POS
+<li>POS --> Kreditkartenorganisation
+<li>Kreditkartenorganisation --> POS
+<li>POS --> Store Adapter
+<li>Store Adapter --> Shop
+</ol>
+</p>
+<p>
+Der Kunde erh&auml;lt dann eine Bezahlseite:
+</p>
+<p><IMG SRC="/artikel/Bilder/200009/20000905_service.png" width=590 height=475 border=0 alt=""></p>
+<p>
+oder eine nach den Vorstellungen des H&auml;ndlers zusammengestellte.
+</p>
+<h2>SET-complete</h2>
+<p>
+Dieses Service beinhaltet die Miete des POS, der Store Adapter wird vom H&auml;ndler gekauft und kann daher im Shop des
+H&auml;ndlers direkt eingebunden werden. Eine vollst&auml;ndige Anpassung an eine Corporate Identity ist dadurch m&ouml;glich,
+allerdings l&auml;uft nun alles in der Web Site des H&auml;ndlers. Sonst beinhaltet dieses Service die gleichen Optionen wie 
+"SET-light".
+</p>
+<p>
+Technische Voraussetzungen: 
+Es werden von der Bezahlseite des H&auml;ndlers alle notwendigen Informationen &uuml;ber eine sichere Verbindung (SSL)
+an das POS &uuml;bergeben. 
+</p>
+<p>
+Der Ablauf einer Transaktion:
+</p>
+<p>
+<ol>
+<li>Shop (Store Adapter) --> POS
+<li>POS --> Kreditkartenorganisation
+<li>Kreditkartenorganisation --> POS
+<li>POS --> Store Adapter (Shop)
+</ol>
+</p>
+<p>
+Weitere Informationen zu den hier vorgestellten 3 Services erhalten Sie bei: <a href="http://www.set4u.at/frame_serverpos.htm">SET4U Payment-Service</a>
+</p>
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Unabh&auml;ngig von anderen Zahlungsweisen wie e-cash, cybercash, net900, und was immer die Zukunft bringen wird, ist die
+Zahlung mit Kreditkarten die einzig wirklich internationale M&ouml;glichkeit - und um allen Sicherheitsapekten gerecht zu
+werden, bietet der Einsatz von SET dem H&auml;ndler derzeit den h&ouml;chsten Standard.
+</p>
+<p>
+Auch wenn die Nutzung von Wallets zur Zeit nicht allzu hoch ist, ist alleine die Online-Autorisierung f&uuml;r den 
+H&auml;ndler von entscheidendem Vorteil gegen&uuml;ber herk&ouml;mmlichen MailOrder/TelefonOrder Transaktionen und die angek&uuml;ndigte
+Verwendbarkeit von MAESTRO-Karten im Rahmen von SET wird f&uuml;r den H&auml;ndler auch ein Anreiz sein, diese Zahlungsmethode
+anzubieten.
+</p>
+<p>
+Shops aus aller Welt, die SET verwenden, finden sich auf <a href="http://goset.org">goset.org</a>
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000904.htm">Beteiligte Komponenten bei SET Transaktionen (Teil&nbsp;1)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000904.htm</span><br>
+<a href="../artikel/20000901.htm">Sichere Zahlungen im Internet mit SET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000901.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fgoset%2Eorg">http://goset.org</a><br>
+<SPAN class="content">http://goset.org</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fset4u%2Eat">http://set4u.at</a><br>
+<SPAN class="content">http://set4u.at</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eecin%2Ede">http://www.ecin.de</a><br>
+<SPAN class="content">http://www.ecin.de</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eeuropay%2Eat">http://www.europay.at</a><br>
+<SPAN class="content">http://www.europay.at</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Enetlife%2Ede">http://www.netlife.de</a><br>
+<SPAN class="content">http://www.netlife.de</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Esetco%2Eorg">http://www.setco.org</a><br>
+<SPAN class="content">http://www.setco.org</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Evisa%2Eat">http://www.visa.at</a><br>
+<SPAN class="content">http://www.visa.at</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

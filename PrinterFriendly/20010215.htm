@@ -1,0 +1,228 @@
+<HTML>
+<HEAD>
+<TITLE>Enums lesbar machen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Der heutige Artikel widmet sich einem Thema aus C#, der gerade bei der Entwicklung gr&ouml;&szlig;erer Projekte interessant werden k&ouml;nnte - dem Konvertieren von Enum Werten in lesbare Strings.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,C#,Csharp,C Sharp,for,Enum,GetValues,Format,ToString,.NET,DotNet,SDK,ASP.NET">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Enums lesbar machen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010215"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Der heutige Artikel widmet sich einem Thema aus C#, das gerade bei der Entwicklung
+gr&ouml;&szlig;erer Projekte interessant werden k&ouml;nnte - dem Konvertieren von Enum Werten in 
+"lesbare" Strings.
+</p>
+<p>
+Da das Ganze jetzt sehr abstrakt klingt, hier ein Beispiel einer Enum:<br>
+</p>
+<pre style="background='silver';">
+&lt;script language=&quot;C#&quot; runat=server&gt;
+enum Wochentag 
+{ 
+  Montag=1,   // Attributname = Attributwert
+  Dienstag, 
+  Mittwoch, 
+  Donnerstag, 
+  Freitag, 
+  Samstag, 
+  Sonntag 
+};
+&lt;/script&gt;
+</pre>
+
+<p>
+Instanziert man eine Variable vom Typ <i>Wochentag</i>, so kann man nur Werte von 1 bis
+7 zuweisen, oder die Attributnamen (sozusagen symbolische Konstanten):
+</p>
+
+<pre style="background='silver';">
+Wochentag myDayTest1 = 1; // Montag
+Wochentag myDayTest2 = Wochentag.Donnerstag; // Wert: 4
+</pre>
+
+<p>
+Mit solcherart typisierten Variablen verhindert man eine Menge von Fehlern. Allerdings stellt
+sich die Frage - jetzt habe ich eine tolle Enum, aber was, wenn ich die Attributnamen in einer DropDown Liste
+darstellen will, damit der Benutzer den Tag ausw&auml;hlen kann?
+</p>
+
+<p>
+In solchen F&auml;llen wurde dann meist auf zus&auml;tzliche Arrays ausgewichen, die die Attributnamen
+als Strings enthielten. Hier ein kleines VBScript Beispiel:
+</p>
+
+<pre style="background='silver';">
+arrValues = Array("Montag", "Dienstag", "Mittwoch", "Donnerstag", ...)
+For n=0 To UBound(arrValues)
+  ...
+Next
+</pre>
+
+<p>
+Klarerweise wird damit die Gefahr eingef&uuml;hrt, da&szlig; Attributnamen und das zus&auml;tzliche Array
+irgendwann nach &Auml;nderungen unterschiedliche Werte enthalten. Das ist nicht so w&uuml;nschenswert.
+Nicht davon zu reden, wenn sich die Attributwerte &auml;ndern - dann wird es vollends haarig.
+</p>
+
+<p>
+In C# kann man diese Klippe sehr elegant umschiffen (eigentlich .NET, aber wir wollen heute
+nicht kleinlich sein) - Enum's k&ouml;nnen die Werte formatiert ausgeben. Nachfolgend das Beispiel
+<b>enum.aspx</b>, das Teil des heutigen Downloads ist.
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Page Language=&quot;C#&quot; %&gt;
+&lt;script language=&quot;C#&quot; runat=server&gt;
+enum Wochentag 
+{ 
+  Montag=1, 
+  Dienstag, 
+  Mittwoch, 
+  Donnerstag, 
+  Freitag, 
+  Samstag, 
+  Sonntag 
+};
+&lt;/script&gt;
+&lt;%
+ // einfache Variable des Enum-Typs erzeugen
+ Wochentag myDay;
+ 
+ // erzeugen eines Arrays von Wochentag-Enum-Werten, sortiert nach Wert
+ Array enValues = Enum.GetValues(typeof(Wochentag));
+ 
+ for (int n=0; n &lt; enValues.GetLength(0); n++)
+ {
+   myDay = (Wochentag)enValues.GetValue(n);
+   Response.Write(&quot;Name=&quot; + Enum.GetName(typeof(Wochentag), myDay));
+   Response.Write(&quot;,  Wert=&quot; + Enum.Format(typeof(Wochentag), myDay,&quot;D&quot;) + &quot;&lt;br&gt;&quot;);
+ }
+%&gt;
+</pre>
+
+<p>
+Alles klar? &lt;g/&gt; Wer ASP.NET schon ein bischen kennt, fragt sich vielleicht, warum
+die Enum in einem separaten SCRIPT Block definiert ist - der Grund: es ist ein eigener (neuer)
+Typ, und da alles in &lt;%%&gt; in die <i>Render</i> Methode eingebaut wird, geht das nicht
+anders.
+</p>
+
+<p>
+Der eigentliche Trick des Codes besteht darin, da&szlig; man &uuml;ber <i>Enum.GetValues</i> ein Array
+von Werten der Enum erh&auml;lt (in unserem Fall also 7 Elemente). &Uuml;ber dieses Array l&auml;uft man dann mit einer <i>for</i> Schleife.
+Damit man den Attributnamen erh&auml;lt, verwendet man die <i>GetName</i> Methode - diese ist genauso
+wie die <i>Format()</i> Methode eine statische Methode der <i>System.Enum</i> Klasse. Letztere Methode formatiert
+uns den Wert eines Enum-Typs als dezimale Zahl - und schon hat man eine Liste Name=Wert.
+</p>
+
+<p>
+Der in <b>enum.aspx</b> gezeigt Code kann auf beliebige Elemente des Typs <i>Wochentag</i> angewendet 
+werden. Will man alle Elemente des Enums in einer Schleife m&ouml;glichst effizient ausgeben, eignet sich folgender
+Code daf&uuml;r besser (<b>enum_iterateonly.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Page Language="C#" %&gt;
+&lt;script language="C#" runat=server&gt;
+ ... // gleich zu enum.aspx
+&lt;/script&gt;
+&lt;%
+ // einfache Variable des Enum-Typs erzeugen
+ Wochentag myDay;
+ 
+ // beide Arrays werden nach Value sortiert geliefert, also synchron
+ Array enValues = Enum.GetValues(typeof(Wochentag));
+ string[] enNames = Enum.GetNames(typeof(Wochentag));
+ 
+ for (int n=0; n &lt; enValues.GetLength(0); n++)
+ {
+   Response.Write("Name=" + enNames[n]);
+   myDay = (Wochentag)enValues.GetValue(n);
+   Response.Write(",  Wert=" + Enum.Format(typeof(Wochentag), myDay,"D") + "&lt;br&gt;");
+ }
+%&gt;
+</pre>
+
+<p>
+Der Unterschied ist, da&szlig; die Konstantennamen ebenfalls in ein Array ausgelesen werden - und zwar mit Hilfe
+der <i>GetNames</i> Methode. Und schon hat man eine effizientere Schleife als zuvor.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Mit diesem allgemein gehaltenen Code kann man nun DropDown Listen, oder welche Auswahlen
+auch immer bef&uuml;llen gehen - Attributnamen und Attributwerte werden immer korrekt im Einklang
+miteinander stehen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010215.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010215.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000726.htm">Datentypen in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000726.htm</span><br>
+<a href="../artikel/20020507.htm">Deutsche Personalausweisnummern verifizieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020507.htm</span><br>
+<a href="../artikel/20000717.htm">Schleifenbefehle in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000717.htm</span><br>
+<a href="../artikel/20020207.htm">Unions in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020207.htm</span><br>
+<a href="../artikel/20020905.htm">Wochenberechnung mit .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020905.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

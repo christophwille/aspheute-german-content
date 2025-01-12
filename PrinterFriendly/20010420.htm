@@ -1,0 +1,208 @@
+<HTML>
+<HEAD>
+<TITLE>Ein einfacher Query Analyzer</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Der heutige Artikel befa&szlig;t sich mit einem altbekannten Thema - SQL Statements. Heute coden wir ein ASP Formular, in dem man bequem Statements eingeben kann, und dann eine dementsprechende Ausgabe erh&auml;lt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Query Analyzer,Input,SQL Statement,SQL,Query,Abfrage,Test">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Ein einfacher Query Analyzer</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010420"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Der heutige Artikel befa&szlig;t sich mit einem altbekannten Thema - SQL Statements. Hierbei wird aber nicht auf die
+einzelnen SQL Statements eingegangen, sondern wie man sich ein ASP Formular codet, in dem man bequem Statements
+eingeben kann, und dann eine dementsprechende Ausgabe erh&auml;lt.
+</p>
+
+<p>
+Das Formular sollte die M&ouml;glichkeit bieten, ein beliebiges SQL Statement einzugeben. Nach einem erfolgten Postback
+sollte anhand der Eingabe das Statement ausgef&uuml;hrt werden, und falls m&ouml;glich ein Ergebnis angezeigt werden.
+Den Sourcecode zu diesem Beispiel finden Sie im Download in der Datei <b>ExSQL.asp</b>.
+</p>
+
+<p>
+Das Eingabeformular enth&auml;lt keine Stolpersteine:
+</p>
+
+<pre style="background='silver';">
+&lt;form method="post"&gt;
+&lt;table cellpadding="2" cellspacing="2" border="0"&gt;
+  &lt;tr&gt;
+     &lt;td valign="top"&gt;SQL Statement:&lt;/td&gt;
+     &lt;td&gt;  
+       &lt;textarea name="txtSQLStmt" rows="8" cols="60"&gt;&lt;%=strSQLStmt%&gt;
+       &lt;/textarea&gt;
+     &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+      &lt;td colspan="2" align="right"&gt;&lt;input type="submit" value="Execute"&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+&lt;/form&gt;
+</pre>
+
+<p>
+Interessanter hingegen ist der eigentliche Sourcecode. Damit dieser etwas mehr Komfort bzw. Sicherheit bietet, habe ich
+zus&auml;tzlich eine Fehlerbehandlung integriert. Gehen wir also den Sourcecode schrittweise durch:
+</p>
+
+<pre style="background='silver';">
+If bIsPostback Then
+    Set objConn = Server.CreateObject("ADODB.Connection")
+    objConn.Open strConn
+    
+    On Error Resume Next
+    Set objRS = objConn.Execute(strSQLStmt)
+
+    If Err.Number &lt;&gt; 0 Then
+      Response.Write "&lt;p&gt;Fehler bei der Ausf&uuml;hrung des SQL Statements:&lt;br&gt;&lt;b&gt;"
+      Response.Write Err.Source &amp; ", " &amp; Err.Description &amp; "&lt;/b&gt;&lt;/p&gt;"
+    Else
+</pre>
+
+<p>
+Dieser Teil wird ausgef&uuml;hrt, wenn ein PostBack stattgefunden hat. Die Variable <i>bIsPostback</i> wurde so
+vorher mit
+</p>
+
+<pre style="background='silver';">
+bIsPostback = CLng(Request.ServerVariables("CONTENT_LENGTH"))
+</pre>
+
+<p>
+zugewiesen. Nach der Instanzierung des <i>Connection</i> Objektes und &Ouml;ffnung der Verbindung zur Datenbank (als
+Beispiel wurde hier die Northwind Datenbank hardcodiert) beginnt die Fehlerbehandlung. Falls die <i>Number</i>
+Property des <i>Err</i> Objektes ungleich 0 ist, ist ein Fehler aufgetreten. Dieser wird dann mit den
+Properties <i>Source</i> und <i>Description</i> beschrieben.
+</p>
+
+<p>
+Da die <i>Execute</i> Methode eine interessante Fehlerquelle darstellt, ist diese in der Fehlerbehandlung 
+nat&uuml;rlich miteinbezogen. Als n&auml;chstes folgt die Alternativbedingung der If-Verzweigung, 
+die ausgef&uuml;hrt wird wenn kein Fehler aufgetreten ist:
+</p>
+
+<pre style="background='silver';">
+Response.Write "&lt;table cellpadding=""2"" cellspacing=""2"" border=""2""&gt;"
+  For FieldIndex = 1 To objRS.Fields.Count - 1
+     Response.Write "  &lt;th&gt;" &amp; objRS.Fields(FieldIndex).Name &amp; "&lt;/th&gt; "
+  Next
+
+  While Not objRS.EOF
+    Response.Write "&lt;tr&gt;"
+    For FieldIndex = 1 To objRS.Fields.Count - 1
+        Response.Write "&lt;td&gt;" &amp; objRS(FieldIndex) &amp; "&lt;/td&gt;"
+    Next
+  
+    Response.Write "&lt;/tr&gt;"
+    objRS.MoveNext
+  Wend
+  
+  Response.Write "&lt;/table&gt;"
+</pre>
+
+<p>
+Dieser Code z.B. erlaubt es unabh&auml;ngig von der vorhandenen Spaltenzahl einer Datenbank des eingegebenen <i>SELECT</i> 
+Statements alle Datens&auml;tze zur&uuml;ckzugeben die der Bedingung im Statement gen&uuml;gen. Zwecks der &Uuml;bersicht werden die 
+gewonnenen Datens&auml;tze in einer HTML Tabelle ausgegeben.
+</p>
+
+<p>
+Ausgef&uuml;hrt in einem Browser erh&auml;lt man nach Eingabe eines SQL-Statements folgendes Ergebnis:
+</p>
+
+<IMG SRC="/artikel/Bilder/200104/20010420_1.png" width="593" height="530" alt="" border="0">
+
+<p>
+Es funktionieren nicht nur SELECT Statements - auch DELETE oder INSERT k&ouml;nnen ohne Probleme in diesem "Query
+Analyzer" abgesetzt werden.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dies war ein einfaches, erweiterbares Beispielskript, das den praktischen Zweck des Query Analyzers des SQL Servers
+auf ASP Basis widerspiegelt.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010420.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010420.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001124.htm">Aktualisieren von Daten mit dem UPDATE Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001124.htm</span><br>
+<a href="../artikel/20001023.htm">Das SQL Join Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001023.htm</span><br>
+<a href="../artikel/20001127.htm">Datens&auml;tze mit dem DELETE Statement l&ouml;schen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001127.htm</span><br>
+<a href="../artikel/20001201.htm">Die SQL ORDER BY Clause</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001201.htm</span><br>
+<a href="../artikel/20001107.htm">Einf&uuml;gen eines Datensatzes mit dem INSERT Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001107.htm</span><br>
+<a href="../artikel/20020322.htm">Query Express f&uuml;r MSDE</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020322.htm</span><br>
+<a href="../artikel/20020903.htm">Stored Procedures einfach erstellt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020903.htm</span><br>
+<a href="../artikel/20020410.htm">Yet Another Access Database Administration Tool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020410.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2Fdata%2F">Aktuelle MDAC (ADO) Versionen</a><br>
+<SPAN class="content">http://www.microsoft.com/data/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

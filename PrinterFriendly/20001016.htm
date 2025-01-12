@@ -1,0 +1,314 @@
+<HTML>
+<HEAD>
+<TITLE>Manipulieren von ZIP Archiven am Server</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel  erkl&auml;rt verschiedene M&ouml;glichkeiten im Zugriff und in der Manipulation von ZIP Archiven in ASP Seiten.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Zippen,Manipulation,ActiveFile Komponente,ActiveFile,Erstellen eines Archives">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Manipulieren von ZIP Archiven am Server</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001016"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>In einem meiner letzen Artikel habe ich mich mit dem Entzippen von ZIP Archiven
+auf dem Webserver besch&auml;ftigt. Dieser Artikel geht einen Schritt weiter
+und erkl&auml;rt verschiedene M&ouml;glichkeiten im Zugriff und in der Manipulation von ZIP
+Archiven in ASP Seiten.</p>
+
+
+<p>Ich habe f&uuml;r diesen Artikel die <i>ActiveFile</i> Komponente herangezogen,
+da sie keine W&uuml;nsche im Bereich der ZIP-Archive offen l&auml;sst.</p>
+
+<p>Eine andere ASP Komponente, die sehr viele M&ouml;glichkeiten der 
+Manipulation von ZIP Archiven aber auch von CAB Archiven bietet, ist die ActiveX Komponente 
+<a href="http://www.softartisans.com/softartisans/saarchive.html">SA-Archive</a>
+der Firma <a href="http://www.softartisans.com/">Software Artisans, Inc.</a>.
+Auch dieses Komponente ist als Evaluierungsversion gratis zum Download verf&uuml;gbar.
+Der einzige Nachteil der SA-Archive Komponente in der aktuellen Version 1.0
+ist, das beim Erstellen eines ZIP Archives die Pfadangaben der gezippten Dateien
+verloren gehen. Bei Verwendung der ActiveFile Komponente ist dies nicht der Fall.</p>
+
+
+<h2>Die ActiveFile Komponente</h2>
+
+<p>Die Installation und grunds&auml;tzliche Verwendung der 
+ActiveFile Komponente habe ich bereits im Artikel
+<a href="../artikel/20001005.htm">Zippen und entzippen von Dateien</a>
+beschrieben.</p>
+
+<p>Daher m&ouml;chte ich hier gleich Anwendungsbeispiele
+der ActiveFile Komponenten demonstrieren:</p>
+
+
+
+<h2>Extrahieren einer einzelnen Datei aus einem ZIP Archiv</h2>
+
+<p>Um eine einzelne Datei zu extrahieren, gen&uuml;gt der Aufruf
+der Extract Methode des <i>ActiveFile.Archive</i> Objektes:</p>
+
+<p><pre style="background='silver';">
+<i>Archive</i>.Extract <i>SourcePath</i>, <i>DestPath</i>
+</pre></p>
+
+<p>Der <i>SourcePath</i> Parameter enth&auml;lt den Namen (und den Relativpfad) der 
+Datei oder der Dateien, die extrahiert werden sollen. 
+Um mehrere Dateien zu extrahieren kann man Wildcards (*.*) benutzen.
+Der <i>DestPath</i> Parameter gibt das Verzeichnis an, in das die Dateien
+extrahiert werden.</p>
+
+<p>Zur Veranschaulichung der <i>Extract</i> Methode hier ein vollst&auml;ndiges
+Beispiel.</p>
+
+<p><pre style="background='silver';">
+&lt;%
+ Set Archive = Server.CreateObject("ActiveFile.Archive")
+ ' Hier physikalischen Pfad zum ZIP Archiv angeben
+ Archive.OpenArchive "C:\Test\Archiv.zip"
+ ' Extrahiere Dateien in Verzeichnis C:\temp
+ Archive.Extract "Artikel*.htm","C:\temp"
+%&gt;
+</pre></p>
+
+<p>Dieses Beispiel extrahiert alle Dateien des Archives deren
+Name mit "Artikel" beginnt, und die vom Typ HTM Datei sind. 
+Die extrahierten Dateien werden in das Verzeichnis <i>C:\temp</i>
+geschrieben. <b>Achtung:</b> ActiveFile &uuml;berschreibt bereits vorhandene Dateien
+des gleichen Namens in Zielverzeichnis (<i>DestPath</i>).</p>
+
+
+
+<h2>Erstellen eines neuen Archives am Webserver</h2>
+
+<p>Die ActiveFile Komponente kann auch Dateien packen und in ein ZIP Archiv schreiben.
+Dazu verwendet man die <i>NewArchive</i>, <i>Add</i> und <i>SaveArchive</i> Methoden des 
+<i>ActiveFile.Archive</i> Objektes.</p>
+
+<p><i>NewArchive</i> erstellt ein neues ZIP Archiv und legt es auf der Festplatte
+des Webservers ab:</p>
+
+<p><pre style="background='silver';">
+<i>Archive</i>.NewArchive <i>Path</i>, <i>ArchiveType</i>
+</pre></p>
+
+<p>Der <i>Path</i> Parameter gibt den physikalischen Pfad und den Namen des zu erstellenden
+ZIP Archives an (z.B. <i>C:\Websites\AspExpert\Archives\test71.zip</i>).</p>
+
+<p>Der optionale <i>ArchiveType</i> Parameter gibt die Art des Archives an.
+F&uuml;r gew&ouml;hnlich wird dieser Parameter nicht ben&ouml;tigt, da
+die ActiveFile Komponente den Archiv Typ gem&auml;&szlig; der Dateiendung des 
+Archives festlegt. So wird die Datei <i>Test.zip</i> automatisch als ZIP
+Archiv angelegt.</p>
+
+<p>Neben ZIP Archiven beherrscht ActiveFile auch noch denm Umgang mit Stuffit, 
+TAR, GNU und MacBinary BIN Dateien.</p>
+
+
+<p>Mittels der <i>Add</i> Methode f&uuml;gt man neue Dateien zum ZIP Archiv hinzu.
+Die Originaldateien bleiben dabei erhalten:</p>
+
+<p><pre style="background='silver';">
+<i>Archive</i>.Add <i>Path</i>, <i>Recurse</i>, <i>Flatten</i>
+</pre></p>
+
+<p>Der <i>Path</i> Parameter gibt die Dateien oder Verzeichnisse an, die zum ZIP Archiv 
+hinzugef&uuml;gt werden sollen. Wildcards (* und ?) sind in dieser Angabe erlaubt.</p>
+
+<p><i>Recurse</i> ist ein optionaler Parameter, der bestimmt, ob die Unterverzeichnisse
+von Verzeichnissen samt Dateien auch in das Archiv geschrieben werden.</p>
+
+<p>Der optionale <i>Flatten</i> Parameter gibt nur an, ob die Verzeichnisinformationen
+von hinzugef&uuml;gten Dateien entfernt werden sollen oder nicht.</p>
+
+<p>Nur das Hinzuf&uuml;gen einer Datei zu einem Archiv mittels <i>Add</i> Methode
+bewirkt noch nicht, da&szlig; die Datei auch im ZIP Archiv auf der Festplatte
+gespeichert wird. Dazu ist der Aufruf der <i>SaveArchive</i> Methode n&ouml;tig:</p>
+
+<p><pre style="background='silver';">
+<i>Archive</i>.SaveArchive <i>Pfad</i>
+</pre></p>
+
+<p>Der Pfad Parameter ist optional. Der Aufruf der <i>SaveArchive</i>
+Methode schreibt alle &Auml;nderungen des Archives in die Archiv Datei
+der Festplatte.</p>
+
+<p>Hier nun das vollst&auml;ndige Beispiel, wie man mehrere Dateien am Webserver zu
+einem ZIP Archiv zusammenfasst, ohne dabei die Pfadinformationen der Dateien zu
+verlieren.</p>
+
+<p><pre style="background='silver';">
+&lt;% 
+ Set Archive = Server.CreateObject("ActiveFile.Archive")
+ Archive.NewArchive "C:\testzip\TestArchiv.zip"
+ ' Archive.Add Path, Recurse, Flatten
+ Archive.Add "C:\Data\Websites\AspHeute Online\*.*", True, False
+ Archive.SaveArchive
+%&gt;
+</pre></p>
+
+<p>Das vorliegende Skript komprimiert alle Dateien des Verzeichnisses 
+<i>C:\Data\Websites\AspHeute Online\</i> und der darunter liegenden Verzeichnisse
+in das Archiv <i>C:\testzip\TestArchiv.zip</i>.</p>
+
+<p>Da der <i>Recurse</i> Parameter auf <i>True</i> gesetzt ist, werden alle Dateien
+in s&auml;mtlichen Unterverzeichnissen erfasst.
+Der <i>Flatten</i> Parameter auf <i>False</i> gesetzt stellt sicher, da&szlig; 
+zu allen Dateien im Archiv die relativen Pfadinformationen des Urspr&uuml;nglichen
+Quellverzeichnisses gespeichert werden.</p>
+
+<p>Zum Schlu&szlig; dieses Artikels m&ouml;chte ich noch die
+On-The-Fly Generierung eines ZIP Archives zeigen, das direkt zum Browser
+geschickt wird, ohne da&szlig; man dabei den Umweg &uuml;ber die Festplatte 
+gehen mu&szlig;:</p>
+
+
+<h2>Erstellen eines ZIP Archives <i>On-The-Fly</i></h2>
+
+
+<p>Die vielf&auml;ltigen M&ouml;glichkeiten der ActiveFile Komponente,
+die Fileupload und Filedownload umfassen, erlaubt die
+On-The-Fly Generierung von ZIP Archiven.</p>
+
+<p>Der Begriff <i>On-The-Fly</i> steht hier f&uuml;r den Vorgang,
+da&szlig; ein ASP Skript ein ZIP Archiv erstellt und es dann direkt zum
+Browser sendet.</p>
+
+
+ <p><pre style="background='silver';">
+&lt;%
+' Temporaeres Verzeichnis fuer Operationen
+ Set File = Server.CreateObject("ActiveFile.File")
+ File.CreateTemp "C:\TEMP"
+
+ ' Erstelle ZIP Archiv
+ Set Archive = Server.CreateObject("ActiveFile.Archive")
+ Archive.NewArchive File, 0
+
+ ' Fuege Dateien zu ZIP Archiv
+ Archive.Add "C:\testzip\dir\*.*", True, False
+
+ ' Speichere das ZIP Archiv 
+ Archive.SaveArchive
+ ' Resourcen des Archiv Objektes freigeben
+ Set Archive = Nothing
+
+ ' Download und Loeschen der temporaeren Datei
+ Response.AddHeader "Content-Disposition", "inline; filename=Archiv.zip"
+ File.Download "application/x-zip-compressed", Now(), True, True
+%&gt;
+</pre></p>
+
+
+<p>Das Skript erstellt eine Tempor&auml;re Datei mittels
+<i>File</i> Objekt und <i>CreateTemp</i> Methode.</p>
+
+<p>Das ZIP Archiv wird wie &uuml;blich mittels <i>NewArchive</i> Methode des
+<i>Archive</i> erzeugt. Die <i>Add</i> Methode f&uuml;gt alle Dateien 
+eines bestimmten Verzeichnisses zum ZIP Archiv hinzu. <i>SaveArchive</i><br>
+schlie&szlig;lich speichert das tempor&auml;re ZIP Archiv
+im Verzeichnis <i>C:\TEMP</i> ab.</p>
+
+<p>Der Download zum Client wird mit Setzen des HTTP Headers 
+<i>Content-Disposition</i> eingeleitet. Dadurch teilt das ASP Skript
+dem Browser mit, da&szlig; die Datei, die er empf&auml;ngt, den
+Namen <i>Archiv.zip</i> hat. &Auml;ltere Browser leiten aus der Dateiendung
+diese Namens auch den Typ des gesendeten Inhaltes ab.</p>
+
+<p>Mit der <i>Download</i> Methode des <i>File</i> Objektes schickt dann
+das ASP Skript den Inhalte des ZIP Archives zum Browser. Die Syntax f&uuml;r 
+die <i>Download</i> Methode ist &uuml;brigens wie folgt:</p>
+
+<p><pre style="background='silver';">
+<i>File</i>.Download <i>Mimetype</i>, <i>ModDate</i>, <i>ResponseEnd</i>, <i>DeleteFile</i>
+</pre></p>
+
+<p>S&auml;mtliche Parameter sind optional. Der <i>Mimetype</i> Parameter zeigt dem
+Browser den Typ des Inhaltes an, den er gesendet bekommt. <i>ModDate</i> 
+schreibt eine Wert f&uuml;r das "Datum der letzen &Auml;nderung der Datei"
+zum Browser. <i>ResponseEnd</i> beendet automatisch das ASP Skript nach dem
+Aufrufen der <i>Download</i> Methode. Und <i>DeleteFile</i> auf <i>True</i> 
+gesetzt sorgt daf&uuml;r, da&szlig; die Datei (das ZIP Archiv) nach dem Download
+von der Festplatte gel&ouml;scht wird.</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>Auch das Manipulieren von ZIP Dateien am Server ist mit der <i>ActiveFile</i> Komponente
+sehr einfach und komfortabel zu erledigen. Das Erstellen von ZIP Archiven
+und Bef&uuml;llen mit Dateien ist einfach &uuml;ber das <i>Archive</i> Objekt zu erledigen.</p>
+
+<p>Dar&uuml;berhinaus kann man ZIP Dateien sogar <i>On-The-Fly</i> generieren und
+zum Browser schicken. Dies ist speziell f&uuml;r den gesicherten Download sehr praktisch,
+da die ASP Seite die Sicherung mittels User Identifizierung (Einloggen oder Cookie)
+&uuml;bernehmen kann, bevor das ZIP Archiv erstellt und zum Browser geschickt wird.</p>
+
+<p>Ein weiteres interessantes Feature der <i>ActiveFile</i> Komponente
+(ab Version 2.2) ist die M&ouml;glichkeit, Dateien pa&szlig;wortgesch&uuml;tzt in
+ZIP Archive zu komprimieren. Damit wird das Entpacken von Dateien verhindert
+wenn der Benutzer nicht das richtige Pa&szlig;wort angibt.</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010507.htm">Web-basiertes Dateimanagement mit dem ASP FileMan</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010507.htm</span><br>
+<a href="../artikel/20001005.htm">Zippen und entzippen von Dateien</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001005.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Einfomentum%2Ecom%2Factivefile">ActiveFile Komponente</a><br>
+<SPAN class="content">http://www.infomentum.com/activefile</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Einfomentum%2Ecom">Infomentum</a><br>
+<SPAN class="content">http://www.infomentum.com</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

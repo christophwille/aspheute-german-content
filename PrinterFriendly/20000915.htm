@@ -1,0 +1,355 @@
+<HTML>
+<HEAD>
+<TITLE>Eine Supportdatenbank in ASP erstellen (1/3)</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor, wie ein Besucher einer Website eine Supportanfrage mittels Formular in eine Datenbank posten kann. Teile 2 und 3 befassen sich dann mit dem Backend und einer FAQ Datenbank.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Datenbank,Support,FAQ,Customer Support,Helpdesk,Solution,Programmierung">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Eine Supportdatenbank in ASP erstellen (1/3)</H1>
+<p>
+Geschrieben von: <a href="../autoren/klausaschenbrenner.htm">Klaus Aschenbrenner</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000915"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Willkommen zum 1. Teil dieser 3-teiligen Serie. In diesem Artikel m&ouml;chte ich Ihnen zeigen, 
+wie ein Besucher einer Website eine Supportanfrage mittels Formular in eine Datenbank posten 
+kann. Im 2. Teil dieser Serie werde ich Ihnen dann n&auml;herbringen, wie ein Supportmitarbeiter
+diese Anfrage bearbeiten und beantworten kann. Schlu&szlig;endlich werden Sie im 3. Teil dann
+sehen, wie aus diesen Supportanfragen und Supportantworten eine FAQ aufgebaut werden kann.
+</p>
+<p>
+Im Download zu diesem Artikel erhalten Sie sowohl eine Access Datenbank als auch das SQL Script
+f&uuml;r die notwendige Tabelle in SQL Server.
+</p>
+
+<h2>Eingabe der Supportanfrage</h2>
+<p>
+Als erstes m&ouml;chte ich Ihnen in der nachfolgenden Grafik zeigen, wie das Formular f&uuml;r die 
+Supportanfragen aussehen wird:
+</p>
+
+<p><IMG SRC="/artikel/Bilder/200009/20000915_submitform.png" width=594 height=440 alt="" border="0"><br>
+<i>Bild 1: Formular f&uuml;r die Supportanfrage</i></p>
+
+<p>Der Benutzer mu&szlig; seine Email-Adresse und sein Problem eingeben. Die beiden anderen Felder,
+n&auml;mlich der Name und das Programm, welches das Problem verursacht, sind nicht zwingend 
+notwendig. Damit sichergestellt wird, da&szlig; die Email-Adresse und das Problem angegeben 
+worden ist, werden diese beiden Felder mit Hilfe der JavaScript-Funktion "<i>ValidateFields</i>" &uuml;berpr&uuml;ft,
+ob sie einen Wert enthalten. Dies geschieht in den Zeilen 8 bis 28 in der Datei <i>submit.html</i>.
+</p>
+<p>
+<pre style="background='silver';">
+&lt;SCRIPT LANGUAGE=&quot;JavaScript&quot;&gt;
+&lt;!-- 
+function ValidateFields()
+{
+ var Formular;
+ var bReturn = true;
+ Formular = document.SupportForm;
+ 
+ // Ueberpruefen, ob eine EMail-Adresse angegeben wurde
+ if (Formular.EMail.value.length == 0)
+ {
+  window.alert(&quot;Bitte geben Sie eine EMail-Adresse an!&quot;);
+  bReturn = false;
+ }
+ 
+ // Ueberpruefen, ob ein Problem angegeben wurde
+ if (Formular.Problem.value.length == 0)
+ {
+  window.alert(&quot;Bitte geben Sie das Problem an!&quot;);
+  bReturn = false;
+ }
+ return(bReturn);
+}
+// --&gt;
+&lt;/SCRIPT&gt;
+</pre>
+</p>
+<p>
+Die &Uuml;berpr&uuml;fung wird clientseitig durchgef&uuml;hrt, damit die Daten nicht zum Server transportiert, 
+dort &uuml;berpr&uuml;ft und bei einem Problem wieder zum Client zur&uuml;ck 
+transportiert werden m&uuml;ssen. Zus&auml;tzlich wird nat&uuml;rlich eine serverseitige Validierung 
+durchgef&uuml;hrt (siehe das Codelisting f&uuml;r submit.asp).
+</p>
+<p>
+Nachdem Sie oben den Aufbau des Formulars gesehen haben, k&ouml;nnen wir nun daraus unser 
+Tabellenschema ableiten. Es sieht folgenderma&szlig;en aus:
+</p>
+
+<p><IMG SRC="/artikel/Bilder/200009/20000915_dbSchemaSQL.png" width=658 height=146 alt="" border="0"><br>
+<i>Bild 2: Tabellenschema in SQL Server 7.0</i></p>
+
+
+<p><IMG SRC="/artikel/Bilder/200009/20000915_dbschemaAccess.png" width=254 height=83 alt="" border="0"><br>
+<i>Bild 3: Tabellenschema in Access 2000</i></p>
+
+
+Die Tabelle habe ich einfach Support genannt. Anschlie&szlig;end hier nochmals die 
+Feldbeschreibungen mit den entsprechenden Datentypen (SQL Server 7.0 und Access 2000 
+Datentypen sind angegeben):
+
+<p><ul>
+<li>Name: VarChar(50) oder Text 50, Name des Verfassers</li>
+<li>Email: VarChar(64) oder Text 64, Email-Adresse des Verfassers</li>
+<li>Programm : VarChar(255) oder Text 255, Name des Programmes, welches den 
+Fehler verursacht</li>
+<li>Problem: Text oder Memo, Beschreibung des Problems</li>
+<LI>ID: Int mit Identity gesetzt oder Autonumber, eindeutige ID der 
+Supportanfrage</LI>
+</ul></p>
+
+<p>Die ID enh&auml;lt einen eindeutigen Wert f&uuml;r die Supportanfrage. Sie wird, neben der 
+eindeutigen Kennzeichnung jedes Datensatzes, sp&auml;ter noch f&uuml;r den Aufbau der FAQ-Datenbank 
+gebraucht. Die anderen 4 Felder entsprechen den Feldern des Formulars. Wenn die Felder 
+durch die JavaScript-Funktion "<i>ValidateFields</i>" &uuml;berpr&uuml;ft wurden, wird das 
+Formular an die ASP-Seite "<i>submit.asp</i>" weitergeleitet, wo jetzt die 
+Supportanfrage in die Datenbank gespeichert wird.</p>
+
+<p>Den Ablauf des Informationsflusses &uuml;ber die verschiedenen Dateien und die 
+Speicherung in der Datenbank habe ich in der folgenden Grafik dargestellt:</p>
+
+<p><IMG SRC="/artikel/Bilder/200009/20000915_ablauf.png" width=500 height=231 border=0 alt=""><br>
+<i>Bild 4: Ablauf von Datentransport und -speicherung</i></p>
+
+
+<p>Hier nochmals die Erkl&auml;rung des Ablaufs:</p>
+
+<p>Als erstes werden die Daten in das Formular eingegeben. Anschlie&szlig;end werden sie von der 
+vorher schon besprochenen JavaScript-Funktion &uuml;berpr&uuml;ft und anschlie&szlig;end an das ASP-Script 
+in der Datei "<i>submit.asp</i>" weitergeleitet. Dieses Script speichert dann die 
+Supportanfrage in der Datenbank.</p>
+
+
+
+<h2>Speicherung der Supportanfrage in der Datenbank</h2>
+
+
+<p>Die Speicherung der Supportanfrage in die Datenbank &uuml;bernimmt die ASP-Datei 
+"<i>submit.asp</i>". Hier speichere ich nicht wie &uuml;blich die Daten in einer 
+Accessdatenbank, sondern in einer SQL-Datenbank, damit Sie einmal sehen, wie einfach man 
+mit Hilfe von ASP auf eine SQL-Datenbank zugreifen kann. Der Connectionstring f&uuml;r den 
+Verbindungsaufbau zur SQL-Datenbank lautet wie folgt:</p>
+
+<p><pre style="background='silver';">
+"Provider=SQLOLEDB.1;Persist Security Info=False;User ID=sa;
+Initial Catalog=Support;Data Source=localhost"
+</pre></p>
+
+<p>Dem Attribut <i>Provider</i> weisen Sie den SQL-OLEDB-Provider SQLOLEDB zu, dem Attribut
+<i>User ID</i> m&uuml;ssen Sie ein Benutzerkonto zuweisen (hier ist dies das 
+Standardbenutzerkonto von SQL-Server, n&auml;mlich <i>sa</i>). Als n&auml;chstes 
+m&uuml;ssen Sie <i>Initial Catalog</i> den 
+Datenbanknamen zuweisen und schlu&szlig;endlich erh&auml;lt das Attribut <i>Data 
+Source</i> den Namen des SQL-Servers (in diesem Fall <i>localhost</i>).</p>
+
+<p>So einfach kann man auf eine SQL-Datenbank mit Hilfe von ADO (ActiveX Data Objects) und 
+ASP zugreifen!</p>
+
+<p>Der Connectionstring f&uuml;r eine Accessdatenbank, die im Stammverzeichnis auf dem Webserver 
+liegt, w&uuml;rde wie folgt lauten:</p>
+
+<p><pre style="background='silver';">
+"Provider=Microsoft.Jet.OLEDB.4.0;Persist Security Info=False;Data Source=" &amp; 
+Server.MapPath("Support.mdb")
+</pre></p>
+
+<p>So kann man einfach durch Austauschen des Connectionstrings die Datenbank-Verbindung 
+zum Beispiel von einem SQL-Server zu einer Access-Datenbank &auml;ndern.</p>
+
+<p>Bei der Datenbankverbindung sind noch die Eigenschaften <i>CursorType</i>, 
+<i>CursorLocation</i> und <i>Locktype</i> des Recordsets zu beachten. Die Eigenschaft 
+<i>CursorType</i> gibt den Typ des Cursors an. Es gibt folgende Einstellungen:</p>
+
+<p><ul>
+<li>adOpenForwardOnly: 0</li>
+<li>adOpenKeyset: 1</li>
+<li>adOpenDynaset: 2</li>
+<li>adOpenStatic: 3</li>
+</ul></p>
+
+<p>In unserem Beispiel habe ich mich f&uuml;r die Einstellung <i>adOpenStatic</i> 
+entschieden, weil sie eine gute Perfomance bietet und das Einf&uuml;gen von neuen 
+Datens&auml;tzen direkt in die Tabelle mittels <i>AddNew</i> Kommando erlaubt.</p>
+
+<p>Die Eigenschaft <i>CursorLocation</i> gibt an, ob der Datenbankcursor clientseitig 
+oder serverseitig gehalten wird. Es gibt folgende Einstellungen:</p>
+
+<p><ul>
+<li>adUseServer: 2</li>
+<li>adUseClient: 3</li>
+</ul></p>
+
+<p>Hier habe ich mich f&uuml;r einen clientseitigen Datenbankcursor entschieden, da 
+dieser, im Gegensatz zum serverseitigen Cursor, die Recordset Methoden <i>Upate</i> und 
+<i>UpdateBatch</i> unterst&uuml;tzt.</p>
+
+<p>Die letzte Eigenschaft, n&auml;mlich <i>Locktype</i> gibt den Typ des ge&ouml;ffneten 
+Recordsets an. Folgende Einstellungen stehen zur Auswahl:</p>
+
+<p><ul>
+<li>adLockUnspecified: -1</li>
+<li>adLockReadOnly: 1</li>
+<li>adLockPessimistic: 2</li>
+<li>adLockOptimistic: 3</li>
+<li>adLockLockBatch: 4</li>
+</ul></p>
+
+<p>Hier fiel meine Wahl auf <i>adLockOptimistic</i>, da dadurch erst das Einf&uuml;gen 
+eines neuen Datensatzes in ein Recordset mittels <i>AddNew</i> und <i>Update</i> Methode 
+des ADO Recordset Objektes erm&ouml;glicht wird!</p>
+
+<p>
+Nachdem wir nun unsere SQL-Datenbankverbindung aufgebaut haben, k&ouml;nnen wir mit 
+Hilfe von ADO die Supportanfrage in der Tabelle <b>Support</b> speichern.
+</p>
+<p>
+<pre style="background='silver';">
+&lt;% @ LANGUAGE="VBSCRIPT" ENABLESESSIONSTATE=False %&gt; 
+&lt;% 
+Dim strName, strEMail, strProgramm, strProblem, tempID 
+Dim rsRecordset, strConnectionString, strSQL, cnnConnection
+
+' Informationen aus dem Formular ermitteln 
+strName = Trim(Request.Form("Name")) 
+strEMail = Trim(Request.Form("EMail")) 
+strProgramm = Trim(Request.Form("Programm")) 
+strProblem = Trim(Request.Form("Problem")) 
+
+' Ueberpruefung der Felder 
+If strEMail = ""  Or strProblem = "" Then 
+  Response.Write "Bitte füllen Sie alle notwendigen Felder aus" 
+Else 
+  ' Tabelle oeffnen 
+  Set rsRecordset = Server.CreateObject("ADODB.Recordset") 
+
+  ' Connectionstring fuer SQL Server Datenbank 
+  ' localhost gegebenenfalls gegen den Computernamen austauschen 
+  strConnectionString = "Provider=SQLOLEDB.1;Persist Security Info=False;" & _ 
+       "User ID=sa;Initial Catalog=Support;Data Source=localhost" 
+   
+  ' Connectionstring fuer Access Datenbank 
+  ' strConnectionString="Provider=Microsoft.Jet.OLEDB.4.0;" & _ 
+  '    "Persist Security Info=False;Data Source=" & _ 
+  '    Server.MapPath("Support.mdb") 
+   
+  strSQL = "SELECT * FROM Support WHERE ID = 0" 
+  rsRecordset.CursorType = 3 
+  rsRecordset.CursorLocation = 3 
+  rsRecordset.LockType = 3 
+  rsRecordset.Open strSQL, strConnectionString 
+
+
+  ' Der Access Provider erlaubt keine Strings der Laenge 0 als Werte 
+  If strName = "" Then 
+   strName = " " 
+  End If 
+  If strProgramm = "" Then 
+   strProgramm = " " 
+  End If 
+   
+  ' Supportanfrage speichern 
+  ' Id wird automatisch von der Datenbank generiert 
+   
+rsRecordset.AddNew 
+rsRecordset.Fields("Name") = strName 
+rsRecordset.Fields("EMail") = strEMail 
+rsRecordset.Fields("Programm") = strProgramm 
+rsRecordset.Fields("Problem") = strProblem 
+rsRecordset.Update 
+rsRecordset.Close 
+
+  Set rsRecordset = Nothing 
+End If 
+%&gt; 
+
+</pre>
+</p>
+<p>
+Mit Hilfe des ADO-Befehls <i>AddNew</i> wird ein neuer Datensatz an die Tabelle 
+angeh&auml;ngt. Anschlie&szlig;end wird mit Hilfe der Fieldsauflistung den Feldern des 
+neuen Datensatzes die entsprechenden Werte zugewiesen. Zuletzt wird der Datenbankzeiger 
+mit dem Befehl <i>Update</i> vom clientseitigen Recordsetcursor in die Datenbank 
+geschrieben. Au&szlig;erdem wird von der Datenbank jeder Supportanfrage eine eindeutige 
+ID zugewiesen.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Sie haben im 1. Teil meiner 3-teiligen Serie gesehen, wie Sie eine Supportanfrage in 
+einer SQL-Datenbank speichern k&ouml;nnen. Dabei haben Sie gelernt, wie man die 
+G&uuml;ltigkeit der Formulareingabefelder clientseitig &uuml;berpr&uuml;ft, damit die 
+Daten nicht umsonst zum Server gesendet werden m&uuml;ssen.
+</p>
+<p>
+Des weiteren haben Sie gesehen, da&szlig; man zum Beispiel nur durch das Verwenden des 
+geeigneten <i>Connectionstrings</i> &uuml;ber einen OLE DB Provider eine 
+Datenbankverbindung zu einer Accessdatenbank oder zu einem SQL-Server aufbauen kann. Es 
+ist keine einzige andere Quellcode&auml;nderung daf&uuml;r notwendig.
+</p>
+<p>
+In den n&auml;chsten beiden Artikeln werden Sie dann sehen, wie ein 
+Supportmitarbeiter eine Supportanfrage beantworten kann, und wie man daraus eine 
+FAQ-Datenbank aufbauen kann.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000915.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000915.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010214.htm">Eine Supportdatenbank in ASP erstellen - Teil 2</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010214.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

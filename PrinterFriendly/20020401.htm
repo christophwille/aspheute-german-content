@@ -1,0 +1,379 @@
+<HTML>
+<HEAD>
+<TITLE>Debugging in der Tiefe</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im heutigen Artikel besch&auml;ftige ich mich mit Debugging von User Stacks. Debugging ist auch mit dem Debug Interface von C# nach wie vor eher eine Kunstform als eine exakte Wissenschaft.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Towed arrays,user stack,debugging,C#,.NET,streamer,System.Diagnostics,Aprilscherz,April April">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Debugging in der Tiefe</H1>
+<p>
+Geschrieben von: <a href="../autoren/bernhardspuida.htm">Bernhard Spuida</a><br>
+Kategorie: <a href="../kategorien/Aprilscherz.htm">Aprilscherz</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020401"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Im heutigen Artikel besch&auml;ftige ich mich mit Debugging von User Stacks. Debugging ist auch mit dem Debug Interface von C# nach wie vor eher
+eine Kunstform als eine exakte Wissenschaft. Besonders der Zugriff auf tiefliegende Komponenten eines
+Programmes ist schwierig, wenn man Seiteneffekte zur Laufzeit vermeiden will.
+</p>
+
+<p>
+Das Debugging Interface des .NET SDK Framework ist gut dokumentiert und kann durch Dritte in seiner
+Funktionalit&auml;t erweitert werden. Die Debugging-Funktionalit&auml;t liegt in den <b>Systems.Diagnostics</b> Klassen.
+Am Beispiel der User Stacks zeige ich, wie eine Erweiterung der Debugging-Funktionalit&auml;t
+implementiert werden kann.
+</p>
+
+<p>
+Voraussetzung f&uuml;r das bessere Verst&auml;ndnis des Artikels ist eine genaue Kenntnis des julianischen
+Kalenders in Bezug auf datumsm&auml;&szlig;ig bedingte Br&auml;uche.
+</p>
+
+<h2>User Stacks</h2>
+<p>
+Zuerst einmal m&ouml;chte ich den Begriff <i>User Stack</i> erkl&auml;ren: Ein Programm verwendet zur Verwaltung seiner Daten und Speicherstrukturen den <i>Heap</i> einerseits
+und den <i>Stack</i> andererseits. Der wesentliche Unterschied dieser beiden Strukturen ist die Handhabung
+von Ein- und Ausgabe von Daten - am Stack wird immer das zuletzt abgelegte Element zur&uuml;ckgegeben.
+Es handelt sich also um einen <i>LIFO</i> (last in, first out) Puffer.
+In Wirklichkeit ist wie zu erwarten die Verwendung des Stacks nicht ganz so einfach. Es
+gibt de facto mehrere Stacks, die unterschiedliche Aufgaben wahrnehmen: Event Queueing, I/O-Pufferung etc.
+Die blutigen Details lasse ich aus, um den geneigten Leser vor dem Einschlafen zu bewahren.
+</p>
+
+<p>
+Richtig interessant wird es sobald wir als Entwickler unsere eigenen Stacks anlegen
+- das geht und ist n&uuml;tzlich! <i>User Stacks</i> k&ouml;nnen wir zum Beispiel verwenden um in einer
+Web-Applikation Nachrichten in einem Chat zu verwalten, Warteschlangen einzurichten etc.
+Die Verwendung von User Stacks nimmt uns viel Arbeit bei der Verwaltung dieser Puffer ab.
+</p>
+
+<p>
+Debugging systemnaher Datenstrukturen bringt immer Probleme mit sich:
+</p>
+
+<ul>
+    <li>Schwierigkeiten beim direkten Zugriff</li>
+    <li>Potentielle Seiteneffekte</li>
+    <li>Performanceprobleme</li>
+</ul>
+
+<p>
+Speziell im Falle von User Stacks besteht die Gefahr da&szlig; ein einfacher, naiver Direktzugriff auf den Stack
+die Integrit&auml;t des Stacks gef&auml;hrdet. Lesen von einem Stack schlie&szlig;t im Normalfall
+einen <i>pop</i> ein, also das <b>Entfernen</b> des Wertes vom Stack. Das ist beim Debuggen
+genau das was wir nicht wollen - der Debugvorgang beeinflu&szlig;t den Zustand des zu debuggenden Programms.
+Schreibt man das Element wieder zur&uuml;ck, hat man im g&uuml;nstigsten Falle eine
+Performance-Einbu&szlig;e, im schlimmsten Fall ein 'zerschossenes' Programm, falls in der Zwischenzeit ein
+Stackzugriff erfolgte.
+Da die <b>System.Diagnostics</b> Klassen wie alle C# Klassen erweiterbar sind, gibt es jedoch 
+L&ouml;sungsm&ouml;glichkeiten.
+</p>
+
+<p>
+Und genau einen solchen Ansatz stellt die Klasse <b>Debug.Sub</b> dar. <I>Sub</i>
+steht dabei f&uuml;r <b>S</b>tack <b>U</b>se <b>B</b>uffer. Die Klasse Debug.Sub setzt auf sogenannte <i>OHIO</i>s
+- <b>O</b>ver<b>H</b>ead <b>I</b>ndependent <b>O</b>bjects - auf. Dadurch werden die mit Debugvorg&auml;ngen verbundenen
+Performanceprobleme minimiert. Die Integrit&auml;tsproblematik wird dadurch gel&ouml;st, da&szlig;
+statt den User Stack auf normalen Arrays abzubilden, ein spezieller Array-Typ zum Einsatz
+kommt: das <b>TowedArray</b>.
+</p>
+
+<p>
+Die grundlegende Idee hinter <b>TowedArrays</b> ist die, da&szlig; im Gegensatz zu normalen
+Arrays von unserer Seite aus keine schreibenden Zugriffe erfolgen k&ouml;nnen. Durch diese Pufferung
+des User Stacks wird selbst wenn man einen Weg finden sollte ihn zu schreiben, die Integrit&auml;t des
+User Stacks gew&auml;hrleistet.
+Beschickt wird das Array &uuml;ber eine Kopie des zu beobachtenden Stacks. Der Name <b>TowedArray</b> ergibt sich 
+also aus diesem 'Nachschleppen' hinter dem eigentlichen Stack.
+</p>
+
+<p>
+Jedes Towed Array kann mehrere sogenannte <b>Streamer</b> beinhalten, die jeweils einen User Stack
+&uuml;berwachen. Die &Uuml;berwachung kann in zwei verschiedenen Modi erfolgen: <b>listen</b> und
+<b>pulse</b>. Der listen-Modus liefert ein kontinuierliches Update des Stack Use Buffers, der
+pulse-Modus bildet den User Stack auf einen Trigger hin als 'Snapshot' ab.
+</p>
+
+<h2>Die Debug.Sub Klasse</h2>
+<p>
+Im Folgenden eine rudiment&auml;re Implementation der <b>Debug.Sub</b> Klasse (Listing). Wie man sieht, ist es in C#
+ein Leichtes, leistungsf&auml;hige Erweiterungen der Debugfunktionalit&auml;t zu
+implementieren. Diese zus&auml;tzliche Funktionalit&auml;t steht nat&uuml;rlich auch in allen anderen
+.NET Sprachen zur Verf&uuml;gung.
+</p>
+
+<pre style="background='silver';">
+// Sub class :
+        class sealed Debug.Sub {
+
+                // ...
+
+                // overloaded  {...} operators :
+
+                public Streamer this{int trace} {
+                        get;
+                }
+                public Streamer this{int trace, int section} {
+                        get;
+                }
+
+                /// &lt;summary&gt;
+                /// Attaches a streamer to a user stack.
+                /// &lt;/summary&gt;
+                public void Lower(UserStack stack);
+
+                /// &lt;summary&gt;
+                /// Detaches a streamer from a user stack.
+                /// &lt;/summary&gt;
+                public void Raise(UserStack stack);
+
+                /// &lt;summary&gt;
+                /// Sets the towed array to listen mode.
+                /// &lt;/summary&gt;
+                public void Silent();
+
+                /// &lt;summary&gt;
+                /// Sets the towed array to pulse mode.
+                /// &lt;/summary&gt;
+                public void Pulse();
+
+                /// &lt;summary&gt;
+                /// Gets a current 'snapshot' in pulse mode.
+                /// &lt;/summary&gt;
+                /// &lt;Exception name="SinkException"&gt;Is thrown when the towed
+                /// array is in listen mode and &lt;code&gt;Trigger()&lt;/code&gt; is called.
+                /// &lt;/Exception&gt;
+                public void Trigger();
+
+                public event TowedArrayEventHandler TowedArrayEvent;
+        }
+</pre>
+
+<p>
+Bemerkenswert an diesem St&uuml;ck Code ist die &Uuml;berladung von <b>Streamer</b>,
+da wir es hier mit <b>TowedArray</b>s statt gew&ouml;hnlichen Arrays zu tun haben. Der <b>Trigger</b>mechanismus
+wird wie man sieht &uuml;ber eine Exception gehandhabt. Dieses Vorgehen dient zur weiteren
+Minimierung des Overheads des Debugvorganges, da Exceptions vom System abgehandelt werden und
+somit unseren Userprozess nicht belasten. Es ist auch
+wichtig zu beachten, da&szlig; nicht nur das gesamte <b>TowedArray</b>, sondern auch einzelne
+Streamer gezielt abgefragt werden k&ouml;nnen. Ebenso ist es vorgesehen, die Streamer individuell
+in das <b>TowedArray</b> aufzunehmen und wieder auszugliedern, da nicht jeder User Stack
+die gesamte Lebensdauer des Programmes &uuml;ber existiert.
+</p>
+
+<h2>Anwendung</h2>
+<p>
+Nun eine einfache Beispielanwendung von <b>Debug.Sub</b>, die beide Modi demonstriert:
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.Diagnostics;
+
+class OhioSample
+{
+        Debug.Sub myTowedArray;
+
+        public void OhioSample()
+        {
+                myTowedArray = new Debug.Sub();
+        }
+
+        public void RunPulseSample()
+        {
+                // demonstrate pulse
+                myTowedArray.Pulse();
+                // attaches the towed array to the user stack
+                myTowedArray.Lower(Debug.UserStack);
+                for (int j = 0; j &lt; 5; ++j) {
+                        // get 'snapshot'
+                        myTowedArray.Trigger();
+                        // shows the streamer as string data.
+                        for (int i = 0; i &lt; myTowedArray.Length;++i) {
+                                Console.WriteLine(myTowedArray{i}.ToString());
+                        }
+                }
+                // detaches the towed array from the user stack
+                myTowedArray.Raise(Debug.UserStack);
+        }
+
+        void TowedEventListener(object sender, TowedArrayEventArgs e)
+        {
+                Console.WriteLine("Tracked  call : " + e.TowedArray{e.RetrievedTrace}{e.RetrievedSection});
+        }
+
+        public void RunListenSample()
+        {
+                // demonstrate silent
+                myTowedArray.Silent();
+                myTowedArray.TowedArrayEvent += new TowedArrayEventHandler(TowedEventListener);
+
+                // attaches the towed array to the user stack
+                myTowedArray.Lower(Debug.UserStack);
+
+                // track 10 Console.WriteLine calls
+                for (int i = 0; i &lt; 10;++i) {
+                        Console.WriteLine("I'm call " + i);
+                }
+
+                // detaches the towed array from the user stack
+                myTowedArray.Raise(Debug.UserStack);
+        }
+
+        public static void Main(string[] args)
+        {
+                OhioSample sample = new OhioSample();
+                sample.RunPulseSample();
+                sample.RunListenSample();
+        }
+}
+
+</pre>
+
+<p>
+Sehen wir uns diesen Code etwas n&auml;her an: zuerst werden die ben&ouml;tigten Namespaces <i>System</i> und 
+<i>System.Diagnostics</i> importiert, gefolgt von der Erzeugung einer Instanz der
+Klasse <b>OhioSample</b> - und dort wird auch das <b>TowedArray</b> eingerichtet:
+</p>
+
+<pre style="background='silver';">
+class OhioSample
+{
+        Debug.Sub myTowedArray;
+
+        public void OhioSample()
+        {
+                myTowedArray = new Debug.Sub();
+        }
+        ...
+</pre>
+
+<p>
+Ist doch einfach, oder? Ab jetzt steht uns das TowedArray zur Verf&uuml;gung. Die Instrumentierung von C#-Code f&uuml;r erfolgreiches Debugging ist
+auch nicht aufwendiger als Einstreuen von diagnostischen <b>Console.WriteLine</b> Statements.
+Und wir k&ouml;nnen noch dazu viel tiefer in unseren Code eintauchen...
+</p>
+<p>
+Die eigentliche Verfolgung der User Stacks erfolgt in sehr &auml;hnlichen Routinen,
+so da&szlig; hier nur <b>RunPulseSample()</b> betrachtet wird:
+</p>
+
+<pre style="background='silver';">
+ public void RunPulseSample()
+        {
+                // demonstrate pulse
+                myTowedArray.Pulse();
+                // attaches the towed array to the user stack
+                myTowedArray.Lower(Debug.UserStack);
+                for (int j = 0; j &lt; 5; ++j) {
+                        // get 'snapshot'
+                        myTowedArray.Trigger();
+                        // shows the streamer as string data.
+                        for (int i = 0; i &lt; myTowedArray.Length;++i) {
+                                Console.WriteLine(myTowedArray{i}.ToString());
+                        }
+                }
+                // detaches the towed array from the user stack
+                myTowedArray.Raise(Debug.UserStack);
+        }
+</pre>
+
+<p>
+Die simple Eleganz der Routine macht eine Erkl&auml;rung nahezu &uuml;berfl&uuml;ssig.
+Nach dem Aktivieren durch <b>myTowedArray.Pulse()</b> wird das Array mit dem zu &uuml;berwachenden
+User Stack <b>Debug.Userstack</b> verbunden. Unser <b>TowedArray</b> besitzt also nur einen
+<b>Streamer</b>. Anschlie&szlig;end werden 5 Snapshots gemacht und ausgegeben. Zu guter
+Letzt wird das <b>TowedArray</b> wieder frei gegeben. Das war's! Wozu User Stacks
+'von Hand' zu debuggen versuchen, wenn es mit <b>TowedArray</b>s so einfach geht?
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Es ist nicht allzu schwierig, sich erweiterte Debug-Funktionalit&auml;t in .NET zu verschaffen.
+Gleichzeitig kann man wie gezeigt die &uuml;blichen Probleme mit Low-Level Debugging vermeiden.
+May the source be with you!
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020401.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020401.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020124.htm">Arrays mit Index und Schl&uuml;ssel</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020124.htm</span><br>
+<a href="../artikel/20000926.htm">Collections einmal anders: Stacks und Queues</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000926.htm</span><br>
+<a href="../artikel/20000823.htm">Die Hashtable Klasse</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000823.htm</span><br>
+<a href="../artikel/20030401.htm">Hochleistungskompression mit .NET-Bordmitteln</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20030401.htm</span><br>
+<a href="../artikel/20040401.htm">Neues in .NET Codename "Swinomish"</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040401.htm</span><br>
+<a href="../artikel/20020506.htm">Schreib&quot;kunst&quot; f&uuml;r Programmierer, Teil I</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020506.htm</span><br>
+<a href="../artikel/20000731.htm">Verwendung von Arrays in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000731.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Epatrickrobinson%2Ecom%2Fbooks%2Fseawolf%2Ehtml">Patrick Robinson - USS Seawolf</a><br>
+<SPAN class="content">http://www.patrickrobinson.com/books/seawolf.html</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Finventors%2Eabout%2Ecom%2Flibrary%2Finventors%2Fblsonar%2Ehtm">The History of Sonar</a><br>
+<SPAN class="content">http://inventors.about.com/library/inventors/blsonar.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ekerzap%2Ecom%2Fhfro%2F">The Hunt for Red October</a><br>
+<SPAN class="content">http://www.kerzap.com/hfro/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Echinfo%2Enavy%2Emil%2Fnavpalib%2Fimages%2Fimagesub%2Ehtml">U.S. Navy - Submarine Images</a><br>
+<SPAN class="content">http://www.chinfo.navy.mil/navpalib/images/imagesub.html</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

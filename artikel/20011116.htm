@@ -1,0 +1,522 @@
+<HTML>
+<HEAD>
+<TITLE>Erstellen von XML-Dateien mit dem DOM</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Zur Bearbeitung von XML-Dateien bietet das Document Object Model (DOM) ein vielseitiges und praktisches Repertoire an. Dieser Artikel befasst sich mit der Erstellung von XML Dokumenten, beschr&auml;nkt sich dabei aber nicht auf die Arbeit mit dem DOM">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,XML,MSXML,Parser,DOM,Document Object Model,Tree,SetAttribute,AppendChild,CreateElement">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Erstellen von XML-Dateien mit dem DOM</H1>
+<p>
+Geschrieben von: <a href="../autoren/fredericganner.htm">Frederic Ganner</a><br>
+Kategorie: <a href="../kategorien/XML.htm">XML</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20011116"></SCRIPT>
+</p>
+<p>
+Zur Bearbeitung von XML-Dateien bietet das Document Object Model (DOM) ein vielseitiges und praktisches Repertoire an. 
+Nach dem vorangegangenen Artikel <a href="20000417.htm">Auslesen von XML Dateien mit dem DOM</a> befasst sich 
+dieser mit der Erstellung von XML Dokumenten, beschr&auml;nkt sich dabei aber nicht auf die Arbeit mit dem DOM, sondern 
+zeigt auch einfachere Wege zum Ziel. &Uuml;ber die Erkl&auml;rung der einzelnen M&ouml;glichkeiten des DOMs hinaus wird die Anwendung 
+am Beispiel einer Sendung von Bestelldaten gezeigt.
+</p>
+
+<p>
+Die einfachste Methode ein XML Dokument zu erstellen ist sicherlich den Text der XML Datei in den Output-Stream zu 
+schreiben. Ein Vorteil liegt in der Geschwindigkeit, da im Vergleich zum Aufbau eines DOM-Trees kaum Belastung f&uuml;r den 
+Server anf&auml;llt. Da man das DOM nicht ben&uuml;tzt, mu&szlig; nat&uuml;rlich auch die MSXML-Komponente am Server nicht installiert sein. 
+Wenn man also auf eine Weiterverarbeitung und Caching am Server verzichten kann, tut es auch diese Variante.
+</p>
+
+<p>
+Im folgenden Beispiel (<b>stats.asp</b>) werden Daten aus einer Datenbank ausgelesen, und als einfacher Text-Stream an den 
+Client weitergegeben. Nat&uuml;rlich k&ouml;nnte man es auch als Textdatei speichern, wie im Artikel 
+<a href="20000725.htm">Schreiben einer Textdatei auf den Server</a> erkl&auml;rt.
+</p>
+
+<pre style="background='silver';">
+&lt;% Response.ContentType = "text/xml" %&gt;
+&lt;?xml version="1.0" encoding="windows-1252" ?&gt;
+&lt;Stats&gt;
+&lt;%
+strConnStr = "Provider=Microsoft.Jet.OLEDB.4.0;" &amp; _
+      "Data Source=" &amp; Server.MapPath("bestellungen.mdb")
+Set conn = Server.CreateObject("ADODB.Connection")
+conn.Open strConnStr
+Set RSobj = Server.CreateObject("ADODB.Recordset")
+RSobj.ActiveConnection = strConnStr
+RSobj.Source = "SELECT * FROM Statistik"
+RSobj.CursorType = 0
+RSobj.CursorLocation = 2
+RSobj.LockType = 3
+RSobj.Open
+RSobj.MoveFirst
+While Not RSobj.EOF
+%&gt;
+&lt;Zeitraum&gt;
+    &lt;Visits&gt;&lt;%= RSobj.Fields("Visits") %&gt;&lt;/Visits&gt;
+    &lt;PageImpressions&gt;&lt;%= RSobj.Fields("PageImpressions") %&gt;&lt;/PageImpressions&gt;
+    &lt;AdClicks&gt;&lt;%= RSobj.Fields("AdClicks") %&gt;&lt;/AdClicks&gt;
+    &lt;Traffic&gt;&lt;%= RSobj.Fields("Traffic") %&gt;&lt;/Traffic&gt;
+&lt;/Zeitraum&gt;
+&lt;%    
+RSobj.MoveNext
+Wend
+RSobj.close
+conn.close
+%&gt;
+&lt;/Stats&gt;
+</pre>
+
+<h2>Das DOM</h2>
+
+<p>
+Durch ein Interface zum Zugriff, zur Erstellung und Ver&auml;nderung von XML-Daten stellt sich das DOM im Vergleich zur oben 
+vorgestellten Methode als weit eleganter dar. Au&szlig;erdem hat das Erstellen von Dokumenten mit dem DOM die 
+entscheidenden Vorteile, da&szlig; das Ergebnis auf jeden Fall well-formed ist, und der modulare Aufbau eines DOM-Dokuments 
+eine weit flexiblere Handhabung als bei Text-Streams zul&auml;&szlig;t. Sehen wir uns zun&auml;chst in der folgenden Grafik die 
+Struktur eines DOM-Dokuments mit seinen wichtigsten Elementen und Beziehungen an:
+</p>
+
+<IMG SRC="Bilder/200111/20011116_1.png" width="336" height="313" alt="" border="0">
+
+<p>
+Beim Aufbau eines XML-Trees wird zuerst das DOM-Document initialisiert. Es enth&auml;lt nur die Root Node, die 
+ihrerseits alle weiteren Elemente enth&auml;lt. Die Eigenschaften des Dokuments, wie zB. die Angabe der DTD bzw. des 
+Schemas, werden auch an die Root Node als Attribute angeh&auml;ngt, obwohl diese im eigentlichen Code im Prolog, also vor 
+dem Wurzelelement, stehen.
+</p>
+
+<pre style="background='silver';">
+Set XMLDoc = Server.CreateObject("Msxml2.DOMDocument")
+</pre>
+
+<p>
+Eventuelle Kommentare werden durch <i>.CreateComment()</i> analog zum Anh&auml;ngen von Elementen an das Root-Element angef&uuml;gt:
+</p>
+
+<pre style="background='silver';">
+Set Comment = XMLDoc.CreateComment("this is an xml file!")
+XMLDoc.AppendChild(Comment)
+</pre>
+
+<p>
+Wenn Verweise zu XSL-Stylesheets verwendet werden, sind diese zwar auch im Prolog zu finden, es ist jedoch egal 
+wo man sie mit dem DOM definiert. 
+</p>
+
+<pre style="background='silver';">
+Set XSL = XMLDoc.CreateProcessingInstruction("xml-stylesheet","type=""text/xsl"" href=""wildstyle.xsl""")
+XMLDoc.AppendChild(XSL)
+</pre>
+
+<p>
+Alle Elemente werden durch die Methode <i>.CreateElement()</i> erstellt. Der eigentliche Aufbau folgt einem immer 
+gleichen Muster: Ein Element wird definiert und dann als child an das im Document-Tree n&auml;chsth&ouml;here Element angeh&auml;ngt. 
+</p>
+
+<pre style="background='silver';">
+Set child = XMLDoc.CreateElement("Bestellungen")
+parent.AppendChild(child)
+</pre>
+
+<p>
+Einem definierten Element k&ouml;nnen durch <i>.SetAttribute()</i> Attribute zugewiesen werden. Dementsprechend kann 
+durch <i>.GetAttribute()</i> auf die Eigenschaften eines Elementes zugegriffen werden. Wenn man anstelle einer DTD ein 
+Schema verwendet, kann man den Elementen Datentypen zuweisen. Der Name des Attributs wird dazu mit dem String 
+"type" belegt, und der Wert des Attributs mit der Bezeichnung des Datentyps. Um die Zahl der Elemente zu 
+minimieren, ist es nat&uuml;rlich ratsam kleine Angaben in ein Attribut zu setzen, anstatt f&uuml;r jede Kleinigkeit ein 
+eigenes Element zu erschaffen.
+</p>
+
+<pre style="background='silver';">
+Element.SetAttribute("type", "string")
+Element.SetAttribute("Name", "Schmidt")
+</pre>
+
+<p>
+Um ein Element mit Inhalt zu f&uuml;llen weist man der Eigenschaft <i>.Text</i> den entsprechenden Wert zu. 
+Dabei ist zu beachten, da&szlig; <i>.Text</i> eine Eigenschaft ist und keine Methode. Daneben ist es auch m&ouml;glich, Text 
+&uuml;ber die Methode <i>.CreateTextNode()</i> anzuh&auml;ngen.
+</p>
+
+<pre style="background='silver';">
+Element.Text = "der text"
+</pre>
+
+<p>
+Wenn man allerdings HTML-Code als Inhalt einf&uuml;gen will, darf dieser nat&uuml;rlich nicht mitgeparsed werden, 
+und mu&szlig; deshalb in separaten CDATA-Sections untergebracht werden. Die Sections werden als eigene Nodes erstellt, 
+die jedoch nicht an Attribut-Nodes anh&auml;ngbar sind.
+</p>
+
+<pre style="background='silver';">
+Set escapedcontent = XMLDoc.createCDATASection("&lt;b&gt;Ein Beispiel ...&lt;/b&gt;")
+Element.AppendChild(escapedcontent)
+</pre>
+
+<p>
+Mit der <i>.Save()</i> Methode wird das Ganze schlie&szlig;lich abgespeichert.
+</p>
+
+<pre style="background='silver';">
+XMLDOC.Save(Server.MapPath("sample.xml"))
+</pre>
+
+<h2>Ein Praxisbeispiel</h2>
+
+<p>
+Im folgenden Beispiel werden Bestelldaten aus einer Access-Datenbank ausgelesen und in ein XML-Dokument 
+verpackt. Aus dem Access-Standarddatum wird dabei ein XSD-konformes Datum nach dem Format "yyyy-mm-dd" gemacht. 
+Das Element "Artikel" enth&auml;lt sowohl den Artikelnamen, als auch die Artikelnummer, die dem Element als Attribut 
+zugewiesen wurde. Bei dem Datum-Element w&auml;re diese Methode na&uuml;rlich nicht m&ouml;glich, da sich Datentypen nur auf 
+den Inhalt von Elementen beziehen, nicht aber auf deren Attribute (<b>dom.asp</b>)
+</p>
+
+<pre style="background='silver';">
+&lt;% @Language = "VBScript" %&gt;
+&lt;%
+strConnStr = "Provider=Microsoft.Jet.OLEDB.4.0;" &amp; _
+      "Data Source=" &amp; Server.MapPath("bestellungen.mdb")
+Set conn = Server.CreateObject("ADODB.Connection")
+conn.Open strConnStr
+	
+Set RSobj = Server.CreateObject("ADODB.Recordset")
+RSobj.ActiveConnection = strConnStr
+RSobj.Source = "SELECT * FROM Bestellungen"
+RSobj.CursorType = 0
+RSobj.CursorLocation = 2
+RSobj.LockType = 3
+RSobj.Open
+RSobj.MoveFirst
+		
+Set XMLDoc = Server.CreateObject("Msxml2.DOMDocument")
+
+Set Root = XMLDoc.CreateElement("Bestellungen")
+XMLDoc.AppendChild(Root)
+Root.SetAttribute "xmlns", "somenamespace"
+Root.SetAttribute "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance"
+Root.SetAttribute "xsi:schemaLocation", "somenamespace C:\path\schema.xsd"
+
+i=0
+
+While Not RSobj.EOF 
+    dtDatum = CDate(RSobj.Fields("datum"))
+    strArtikelname= RSobj.Fields("artikelname")
+    intArtikelnummer = RSobj.Fields("artikelnummer")
+    intAnzahl = RSobj.Fields("anzahl")
+    intPreis = RSobj.Fields("preis")
+	
+    Set Bestellung = XMLDoc.CreateElement("Bestellung")
+    Root.AppendChild (Bestellung)
+	
+        Set Datum = XMLDoc.CreateElement("Datum")
+        If Len(CStr(Month(dtDatum))) = 1 Then
+            Monat = "0"&amp; Month(dtDatum)
+        Else
+            Monat = Month(dtDatum)
+        End If
+        If Len(CStr(Day(dtDatum))) = 1 Then
+            Tag = "0"&amp; Day(dtDatum)
+        Else
+            Tag = Day(dtDatum)
+        End If
+        Datum.Text = Year(dtDatum)&amp;"-"&amp; Monat &amp;"-"&amp; Tag
+        Bestellung.AppendChild (Datum)
+        Datum.SetAttribute "type", "date"
+
+        Set Artikel = XMLDoc.CreateElement("Artikel")
+        Artikel.Text = strArtikelname
+        Bestellung.AppendChild (Artikel)
+        Artikel.SetAttribute "type", "integer"
+        Artikel.SetAttribute "ArtNummer", intArtikelnummer
+				
+        Set Anzahl = XMLDoc.CreateElement("Anzahl")
+        Anzahl.Text = intAnzahl
+        Bestellung.AppendChild (Anzahl)
+        Anzahl.SetAttribute "type", "integer"
+		
+        Set Preis = XMLDoc.CreateElement("Preis")
+        Preis.Text = intPreis
+        Bestellung.AppendChild (Preis)
+        Preis.SetAttribute "type", "decimal"
+
+        i=i+1
+RSobj.MoveNext
+Wend
+	
+XMLDOC.Save(Server.MapPath("sample.xml"))
+Response.Write(i&amp;" Eintr&auml;ge aus der Datenbank in XML-file &uuml;betragen")
+%&gt;
+</pre>
+
+<p>
+Das fertige Dokument sieht im Browser dann folgenderma&szlig;en aus:
+</p>
+
+<IMG SRC="Bilder/200111/20011116_2.png" width="521" height="313" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Mit dem Document Object Model besitzt man als ASP Programmierer 
+eine leicht zug&auml;ngliche, und trotzdem tiefgehende Br&uuml;cke zwischen Anwendungen und XML-Dateien. Zwar bieten 
+sich zur Behandlung von XML-Daten mit dem DOM inzwischen einige Alternativen aus den Bereichen .NET und 
+SAX, aber gerade wegen der M&ouml;glichkeiten zur Validierung und beispielsweise des Schema Supports bleiben 
+wohl reichlich Gelegenheiten das DOM zu verwenden.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20011116.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20000417.htm">Auslesen von XML Dateien mit dem DOM</a><br>
+<a href="20000725.htm">Schreiben einer Textdatei auf den Server</a><br>
+<a href="20020116.htm">XML-Daten verarbeiten mit XSLT</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3Furl%3D%2Flibrary%2Fen%2Dus%2Fxmlsdk30%2Fhtm%2Fxmmscxmlreference%2Easp">DOM-Referenz bei MSDN</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Etopxml%2Ecom%2Flearning%2Fgames%2Fb%2Fdefault%2Easp">The Understanding XML DOM Game</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ew3schools%2Ecom%2Fdom%2Fdefault%2Easp">W3 Dom School</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ew3%2Eorg%2FDOM%2F">W3C DOM Spezifikation</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Exmldir%2Ecom%2Fdirectory%2Easp%3Fdir%3D497%26ob%3D6">XMLdir: Artikel und Beispiele</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20011116" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Erstellen von XML-Dateien mit dem DOM"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20011116.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Frederic Ganner"><input type="hidden" name="AuthorEmail" value="F.Ganner@technomad.de"><input type="hidden" name="Artikel" value="20011116"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20011116.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

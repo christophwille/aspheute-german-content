@@ -1,0 +1,231 @@
+<HTML>
+<HEAD>
+<TITLE>Speichern von Recordsets in Application-Variablen (Teil&nbsp;I)</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch¸tzt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In einer ASP Anwendung kann es von Vorteil sein, Datenbankwerte, die nicht (oder nur sehr selten) ver&auml;ndert werden, in einer Application Variablen zu speichern. Dieser Artikel zeigt zwei M&ouml;glichkeiten auf...">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ADO,Application,ASP,Lock,Unlock,Recordset,Thread,IIS5,GetRows,GetString,XML">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Speichern von Recordsets in Application-Variablen (Teil&nbsp;I)</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000420"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>In einer ASP Anwendung kann es von Vorteil sein,
+Datenbankwerte, die nicht (oder nur sehr selten) ver&auml;ndert werden,
+in einer <i>Application</i> Variablen zu speichern.
+Auf solch' eine <i>Application</i> Variable kann dann
+jedes ASP-Skript der selben Website zugreifen
+(solang' es besondere Umst‰nde nicht daran hindern).<br><br>
+<i>Application-Variablen</i> werden wie folgt gesetzt und gelesen:</p>
+
+<pre style="background='silver';">
+<b>' Application Variable setzen:</b>
+Application.Lock
+Application("VariablenName") = VariablenWert
+Application.UnLock
+
+<b>' Application Variable auslesen:</b>
+Variable = Application("VariablenName")</pre>
+
+<p>Den Wert einer <i>Application-Variable</i> setzt man am besten in 
+der Unterroutine (engl. <i>Sub</i>) <i>Application_OnStart</i> der <u>Global.asa</u>. 
+Die <u>Global.asa</u> ist eine Text Datei (&auml;hnlich einer <i>.asp</i>-Datei),
+die im Root-Verzeichnis der Website liegt. 
+In der <u>Global.asa</u> stehen die Definitionen der Unterroutinen
+<i>Application_OnStart</i> und <i>Application_OnEnd</i>, die beim Starten und
+Beenden der Website-Applikation abgearbeitet werden.</p>
+
+<p>Ausserdem kann die <u>Global.asa</u> noch die Unterroutinen <i>Session_OnStart</i>
+und <i>Session_OnEnd</i> enthalten, die beim Starten und Beenden einer User-Session 
+in der Website-Applikation ausgef&uuml;hrt werden.<br><br> 
+Das Grundger&uuml;st der <u>Global.asa</u> ist wie folgt:</p>
+
+<pre style="background='silver';">
+&lt;SCRIPT LANGUAGE="VBScript" RUNAT="SERVER"&gt;
+Sub Application_OnStart
+	' Wird beim Starten der Website Applikation ausgef&uuml;hrt
+	' Hier werden normalerweise Application-Variablen gesetzt
+	Application("Variablenname")= VariablenWert
+	...
+End Sub
+
+Sub Application_OnEnd
+	' Wird beim Beenden der Website Applikation ausgef&uuml;hrt
+	...
+End Sub
+
+Sub Session_OnStart
+	' Wird beim Starten einer Session ausgef&uuml;hrt
+	...
+End Sub
+
+Sub Session_OnEnd
+	' Wird beim Beenden einer Session ausgef&uuml;hrt
+	...
+End Sub
+&lt;/SCRIPT&gt;</pre>
+
+<p>Welche M&ouml;glichkeiten hat man, wenn man ein <i>Recordset</i> in einer 
+<i>Application-Variablen</i> speichern will? 
+Man k&ouml;nnte ein <i>Disconnected Recordset</i> nehmen (das keine permanente 
+Datenbank Verbindung braucht) und es in einer <i>Application-Variablen</i> speichern 
+- Dies war unter IIS 4.0 m&ouml;glich, wird jedoch auf einem IIS 5.0 (Windows 2000)
+unter Ausgabe einer Fehlermeldung verweigert.</p>
+
+<p><b><u>Anmerkung:</u></b> <font size="-1">Auch auf einer IIS 4.0 
+ASP-Applikation war es nicht ratsam ein Recordset Objekt 
+(oder irgendein anderes Objekt) in einer Application-Variablen zu speichern,
+da jede ASP-Seite, die das Recordset dann benutzte, im selben
+"Thread"-Kontext wie das Recordset Objekt laufen muﬂte. 
+Dies hatte vereinfacht gesagt zur Folge, da&szlig; der Webserver seine Kapazit&auml;ten
+nicht aussch&ouml;pfen konnte, da alle ASP-Skripts nur einzeln nacheinander abgearbeitet
+werden k&ouml;nnen.
+Da das Abarbeiten einer ASP-Seite, durch die Client-Server Architektur des Internetes 
+bedingt, durchaus mehrere Sekunden dauern konnte, war eine betr&auml;chtliche
+Performance Einbu&szlig;e schon bei mittelgro&szlig;en
+Internet-Applikationen zu beobachten.</font></p>
+
+<p>Eine weitere M&ouml;glichkeit den <i>Recordset</i> Inhalt in einer 
+<i>Application-Variablen</i> zu speichern ist, das <i>Recordset</i> in
+ein <i>Array</i> umzuwandeln, um dann dieses <i>Array</i> in einer <i>Application-Variablen</i> 
+zu speichern.
+Dies l&auml;&szlig;t sich einfach mit der <i>GetRows</i> Methode des <i>Recordset</i>
+Objektes verwirklichen. 
+Dabei werden die Daten in einem zwei-dimensionalen Array mit 0-basierendem
+Index gespeichert (erste Dimension ist Feld, zweite Dimension die Datensatznummer):</p>
+
+<pre style="background='silver';">
+&lt;%
+...
+rs.MoveFirst
+arrRecordset = rs.GetRows()
+
+Application.Lock
+Application("RecordsetArray")= arrRecordset
+Application.UnLock
+
+' Alle Datensaetze des Arrays durchlaufen
+For intI = 0 to UBound(arrRecordset, 2)
+	strErstesFeld = arrRecordset(0,intI)
+	strZweitesFeld = arrRecordset(1,intI)
+	...
+Next
+%&gt;</pre>
+
+<p>Einen anderen Weg beschreitet man, wenn man den Inhalt des <i>Recordsets</i>
+unter Verwendung der <i>GetString</i> Methode in einer String (Text) Variablen 
+speichert.
+Diese Text Variable kann dann in einer <i>Application Variablen</i> gespeichert
+und bei Bedarf wieder ausgelesen werden.
+Zum Auslesen des <i>Recordset</i> Inhaltes aus der Text-Variablen ist es oft
+hilfreich, den Text in ein <i>Array</i> &uuml;berzuf&uuml;hren, 
+und dann die Daten aus dem <i>Array</i> zu lesen:</p>
+
+<pre style="background='silver';">
+&lt;%
+' Recordset in String Speichern
+' Als Begrenzungszeichen fuer Records (oder Rows) wird die 
+'   Zeilenschaltung (Konstante VbCrLf in VBScript),  
+'   und zur Begrenzung der Salten (oder Columns) 
+'   das "|"-Zeichen verwendet
+strRecordsetInhalt = rs.GetString(2, , "|", VbCrLf, "(null)")   
+     ' 2 = adClipString
+
+' Speichern des Recordset Inhaltes als String 
+'   in einer Application Variablen
+Application.Lock
+Application("RecordsetString")= strRecordsetInhalt
+Application.UnLock
+
+' Auslesen der Daten aus dem String durch
+'   Ueberfuehren in ein Array
+arrRecords = Split(strRecordsetInhalt, VbCrLf)
+For intI = 0 to UBound(arrRecords) - 1 
+  Response.Write intI+1 & ". Datensatz:&lt;br&gt;" & VbCrLf
+  arrFields = Split(arrRecords(intI), "|")
+  For intK = 0 to UBound(arrFields)
+    Response.Write "&nbsp;&nbsp;" & intK+1 & ". Feld = " 
+    Response.Write arrFields(intK) & "&lt;br&gt;" & VbCrLf
+  Next
+Next
+%&gt;
+</pre>
+
+<p>Weitaus komfortabler als ein <i>Recordset</i> in Form
+eines <i>Arrays</i> oder <i>Strings mit Begrenzungszeichen</i> zu speichern
+ist es jedoch, wenn man ein <i>Recordset</i> als <u>XML</u>-String in 
+einer <i>Application</i> Variablen speichert.</p>
+
+<p>Dies hat den Vorteil, da&szlig; man das <u>XML</u> wieder einfach in ein
+<i>Recordset</i> Objekt umwandeln kann.
+Mit diesem <i>Recordset</i> Objekt kann man nat&uuml;rlich alle 
+<i>Recordset</i> Operationen ausf&uuml;hren, den Inhalt lesen, das <i>Recordset</i> 
+sortieren, oder nach bestimmten Werten suchen.</p>
+
+<p>Weiters kann man das <i>Recordset</i> &auml;ndern, in einen 
+<u>XML</u>-String &uuml;berf&uuml;hren, und den <u>XML</u>-String wieder in 
+die <i>Application</i> Variable zur&uuml;ckschreiben. 
+Wie dies im Detail funktioniert lesen Sie in Teil II.</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000420.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000420.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001018.htm">Global.asa: Verwendung, Events und Probleme</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001018.htm</span><br>
+<a href="../artikel/20000425.htm">Speichern von Recordsets in Application-Variablen (Teil&nbsp;II)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000425.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

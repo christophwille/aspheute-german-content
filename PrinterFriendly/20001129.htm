@@ -1,0 +1,359 @@
+<HTML>
+<HEAD>
+<TITLE>INI-Dateien als Konfigurationsdateien f&uuml;r ASP-Anwendungen verwenden</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im allgemeinen bieten sich Textdateien an, um Konfigurationsdaten f&uuml;r eine ASP-Anwendung abzulegen und bei Bedarf auszulesen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,INI,Textdateien,Konfiguration,Konfigurationsdaten,ASP,INI-Datei">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>INI-Dateien als Konfigurationsdateien f&uuml;r ASP-Anwendungen verwenden</H1>
+<p>
+Geschrieben von: <a href="../autoren/steffenkangowski.htm">Steffen Kangowski</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001129"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wie schon im Artikel <a href="../artikel/20000530.htm">Lesen von Textdateien</a> von Christian Koller angeschnitten, 
+bieten sich Textdateien an, um Konfigurationsdaten f&uuml;r eine ASP-Anwendung abzulegen und bei Bedarf 
+auszulesen.
+</p>
+
+<p>
+Eine solche Verfahrensweise bietet sich beispielsweise dann an, wenn Anwendungen distribuiert 
+werden sollen. Solche Anwendungen werden oftmals verschl&uuml;sselt weitergegeben und es besteht 
+dann der Wunsch Basiskonfigurationsdaten dem Betreiber transparent und editierbar zur 
+Verf&uuml;gung zu stellen. Ein anderes Beispiel w&auml;re, wenn Konfigurationsdaten, unabh&auml;ngig von 
+der Verf&uuml;gbarkeit  einer Datenbank, der Anwendung zur Verf&uuml;gung gestellt werden sollen.
+</p>
+
+<p>
+Wie aber k&ouml;nnte eine solche Konfigurationsdatei aussehen und wie greife ich gezielt auf 
+einen gew&uuml;nschten Eintrag zu? Wie kann man gleichartige Konfigurationsdaten trennen? Wie 
+kann ich Daten unabh&auml;ngig der Verwendung von Variablen und Konstanten so ablegen? Und wie 
+kann ich absichern, da&szlig; wenn ein Wert nicht vorhanden ist, meine Anwendung weiterarbeiten 
+kann?
+</p>
+
+<p>
+Fragen &uuml;ber Fragen. Die Antwort darauf k&ouml;nnte die Verwendung von INI-Dateien sein. 
+Vielleicht erinnert sich der eine oder andere noch an die sogenannten INI-Dateien, die 
+unter Windows 3.x massenhaft verwendet wurden und erst mit der Einf&uuml;hrung von Windows9x 
+und der Registrierungsdatenbank an Bedeutung verloren haben.
+</p>
+
+<p>
+Der gro&szlig;e Vorteil von INI-Dateien besteht unter anderem:
+</p>
+
+<p>
+<ul>
+<li>im einheitlichen Aufbau von INI-Dateien
+<li>in der einheitlichen Ablage von Schl&uuml;sselw&ouml;rtern und zugeh&ouml;rigen Werten, z.B.:<br>
+<i>BackgroundColor = #c0c0c0</i>
+<li>in der Trennung von Konfigurationsdaten in logische Abschnitte und der expliziten 
+Zuordnung von Schl&uuml;sselw&ouml;rtern zu Abschnitten. Dadurch k&ouml;nnen auch gleiche 
+Schl&uuml;sselw&ouml;rter verschiedenen Abschnitten zugeordnet werden. Beispielsweise:<br>
+<i>[FarbSchemaGelb]</i><br>
+<i>BackgroundColor = #ffff00</i><br>
+<i>[FarbSchemaRot]</i><br>
+<i>BackgroundColor = #ff0000</i><br>
+<li>der M&ouml;glichkeit Kommentare einzuf&uuml;gen<br>
+<i>; dies ist ein Kommentar</i>
+</ul>
+</p>
+
+<h2>Wie ist nun eine typische INI-Datei aufgebaut?</h2>
+
+<p>
+Eine INI-Datei besteht aus mindestens einem Abschnitt. Abschnitte werden durch symbolische 
+Namen, die in eckige Klammern gefa&szlig;t sind, gekennzeichnet. Jedes Schl&uuml;sselwort und der 
+zugeh&ouml;rige Wert stehen in jeweils einer Zeile. Schl&uuml;sselw&ouml;rter stehen unterhalb des 
+zugeh&ouml;rigen Abschnitts.
+</p>
+
+<p>
+Das Schl&uuml;sselwort und der zugeh&ouml;rige Wert sind durch ein Gleichheitszeichen getrennt. 
+Die Verwendung von mehr als einem Gleichheitszeichen in einer Zeile ist untersagt.
+Kommentare sind durch ein Semikolon vor dem ersten Textzeichen in der betreffenden Zeile 
+zu kennzeichnen. 
+</p>
+
+<p>
+Hier nun ein vollst&auml;ndiges Beispiel einer INI-Datei <i>beispiel.ini</i> (finden Sie im Download):
+</p>
+
+<p>
+<pre style="background='silver';">
+; Ein Kommentar in der beispiel.ini
+
+[AppLog]
+VirtualLogPath = /meineapps/log/
+SysLogEnable = true
+LogPerMonth = true
+
+[Interface1]
+HeadColor = #0063ce
+MainColor = #2C5BA5
+FontColor = #84ADEB
+TabSize = 400
+
+[Interface2]
+HeadColor = #2277ce
+MainColor = #99ff99
+FontColor = #84ADEB
+TabSize = 250
+</pre>
+</p>
+
+<h2>Wie aber gelangen wir nun an die Werte in einer solchen INI-Datei?</h2> 
+
+<p>
+Eine komfortable Funktion soll dabei helfen. Diese Funktion soll gezielt auf eine 
+bestimmte INI-Datei zuzugreifen und den zugeordneten Wert eines bestimmten 
+Schl&uuml;sselwortes in einem bestimmten Abschnitt zur&uuml;ckzugeben. Wenn das Schl&uuml;sselwort im 
+angebenen Abschnitt nicht gefunden wurde, soll ein Default-Wert zur&uuml;ckgegeben werden. 
+Diese Funktion hei&szlig;t im Beispiel <i>IniReadKey</i>. Das vollst&auml;ndige Listing der Funktion finden 
+Sie in der Datei (<i>beispiel_ini.asp</i>. 
+</p>
+
+<p>
+Nun zur Analyse der Funktion IniReadKey:
+</p>
+
+<p>
+<pre style="background='silver';">
+IniReadKey(IniFilename, IniSection, IniKey, DefaultValue)
+</pre>
+</p>
+
+<p>
+Die Funktion erwartet vier Parameter:
+</p>
+
+<p>
+<ul>
+<li><i>IniFileName</i> (String). Dies ist der Dateiname mit dem relativen Pfad bzw. dem physischen Pfad der INI-Datei
+Beispiel: <i>"/appconfig.ini"</i>
+<li><i>Der zweite Parameter ist IniSection</i> (String), der Abschnitt der INI-Datei in der der Schl&uuml;ssel gesucht werden soll.
+Beispiel: <i>"Interface1"</i>
+<li><i>IniKey</i> (String), der Schl&uuml;ssel dessen Wert gelesen werden soll.
+Beispiel: <i>"MainColor"</i>
+<li><i>DefaultValue</i> (String), der Wert der zur&uuml;ckgegeben werden soll wenn der Schl&uuml;ssel nicht gefunden wurde oder f&uuml;r den Schl&uuml;ssel kein Wert vorhanden ist.
+</ul>
+</p>
+
+<p>
+Ein Aufruf der Funktion sieht dann beispielweise so aus:
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;%
+MainColor = IniReadKey("c:\temp\appconfig.ini ","Interface1","MainColor","#c0c0c0")
+%&gt;
+</pre>
+</p>
+
+<p>
+Nun zur eigentlichen Arbeitsweise der Funktion, Schritt f&uuml;r Schritt erkl&auml;rt.
+</p>
+
+<p>
+<pre style="background='silver';">
+Function IniReadKey(IniFileName, IniSection, IniKey, DefaultValue)
+
+Dim FileSystem, IniFile, FileName, ThisLine, ThisSection, _
+                  ThisKey, FoundSection, TmpValue
+
+If Instr(1,IniFileName,"\") &gt; 0 Then
+FileName = Trim(IniFileName)
+Else 
+FileName = Trim(server.mappath(IniFileName))
+End If
+IniSection = Trim(IniSection)
+IniKey = Trim(IniKey)
+DefaultValue = Trim(DefaultValue)
+</pre>
+</p>
+
+<p>
+Als erstes &uuml;berpr&uuml;ft die Funktion ob der &uuml;bergebene Pfad ein physischer oder ein 
+virtueller Pfad ist und wandelt gegebenenfalls den virtuellen Pfad in einen physischen 
+Pfad um - und zwar mit Hilfe der Funktion <i>server.mappath()</i>. Weiterhin werden bei 
+den anderen Parametern unn&ouml;tige Leerzeichen entfernt.
+</p>
+
+<p>
+<pre style="background='silver';">
+Set FileSystem = _ 
+   CreateObject("Scripting.FileSystemObject")
+Set IniFile = _ 
+   FileSystem.OpenTextFile(FileName,ForReading,TristateFalse)
+</pre>
+</p>
+
+<p>
+Ein FileSystemObject Objekt wird erstellt und in in der Variable FileSystem gespeichert. 
+Durch das FileSystemObject bekommt man Zugriff auf Dateien und Ordner, und wir verwenden 
+das FileSystemObject um unsere INI Datei zum Lesen zu &ouml;ffnen.
+</p>
+
+<p>
+<pre style="background='silver';">
+Do While NOT IniFile.AtEndOfStream
+ThisLine = Trim(IniFile.Readline)
+' &Uuml;berpr&uuml;fen ob aktuelle Zeile ein Abschnitt ist
+If Instr(1, ThisLine, "[") &gt; 0 Then
+   'Abschnitt ja aber ob der richtige ?
+   FoundSection = false
+   '&Uuml;berpr&uuml;fen ob aktuelle Zeile der
+   'richtige Abschnitt ist
+   If Instr(1, ThisLine, IniSection) &gt; 0 Then
+     'OK Abschnitt gefunden, Flag auf true
+     'setzen bis zum n&auml;chsten Abschnitt
+     FoundSection = true
+    End If
+End If
+</pre>
+</p>
+
+<p>
+Nun wird die INI-Datei Zeile f&uuml;r Zeile gelesen und nach einem Abschnitt gesucht, die ja 
+allesamt durch eckige Klammern gekennzeichnet sind . Dazu wird jede gelesene Zeile mit 
+Instr nach einer eckigen Klammer durchsucht. Wenn ein Abschnitt gefunden wurde, dann 
+wird nat&uuml;rlich noch &uuml;berpr&uuml;ft, ob es sich um den richtigen Abschnitt handelt. 
+</p>
+
+<p>
+<pre style="background='silver';">
+If FoundSection Then
+'pr&uuml;fen ob Key in aktueller Zeile
+	'UND nur weiter wenn rechts vom Key ein IstGleich-
+'Zeichen steht UND nur weiter wenn kein
+'Kommentarzeichen (Semikolon) vor Text
+	If Instr(1, ThisLine, IniKey) &gt; 0 AND Instr(Instr(1, ThisLine, IniKey) _
+	   + Len(IniKey), ThisLine, "=") &gt; 0 AND Left(ThisLine,1) &lt;&gt; ";" Then
+</pre>
+</p>
+
+<p>
+Anschlie&szlig;end wird, wenn es sich tats&auml;chlich um den richtigen Abschnitt handelt, &uuml;berpr&uuml;ft 
+ob in der aktuellen Zeile der INI-Datei der passende Schl&uuml;ssel Parameter <i>IniKey</i> vorhanden 
+ist, ob rechts vom Schl&uuml;ssel ein Gleichheitszeichen steht und ob es sich bei der Zeile 
+nicht um eine Kommentarzeile handelt. Wenn alle Bedingungen erf&uuml;llt sind wird die 
+Schleife verlassen und der gelesene Wert zwischengespeichert.
+</p>
+
+<p>
+<pre style="background='silver';">
+    'Wert &uuml;bertragen und Lesen beenden
+     TmpValue = Trim(Mid(ThisLine,Instr(1, ThisLine, "=")+1))
+    Exit Do
+  End If
+End If
+Loop
+</pre>
+</p>
+
+<p>
+Im Anschlu&szlig; pr&uuml;ft die Funktion noch ob der gefundene Wert leer ist und &uuml;bergibt 
+gegebenenfalls den Default-Wert aus <i>DefaultValue</i>.
+</p>
+
+<p>
+<pre style="background='silver';">
+If TmpValue = "" OR IsEmpty(TmpValue)Then
+IniReadKey = DefaultValue
+Else 
+	IniReadKey = TmpValue
+End If
+IniFile.Close
+Set FileSystem = Nothing
+Set IniFile = Nothing
+End Function
+</pre>
+</p>
+
+<p>
+Mit dieser Funktionalit&auml;t hat man somit die M&ouml;glichkeit, sehr bequem und &uuml;bersichlich zum 
+Beispiel Konfigurationsdaten einer ASP-Anwendung abzulegen und darauf zuzugreifen.
+</p>
+
+<p>
+Wichtig ist noch anzumerken, da&szlig; aus Sicherheitsgr&uuml;nden solche INI-Dateien unbedingt so 
+im Dateisystem abgelegt werden sollten, da&szlig; Sie via Web nicht erreichbar sind und somit 
+ein Download der INI-Dateien unm&ouml;glich ist. Deshalb sollte man mit dem Parameter 
+IniFileName nach M&ouml;glichkeit immer physische Pfade &uuml;bergeben.
+</p>
+
+<p>
+Wer die M&ouml;glichkeit hat, Komponenten auf dem von ihm genutzten IIS zu installieren, 
+kann nat&uuml;rlich auch auf Komponenten zur&uuml;ckgreifen, die bez&uuml;glich der Arbeit mit 
+INI-Dateien ungleich mehr Komfort bieten. Ein Beispiel f&uuml;r eine solche Komponente ist 
+<a href="http://www.softartisans.com/softartisans/safilemanager.html">SA-FileManager von Software Artisans</a>.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Man kann nicht nur INI-Dateien lesen, sondern aus ASP heraus auch den Inhalt von INI-Dateien aktualisieren beziehungsweise neue INI-Dateien anlegen. 
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001129.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20001129.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000530.htm">Lesen von Textdateien</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000530.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,56 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML>
+<HEAD>
+<TITLE> querycounter.aspx </TITLE>
+<STYLE>
+BODY {
+  font-family: "sans-serif";
+  bgcolor: "#FFFFFF";
+}
+
+PRE {
+  font-family: "monospaced";
+  }
+
+#statement {
+  color: "#0000FF"; /* Color for Script Statements (things like Call, Dim, If...Then...Else, etc) */
+  }
+
+#function {
+  color: "#FF0000"; /* Color for Script Functions (things like Instr, Abs, etc) */
+  }
+
+#script {
+  color: "#800000"; /* Color for anything that is not in one of the above script categories, but is
+                      contained inside script delimeters */
+  }
+
+#scripton {
+  color: "#FF00FF"; /* Color for anything that is not in one of the above script categories, but is
+                      contained inside script delimeters, inside quotation marks */
+  }
+
+#html {
+  color: "#0000FF"; /* Color for any non-script html output */
+  }
+
+#base {
+  color: "#000000"; /* Color for any non-script, non-html output */
+  }
+
+#comment {
+  color: "#008000"; /* Color for any commented code */
+  }
+
+#linenum {
+  color: "#808080"; /* Color for the line numbers */
+  }
+</STYLE>
+</HEAD>
+
+<BODY>
+
+<pre><span id="linenum">001&nbsp;&nbsp;</span><span id="script">&lt;% @Page Language=<span id="scripton">"C#"</span> %&gt;</span><br><span id="linenum">002&nbsp;&nbsp;</span><span id="script">&lt;% @Import Namespace=<span id="scripton">"System.Diagnostics"</span> %&gt;</span><br><span id="linenum">003&nbsp;&nbsp;</span><span id="script">&lt;% @Import Namespace=<span id="scripton">"System.Net"</span> %&gt;</span><br><span id="linenum">004&nbsp;&nbsp;</span>&lt;script language=<span id="scripton">"C#"</span> runat=<span id="scripton">"server"</span>&gt;<br><span id="linenum">005&nbsp;&nbsp;</span>void Page_Load(Object Src, EventArgs E) <br><span id="linenum">006&nbsp;&nbsp;</span>{<br><span id="linenum">007&nbsp;&nbsp;</span>	if (!Page.IsPostBack)<br><span id="linenum">008&nbsp;&nbsp;</span>	{<br><span id="linenum">009&nbsp;&nbsp;</span>		PerformanceCounterCategory[] arrCategories = PerformanceCounterCategory.GetCategories();<br><span id="linenum">010&nbsp;&nbsp;</span>		Category.DataSource = arrCategories;<br><span id="linenum">011&nbsp;&nbsp;</span>		Category.DataBind();<br><span id="linenum">012&nbsp;&nbsp;</span>	}<br><span id="linenum">013&nbsp;&nbsp;</span>}<br><span id="linenum">014&nbsp;&nbsp;</span><br><span id="linenum">015&nbsp;&nbsp;</span>void OnDisplayCategory(Object sender, EventArgs e)<br><span id="linenum">016&nbsp;&nbsp;</span>{<br><span id="linenum">017&nbsp;&nbsp;</span>	string strCategory = Category.SelectedItem.Value;<br><span id="linenum">018&nbsp;&nbsp;</span>	PerformanceCounterCategory pcInfo = new PerformanceCounterCategory(strCategory);<br><span id="linenum">019&nbsp;&nbsp;</span>	PerformanceCounter[] arrCntrs = pcInfo.GetCounters(<span id="scripton">""</span>);<br><span id="linenum">020&nbsp;&nbsp;</span>	Counters.DataSource = arrCntrs;<br><span id="linenum">021&nbsp;&nbsp;</span>	Counters.DataBind();<br><span id="linenum">022&nbsp;&nbsp;</span>	CounterInstances.Items.Clear();<br><span id="linenum">023&nbsp;&nbsp;</span>}<br><span id="linenum">024&nbsp;&nbsp;</span><br><span id="linenum">025&nbsp;&nbsp;</span>void OnCounterInfo(Object sender, EventArgs e)<br><span id="linenum">026&nbsp;&nbsp;</span>{<br><span id="linenum">027&nbsp;&nbsp;</span>	string strCategory = Category.SelectedItem.Value;<br><span id="linenum">028&nbsp;&nbsp;</span>	CounterInstances.Items.Clear();<br><span id="linenum">029&nbsp;&nbsp;</span>	<br><span id="linenum">030&nbsp;&nbsp;</span>	PerformanceCounterCategory pcCat = new PerformanceCounterCategory(strCategory);<br><span id="linenum">031&nbsp;&nbsp;</span>	string[] arrInstanceNames = pcCat.GetInstanceNames();<br><span id="linenum">032&nbsp;&nbsp;</span>	if (arrInstanceNames.GetLength(0) &gt; 1)<br><span id="linenum">033&nbsp;&nbsp;</span>	{<br><span id="linenum">034&nbsp;&nbsp;</span>	  CounterInstances.DataSource = arrInstanceNames;<br><span id="linenum">035&nbsp;&nbsp;</span>	  CounterInstances.DataBind();<br><span id="linenum">036&nbsp;&nbsp;</span>	}<br><span id="linenum">037&nbsp;&nbsp;</span>}<br><span id="linenum">038&nbsp;&nbsp;</span><br><span id="linenum">039&nbsp;&nbsp;</span>void SubmitBtn_Click(Object sender, EventArgs e) <br><span id="linenum">040&nbsp;&nbsp;</span>{<br><span id="linenum">041&nbsp;&nbsp;</span>	string strCategory = Category.SelectedItem.Value;<br><span id="linenum">042&nbsp;&nbsp;</span>	string strCounter = Counters.SelectedItem.Value;<br><span id="linenum">043&nbsp;&nbsp;</span>	string strInstanceName = <span id="scripton">""</span>;<br><span id="linenum">044&nbsp;&nbsp;</span>	<br><span id="linenum">045&nbsp;&nbsp;</span>	if (CounterInstances.Items.Count &gt; 0)<br><span id="linenum">046&nbsp;&nbsp;</span>		strInstanceName = CounterInstances.SelectedItem.Value;<br><span id="linenum">047&nbsp;&nbsp;</span>		<br><span id="linenum">048&nbsp;&nbsp;</span>	try<br><span id="linenum">049&nbsp;&nbsp;</span>	{<br><span id="linenum">050&nbsp;&nbsp;</span>		PerformanceCounter pc = new PerformanceCounter(strCategory, strCounter, strInstanceName);<br><span id="linenum">051&nbsp;&nbsp;</span>		<span id="comment">// get the current value</span><br><span id="linenum">052&nbsp;&nbsp;</span>		float dResult = pc.<span id="statement">Next</span>Value();<br><span id="linenum">053&nbsp;&nbsp;</span>		Message.Text = <span id="scripton">"&lt;"</span> + strCategory + <span id="scripton">"&gt; ["</span> + strCounter + <span id="scripton">"] {"</span> + strInstanceName + <span id="scripton">"} = "</span> + dResult.ToString();<br><span id="linenum">054&nbsp;&nbsp;</span>	}<br><span id="linenum">055&nbsp;&nbsp;</span>	catch (Exception exc)<br><span id="linenum">056&nbsp;&nbsp;</span>	{<br><span id="linenum">057&nbsp;&nbsp;</span>		Message.Text = exc.ToString();<br><span id="linenum">058&nbsp;&nbsp;</span>	}<br><span id="linenum">059&nbsp;&nbsp;</span>}<br><span id="linenum">060&nbsp;&nbsp;</span><br><span id="linenum">061&nbsp;&nbsp;</span>&lt;/script&gt;<br><span id="linenum">062&nbsp;&nbsp;</span><br><span id="linenum">063&nbsp;&nbsp;</span>&lt;html&gt;<br><span id="linenum">064&nbsp;&nbsp;</span>&lt;head&gt;&lt;title&gt;Query performance counters&lt;/title&gt;&lt;/head&gt;<br><span id="linenum">065&nbsp;&nbsp;</span>&lt;body&gt;<br><span id="linenum">066&nbsp;&nbsp;</span>&lt;h3&gt;Performance Counter auslesen&lt;/h3&gt;<br><span id="linenum">067&nbsp;&nbsp;</span><br><span id="linenum">068&nbsp;&nbsp;</span>&lt;form runat=<span id="scripton">"server"</span> method=<span id="scripton">"post"</span>&gt;<br><span id="linenum">069&nbsp;&nbsp;</span>&lt;table width=<span id="scripton">"400"</span>&gt;<br><span id="linenum">070&nbsp;&nbsp;</span>&lt;tr&gt;&lt;td&gt;Kategorie:&lt;/td&gt;&lt;td&gt;Counter:&lt;/td&gt;&lt;td&gt;Instances&lt;/td&gt;&lt;/tr&gt;<br><span id="linenum">071&nbsp;&nbsp;</span>&lt;tr&gt;&lt;td valign=<span id="scripton">"top"</span>&gt;<br><span id="linenum">072&nbsp;&nbsp;</span>&lt;asp:dropdownlist id=<span id="scripton">"Category"</span>  AutoPostBack=<span id="scripton">"True"</span> <br><span id="linenum">073&nbsp;&nbsp;</span>	DataTextField=<span id="scripton">"CategoryName"</span> DataValueField=<span id="scripton">"CategoryName"</span><br><span id="linenum">074&nbsp;&nbsp;</span>	runat=server OnSelectedIndexChanged=<span id="scripton">"OnDisplayCategory"</span> /&gt;<br><span id="linenum">075&nbsp;&nbsp;</span>&lt;/td&gt;&lt;td valign=<span id="scripton">"top"</span>&gt;<br><span id="linenum">076&nbsp;&nbsp;</span>&lt;asp:ListBox id=<span id="scripton">"Counters"</span> Width=<span id="scripton">"200px"</span> runat=<span id="scripton">"server"</span> <br><span id="linenum">077&nbsp;&nbsp;</span>	DataTextField=<span id="scripton">"CounterName"</span> DataValueField=<span id="scripton">"CounterName"</span><br><span id="linenum">078&nbsp;&nbsp;</span>  	AutoPostBack=<span id="scripton">"True"</span> <br><span id="linenum">079&nbsp;&nbsp;</span>	OnSelectedIndexChanged=<span id="scripton">"OnCounterInfo"</span>/&gt;<br><span id="linenum">080&nbsp;&nbsp;</span>&lt;/td&gt;&lt;td valign=<span id="scripton">"top"</span>&gt;<br><span id="linenum">081&nbsp;&nbsp;</span>&lt;asp:ListBox id=<span id="scripton">"CounterInstances"</span> Width=<span id="scripton">"100px"</span> runat=<span id="scripton">"server"</span> /&gt;<br><span id="linenum">082&nbsp;&nbsp;</span>&lt;/td&gt;&lt;/tr&gt;<br><span id="linenum">083&nbsp;&nbsp;</span>&lt;/table&gt;<br><span id="linenum">084&nbsp;&nbsp;</span>&lt;asp:button OnClick=<span id="scripton">"SubmitBtn_Click"</span> text=<span id="scripton">"Lookup"</span> runat=<span id="scripton">"server"</span>/&gt;<br><span id="linenum">085&nbsp;&nbsp;</span>&lt;/form&gt;<br><span id="linenum">086&nbsp;&nbsp;</span><br><span id="linenum">087&nbsp;&nbsp;</span>&lt;p&gt;<br><span id="linenum">088&nbsp;&nbsp;</span>&lt;asp:Label id=<span id="scripton">"Message"</span> runat=<span id="scripton">"server"</span> /&gt;<br><span id="linenum">089&nbsp;&nbsp;</span>&lt;/p&gt;<br><span id="linenum">090&nbsp;&nbsp;</span><br><span id="linenum">091&nbsp;&nbsp;</span>&lt;/body&gt;<br><span id="linenum">092&nbsp;&nbsp;</span>&lt;/html&gt;<br></pre>
+</BODY>
+</HTML>

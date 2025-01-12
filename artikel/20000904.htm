@@ -1,0 +1,422 @@
+<HTML>
+<HEAD>
+<TITLE>Beteiligte Komponenten bei SET Transaktionen (Teil&nbsp;1)</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel beschreibt die einzelnen SET-Komponenten, wie das Payment Gateway und das Wallet.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SET, Payment, e-commerce, Kreditkarte, ASP, POS, Visa, Mastercard, Wallet, Payment Gateway, Brand, Bank, Zertifikat, CA">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Beteiligte Komponenten bei SET Transaktionen (Teil&nbsp;1)</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianweissengruber.htm">Christian Weissengruber</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000904"></SCRIPT>
+</p>
+<p>
+Nachdem wir uns im ersten Teil mit der SET-Technologie im Allgemeinen besch&auml;ftigt haben, werden wir in diesem Artikel die
+einzelnen SET-Komponenten n&auml;her betrachten.
+</p>
+<h2>Das Payment Gateway</h2>
+<p>
+Das Payment Gateway (auch kurz nur Gateway genannt) ist die Schnittstelle zwischen dem H&auml;ndler und den 
+Kreditkartenorganisationen. Das Gateway erh&auml;lt im Rahmen seiner Installation ein Zertifikat von einer CA 
+(Certificate Authority).
+</p>
+<p>
+Gateways werden unter anderem von <a href="http://www.globeset.com">Globeset</a> , <a href="http://www.ibm.com">IBM</a> 
+und <a href="http://www.trintech.com">Trintech</a> angeboten. Betrieben werden diese Gateways von den Acquirern. 
+Acquirer sind jene Banken oder Organisationen, die f&uuml;r die H&auml;ndlerseite der Kreditkartenabwicklung zust&auml;ndig sind. In 
+&Ouml;sterreich sind dies Visa und Mastercard,  in der BRD z.B. <a href="http://www.bs-cardservice.de">B &amp; S Cardsysteme</a>, 
+<a href="http://www.gzs.de">GZS</a>
+</p>
+Jedes zertifizierte Payment Gateway entspricht dem SET-Protokoll in der aktuellen Version (derzeit 1.0.). Das Gateway 
+verbindet den Karteninhaber - &uuml;ber den H&auml;ndler - mit dem Zahlungssystem des Kreditkartenunternehmens und stellt auch 
+den Konnex zwischen H&auml;ndler, Acquirer-Bank und der Kartenorganisation her. Jedes Payment Gateway ist mit allen 
+SET-konformen Produkten aller Hersteller kompatibel. Es unterst&uuml;tzt somit den kompletten Proze&szlig; der Zahlungsautorisierung
+sowie der Zahlungsabwicklung.
+</p>
+<p>
+Das Payment Gateway bearbeitet die eingehenden Autorisierungsanfragen und leitet diese an einen Autorisierungshost weiter. Von dort wird das Ergebnis der Anfrage prompt an das Vertragsunternehmen gesendet.
+Die Wahl eines Gateways ist nicht frei, das Gateway wird vom Acquirer zur Verf&uuml;gung gestellt.
+</p>
+<IMG SRC="Bilder/200009/20000904_gateway.png" width=413 height=294 border=0 alt="">
+
+<p>Zum Punkt POS (Point-of-sale-Anwendungen), einer Software die den H&auml;ndler mit dem Kundenwallet verbindet, werde ich in einem sp&auml;teren Artikel genauer eingehen.</p>
+
+
+<h2>Das Wallet</h2>
+
+
+<p>
+F&uuml;r einen Kunden, der als zertifizierter Karteninhaber im World Wide Web einkaufen m&ouml;chte, besteht der Einstieg aus 
+zwei Teilen. Erstens mu&szlig; er &uuml;ber eine geeignete Software verf&uuml;gen, zweitens mu&szlig; er sich Online zertifizieren lassen. 
+Die Software steht dem Kunden prim&auml;r als Download (z. B.<a href=" http://www.set4u.at"> www.set4u.at</a>, <a href="http://www.visa.at">www.visa.at</a>, <a href="http://www.europay.at">www.europay.at</a>) zur Verf&uuml;gung, 
+sie kann auch &uuml;ber diverse Provider-CD's oder von Banken (zusammen mit dem SET-Code )
+dem Kunden zur Verf&uuml;gung gestellt werden.
+</p>
+<p>
+Alles was der Karteninhaber ben&ouml;tigt, ist eine Kreditkarte, einen PC (bis eine Firma ein Java-Wallet auf den Markt 
+bringt, sind MAC-User von der Teilnahme an SET ausgeschlossen), einen Internetzugang und einen gebr&auml;uchlichen Browser
+(Netscape, Microsoft Internet Explorer, etc.). Die Software, die n&ouml;tig ist, um Kreditkartennummern und damit 
+verkn&uuml;pfte Zertifikate verwalten zu k&ouml;nnen wird meist als Wallet oder Pay Purse bezeichnet. Folgende Punkte sind 
+wichtig bei Wallets:
+</p>
+<p>
+<ul>
+<li>Jedes Wallet ist mit jeder Payware kompatibel.
+<li>Jede Kreditkarte kann in jedes Wallet plaziert werden.
+</ul>
+</p>
+<p>
+Das MasterWallet der Europay/Mastercard stammt von IBM und ist in ganz Europa gebr&auml;uchlich.
+</p>
+<IMG SRC="Bilder/200009/20000904_masterwallet.png" width=353 height=387 border=0 alt="">
+<p>
+Die Paypurse von Visa-Austria stammt von Trintech und wird nur von Visa-Austria verwendet.
+</p>
+<IMG SRC="Bilder/200009/20000904_visawallet.png" width=497 height=468 border=0 alt="">
+<p>
+<b>Achtung:</b>  Das im MS-Internet Explorer 5 enthaltene Wallet ist kein SET-Wallet!
+</p>
+<p>
+Vor Inbetriebnahme der Software ist vom Karteninhaber ein schriftlicher Antrag auf Ausstellung eines SET-Codes f&uuml;r 
+eine Kreditkarte an die  Bank zu stellen.
+Derzeit ist aus rechtlichen Gr&uuml;nden die Unterschrift des Karteninhabers verpflichtend.
+</p>
+<p>
+In &Ouml;sterreich &uuml;bernehmen die Kartengesellschaften Visa und Mastercard (bedingt durch ihre Stellung als alleinige 
+kartenausgebende Institute) auch die Rolle der Bank. Der Informationsflu&szlig; wird dadurch teilweise verk&uuml;rzt, und die 
+Ausstellung beschleunigt. Generell aber regelt die Bank den Zertifikatsantrag des Endkunden und gibt den Antrag an 
+die Kreditkartengesellschaft weiter (wie gesagt, &Ouml;sterreich ist anders...).
+</p>
+<p>
+Bei der Kreditkartengesellschaft wird der Auftrag zur Generierung des Zertifikats an ein Trust Center erteilt. 
+Das Zertifikat wird dort erstellt. Die Kreditkartengesellschaft wird &uuml;ber die erfolgte Ausstellung des Zertifikates 
+informiert und leitet die Informationen an die Bank weiter. Die Bank kann nun den Zertifikatsbrief (im Idealfall 
+gemeinsam mit einer Wallet-Software) an den Endkunden ausliefern. Dieser braucht das Wallet nur auf seinem PC zu 
+installieren und kann dann das Zertifikat &uuml;ber eine verschl&uuml;sselte Internetverbindung zusammen mit einem 
+Autorisierungscode abholen und in seinem Wallet aktivieren. 
+</p>
+<p>
+Im Normalfall geschieht das Abholen des Zertifikates dadurch, da&szlig; man im Browser eine vom jeweiligen Karteninstitut 
+bekanntgegebene Web-Seite &ouml;ffnet, dort auf das entsprechende Symbol klickt und dadurch eine Wake-Up Message f&uuml;r das 
+Wallet erh&auml;lt.
+</p>
+<p>
+z.B: <a href="http://www.registervisa.com/cgi-bin/visa.atCCA/SET.exe?operation=SETWakeup&wuf=wakeup.dat">http://www.registervisa.com/cgi-bin/visa.atCCA/SET.exe?operation=SETWakeup&amp;wuf=wakeup.dat</a>
+	 <a href="http://www.europay.at/htdocs/set/zertifikat_set.htm">http://www.europay.at/htdocs/set/zertifikat_set.htm</a>
+</p>
+
+<p><a href="20000904_mcwakeup.png" target="_blank"><IMG SRC="Bilder/200009/20000904_mcwakeup_small.png" width="500" height="383" alt="" border="0"></a><br>
+<i>Zum Vergr&ouml;&szlig;ern auf das Bild klicken.</i></p>
+
+<p>
+Auf diese Seiten gelangt man auch &uuml;ber Links der Websites von Visa und Mastercard. Zum einen geschieht dies deshalb 
+um den Aufwand f&uuml;r den Karteninhaber zu minimieren und Schreibfehler bei der Eingabe des sogenannten Brands auszuschlie&szlig;en.
+Zum anderen ist es auf diese Art auch m&ouml;glich, Testzertifikate in sein Wallet zu bekommen.
+</p>
+<p>
+An dieser Stelle sind einige Erkl&auml;rungen notwendig:
+</p>
+<p>
+<ul>
+<li><b>Acquirer:</b> ist die Bank des H&auml;ndlers, in &Ouml;sterreich &uuml;bernehmen Visa-Austria und Europay-Austria als 
+eigenst&auml;ndige Banken diese Rolle, in Deutschland werden die Aufgaben des Acquirers von z.B. <a href="http://www.gzs.de">GZS</a>
+oder <a href="http://www.bs-cardservice.de">B&amp;S Cardservice</a> erf&uuml;llt.
+<li><b>Brand</b> ist die Kartenmarke, die von den Acquirern angeboten wird. Z.B.: <a href="http://www.europay.at">Europay-Austria</a> 
+bietet MasterCard an <a href="http://www.visa.at">Visa-Austria</a> bietet VISA an. Jedoch bietet <a href="http://www.bs-cardservice.de">B&amp;S Cardservice</a>
+in Frankfurt sowohl VISA als auch MasterCard an.
+<li><b>Produktionsumgebung:</b> Da seitens der Kreditkartenorganisationen keinerlei Testbedingungen 
+(Host-Zugang oder Testkarten) f&uuml;r externe Softwarel&ouml;sungen geschaffen werden k&ouml;nnen, kann jede SET-Transaktion nur 
+mit echten Kreditkarten durchgef&uuml;hrt werden.
+</ul>
+</p>
+<p>
+Um jedoch Software-Entwicklern die M&ouml;glichkeit zu bieten, bei komplexeren E-Commerce-L&ouml;sungen, wie z.B. Wettb&uuml;ros 
+oder auch anderen Shops, wo die Kreditkartenzahlung in einen Workflow oder ein vorhandenes Warenwirtschaftssystem 
+integriert werden mu&szlig;, ihre Software unter realen Bedingungen zu testen, bietet <a href="http://www.netlife.de">Netlife</a> 
+ein Testgateway, Testh&auml;ndler, Testkartennummern und einen entsprechenden "Brand".
+</p>
+<p>
+Unter der Adresse <a href="http://194.221.212.108/gs/brandx">http://194.221.212.108/gs/brandx</a> ist eine 
+WakeUp-Message f&uuml;r den Testbrand "Brand X" vorhanden. Ohne diese WakeUp-Message w&auml;re es nicht m&ouml;glich diesen Brand und
+die dazugeh&ouml;rige Testkartennummer in einem Wallet einzugeben.
+</p>
+<p>
+Der Kunde (Karteninhaber) ist von diesen Dingen nat&uuml;rlich nicht betroffen.
+</p>
+
+<IMG SRC="Bilder/200009/20000904_netlife.png" width="518" height="662" alt="" border="0">
+
+<p>
+Zul&auml;ssige Brands f&uuml;r Produktionsumgebungen sind <b>VISA</b> und <b>MasterCard</b> (Schreibweise beachten).
+</p>
+<p>
+Der Karteninhaber besitzt nun ein der echten Karte entsprechendes Pendant f&uuml;r die virtuelle Welt. Festgelegt durch 
+<i><b>SET</b></i> ist die Verwendung und Erzeugung zweier Schl&uuml;sselpaare, von denen ein Paar (Public/Private Key), das 
+"Key Exchange" Paar, zur Ver- und Entschl&uuml;sselung von Daten dient, w&auml;hrend das zweite, das "Signature" Paar, zum 
+Unterschreiben und zur Pr&uuml;fung von digitalen Unterschriften dient. Alle diese Funktionen laufen f&uuml;r den Karteninhaber 
+unsichtbar im Hintergrund ab. Der Anwender mu&szlig; nicht explizit Verschl&uuml;sselungen oder Unterschriften einleiten, 
+im Zuge einer <b><i>SET</i></b> Transaktion geschehen dies Prozeduren automatisch im Hintergrund.
+</p>
+<IMG SRC="Bilder/200009/20000904_flow.png" width=387 height=377 border=0 alt="">
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>Nun kann der Kunde im Internet mit SET einkaufen gehen. Die genaue Beschreibung der H&auml;ndler-Software, dem Kernst&uuml;ck des SET-Ablaufes, erfolgt
+im dritten Artikel dieser Artikelreihe.
+</p><h2>Verwandte Artikel</h2>
+<p>
+<a href="20000905.htm">Beteiligte Komponenten bei SET Transaktionen (Teil&nbsp;2)</a><br>
+<a href="20000901.htm">Sichere Zahlungen im Internet mit SET</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ebs%2Dcardservice%2Ede">http://www.bs-cardservice.de</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eeuropay%2Eat">http://www.europay.at</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eglobeset%2Ecom">http://www.globeset.com</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Egzs%2Ede">http://www.gzs.de</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eibm%2Ecom">http://www.ibm.com</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Enetlife%2Ede">http://www.netlife.de</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Evisa%2Eat">http://www.visa.at</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000904" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Beteiligte Komponenten bei SET Transaktionen (Teil&nbsp;1)"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000904.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Weissengruber"><input type="hidden" name="AuthorEmail" value="c.weissengruber@set4u.at"><input type="hidden" name="Artikel" value="20000904"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000904.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

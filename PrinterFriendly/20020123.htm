@@ -1,0 +1,289 @@
+<HTML>
+<HEAD>
+<TITLE>Impersonation mit ASP.NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Gesch&uuml;tzte Bereiche auf einer Website kann man auf viele Arten implementieren. Will man aber da&szlig; Seiten im gesch&uuml;tzen Bereich unter dem Account des eingeloggten Benutzers laufen (Impersonation), dann helfen nur noch Windows Accounts.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Impersonation,impersonisieren,ASP.NET,web.config,NTFS,ACL,Berechtigung,Zugriffsrechte,Active Directory">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Impersonation mit ASP.NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020123"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Gesch&uuml;tzte Bereiche auf einer Website kann man auf viele Arten implementieren. Will man aber da&szlig;
+Seiten im gesch&uuml;tzen Bereich unter dem Account des eingeloggten Benutzers laufen (Impersonation),
+dann helfen nur noch Windows Accounts. Anwendungen der Impersonation gibt es unz&auml;hlige, aber sie
+wird immer dort notwendig, wo der normale Account des Webservers nicht mehr genug Rechte hat: zB
+anlegen von Usern im Active Directory, managen von DNS Servern via WMI, oder auch so einfache Dinge
+wie das Auslesen von mit NTFS Rechten gesch&uuml;tzten Dateien.
+</p>
+<p>
+Die &Uuml;bungsannahme f&uuml;r heute ist daher wie folgt: wir haben eine Datei namens <i>secure.txt</i>, auf die nur
+der lokale Administrator Vollzugriff hat (und sonst niemand irgendwelche Rechte). Unsere Scripts
+sollen diese Datei auslesen und an den Browser schicken. Wie macht man das? (die im ersten Absatz
+angesprochenen Anwendungsf&auml;lle funktionieren analog)
+</p>
+
+
+<h2>R&uuml;ckblick: The ASP Way</h2>
+<p>
+Unter ASP ist die Sache sehr einfach - da die Datei <i>secure.txt</i> nur NTFS Rechte f&uuml;r den 
+Administrator gesetzt hat, machen wir das gleiche mit dem ASP Script, das die <i>secure.txt</i>
+ausliest:
+</p>
+
+<IMG SRC="/artikel/Bilder/200201/20020123_0.png" width="370" height="443" alt="" border="0">
+
+<p>
+Im Script selbst passiert nichts magisches (<b>highprivtest.asp</b>), es dient nur dazu nachzuweisen,
+da&szlig; eine Aktion ausgef&uuml;hrt wird, die einen spezifischen User Account verlangt (in diesem Fall den
+Administrator):
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Option Explicit
+Dim strDateiname, strInhalt, objFs, objTextStream
+
+strDateiname = Server.MapPath("secure.txt")
+Set objFs = Server.CreateObject("Scripting.FileSystemObject")
+Set objTextStream = objFs.OpenTextFile(strDateiname, 1) ' fsForReading
+strInhalt = objTextStream.ReadAll
+objTextStream.Close
+Set objTextStream = Nothing
+Set objFs = Nothing
+
+Response.Write strInhalt
+%&gt;
+</pre>
+
+<p>
+Durch die Absicherung von <i>highprivtest.asp</i> mit einem NTFS ACL werden wir im Browser nach
+Benutzernamen und Passwort gefragt:
+</p>
+
+<IMG SRC="/artikel/Bilder/200201/20020123_1.png" width="598" height="408" alt="" border="0">
+
+<p>
+Und danach l&auml;uft das Script unter dem eingegebenen Account ("Impersonation"), und kann somit ohne
+Probleme auf <i>secure.txt</i> zugreifen. Piece of cake - Impersonation mit ASP ist leicht.
+</p>
+
+<h2>ASP.NET - Warum einfach, wenn es kompliziert auch geht</h2>
+<p>
+Eigentlich ist diese &Uuml;berschrift eine Gemeinheit gegen&uuml;ber ASP.NET, aber im ersten Gedanken ist
+erh&ouml;hte Sicherheit - wie sie dankenswerterweise in ASP.NET enhalten ist - einfach nur l&auml;stig, weil
+man auf mehr Dinge R&uuml;cksicht nehmen mu&szlig;.
+</p>
+<p>
+Um so richtig zu verstehen, warum ASP.NET sich anders verh&auml;lt, mu&szlig; man sich die Architekturunterschiede
+von ASP und ASP.NET vor Auge halten. ASP l&auml;uft als ISAPI Anwendung direkt im IIS, und nimmt somit automatisch
+dessen Prozessidentit&auml;t an. ASP.NET hingegen l&auml;uft in einem eigenen von IIS getrennten Prozess, dem ASP.NET
+Worker Prozess (als <i>aspnet_wp.exe</i> im Task Manager zu sehen). Und dieser l&auml;uft im Gegensatz zu IIS
+nicht als SYSTEM, sondern als korrekt niedrig privilegierter ASPNET Account, der standardm&auml;&szlig;ig keine
+Impersonation macht.
+</p>
+
+<p>
+Da es hin und wieder n&uuml;tzlich sein kann, die Prozessidentit&auml;t des ASP.NET Worker Prozesses zu &auml;ndern (und
+sei es nur auf einen Domain-Account), stelle ich jetzt die notwendigen Handgriffe vor. Schritt 1 ist die
+Datei <i>machine.config</i> ausfindig zu machen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200201/20020123_2.png" width="548" height="405" alt="" border="0">
+
+<p>
+In dieser <i>machine.config</i> gibt es die <i>processModel</i> Sektion, in der man mit den Attributen <i>userName</i> und <i>password</i>
+die gew&uuml;nschten Einstellungen treffen kann. Die reservierten W&ouml;rter <b>machine</b> (ASPNET Account) und
+<b>System</b> (SYSTEM Account) sind vor der Sektion nochmals ausf&uuml;hrlich erkl&auml;rt.
+</p>
+
+<pre style="background='silver';">
+        &lt;processModel
+            enable=&quot;true&quot;
+            timeout=&quot;Infinite&quot;
+            idleTimeout=&quot;Infinite&quot;
+            shutdownTimeout=&quot;0:00:05&quot; 
+            requestLimit=&quot;Infinite&quot; 
+            requestQueueLimit=&quot;5000&quot; 
+            restartQueueLimit=&quot;10&quot;
+            memoryLimit=&quot;60&quot; 
+            webGarden=&quot;false&quot;
+            cpuMask=&quot;0xffffffff&quot;
+            logLevel=&quot;Errors&quot;
+            clientConnectedCheck=&quot;0:00:05&quot;
+            comAuthenticationLevel=&quot;Connect&quot;
+            userName=&quot;machine&quot;
+            password=&quot;AutoGenerate&quot;
+            comImpersonationLevel=&quot;Impersonate&quot;
+            responseRestartDeadlockInterval=&quot;00:09:00&quot;
+            responseDeadlockInterval=&quot;00:03:00&quot; 
+            maxWorkerThreads=&quot;25&quot;
+            maxIoThreads=&quot;25&quot;
+        /&gt;
+</pre>
+
+<p>
+Das Wissen um den ASPNET Account erspart einem sp&auml;ter einige Zeit bei der Problemsuche. So zum Beispiel,
+wenn man auf folgende Idee kommt: was in ASP gegangen ist, geht auch in ASP.NET. Was meine ich damit? Nun,
+einfach auf <b>highprivtest.aspx</b> (Code folgt sogleich) den NTFS ACL nur f&uuml;r Administratoren zu setzen.
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.IO" %&gt;
+&lt;%
+StreamReader stmReader = File.OpenText(Server.MapPath("secure.txt"));
+string strLine;
+
+while (null != (strLine = stmReader.ReadLine()))
+{
+  strLine = Server.HtmlEncode(strLine);
+  Response.Write(strLine +"&lt;br&gt;\r\n");
+}
+stmReader.Close();
+%&gt;
+</pre>
+
+<p>
+Wenn man <b>highprivtest.aspx</b> so abgesichert nun aufruft, bekommt man folgenden Fehler (nach oftmaligen
+v&ouml;llig richtigem Eintippen des Accounts mit Zugriffsberechtigung):
+</p>
+
+<IMG SRC="/artikel/Bilder/200201/20020123_4.png" width="598" height="220" alt="" border="0">
+
+<p>
+Was ist passiert? Nun, ASP.NET macht per Default keine Impersonation. Das hei&szlig;t, obwohl ich Benutzername 
+und Passwort brav eintippe, versucht der Worker Prozess mit dem ASPNET Account auf die Datei zuzugreifen -
+und das geht klarerweise schief, weil der Account keinen Zugriff nach NTFS Rechten hat. 
+</p>
+<p>
+Es folgt somit der n&auml;chste Streich: gut, dann geben wir einfach zus&auml;tzlich zum Administrator auch dem 
+ASPNET Account die Leseberechtigung:
+</p>
+
+<IMG SRC="/artikel/Bilder/200201/20020123_5.png" width="370" height="443" alt="" border="0">
+
+<p>
+Nun, der Erfolg (?) ist ein anderer:
+</p>
+
+<IMG SRC="/artikel/Bilder/200201/20020123_6.png" width="598" height="411" alt="" border="0">
+
+<p>
+Was ist passiert? ASP.NET kann wieder als "anonymer Benutzer" auf die Datei zugreifen, und ignoriert den
+Adminstrator Account den der Client schickt. Es ist zum Verzweifeln - nur Administrator geht nicht, weil der Worker Prozess
+dann nicht zugreifen kann, gibt man den ASPNET Account dazu, wird der Zugriff wieder anonym. Wie kommen wir aus diesem
+Dilemma hinaus?
+</p>
+<p>
+Mittels obigen NTFS Rechten und der immer n&uuml;tzlichen <b>web.config</b>! Diese Datei erlaubt es uns, ASP.NET zur Impersonation zu zwingen, alles was
+man braucht sind 2 Eintr&auml;ge - einer f&uuml;r die Art der Authentication, und einen zweiten zum Erzwingen
+der Impersonation:
+</p>
+
+<pre style="background='silver';">
+&lt;configuration&gt;
+   &lt;system.web&gt;
+      &lt;compilation debug="true" /&gt;
+
+      &lt;authentication mode="Windows"/&gt;
+      &lt;identity impersonate="true"/&gt;
+
+   &lt;/system.web&gt;
+&lt;/configuration&gt;
+</pre>
+
+<p>
+Damit haben wir es geschafft - der Administrator Account wird impersonisiert, um den Zugriff auf die
+Datei <i>secure.txt</i> zu erlangen.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Im Prinzip ist es nicht schwierig, sondern nur ungewohnt, da&szlig; die NTFS Permissions auch den ASPNET
+Account enthalten m&uuml;ssen, und man die web.config anpassen mu&szlig;. Dieses Mehr an Arbeit sollte uns die
+erh&ouml;hte Sicherheit durch ASP.NET aber wert sein.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020123.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020123.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010402.htm">NT Account Management via ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010402.htm</span><br>
+<a href="../artikel/20011207.htm">On Demand Zugriffsrechte f&uuml;r Web Sites vergeben</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011207.htm</span><br>
+<a href="../artikel/20011119.htm">Schritt-f&uuml;r-Schritt Debuggen von Sicherheitsproblemen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011119.htm</span><br>
+<a href="../artikel/20001109.htm">Verzeichnissicherheit mit NTFS und IIS Authentifizierung</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001109.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3Furl%3D%2Fnhp%2Fdefault%2Easp%3Fcontentid%3D28001369">.NET Security</a><br>
+<SPAN class="content">http://msdn.microsoft.com/library../default.htm?url=/nhp../default.htm?contentid=28001369</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Edotnetgerman%2Ecom%2Flisten%2FdotnetDEsecurity%2Easp">.NET Security Mailingliste</a><br>
+<SPAN class="content">http://www.dotnetgerman.com/listen/dotnetDEsecurity.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easp%2Enet%2Fsecurity%2Easpx">ASP.NET Denied Access to IIS Directories</a><br>
+<SPAN class="content">http://www.asp.net/security.aspx</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3Furl%3D%2Flibrary%2Fen%2Dus%2Fdnnetsec%2Fhtml%2Fnetframesecover%2Easp%3Fframe%3Dtrue">Security in the .NET Framework: An Overview</a><br>
+<SPAN class="content">http://msdn.microsoft.com/library../default.htm?url=/library/en-us/dnnetsec/html/netframesecover.asp?frame=true</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3Furl%3D%2Flibrary%2Fen%2Dus%2Fdnnetsec%2Fhtml%2FV1securitychanges%2Easp%3Fframe%3Dtrue">Version 1 Security Changes for the Microsoft .NET Framework</a><br>
+<SPAN class="content">http://msdn.microsoft.com/library../default.htm?url=/library/en-us/dnnetsec/html/V1securitychanges.asp?frame=true</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

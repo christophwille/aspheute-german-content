@@ -1,0 +1,249 @@
+<HTML>
+<HEAD>
+<TITLE>Delay Signing von Assemblies</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Assemblies unter .NET m&uuml;ssen signiert werden, wenn sie in den Global Assembly Cache (GAC) installiert werden sollen. Wir werden uns heute mit der Frage auseinandersetzen, ob es denn klug ist, einem Entwickler den Private Key der Firma zu geben.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,sn.exe,Signing,Signierung,Kryptographie,Cryptography,hash,Hashing,Assembly,Delay signing,AssemblyDelaySign">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Delay Signing von Assemblies</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020904"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Assemblies unter .NET m&uuml;ssen signiert werden, wenn sie in den Global Assembly Cache (GAC) installiert werden sollen.
+Auch sonst sollten Assemblies signiert werden, da die Runtime dann &uuml;berpr&uuml;fen kann, ob die zu ladende Assembly mit
+der &uuml;bereinstimmt, die zum Kompilierungszeitpunkt verwendet wurde. Dies passiert mittels Public und Private Keys, und wir
+werden uns heute mit der Frage auseinandersetzen, ob es denn klug ist, einem Entwickler den Private Key der Firma
+zu geben.
+</p>
+<p>
+Zuerst zur Kl&auml;rung der rein technischen Fragen. Der Private Key wird vom Komponentenhersteller verwendet, um
+den &uuml;ber die Assembly errechneten Hash zu signieren. In die Assembly wird der Public Key (vorher, und somit ist dieser
+Teil des Hashes) eingebettet, mit dem der Hash verfizierbar ist. Stimmt eingebetteter Hash und der nachgerechnete Hash 
+&uuml;berein, ist die Assembly vom Hersteller und unver&auml;ndert.
+</p>
+<p>
+Besitzt jemand den Private Key, kann er also immer g&uuml;ltige Assemblies herstellen. Ohne diesen Key geht gar nichts. Daher
+gilt, ger&auml;t der Key in falsche H&auml;nde, kann die Firma nicht mehr erfolgreich abstreiten, da&szlig; ein Code nicht von ihnen kam -
+weil ja g&uuml;ltig signiert wurde.
+</p>
+<p>
+Kein Problem denkt man sich - meine Programmierer sind ja zuverl&auml;ssig, und unsere Firewall ist gut. Nur, was passiert zB wenn
+ein Mitarbeiter der Zugang zu den Keys hatte, unter unerfreulichen Bedingungen geht/gegangen wird? Sind Sie sich dann noch
+immer sicher, da&szlig; Ihre Keys nicht den Weg nach au&szlig;en finden werden?
+</p>
+<p>
+Der sicherste Weg ist, da&szlig; Programmierer zum Entwicklungszeitpunkt die Private Keys nicht brauchen - erst wenn das Produkt
+die Firma verl&auml;&szlig;t, wird signiert. Doch halt - wie kommen dann die Public Keys und Hashes in die Assemblies? Das passiert
+&uuml;ber Delay Signing, das es den Programmieren erlaubt, diese einzubetten, aber die Signierung sp&auml;ter durch eine andere Person
+nachgeholt werden kann.
+</p>
+
+<h2>Ein Praxisbeispiel</h2>
+<p>
+An einem Beispiel l&auml;&szlig;t es sich am leichtesten verstehen, wie man vorzugehen hat - und wie es in der Praxis funktionieren
+kann. Dazu habe ich ein Projekt mit einer Assembly und einer Applikation erstellt (mittels 
+<a href="http://www.icsharpcode.net/opensource/sd/" target="_blank">#develop</a>):
+</p>
+
+<IMG SRC="/artikel/Bilder/200209/20020904_1.png" width="660" height="488" alt="" border="0">
+
+<p>
+Das <b>HelloAssembly</b> Projekt ist die Komponente unserer Firma. Die Applikation, die diese Komponente einsetzt, ist
+<b>HelloTestApp</b>. Die <i>helloassembly.dll</i> soll in den Global Assembly Cache installiert werden, daher braucht 
+man ein Keypair f&uuml;r die Signierung (<b>generatekeypair.bat</b>):
+</p>
+
+<pre style="background='silver';">
+sn -k keypair.bin
+</pre>
+
+<p>
+Damit wird ein Schl&uuml;sselpaar - Public und Private Key - erstellt. Dies wird im normalen Falle des sofortigen Signierens
+in der Datei <i>AssemblyInfo.cs</i> dann so verwendet:
+</p>
+
+<pre style="background='silver';">
+[assembly: AssemblyDelaySign(false)]
+[assembly: AssemblyKeyFile("keypair.bin")
+</pre>
+
+<p>
+Damit kann man <i>helloassembly.dll</i> sofort in den GAC installieren (<b>gacinstall.bat</b>):
+</p>
+
+<pre style="background='silver';">
+gacutil -i helloassembly.dll
+</pre>
+
+<IMG SRC="/artikel/Bilder/200209/20020904_5.png" width="653" height="323" alt="" border="0">
+
+<p>
+Und in unserer (tollen) Testapplikation verwenden:
+</p>
+
+<IMG SRC="/artikel/Bilder/200209/20020904_2.png" width="660" height="488" alt="" border="0">
+
+<p>
+Durch diese Referenz wird der Public Key Token (die verk&uuml;rzte Version des Public Keys) der <i>helloassembly.dll</i> in 
+das Manifest unserer Applikation eingebaut:
+</p>
+
+<IMG SRC="/artikel/Bilder/200209/20020904_3.png" width="447" height="323" alt="" border="0">
+
+<p>
+Ab sofort kann uns niemand mehr eine gef&auml;lschte <i>helloassembly.dll</i> unterschieben - au&szlig;er er hat den Private Key
+zur Verf&uuml;gung. Und das h&auml;tte der Programmierer, weil er das Key Pair hat. Erwischt.
+</p>
+
+<h2>Delay Signing in der Praxis</h2>
+<p>
+Also wie sorgt man daf&uuml;r, da&szlig; der Programmierer den Private Key nicht hat? Nun, man gibt ihm den Key einfach nicht, 
+man teilt das Key Pair auf (<b>extractpublickey.bat</b>):
+</p>
+
+<pre style="background='silver';">
+sn -p keypair.bin pubkey.bin
+</pre>
+
+<p>
+Dadurch erh&auml;lt man in <i>pubkey.bin</i> den &ouml;ffentlichen Schl&uuml;ssel: diesen gibt man dem Programmierer. Die Datei
+<i>keypair.bin</i> hingegen wandert auf eine Diskette in den Safe, m&ouml;glichst kryptographisch gesichert soda&szlig; man 
+mehr als ein Person braucht, um sie wieder entschl&uuml;sseln zu k&ouml;nnen.
+</p>
+
+<p>
+Der Programmierer kann die Assembly nun Delay-Signen, und das passiert wieder &uuml;ber die Assembly Information der
+Komponente (<b>AssemblyInfoDelaySign.cs</b>):
+</p>
+
+<pre style="background='silver';">
+using System.Reflection;
+using System.Runtime.CompilerServices;
+
+[assembly: AssemblyTitle("")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("AlphaSierraPapa")]
+[assembly: AssemblyProduct("")]
+[assembly: AssemblyCopyright("")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+
+[assembly: AssemblyVersion("1.0.0.0")]
+
+// Delay Signing enabled
+[assembly: AssemblyDelaySign(true)]
+[assembly: AssemblyKeyFile("pubkey.bin")]
+</pre>
+
+<p>
+Dadurch da&szlig; die Assembly jetzt keinen signierten Hash mehr hat, funktioniert der Verification Check nicht mehr,
+das Installieren in den GAC schl&auml;gt fehl:
+</p>
+
+<IMG SRC="/artikel/Bilder/200209/20020904_4.png" width="668" height="331" alt="" border="0">
+
+<p>
+Um dieses Problem zu umgehen, mu&szlig; der Programmierer der Komponente die Assembly vom Verification Checking ausnehmen 
+(<b>reg4verificationskipping.bat</b>):
+</p>
+
+<pre style="background='silver';">
+sn -Vr HelloAssembly.dll
+</pre>
+
+<p>
+Und jetzt geht das Installieren in den GAC auch wieder - genauso wie es wieder m&ouml;glich ist, andere Assemblies gegen
+diese zu linken.
+</p>
+
+<p>
+Was mu&szlig; man nun aber tun, damit man die Assembly zum Kunden ausliefern kann? Sie mu&szlig; signiert werden, und zwar mit
+Hilfe der weggesperrten <i>keypair.bin</i> Datei und dem Skript <b>beforeshipping.bat</b>:
+</p>
+
+<pre style="background='silver';">
+sn -R helloassembly.dll keypair.bin
+</pre>
+
+<p>
+Und damit ist die Komponente vollst&auml;ndig signiert. Der Programmierer kann die ganze Zeit entwicklen und testen, und
+erst kurz bevor die Komponente das Haus verl&auml;&szlig;t, wird der signierte Hash eingef&uuml;gt. So l&auml;uft auch die Entwicklung der
+Base Class Library (BCL) bei Microsoft.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Auf den ersten Blick mag das Problem des Private Key in H&auml;nden des Programmierers gering im Vergleich zum Aufwand
+des Delay Signings sein - doch stellen Sie sich vor, was passiert, wenn Sie nicht abstreiten k&ouml;nnen, da&szlig; ein Virus /
+was auch immer <i>nicht</i> von Ihrer Firma kommt.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020904.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020904.zip</span></p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eicsharpcode%2Enet%2Fopensource%2Fsd%2F">#develop (SharpDevelop)</a><br>
+<SPAN class="content">http://www.icsharpcode.net/opensource/sd/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3Furl%3D%2Flibrary%2Fen%2Dus%2Fcpguide%2Fhtml%2Fcpcondelayedsigningassembly%2Easp">Delay Signing an Assembly</a><br>
+<SPAN class="content">http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpguide/html/cpcondelayedsigningassembly.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3Furl%3D%2Flibrary%2Fen%2Dus%2Fcpguide%2Fhtml%2Fcpconassigningassemblystrongname%2Easp">Signing an Assembly with a Strong Name</a><br>
+<SPAN class="content">http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpguide/html/cpconassigningassemblystrongname.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3Furl%3D%2Flibrary%2Fen%2Dus%2Fcptools%2Fhtml%2Fcpgrfstrongnameutilitysnexe%2Easp">Strong Name Tool (Sn.exe)</a><br>
+<SPAN class="content">http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cptools/html/cpgrfstrongnameutilitysnexe.asp</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

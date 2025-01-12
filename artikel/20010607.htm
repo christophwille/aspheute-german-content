@@ -1,0 +1,591 @@
+<HTML>
+<HEAD>
+<TITLE>Daten aus CSV-Dateien in MDBs importieren</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Manchmal stellt sich einem die Aufgabe, Datenbanksysteme aus irgendwelchen Gr&uuml;nden zu wechseln. Die Daten m&uuml;ssen transferiert werden - und als kleinster gemeinsamer Nenner zwischen den Systemen bleibt meist nur das CSV Format.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,CSV,FileSystemObject,ADOX,Comma Separated Values,Datenbank,Database,Transformation,Datenimport,Import,Konvertierung">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Daten aus CSV-Dateien in MDBs importieren</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010607"></SCRIPT>
+</p>
+<p>
+Manchmal stellt sich einem die Aufgabe, Datenbanksysteme aus irgendwelchen Gr&uuml;nden zu wechseln. 
+Die Daten m&uuml;ssen transferiert werden - und als kleinster gemeinsamer Nenner zwischen den Systemen bleibt
+meist nur das CSV Format. Dieser Artikel zeigt einen von vielen Wegen um eine
+CSV-Datei in eine Access Datenbank zu konvertieren - und das, ohne da&szlig; Access installiert sein mu&szlig;.
+</p>
+
+<p>
+Wie Sie sicher schon aus der &Uuml;berschrift entnehmen konnten, zeige ich Ihnen heute den umgekehrten Weg den der 
+Artikel <a href="20010605.htm">CSVs aus MDBs leicht gemacht</a> beschrieben hat. Abermals habe 
+ich eine VBScript Klasse geschrieben, um den Konvertierungsvorgang zu vollziehen. Man kann damit leicht den Vorgang 
+automatisieren und das Script l&auml;&szlig;t auch einige Konfigurationsoptionen zu. 
+</p>
+<p>
+Beginnen wir also gleich mit 
+der Klasse <i>CSV2MDB</i>, die den Konvertierungsvorgang vollzieht, und in der <b>CSV2MDB.Class.asp</b> Datei
+zu finden ist.
+</p>
+
+<pre style="background='silver';">
+Class CSV2MDB
+
+    Public FirstLineContainsFieldNames
+    Public UseTextQualifier
+    Public CreateNewDB
+    Public TableExists
+    
+    Public Sub ConvertToMDB(ByVal strMDBPath, ByVal strTableName, _
+                            ByVal strCSVPath, ByVal strCSVFileName)
+    
+    Const ForReading = 1
+    Const ForWriting = 2
+    
+    strDB = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" &amp; strMDBPath
+</pre>
+
+<p>
+Zuerst werden einige Properties deklariert, mit denen man das Objekt leicht an die speziellen W&uuml;nsche 
+anpassen kann. Die Properties nehmen die Werte <i>true</i> oder <i>false</i> an. Mit der <i>FirstLineContainsFieldNames</i>
+Property k&ouml;nnen Sie angeben, ob die erste Zeile der CSV-Datei die Spaltennamen der Datentabelle enth&auml;lt. Mit der
+entsprechenden Angabe von <i>UseTextQualifier</i> signalisieren Sie die Verwendung von doppelten Anf&uuml;hrungszeichen
+als zus&auml;tzliche Spaltenbegrenzer. Diese Formatierung ist besonders dann n&uuml;tzlich, wenn Datens&auml;tze Beistriche etc.
+verwenden, die als Delimiter mi&szlig;interpretiert werden k&ouml;nnten.
+</p>
+
+<p>
+Die <i>CreateNewDB</i> Property bietet die M&ouml;glichkeit eine neue Datenbank f&uuml;r die Importdaten anlegen zu lassen.
+Diese Datenbank kann entweder im selben Verzeichnis, wo das Script ausgef&uuml;hrt wurde, abgelegt werden oder in
+einem beliebigen Pfad gespeichert werden. Diese Pfadinformationen werden der <i>strMDBPath</i> Variable
+entnommen, die der <i>ConvertToMDB</i> Sub-Prozedur als Parameter &uuml;bergeben wird. (Die <i>ConvertToMDB</i> 
+Sub-Prozedur enth&auml;lt die Konvertierungsfunktionalit&auml;t in mdb-Dateien.)
+</p>
+
+<p>
+Die letzte Property ist <i>TableExists</i>. Falls diese Property auf <i>true</i> gesetzt wurde, wird 
+eine eventuell schon vorhandene Tabelle gleichen Namens gel&ouml;scht. Dieser Fall tritt nur dann ein, wenn auf die
+Erstellung einer neuen Access Datenbank verzichtet wurde (<i>CreateNewDB = false</i>).
+</p>
+
+<p>
+Zus&auml;tzlich zu den oben besprochenen Parametern, die der <i>ConvertToMDB</i> Sub-Prozedur &uuml;bergeben werden m&uuml;ssen, mu&szlig;
+noch der Pfad, wo sich die CSV-Datei befindet (<i>strCSVPath</i>) und ihr Dateiname (<i>strCSVFileName</i>) angegeben werden.
+Die beiden angef&uuml;hrten Konstanten <i>ForReading</i> und <i>ForWriting</i> werden in einem sp&auml;teren Abschnitt
+des Sourcecodes f&uuml;r die Dateioperationen mit dem FileSystemObject ben&ouml;tigt. Die <i>strDB</i> Variable 
+enth&auml;lt die f&uuml;r eine Access Datenbank ben&ouml;tigten Providerinformationen und den Pfad zu dieser. Diese Variable wird 
+entweder f&uuml;r die Erstellung einer neuen Datenbank oder zur &Ouml;ffnung der Verbindung zu einer bestehenden Datenbank 
+ben&ouml;tigt.
+</p>
+
+</p>
+Da die Erstellung einer neuen Access Datenbank unabh&auml;ngig von Access geschehen soll, verwenden wir ADOX 
+(Microsoft ADO Extensions for DDL and Security) um dies zu erledigen:
+</p>
+
+<pre style="background='silver';">
+If (CreateNewDB) Then
+    Set objNewCatalog = Server.CreateObject("ADOX.Catalog") 
+    objNewCatalog.Create strDB
+    Set objNewCatalog = Nothing
+End If
+</pre>
+
+<p>
+Da nur eine neue Datenbank erstellt werden soll, wenn auch die <i>CreateNewDB</i> auf <i>true</i> gesetzt ist,
+verwenden wir hier eine <i>If</i>-Verzweigung. Da die <i>strDB</i> in Kombination mit dem &uuml;bergebenen
+Parameter <i>strMDBPath</i> alle Informationen f&uuml;r einen Datenbank enth&auml;lt, k&ouml;nnen wir also mit der <i>Create</i>
+Methode eine neue erstellen. Diese wird gem&auml;&szlig; den Pfadangaben der <i>strMDBPath</i> Variable angelegt.
+</p>
+
+<p>
+Falls in einer vorhandenen Datenbank bereits eine Tabelle gleichen Namens existiert, l&ouml;scht die folgende Anweisung
+mittels <i>DROP</i> diese:
+</p>
+
+<pre style="background='silver';">
+If (TableExists) Then  
+    Set objDropTableConn = Server.CreateObject("ADODB.Connection")
+    objDropTableConn.Open strDB
+    objDropTableConn.Execute "DROP TABLE " &amp; strTableName
+    objDropTableConn.Close
+    Set objDropTableConn = Nothing
+End If   
+</pre>
+
+<p>
+Nun sind wir soweit, da&szlig; wir eine neue Tabelle in der bereits existierenden bzw. neu erstellten Datenbank
+erstellen k&ouml;nnen. Dies geschieht wiederum mit Hilfe von ADOX:
+</p>
+
+<pre style="background='silver';">
+Set objCatalog = Server.CreateObject("ADOX.Catalog")
+    objCatalog.ActiveConnection = strDB
+    Set objTable = Server.CreateObject("ADOX.Table")
+    Set fso = Server.CreateObject("Scripting.FileSystemObject")
+    objTable.Name = strTableName
+    objCatalog.Tables.Append objTable
+
+    Set CVSFile = fso.OpenTextFile(strCVSFileFullPath, ForReading)
+    strFields = CVSFile.ReadLine
+    CVSFile.Close
+    Set CVSFile = Nothing
+    Set fso = Nothing
+</pre>
+
+<p>
+Zus&auml;tzlich treffen wir eine Vorbereitung f&uuml;r die Erstellung der Spaltennamen. Hier wird die erste Zeile 
+(<i>ReadLine</i> Methode des FileSystemObjects) der mit den Variablen <i>strCSVPath</i> und 
+<i>strCSVFileName</i> angegebenen CSV-Datei eingelesen. Diese Information, welche in der <i>strFields</i> 
+Variable abgelegt ist, wird sp&auml;ter entweder f&uuml;r die Feldnamen selbst, oder f&uuml;r die Bestimmung der 
+Spaltenanzahl verwendet. 
+</p>
+
+<p>
+Als n&auml;chstes schreiben wir die Spalten&uuml;berschriften in die neu erstellte Tabelle.
+Hier gibt es wie schon erw&auml;hnt zwei M&ouml;glichkeiten: entweder entspricht die erste Zeile der CSV-Datei
+den Spalten&uuml;berschriften oder nicht. Die erste Zeile der CSV-Dateien haben wir ja schon in der <i>strFields</i>
+gespeichert und k&ouml;nnen nun per <i>Split</i> Funktion den String in die einzelnen Spalten aufteilen und 
+jede einzelne der Tabelle als &Uuml;berschrift zuweisen.
+</p>
+
+<p> 
+Hier tritt wieder der Fall ein, da&szlig; man &uuml;berpr&uuml;fen mu&szlig;, ob die Spalten doppelte Anf&uuml;hrungszeichen als zus&auml;tzliche 
+Delimiter haben. Wenn ja, dann werden diese mit der <i>Replace</i> Funktion entfernt:
+</p>
+
+<pre style="background='silver';">
+If (FirstLineContainsFieldNames) Then
+    If (UseTextQualifier) Then
+        strFields = Replace(strFields, """","")
+    End If    
+    
+    arFields = Split(strFields,",")
+    
+    For Each item In arFields
+       objTable.Columns.Append item
+    Next    
+Else
+    arFields = Split(strFields,",")
+    nCount = 0
+    
+    For Each item In arFields
+       nCount = nCount + 1
+       objTable.Columns.Append "Field" &amp; nCount
+    Next
+End If    
+</pre>
+
+<p>
+Wenn aber die erste Zeile in der CSV-Datei nicht die Spalten&uuml;berschriften enth&auml;lt, schreiben wir Standardwerte 
+mit einer fortlaufenden Nummer als &Uuml;berschriften. Die fortlaufende Nummer wird durch die Anzahl der 
+Substrings des Arrays <i>arFields</i> bestimmt. Die neu generierten Standard&uuml;berschriften, die sich nachtr&auml;glich &auml;ndern lassen,
+da ja keine Beziehungen zu anderen Tabellen existieren, werden wiederum mit Hilfe der ADOX Methode <i>Append</i>
+den Spalten zugewiesen.
+</p>
+
+<p>
+Jetzt k&ouml;nnen wir endlich die Daten aus der CSV-Datei in die Access Datenbank importieren. Da standardm&auml;&szlig;ig f&uuml;r
+Access immer die erste Zeile einer CSV-Datei als Spalten&uuml;berschriften herangezogen wird, m&uuml;ssen wir im Fall, da&szlig;
+keine angegeben wurden und welche generiert werden mu&szlig;ten, ein wenig tricksen. Es sollen ja weder die erste Zeile,
+welche die eigentlichen Daten enth&auml;lt als &Uuml;berschrift verwendet werden, noch Komplikationen w&auml;hrend des 
+Einf&uuml;gens der Daten per SQL Statement auftreten.
+</p>
+
+<p>
+Wir erstellen uns also mit dem FileSystemObject eine tempor&auml;re Datei (<b>temp.csv</b>), die in der ersten Zeile 
+unsere vorher generierten &Uuml;berschriften enth&auml;lt. Nach diesem Eintrag werden dann die eigentlichen Daten aus der 
+urspr&uuml;nglichen CSV-Datei mittels der <i>ReadAll</i> Methode des FileSystemObjects eingef&uuml;gt. 
+Weiters ist hier wieder auf die M&ouml;glichkeit der zus&auml;tzlichen Delimiter zu achten, damit 
+die ersten Felder korrekt formatiert werden:
+</p>
+
+<pre style="background='silver';">
+If Not (FirstLineContainsFieldNames) Then
+    Set objFSO = Server.CreateObject("Scripting.FileSystemObject")
+    Set objTempFile = objFSO.OpenTextFile(strCSVPath &amp; "temp.csv", ForWriting, True)
+    
+    If (UseTextQualifier) Then
+        For n=1 To nCount
+            objTempFile.Write """Field" &amp; n
+            If n <> nCount Then
+                objTempFile.Write ""","
+            End If  
+        Next
+    Else
+        For n=1 To nCount
+            objTempFile.Write "Field" &amp; n
+            If n <> nCount Then
+                objTempFile.Write ","
+            End If
+        Next
+    End If
+    
+    objTempFile.Write """"
+    objTempFile.WriteBlankLines(1)
+    
+    Set CVSFile = objFSO.OpenTextFile(strCVSFileFullPath, ForReading)
+    strCVSContent = CVSFile.ReadAll
+    CVSFile.Close
+    Set CVSFile = Nothing
+    
+    objTempFile.Write strCVSContent
+    objTempFile.Close
+</pre>
+
+<p>
+Nun da diese tempor&auml;re Datei erfolgreich erstellt wurde, k&ouml;nnen wir mit einem angepa&szlig;ten SQL Statement die
+Daten aus dieser Datei in unsere Tabelle einf&uuml;gen:
+</p>
+
+<pre style="background='silver';">
+strSQLAlt = "INSERT INTO " &amp; strTableName &amp; " SELECT * FROM [temp.csv"
+strSQLAlt = strSQLAlt &amp;  "] IN """ &amp; strCSVPath &amp; """ ""TEXT;"""
+
+objConn.Execute strSQLAlt
+
+Set objTempFile = objFSO.GetFile(strCSVPath &amp; "temp.csv")
+objTempFile.Delete
+</pre>
+
+<p>
+Da wir nun die Tempor&auml;rdatei nicht mehr ben&ouml;tigen, wird sie am Schlu&szlig; wieder gel&ouml;scht. Die Alternative 
+(Spalten&uuml;berschiften in der ersten Zeile) ist um einiges weniger aufwendig. Hier reicht das Einf&uuml;gen der
+Daten aus der mit <i>strCSVPath</i> und <i>strCSVFileName</i> angegebenen CSV-Datei mittels SQL Statement.
+Dieses ist in der Variable <i>strSQL</i> enthalten:
+</p>
+
+<pre style="background='silver';">
+strSQL = "INSERT INTO " &amp; strTableName &amp; " SELECT * FROM [" &amp; strCSVFileName
+strSQL = strSQL &amp;  "] IN """ &amp; strCSVPath &amp; """ ""TEXT;"""
+
+objConn.Execute strSQL
+</pre>
+
+<p>
+Als Abschlu&szlig; m&ouml;chte ich noch die zwei m&ouml;glichen Hauptvarianten in Form von Beispielscripts pr&auml;sentieren.
+Zun&auml;chst nehmen wir an, da&szlig; die CSV-Datei in der ersten Zeile die Datenspalten&uuml;berschrift enth&auml;lt. F&uuml;r
+diesen Fall w&auml;re dieser Sourcecode in Verbindung mit der besprochenen VBScript Klasse notwendig 
+(<b>TestDrive.asp</b>): 
+</p>
+
+<pre style="background='silver';">
+&lt;!-- #include file="CSV2MDB.Class.asp" --&gt; 
+
+&lt;%
+    Dim objCSV2MDB
+    Set objCSV2MDB = New CSV2MDB
+    
+    strMDBPath = Server.MapPath("csv2mdb.mdb")
+    strTableName = "tProducts"
+    strCSVPath = Server.MapPath("./") &amp; "\"
+    strCSVFileName ="test.csv"
+    objCSV2MDB.FirstLineContainsFieldNames = true
+    objCSV2MDB.UseTextQualifier = true
+    objCSV2MDB.CreateNewDB = true
+    objCSV2MDB.TableExists = false
+    objCSV2MDB.ConvertToMDB strMDBPath, strTableName, strCSVPath, strCSVFileName
+    
+    Set objCSV2MDB = Nothing
+%&gt;
+</pre>
+
+<p>
+Zuerst wird die <b>CSV2MDB.Class.asp</b> ASP-Datei, welche die Klasse enth&auml;lt, per <i>include</i>-Anweisung 
+eingebunden. Danach ist ein neues Objekt mit der Referenz zu der VBScript Klasse zu instanzieren.
+Weiters sind den der Sub-Prozedur zu &uuml;bergebenden Parametern entsprechende Werte zuzuweisen, und die
+Properties des Objektes zu setzen. Schlie&szlig;lich und endlich erfolgt der Aufruf der Prozedur mit der &Uuml;bergabe der Parameter
+- fertig.
+</p>
+
+<p>
+Die verwendete Beispiel-CSV-Datei sieht wie folgt aus:
+</p>
+
+<IMG SRC="Bilder/200106/20010607_1.png" width="503" height="128" alt="" border="0">
+
+<p>
+Das Ergebnis -  die Access Datenbank - sieht nach erfolgreicher Erstellung aus der CSV-Datei so aus:
+</p>
+
+<IMG SRC="Bilder/200106/20010607_2.png" width="503" height="141" alt="" border="0">
+
+<p>
+F&uuml;r den Fall, da&szlig; keine Spalten&uuml;berschriften vorhanden sind, sind im Beispielscript <b>TestDrive.asp</b>
+folgende &Auml;nderungen in der Zeile, die die <i>FirstLineContainsFieldNames</i> Property enth&auml;lt, durchzuf&uuml;hren:
+</p>
+
+<pre style="background='silver';">
+objCSV2MDB.FirstLineContainsFieldNames = false
+</pre>
+
+<p>
+Dies ergibt bei entsprechender CSV-Datei folgendes Ergebnis:
+</p>
+
+<IMG SRC="Bilder/200106/20010607_3.png" width="448" height="156" alt="" border="0">
+
+<p>
+Nat&uuml;rlich sind dann im Einsatz des Scriptes die Properties und Pfadeinstellungen ensprechend dem Anwendungsfall 
+anzupassen.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Das gezeigte Beispiel l&auml;&szlig;t sich wie Sie sicherlich erkannt haben, leicht an den Anwendungsfall anpassen und vor 
+allem z.B. f&uuml;r mehrere Dateien automatisieren. Zwar gehen bei einem solchen Konvertierungsvorgang alle 
+Relationships zwischen den Tabellen oder auch anderen externen Datenbanken verloren, diese sind aber meist 
+einfacher und schneller wieder herzustellen als die Datens&auml;tze.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010607.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20010605.htm">CSVs aus MDBs leicht gemacht</a><br>
+<a href="20000526.htm">Klassen in VBScript</a><br>
+<a href="20000626.htm">Tabellenerstellung mit ADOX</a><br>
+<a href="20020410.htm">Yet Another Access Database Administration Tool</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20010607" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Daten aus CSV-Dateien in MDBs importieren"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20010607.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Holm"><input type="hidden" name="AuthorEmail" value="office@holmcs.com"><input type="hidden" name="Artikel" value="20010607"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20010607.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

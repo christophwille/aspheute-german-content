@@ -1,0 +1,509 @@
+<HTML>
+<HEAD>
+<TITLE>Formularbasierte Authentifizierung in f&uuml;nf Minuten</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In Anlehnung an diverse Buchserien werde ich Ihnen heute zeigen, wie schnell man mit ASP.NET eine Website f&uuml;r registrierte User erstellen kann. Weiters gebe ich Ihnen noch eine L&ouml;sung f&uuml;r ein sicheres Loginformular mit auf den Weg.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Authentication,Authorization,Authentifizierung,Authorisierung,Login,Loginformular,Formularbasiert,ASP.NET,web.config,debug,Sicherheit">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Formularbasierte Authentifizierung in f&uuml;nf Minuten</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020705"></SCRIPT>
+</p>
+<p>
+In Anlehnung an diverse Buchserien werde ich Ihnen heute zeigen, wie schnell man mit ASP.NET eine Website 
+f&uuml;r registrierte User erstellen kann. Da mir nach den f&uuml;nf Minuten noch Zeit &uuml;brig bleibt, gebe ich Ihnen
+noch eine fix und fertige L&ouml;sung f&uuml;r ein technisch sauberes und vor allem sicheres Loginformular mit auf den Weg.
+</p>
+
+<p>
+ASP.NET ist in vielen Bereichen revolution&auml;r, so auch bei der Authentifizierung und der Authorisierung. Um die Begriffe
+zu definieren: Authentifizierung ist die &Uuml;berpr&uuml;fung ob der User der ist, der er vorgibt zu sein, und Authorisierung ist
+der Vorgang der &Uuml;berpr&uuml;fung ob der authentifizierte User auf eine bestimmte Resource zugreifen darf. Beide - Authentifizierung
+und Authorisierung - k&ouml;nnen je nach Bedarf durch eigene Implementationen ausgetauscht werden. Wir besch&auml;ftigen uns heute mit
+der am Web &uuml;blichsten Methode der Authentifizierung: formularbasierte Logins.
+</p>
+
+<p>
+In klassischem ASP hat man eine geschlossene Webapplikation nach folgendem Muster entwickelt:
+</p>
+
+<ul>
+	<li>Ein Loginformular - die Authentifizierung.
+	<li>Eine Includedatei - die Authorisierung. Diese Includedatei wurde in alle zu sch&uuml;tzenden ASP Dateien includet, und hat
+		die Benutzerberechtigungen auf Dateien &uuml;berpr&uuml;ft.
+</ul>
+
+<p>
+Der Nachteil dieser L&ouml;sung ist klarerweise da&szlig; man alle ASP Dateien modifizieren mu&szlig;. Mit ASP.NET ist das nicht mehr notwendig,
+wie ich Ihnen zeigen werde.
+</p>
+
+<h2>Die Implementation</h2>
+<p>
+Ich habe Ihnen versprochen, da&szlig; Sie innerhalb von f&uuml;nf Minuten eine mit Forms-based Authentication gesicherte Webapplikation bekommen.
+Beginnen wir also, und zwar mit tatkr&auml;ftiger Hilfe des <a href="20020618.htm">ASP.NET Web Matrix Projekts</a>. Wir 
+ben&ouml;tigen zwei Dinge: eine <b>web.config</b> und ein passendes Loginformular. Beginnen wir damit, in einem neuen Verzeichnis namens
+<b>basicformauth</b> eine <b>web.config</b> anzulegen:
+</p>
+
+<IMG SRC="Bilder/200207/20020705_1.png" width="472" height="425" alt="" border="0">
+
+<p>
+Der ge&uuml;bte Leser ahnt bereits, da&szlig; die Technik des heutigen Artikels wieder einmal "gewu&szlig;t wo" lautet. Stimmt, das <a href="20020618.htm">ASP.NET Web Matrix
+Projekt</a> legt uns eine f&uuml;r formularbasierte Authentifizierung perfekt geeignete <b>web.config</b> an (Details zu web.config finden Sie im Artikel <a href="20010802.htm">Web.Config 101</a>)::
+</p>
+
+<pre style="background='silver';">
+&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+
+&lt;configuration&gt;
+
+  &lt;system.web&gt;
+
+    &lt;authentication mode="Forms"&gt;
+      &lt;forms name=".ASPXAUTH" loginUrl="login.aspx" /&gt;
+    &lt;/authentication&gt;  
+    
+    &lt;authorization&gt;
+      &lt;deny users="?" /&gt; 
+    &lt;/authorization&gt;
+
+  &lt;/system.web&gt;
+
+&lt;/configuration&gt;
+</pre>
+
+<p>
+Die springenden Punkte sind die <i>authentication</i> und <i>authorization</i> Nodes. Erstere legt die Art der Authentication (<i>Forms</i>)
+fest, zweitere sorgt daf&uuml;r, da&szlig; anonymer Zugriff (<i>?</i>) auf unser Web nicht erlaubt ist, also Eintritt nur &uuml;ber das Loginformular gestattet ist.
+Dieses wird in der <i>authentication</i> Node definiert, und mu&szlig; von "uns" angelegt werden:
+</p>
+
+<IMG SRC="Bilder/200207/20020705_2.png" width="472" height="425" alt="" border="0">
+
+<p>
+Mit dieser Vorlage bekommen wir ein fix &amp; fertiges Loginformular, das im Designer so aussieht:
+</p>
+
+<IMG SRC="Bilder/200207/20020705_4.png" width="482" height="297" alt="" border="0">
+
+<p>
+Bevor wir uns den Code ansehen, m&uuml;ssen wir noch sicherstellen da&szlig; unsere <b>web.config</b> auch ihren Dienst verrichten kann. Da wir
+Authentifizierung verlangen, m&uuml;ssen wir das neu erstellte Verzeichnis zu einem Applikationsroot machen. Dies geschieht im ISM, Eigenschaften
+des Verzeichnisses, Applikation anlegen. Danach hat das Verzeichnis ein Paketsymbol vorangestellt:
+</p>
+
+<IMG SRC="Bilder/200207/20020705_3.png" width="640" height="423" alt="" border="0">
+
+<p>
+Nun legen Sie sich eine Testdatei an, in meinem Fall ist das <b>coolpage.aspx</b>. Gehen Sie mit dem Webbrowser auf diese Seite, und
+voila, Sie landen auf der Loginseite! Auftrag ausgef&uuml;hrt, unsere Applikation ist nur mehr f&uuml;r berechtigte User zug&auml;nglich - aber
+halt, wer sind denn die Berechtigen?
+</p>
+<p>
+Dazu sehen wir uns den Code der <b>login.aspx</b> an:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Page Language="C#" %&gt;
+&lt;script runat="server"&gt;
+    void LoginBtn_Click(Object sender, EventArgs e) {
+    
+        if (Page.IsValid) {
+            if ((UserName.Text == "jdoe@somewhere.com") &amp;&amp; (UserPass.Text == "password")) {
+                FormsAuthentication.RedirectFromLoginPage(UserName.Text, true);
+            }
+            else {
+                Msg.Text = "Invalid Credentials: Please try again";
+            }
+        }
+    }
+&lt;/script&gt;
+</pre>
+
+<p>
+Ja, im Moment kann nur ein einzelner User einloggen, und der ist noch dazu fest verdrahtet. Damit kommen wir zu Teil 2 des Artikels:
+der technisch sauberen und vor allem sicheren L&ouml;sung f&uuml;r das Loginformular.
+</p>
+
+<h2>Formularbasierter Login mit Datenbank</h2>
+<p>
+In den meisten aller F&auml;lle wird man die Benutzerkonten in einer Datenbank ablegen. Daf&uuml;r m&ouml;chte ich Ihnen heute eine "Best Practice"
+zur Verwendung in Ihren Applikationen mitgeben: technisch sauber, und vor allem sicher.
+</p>
+<p>
+Als Datenbank habe ich eine einfache Accessdatenbank mit einer einzigen Tabelle gew&auml;hlt, damit man sp&auml;ter leicht auf andere Datenbankprodukte
+migrieren kann. Die Tabelle sieht so aus:
+</p>
+
+<IMG SRC="Bilder/200207/20020705_5.png" width="586" height="334" alt="" border="0">
+
+<p>
+Den Datenbankconnectionstring speichere ich wie in Artikel <a href="20011122.htm">Einstellungssache - Applikationsdaten in web.config</a> gezeigt
+in der <b>web.config</b>, zus&auml;tzlich zu den bereits bestehenden Eintragungen:
+</p>
+
+<pre style="background='silver';">
+&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;configuration&gt;
+  &lt;system.web&gt;
+
+    &lt;authentication mode="Forms"&gt;
+      &lt;forms name=".ASPXAUTH" loginUrl="login.aspx" /&gt;
+    &lt;/authentication&gt;  
+    
+    &lt;authorization&gt;
+      &lt;deny users="?" /&gt; 
+    &lt;/authorization&gt;
+
+    &lt;!-- Bei Fehlern die nachfolgende Zeile von Kommentarzeichen "befreien"
+         um die vollst&auml;ndige Fehlermeldung angezeigt zu bekommen. Auf "Live-Systemen"
+         niemals debug="true" eingeschaltet lassen!!! --&gt;
+
+    &lt;!-- &lt;compilation debug="true"/&gt; --&gt;
+  &lt;/system.web&gt;
+
+  &lt;appSettings&gt;
+     &lt;add key="LoginDb" value="PROVIDER=Microsoft.Jet.OLEDB.4.0;Data Source=f:\aspheute\login.mdb" /&gt;
+  &lt;/appSettings&gt;
+&lt;/configuration&gt;
+</pre>
+
+<p>
+Andere Connection Strings, zB f&uuml;r SQL Server k&ouml;nnen Sie im Artikel <a href="20001102.htm">Datenbankzugriff mittels ADO.NET</a> nachlesen.
+Die weitere &Auml;nderung betrifft unser Loginformular <b>login.aspx</b>. Dort m&uuml;ssen wir die Methode <i>LoginBtn_Click</i> deutlich 
+umbauen:
+</p>
+
+<pre style="background='silver';">
+    void LoginBtn_Click(Object sender, EventArgs e) 
+    {
+        if (Page.IsValid) 
+        {
+            // holen des Connection Strings aus den &lt;appSettings&gt;
+            string strDbConnString = ConfigurationSettings.AppSettings["LoginDb"];
+            
+            // verbinden zur Datenbank
+            OleDbConnection con = new OleDbConnection(strDbConnString);
+            con.Open();
+            
+            // SQL Injection sicher nicht mit uns!
+            OleDbCommand cmd = new OleDbCommand();
+            cmd.CommandText = "SELECT COUNT(*) FROM login WHERE UPN=@ParamUpn AND Password=@ParamPwd";
+            cmd.Parameters.Add("@ParamUpn", UserName.Text);
+            cmd.Parameters.Add("@ParamPwd", UserPass.Text);
+            cmd.Connection = con;
+            
+            // korrektes Auslesen des mit ExecuteScalar geholten Wertes
+            int nUsersMatched = 0;
+            object oResult = cmd.ExecuteScalar();
+            if (oResult != null) nUsersMatched = (int)oResult;
+			
+            // Command &amp; Connection so fr&uuml;h als m&ouml;glich schlie&szlig;en
+            cmd.Dispose();
+            con.Close();
+            
+            if (0 != nUsersMatched) {
+                FormsAuthentication.RedirectFromLoginPage(UserName.Text, true);
+            }
+            else {
+                Msg.Text = "Invalid Credentials: Please try again";
+            }
+        }
+    }
+</pre>
+
+<p>
+Mit dem Aufruf von <i>ConfigurationSettings.AppSettings</i> holen wir uns den Connection String aus <b>web.config</b>. Mit diesem
+Connection String bauen wir eine <i>OleDbConnection</i> auf. Danach gehen wir absolut auf Nummer sicher: anstatt den SQL String
+dynamisch zusammenzubauen, verwenden wir eine parametrisierte Abfrage. Mehr dazu k&ouml;nnen Sie im Artikel <a href="20011203.htm">Verhinderung von SQL Injection Marke .NET</a>
+nachlesen, beziehungsweise sich im Artikel <a href="20011030.htm">SQL Injection</a> &uuml;ber die Hintergr&uuml;nde informieren.
+</p>
+<p>
+Die parametrisierte Abfrage liefert uns 0 wenn die Logindaten inkorrekt sind, beziehungsweise 1 wenn der User authentifiziert werden
+konnte. Das Auslesen des R&uuml;ckgabewerts von <i>ExecuteScalar</i> sollte man &uuml;brigens immer so wie gezeigt machen, und ebenfalls sollten
+alle verwendeten Resourcen (<i>OleDbCommand</i> und <i>OleDbConnection</i>) so schnell als m&ouml;glich freigegeben werden.
+</p>
+<p>
+Abschlie&szlig;end ist die orginale <i>if</i> Bedingung getauscht, der Code in der <i>if</i> Verzweigung selbst ist unver&auml;ndert.
+Damit h&auml;tten wir dieses Kochrezept f&uuml;r ein datenbankgest&uuml;tztes Loginformular auch schon abgeschlossen. Wollen Sie SQL Server
+einsetzen, so machen Sie eine Replaceoperation auf <i>OleDb</i> und tauschen alle Matches gegen <i>Sql</i> aus!
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Formularbasierte Authentifizierung ist mit ASP.NET kinderleicht und vor allem schnell implementiert. Die vorgestellte Datenbankl&ouml;sung
+k&ouml;nnen Sie f&uuml;r Ihre Applikationen als Startpunkt nehmen, da von vorne bis hinten auf Sicherheit geachtet wurde.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020705.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20020618.htm">Das ASP.NET Web Matrix Projekt</a><br>
+<a href="20001102.htm">Datenbankzugriff mittels ADO.NET</a><br>
+<a href="20000726.htm">Datentypen in C#</a><br>
+<a href="20000911.htm">Einf&uuml;hrung in ASP.NET Validation Controls (Teil 1)</a><br>
+<a href="20000913.htm">Einf&uuml;hrung in ASP.NET Validation Controls (Teil 2)</a><br>
+<a href="20000808.htm">Einf&uuml;hrung in ASP.NET Web Forms</a><br>
+<a href="20011122.htm">Einstellungssache - Applikationsdaten in web.config</a><br>
+<a href="20031010.htm">Einstieg in Visual Studio.NET - die erste Webanwendung mit Visual C#</a><br>
+<a href="20000922.htm">Eventbehandlung bei ASP.NET WebForms</a><br>
+<a href="20000724.htm">Exception Handling in C#</a><br>
+<a href="20000714.htm">Kontrollstatements in C#</a><br>
+<a href="20020801.htm">MS IE WebControls 101</a><br>
+<a href="20011206.htm">Performancemessungen in .NET</a><br>
+<a href="20001019.htm">Sichere Konvertierungen von Referenztypen</a><br>
+<a href="20011030.htm">SQL Injection</a><br>
+<a href="20001006.htm">Tracing in ASP.NET</a><br>
+<a href="20040303.htm">Vergleich von DataGrid, DataList und Repeater-Control - was verwende ich wann?</a><br>
+<a href="20011203.htm">Verhinderung von SQL Injection Marke .NET</a><br>
+<a href="20010802.htm">Web.Config 101</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20020705" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Formularbasierte Authentifizierung in f&uuml;nf Minuten"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20020705.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20020705"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20020705.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

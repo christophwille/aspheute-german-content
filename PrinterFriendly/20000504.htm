@@ -1,0 +1,299 @@
+<HTML>
+<HEAD>
+<TITLE>Formatierte Zahlenausgabe</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel beschreibt die Verwendung von Zahlenformatierungsfunktionen um errechnete Zahlenwerte entsprechend formatiert auszugeben - inklusive den l&auml;nderspezifischen Einstellungen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,FormatNumber,FormatCurrency,SetLocale,LCID,@LCID,FormatDateTime,FormatPercent,Zahlen,Zahlenformatierung">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Formatierte Zahlenausgabe</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000504"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>Um eine in VBscript errechnete Zahl dem User zu pr&auml;sentieren, ist es oft im Sinne 
+der Benutzerfreundlichkeit, wenn man diese Zahl in der gew&uuml;nschten Weise formatiert,
+um so festzulegen, wieviele Kommastellen angezeigt werden, oder ob ein Trennzeichen 
+alle 3 Zahlen eingef&uuml;gt wird.</P>
+
+
+<P>Der Sinn dieses Vorgehens wird besonders augenf&auml;llig, wenn man sich ein 
+Beispiel wie folgt ansieht:</P>
+
+<pre style="background='silver';">
+<B>Hochrechnung:</B>
+<TABLE CELLSPACING="3" CELLPADDING="3" BORDER="0">
+<TR>
+    <TH>Jahr</TH>
+    <TH>Einnahmen</TH>
+</TR>
+<TR>
+    <TD>2000</TD>
+    <TD>-456.78</TD>
+</TR>
+<TR>
+    <TD>2001</TD>
+    <TD>413.20299</TD>
+</TR>
+<TR>
+    <TD>2002</TD>
+    <TD>2230.64932</TD>
+</TR>
+</TABLE></pre>
+
+<P>Keine dieser Zahlen ist formatiert, sondern wurde einfach so ausgegeben, wie sie in VBScript 
+errechnet wurden. Welche Funktion(en) bietet aber nun VBScript, um Zahlen zu formatieren und damit lesbarer
+darzustellen?</P>
+
+<P>Zum einen ist da die <I>FormatNumber</I> Funktion, die es erlaubt, die Anzahl der Nachkomma-Stellen
+festzulegen, und die auch Ziffern in 3er Gruppen zusammenfassen kann.
+Die Syntax der <I>FormatNumber</I> Funktion ist wie folgt:</P>
+
+<pre style="background='silver';">
+<I>FormatierteZahl</I> = <B>FormatNumber</B>(<I>Zahl</I>,<I>Nachkommastellen</I>,
+   <I>F&uuml;hrende_Null</I>,<I>Klammern_f&uuml;r_negative_Zahlen</I>,<I>Zahlengruppen</I>)</pre>
+
+<P>Dabei steht <I>Zahl</I> f&uuml;r die zu formatierende Zahl.
+<I>Nachkommastellen</I> steht f&uuml;r die Anzahl der Nachkommastellen, die noch angezeigt werden.
+Der optionale Parameter <I>F&uuml;hrende_Null</I> gibt an, ob bei Bruchzahlen eine Null vor dem Komma
+angezeigt wird oder nicht.</P>
+
+<P>Mit <I>Klammern_f&uuml;r_negative_Zahlen</I> gibt man an, ob negative Zahlen
+in Klammern ausgegeben werden, wie zum Beispiel <I>(200)</I> statt <I>-200</I>. 
+Der <I>Zahlengruppen</I> Parameter erlaubt es, die Zahlen vor dem Komma in 3er Gruppen zu gruppieren.</P> 
+
+<P>F&uuml;r die Parameter <I>F&uuml;hrende_Null</I>,<I>Klammern_f&uuml;r_negative_Zahlen</I>
+und <I>Zahlengruppen</I> kann man folgende Werte benutzen:</P>
+
+<DIV ALIGN="center"><TABLE CELLSPACING="2" CELLPADDING="2" BORDER="1">
+<TR>
+    <TD ALIGN="right">Parameter setzen:</TD>
+    <TD>&nbsp;&nbsp;-1</TD>
+</TR>
+<TR>
+    <TD ALIGN="right">Parameter nicht setzen:</TD>
+    <TD>&nbsp;&nbsp;&nbsp;0</TD>
+</TR>
+<TR>
+    <TD ALIGN="right">Parameter wie in L&auml;nder-<BR>einstellung des Computers:</TD>
+    <TD>&nbsp;&nbsp;-2</TD>
+</TR>
+</TABLE></DIV>
+
+<P>Beim Festlegen einer bestimmten Anzahl von Nachkommastellen wird die letzte
+Nachkommastelle automatisch auf- oder abgerundet.</P>
+
+<P>Um nun also in der Hochrechnungstabelle von vorhin die Zahlen so zu formatieren,
+da&szlig; 2 Nachkommastellen sichtbar sind, eine f&uuml;hrende Null bei 
+Bruchzahlen angezeigt wird und negative Zahlen nicht in Klammer stehen,
+benutzt man die Funktion <I>FormatNumber</I> wie folgt:</P>
+
+<pre style="background='silver';">
+<I>FormatierteZahl</I> = <B>FormatNumber</B>(<I>Zahl</I>,2,-1,0,-1)</pre>
+
+<P>Damit sieht die Beispiel-Tabelle wie folgt aus:</P>
+
+<pre style="background='silver';">
+<B>Hochrechnung:</B>
+<TABLE CELLSPACING="3" CELLPADDING="3" BORDER="0">
+<TR>
+    <TH>Jahr</TH>
+    <TH>Einnahmen</TH>
+</TR>
+<TR>
+    <TD>2000</TD>
+    <TD ALIGN="RIGHT"><TT>-456.78</TT></TD>
+</TR>
+<TR>
+    <TD>2001</TD>
+    <TD ALIGN="RIGHT"><TT>413.20</TT></TD>
+</TR>
+<TR>
+    <TD>2002</TD>
+    <TD ALIGN="RIGHT"><TT>2,230.65</TT></TD>
+</TR>
+</TABLE></pre>
+
+<P>Damit die Zahlen so gleichm&auml;&szlig;ig untereinander stehen wurden folgende
+zwei Tricks angewendet: Die Zahlen wurden in der Tabellenzelle rechtsb&uuml;ndig formatiert -
+dies ist durch den Zusatz <I>align="right"</I> im <I>&lt;td&gt;</I> Tag zu bewerkstelligen.
+Weiters wurden die Zahlen mit dem <I>&lt;tt&gt;</I> Tag begrenzt um sie in
+einer Schrift mit fixer Buchstabenweite darzustellen:</P>
+
+<pre style="background='silver';">
+&lt;td align="right"&gt;&lt;tt&gt; 2,230.65 &lt;/tt&gt;&lt;/td&gt;</pre>
+
+<P>Wenn sie sich gewundert haben, warum die formatierten Zahlen in der Tabelle einen
+Punkt als Komma, und eine Beistrich als Gruppierungszeichen haben, so liegt dies
+daran, da&szlig; ich das Beispielscript auf einem amerikanischen Webserver ablaufen
+habe lassen, der nat&uuml;rlich auch den amerikanischen Regionalcode gesetzt hat.</P>
+
+<P>Alle Zahlen werden bei Verwendung der <I>FormatNumber</I> Funktion  
+gem&auml;&szlig; den l&auml;nderspezifischen Einstellungen des Webservers formatiert.
+Um nun ganz sicher zu gehen, da&szlig; die Zahlen gem&auml;&szlig; den
+deutschen L&auml;ndereinstellungen formatiert werden, kann man in ASP-Seiten die 
+<I>@LCID</I> Direktive, oder die VBScript Funktion namens <I>SetLocale</I> verwenden:</P>
+
+<pre style="background='silver';">
+&lt; @LCID=1031 &gt;
+...
+
+<U>oder</U>
+
+SetLocale("de")
+...</pre>
+
+<P>Anzumerken ist, da&szlig; sowohl das Setzen der <I>@LCID</I>-Direktive als auch der Aufruf
+der Funktion <I>SetLocale</I> die Wirkung haben, Zahlen beim Umwandeln in Strings gem&auml;&szlig; 
+den deutschen L&auml;ndereinstellungen zu formatieren. Hingegen wird beim
+direkten Ausgeben einer Zahl diese weiterhin mit einem Punkt als Komma dargestellt:</P>
+
+<pre style="background='silver';">
+&lt;%
+SetLocale("de")
+lngA = 27.1287
+
+' Direktes Ausgeben der Zahl:
+Response.Write lngA
+Response.Write "&lt;BR&gt;" & VbCrLf
+' Explizite Umwandlung in einen String:
+Response.Write CStr(lngA) 
+Response.Write "&lt;BR&gt;" & VbCrLf
+' Implizite Umwandlung in einen String:
+Response.Write "" & lngA
+Response.Write "&lt;BR&gt;" & VbCrLf
+' Formatieren mit <I>FormatNumber</I>:
+Response.Write FormatNumber(lngA)
+Response.Write "&lt;BR&gt;" & VbCrLf
+%&gt;
+
+<U>Ergebnis</U>:
+
+27.1287
+27,1287
+27,1287
+27,13</pre>
+
+<P>&Auml;hnlich wie die Funktion <I>FormatNumber</I> es erlaubt Zahlen zu formatieren, 
+so stellt die VBScript Funktion <I>FormatCurrency</I> die Funktionalit&auml;t zur 
+Verf&uuml;gung, um W&auml;hrungsbetr&auml;ge formatiert darzustellen. 
+Der Syntax der <I>FormatCurrency</I> Funktion lautet wie folgt:</p>
+
+<pre style="background='silver';">
+<I>FormatierteW&auml;hrung</I> = <B>FormatCurrency</B>(<I>Zahl</I>,<I>Nachkommastellen</I>,
+   <I>F&uuml;hrende_Null</I>,<I>Klammern_f&uuml;r_negative_Zahlen</I>,<I>Zahlengruppen</I>)</pre>
+
+<P>Das W&auml;hrungssymbol, wie $ oder DM wird dabei wieder von der L&auml;ndereinstellung
+des Servers bestimmt. Die L&auml;ndereinstellung kann dabei wieder durch die <I>@LCID</I> Direktive
+oder die <I>SetLocale</I> Funktion erfolgen, wie im folgenden Beispiel:</P>
+
+<pre style="background='silver';">
+&lt;%
+lngA = 27.1287
+
+' Deutsche L&auml;ndereinstellung:
+SetLocale("de")
+Response.Write lngA
+Response.Write "&lt;BR&gt;" & VbCrLf
+' Schweizer L&auml;ndereinstellung:
+SetLocale("de-ch")
+Response.Write lngA
+Response.Write "&lt;BR&gt;" & VbCrLf
+' &Ouml;sterreichische L&auml;ndereinstellung:
+SetLocale("de-at")
+Response.Write lngA
+Response.Write "&lt;BR&gt;" & VbCrLf
+%&gt;
+
+<U>Ergebnis</U>:
+
+27,13 DM
+SFr. 27.13
+&ouml;S 27,13</pre>
+
+<P>Um nun auch DM vor den Betrag zu stellen oder Euro als W&auml;hrung auszugeben 
+benutzt man am besten selbstgebastelte Funktionen:</P>
+
+<pre style="background='silver';">
+&lt;%
+Function FormatDM(Zahl)
+	Dim tmpLocale
+	tmpLocale = SetLocale("de")
+	FormatDM = "DM " & FormatNumber(Zahl,2,-1,0,-1)
+	SetLocale tmpLocale 
+End Function
+
+Function FormatEuro(Zahl)
+	Dim tmpLocale 
+	tmpLocale = SetLocale("de")
+	FormatEuro = "Euro " & FormatNumber(Zahl,2,-1,0,-1)
+	SetLocale tmpLocale
+End Function
+
+lngA = 0.49
+Response.Write FormatDM(lngA) 
+Response.Write "&lt;BR&gt;" & VbCrLf
+Response.Write FormatEuro(lngA) 
+Response.Write "&lt;BR&gt;" & VbCrLf
+&gt;
+
+<U>Ergebnis</U>:
+
+DM 0,49
+Euro 0,49</pre>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<P>Verwandt zu <I>FormatNumber</I> oder <I>FormatCurrency</I> sind die
+VBScript Funktionen <I>FormatPercent</I> und <I>FormatDateTime</I>.
+Doch dies soll Stoff f&uuml;r einen sp&auml;teren Artikel sein.</P>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

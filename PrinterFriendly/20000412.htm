@@ -1,0 +1,201 @@
+<HTML>
+<HEAD>
+<TITLE>Pr&uuml;fen ob ein Browser Cookies annimmt</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Einsatz der BrowserHawk Komponente um herauszufinden, ob am Browser des Clients Cookies enabled sind oder nicht. Dies ist f&uuml;r viele Anwendungen von gro&szlig;er Bedeutung.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,BrowserHawk,Cookies,cookie,detection,cookiesenabled,enabled">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Pr&uuml;fen ob ein Browser Cookies annimmt</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/Komponenten.htm">Komponenten</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000412"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Ob ein Browser Cookies annimmt ist in vielen Anwendungen wichtig.
+Wenn Sie eine einfache E-Commerce Applikation implementieren,
+bei der die bereits bestellten Waren (Shopping-Bag) in einer Session 
+Variablen mitgef&uuml;hrt werden,
+oder einen dauerhaften Cookie zur Personalisierung Ihrer Website setzen wollen,
+immer h&auml;ngt der Erfolg Ihres Bem&uuml;hens davon ab, ob der Browser
+Cookies annimmt.
+</p>
+<p>
+Ein <B>Cookie</B> ist eine kleine Informationsmenge, die im Browser gespeichert wird.
+Man unterscheidet tempor&auml;re Cookies, die nur existieren solange noch ein 
+Browserfenster ge&ouml;ffnet ist, und permanente Cookies, die bis zu Ihrem Ablaufdatum
+in einer Textdatei (meist <I>Cookies.txt</I> genannt) gespeichert werden.
+</p>
+<p>
+Wozu braucht man nun Cookies genau? Wenn Sie unter ASP eine <I>Session</I> Variable
+f&uuml;r einen bestimmten User benutzen, so wird die Session-ID in Form eines
+tempor&auml;ren Cookies im User Browser gespeichert. 
+Das bedeutet auf der anderen Seite, da&szlig; Sie keine <I>Session</I>
+Variablen einsetzen k&ouml;nnen, wenn der Browser keine Cookies annimmt.
+</p>
+<p>
+<I>Session</I> Variablen werden der Einfachheit halber oft in 
+Pa&szlig;wort gesch&uuml;tzten Bereichen einer Website eingesetzt.
+Dabei wird gepr&uuml;ft, ob f&uuml;r den augenblicklichen User eine 
+bestimmte <I>Session</I> Variable, zum Beispiel 
+<I>Session("User")</I> einen Wert enth&auml;lt.
+Wenn der User die richtige <U>User-Name/Pa&szlig;wort</U> Kombination in einer
+Login Seite eingibt, dann wird im ASP Script der Login-Seite 
+dieser <I>Session</I> Variable ein Wert zugewiesen.
+
+Immer wenn eine gesch&uuml;tze Datei abgefragt wird,
+dann pr&uuml;ft ASP ob die <I>Session</I> Variable einen Wert enth&auml;lt.
+Wenn kein Wert in der Variablen gespeichert ist, so wird der Browser 
+vom ASP-Script mit <I>Response.Redirect</I> automatisch zur Login Seite 
+(oder einer anderen Seite) umgeleitet:
+</p>
+<pre style="background='silver';">
+&lt;%
+' Anfang der ASP Seite
+
+If Session("User") = "" Then
+	' User nicht eingeloggt, daher einen 
+	' Redirect zur Login Seite ausfuehren:
+	Response.Redirect "Login.asp"
+	Response.End
+End If
+' Hier kommt der geschuetzte Inhalt der Seite:
+
+...
+
+%&gt;
+</pre>
+<p>
+Nun aber zur&uuml;ck zur Frage wie man herausfindet ob ein Browser
+Cookies auch annimmt.
+</p>
+<P>
+Eine einfache und elegante L&ouml;sung l&auml;&szlig;t sich mit der
+ASP Komponente BrowserHawk&nbsp;2000 von CyScape verwirklichen.
+</P>
+<P>
+Das folgende Beispiel zeigt, wie man mit der BrowserHawk 2000 Komponente
+effizient abfragen kann ob Cookies vom Browser akzeptiert werden. 
+Das ASP-Script benutzt dazu die <I>Cookies</I> und die <I>CookiesEnabled</I> Eigenschaften der
+BrowserHawk Komponente. Die <I>Cookies</I> Eigenschaft enth&auml;lt die Information,
+ob der Browser technisch prinzipiell in der Lage ist, Cookies
+zu akzeptieren. Die <I>CookiesEnabled</I> Eigenschaft schlie&szlig;lich liefert
+die Information, ob der Browser tats&auml;chlich 
+Cookies akzeptiert. Daf&uuml;r mu&szlig; allerdings vorher die <I>CookieDetector</I>
+Methode der Komponente ausgef&uuml;hrt werden.
+</p>
+<p><B>ASP Beispiel</B>, das effizient pr&uuml;ft ob der Browser Cookies annimmt
+(<A href="../artikel/20000412_code.asp">ausf&uuml;hrbares Beispiel</A>):
+</p>
+
+<pre style="background='silver';">
+&lt;% 
+Dim BrowserHawk     ' BrowserHawk 2000 Objekt
+Dim CookieAccept    ' Enthaelt True wenn der Browser Cookies annimmt
+CookieAccept = False
+
+Set BrowserHawk = Server.CreateObject("cyScape.browserObj")
+
+If BrowserHawk.Cookies = True Then
+	' Cookies werden vom Browser technisch unterstuetzt
+	BrowserHawk.CookieDetector "noredirect"
+	If BrowserHawk.CookiesEnabled Then
+		' Cookies werden vom Browser angenommen
+		CookieAccept = True
+	End If
+End If
+
+If CookieAccept = True Then
+	' Hier die Variante wenn Cookies angenommen werden
+	&lt;% 
+	... 
+	%&gt;
+Else
+	' Hier die Variante wenn keine Cookies angenommen werden
+	&lt;% 
+	...
+	%&gt;
+End If
+%&gt;
+</pre>
+<p>
+Es gibt einen Punkt auf den man achten sollte: Wenn man die
+CookieDetector Methode einsetzt, so kann man mit der selben 
+Seite kein Formular empfangen, das mit der <I>POST</I>-Methode abgeschickt wurde.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000412.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000412.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000410.htm">Browsereigenschaften mit BrowserHawk 2000 bestimmen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000410.htm</span><br>
+<a href="../artikel/20010306.htm">Dynamische Stylesheets</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010306.htm</span><br>
+<a href="../artikel/20000907.htm">Einfacher Test, ob der Browser Cookies annimmt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000907.htm</span><br>
+<a href="../artikel/20001018.htm">Global.asa: Verwendung, Events und Probleme</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001018.htm</span><br>
+<a href="../artikel/20000505.htm">Session Variablen - Verwendung und Stolpersteine</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000505.htm</span><br>
+<a href="../artikel/20000517.htm">Zwischenspeichern von ASP Seiten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000517.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ecyscape%2Ecom%2F">CyScape</a><br>
+<SPAN class="content">http://www.cyscape.com/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

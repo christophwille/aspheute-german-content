@@ -1,0 +1,26 @@
+<pre style="background='silver';">
+Function ReadFile(strDateiname)
+   ' ### Listing aus dem Artikel "Lesen von Textdateien" ###
+   ' strDateiname in der Form "C:\Testdateien\MeineDatei.txt"
+   Const fsForReading = 1
+   Dim strInhalt, strInhaltHTML
+   Dim objFs           ' FileSystemObject Objekt
+   Dim objTextStream   ' Textstream Objekt
+   
+   Set objFs = CreateObject("Scripting.FileSystemObject")
+   
+   On Error Resume Next
+   Set objTextStream = objFs.OpenTextFile(strDateiname, fsForReading)
+   If Err.Number <> 0 Then
+      ' Fehler aufgetreten
+      strInhalt = ""
+   Else
+      strInhalt = objTextStream.ReadAll
+   End If
+   objTextStream.Close
+   On Error Goto 0
+   Set objTextStream = Nothing
+   Set objFs = Nothing
+   ReadFile = strInhalt
+End Function
+</pre>

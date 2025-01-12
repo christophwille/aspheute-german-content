@@ -1,0 +1,192 @@
+<HTML>
+<HEAD>
+<TITLE>ADO und ASP - Datenbanken einmal n&auml;her betrachtet</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Der Weg zur Datenbank f&uuml;hrt &uuml;ber ADO - dieser Artikel beschreibt die Grundlagen zur Datenbanktechnologie und deren Verwendung.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ADO,Connection,Recordset,Command,conn.Open">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>ADO und ASP - Datenbanken einmal n&auml;her betrachtet</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=19990825"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Kaum eine anspruchsvolle Website die heute nicht mit einer Datenbank arbeitet. Ob Veranstaltungskalender, 
+Produktkatalog,  Mitgliederdatenbank, G&auml;stebuch, personalisierte Dienste oder allgemein ver&auml;nderliche Daten -
+all dies l&auml;&szlig;t sich mit Hilfe der Kombination ASP Skripts auf der Webserver Seite und einer Datenbank auf 
+der anderen Seite verwirklichen. 
+</p>
+<P>
+Betrachten wir einmal das Bindeglied zwischen diesen beiden Technologien 
+n&auml;her. Von ASP aus greift man am einfachsten &uuml;ber ADO (<i>ActiveX Data Objects</i>) und das zugeh&ouml;rige ADODB Objekt
+auf Datenquellen zu. Die Verbindung zwischen ADO (und der darunterliegenden OLE DB, <i>Object Linking and 
+Embedding Database</i>) und der Datenbank wird meist &uuml;ber ODBC (<i>Open DataBase Connectivity</i>) hergestellt, 
+das Applikationen einen weitgehend einheitlichen Zugriff auf verschiedenste Datenquellen erlaubt. 
+Aber alles sch&ouml;n der Reihe nach.
+</p>
+<p>
+ADO stellt die Objekte zur Verf&uuml;gung mit deren Hilfe ein ASP Skript eine Verbindung zur Datenbank 
+aufbauen und Daten auf vielf&auml;ltigste Weise manipulieren kann. Die wichtigsten ADO Objekte sind:
+<ul>
+	<li><b>Connection</b> (Datenbankverbindung) - Repr&auml;sentiert die Verbindung zur Datenquelle
+	<li><b>Recordset</b> (Sammlung von Datens&auml;tzen) - Besteht aus den Datens&auml;tzen die aus einer 
+		Datenbankabfrage stammen und dem zugeh&ouml;rigen Cursor, der auf den aktuellen Datensatz zeigt.
+	<li><b>Field </b>(Datenfeld) - Enth&auml;lt Daten einer Datenbankspalte und Informationen &uuml;ber diese Daten 
+		wie Datentyp, Datenl&auml;nge und &Auml;hnliches. Das Recordset Objekt stellt dabei die <b>Fields</b> Collection  
+		zur Verf&uuml;gung, die alle Field Objekte eines Datensatzes beinhaltet.
+	<li><b>Property </b>(Eigenschaft) - Erlaubt den Zugriff auf dynamische Informationen eines ADO Objektes die 
+		von der Datenquelle oder der Datenanbindung (wie ODBC) zur Verf&uuml;gung gestellt werden.
+	<li><b>Error</b> (Fehler) - Enth&auml;lt ausf&uuml;hrliche Fehlerinformationen bei Datenbankzugriffen. Auf alle Fehler 
+		eines Datenbankzugriffes kann durch die <b>Errors</b> Collection zugegriffen werden.
+	<li><b>Command</b> (Befehl) - Erlaubt es einzelne Datenbankabfragen zu definieren, so da&szlig; ein mehrmaliger 
+		Einsatz mit verschiedenen Parametern rascher durchgef&uuml;hrt werden kann .
+	<li><b>Parameter</b> (Parameter) - Stellt einen einzelnen Parameter (Argument) eines Command Objektes f&uuml;r 
+		eine parametrisierte Abfrage oder einen Zugriff auf eine "Gespeicherte Datenbankprozedur" dar.
+</ul>
+Normalerweise findet man mit den Objekten Connection, Recordset und Field das Auslangen. 
+</p>
+<p>
+Wie sieht nun eine einfache Datenbankabfrage aus? Das folgende ASP Skript &ouml;ffnet eine Verbindung zur 
+Nordwind Datenbank, die mit Microsoft Access 97/2000 und SQL Server 7.0 (deutsche Versionen) ausgeliefert wird.
+Weiters liest es die Datens&auml;tze der Tabelle Artikel aus, die in die Kategorie Meeresfr&uuml;chte fallen, 
+um die Werte der Spalten Artikel-Nr und Artikelname schlie&szlig;lich im Browser anzuzeigen.
+<pre>
+&lt;%
+Response.Expires=0
+Response.AddHeader &quot;Pragma&quot;,&quot;no-cache&quot;
+Response.AddHeader &quot;cache-control&quot;, &quot;no-store&quot;
+
+Response.Write &quot;Abfrageergebnis:&lt;br&gt;&quot; &amp; vbcrlf
+Set conn = Server.CreateObject(&quot;ADODB.Connection&quot;)
+conn.Open &quot;DSN=NW;USR=sa;PWD=&quot;
+strSQL = &quot;SELECT Artikel.[Artikel-Nr], Artikel.Artikelname &quot;
+strSQL = strSQL &amp; &quot;FROM Artikel INNER JOIN Kategorien &quot;
+strSQL = strSQL &amp; &quot;ON Artikel.[Kategorie-Nr]=Kategorien.[Kategorie-Nr] &quot;
+strSQL = strSQL &amp; &quot;WHERE Kategorien.Kategoriename = 'Meeresfr&uuml;chte' &quot;
+
+Set rs = conn.Execute(strSQL)
+
+Do While Not(rs.EOF)
+	Response.Write &quot;&quot; &amp; rs(&quot;Artikel-Nr&quot;) &amp; &quot; : &quot;
+	Response.Write &quot;&quot; &amp; rs(&quot;Artikelname&quot;) &amp; &quot;&lt;BR&gt;&quot; &amp; vbcrlf
+	rs.MoveNext
+Loop
+
+rs.Close
+conn.Close
+%&gt;
+</pre>
+In kurzen Worten erkl&auml;rt speichert das Skript eine Instanz des Connection Objektes in der Variable <i>conn</i>, 
+um dann die Datenbankverbindung mit dem Befehl <i>conn.Open</i> herzustellen.
+</p>
+<p>
+Der Parameter f&uuml;r conn.Open enth&auml;lt den Datenquellennamen, im englischen Original DSN (<i>Data Source Name</i>) 
+genannt, der im ODBC Datenquellenadministrator korrekt definiert sein mu&szlig;.
+</p>
+<p>
+Danach wird das SQL (<i>Structured Query Language</i>) Statement, das die Datenbankabfrage definiert, in der 
+Variable strSQL gespeichert. Die SQL Abfrage sieht im Klartext wie folgt aus.
+<pre>
+SELECT Artikel.[Artikel-Nr], Artikel.Artikelname 
+	FROM Artikel INNER JOIN Kategorien
+	ON Artikel.[Kategorie-Nr]=Kategorien.[Kategorie-Nr]
+	WHERE Kategorien.Kategoriename = 'Meeresfr&uuml;chte' 
+</pre>
+</p>
+<p>
+Das Ergebnis dieser SQL Abfrage wird im Recordset mit dem Namen <i>rs</i> von ADO bereitgestellt, die Werte 
+der Felder ausgelesen und zum Browser geschickt. 
+</p>
+<p>
+Zu guter letzt macht das Skript noch Ordnung und schlie&szlig;t das Recordset und die Connection um deren 
+Ressourcen wieder zur Verf&uuml;gung zu stellen.
+</p>
+<p>
+Was schon anhand dieses kleinen Beispieles ersichtlich ist: Um Daten aus einer Datenbank in einem ASP 
+Skript verwenden zu k&ouml;nnen, ist es durchaus hilfreich, wenn man ein gesundes Wissen &uuml;ber die Grundlagen 
+der Datenbankprogrammierung und der Sprache SQL hat. 
+</p>
+<p>
+ADO bietet dar&uuml;ber hinaus noch einige andere M&ouml;glichkeiten um mit wenig Aufwand Daten zu manipulieren. 
+Die Verwendung h&auml;ngt wie so oft vom Einsatzgebiet und pers&ouml;nlichen Vorlieben ab.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000518.htm">ADO Konstanten und die Datei Adovbs.inc</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000518.htm</span><br>
+<a href="../artikel/20001023.htm">Das SQL Join Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001023.htm</span><br>
+<a href="../artikel/20001201.htm">Die SQL ORDER BY Clause</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001201.htm</span><br>
+<a href="../artikel/20001107.htm">Einf&uuml;gen eines Datensatzes mit dem INSERT Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001107.htm</span><br>
+<a href="../artikel/20000516.htm">Einsatz des Recordset Objektes als Multifunktionaler Datenspeicher</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000516.htm</span><br>
+<a href="../artikel/20001013.htm">Highspeed-Abfragen einer SQL Server Datenbank</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001013.htm</span><br>
+<a href="../artikel/20010620.htm">Intelligente Meta-Tags</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010620.htm</span><br>
+<a href="../artikel/19990826.htm">ODBC und ASP - Eine DSN zur Verwendung mit ASP definieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990826.htm</span><br>
+<a href="../artikel/20010515.htm">Universal Data Links mit ASP verwenden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010515.htm</span><br>
+<a href="../artikel/20010213.htm">Update und UpdateBatch zum Einf&uuml;gen von Datens&auml;tzen in Datenbanken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010213.htm</span><br>
+<a href="../artikel/20001030.htm">Uploaden einer beliebigen Datei in eine Datenbank</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001030.htm</span><br>
+<a href="../artikel/20000606.htm">Zugriff auf autom. generierte ID beim Einf&uuml;gen eines Datensatzes</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000606.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

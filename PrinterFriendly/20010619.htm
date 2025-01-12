@@ -1,0 +1,262 @@
+<HTML>
+<HEAD>
+<TITLE>Transaktionen in C# Business Tier Komponenten</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Heute werde ich zeigen, da&szlig; das &uuml;ber COM+ Applikationen erworbene Wissen auch in .NET verwendbar ist - und die Anwendung sogar deutlich leichter geworden ist!">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,MTS,COM+,EnterpriseServices,COM+ application,MTS package,ServicedComponent,Transaktion,Transaction,ACID,properties,GAC,global assembly cache">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Transaktionen in C# Business Tier Komponenten</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010619"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Im Laufe der Zeit hat man sich ja sozusagen die COM+ Applikationen (aka MTS Packages) angew&ouml;hnt, und 
+zwar einerseits als Object Broker, und andererseits als Provider von Transaktionen &uuml;ber Komponentengrenzen
+hinweg. Heute werde ich zeigen, da&szlig; das erworbene Wissen auch in .NET verwendbar ist - und die Anwendung
+sogar deutlich leichter geworden ist!
+</p>
+
+<p>
+Um den heute vorgestellten Code verwenden zu k&ouml;nnen, mu&szlig; am Rechner das Microsoft .NET SDK installiert sein.
+</p>
+
+<h2>Erstellen der Komponente</h2>
+<p>
+Eine l&auml;stige T&auml;tigkeit bei der Verwendung von COM+ Applikationen war ja, da&szlig; man die Applikation h&auml;ndisch
+anlegen und jede einzelne Komponente mit ihren Transaktionsattributen dort registrieren mu&szlig;te. Damit
+komme ich zur besonders guten Nachricht des Tages: in .NET f&auml;llt das weg, die Komponenten registrieren sich 
+selbst&auml;ndig - man mu&szlig; nur Attribute in der Komponente setzen, den Rest erledigt .NET!
+</p>
+<p>
+Eine &Auml;nderung zu COM+ mu&szlig; man aber beachten: es gibt in .NET keine GUID's zur eindeutigen Komponentenidentifizierung
+mehr, diesen Platz nimmt das Konzept der <b>Strong Names</b> ein. Grunds&auml;tzlich handelt es sich dabei um nichts
+anderes als einen kryptographischen Fingerprint der Komponente, der absolut eindeutig ist. Allerdings
+um der Kryptographie gen&uuml;ge zu tun, mu&szlig; man sich ein Keyfile anlegen, und zwar mit Hilfe des <b>sn.exe</b>
+Utility's:
+</p>
+
+<pre style="background='silver';">
+sn -k MyComponent.snk
+</pre>
+
+<p>
+Im Normalfall wird das generierte Keyfile "weggesperrt", weil damit die Echtheit der Komponente bescheinigt wird. Aber
+in unserem ersten einfachen Beispiel lassen wir das generierte Keyfile im Projektverzeichnis "herumliegen".
+Es ist einfach einfacher.
+</p>
+
+<p>
+Schauen wir uns nun an, wie die Komponente dieses Keyfile verwendet (<b>complusservices.cs</b>):
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.EnterpriseServices;
+using System.Reflection;
+
+// This is the name that will appear in the COM+ catalog
+[assembly: ApplicationName("MyComponent")]
+
+// Strong name for assembly.
+[assembly: AssemblyKeyFile("MyComponent.snk")]
+
+namespace AspHeute
+{
+ //... to be continued
+</pre>
+
+<p>
+Das Keyfile wird im <i>AssemblyKeyFile</i> Attribut angegeben - und das war auch schon alles. Den Rest &uuml;bernimmt
+der Compiler f&uuml;r uns. Also keine gro&szlig;e Sache, mu&szlig; aber f&uuml;r jede in COM+ eingebundene .NET Komponente gemacht
+werden.
+</p>
+
+<p>
+Das <i>ApplicationName</i> Attribut ist unser Gratisticket zur Installation als COM+ Application - unter
+diesem Namen wird nach dem ersten Aufruf unsere Komponente registriert sein - cool, nicht wahr?
+</p>
+
+<p>
+Der <i>System.Reflection</i> Namespace ist f&uuml;r das <i>AssemblyKeyFile</i> Attribut inkludiert, der
+<i>System.EnterpriseServices</i> Namespace hingegen dient der Komponente selbst:
+</p>
+
+<pre style="background='silver';">
+	[Transaction(TransactionOption.Required)]
+	public class MyClass : ServicedComponent 
+	{
+	    [AutoComplete]
+	    public String TransactedMethod(int amount) 
+	    {
+	        return "A-OK";
+	    }
+	    
+	    public void VoteOK()
+	    {
+	    	ContextUtil.SetComplete();
+	    }
+	    
+	    public void VoteNo()
+	    {
+	    	ContextUtil.SetAbort();
+	    }
+	}
+</pre>
+
+<p>
+Wieder einmal sind die Attribute unsere Eintrittskarte zu COM+. Mit <i>Transaction</i> gibt man an,
+da&szlig; die folgende von <i>ServicedComponent</i> abgeleitete Komponente in COM+ arbeiten wird - und
+zwar mit einem der entsprechenden Transaktionsattribute: Disabled, NotSupported, Required, RequiresNew
+oder Supported. Nun sind alle Infrastruktur-Tasks erf&uuml;llt, der Rest ist dann der tats&auml;chliche Code
+der Businesskomponente. 
+</p>
+<p>
+Ich habe drei einfache Methoden eingebaut: <i>TransactedMethod</i>, <i>VoteOK</i> und <i>VoteNo</i>.
+Die letzten beiden funktionieren nach dem bekannten Prinzip explizit zum Ausgang einer Transaktion zu
+voten, und zwar entweder mit <i>SetComplete</i> oder <i>SetAbort</i>. Interessanter weil neu ist hingegen
+das Attribut <i>AutoComplete</i> - was bedeutet das? Nun, einfaches und bequemes programmieren: tritt
+eine Exception auf, voted die Methode mit <i>SetAbort</i> - l&auml;uft der Code OK ab, votet sie automatisch mit
+<i>SetComplete</i>. Bequem, nicht wahr?
+</p>
+<p>
+Damit h&auml;tten wir eine voll funktionsf&auml;hige Komponente fertig. Sie mu&szlig; nur noch kompiliert werden. Der
+Faulheit halber habe ich <a href="http://www.icsharpcode.net/opensource/sd/" target="_blank">SharpDevelop</a>
+verwendet, aber wer es gerne selbst macht: man braucht die Reference f&uuml;r <i>System.EnterpriseServices</i>, der
+Rest kommt automatisch mit.
+</p>
+
+<h2>Die Komponente aufrufen</h2>
+<p>
+Wer jetzt schon in Component Services nachgesehen hat, wird bemerkt haben, da&szlig; die Komponente dort noch
+nicht aufscheint. Dies passiert erst, wenn man sie das erste Mal aufruft. Deshalb schreiben wir uns
+ein kleines Kommandozeilenprogramm (<b>Main.cs</b>), eine ASP.NET Seite folgt danach:
+</p>
+
+<pre style="background='silver';">
+using System;
+using AspHeute;
+
+class MainClass
+{
+	public static void Main(string[] args)
+	{
+		MyClass var = new MyClass();
+		Console.WriteLine(var.TransactedMethod(10));
+	}
+}
+</pre>
+
+<p>
+Dieses Programm mit unserer Komponente als Reference kompiliert, und schon haben wir eine kleine
+(nutzlose) Clientapplikation. Aber: nach dem ersten Ausf&uuml;hren ist die Komponente in COM+ registriert:
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010619_1.png" width="630" height="531" alt="" border="0">
+
+<p>
+Und funktioniert hat sie auch beim ersten Mal (nur langsam, wegen der Registrierung). Alle weiteren
+Aufrufe sind ab nun enorm schnell, und ja, wir k&ouml;nnen mit Transaktionen arbeiten. Es war wirklich so
+einfach!
+</p>
+
+<p>
+Nun aber zum ASP.NET Beispiel, das so anders eigentlich nicht ist (<b>tactedinaspnet.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Assembly Name="System.EnterpriseServices" %&gt;
+&lt;% @Import Namespace="System.EnterpriseServices" %&gt;
+&lt;% @Import Namespace="AspHeute" %&gt;
+&lt;%
+MyClass var = new MyClass();
+string strResult = var.TransactedMethod(10);
+Response.Write(strResult);
+%&gt;
+</pre>
+
+<p>
+Nur den <i>System.EnterpriseServices</i> Namespace mu&szlig;te ich extra angeben, da ASP.NET Pages selbst zu Assemblies
+kompiliert werden (und dadurch sonst die Reference fehlen w&uuml;rde). Ach ja - das <i>bin</i> Verzeichnis
+ist ein guter Ort zur "Aufbewahrung" der Komponente, au&szlig;er man registriert die Komponentenassembly
+(korrekterweise) im GAC - dem Global Assembly Cache. Aber das ist ein andere Geschichte...
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Der heutige Artikel war ein Schnellstkurs zur Komponentenerstellung in C#, und deren Integration in
+COM+ Applications. Die Botschaft des Artikels soll sein, da&szlig; es niemals leichter war Business Komponenten
+mit Transaktionen zu erstellen als unter .NET - und man diese Gelegenheit ergreifen sollte.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010619.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010619.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001012.htm">Einf&uuml;hrung: C#-Klassen in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001012.htm</span><br>
+<a href="../artikel/20010322.htm">In VB Komponenten auf ASP Objekte zugreifen (Variante 2)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010322.htm</span><br>
+<a href="../artikel/20000828.htm">Verwenden von COM Komponenten in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000828.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Edotnetgerman%2Ecom%2F">DotNetGerman Diskussionslisten</a><br>
+<SPAN class="content">http://www.dotnetgerman.com/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

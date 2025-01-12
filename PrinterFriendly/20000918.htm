@@ -1,0 +1,252 @@
+<HTML>
+<HEAD>
+<TITLE>Emails mit ASP.NET versenden</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor, wie man in ASP.NET mit Hilfe der SmtpMail, MailMessage und MailAttachment Objekte bequem Emails mit Hilfe des SMTP Services verschicken kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP.NET,Email,MailMessage,SmtpMail,MailAttachment,Send,.NET,framework,C#,CSharp,C Sharp">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Emails mit ASP.NET versenden</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000918"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Etwas, das sich heutzutage auf jeder Website findet, ist ein Email-Anfrageformular. Das wird sich wahrscheinlich
+auch nicht so schnell &auml;ndern, deswegen werde ich heute vorstellen, wie man Emails in ASP.NET verschickt: von ganz
+einfach bis hin zu HTML Mails und Attachments.
+</p>
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation 
+des Microsoft .NET Framework SDK's auf einem Webserver. Weiters setze ich voraus, da&szlig; der 
+Leser die Programmiersprache C# zu einem gewissen Grad beherrscht - es finden sich etliche 
+Artikel auf diesem Server, um das notwendige Wissen zu erlernen. 
+</p>
+
+<h2>Die schnellste Variante</h2>
+<p>
+Es gibt immer eine Variante, die man in die Rubrik "Quick and Dirty" einreihen kann. Mit dieser m&ouml;chte ich
+auch diesmal anfangen, weil man damit die Serverkonfiguration relativ einfach austesten kann, ohne sonstige
+Seiteneffekte einkalkulieren zu m&uuml;ssen (<b>SimpleMail.aspx</b>).
+</p>
+<p>
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Web.Mail&quot; %&gt;
+&lt;%
+string strTo = &quot;christophw@sleeper.Dev.AlfaSierraPapa.Com&quot;;
+string strFrom = &quot;webmaster@aspheute.com&quot;;
+string strSubject = &quot;Hi Chris&quot;;
+
+SmtpMail.Send(strFrom, strTo, strSubject,
+  &quot;A real nice body text here&quot;);
+
+Response.Write(&quot;Email was queued to disk&quot;);
+%&gt;
+</pre>
+</p>
+<p>
+Das Ergebnis - wenn alles funktioniert hat - sieht wie der folgende Screenshot aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200009/20000918_1.png" width="420" height="296" border="0" alt="">
+
+<p>
+Was passiert nun eigentlich im Script? Der gesamte Emailsupport befindet sich <i>System.Web.Mail</i> Namespace. 
+In diesem Namespace findet sich die Klasse <i>SmtpMail</i>, deren statische <i>Send</i> Methode 
+vier Parameter annehmen kann:
+</p>
+
+<pre style="background='silver';">
+SmtpMail.Send(From, To, Subject, BodyText);
+</pre>
+
+<p>
+Wie gesagt sehr simpel, allerdings hat sie eines mit den funktionaleren Emailversandoptionen gemeinsam: der SMTP
+Server mu&szlig; der lokal installierte SMTP Service des IIS sein - man kann keinen anderen verwenden. In diesem Aspekt
+ist der Emailsupport von ASP.NET ident mit den CDONTS von ASP 3.0.
+</p>
+
+<h2>Eine HTML Email verschicken</h2>
+<p>
+Lassen wir nun diese doch zu einfache Mailmethode hinter uns, und sehen uns ein sehr funktionales Objekt an: die
+<i>MailMessage</i> Klasse. Diese "kapselt" alles, was man sich von einer Email w&uuml;nscht - das folgende Beispiel
+demonstriert die Verwendung anhand einer kurzen HTML Email (<b>SimpleMailMessage.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Web.Mail&quot; %&gt;
+&lt;%
+MailMessage msgMail = new MailMessage();
+
+msgMail.To = &quot;christophw@sleeper.Dev.AlfaSierraPapa.Com&quot;;
+msgMail.Cc = &quot;webmaster@sleeper.Dev.AlfaSierraPapa.Com&quot;;
+msgMail.From = &quot;webmaster@aspheute.com&quot;;
+msgMail.Subject = &quot;Hi Chris, another mail&quot;;
+
+msgMail.BodyFormat = MailFormat.Html;
+string strBody = &quot;&lt;html&gt;&lt;body&gt;&lt;b&gt;Hello World&lt;/b&gt;&quot; +
+   &quot; &lt;font color=\&quot;red\&quot;&gt;ASP.NET&lt;/font&gt;&lt;/body&gt;&lt;/html&gt;&quot;;
+msgMail.Body = strBody;
+
+SmtpMail.Send(msgMail);
+
+Response.Write(&quot;Email was queued to disk&quot;);
+%&gt;
+</pre>
+
+<p>
+Das sieht vom Code her doch gleich viel besser aus, und vor allem hat man deutlich mehr Optionen als bei der ersten
+<i>Send</i> Methode. Zuerst setzt man die <i>To</i>, <i>From</i> und <i>Subject</i> Eigenschaften des <i>MailMessage</i> Objekts, und
+dann setzt man <i>BodyFormat</i> auf den Wert <i>Html</i> aus der <i>MailFormat</i> Enumeration. Und schon kann man
+eine HTML-formatierte Email verschicken.
+</p>
+<p>
+Erw&auml;hnenswert ist, da&szlig; alle Overloads der <i>Send</i> Methode keinen R&uuml;ckgabewert ob des Erfolgs des Emailversands
+haben. Der Grund hierf&uuml;r ist, da&szlig; die Emails einfach als Datei in den <i>Pickup</i> Folder des <i>Inetpub</i> Verzeichnisses 
+geschrieben werden, von wo aus der SMTP Service sie liest und verschickt. Fehlerhafte Mails (Versandfehler) finden
+sich ebenfalls als Dateien, diesmal aber im <i>Bad</i> Folder.
+</p>
+<p>
+Als Nachtrag m&ouml;chte ich jetzt noch den Screenshot der Email liefern.
+</p>
+
+<IMG SRC="/artikel/Bilder/200009/20000918_2.png" width="470" height="274" alt="" border="0">
+
+<h2>Attachments versenden</h2>
+<p>
+Mit gewissen Mailkomponenten sind Attachments ein wenig abenteuerlich zu verwenden. Mit .NET ist es nur ein
+weiteres, einfach zu verwendendes Objekt: <i>MailAttachment</i>. Der folgende Code demonstriert, wie man das 
+Attachment an eine <i>MailMessage</i> anh&auml;ngen kann (<b>MailAttachment.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Web.Mail&quot; %&gt;
+&lt;%
+MailMessage msgMail = new MailMessage();
+
+msgMail.To = &quot;christophw@sleeper.Dev.AlfaSierraPapa.Com&quot;;
+msgMail.From = &quot;webmaster@aspheute.com&quot;;
+msgMail.Subject = &quot;Attachment Test&quot;;
+
+msgMail.BodyFormat = MailFormat.Text;
+msgMail.Body = &quot;Check out the attachment!&quot;;
+msgMail.Attachments.Add(new MailAttachment(&quot;c:\\temp\\annual-report.pdf&quot;));
+
+SmtpMail.Send(msgMail);
+
+Response.Write(&quot;Email was queued to disk&quot;);
+%&gt;
+</pre>
+
+<p>
+Die Zeile 
+</p>
+
+<pre style="background='silver';">
+msgMail.Attachments.Add(new MailAttachment(&quot;c:\\temp\\annual-report.pdf&quot;));
+</pre>
+
+<p>
+k&ouml;nnte man auch wie folgt programmieren:
+</p>
+
+<pre style="background='silver';">
+MailAttachment maAttach = new MailAttachment(&quot;c:\\temp\\annual-report.pdf&quot;);
+IList msgAttachments = msgMail.Attachments;
+msgAttachments.Add(maAttach);
+</pre>
+
+<p>
+Den Punkt, den ich damit illustrieren will ist der, da&szlig; die Attachments &uuml;ber ein <i>IList</i> Interface (findet
+sich im <i>System.Collections</i> Namespace) angegriffen werden - und dieses die <i>Add</i> Methode zur Verf&uuml;gung stellt.
+Dieses <i>IList</i> Interface kann man auch zum Aufz&auml;hlen oder L&ouml;schen von Attachments verwenden. Und ein Nachtrag zum
+Konstruktor von <i>MailAttachment</i> ist auch f&auml;llig: man k&ouml;nnte den Encoding Type festlegen (was allerdings selten notwendig
+werden d&uuml;rfte).
+</p>
+<p>
+Einen Screenshot bin ich auf noch schuldig - so sieht das Attachment in Outlook Express aus. Geringer Programmieraufwand,
+gro&szlig;e Wirkung (wenn man etwas sinnvolles versendet).
+</p>
+
+<IMG SRC="/artikel/Bilder/200009/20000918_3.png" width="520" height="318" border="0" alt="">
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Das war's f&uuml;r den heutigen Crashkurs in Emailversand in ASP.NET. Ich habe die Objekte vorgestellt, die man verwenden kann,
+um mit Bordmitteln seinen Kunden - oder sich selbst - &uuml;ber den Webserver eine Nachricht zukommen zu lassen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000918.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000918.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20021028.htm">ACT MetaMailer - Mails verschicken leicht gemacht</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021028.htm</span><br>
+<a href="../artikel/20001009.htm">Das Versenden von Emails selbst programmieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001009.htm</span><br>
+<a href="../artikel/20031010.htm">Einstieg in Visual Studio.NET - die erste Webanwendung mit Visual C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20031010.htm</span><br>
+<a href="../artikel/20010122.htm">Emails mit ASP.NET und VB.NET versenden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010122.htm</span><br>
+<a href="../artikel/20010219.htm">Emails versenden mit ASPEmail</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010219.htm</span><br>
+<a href="../artikel/20010625.htm">Html Emails mit Dundas Mailer verschicken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010625.htm</span><br>
+<a href="../artikel/20040303.htm">Vergleich von DataGrid, DataList und Repeater-Control - was verwende ich wann?</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040303.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

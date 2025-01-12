@@ -1,0 +1,238 @@
+<HTML>
+<HEAD>
+<TITLE>Klassen in VBScript</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Seit Version 5.0 bietet VBScript die M&ouml;glichkeit, Klassen anzulegen und somit mit Eigenschaften und Methoden zu arbeiten. Ob sich Klassen wirklich sinnvoll in VBScript einsetzen lassen, soll dieser Artikel kl&auml;ren.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,VBScript,Class,Public,Private,Property,Get,Let,Set,Klasse,End Class,objektorientiert,Objekt">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Klassen in VBScript</H1>
+<p>
+Geschrieben von: <a href="../autoren/patricka_lorenz.htm">Patrick A. Lorenz</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000526"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Seit Version 5.0 bietet VBScript die M&ouml;glichkeit, Klassen anzulegen und somit mit Eigenschaften und Methoden 
+zu arbeiten. Jeder Entwickler einer h&ouml;heren Sprache wie VB, Delphi, C, etc. wird jetzt vor Vorfreude nerv&ouml;s mit 
+den Augen zucken, aber ob sich Klassen wirklich sinnvoll in VBScript einsetzen lassen, soll 
+dieser Artikel kl&auml;ren.
+</p>
+<p>
+Wie normale Funktionen werden auch Klassen im normalen Kontext einer VBScript Datei notiert und nicht in 
+einer separaten Datei, wie etwa in VB. Es wurde hierzu die Schl&uuml;sselworter <i>Class</i> und <i>End Class</i> eingef&uuml;hrt, die 
+die eigentliche Klasse einrahmen.
+<pre style="background=silver;">
+Class ClassName
+...
+End Class
+</pre>
+</p>
+<p>
+Innerhalb der Klasse lassen sich nun mit Hilfe von 
+<pre style="background=silver;">
+[Private|Public] [Default] Sub|Function() 
+</pre>
+und 
+<pre style="background=silver;">
+[Private|Public] [Default] Property Get|Let|Set()
+</pre>
+</p>
+<p>
+Methoden und Eigenschaften implementieren. Der Syntax orientiert sich dabei am gro&szlig;en Visual Basic. 
+</p>
+
+<h2>Die Beispiel-Klasse TextOut</h2>
+<p>
+Die im folgenden dargestellte Klasse soll einen beliebigen Text in der Eigenschaft <b>Text</b> aufnehmen und diesen 
+bei Aufruf der Methode <b>WriteLn</b> ausgeben. Der Code f&uuml;r die Klasse TextOut sowie den Code zum Testen der Klasse 
+kann man in einer ASP Datei zusammenfassen:
+<pre style="background=silver;">
+&lt;% @LANGUAGE = "VBScript" %&gt
+&lt;%
+Class TextOut
+
+ 'Deklarationen
+ Dim m_Text
+
+ '&Ouml;ffentliche Eigenschaft Text
+ Public Property Get Text
+  Text = m_Text
+ End Property
+
+ Public Property Let Text(newText)
+  m_Text = newText
+ End Property
+
+ '&Ouml;ffentliche Methode WriteLn()
+ Public Function WriteLn()
+  Response.Write Text  ' f&uuml;r ASP
+  ' WScript.Echo Text    ' f&uuml;r WSH
+ End Function
+ 
+End Class
+
+Dim x
+Set x = New TextOut
+With x
+ .Text = "Hallo Welt"
+ .WriteLn()
+End With
+%&gt;
+</pre>
+</p>
+<p>
+Die Klasse TextOut verf&uuml;gt &uuml;ber eine Eigenschaft Text, auf die lesend und schreibend zugegriffen werden kann. 
+Der Inhalt der Eigenschaft wird in der Member Variable m_Text gespeichert. Zudem gibt es die Methode WriteLn 
+mit dem der Inhalt der Eigenschaft ausgegeben werden kann - und zwar im Falle von ASP mit Response.Write. 
+</p>
+<p>
+Vor dem Aufruf mu&szlig; die Klasse mit dem neuen Schl&uuml;sselwort <i>New</i> instanziert werden, <i>CreateObject</i> kann nicht 
+verwendet werden. Danach kann das Objekt verwendet werden, indem man Eigenschaften und Methoden aufruft.
+</p>
+
+<h2>Die optionalen Schl&uuml;sselw&ouml;rter</h2>
+<p>
+Interessant sind auch die optionalen Schl&uuml;sselw&ouml;rter <i>Private</i> und <i>Public</i>, &uuml;ber die man wie im gro&szlig;en Bruder 
+VB angeben kann, ob eine Eigenschaft oder Methode &ouml;ffentlich oder privat verwendet werden soll. Bei einer 
+&ouml;ffentlichen Deklaration ist der Zugriff von au&szlig;en m&ouml;glich, bei einer privaten nur von innerhalb der Klasse. 
+</p>
+<p>
+Wird weder Public noch Private bei der Deklaration angegeben, so nimmt VBScript automatisch Public an. Neben 
+Methoden lassen sich auch Variablen als Public definieren, und sind somit &ouml;ffentlich zugreifbar. Dies erm&ouml;glicht 
+den Wegfall des <i>Property Get|Let|Set</i> Konstruktes, was den Schreibaufwand unter Umst&auml;nden enorm reduzieren kann. 
+</p>
+<p>
+Verk&uuml;rzt sieht unser obiges Beispiel wie folgt aus:
+<pre style="background=silver;">
+&lt;%
+Class TextOut
+ 
+ '&Ouml;ffentliche Variable Text
+ Public Text
+
+ '&Ouml;ffentliche Methode WriteLn()
+ Public Default Function WriteLn()
+  Response.Write Text  ' f&uuml;r ASP
+  ' WScript.Echo Text    ' f&uuml;r WSH
+ End Function
+ 
+End Class
+
+Set x = New TextOut
+x.Text = "Hallo Welt"
+x
+%&gt;
+</pre>
+</p>
+<p>
+Im letzten Beispiel wurde das das Schl&uuml;sselwort Default verwendet. Hier&uuml;ber l&auml;&szlig;t sich eine Methode oder 
+Eigenschaft festlegen, die nicht angegeben werden mu&szlig; um standard(default)m&auml;&szlig;ig aufgerufen zu werden. Bei 
+Eigenschaften kann hier aber nur der Get Teil verwendet werden, da bedingt durch das Late Binding von 
+VBScript der Wert ansonsten nicht der Standard-Eigenschaft sondern der instanzierten Klasse selbst zugewiesen 
+werden w&uuml;rde und diese somit terminiert werden w&uuml;rde.
+</p>
+
+<h2>Praxis-Einsatz</h2>
+<p>
+Soweit die Theorie der Klassen in VBScript, aber wie sieht es nun aber in der Praxis aus? Als ich mich das 
+erste Mal mit VBScript Klassen besch&auml;ftigt habe, schossen mir sofort Gedanken an Warenk&ouml;rbe, 
+Benutzer-Verwaltungen, etc. in den Kopf. Sofort habe ich eine erste Klasse geschrieben und diese in einer 
+Include-Datei abgelegt. Nun habe ich zwei ASP Seiten erstellt, die beide die Klasse included haben. Die erste 
+Seite hat die Klasse in einer Variablen mit Session Scope instanziert und einige Eigenschaften zugewiesen. Die 
+zweite Seite versucht nun, auf die Eigenschaften der Klasse zuzugreifen. Ergebnis: Ein ASP Runtime Error. 
+Microsoft &auml;u&szlig;ert sich im Knowledgebase Artikel Q246596 dazu, best&auml;tigt und nennt als L&ouml;sung: "Only use 
+VBScript classes with page-level scope.". Schade, w&auml;re es doch so sch&ouml;n gewesen.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Das Klassen-Konstrukt von VBScript bietet eine Reihe von interessanten M&ouml;glichkeiten, die sich gerade in 
+Verbindung mit Includes sehr gut nutzen lassen. Als Anwendungsbeispiel f&auml;llt mir hier spontan ein allgemeiner 
+Mail-Parser ein, der auf der einen Seite mit Variablen und deren Inhalt gef&uuml;llt wird und auf der anderen 
+Seite ein angegebenes Textfile parst und das Ergebnis versendet. Dieser Parser soll Inhalt eines weiteren 
+Artikels sein. 
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000526.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000526.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000602.htm">Allgemeine MailParser-Klasse mit ASPMail</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000602.htm</span><br>
+<a href="../artikel/20010605.htm">CSVs aus MDBs leicht gemacht</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010605.htm</span><br>
+<a href="../artikel/20010607.htm">Daten aus CSV-Dateien in MDBs importieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010607.htm</span><br>
+<a href="../artikel/20020320.htm">Flash Detection ohne Komponente</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020320.htm</span><br>
+<a href="../artikel/20020430.htm">Gro&szlig;e Datenmengen in Formularfeldern erfolgreich auslesen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020430.htm</span><br>
+<a href="../artikel/20020408.htm">Klassenauflistungen mit dem Dictionary-Objekt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020408.htm</span><br>
+<a href="../artikel/20020411.htm">Kopieren verboten - Lizenzsicherung bei ASP Scripts</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020411.htm</span><br>
+<a href="../artikel/20010606.htm">RemoteScripting - Einf&uuml;hrung, Tips und Tricks</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010606.htm</span><br>
+<a href="../artikel/20011112.htm">Strukturierter Aufbau in der ASP-Programmierung</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011112.htm</span><br>
+<a href="../artikel/20010423.htm">Tracing in ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010423.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsupport%2Emicrosoft%2Ecom%2Fsupport%2Fkb%2Farticles%2FQ246%2F5%2F96%2EASP">Only use VBScript classes with page-level scope</a><br>
+<SPAN class="content">http://support.microsoft.com/support/kb/articles/Q246/5/96.ASP</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

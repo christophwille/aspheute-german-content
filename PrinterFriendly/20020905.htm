@@ -1,0 +1,193 @@
+<HTML>
+<HEAD>
+<TITLE>Wochenberechnung mit .NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Die Frage des Tages lautet: Wie erh&auml;lt man die Nummer der Woche f&uuml;r ein vorgegebenes Datum?">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,DateTime,Globalization,DateTimeFormatInfo,CurrentInfo,CalendarWeekRule,DayOfWeek,DayOfYear,GetWeekOfYear,GregorianCalendar">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Wochenberechnung mit .NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020905"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Die Frage des Tages lautet: Wie erh&auml;lt man die Nummer der Woche f&uuml;r ein vorgegebenes Datum? Nun, die <i>Week</i>
+Funktion aus dem guten, alten VBScript gibt es nicht mehr, und auch die DateTime Klasse stellt keinerlei Methoden
+oder Eigenschaften zur Verf&uuml;gung - wie also kommen wir wirklich vom Datum zur Woche?
+</p>
+<p>
+Es f&uuml;hren wie immer viele Wege nach Rom, einige davon sind steiniger als andere. Beginnen wir also zun&auml;chst mit
+dem steinigsten:
+</p>
+
+<pre style="background='silver';">
+public class Week {
+  public static int FromDateTime(DateTime dt) 
+  {
+    DateTime dtFirstOfYear = new DateTime(dt.Year, 1, 1);
+    int dowFirst = (int)dtFirstOfYear.DayOfWeek;
+    int dowDate = (int)dt.DayOfWeek;
+    
+    // fix american format of week
+    if (0 == dowFirst) dowFirst = 7;
+    if (0 == dowDate) dowDate = 7;
+    
+    int nWeek = dt.DayOfYear / 7;
+    
+    if (0 == nWeek) {
+      nWeek++;
+    }
+    else if (dowDate &lt;= dowFirst) {
+      nWeek++;
+    }
+  
+    return nWeek;
+  }
+}
+</pre>
+
+<p>
+Das ist die L&ouml;sung namens "zu Fu&szlig;" - wir errechnen uns die Woche selbst mittels der <i>DayOfWeek</i> und of <i>DayOfYear</i>
+Eigenschaften der <i>DateTime</i> Klasse. Eine wichtige Angelegenheit in punkto Internationalisierung regelt die Implementierung
+auch noch: die Enum <i>DayOfWeek</i> ist amerikanisch ausgelegt, mit Sonntag als erstem Tag der Woche - dieser wird f&uuml;r unsere
+Breiten auf den letzten Tag der Woche umgestellt.
+</p>
+<p>
+Weil wir gerade von Internationalisierung reden - gibt es da nicht den <i>System.Globalization</i> Namespace? Jawohl,
+und der h&auml;lt auch eine elegante L&ouml;sung f&uuml;r unser Problem bereit:
+</p>
+
+<pre style="background='silver';">
+  public static int InteractiveGetWeekOfYear(DateTime dt)
+  {
+    Calendar cal = DateTimeFormatInfo.CurrentInfo.Calendar;
+    
+    int nWeek = cal.GetWeekOfYear(dt,
+        DateTimeFormatInfo.CurrentInfo.CalendarWeekRule,
+        DateTimeFormatInfo.CurrentInfo.FirstDayOfWeek);
+    
+    return nWeek;
+  }
+</pre>
+
+<p>
+Diese L&ouml;sung wird dann verwendet, wenn man die Woche "relativ" zum interaktiven User der Applikation errechnen
+m&ouml;chte, also zB eine Windows Forms Anwendung. Nicht gut ist dieser Ansatz, wenn die Anwendung
+f&uuml;r einen bestimmten Kulturkreis immer die gleiche Woche errechnen soll (also zB eine ASP.NET Serverapplikation). Dort
+"hardcodiert" man die entsprechenden Vorgaben:
+</p>
+
+<pre style="background='silver';">
+  public static int AbsoluteGetWeekOfYear(DateTime dt)
+  {
+    GregorianCalendar cal = new GregorianCalendar();
+    
+    int nWeek = cal.GetWeekOfYear(dt, 
+            CalendarWeekRule.FirstDay,
+            DayOfWeek.Monday);
+    return nWeek;
+  }
+</pre>
+
+<p>
+Dieser Ansatz ist die beste L&ouml;sung, wenn man will, da&szlig; jeder User egal welche L&auml;ndereinstellungen er getroffen hat,
+immer der gleichen Wochenberechnung "ausgeliefert" ist. Grunds&auml;tzlich geht meine Empfehlung zu dieser Variante, da
+gerade individuelle L&auml;ndereinstellungen in internationalen Unternehmen stark verbreitet sind.
+</p>
+<p>
+Als Abschlu&szlig; noch die Anwendung der verschiedenen Ans&auml;tze:
+</p>
+
+<pre style="background='silver';">
+  public static void Main(string[] args)
+  {
+    Console.WriteLine(Week.FromDateTime(new DateTime(2002, 1, 1))); // Tuesday
+    Console.WriteLine(Week.FromDateTime(new DateTime(2002, 1, 6))); // Sunday, 1st week
+    Console.WriteLine(Week.FromDateTime(new DateTime(2002, 1, 7))); // Monday, 2nd week
+    Console.WriteLine(Week.FromDateTime(new DateTime(2002, 5, 20))); // Monday, 21st week
+    Console.WriteLine(Week.FromDateTime(new DateTime(2002, 10, 29))); // Tuesday, 44th week
+    
+    Console.WriteLine(MainClass.InteractiveGetWeekOfYear(new DateTime(2002, 1, 6)));
+    Console.WriteLine(MainClass.AbsoluteGetWeekOfYear(new DateTime(2002, 1, 6)));
+  }
+</pre>
+
+<p>
+Auf meiner Maschine liefert die vorletzte Zeile die Woche 2, die letzte hingegen Woche 1. Der Grund, wie schon
+erw&auml;hnt sind die L&auml;ndereinstellungen des Users - bei mir US Englisch.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dieser Artikel soll Ihnen kurz und pr&auml;gnant vor Augen f&uuml;hren, welche M&ouml;glichkeiten Ihnen zur Verf&uuml;gung stehen - und
+welche Fallstricke wie zB L&auml;ndereinstellungen der User Ihnen Probleme bereiten k&ouml;nnen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020905.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020905.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000726.htm">Datentypen in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000726.htm</span><br>
+<a href="../artikel/20020226.htm">Ein Touch-Utility in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020226.htm</span><br>
+<a href="../artikel/20010215.htm">Enums lesbar machen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010215.htm</span><br>
+<a href="../artikel/20000714.htm">Kontrollstatements in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000714.htm</span><br>
+<a href="../artikel/20020704.htm">Zahl, Datum und W&auml;hrung korrekt formatiert ausgeben</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020704.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

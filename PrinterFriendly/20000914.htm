@@ -1,0 +1,202 @@
+<HTML>
+<HEAD>
+<TITLE>Hotfix Check Tool f&uuml;r IIS 5.0</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Speziell f&uuml;r Internet Information Services 5.0 unter Windows 2000 hat Microsoft ein Tool herausgebracht, das dem Webmaster einige Sorgen bez&uuml;glich Webserver-Sicherheit abnimmt: das Hotfix Check Tool.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Security,Sicherheit,Hotfix,Service Pack,Fix,Bug,IIS,Check,Tool">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Hotfix Check Tool f&uuml;r IIS 5.0</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000914"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Speziell f&uuml;r Internet Information Services 5.0 unter Windows 2000
+hat Microsoft ein Tool herausgebracht, das dem Webmaster einige Sorgen bez&uuml;glich
+Webserver-Sicherheit abnimmt: das HFCHECK.WSF Tool (kurz f&uuml;r Hotfix Check Tool) 
+erlaubt es, die Webserver Konfiguration auf Hotfixes zu 
+untersuchen. Wenn ein sicherheitsrelevanter Hoftix nicht am Webserver installiert ist,
+so schreibt das HFCheck.wsf Tool eine entsprechende Meldung in das Application Log
+des Webservers.
+</p>
+<p>
+Zuerst einmal zum Download des Tools: Gehen Sie zur 
+<a href="http://www.microsoft.com/Downloads/Release.asp?ReleaseID=24168" target="_blank">HFCheck Tool Webseite</a>
+und laden Sie das Tool auf Ihren Webserver.
+Die Datei hfcinst.exe k&ouml;nnen Sie mit einen Doppelklick starten. Nach dem
+Best&auml;tigen der EULA geben Sie das Verzeichnis an, in das die Tool Dateien kopiert werden
+sollen. Am besten benutzen Sie das Verzeichnis <i>C:\HFCheck</i>.
+</p>
+
+
+<p>
+Das HFCheck Tool durchsucht die Registry des Webservers auf Eintr&auml;ge von Hotfixes
+und vergleicht die gefundenen Hoftfixes mit der Liste, die auf der Microsoftseite 
+<a href="http://www.microsoft.com/technet/security/search/bulletins.xml">http://www.microsoft.com/technet/security/search/bulletins.xml</a> 
+online und auf dem neuesten Stand ist. Findet das Tool einen Hoftix f&uuml;r den IIS 5.0,
+der noch nicht am Webserver installiert ist, so gibt es eine Meldung aus
+und schreibt zus&auml;tzlich eine Warnung in das Event Log des Webservers.
+</p>
+
+
+<h2>Anwendung des HFCheck Tools</h2>
+
+<p>Das HFCheck Tool ist in Form eines Windows Script Files (.wsf) implementiert. 
+Will man es ausf&uuml;hren, so gen&uuml;gt ein Doppelklick im Explorer 
+auf die <i>HFCheck.wsf</i> Datei.</p>
+
+<p>
+Allerdings mu&szlig; daf&uuml;r der Scripting Host auf
+CScript (anstatt standardm&auml;&szlig;ig auf WScript) gesetzt sein. Damit
+man trotzdem das Tool einfach ausf&uuml;hren kann, bedient man sich der folgenden
+Batch Datei mit Namen <i>HFCheck.bat</i> (nicht im Tool enthalten):
+</p>
+
+<p>
+<pre style="background='silver';">
+CScript.exe HFCheck.wsf
+</pre>
+</p>
+
+<p>Diese Batchdatei f&uuml;hrt das Tool mit Hilfe des Command-Line Scripting Host aus.
+Der Aufruf der Datei funktioniert einfach &uuml;ber Doppelklick (siehe Bild 1).</p>
+
+<p><IMG SRC="/artikel/Bilder/200009/20000914_01.png" width=444 height=332 alt="" border="0">
+<br>
+<i>Bild 1: Batch Datei HFCheck.bat im Windows Explorer</i></p>
+
+<p>Nachdem das Tool ausgef&uuml;hrt wurde, kann man im Webserver Event Viewer (Ereignis Protokoll)
+unter Application Log die Warnungen auslesen, die das HFCheck Tool in das Log geschrieben hat
+(siehe Bild 2).</p>
+
+<p><IMG SRC="/artikel/Bilder/200009/20000914_02.png" width=624 height=203 alt="" border="0">
+<br>
+<i>Bild 2: Application Log mit Hoftix Warnungen</i></p>
+
+<p>Mit einem Doppelklick auf die Warnung bekommt man den genauen Text,
+der eine Beschreibung des fehlenden Hotfixes und die zugeh&ouml;rige 
+Internetadresse enth&auml;lt (siehe Bild 3).</p>
+
+<p><IMG SRC="/artikel/Bilder/200009/20000914_03.png" width=404 height=448 border=0 alt="">
+<br>
+<i>Bild 3: Text der Warnung</i></p>
+
+<p>
+Mit einem Klick auf den Link kommmt man also direkt zur Beschreibung des Hotfixes,
+der Sicherheitsl&uuml;cke die den Hotfix n&ouml;tig macht und der Downloadadresse,
+unter der man den Sicherheits-Patch downloaden kann.
+</p>
+
+<p>
+Wenn man einmal alle Warnungen gelesen, die Seite des zugeh&ouml;rigen IIS-Patches
+aufgerufen, die entsprechenden Patches downgeloadet und auf dem Webserver installiert hat, 
+so ist es durchaus sinnvoll, das HFCheck Tool periodisch  laufen zu lassen, 
+um auch auf neu erschienene Sicherheitspatches aufmerksam gemacht zu werden.
+</p>
+
+<p>
+Um am Webserver das Tool in bestimmten Intervallen aufzurufen, kann
+man sich des AT.exe Kommandos bedienen. Das AT Kommmando sorgt daf&uuml;r, da&szlig; ein
+bestimmtes Programm (oder Batchfile) in spezifizierten Intervallen aufgerufen wird.
+</p>
+
+<p>
+Die folgenden Kommandos sind in der Kommandozeile (DOS-Prompt) einzugeben
+und sorgen daf&uuml;r, da&szlig; das Batchfile HFCheck.bat jeden Tag bzw. einmal
+in der Woche zu starten:
+</p>
+
+<p>
+<pre style="background='silver';font-size=8pt;">
+AT.EXE  7:00am /INTERACTIVE /every:M,T,W,Th,F  CScript.exe C:\HFCheck\hfcheck.wsf
+AT.EXE 5:00pm /INTERACTIVE /every:Wednesday CScript.exe C:\HFCheck\hfcheck.wsf
+</pre>
+</p>
+
+<p>
+Eventuell fehlende Hotfixes k&ouml;nnen Sie wieder dem Webserver Event Log entnehmen.
+Zu n&auml;heren Information zum AT Kommando konsultieren Sie bitte die Windows 2000
+Hilfe bzw. Dokumentation. Sie k&ouml;nnen solche Tasks allerdings auch &uuml;ber die 
+Systemsteuerung, Scheduled Tasks mit einem Wizard anlegen.
+</p>
+
+<p>
+Nicht ganz unerw&auml;hnt lassen m&ouml;chte ich auch, da&szlig;
+man das HFCheck Tool auch einsetzen kann, um andere Webserver &uuml;ber die 
+Remote-Funktionalit&auml;t von Windows 2000 auf fehlende Hotfixes zu &uuml;berpr&uuml;fen.
+Die daf&uuml;r n&ouml;tigen Schritte entnehmen Sie dem Word Dokument HFCheck.doc,
+das Sie im selben Verzeichnis wie das HFCheck.wsf Tool finden.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Um als Webmaster die Webserver immer auf dem neuesten Stand zu halten
+sollte man nach M&ouml;glichkeit die neuesten Hoftixes f&uuml;r IIS 5.0 
+installieren. Das HFCheck Tool erlaubt es, auf einfache Art und Weise,
+Informationen dar&uuml;ber zu bekommen, welche IIS-Hotfixes auf einem 
+Webserver noch nicht installiert sind.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000807.htm">Windows 2000 Internet Server Security Configuration Tool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000807.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2FDownloads%2FRelease%2Easp%3FReleaseID%3D24168">Windows 2000 IIS 5.0 Hotfix Checking Tool</a><br>
+<SPAN class="content">http://www.microsoft.com/Downloads/Release.asp?ReleaseID=24168</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

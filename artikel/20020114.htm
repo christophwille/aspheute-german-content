@@ -1,0 +1,624 @@
+<HTML>
+<HEAD>
+<TITLE>Automatisches Aktualisieren einer Site per Mail</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wenn man die Aufgabe hat eine Web-Site t&auml;glich oder sogar st&uuml;ndlich mit neuem Inhalt zu f&uuml;llen, ist man meist an seinen Arbeitsplatz gebunden. Sch&ouml;n w&auml;re es doch, wenn man von unterwegs...">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Exchange,Serverskript,COM,Komponente,Scripting,server-side,Mail,Siteupdate,Sitewartung,Fernwartung">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Automatisches Aktualisieren einer Site per Mail</H1>
+<p>
+Geschrieben von: <a href="../autoren/joergneumann.htm">Jörg Neumann</a><br>
+Kategorie: <a href="../kategorien/Server.htm">Server</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020114"></SCRIPT>
+</p>
+<p>
+Wenn man die Aufgabe hat eine Web-Site t&auml;glich oder sogar st&uuml;ndlich mit neuem Inhalt zu f&uuml;llen, ist man 
+meist an seinen Arbeitsplatz gebunden, auf dem man den aktuellen Inhalt erstellt und dann per FTP auf 
+den Server &uuml;bertr&auml;gt. Sch&ouml;n w&auml;re es doch, wenn man von unterwegs mal eben per Mail den aktuellen Stand auf 
+die Site bringen k&ouml;nnte.
+</p>
+
+<p>
+Im heutigen Artikel m&ouml;chte ich beschreiben, wie man mit relativ wenig Aufwand einen 
+Aktualisierungsmechanismus f&uuml;r eine Site auf Grundlage von Microsoft Exchange Server 5.5/2000 erstellen kann.
+</p>
+
+<p>
+Die Funktionsweise ist dabei wie folgt: Der Benutzer schickt eine Mail an eine spezielle Mail-Adresse eines 
+Exchange-Servers. Dieser ruft bei Maileingang eine Funktion einer COM-Komponente auf und &uuml;bergibt ihr den 
+Mailtext. Die Komponente erzeugt daraufhin eine HTML-Datei und versendet sie per FTP an den Webserver.
+</p>
+
+<p>
+Daf&uuml;r sind folgende Arbeitsschritte notwendig:
+</p>
+
+<ul>
+<li>Einrichten eines Mail-Kontos</li>
+<li>Konfiguration von Serverskripts</li>
+<li>Kodieren des Agents</li>
+<li>Kodieren der COM-Komponente</li>
+<li>Erstellen einer Batch-Datei und eines FTP-Skripts f&uuml;r den Versand auf den Webserver</li>
+</ul>
+
+<p>
+Folgende Software ist f&uuml;r die Erstellung des Beispiels n&ouml;tig:
+</p>
+
+<ul>
+<li>Microsoft Exchange 5.5 oder 2000</li>
+<li>Outlook 2000</li>
+<li>Microsoft Visual Basic 5 oder 6</li>
+</ul>
+
+<h2>Einrichten eines Mail-Kontos</h2>
+
+<p>
+Zuerst richten wir in Exchange einen &ouml;ffentlichen Ordner ein, in dem alle eingehenden Mails auflaufen 
+sollen. Im Anschlu&szlig; erstellen wir f&uuml;r diesen Ordner eine E-Mail-Adresse, &uuml;ber die er von au&szlig;en 
+erreichbar ist. An diese Mail-Adresse werden sp&auml;ter die "Aktualisierungsmails" geschickt.  F&uuml;r das 
+Anlegen des Ordners ben&ouml;tigt man nat&uuml;rlich die entsprechenden Rechte auf dem Exchange Server. 
+</p>
+
+<ul>
+<li>Starten Sie auf dem Rechner, auf dem der Exchange Server installiert ist, den Exchange System Manager</li>
+<li>Erweitern Sie den Zweig "Ordner"</li>
+<li>Klicken Sie mit der rechten Maustaste auf den Zweig "&Ouml;ffentliche Ordner"</li>
+<li>W&auml;hlen Sie unter "Neu" den Punkt "&Ouml;ffentlicher Ordner"</li>
+<li>Geben Sie dem Ordner einen beliebigen Namen und klicken Sie auf "OK"</li>
+<li>Klicken Sie mit der rechten Maustaste auf den neuen Ordner und w&auml;hlen Sie unter 
+"Alle Tasks" den Punkt "E-Mail aktivieren"</li>
+<li>Klicken Sie erneut mit der rechten Maustaste auf den Ordner und w&auml;hlen Sie "Eigenschaften"</li>
+<li>Im Reiter "E-Mail-Adressen" klicken Sie auf "Neu"</li>
+<li>In der nun erscheinenden Auswahlliste klicken Sie auf SMTP-Adresse und klicken auf "OK"</li>
+<li>Im nun erscheinenden Fenster geben Sie eine entsprechende Mail-Adresse f&uuml;r den Ordner an 
+(z.B. SiteUpdate@MyCompany.de)
+</li>
+</ul>
+
+<h2>Konfiguration von Serverskripts</h2>
+
+<p>
+Der Exchange Server bietet mit den serverseitigen Agents die M&ouml;glichkeit auf bestimmte Ereignisse zu 
+reagieren und darauf entsprechende Aktionen per VBScript auszuf&uuml;hren. Diese Option mu&szlig; man allerdings erst 
+einschalten, da sie standardm&auml;&szlig;ig ausgeschaltet ist.
+</p>
+
+<p>
+F&uuml;r das Einrichten der Agents mu&szlig; man nicht an den Server, sondern kann das bequem vom Client aus 
+bewerkstelligen. Die folgenden Beispiele verwenden Outlook 2000 als Client. Bei &auml;lteren Versionen 
+sollten das Verfahren aber &auml;hnlich funktionieren.
+</p>
+
+<p>
+Zuerst einmal schaltet man die Option f&uuml;r Serverskripts ein, die sich gut versteckt, in den Tiefen von 
+Outlook befindet.
+</p>
+
+<ul>
+<li>W&auml;hlen Sie aus dem Men&uuml; "Extras" den Punkt "Optionen"</li>
+<li>W&auml;hlen Sie den Tabreiter "Weitere"</li>
+<li>Klicken Sie auf den Button "Erweiterte Optionen"</li>
+<li>Im nun erscheinenden Fenster klicken Sie auf den Button "Add-In-Manager"</li>
+<li>Aktivieren Sie den Punkt "Serverskripts"</li>
+</ul>
+
+<IMG SRC="Bilder/200201/20020114_1.png" width="461" height="471" alt="" border="0">
+
+<h2>Das Serverskript erstellen</h2>
+
+<p>
+Nun kann man f&uuml;r jeden Exchange-Mail-Ordner Skripts definieren, die auf bestimmte Ereignisse reagieren. 
+In den n&auml;chsten Schritten erstellen wir ein Skript f&uuml;r das eingerichtete Mail-Konto, das auf Maileingang 
+reagiert:
+</p>
+
+<ul>
+<li>Klicken Sie mit der rechten Maustaste auf den gew&uuml;nschten Ordner</li>
+<li>W&auml;hlen Sie den Punkt "Eigenschaften"</li>
+<li>W&auml;hlen Sie den Reiter "Agenten"</li>
+<li>Klicken Sie auf den Button "Neu"</li>
+<li>Im nun erscheinenden Fenster w&auml;hlen Sie das Ereignis </li>
+<li>"Bereitstellung eines neuen Objektes in diesem Ordner" aus</li>
+</ul>
+
+<IMG SRC="Bilder/200201/20020114_2.png" width="401" height="357" alt="" border="0">
+
+<ul>
+<li>Klicken Sie auf den Button "Skript bearbeiten"</li>
+</ul>
+
+<p>
+Nun &ouml;ffnet sich der Editor und es erscheint ein VBScript, welches die entsprechenden Event-Handler 
+beinhaltet (vergleichbar mit der Global.asa in ASP).
+</p>
+
+<p>
+Im Event Folder_OnMessageCreated wird nun die entsprechende Aktion in VBScript kodiert. Zuerst einmal 
+ermitteln wir die eingegangene Mail. Hierzu stellt Exchange das Objekt EventDetails zur Verf&uuml;gung.
+</p>
+
+<pre style="background='silver';">
+Dim oMsg
+Set oMsg = EventDetails.Session.GetMessage(EventDetails.MessageID, Null )
+</pre>
+
+<p>
+In oMsg haben wir nun eine Referenz auf das aktive Mail-Objekt. Nun k&ouml;nnte man &uuml;ber den Mail-Subject oder 
+den Absender eine entsprechende Filterung vornehmen. Wir beschr&auml;nken uns jedoch darauf, den Mail-Text 
+an eine eigens erstellte COM-Komponente weiterzuleiten, die dann die eigentliche Funktionalit&auml;t beinhaltet. 
+</p>
+
+<p>
+Dies hat zum einen den Vorteil, da&szlig; wir die Logik nicht in Exchange "verstecken", und zum anderen kann 
+der Code auch von anderer Stelle aus aufgerufen werden (z.B. aus einem Word-Makro).
+</p>
+
+<p>
+Vorweg jedoch erst einmal der gesamte Code f&uuml;r den Event-Handler:
+</p>
+
+<pre style="background='silver';">
+Public Sub Folder_OnMessageCreated
+    Dim oMsg
+    Dim oMailHandler
+    Dim sRet
+	
+    Set oMsg = EventDetails.Session.GetMessage( _
+        EventDetails.MessageID, Null )
+    Set oMailHandler = _
+        CreateObject("MailAutomation.cMailHandler ")
+    sRet = oMailHandler.SendMailToServer( _
+        "D:\", CStr(oMsg.Text))
+    Script.Response = sRet
+    Set oMailHandler = Nothing
+End Sub
+</pre>
+
+<p>
+Als Namen f&uuml;r die Komponente habe ich "MailAutomation" und f&uuml;r die Klasse "cMailHandler" verwendet. Die 
+Klasse besitzt die Funktion "SendMailToServer" die zur Aufgabe hat, die Mail aufzunehmen, in HTML zu 
+formatieren und sie per FTP an den Server zu senden. 
+</p>
+
+<p>
+Mit der Zeile
+</p>
+
+<pre style="background='silver';">
+Script.Response = sRet
+</pre>
+
+<p>
+wird das Ergebnis des Funktionsaufrufes in das EventLog von Exchange geschrieben, welches man &uuml;ber 
+den Button "Protokolle" im obigen Fenster einsehen kann. So kann man sp&auml;ter kontrollieren, wann welche 
+Inhalte versendet wurden.
+</p>
+
+<p>
+Nun wenden wir uns der COM-Komponente zu. 
+</p>
+
+<h2>Erstellen der COM-Komponente</h2>
+
+<ul>
+<li>&Ouml;ffnen Sie Visual Basic und erstellen Sie eine neue ActiveX-DLL.</li>
+<li>Geben Sie der Komponente den Namen MailAutomation</li>
+<li>Geben Sie der Klasse den Namen cMailHandler</li>
+<li>Setzen Sie die Instancing-Eigenschaft der Klasse auf ‚5 - MultiUse'</li>
+</ul>
+
+<p>
+Als erstes kodieren wir die Funktion zum Erstellen der HTML-Datei. Sie bekommt den Zielpfad und den 
+Mailtext &uuml;bergeben, und liefert eine Statusmeldung zur&uuml;ck.
+</p>
+
+<pre style="background='silver';">
+Public Function SendMailToServer( _
+        byval sPath As Variant, _
+        byval sMailText As Variant) As Variant
+    
+    On Error Resume Next
+    
+    Dim sHTML As String
+    
+    ' HTML-Datei erzeugen
+    sHTML = GetHeader &amp; _
+        FormatHTML(sMailText) &amp; _
+        GetFooter
+    
+    If Right(sPath, 1) &lt;&gt; "\" Then sPath = sPath &amp; "\"
+    
+    ' HTML-Datei schreiben
+    Open sPath &amp; "Content.htm" For Output As #1
+        Print #1, sHTML
+    Close #1
+    
+    ' FTP-Transfer starten
+    Shell sPath &amp; "Transfer.bat"
+    
+    ' Statusmeldung zur&uuml;ck geben
+    If Err.Number = 0 Then
+        SendMailToServer = "OK!"
+    Else
+        SendMailToServer = Err.Description
+    End If
+End Function
+</pre>
+
+<p>
+Der &uuml;bergebene Mailtext wird nach HTML konvertiert und von einem fixen Header und Footer umschlo&szlig;en. 
+Danach wird alles in eine Datei namens "Content.htm" geschrieben, die dann durch den Aufruf 
+der Batchdatei "Transfer.bat" an den Server geschickt wird.
+</p>
+
+<p>
+Die Funktion FormatHTML ersetzt Sonderzeichen im Text durch deren HTML-&Auml;quivalente und gibt 
+den HTML-konformen Text zur&uuml;ck:
+</p>
+
+<pre style="background='silver';">
+Private Function FormatHTML(sString As Variant) As String
+    sString = Replace(sString, vbCr, "&lt;br&gt;")
+    sString = Replace(sString, "&auml;", "&amp;auml;")
+    sString = Replace(sString, "&ouml;", "&amp;ouml;")
+    sString = Replace(sString, "&uuml;", "&amp;uuml;")
+    sString = Replace(sString, "&szlig;", "&amp;szlig;")
+    sString = Replace(sString, "&Auml;", "&amp;Auml;")
+    sString = Replace(sString, "&Ouml;", "&amp;Ouml;")
+    sString = Replace(sString, "&Uuml;", "&amp;Uuml;")
+    FormatHTML = sString
+End Function
+</pre>
+
+<p>
+In der Funktion GetHeader wird der HTML-Header hinterlegt:
+</p>
+
+<pre style="background='silver';">
+Private Function GetHeader() As String
+    Dim sHeader As String
+
+    sHeader = sHeader &amp; "&lt;!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.0 Transitional//DE'&gt;"
+    sHeader = sHeader &amp; ""
+    sHeader = sHeader &amp; "&lt;HTML&gt;"
+    sHeader = sHeader &amp; "&lt;HEAD&gt;"
+    sHeader = sHeader &amp; "   &lt;META HTTP-EQUIV='Content-Type' CONTENT='text/html'&gt;"
+    sHeader = sHeader &amp; "   &lt;TITLE&gt;Titel der Seite&lt;/TITLE&gt;"
+    sHeader = sHeader &amp; ""
+    sHeader = sHeader &amp; "&lt;/HEAD&gt;"
+    sHeader = sHeader &amp; ""
+    sHeader = sHeader &amp; "&lt;BODY&gt;"
+    
+    GetHeader = sHeader
+End Function
+</pre>
+
+<p>
+In der Funktion GetFooter wird der HTML-Footer und ein Zeitstempel hinterlegt:
+</p>
+
+<pre style="background='silver';">
+Private Function GetFooter() As String
+    Dim sFooter As String
+        
+    sFooter = sFooter &amp; "&lt;/BODY&gt;"
+    sFooter = sFooter &amp; "&lt;P&gt;"
+    sFooter = sFooter &amp; "&lt;HR&gt;"
+    sFooter = sFooter &amp; "&lt;BR&gt;Letzte Aktualisierung am " &amp; Now() &amp; " durch Heinz 
+            Mustermann&lt;/P&gt;"
+    sFooter = sFooter &amp; "&lt;/BODY&gt;"
+    sFooter = sFooter &amp; "&lt;/HTML&gt;"
+    
+    GetFooter = sFooter
+End Function
+</pre>
+
+<p>
+Kompilieren Sie das Projekt zur MailAutomation.dll. Kopieren Sie die DLL auf den Exchange-Server in 
+das Windows-System-Verzeichnis und registrieren Sie sie mit "RegSvr32.exe" 
+(Beispiel: "RegSvr32 C:\WinNT\System32\MailAutomation.dll").
+</p>
+
+<h2>Die Transfer-Dateien</h2>
+
+<p>
+F&uuml;r den Transfer der Datei auf einen FTP-Server erstellen wir eine Textdatei, die die n&ouml;tigen 
+FTP-Befehle enth&auml;lt. Diese Datei wird dann mittels einer Batch-Datei aus der COM-Komponente 
+heraus ausgef&uuml;hrt. Erstellen Sie mit Notepad eine neue Datei, geben Sie Ihr den Namen "Transfer.txt" 
+und f&uuml;llen Sie sie mit folgendem Inhalt:
+</p>
+
+<pre style="background='silver';">
+open www.MeineSeite.de
+Benutzername
+Pa&szlig;wort
+cd Zielverzeichnis
+send D:\Content.htm
+close
+bye
+</pre>
+
+<p>
+Die Daten m&uuml;ssen nat&uuml;rlich durch die entsprechenden, eigenen Daten ersetzt werden. 
+</p>
+
+<p>
+Die Batch-Datei hat den Namen Transfer.bat und besteht nur aus einer einzigen Zeile:
+</p>
+
+<pre style="background='silver';">
+ftp -s:D:\Transfer.txt
+</pre>
+
+<p>
+Wichtig ist da&szlig; Transfer.txt und Transfer.bat in dem Verzeichnis liegen, das an die COM-Komponente 
+&uuml;bergeben wurde.
+</p>
+
+<p>
+Bevor Sie die Funktion testen sollten Sie den Exchange Server einmal neu starten.
+</p>
+
+<h2>Sicherheitshinweis</h2>
+
+<p>
+Bevor man das gezeigt Beispiel in die Praxis umsetzt, sollte man sich im klaren sein, da&szlig; diese Technik 
+ein gewisses Sicherheitsrisiko mit sich bringt, da nat&uuml;rlich auch Fremde an das eingerichtete Mailkonto 
+Mails schicken k&ouml;nnen. Dies k&ouml;nnte man z.B. dadurch l&ouml;sen, indem man entweder im Exchange-Skript oder 
+in der COM-Komponente den Absender mit einer Liste abgleicht.
+</p>
+
+<p>
+Auch die Speicherung des Benutzernamens und des Passwortes in der Transfer.txt stellt ein 
+potentielles Sicherheitsrisiko dar. Dies k&ouml;nnte man z.B. durch das Setzen der NT-Verzeichnissicherheit 
+l&ouml;sen.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Das hier vorgestellte Projekt ist bewu&szlig;t einfach gehalten und soll mehr die Einsatzm&ouml;glichkeiten zeigen.
+Ziel des Artikels sollte es sein, die Funktion der Exchange Serverskript einmal etwas n&auml;her zu beleuchten.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020114.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20020114" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Automatisches Aktualisieren einer Site per Mail"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20020114.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Jörg Neumann"><input type="hidden" name="AuthorEmail" value="neumannjn@yahoo.de"><input type="hidden" name="Artikel" value="20020114"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20020114.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

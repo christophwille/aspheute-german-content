@@ -1,0 +1,265 @@
+<HTML>
+<HEAD>
+<TITLE>Web Projekte mit SharpDevelop erstellen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor, wie man mit der Open-Source IDE SharpDevelop eine Komponente samt zugehörigem Consumer - einer ASP.NET Seite - programmieren kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SharpDevelop,C#,Csharp,C Sharp,.NET,IDE,Open Source,GPL,Komponente,ASP.NET,ASPX">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Web Projekte mit SharpDevelop erstellen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010208"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Dieser Artikel zeigt Ihnen, da&szlig; kleinere Web Projekte nicht nur mit Jumbo Programmen, die 
+PC-Resourcen wie ein V8 Motor Benzin verbrauchen, zu bew&auml;ltigen sind. Ich habe f&uuml;r die
+L&ouml;sung der heutigen Aufgabe - eine C# Komponente und die dazugeh&ouml;rige ASP.NET Seite - das
+Open-Source Tool <a href="http://www.icsharpcode.net/opensource/sd/" target="_blank">SharpDevelop</a> verwendet.
+</p>
+<p>
+SharpDevelop ist selbst in C# geschrieben, und somit eine .NET Anwendung. Daher ben&ouml;tigen Sie, um
+SharpDevelop ausf&uuml;hren zu k&ouml;nnen, die .NET Runtime (oder das vollst&auml;ndige SDK).
+</p>
+
+<h2>Das Projekt</h2>
+
+<p>
+Das Web Projekt besteht zwar der Einfachheit halber nur aus 2 Dateien, ist aber dennoch aussagekr&auml;ftig &uuml;ber die M&auml;chtigkeit des Tools.
+Die Aufgabenstellung ist einfach: Es gilt einen Zufallszahlengenerator in C# zu schreiben, und diesen
+als Assembly zur Verf&uuml;gung zu stellen. Eine ASP.NET Datei wird der "Consumer" dieser Komponente sein, und
+ebenfalls in das Projekt eingebunden.
+</p>
+
+<h3>Erstellung der Projekt Datei</h3>
+
+<p>
+Nach dem &Ouml;ffnen von SharpDevelop erstellen wir ein neues Projekt indem wir unter dem Untermen&uuml;punkt
+"New" des Men&uuml;s "File" den Punkt "Project..." ausw&auml;hlen.
+Im Eintrag "C#" w&auml;hlen wir <i>Empty C# Project</i>, geben ihm den Namen
+<i>Randomizer</i> und best&auml;tigen mit <i>OK</i> (siehe Screenshot).
+</p>
+
+<IMG SRC="/artikel/Bilder/200102/20010208_1.png" width="517" height="430" alt="" border="0">
+
+<p>
+Danach f&uuml;gen wir dem Projekt durch Klicken mit der rechten Maustaste auf den Projektnamen im Project Scout
+(<i>PS-Tab</i>) die ben&ouml;tigten Dateien hinzu. 
+Dieser Vorgang ist Schritt-f&uuml;r-Schritt in den n&auml;chsten Screenshots gezeigt.
+</p>
+
+<IMG SRC="/artikel/Bilder/200102/20010208_2.png" width="430" height="244" alt="" border="0">
+
+<p>
+Das Hinzuf&uuml;gen funktioniert &uuml;ber das Kontextmen&uuml;, das die New File Dialogbox &ouml;ffnet.
+</p>
+
+<IMG SRC="/artikel/Bilder/200102/20010208_3.png" width="517" height="353" alt="" border="0">
+
+<p>
+Da wir die Komponente &uuml;ber eine C#-Klasse erstellen, w&auml;hlen wir zuerst <i>Empty C# file</i> aus, 
+und benennen sie auch gleich passend mit <b>rnd.cs</b>. Weiter geht es mit der ASP.NET Datei:
+</p>
+
+<p>
+Dieser Typ existiert noch nicht explizit, daher w&auml;hlen wir wieder <i>Empty C# file</i>, und benennen die 
+Datei aber als <b>random.aspx</b>.
+</p>
+
+<p>
+Als n&auml;chsten Schritt konfigurieren wir die <i>Project Options</i> im Project Menüs. Da wir eine DLL Datei erstellen wollen,
+setzen wir den Eintrag bei "Target" auf <i>Library</i> (siehe n&auml;chsten Screenshot).
+</p>
+
+<IMG SRC="/artikel/Bilder/200102/20010208_4.png" width="414" height="365" alt="" border="0">
+
+<p>
+Soweit so gut. Nun k&ouml;nnen wir mit dem 
+Programmieren anfangen. Als erstes beginnen wir mit dem C# Code.
+</p>
+
+<h3>Die C# Klasse</h3>
+
+<p>
+Zuerst referenzieren wir auf den <i>System</i> Namespace. Danach erstellen wir unseren eigenen Namespace
+<i>NumberGen</i>.
+</p>
+
+<pre style="background='silver';">
+using System;
+
+namespace NumberGen
+{
+</pre>
+
+<p>
+Das Zufallszahlengenerieren verpacken wir in eine Klasse namens <i>Randomize</i>. Wir deklarieren
+eine Variable <i>dRndNum</i> vom Datentyp <i>double</i> und erstellen, damit sich auch was tut, 
+zus&auml;tzlich die Methode <i>GenNumber</i>, die <i>public</i> ist und einen Integerwert zur&uuml;ckgibt.
+</p>
+
+<pre style="background='silver';">
+...
+public class Randomize
+{
+  	double dRndNum;
+
+  	public int GenNum()
+  	{
+              Random objRandom = new Random();
+              dRndNum = objRandom.NextDouble();
+              return (int)(dRndNum * 10.0);
+  	}
+}
+...
+</pre>
+
+<p>
+Danach m&uuml;ssen wir noch ein neues <i>Random</i> Objekt erstellen, welches wir der Variable <i>objRandom</i>
+zuweisen. Damit lassen wir uns eine Zufallszahl generieren und weisen diese der Variable <i>dRndNum</i> zu.
+Da unsere Methode ja auch was zur&uuml;ckliefern soll, m&uuml;ssen wir das mit dem Keyword <i>return</i> machen und wandeln
+die Double-Variable gleich in den Integer-Datentyp um - fast fertig. Was noch fehlt ist die Kompilierung 
+zur DLL, was der n&auml;chste Screenshot zeigt.
+</p>
+
+<IMG SRC="/artikel/Bilder/200102/20010208_5.png" width="545" height="371" alt="" border="0">
+
+<p>
+Nach der erfolgreichen Kompilierung wenden wir uns der ASP.NET Datei zu - unserem Consumer.
+</p>
+
+<h3>Die ASP.NET Datei</h3>
+
+<p>
+Diese enth&auml;lt keine besonders aufregenden Codezeilen. Wir m&uuml;ssen lediglich auf unseren Namespace
+<i>NumberGen</i> referenzieren. Ich habe noch eine <i>if</i> Verzweigung eingebaut, die falls "0"
+zur&uuml;ckgegeben wird, dies mit "zero returned" best&auml;tigt.
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language= "c#" %&gt;
+&lt;% @Import Namespace="NumberGen" %&gt;
+
+&lt;%
+    int nResult=0;
+    Randomize MyRandom = new Randomize();
+    nResult = MyRandom.GenNum();
+
+    Response.Write("&lt;h3&gt;Randomizer&lt;/h3&gt; &lt;br&gt;");
+
+    if (0 == nResult)
+    {
+    	Response.Write("zero returned");
+    }
+    else
+    {
+        Response.Write("Randomized Number: ");
+        Response.Write(nResult.ToString());
+    }
+%&gt;
+</pre>
+
+<p>
+Der fertige Sourcode Sourcecode sieht in SharpDevelop mit Color-Coding dann so aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200102/20010208_6.png" width="582" height="398" alt="" border="0">
+
+<p>
+Da SharpDevelop unter anderem C#-<i>Syntaxhighlighting</i> unterst&uuml;tzt, wird der Code sch&ouml;n &uuml;bersichtlich (bunt).
+Die einstellbaren Coding Gadgets wie automatische Klammernanordnungen, Code Templates (Code Vorlagen)
+erleichtern die Arbeit ungemein.
+</p>
+
+<p>
+Was nun noch fehlt ist die Ausf&uuml;hrung auf einem Web Server, der die Microsoft .NET Runtime installiert hat.
+Wir kopieren die <i>random.aspx</i> Datei ins Webverzeichnis (z.B. ..\wwwroot) und die <i>rnd.dll</i> ins
+Unterverzeichnis <i>\bin</i> (z.B. ..\wwwroot\bin).
+</p>
+
+<p>
+In einem Browser sieht die ausgef&uuml;hrte ASP.NET Datei dann so aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200102/20010208_7.png" width="423" height="224" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die vorliegende SharpDevelop Version beweist schon jetzt ihre St&auml;rken und kann nat&uuml;rlich auch bei umfangreicheren
+Projekten mithalten - SharpDevelop wurde in SharpDevelop entwickelt. Sie l&auml;&szlig;t kaum W&uuml;nsche 
+offen und l&auml;uft stabil auf der Microsoft .NET Runtime.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010208.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010208.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020409.htm">Dateien umbenennen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020409.htm</span><br>
+<a href="../artikel/20020902.htm">Regex'en zu Assemblies kompilieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020902.htm</span><br>
+<a href="../artikel/20010627.htm">Session State in ASP.NET Web Services</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010627.htm</span><br>
+<a href="../artikel/20010621.htm">Web Services 101 in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010621.htm</span><br>
+<a href="../artikel/20010622.htm">Web Services in Anwendungen konsumieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010622.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eicsharpcode%2Enet%2Fopensource%2Fsd%2F">SharpDevelop</a><br>
+<SPAN class="content">http://www.icsharpcode.net/opensource/sd/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

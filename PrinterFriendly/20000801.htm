@@ -1,0 +1,250 @@
+<HTML>
+<HEAD>
+<TITLE>Eine IP Adresse f&uuml;r mehrere Websites</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Oft mu&szlig; man mehrere Websites auf einer einzigen IP Adresse bedienen - dieser Artikel zeigt, wie man das Problem administrativ als auch programmatisch l&ouml;sen kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,IP Adresse,Host Header,SERVER_NAME,ServerVariables,IPv4,ISM,IIS,Redirect,Include">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Eine IP Adresse f&uuml;r mehrere Websites</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Server.htm">Server</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000801"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+IP Adressen sind - zumindest f&uuml;r IPv4 - eine zur Neige gehende Resource. Dadurch ist man auch am Webserver
+manchmal gezwungen, mehrere Websites &uuml;ber eine einzige IP Adresse zu bedienen. Ein anderer Grund f&uuml;r mehrere
+Websites per IP Adresse w&auml;re, da&szlig; man einen Account bei einem ISP mit mehreren Sites besser auslasten m&ouml;chte.
+</p>
+<p>
+Egal was die Motivation ist, das Problem mu&szlig; gel&ouml;st werden. Dank IIS und ASP hat man aber 2 unterschiedliche
+M&ouml;glichkeiten, das Problem zu l&ouml;sen, obwohl beide auf der gleichen Technik aufsetzen: den Host Header
+abzufragen. 
+</p>
+<p>
+Was ist der Host Header? Das ist das, was der Benutzer in der Adressbox des Browsers eintippt, allerdings nur
+der Teil, der den Server identifiziert. F&uuml;r die Adresse
+<pre style="background='silver';">
+http://www.alphasierrapapa.com/componentcenter../default.htm
+</pre>
+</p>
+<p>
+ist der Host Header
+<pre style="background='silver';">
+www.alphasierrapapa.com
+</pre>
+</p>
+<p>
+Da dieser Host Header mit jedem Request mitgeschickt wird (bei allen modernen Browsern inklusive Netscape), kann man
+mehrere Websites auf einer IP Adresse fahren. IIS unterst&uuml;tzt das Trennen von IIS Websites bereits "out of the box"
+als Standardfeature, allerdings kann man auch ASP verwenden, um Websites selbst anhand des Host Headers zu
+identifizieren. Beide Methoden werden in diesem Artikel vorgestellt, zuerst schauen wir uns aber das
+Testszenario an.
+</p>
+
+<h2>Das Testszenario</h2>
+<p>
+&Uuml;blicherweise werden Websites verschiedener Domains auf eine IP Adresse gemappt
+(zB www.aspgerman.com und www.alphasierrapapa.com), um allerdings
+das Beispiel im kleinen Rahmen durchtesten zu k&ouml;nnen reicht es bereits, zus&auml;tzliche Hosts 
+mit derselben IP Adresse in die Forward Lookup Zone der eigenen DNS Zone einzutragen.
+</p>
+<p>
+Wer Windows 2000 mit Active Directory einsetzt, der hat automatisch einen DNS Server mit einer Zone
+f&uuml;r die Domain und kann sehr leicht neue Hosts eintragen. Ich habe die Hosts <i>hostheader1</i> und
+<i>hostheader2</i> f&uuml;r meine AD Domain hinzugef&uuml;gt.
+</p>
+<p><IMG SRC="/artikel/Bilder/200008/20000801_1.png" width="569" height="384" border="0"></p>
+
+<h2>Mehrere IIS Websites auf einer IP Adresse</h2>
+<p>
+Die erste Variante mehrere Websites auf einer IP Adresse zu fahren ist es mehrere IIS Websites im
+IIS anzulegen. Der Vorteil ist, man mu&szlig; nichts programmieren. Der Nachteil: wenn man einen Account
+bei einem Provider gemietet hat, dann bedeutet das einen weiteren Account pro Website. Diese Technik
+wird man also meist dann anwenden, wenn man selbst die Kontrolle &uuml;ber den Webserver hat.
+</p>
+<p>
+Und wie funktioniert das in der Praxis? Sehr einfach. Zuerst legt man die erste IIS Website, die 
+auf dieser einen IP Adresse liegen soll, einfach an. Bei der zweiten und jeder folgenden mu&szlig; 
+man im dritten Schritt neben der IP Adresse auch den Host Header eingeben (in Falle dieses Beispiels
+ist dies <i>hostheader2.dev.alfasierrapapa.com</i>):
+<p><IMG SRC="/artikel/Bilder/200008/20000801_2.png" width="482" height="374" border="0" alt=""></p>
+<p>
+Der Rest (Pfad zur Website und Zugriffsberechtigungen k&ouml;nnen wieder nach Belieben eingeben werden.
+</p>
+<p>
+Wenn man sp&auml;ter den Host Header &auml;ndern will, dann mu&szlig; man die Eigenschaften der IIS Website aufrufen, und
+im Web Site Tab auf die Schaltfl&auml;che Advanced klicken. In der Dialogbox Advanced Multiple Web Site Configuration
+kann man - so man m&ouml;chte - auch mehrere Host Header auf diese eine IIS Website binden.
+</p>
+<p><IMG SRC="/artikel/Bilder/200008/20000801_3.png" width="452" height="405" border="0" alt=""></p>
+<p>
+Zum Beweis da&szlig; es funktioniert braucht man nur den Browser &ouml;ffnen und den URL der gew&uuml;nschten "gehostheaderten"
+Website eingeben:
+</p>
+<p><IMG SRC="/artikel/Bilder/200008/20000801_4.png" width="590" height="482" border="0" alt=""></p>
+<p>
+Ein weiterer Vorteil dieser Variante ist, da&szlig; man wirklich getrennte IIS Websites f&uuml;r jede Website hat. Dies
+bedeutet einfachere Administration, und bessere Trennung der verschiedenen ASP Applikationen. Aber wie gesagt,
+um diese Technik umzusetzen mu&szlig; man den Server unter der eigenen Kontrolle haben.
+</p>
+
+<h2>Mehrere Websites auf einer IIS Website</h2>
+<p>
+Auch wenn man keine direkte Kontrolle &uuml;ber den Webserver und das Anlegen von Websites hat, ist noch lange
+nicht alles verloren - man kann mit ASP den Host Header genauso abfragen! Einzig und allein die Hauptseite
+(meist <i>../default.htm</i>) mu&szlig; modifiziert werden, und ich pr&auml;sentiere hier 2 Ans&auml;tze.
+</p>
+
+<h3>Client-side Redirects</h3>
+<p>
+Die erste Variante zur Programmierung ist die des client-seitigen Redirects basierend auf dem Wert des
+Host Headers <i>SERVER_NAME</i>.
+<pre style="background='silver';">
+&lt;% @ Language=VBScript %&gt;
+&lt;%
+Response.Buffer = True
+Response.Expires = 0
+Response.AddHeader &quot;Pragma&quot;,&quot;no-cache&quot;
+Response.AddHeader &quot;cache-control&quot;, &quot;no-store&quot;
+
+strDomainName = Request.ServerVariables(&quot;SERVER_NAME&quot;)
+strDomainName = LCase(strDomainName)
+
+If (0 = StrComp(&quot;hostheader1.dev.alfasierrapapa.com&quot;,strDomainName)) Then
+   Response.Redirect &quot;hostheader1.asp&quot;
+   Response.End
+End If
+
+' alles, was nicht abgefangen wird, landet auf hostheader2.asp
+Response.Redirect &quot;hostheader2.asp&quot;
+Response.End
+%&gt;
+</pre>
+</p>
+<p>
+Der Sourcecode ist nicht weiter aufwendig: <i>SERVER_NAME</i> wird ausgelesen, auf Kleinbuchstaben umgewandelt, und
+dann in einem (oder mehreren) <i>if</i> Statements gegen vordefinierte Host Header verglichen. Basierend auf den
+Vergleichen wird auf die jeweiligen Startseiten redirected (Achtung: <i>Response.Redirect</i> schickt die Redirect
+Anweisung an den Client)
+</p>
+<p>
+Die Zuweisung von <i>SERVER_NAME</i> auf eine lokale Variable hat einen guten Grund: jeder Lookup in einer Collection
+(<i>ServerVariables</i> ist ja eine) kostet Zeit, der Zugriff auf eine lokale Variable hingegen ist deutlich schneller.
+Und da m&ouml;glicherweise sehr oft verglichen wird, kann sich das bei dieser sehr kurzen ASP Seite prozentuell
+auf die Laufzeit des Scripts sehr stark auswirken. Deshalb sollte auch der Vergleich f&uuml;r die am &ouml;ftesten
+aufgerufene Website immer am Anfang der Vergleiche stehen.
+</p>
+
+<h3>Server-side Includes</h3>
+<p>
+Die zweite Variante arbeitet ohne Redirects - sie inkludiert die jeweiligen Dateien direkt am Server. Der Vorteil dieser
+Variante ist, da&szlig; kein client-seitiger Redirect ausgel&ouml;st wird, und man das Faktum, da&szlig; mehrere Websites
+von einer IIS Website aus bedient werden besser kaschieren kann.
+<pre style="background='silver';">
+&lt;% @ Language=VBScript ENABLESESSIONSTATE=FALSE%&gt;
+&lt;%
+Response.Buffer = True
+Response.Expires = 0
+Response.AddHeader &quot;Pragma&quot;,&quot;no-cache&quot;
+Response.AddHeader &quot;cache-control&quot;, &quot;no-store&quot;
+
+strDomainName = Request.ServerVariables(&quot;SERVER_NAME&quot;)
+strDomainName = LCase(strDomainName)
+
+If (0 = StrComp(&quot;hostheader1.dev.alfasierrapapa.com&quot;,strDomainName)) Then
+%&gt;
+	&lt;!--#include file=&quot;hostheader1.asp&quot;--&gt;
+&lt;%
+Else
+%&gt;
+	&lt;!--#include file=&quot;hostheader2.asp&quot;--&gt;
+&lt;%
+End If
+%&gt;
+</pre>
+</p>
+<p>
+Diese Variante demonstriert auch die Nicht-Verwendung von Session-Cookies durch Einsatz der
+<i>EnableSessionState</i> Direktive. Dadurch erh&auml;lt der Benutzer keinen Cookie wenn er die Hauptseite
+ansurft.
+</p>
+<p>
+Sind die inkludierten Dateien komplizierter, oder inkludieren dieselben Funktionsbibliotheken, dann ist dieser
+Ansatz nat&uuml;rlich in dieser Art und Weise nicht m&ouml;glich. Aber man kann die entsprechenden Dateien jedoch mit 
+<i>Server.Transfer</i> oder <i>Server.Execute</i> (in diesem Falle nach Belieben verwendbar) ausf&uuml;hren lassen -
+vorausgesetzt, der Webserver l&auml;uft auf Windows 2000.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+In diesem Artikel habe ich eine administrative als auch eine programmatische L&ouml;sung vorgestellt, wie sich
+mehrere Websites eine einzige IP Adresse teilen k&ouml;nnen. Erstere Variante wird dann zum Einsatz kommen wenn
+man selbst direkte Kontrolle &uuml;ber den Server hat, die letztere wenn man bei einem ISP hostet.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000801.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000801.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020729.htm">Den Webserver umsiedeln (IIS 4 oder 5)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020729.htm</span><br>
+<a href="../artikel/20001003.htm">Einf&uuml;hrung in Stringoperationen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001003.htm</span><br>
+<a href="../artikel/20010917.htm">Erstellung eines Intranets in ASP - Grundlagen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010917.htm</span><br>
+<a href="../artikel/20020503.htm">Show me the source - Includes aufgel&ouml;st</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020503.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,195 @@
+<HTML>
+<HEAD>
+<TITLE>Eintr&auml;ge numerieren im DataGrid</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="F&uuml;r eine Website wollte ich im Rahmen einer von mir entwickelten Online-Petition einen Z&auml;hler f&uuml;r die Anzahl der Eintr&auml;ge sowie die Nummer des aktuellen Eintrages realisieren.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,DataGrid,Sortierung,Numerierung,Paging,.NET Fu,Tips&Tricks,Tipps,Tricks,Beispiel,Hands On,Sample">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Eintr&auml;ge numerieren im DataGrid</H1>
+<p>
+Geschrieben von: <a href="../autoren/alexanderzeitler.htm">Alexander Zeitler</a><br>
+Kategorie: <a href="../kategorien/dotNET%20Fu.htm">.NET Fu</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20040317"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+F&uuml;r eine Website wollte ich im Rahmen einer von mir entwickelten Online-Petition einen Z&auml;hler f&uuml;r die Anzahl der 
+Eintr&auml;ge sowie die Nummer des aktuellen Eintrages im Stil "Eintrag 10 von 452" im DataGrid realisieren. Dabei 
+stie&szlig; ich auf unerwarteten Widerstand seitens des DataGrids. Welcher Art dieser Widerstand war und wie eine m&ouml;gliche 
+L&ouml;sung aussehen k&ouml;nnte, m&ouml;chte ich deshalb hier darstellen.
+</p>
+
+<h2>Das Problem</h2>
+<p>
+Um das Ziel zu verdeutlichen, zun&auml;chst ein Screenshot:
+</p>
+
+<IMG SRC="/artikel/Bilder/200403/20040317_1.png" width="570" height="263" alt="" border="0">
+
+<p>
+Wie man also sieht, sind alle Eintr&auml;ge des DataGrids &uuml;ber mehrere Seiten hinweg sauber fortlaufend numeriert. Doch wie 
+erreicht man das? Grundlegend ist dieses Layout mit einer <i>TemplateColumn</i> realisiert, welche wie folgt aussieht 
+(CSS-Definitionen und die Standard-Eintr&auml;ge aus der Datenquelle spare ich mir hier):
+</p>
+
+<pre style="background='silver';">
+&lt;asp:DataGrid id="SubscriberGrid" runat="server" 
+             AllowPaging="True" AutoGenerateColumns="False" 
+             PageSize="2" OnPageIndexChanged="SubscriberGrid_PageIndexChanged"&gt; 
+&lt;ItemTemplate&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;nbsp;Eintrag Nr.: ... von ...&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;&lt;br&gt;
+&lt;/ItemTemplate&gt;
+&lt;/asp:DataGrid&gt;
+</pre>
+
+<h2>Die L&ouml;sung</h2>
+<p>
+Die Gesamtzahl der Eintr&auml;ge ist relativ einfach zu ermitteln: Man wendet die <i>Count</i>-Methode der Datenquelle 
+(hier die DataTable eines Typed DataSets namens subscribers) an und gibt diesen Wert mit <i>.ToString()</i> aus:
+</p>
+
+<pre style="background='silver';">
+&lt;%#subscribers.Tables[0].Rows.Count.ToString()%&gt;
+</pre>
+
+<p>
+Die Ermittlung des aktuellen Eintrages ist etwas komplizierter. Zun&auml;chst k&ouml;nnte man annehmen, ein 
+<i>&lt;%#(SubscriberGrid.Items.Count + 1).ToString()%&gt;</i> w&uuml;rde das Problem l&ouml;sen, da hier bei jedem Item 
+w&auml;hrend des DataBindings der Count um 1 erh&ouml;ht wird. Leider werden unsere Tr&auml;ume sp&auml;testens dann zerst&ouml;rt, 
+wenn wir das Paging aktivieren. Das Resultat sieht dann wie folgt aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200403/20040317_2.png" width="570" height="263" alt="" border="0">
+
+<p>
+Wie man also sieht, beginnt das DataGrid auf jeder Seite neu bei 0 damit, die Items zu numerieren.
+</p>
+<p>
+Um nun dennoch die Eintr&auml;ge von der ersten bis zur letzten Seite korrekt zu numerieren, m&uuml;ssen wir den 
+Index der aktuellen Seite mit der Seitengr&ouml;&szlig;e (also der Anzahl an Items je Seite) multiplizieren. Zu diesem 
+Produkt ist der Index des aktuellen Items plus 1 (da der Index nullbasierend ist) zu addieren. Diese Summe 
+ist unser gesuchter aktueller Eintrag. In Code ausgedr&uuml;ckt lautet es wie folgt:
+</p>
+
+<pre style="background='silver';">
+&lt;%#((SubscriberGrid.CurrentPageIndex * SubscriberGrid.PageSize) + 
+             SubscriberGrid.Items.Count + 1).ToString()
+</pre>
+
+<p>
+Somit lautet also das gesamte Konstrukt in der ItemTemplate folgenderma&szlig;en:
+</p>
+
+<pre style="background='silver';">
+&lt;td&gt;&amp;nbsp;Eintrag Nr.: 
+             &lt;%#((SubscriberGrid.CurrentPageIndex * SubscriberGrid.PageSize) + 
+             SubscriberGrid.Items.Count + 1).ToString() %&gt; von 
+             &lt;%#subscribers.Tables[0].Rows.Count.ToString()%&gt;&lt;/td&gt;
+</pre>
+
+<p>
+Damit ist das Problem elegant gel&ouml;st. Als Bonus implementieren wir nun noch die Numerierung absteigend, dh der 
+letzte Eintrag im DataGrid hat die Nummer 1:
+</p>
+
+<IMG SRC="/artikel/Bilder/200403/20040317_3.png" width="570" height="263" alt="" border="0">
+
+<p>
+Im Prinzip &auml;ndert sich nur der Algorithmus zur Errechnung des aktuellen Index:
+</p>
+
+<pre style="background='silver';">
+&lt;td&gt;&amp;nbsp;Eintrag Nr.: &lt;%# (subscribers.Tables[0].Rows.Count - 
+             (((SubscriberGrid.CurrentPageIndex) * SubscriberGrid.PageSize) + 
+			 SubscriberGrid.Items.Count)).ToString() %&gt; von 
+			 &lt;%#subscribers.Tables[0].Rows.Count.ToString()%&gt;&lt;/td&gt;
+</pre>
+
+<p>
+Von der Gesamtzahl der Eintr&auml;ge ist die eben bereits ermittelte Zahl der Eintr&auml;ge abzuziehen - allerdings ohne den Index der 
+Items um 1 zu erh&ouml;hen, da dieser "Fehler" bereits durch <i>Rows.Count</i> (welcher den tats&auml;chlichen Wert liefert) kompensiert wird.
+</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die Implementierung der gezeigten L&ouml;sung ist sicher nicht der Weisheit letzter Schlu&szlig;. M&ouml;glich w&auml;re z.B. die Implementierung 
+als eine in die CodeBehind-Datei ausgelagerte Helper-Funktion, um den "HTML-Code" schlank und verst&auml;ndlich zu halten. Allerdings 
+gilt hier: "die L&ouml;sung ist das Ziel".
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20030909.htm">Das ASP.NET DataGrid selbst erweitern</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20030909.htm</span><br>
+<a href="../artikel/20001116.htm">Das DataTable Objekt in ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001116.htm</span><br>
+<a href="../artikel/20040929.htm">DataGrid - Daten bearbeiten leicht gemacht</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040929.htm</span><br>
+<a href="../artikel/20001106.htm">Datenaufbereitung in ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001106.htm</span><br>
+<a href="../artikel/20001102.htm">Datenbankzugriff mittels ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001102.htm</span><br>
+<a href="../artikel/20040628.htm">MouseOver-Effekte beim DataGrid</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040628.htm</span><br>
+<a href="../artikel/20040318.htm">Pager- und Footerzeilen des DataGrid erweitern</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040318.htm</span><br>
+<a href="../artikel/20040303.htm">Vergleich von DataGrid, DataList und Repeater-Control - was verwende ich wann?</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040303.htm</span><br>
+<a href="../artikel/20020704.htm">Zahl, Datum und W&auml;hrung korrekt formatiert ausgeben</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020704.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

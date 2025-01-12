@@ -1,0 +1,463 @@
+<HTML>
+<HEAD>
+<TITLE>Unit Testing</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Das Unit Testing ist in der Java Welt schon lange ein Begriff und wird auch oft eingesetzt. Im heutigen Artikel besch&auml;ftigen wir uns mit der Frage warum man Unit Testing auch in .NET einsetzen soll und wie man es machen kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Unit Testing,SharpUnit,Nunit,Junit,Test,TestSuite,Attribut,TestMethod,testing,testen,debuggen">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Unit Testing</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020619"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Das Unit Testing ist in der Java Welt schon lange ein Begriff und wird auch oft eingesetzt. Im heutigen Artikel besch&auml;ftigen
+wir uns mit der Frage warum man Unit Testing auch in .NET einsetzen soll, wie man es machen kann, und welche Vorteile man daraus
+ziehen kann.
+</p>
+
+<h2>Testen heute</h2>
+<p>
+Das Testen ist meist ein Anh&auml;ngsel am Entwicklungsprozess, und die meisten Entwickler verlassen sich auf die Testabteilung (oder
+sogar Enduser), da&szlig; Fehler gefunden werden. Wird getestet, dann passiert dies oft ohne wirkliche Struktur, denn wer
+kennt das nicht:
+</p>
+
+<pre style="background='silver';">
+public clas Euro {
+ public float GetEuroAmount(float dm) {
+  float euro = dm / 1.955;
+  // Console.WriteLine("dm->euro {0}=={1}, dm, euro);
+  return euro;
+ }
+}
+</pre>
+
+<p>
+Das ist nat&uuml;rlich keine L&ouml;sung: der Produktionscode und Testcode sind miteinander vermischt, was bedeutet, da&szlig; kein automatisches
+Testen m&ouml;glich ist. Nur der Entwickler selbst wei&szlig; mit dem Output etwas anzufangen, und da&szlig; die Intention des Debugcodes nicht
+klar dokumentiert, ist nur der Zuckergu&szlig; auf diesem Problem.
+</p>
+
+<h2>Warum Unit Testing?</h2>
+<p>
+Unter den Gr&uuml;nden die f&uuml;r das Unit Testing sprechen stellt sich einer besonders in den Vordergrund: der Entwickler wei&szlig;, da&szlig; sobald
+der Testcode l&auml;uft, sein getesteter Produktionscode in Ordnung ist. Wird sp&auml;ter etwas am Algorithmus des Produktionscodes umgestellt,
+so ist ein Fehler sehr schnell und vor allem Methodengenau lokalisierbar - automatisch. Weitere Vorteile von Unit Testing sind da&szlig;
+der Entwickler der erste Verwender seines Produktionscodes ist, was zu besserem Design und besserem Verst&auml;ndnis der implementierten
+Features f&uuml;hrt. Unit Testing ist auch unter dem Begriff "Test a Little, Code a Little" bekannt, und wir werden uns diese Methodologie
+sp&auml;ter im Artikel ansehen.
+</p>
+
+<p>
+Wenn es so viele Vorteile gibt, warum macht dann nicht jeder Unit Testing? Nun, wie Entwickler so sind, sie haben immer mindestens
+eine Ausrede parat:
+</p>
+
+<ul>
+	<li><b>Tests schreiben nimmt zuviel Zeit in Anspruch</b>: Es ist genauso wie bei der Textverarbeitung - im ersten Schreiben eines
+		Textes ist man nicht schneller als auf der Schreibmaschine, aber sp&auml;ter zahlt es sich aus. Zum Beispiel helfen Unit Tests
+		bei der Integration eines Projekts, sind ein Sicherheitsnetz wenn man &Auml;nderungen durchf&uuml;hrt, und Bug Reports k&ouml;nnen als
+		Unit Tests eingebaut werden, um sp&auml;tere Regressionen der Bugs zu vermeiden.
+	<li><b>Test unterbrechen den Arbeitsflu&szlig;</b>: Weil man anf&auml;nglich nicht gewohnt ist, so zu arbeiten. Schrittweises L&ouml;sen eines Problems
+		mit gleichzeitigem Testen ist einfach nicht die Art, wie man Programmieren gelernt hat.
+	<li><b>Tests sind unnotwendig</b>: Mein pers&ouml;nlicher Favorit. Jeder macht Fehler, auch der beste Programmierer.
+	<li><b>Unit Testing ist zu kompliziert</b>: Nimmt ein Programmierer diese Ausrede, dann ist er wahrscheinlich schon mit dem Schreiben
+		des normalen Produktionscodes &uuml;berlastet. 
+	<li><b>Legacy Code</b>: Hat man viel alten Code, der noch verwendet wird, dann kann man nicht f&uuml;r alles Unit Tests schreiben. Aber zumindest f&uuml;r die
+		wichtigsten Routinen.
+	<li><b>Bestimmter Code kann nicht Unit-getestet werden</b>: Stimmt. COM Schnittstellen ansprechen zB ist ein solcher Punkt. Dann mu&szlig; man
+		um die externen Interfaces herumarbeiten.
+</ul>
+
+<h2>Wie Unit Testing funktioniert</h2>
+<p>
+Die grunds&auml;tzliche Idee ist, Produktions-Code und Testing-Code voneinander zu trennen. Weiters sollte ein Test pro zu testender
+Methode existieren, niemals den Test mehrerer Methoden in eine Testmethode verpacken (dann wei&szlig; man ja erst recht wieder nicht,
+was den Fehler ausgel&ouml;st hat). Ein Test f&uuml;r unsere Euro Klasse k&ouml;nnte zu aussehen:
+</p>
+
+<pre style="background='silver';">
+public class <font color="Red">Test</font>Euro {
+ public void <font color="Red">Test</font>GetEuroAmount() {
+   Assertion.AssertEquals(new Euro().GetEuroAmount(1.955f), 1f);
+ }
+}
+</pre>
+
+<p>
+Die Namenskonvention w&auml;re, alles mit <i>Test</i> zu beginnen, sowohl den Klassennamen als auch die Testmethoden. Der Grund liegt
+in der leichten Assoziation von Test und Produktionscode.
+</p>
+
+<p>
+Die <i>Assertion</i> Klasse kommt von einem Unit Testing Framework, n&auml;mlich #unit. Warum sollte man ein Unit Testing Framework einsetzen,
+wenn man es doch selbst schreiben k&ouml;nnte? Nun, ein Framework hat den Vorteil getestet zu sein, und es soll durch einfache Verwendbarkeit
+den Programmierer motivieren, Unit Tests zu schreiben.
+</p>
+
+<h2>#unit Unit Testing Framework</h2>
+<p>
+Die Mutter aller Unit Testing Frameworks ist JUnit, das von Kent Beck und Erich Gamma entwickelt wurde. Fast alle anderen Unit
+Testing Frameworks halten sich an das Klassendiagramm dieses Java Tools. Unter .NET gibt es einen direkten Port, n&auml;mlich NUnit,
+der sich stark an JUnit anlehnt. Dies bringt aber etliche Nachteile mit sich:
+</p>
+
+<ul>
+	<li>Kein Testen von <i>protected</i> Members m&ouml;glich: Der Grund hierin liegt in der <i>TestCase</i> Klasse, von der alle Tests in
+		NUnit ableiten m&uuml;ssen. Und da es unter .NET nur einfache Vererbung (single inheritance) gibt, mu&szlig; man eine separate Testklasse
+		anlegen, und die kann nur auf <i>public</i> Members zugreifen.
+	<li>Tests m&uuml;ssen per Code in eine Suite zusammengebaut werden: Nachteil ist hier klar - ein Nichtprogrammierer kann die Testsuite
+		nicht modifizieren, das kann nur ein Programmierer.
+	<li>NUnit kann nur Programme testen, die in einem Verzeichnis liegen: Sobald ein Programm auf viele Unterverzeichnisse verteilt ist,
+		kann man mit NUnit nicht mehr testen. Dies war der Hauptgrund, warum #unit entstanden ist: um #develop testen zu k&ouml;nnen.
+</ul>
+
+<p>
+Was kann #unit noch alles? Nun, es ist vollst&auml;ndig f&uuml;r .NET konzipiert. Das hei&szlig;t, fast alles baut auf Attributen auf, und anstatt
+Java-like <i>setUp</i> und <i>tearDown</i> Methoden werden Konstruktoren und das <i>IDisposable</i> Interface unterst&uuml;tzt. Wer von
+NUnit nach #unit umsteigt wird sehen, da&szlig; die Umstellung einfach ist: man mu&szlig; fast nur Code entfernen, es wird &uuml;bersichtlicher als
+zuvor.
+</p>
+
+<h2>Kochrezept f&uuml;r Unit Tests mit #unit</h2>
+<p>
+Als erstes mu&szlig; man sich #unit downloaden. #unit ist Teil von #develop, und dessen <a href="http://www.icsharpcode.net/OpenSource/SD/Download../default.htm">Installationsprogramm</a>. 
+Nach der Installation von #develop sollte man einen weiteren Schritt setzen, der zwar optional, aber f&uuml;r das Schreiben von Unit Tests
+sehr angenehm ist: #unit in den Global Assembly Cache (GAC) installieren. Dazu gehen Sie ins #develop Verzeichnis.
+</p>
+
+<IMG SRC="/artikel/Bilder/200206/20020619_1.png" width="404" height="488" alt="" border="0">
+
+<p>
+Und f&uuml;hren dort in der Kommandozeile folgenden Befehl aus:
+</p>
+
+<pre style="background='silver';">
+gacutil /i ICSharpCode.SharpUnit.dll
+</pre>
+
+<p>
+Dieser Befehl installiert #unit in den GAC, und nach diesem einmaligem Prozedere k&ouml;nnen wir Unit Tests schreiben. Beginnen wir damit,
+in #develop ein neues Projekt f&uuml;r unsere Euro Komponente anzulegen (File/New/New Project):
+</p>
+
+<IMG SRC="/artikel/Bilder/200206/20020619_2.png" width="520" height="452" alt="" border="0">
+
+<p>
+Im Project Scout klicken Sie dann mit der rechten Maustaste auf den Projektnamen (nicht die Combine, welcher der erste Eintrag ist),
+und w&auml;hlen dann Project Options:
+</p>
+
+<IMG SRC="/artikel/Bilder/200206/20020619_3.png" width="646" height="494" alt="" border="0">
+
+<p>
+In der Project Options Dialogbox gehen Sie auf den <i>Settings</i> Tab, und stellen dort das Compile Target auf <i>Library</i> (Bibliothek) um:
+</p>
+
+<IMG SRC="/artikel/Bilder/200206/20020619_4.png" width="428" height="488" alt="" border="0">
+
+<p>
+Nun k&ouml;nnen wir mit dem Programmieren unserer Euro Komponente beginnen. Dazu f&uuml;gen wir eine neue Datei dem Projekt hinzu, indem wir
+aus dem Kontextmen&uuml; f&uuml;r das Projekt Add/New File ausw&auml;hlen. F&uuml;gen Sie eine leere C# Datei ein, und benennen diese in <b>euro.cs</b>
+um. Der Inhalt soll am Anfang nur aus den folgenden Zeilen bestehen (im Ernst):
+</p>
+
+<pre style="background='silver';">
+public class Euro {
+}
+</pre>
+
+<p>
+Trotz seiner Kurzheit l&auml;&szlig;t sich das Projekt erfolgreich kompilieren (F8 dr&uuml;cken oder Build aus dem Kontextmen&uuml; ausw&auml;hlen). Der Grund
+f&uuml;r die K&uuml;rze liegt im "Test a Little, Code a Little" Ansatz - wir wollen immer die Unit Test mitziehen. Daher f&uuml;gen wir ein neues
+Projekt dazu:
+</p>
+
+<IMG SRC="/artikel/Bilder/200206/20020619_5.png" width="646" height="494" alt="" border="0">
+
+<p>
+Geben Sie dem Projekt den Namen <b>TestEuro</b> (wieder leeres C# Projekt w&auml;hlen), und stellen Sie das Compile Target auch auf Library um.
+Ihr Project Scout sollte jetzt wie folgt aussehen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200206/20020619_6.png" width="578" height="342" alt="" border="0">
+
+<p>
+F&uuml;gen Sie in das TestEuro Projekt eine neue leere Datei ein, benennen diese <b>TestEuro.cs</b>, und schreiben folgenden Code:
+</p>
+
+<pre style="background='silver';">
+public class TestEuro {
+ public void TestGetEuroAmount() {
+   Euro euro = new Euro();
+ }
+}
+</pre>
+
+<p>
+Wenn Sie das TestEuro nun via Build aus dem Kontextmen&uuml; kompilieren wollen, bekommen Sie folgenden Fehler in der Task List:
+</p>
+
+<IMG SRC="/artikel/Bilder/200206/20020619_7.png" width="644" height="143" alt="" border="0">
+
+<p>
+Der Grund ist, da&szlig; das TestEuro Projekt nichts von der Euro Klasse wei&szlig; - ein Verweis auf das Projekt mu&szlig; gelegt werden. Dies geschieht
+via <i>Add Reference</i> aus dem Kontextmen&uuml; des <i>References</i> Projektitems des TestEuro Projekts. Gehen Sie auf den <i>Projects</i>
+Tab, selektieren <i>Euro</i> aus der oberen Listbox, klicken <i>Select</i> und dann <i>OK</i>.
+</p>
+
+<IMG SRC="/artikel/Bilder/200206/20020619_8.png" width="576" height="424" alt="" border="0">
+
+<p>
+Damit kompiliert unser Testprojekt. Erster Schritt in "Test a Little, Code a Little" bestanden. 
+</p>
+
+<p>
+Gehen wir weiter. Vervollst&auml;ndigen wir die Methode <i>TestGetEuroAmount</i>:
+</p>
+
+<pre style="background='silver';">
+public class TestEuro {
+ public void TestGetEuroAmount() {
+   Euro euro = new Euro();
+   Assertion.AssertEquals(euro.GetEuroAmount(1.955f), 1f);
+ }
+}
+</pre>
+
+<p>
+Unser Test ist, da&szlig; eine Umrechnung von 1.955 DM einen Euro ergeben mu&szlig;. Ist dies nicht der Fall, wird von #unit ein Fehler
+registriert. Apropos #unit: dessen Namespace und Assembly m&uuml;ssen wir noch referenzieren. Letzteres geht &uuml;ber <i>Add Reference</i>,
+diesmal aber kein Projekt, sondern eine Assembly aus dem GAC:
+</p>
+
+<IMG SRC="/artikel/Bilder/200206/20020619_9.png" width="576" height="424" alt="" border="0">
+
+<p>
+Und nun fehlt uns nur noch das <i>using</i> Statement am Anfang der <b>EuroTest.cs</b>:
+</p>
+
+<pre style="background='silver';">
+using ICSharpCode.SharpUnit;
+</pre>
+
+<p>
+Wenn man jetzt kompiliert, bekommt man eine Fehlermeldung aus dem "Test a Little, Code a Little" Ansatz:
+</p>
+
+<pre style="background='silver';">
+c:\UnitTesting\TestEuro\TestEuro.cs(6,26): error CS0117: 'Euro' does not contain a definition for 'GetEuroAmount'
+</pre>
+
+<p>
+Dieser Fehler war erwartet - unser Test referenziert eine Methode, die es noch nicht gibt. Bauen wir sie in <b>Euro.cs</b> ein:
+</p>
+
+<pre style="background='silver';">
+public class Euro {
+	public double GetEuroAmount(double dm) {
+		return 0f;
+	}
+}
+</pre>
+
+<p>
+Zuerst das Euro Projekt builden, danach das EuroTest Projekt - keine Fehler mehr. Nun kann man Run Tests ausw&auml;hlen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200206/20020619_10.png" width="646" height="488" alt="" border="0">
+
+<p>
+#unit startet mit der TestEuro.dll Assembly, nur hat die Sache einen Haken - wir haben noch keine Tests definiert (nur implementiert).
+Es fehlen uns die notwendigen Testattribute in <b>TestEuro.cs</b>:
+</p>
+
+<pre style="background='silver';">
+using ICSharpCode.SharpUnit;
+
+[TestSuite("Euro Test Suite")]
+public class TestEuro {
+ [TestMethod("Testet die Funktion auf korrekte Umrechnung")]
+ public void TestGetEuroAmount() {
+   Euro euro = new Euro();
+ 	Assertion.AssertEquals(euro.GetEuroAmount(1.955f), 1f);
+ }
+}
+</pre>
+
+<p>
+Es sind das <i>TestSuite</i> und das <i>TestMethod</i> Attribut dazugekommen. Das erste braucht man f&uuml;r die Testklasse, das zweite
+f&uuml;r jede Testmethode. Ausgelesen werden die Attribute durch #unit via Reflection. 
+</p>
+<p>
+Nach Neukompilierung und Run Tests sieht es in #unit nun freundlicher aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200206/20020619_11.png" width="585" height="415" alt="" border="0">
+
+<p>
+Allerdings holt uns der Run Tests Button wieder auf den Boden zur&uuml;ck, da es einen Fehler gibt: und der ist, da&szlig; Euro.dll nicht gefunden
+werden kann. Einerseits k&ouml;nnte man Euro.dll umkopieren ins TestEuro Verzeichnis, aber halt - ich hatte doch gesagt, da&szlig; #unit Projekte
+testen kann, bei denen die Dateien nicht im selben Verzeichnis sind. Der Trick sind Manifestdateien, die immer <i>AssemblyName.testconfig</i>
+benannt sein m&uuml;ssen, und Informationen beinhalten, von wo #unit Assemblies nachladen soll. In unserem Fall hei&szlig;t die Manifestdatei
+<b>TestEuro.dll.testconfig</b>, und ihr Inhalt sieht so aus:
+</p>
+
+<pre style="background='silver';">
+&lt;TestConfig&gt;
+ &lt;Codebases&gt;
+   &lt;Path location="..\Euro\" /&gt;
+ &lt;/Codebases&gt;
+&lt;/TestConfig&gt;
+</pre>
+
+<p>
+Damit werden immer die letztaktuellen Assemblies aus dem Verzeichnis <b>..\Euro</b> nachgeladen, in unserem Fall nur <b>Euro.dll</b>.
+Nun bekommen wir folgenden Fehler:
+</p>
+
+<IMG SRC="/artikel/Bilder/200206/20020619_12.png" width="585" height="415" alt="" border="0">
+
+<p>
+Ein roter Balken ist schlecht - wir wollen einen gr&uuml;nen (fehlerfrei). Der Grund ist: "Test a Little, Code a Little". Wir haben ein
+<i>return 0</i> bei GetEuroAmount implementiert, um zu sehen ob die Funktion korrekt aufgerufen wird. Die korrekte Implementierung
+fehlt uns noch (<b>Euro.cs</b>):
+</p>
+
+<pre style="background='silver';">
+	public double GetEuroAmount(double dm) {
+		return (dm / 1.955f);
+	}
+</pre>
+
+<p>
+Das Euro Projekt neu kompiliert, zur&uuml;ck nach #unit und Run Tests erneut geklickt:
+</p>
+
+<IMG SRC="/artikel/Bilder/200206/20020619_13.png" width="585" height="415" alt="" border="0">
+
+<p>
+Ja was ist denn da falsch? Nun, unser Unit Test ist es! Mathematische Rechenergebnisse sollte man immer mit einem Delta vergleichen,
+niemals direkt. Was lernen wir daraus: Unit Tests sind auch Code, der sorgf&auml;ltig geschrieben werden mu&szlig;, weil sonst der ganze Unit
+Test f&uuml;r umsonst ist. Korrigiert sieht <b>EuroTest.cs</b> so aus:
+</p>
+
+<pre style="background='silver';">
+using ICSharpCode.SharpUnit;
+
+[TestSuite("Euro Test Suite")]
+public class TestEuro {
+ [TestMethod("Testet die Funktion auf korrekte Umrechnung")]
+ public void TestGetEuroAmount() {
+   Euro euro = new Euro();
+ 	Assertion.AssertEquals(euro.GetEuroAmount(1.955f), 1f, 0.001f);
+ }
+}
+</pre>
+
+<p>
+Und nun wird auch der Balken gr&uuml;n:
+</p>
+
+<IMG SRC="/artikel/Bilder/200206/20020619_14.png" width="585" height="415" alt="" border="0">
+
+<p>
+Nach dem kleinen Umweg &uuml;ber den Hinweis da&szlig; sich auch Bugs in Unit Tests einschleichen k&ouml;nnen, sind wir nun am Ende des Kochrezepts
+angelangt: weitere Methoden und ihre Testmethoden werden nach dem gleichen Schema eingebaut - "Test a Little, Code a Little".
+</p>
+
+<p>
+Zum Abschlu&szlig; noch eine Liste der Methoden, die von der <i>Assertion</i> Klasse angeboten werden. Diese sind immer das Herzst&uuml;ck Ihrer
+Testmethoden, denn sie teilen #unit einen Fehler mit:
+</p>
+
+<pre style="background='silver';">
+public static void Assert(string message, bool condition)
+public static void Assert(bool condition)
+public static void AssertEquals(string message,  double expected, double current, double delta)
+public static void AssertEquals(double expected, double current, double delta)
+public static void AssertEquals(string message,  float expected, float current, float delta)
+public static void AssertEquals(float expected, float current, float delta)
+public static void AssertEquals(string message,  object expected, object current)
+public static void AssertEquals(object expected, object current)
+public static void AssertNotNull(string message, object o);
+public static void AssertNotNull(object o)
+public static void AssertNull(string message, object o)
+public static void AssertNull(object o)
+public static void AssertSame(string message, object expected, object current)
+public static void AssertSame(object expected, object current)
+public static void Fail()
+public static void Fail(string message)
+</pre>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Als Schlu&szlig;bemerkung m&ouml;chte ich Ihnen folgendes auf den Weg mitgeben: Unit Testing ist ungewohnt. Nehmen Sie sich Zeit. Es zahlt sich
+aus, sp&auml;testens bei der Integration eines Projekts, automatisiertem Testen oder Bug Fixing. Und schreiben Sie Ihre Tests umsichtig.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020619.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020619.zip</span></p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eicsharpcode%2Enet%2Fopensource%2Fsd%2Fdownload%2F">#unit (Teil von #develop)</a><br>
+<SPAN class="content">http://www.icsharpcode.net/opensource/sd/download/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ejunit%2Eorg">Junit</a><br>
+<SPAN class="content">http://www.junit.org</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fnunit%2Esourceforge%2Enet">Nunit</a><br>
+<SPAN class="content">http://nunit.sourceforge.net</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

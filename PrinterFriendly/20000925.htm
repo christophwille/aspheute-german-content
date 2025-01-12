@@ -1,0 +1,284 @@
+<HTML>
+<HEAD>
+<TITLE>Services &uuml;ber das Web managen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im heutigen Artikel besch&auml;ftigen wir uns mit den Grundlagen des Arbeitens mit Windows Services - etwas, das definitiv wert ist, administriert zu werden">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Services,ServiceController,GetServices,System.ServiceProcess,ServiceProcess,Start,Stop">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Services &uuml;ber das Web managen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000925"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Remote Administration, das ist eines der Themen im Internetzeitalter. Vom Datenbankserver &uuml;ber den Webserver,
+alles soll &uuml;ber das Internet gemanaged werden. Meistens bedient man sich eigener Remote Consolen (Terminal
+Services, etc), warum allerdings sollte man sich nicht ein ma&szlig;geschneidertes Webinterface basteln?
+</p>
+<p>
+Im heutigen Artikel besch&auml;ftigen wir uns mit den Grundlagen des Arbeitens mit Windows Services - 
+etwas, das definitiv wert ist, administriert zu werden. Dazu verwenden
+wir wieder einmal ASP.NET und das .NET Framework SDK. Apropos: ausnahmsweise g&auml;be es auch f&uuml;r ASP einen Weg, um an einer
+eigenen Komponente vorbeizukommen: WMI, Windows Management Instrumentation.
+</p>
+
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu können ist eine Installation des Microsoft .NET Framework
+SDK's auf einem Webserver. Weiters setze ich voraus, daß der Leser die Programmiersprache C# zu einem gewissen Grad 
+beherrscht - es finden sich etliche Artikel auf diesem Server, um das notwendige Wissen zu erlernen
+</p>
+<p>
+Sicherheitshinweis: die Beispielannahme ist, da&szlig; der ASP.NET Worker Prozess unter dem SYSTEM Konto l&auml;uft
+(standardm&auml;&szlig;ig l&auml;uft er unter dem ASPNET Account). Bitte &auml;ndern Sie <i>processModel</i> in <i>machine.config</i> entsprechend
+ab, oder geben nur Administratoren Zugriff auf die Dateien (Impersonation).
+</p>
+
+<h2>Auflisten der Services</h2>
+<p>
+Als Aufw&auml;rm&uuml;bung listen wir einmal die gesamten Services auf, die am Webserver installiert sind. Damit
+die &Uuml;bung nicht zu leicht wird, soll auch der Status (gestartet, gestoppt, etc) des jeweiligen Services
+angegeben werden (<b>listservices.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Assembly Name=&quot;System.ServiceProcess&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.ServiceProcess&quot; %&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;Services @localhost&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;%
+ServiceController[] arrSC = ServiceController.GetServices();
+
+Response.Write(arrSC.Length.ToString() + &quot; Services installed&lt;br&gt;&quot;);
+
+for (int i=0; i &lt; arrSC.Length; i++)
+{
+  Response.Write(&quot;&lt;b&gt;&quot; + arrSC[i].ServiceName + &quot;&lt;/b&gt;&amp;nbsp;-&amp;nbsp;&quot; 
+      + arrSC[i].DisplayName);
+  
+  switch(arrSC[i].Status)
+  {
+  case ServiceControllerStatus.ContinuePending:
+    Response.Write(&quot; [&lt;i&gt;continue pending&lt;/i&gt;]&quot;);
+    break;
+  case ServiceControllerStatus.Paused:
+    Response.Write(&quot; [&lt;i&gt;paused&lt;/i&gt;]&quot;);
+    break;
+  case ServiceControllerStatus.PausePending:
+    Response.Write(&quot; [&lt;i&gt;pause pending&lt;/i&gt;]&quot;);
+    break;
+  case ServiceControllerStatus.Running:
+    Response.Write(&quot; [&lt;i&gt;running&lt;/i&gt;]&quot;);
+    break;
+  case ServiceControllerStatus.StartPending:
+    Response.Write(&quot; [&lt;i&gt;start pending&lt;/i&gt;]&quot;);
+    break;
+  case ServiceControllerStatus.Stopped:
+    Response.Write(&quot; [&lt;i&gt;stopped&lt;/i&gt;]&quot;);
+    break;
+  case ServiceControllerStatus.StopPending:
+    Response.Write(&quot; [&lt;i&gt;stop pending&lt;/i&gt;]&quot;);
+    break;
+  }
+
+  Response.Write(&quot;&lt;br&gt;\r\n&quot;);
+}
+%&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Alles, was wir an Funktionalit&auml;t ben&ouml;tigen, findet sich im <i>System.ServiceProcess</i> Namespace. Um an
+die Liste der Services zu gelangen, verwenden wir die statische Methode <i>GetServices</i> der <i>ServiceController</i>
+Klasse:
+</p>
+
+<pre style="background='silver';">
+ServiceController[] arrSC = ServiceController.GetServices();
+</pre>
+
+<p>
+Grob gesagt, war das bereits die gesamte Arbeit - wir haben ein Array der gesamten installierten Services
+"in die Hand" gedr&uuml;ckt bekommen. Nun geht es nur noch darum, die erhaltenen Informationen am Browser 
+darzustellen. Da der <i>Status</i> Werte aus der <i>ServiceControllerStatus</i> Enumeration enth&auml;lt, habe ich noch ein
+kleines <i>switch</i> Statement eingebaut.
+</p>
+<p>
+Das Ergebnis sieht dann wie folgt aus (und das ist eine Maschine mit kaum Services installiert!):
+</p>
+
+<IMG SRC="/artikel/Bilder/200009/20000925_2.png" width="532" height="448" alt="" border="0">
+
+<p>
+Der "Vollst&auml;ndigkeit" halber m&ouml;chte ich auf noch zeigen, da&szlig; man dieses <i>ServiceController</i> Array einem <i>DataGrid</i>
+zuweisen kann. Das Beispiel <b>listservices2.aspx</b> demonstriert dies, allerdings ohne bells and whistles.
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Assembly Name=&quot;System.ServiceProcess&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.ServiceProcess&quot; %&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;Services @localhost&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;script language=&quot;C#&quot; runat=&quot;server&quot;&gt;
+void Page_Load(Object sender, EventArgs e) 
+{
+  ServiceController[] arrSC = ServiceController.GetServices();
+  
+  ServiceGrid.DataSource = arrSC;
+  ServiceGrid.DataBind();
+}
+&lt;/script&gt;
+
+&lt;h3&gt;Services&lt;/h3&gt;
+
+&lt;form runat=&quot;server&quot;&gt;
+&lt;asp:DataGrid id=&quot;ServiceGrid&quot; runat=&quot;server&quot;
+    BorderColor=&quot;black&quot;
+    BorderWidth=&quot;1&quot;
+    GridLines=&quot;Both&quot;
+    CellPadding=&quot;3&quot;
+    CellSpacing=&quot;0&quot;
+    Font-Name=&quot;Verdana&quot;
+    Font-Size=&quot;8pt&quot;
+    HeaderStyle-BackColor=&quot;#aaaadd&quot;
+    AutoGenerateColumns=&quot;false&quot;&gt;
+    &lt;Columns&gt;
+      &lt;asp:BoundColumn HeaderText=&quot;Service name&quot; DataField=&quot;ServiceName&quot; /&gt;
+      &lt;asp:BoundColumn HeaderText=&quot;Display name&quot; DataField=&quot;DisplayName&quot; /&gt;
+      &lt;asp:BoundColumn HeaderText=&quot;Status&quot; DataField=&quot;Status&quot;/&gt;
+    &lt;/Columns&gt;
+&lt;/asp:DataGrid&gt;
+&lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Und am Browser erh&auml;lt man dann folgendes DataGrid:
+</p>
+
+<IMG SRC="/artikel/Bilder/200009/20000925_1.png" width="578" height="410" alt="" border="0">
+
+<h2>Stoppen von Services</h2>
+<p>
+Das Auflisten von Services war ja nicht weiter schwierig, also darf man annehmen, da&szlig; das Stoppen
+eines Services ebenso leicht sein sollte (ist es auch). Der folgende Code (<b>stopservice.aspx</b>) zeigt
+wie's geht:
+</p>
+<p>
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Assembly Name=&quot;System.ServiceProcess&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.ServiceProcess&quot; %&gt;
+&lt;%
+ServiceController myService = new ServiceController(&quot;MSFTPSVC&quot;);
+if (myService.CanStop)
+{
+  myService.Stop();
+}
+%&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</p>
+<p>
+Eigentlich w&auml;re nur die <i>Stop</i> Methode aufzurufen, allerdings w&uuml;rde man eine unsch&ouml;ne Exception erhalten,
+wenn der Service bereits gestoppt ist - deshalb checke ich zuerst die <i>CanStop</i> Eigenschaft, ob der Service
+&uuml;berhaupt gestoppt werden kann.
+</p>
+<p>
+Apropos Falle: nat&uuml;rlich darf nicht jedermann Services stoppen - dieses Recht haben nur einige Benutzergruppen,
+deshalb mu&szlig; man f&uuml;r die korrekten Zugriffsrechte (NTFS) auf den ASP.NET Dateien sorgen!
+</p>
+
+<h2>Starten eines Services</h2>
+<p>
+Eigentlich f&uuml;hre ich das nur noch zur Vervollst&auml;ndigung an, da alle Befehle (stoppen, starten, pausieren)
+nach dem gleichen Muster funktionieren - der Aufruf einer Methode reicht. Hier eben der Aufruf, um den 
+FTP Service zu starten:
+</p>
+<p>
+<pre style="background='silver';">
+ServiceController myService = new ServiceController(&quot;MSFTPSVC&quot;);
+myService.Start();
+</pre>
+</p>
+<p>
+Auf diese Art und Weise k&ouml;nnte man den FTP Service einschalten, wenn man ihn ben&ouml;tigt - ohne eine
+potentielle Sicherheitsl&uuml;cke allzulange offenzulassen.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Visuell sieht das noch nicht nach einem zusammenh&auml;ngenden Administrationsinterface f&uuml;r Services aus - 
+allerdings ist dies nur noch ein kleiner Schritt. In weiteren Artikeln werde ich das Portfolio an 
+Administrationstools dann vervollst&auml;ndigen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000925.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000925.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000811.htm">Ausgabe der Event Log Eintr&auml;ge a la ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000811.htm</span><br>
+<a href="../artikel/20000809.htm">Performance Monitoring a la .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000809.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

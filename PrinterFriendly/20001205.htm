@@ -1,0 +1,357 @@
+<HTML>
+<HEAD>
+<TITLE>Erstellung eines Newstickers in ASP</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel beschreibt wie man mithilfe von ASP und JavaScript einen Newsticker erstellt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP,News,Newsticker,Browser">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Erstellung eines Newstickers in ASP</H1>
+<p>
+Geschrieben von: <a href="../autoren/alexanderzeitler.htm">Alexander Zeitler</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001205"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Willkommen zum 1. Teil einer 2-teiligen Artikelserie zur Erstellung eines Newstickers. In diesem Artikel 
+zeige ich Ihnen, welche grundlegenden Strukturen notwendig sind und wie Sie den Newsticker anzeigen 
+lassen. Im zweiten Teil werden Sie dann erfahren, wie Sie eine Administrations-Seite f&uuml;r den Newsticker 
+erstellen.
+</p>
+
+<p>
+Im Download zum heutigen Artikel finden Sie die ben&ouml;tigte Access-Datenbank sowie den Sourcecode zur 
+Anzeige des Newstickers.Der Newsticker funktioniert mit dem Internet Explorer und Netscape Navigator 
+ab Version 4.0. Netscape 6.0 unterst&uuml;tzt keine Layer, weswegen dieses Script nicht funktioniert.
+</p>
+
+<h2>Site- und Datenbankdesign</h2>
+
+<p>
+Zun&auml;chst will ich Ihnen ein m&ouml;gliches Ergebnis f&uuml;r einen Newsticker vorstellen, an dem wir uns in diesem 
+Artikel orientieren werden.
+</p>
+
+<p><IMG SRC="/artikel/Bilder/200012/20001205_newsticker_anzeigen.png" width="444" height="368" alt="" border="0"></p>
+
+<p>
+Der Ticker scrollt die 3 (dieser Wert l&auml;sst sich mit der Administrationsseite beliebig &auml;ndern) 
+aktuellsten Eintr&auml;ge aus der Datenbank von unten nach oben in einer Endlosschleife.
+</p>
+
+<p>
+Jeder Tickereintrag besteht aus bis zu 6 Teilen, welche in der Datenbank gespeichert werden:
+</p>
+
+<p>
+<ul>
+<li>&Uuml;berschrift
+<li>Text
+<li>Link
+<li>Link-Ziel (Target)
+<li>Datum
+<li>Darf der Eintrag angezeigt werden? (Ja/Nein)
+</ul>
+</p>
+
+<p>
+Beim Internet-Explorer l&auml;sst sich das Scrolling relativ leicht &uuml;ber eine Marquee erstellen. Beim 
+Netscape-Navigator m&uuml;ssen wir hierzu ein JavaScript verwenden, das mittels Layern den gleichen Effekt 
+erzielt. Deshalb ist der gesamte Ticker f&uuml;r beide Browser in JavaScript implementiert.
+</p>
+
+<p>
+Das JavaScript f&uuml;r Internet Explorer und Netscape  - ohne ASP-Code - sieht wie folgt aus:
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;script language="JavaScript1.2">
+var tickerbreite=210
+var tickerhoehe=200
+var geschwindigkeit=1
+var tickerparameter='&lt;font face="verdana" color="#000000" size="1"&gt;'
+
+tickerparameter=tickerparameter+'Tickertext';
+tickerparameter=tickerparameter+'&lt;/font&gt;';
+  if (document.all)
+   document.write('&lt;marquee direction="up" scrollAmount='+geschwindigkeit+' style="width: _
+   '+tickerbreite+';height:'+tickerhoehe+'"&gt;'+tickerparameter+'&lt;/marquee&gt;')
+		
+function erneuern(){
+    window.location.reload()
+}
+
+function erneuern1(){
+   if (document.layers){
+      setTimeout("window.onresize=erneuern",450)
+      tickerinitialisieren()
+    }
+}
+		
+function tickerinitialisieren(){
+  document.tickerl1.document.tickerl2.document.write(tickerparameter)
+  document.tickerl1.document.tickerl2.document.close()
+  laenge=document.tickerl1.document.tickerl2.document.height
+     tickerscrollen()
+}
+		
+function tickerscrollen(){
+  if (document.tickerl1.document.tickerl2.top>=laenge*(-1)){
+	document.tickerl1.document.tickerl2.top-=geschwindigkeit
+	setTimeout("tickerscrollen()",100)
+  }
+  else{
+    document.tickerl1.document.tickerl2.top=tickerhoehe
+    tickerscrollen()
+  }
+}
+		
+window.onload=erneuern1
+&lt;/script&gt;
+				
+&lt;ilayer width=&{tickerbreite}; height=&{tickerhoehe}; name="tickerl1"&gt;
+&lt;layer name="tickerl2" width=&{tickerbreite}; height=&{tickerhoehe};&gt;&lt;/layer&gt;
+&lt;/ilayer&gt;
+</pre>
+</p>
+
+<p>
+Aus dem JavaScript ergeben sich weitere Felder, die wir in der Datenbank ben&ouml;tigen:
+</p>
+
+<p>
+<ul>
+<li>Tickerbreite
+<li>Tickerh&ouml;he
+<li>Geschwindigkeit
+</ul>
+</p>
+
+<p>
+Au&szlig;erdem ben&ouml;tigen wir noch ein Feld, das festlegt, wie viele Eintr&auml;ge der Ticker anzeigen soll.
+</p>
+
+<p>
+Mit diesem Vorgaben ergibt sich die Notwendigkeit, 2 Tabellen in unserer Datenbank zu erstellen:
+</p>
+
+<p><IMG SRC="/artikel/Bilder/200012/20001205_tabelle_settings.png" width="476" height="122" alt="" border="0"></p>
+
+<p><IMG SRC="/artikel/Bilder/200012/20001205_tabelle_news.png" width="554" height="154" alt="" border="0"></p>
+
+<h2>Darstellung des Newstickers</h2>
+
+<p>
+Wie stellen wir nun die Werte aus der Datenbank dar? Hierzu werfen wir noch einmal einen kurzen Blick 
+auf die Darstellung unseres Beispiels. Wir m&ouml;chten die in der Datenbank eingestellte Anzahl an 
+Eintr&auml;gen anzeigen lassen. Au&szlig;erdem sollen auch H&ouml;he, Breite und Geschwindigkeit aus der Datenbank 
+gelesen werden. Der notwendige Code ist relativ einfach und sieht wie folgt aus:
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;%
+Set conn = Server.CreateObject("ADODB.Connection")
+
+strConn = "Driver={Microsoft Access Driver (*.mdb)};DriverID=25;DBQ="
+strConn = strConn &amp; Server.MapPath("newsticker.mdb")
+strConn = strConn &amp; ";FIL=MS Access;MaxBufferSize=512;PageTimeout=5;"
+conn.Open strConn
+
+strSQL = "SELECT * FROM settings"
+Set rs = conn.Execute(strSQL)
+tickerbreite = rs.fields("tickerbreite")
+tickerhoehe = rs.fields("tickerhoehe")
+geschwindigkeit = rs.fields("geschwindigkeit")
+anzahlangezeigt = rs.fields("anzahlangezeigt")
+%&gt;
+</pre>
+</p>
+
+<p>
+Weiters &uuml;berpr&uuml;fen wir, ob die Werte f&uuml;r die Breite, H&ouml;he und Geschwindigkeit des Tickers 
+sowie die Anzahl der angezeigten Eintr&auml;ge in einem g&uuml;ltigen bzw. sinnvollen Bereich liegen:
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;%
+if anzahlangezeigt &lt; 1 then anzahlangezeigt=3
+if (tickerbreite &lt; 135 or tickerbreite &gt; 300) then tickerbreite=220
+if (tickerhoehe &lt; 30 or tickerhoehe &gt; 300) then tickerhoehe=220
+if (geschwindigkeit &lt; 1 or geschwindigkeit &gt; 6) then geschwindigkeit = 2
+%&gt;
+</pre>
+</p>
+
+<p>
+Um zu vermeiden, da&szlig; evtl. alte Parameter bzw. auch veraltete Eintr&auml;ge angezeigt werden, schalten wir 
+das Caching f&uuml;r Proxies und Browser mit den folgenden Befehlen ab:
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;%
+Response.Expires=0
+Response.AddHeader "Pragma","no-cache"
+Response.AddHeader "cache-control", "no-store"
+%&gt;
+</pre>
+</p>
+
+<p>
+Weitere Informationen zum Thema "Caching" finden Sie <a href="../artikel/19990808.htm">hier</a>
+</p>
+
+<p>
+Jetzt k&ouml;nnen wir die ermittelte Breite, H&ouml;he und Geschindigkeit an unser JavaScript &uuml;bergeben:
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;script language="JavaScript1.2"&gt;
+var tickerbreite=&lt;%=tickerbreite%&gt;
+var tickerhoehe=&lt;%=tickerhoehe%&gt;
+var geschwindigkeit=&lt;%=geschwindigkeit%&gt;
+.
+.
+.
+</pre>
+</p>
+
+<p>
+Um die vorher ausgelesene Anzahl an Eintr&auml;gen aus der Datenbank zu lesen, m&uuml;ssen wir nun zuerst 
+unseren ConnectionString zusammensetzen:
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;%
+strSQL = "SELECT TOP "
+strSQL = strSQL &amp; cstr(anzahlangezeigt)
+strSQL = strSQL &amp; " * FROM news where eintraganzeigen = true order by datum desc"
+%&gt;
+</pre>
+</p>
+
+<p>
+Wie man sieht, wurde mittels "desc" im SQL String die Sortierreihenfolge der Eintr&auml;ge umgekehrt. 
+Dies ist notwendig, um die neuesten Eintr&auml;ge zuerst anzeigen zu lassen. Au&szlig;erdem mu&szlig; mittels "cstr" der 
+Integer-Wert der Variable "anzahlangezeigt" in einen String umgewandelt werden.
+</p>
+
+<p>
+Zuletzt &uuml;bergeben wir die ausgelesenen Eintr&auml;ge an unser JavaScript. Hierbei m&uuml;ssen wir beachten, da&szlig; 
+das Feld "Link" leer sein k&ouml;nnte. In diesem Fall darf auch kein Link in dem Ticker angezeigt werden, um 
+einen "Sprung ins Leere" f&uuml;r den Surfer zu vermeiden. Das ganze l&auml;&szlig;t sich mit einer IF-Abfrage leicht 
+realisieren:
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;%
+strSQL = "SELECT TOP "
+strSQL = strSQL + cstr(anzahlangezeigt)
+strSQL = strSQL + " * FROM news where eintraganzeigen = true order by datum desc"
+Set rs = conn.Execute(strSQL)
+Do While Not(rs.EOF)
+  Response.Write "tickerparameter=tickerparameter+'&lt;B&gt;" &amp; rs("datum") &amp; ": " &amp;
+    rs("ueberschrift") &amp; "&lt;/B&gt;" &amp; "&lt;br&gt;" &amp; rs("text") &amp; "&lt;br&gt;';"
+    if rs("link") &lt;&gt; "" then
+      Response.Write "tickerparameter=tickerparameter+' _
+      &lt;A HREF=" + rs("link") + " target=" + rs("link_target") + "&gt;mehr...&lt;/A&gt;&lt;br&gt;';"
+    end if
+  Response.Write "tickerparameter=tickerparameter+'<br>';"
+  rs.MoveNext
+Loop
+rs.Close
+conn.Close
+%&gt;
+</pre>
+</p>
+
+<p>
+In dem dargestellten Code wird in die JavaScript-Variable "tickerparameter" nun Eintrag f&uuml;r Eintrag 
+eingelesen und entsprechend formatiert. &Auml;nderungen an der Formatierung (Schriftart etc.) m&uuml;ssen Sie 
+also hier vornehmen, indem Sie entsprechende HTML-Tags verwenden. Sie k&ouml;nnten allerdings auch die 
+Datenbank dahingehend erweitern, dass Formatierungen der Eintr&auml;ge gespeichert werden k&ouml;nnen...
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Im ersten Teil meines Artikels haben Sie gesehen, wie sie mit Hilfe der TOP-Abfrage schnell und einfach 
+eine bestimmte Anzahl von Werten aus einer Datenbank auslesen k&ouml;nnen. Damit diese beim Client immer 
+aktuell sind, haben wir auch kurz das Thema Caching angesprochen.
+</p>
+
+<p>
+Auch in die Kombinationsm&ouml;glichkeiten von ASP und JavaScript haben Sie einen kleinen Einblick erhalten.
+</p>
+
+<p>
+Bleibt mir nur, Ihnen mit den bisher gezeigten Werkzeugen viel Spa&szlig; zu w&uuml;nschen und Sie zum zweiten Teil 
+des Kurses einzuladen, um auf die leichte Administration des Newstickers einzugehen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001205.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20001205.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010417.htm">Eine Umfrage in ASP erstellen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010417.htm</span><br>
+<a href="../artikel/20010209.htm">Erstellung eines Newstickers in ASP - Teil 2</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010209.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,231 @@
+<HTML>
+<HEAD>
+<TITLE>Laden von Dateien aus dem Web mit ASP</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Um spezielle Anwendungen - wie Suchmaschinen oder Spider - mittels Active Server Pages programmieren zu k&ouml;nnen, ben&ouml;tigt man eine ASP-Komponente, die Dateien (und eventuell Bilder) aus dem Internet laden kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP, Active Server Pages, Daten aus Internet, Intranet, Webserver, Datei speichern, AspTear, Komponente, Alphasierrapapa.com">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Laden von Dateien aus dem Web mit ASP</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000519"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Um spezielle Anwendungen, wie Suchmaschinen oder Spider, mittels Active Server Pages programmieren zu k&ouml;nnen,
+ben&ouml;tigt man eine ASP-Komponente, die Dateien (und eventuell Bilder) aus dem Internet laden kann.
+</p>
+<p>
+Ich m&ouml;chte hier den Einsatz einer solchen Komponente am Beispiel der 
+<a href="http://www.alphasierrapapa.com/ComponentCenter/AspTear/" target="_blank">AspTear Komponente von AlphaSierraPapa</a>
+erkl&auml;ren.
+</p>
+
+<p>
+Nachdem die Installation der AspTear Komponente am Webserver abgeschlossen ist,
+kann man aus ASP-Scripts, aber auch aus Word, Excel und Access, Daten aus dem
+Internet abfragen.
+</p>
+
+
+<h2>Laden einer Textdatei aus dem Web</h2>
+<p>
+AspTear erlaubt es, Textdateien aus Web zu lesen. Der Inhalt der Textdatei
+kann an die ASP-Seite &uuml;bergeben und dort weiterverarbeitet werden.
+</p>
+<p>
+Bevor die Komponente in einer ASP-Seite benutzt wird, mu&szlig; zuerst eine Instanz
+der Komponente erstellt und in einer Variable gespeichert werden:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Language=VBScript %&gt;
+&lt;%
+Option Explicit
+
+' Konstanten fuer AspTear definieren
+Const atPost = 1
+Const atGet = 2
+Const atHead = 3
+
+Dim objAspTear, strWebDatei, strDateiInhalt
+
+' Objektinstanz von AspTear erstellen
+Set objAspTear = Server.CreateObject("SOFTWING.ASPtear")      
+
+' Zu ladende Datei
+strWebDatei = "http://www.aspheute.com../default.htm"
+
+' Inhalt der Datei laden und speichern
+' Syntax: Retrieve(URL, Methode, Daten_Zur_Webseite, 
+'                        Benutzername, Passwort)
+strDateiInhalt = objAspTear.Retrieve(strWebDatei, atGet, "", "", "")
+
+' Objektresourcen freigeben
+Set objAspTear = Nothing
+
+' Inhalt von http://www.aspheute.com../default.htm ist nun in
+'  strDateiInhalt gespeichert
+Response.Write strDateiInhalt
+%&gt;
+</pre>
+
+<p>
+Bilder kann man auf diese Weise aber nicht verarbeiten.
+</p>
+
+
+<h2>Speichern von Daten aus dem Web</h2>
+<p>
+Dateien aus dem Internet holen und direkt auf der Festplatte speichern ist eine weitere Funktionalit&auml;t
+der AspTear Komponente. 
+Zu diesem Zweck stellt die Komponente die <i>Save</i> Methode zur Verf&uuml;gung.
+</p>
+<p>
+Mit Hilfe der <i>Save</i> Methode kann man sowohl Text-Dateien als
+auch Grafiken aus dem Internet (und nat&uuml;rlich auch aus dem Intranet) 
+direkt auf die Festplatte des Webservers (oder einem Netzwerkverzeichnis)
+schreiben.
+</p>
+<p>
+Das folgende Beispiel zeigt, wie man Bilder direkt auf die Fesplatte l&auml;dt:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Language=VBScript %&gt;
+&lt;%
+Option Explicit
+
+' Konstanten fuer AspTear definieren
+Const atPost = 1
+Const atGet = 2
+Const atHead = 3
+
+Dim objAspTear, strUrl, strDatei, blnSpeichernErfolgreich
+
+' Objektinstanz von AspTear erstellen
+Set objAspTear = Server.CreateObject("SOFTWING.ASPtear")      
+
+' Zu ladende Datei
+strUrl = "http://www.aspheute.com/Images/Layout/aspheutetitle.gif"
+
+' Wird auf der Festplatte gespeichert als:
+strDatei = "C:\Temp\aspheutetitle.gif"
+
+' Inhalt der Datei laden und auf Festplatte speichern
+' Syntax: Save(URL, Methode, Daten_Zur_Webseite, 
+'                    Dateiname, Benutzername, Passwort)
+objAspTear.Accept = "*/*"
+blnSpeichernErfolgreich = objAspTear.Save(strUrl, atGet, "" , strDatei, "", "")
+
+If blnSpeichernErfolgreich Then
+	Response.Write "Datei erfolgreich gespeichert."
+Else	
+	Response.Write "Datei nicht gespeichert."
+End If
+
+' Objektresourcen freigeben
+Set objAspTear = Nothing
+
+' Inhalt von http://www.aspheute.com/Images/Layout/aspheutetitle.gif ist nun in
+'  der Datei C:\Temp\aspheutetitle.gif gespeichert
+%&gt;
+</pre>
+
+<p>
+Beide Beispiele zeigen die Grundfunktionali&auml;t von AspTear. 
+Taucht beim Ladevorgang einer Datei aus dem Web ein Fehler auf,
+so gibt AspTear diesen Fehler als Run-Time Fehler an die
+aufrufende ASP-Seite weiter. Deshalb sollten ASP-Seiten,
+die AspTear, oder andere Komponenten benutzen, stets eine Fehlerbehandlung
+enthalten.
+</p> 
+
+<h2>Weitere Funkionalit&auml;ten von AspTear</h2>
+<p>
+AspTear kann nicht nur Dateien aus dem Webserver laden.
+Es kann beim Abruf der Datei auch Daten zur Datei schicken. Dabei
+geht es auf die selbe Weise vor, wie ein Browser, der eine Formular
+(mit POST oder GET) abschickt. Ausserdem kann man noch weitere
+Funktionalit&auml;ten eines Browsers mit der AspTear Komponente simulieren.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000519.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000519.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000508.htm">Erstellen eines HTTP Test Tools</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000508.htm</span><br>
+<a href="../artikel/20020411.htm">Kopieren verboten - Lizenzsicherung bei ASP Scripts</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020411.htm</span><br>
+<a href="../artikel/20010803.htm">Meta Tags von fremden Seiten parsen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010803.htm</span><br>
+<a href="../artikel/20000824.htm">Scrapen von Webseiten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000824.htm</span><br>
+<a href="../artikel/20011113.htm">Sonderzeichen korrekt grabben mit XmlHttp</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011113.htm</span><br>
+<a href="../artikel/20010328.htm">Webpage-Grabbing mit dem XML Parser</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010328.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2FComponentCenter%2FAspTear%2FHelp%2F">AspTear Dokumentation</a><br>
+<SPAN class="content">http://www.alphasierrapapa.com/ComponentCenter/AspTear/Help/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2FComponentCenter%2FAspTear%2FHelp%2Fexamples%2Dbasic%2Ehtml">Einfaches AspTear Beispiel</a><br>
+<SPAN class="content">http://www.alphasierrapapa.com/ComponentCenter/AspTear/Help/examples-basic.html</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2FComponentCenter%2FAspTear%2F">Produktseite AspTear</a><br>
+<SPAN class="content">http://www.alphasierrapapa.com/ComponentCenter/AspTear/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

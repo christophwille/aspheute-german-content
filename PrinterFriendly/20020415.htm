@@ -1,0 +1,277 @@
+<HTML>
+<HEAD>
+<TITLE>Programmieren mit den Google Web APIs Beta 2</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Ein neuer Web Service sind die Google Web APIs, mit denen man auf Such-, Cache- und Spellingdienste dieser sehr beliebten Suchmaschine zugreifen kann. Heute sehen wir uns, wie man die APIs in seine .NET Anwendungen einbauen kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Web Service,Consumer,Google Web APIs,Suchmaschine,Spelling,Windows Application,Beispiel,Sample">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Programmieren mit den Google Web APIs Beta 2</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Web%20Services.htm">Web Services</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020415"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Langsam aber sicher tauchen die ersten interessanten Web Services am Internet auf. Einer davon sind die
+Google Web APIs, mit denen man auf Such-, Cache- und Spellingdienste dieser sehr beliebten Suchmaschine
+zugreifen kann. Heute sehen wir uns, wie man die APIs in seine .NET Anwendungen einbauen kann.
+</p>
+<p>
+Das SDK und die Beispiele k&ouml;nnen von <a href="http://www.google.com/apis/" target="_blank">Google Web APIs </a>
+downgeloadet werden. Die Registrierung ist kurz und schmerzlos, aber sehr wichtig: nach der Registrierung
+bekommt man einen Key zugemailt, den man bei allen Anfragen mitschicken mu&szlig;. Mit diesem Key kann man bis zu maximal
+1000 Abfragen pro Tag absetzen.
+</p>
+<p>
+Im SDK findet sich eine Kurzdokumentation in Form eines HTML Dokuments, eine WSDL Datei f&uuml;r Verwendung in beliebigen 
+Programmiersprachen, sowie fertige Beispiele (und Klassen) f&uuml;r Java und .NET. Wer sich ein schnelles Erfolgserlebnis 
+g&ouml;nnen will, sollte das Beispiel im Order <b>\googleapi\dotnet</b> in VS.NET aufmachen und starten:
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020415_4.png" width="384" height="320" alt="" border="0">
+
+<p>
+Mit dieser Beispielapplikation kann man in die Programmierung der drei Bereiche - Search, Cache und Spelling - 
+hineinschnuppern. Der Sourcecode ist in C# geschrieben, und die Komplexheit h&auml;lt sich in engen Grenzen.
+</p>
+
+<h2>Suchanfragen durchf&uuml;hren</h2>
+<p>
+Die Beispielanwendung ist in letzteren beiden Bereichen ausreichend, aber bei Search kann man einiges mehr machen, als
+die Beispielanwendung zeigt. Deshalb habe ich eine kleine Windows Forms Anwendung programmiert, die auch Resultate
+abholen kann:
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020415_2.png" width="584" height="392" alt="" border="0">
+
+<p>
+Es handelt sich hierbei um eine C# Windows Application. Auf der Form befinden sich zwei Textboxen, eine f&uuml;r den Key
+und eine f&uuml;r den Abfragebefehl. Durch Klicken auf Start Search wird das Google Web API angestossen, und die Resultate
+der Suchanfrage zur&uuml;ckgeholt (maximal zehn pro Roundtrip mit dem Server). Diese werden dann in die ListView eingetragen.
+</p>
+<p>
+Neben der anf&auml;nglichen Designarbeit sind zwei Arbeitsschritte wichtig: das Hinzuf&uuml;gen einer Referenz auf die
+<i>System.Web.Services</i> Assembly sowie das Einbinden der Datei <b>GoogleSearchService.cs</b>. Diese Datei kommt
+mit der Beispielanwendung aus dem Google Web APIs SDK, und erspart uns die zus&auml;tzliche Arbeit, eine Web Referenz auf
+den tats&auml;chlichen Web Service zu erzeugen. Der Solution Explorer sieht dann so aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020415_3.png" width="273" height="259" alt="" border="0">
+
+<p>
+Bevor man zur Arbeit schreitet, ein kleiner Tip: es gibt im Visual Studio die immer hilfreiche Class View - dort kann man
+sich einen &Uuml;berblick &uuml;ber die verschiedenen Klassen der Google Web APIs verschaffen. Zur Referenz hier der vollst&auml;ndig
+expandierte Class View mit den vier Klassen <i>GoogleSearchService</i>, <i>GoogleSearchResult</i>, <i>ResultElement</i> und <i>DirectoryCategory</i>.
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020415_1.png" width="598" height="674" alt="" border="0">
+
+<p>
+Mit diesen Information inklusive des Beispielcodes kann man sich an die Implementierung wagen. Hier meine Version f&uuml;r das
+Starten der Suchanfrage:
+</p>
+
+<pre style="background='silver';">
+private void btnStartSearch_Click(object sender, System.EventArgs e)
+{
+  GoogleSearchService gss = new GoogleSearchService();
+  GoogleSearchResult gsr = null;
+  labelEstimatedResults.Text = "";
+
+  // issue the search command
+  try
+  {
+    gsr = gss.doGoogleSearch(txtKey.Text, // Key
+      txtSearchString.Text,  // Search string
+      0,    // start index
+      10,    // max results
+      false,  // filter
+      "",    // restriction
+      false,  // safe search
+      "",    // lr
+      "",    // ie
+      "");  // or
+  }
+  catch (Exception ex)
+  {
+    // intention: give a friendly error message for invalid license key
+    // note: this will also catch network connectivity problem on starting the search
+    string strError = ex.Message;
+    if (strError.StartsWith("Exception from service object: Invalid authorization key"))
+    {
+      strError = "License key for Google search is invalid";
+    }
+    MessageBox.Show(strError, "Error invoking Google Search Service");
+    return;
+  }
+</pre>
+
+<p>
+Der Unterschied zum Beispielcode im SDK ist das Exceptionhandling, das zwei Ziele verfolgt: erstens das Abfangen von
+Netzwerkfehlern, zweitens eine freundliche Fehlermeldung auszugeben, wenn man einen falschen Key eingegeben
+haben sollte - ein reiner Exceptiontext ist nicht benutzerfreundlich! 
+</p>
+<p>
+Wer den Beispielcode im SDK nicht lesen m&ouml;chte:
+die Methode <i>doGoogleSearch</i> der <i>GoogleSearchService</i> Klasse schickt den Abfragebefehl inklusive diverser
+Parameter an den Server. Das Result ist eine Instanz der <i>GoogleSearchResult</i> Klasse, mit der wir nun unsere
+Suchresultate auslesen k&ouml;nnen:
+</p>
+
+<pre style="background='silver';">
+  // get the estimated number of results - important for paging
+  int nEstimatedResultRow = gsr.estimatedTotalResultsCount;
+  labelEstimatedResults.Text = "Estimated # of results: " + 
+    nEstimatedResultRow.ToString();
+
+  // get all results that were returned (10 maximum as per API)
+  // BeginUpdate and EndUpdate are used to speed up drawing and minimize flickering
+  lvResults.BeginUpdate();
+  lvResults.Items.Clear();
+  ResultElement[] arrResultset = gsr.resultElements;
+  for (int i=0; i &lt; arrResultset.Length; i++)
+  {
+    ListViewItem lvi = new ListViewItem();
+    lvi.Text = arrResultset[i].title;
+    lvi.SubItems.Add(arrResultset[i].URL);
+    lvResults.Items.Add(lvi);
+  }
+  lvResults.EndUpdate();
+}
+</pre>
+
+<p>
+Zuerst lesen wir die gesch&auml;tzte Anzahl an Resultaten aus, und schreiben diese dann in eine Label-Control. Danach geht
+es ans updaten der <i>ListView</i>. Um kein Flackern der ListView zu provozieren, verwende ich hier <i>BeginUpdate</i> und <i>EndUpdate</i>,
+die mir eine "Transaktion" rund um alle Befehle der ListView legen - ein Update passiert erst nach <i>EndUpdate</i>.
+</p>
+<p>
+Abgesehen von der ListView Control und deren <i>ListViewItem</i>s arbeite ich hier haupts&auml;chlich mit einem Array aus 
+<i>ResultElement</i>s, das ich &uuml;ber die Eigenschaft <i>resultElements</i> ausgelesen habe. Die vollst&auml;ndige Definition der <i>ResultElement</i>
+Klasse finden Sie im Screenshot der Class View weiter oben, in diesem Beispiel lese ich nur die <i>title</i> und <i>URL</i>
+Eigenschaften aus, und erstelle damit ein <i>ListViewItem</i>. Wenn alle Elemente des Arrays ausgelesen sind, bekommt man
+ein Resultat wie hier zu sehen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020415_2.png" width="584" height="392" alt="" border="0">
+
+<p>
+Als kleines zus&auml;tzliches Goodie habe ich noch den Doppelklick in die Applikation eingebaut:
+</p>
+
+<pre style="background='silver';">
+private void lvResults_DoubleClick(object sender, System.EventArgs e)
+{
+  if (0 == lvResults.SelectedItems.Count) return;
+  ListViewItem lvi = lvResults.SelectedItems[0]; // we only start first one
+  string strUrl = lvi.SubItems[1].Text;
+  Process.Start(strUrl);
+}
+</pre>
+
+<p>
+Was macht dieser Code? Wenn man auf ein Item der ListView doppelklickt, wird Internet Explorer automatisch mit
+der Webadresse des aktuell selektierten Items gestartet. Nur vier Zeilen Code f&uuml;r ein praktisches Feature, praktisch.
+</p>
+<p>
+Ein wichtiges Detail fehlt noch - das Paging durch die Resultate. Wie im Screenshot zu sehen ist, haben wir mit 23
+Resultaten zu rechnen. Wie kommt man an die restlichen, weil ich zeige ja immer nur die ersten maximal zehn Resultate
+an? Nun, des R&auml;tsels L&ouml;sung liegt in der <i>doGoogleSearch</i> Methode:
+</p>
+
+<pre style="background='silver';">
+gsr = gss.doGoogleSearch(txtKey.Text, // Key
+      txtSearchString.Text,  // Search string
+      0,    // start index
+      10,    // max results
+      false,  // filter
+      "",    // restriction
+      false,  // safe search
+      "",    // lr
+      "",    // ie
+      "");  // or
+</pre>
+
+<p>
+Um weitere Resultate zu erhalten, mu&szlig; man im dritten Parameter den Startindex jeweils um (Seite * Max Results) anpassen. That's it.
+</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Mit den Google Web APIs gibt es einen Web Service, den man als gutes Beispiel f&uuml;r die Sinnhaftigkeit von Web Services
+nehmen kann. Eine tiefe Integration von Google's Suchfunktionen in eigene Anwendungen oder Web Seiten wird dadurch
+leicht m&ouml;glich.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020415.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020415.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20021029.htm">Amazon.com Web Services 2.0</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021029.htm</span><br>
+<a href="../artikel/20021107.htm">Index Server Abfragen per Web Service</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021107.htm</span><br>
+<a href="../artikel/20010703.htm">Web Services einfach konsumieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010703.htm</span><br>
+<a href="../artikel/20010622.htm">Web Services in Anwendungen konsumieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010622.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Egoogle%2Ecom%2Fapis%2F">Google Web APIs</a><br>
+<SPAN class="content">http://www.google.com/apis/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

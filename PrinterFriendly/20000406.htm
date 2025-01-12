@@ -1,0 +1,346 @@
+<HTML>
+<HEAD>
+<TITLE>Auswertung von HTML Formularen mit ASP</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel beschreibt die Grundlagen der Programmierung von HTML Formularen, und wie man Formulardaten in ASP Seiten auswertet.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP,HTML,FORM,Formular,Auswertung,QueryString,Form,Request,Item">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Auswertung von HTML Formularen mit ASP</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000406"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Sicherlich kennen sie die Eingabeformulare in HTML Seiten. Sie werden zum Beispiel benutzt um Registrierungsdaten 
+einzugeben, oder um in einer Suchmaschine den Suchbegriff festzulegen.
+</p>
+<p>
+Wie sieht nun der HTML Code eines Formulares prinzipiell aus? Um ein Formular zu kennzeichnen bedarf 
+es des <i>&lt;FORM&gt;</i> Tags.  
+</p>
+<p>
+Die wichtigsten Parameter des &lt;FORM&gt; Tags sind wie folgt:
+</p>
+<p>
+<table cellspacing=3 cellpadding=3>
+<tr>
+	<td>ACTION</td>
+	<td>Internet-Adresse, an welche der Inhalt des Formulars geschickt wird</td>
+</tr>
+<tr>
+	<td>METHOD</td>
+	<td>Methode der Daten&uuml;bertragung (GET oder POST)</td>
+</tr>
+<tr>
+	<td>ENCTYPE</td>
+	<td>Codierungsart der Daten </td>
+</tr>
+</table>
+</p>
+<p>
+Somit k&ouml;nnte ein Formular wie folgt eingeleitet werden:
+</p>
+<p>
+<pre style="background='silver';">&lt;FORM ACTION="http://www.aspgerman.com" METHOD="Get"&gt;</pre>
+</p>
+<p>
+Zwischen dem &lt;FORM&gt; und dem &lt;/FORM&gt; Tag des Formulars stehen die HTML Tags der Formularelemente:
+</p>
+<h3>Textfeld</h3>
+<p>
+Erlaubt dem User Text einzugeben
+<pre style="background='silver';">
+&lt;INPUT TYPE="Text" NAME="TextName" VALUE="Wert1"&gt; 
+</pre>
+</p>
+<h3>Passwortfeld</h3>
+<p>
+Das Passwortfeld sieht im Prinzip gleich aus wie das Textfeld, hier wird aber der Text beim Eintippen unkenntlich 
+gemacht und als *** angezeigt
+<pre style="background='silver';">&lt;INPUT TYPE="Password" NAME="PasswordName" VALUE="Wert7"&gt;</pre>
+</p>
+<h3>Verborgenes Feld</h3>
+<p>
+In diesem Feld ist der Text nicht sichtbar oder &auml;nderbar, der Wert wird mit dem Formular geschickt
+<pre style="background='silver';">
+&lt;INPUT TYPE="Hidden" NAME="HiddenName" VALUE="Wert2"&gt;
+</pre>
+</p>
+<h3>Checkbox</h3>
+<p>
+Das ist ein Feld zum Ankreuzen. Der Parameter "CHECKED" gibt an, da&szlig; das Feld standardm&auml;&szlig;ig angekreuzt ist. 
+Diese Felder k&ouml;nnen, m&uuml;ssen aber nicht markiert werden.
+<pre style="background='silver';">
+&lt;INPUT TYPE="Checkbox" NAME="CheckboxName" VALUE="Wert5"&gt;
+&lt;INPUT TYPE="Checkbox" NAME="CheckboxName" VALUE="Wert6" CHECKED&gt;
+</pre>
+</p>
+<h3>Radio-Button</h3>
+<p>
+Ein Feld zum Ausw&auml;hlen, bei mehreren Radio-Kn&ouml;pfen mit selben Namen kann immer nur einer ausgew&auml;hlt werden. 
+Der Parameter "CHECKED" gibt an, da&szlig; das Feld standardm&auml;&szlig;ig ausgew&auml;hlt ist.
+<pre style="background='silver';">
+&lt;INPUT TYPE="Radio" NAME="RadioName" VALUE="Wert3"&gt;
+&lt;INPUT TYPE="Radio" NAME="RadioName" VALUE="Wert4" CHECKED&gt;
+</pre>
+</p>
+<h3>Button (Knopf)</h3>
+<p>
+Dieser Button kann gedr&uuml;ckt werden, hat aber nur im Zusammenspiel mit client-side JavaScript/VBScript eine 
+Funktion. Der Wert wird nicht mit dem Formular abgesendet.
+<pre style="background='silver';">
+&lt;INPUT TYPE="Button" NAME="ButtonName" VALUE="Wert8"&gt;
+</pre>
+</p>
+<h3>Bild Knopf / Image Button</h3>
+<p>
+Der Image Button kann statt dem Submit Knopf verwendet werden. Beim Klicken auf das Bild wird das Formular 
+abgesendet und die X- und Y-Koordinaten der Mouseposition werden auch mitgeschickt 
+(als Werte von ImageName.x und ImageName.y). Das Bild des Knopfes selbst wird von der Internetadresse 
+bezogen, die im Parameter SRC angegeben ist. Der Parameter Border gibt die St&auml;rke der Bildumrandung vor.
+<pre style="background='silver';">
+&lt;INPUT TYPE="Image" NAME="ImageName" 
+	SRC="http://www.aspgerman.com/button1.jpg" BORDER="0"&gt;
+</pre>
+</p>
+<h3>Listenauswahl (Dropdown Box)</h3>
+<p>
+Bei einer Listenauswahl kann der User einen Eintrag aus der Liste ausw&auml;hlen. Der sichtbare Wert jedes 
+Listeneintrags wird von den &lt;OPTION&gt; und &lt;/OPTION&gt; Tags begrenzt. Der Value Parameter in 
+den &lt;OPTION&gt; Tags enth&auml;lt den Wert, der bei Auswahl des Eintrags mit dem Formular &uuml;bermittelt wird.
+Der Size Parameter im &lt;SELECT&gt; Tag gibt an, wieviele Eintr&auml;ge gleichzeitig sichtbar sind.
+<pre style="background='silver';">
+&lt;SELECT NAME="SelectName" SIZE="1"&gt;
+		&lt;OPTION VALUE="Select1"&gt;Auswahl 1&lt;/OPTION&gt;
+	   	&lt;OPTION VALUE="Select2"&gt;Auswahl 2&lt;/OPTION&gt;
+	   	&lt;OPTION VALUE="Select3"&gt;Auswahl 3&lt;/OPTION&gt;
+&lt;/SELECT&gt;
+</pre>
+</p>
+<h3>Mehrfachliste (Multiple Select)</h3>
+<p>
+Eine Mehrfachliste erlaubt dem User mehrere Listeneintr&auml;ge auszuw&auml;hlen, dabei mu&szlig; bei jeder zus&auml;tzlichen 
+Auswahl die "Shift" Taste gedr&uuml;ckt sein. Ein Mehrfachlisteneintrag wird durch den Parameter MULTIPLE 
+im &lt;SELECT&gt; Tag angezeigt. Ansonsten verh&auml;lt sich die Mehrfachlsite so wie die Listenauswahl.
+<pre style="background='silver';">
+&lt;SELECT NAME="SelectName" SIZE="2" MULTIPLE&gt;
+		&lt;OPTION VALUE="Select1"&gt;Auswahl 1&lt;/OPTION&gt;
+	   	&lt;OPTION VALUE="Select2"&gt;Auswahl 2&lt;/OPTION&gt;
+	   	&lt;OPTION VALUE="Select3"&gt;Auswahl 3&lt;/OPTION&gt;
+&lt;/SELECT&gt;
+</pre>
+</p>
+<h3>Senden Knopf / Submit Button</h3>
+<p>
+Durch Dr&uuml;cken dieses Knopfes wird das Formular abgesendet.
+<pre style="background='silver';">
+&lt;INPUT TYPE="Submit" NAME="SubmitName" VALUE="Absenden"&gt;
+</pre>
+</p>
+<h3>Zur&uuml;cksetzen Knopf / Reset Button</h3>
+<p>
+Das Dr&uuml;cken dieses Knopfes setzt das Formular in den Ursprungszustand zur&uuml;ck, und l&ouml;scht ihre Eingaben.
+<pre style="background='silver';">
+&lt;INPUT TYPE="Reset" VALUE="Zur&uuml;cksetzen"&gt;
+</pre>
+</p>
+
+<h2>Auswerten eines abgesendeten Formulares</h2>
+<p>
+Sehen wir uns einmal folgendes HTML Formular an:
+</p>
+<p>
+Text1: <INPUT TYPE="Text" NAME="Text1" VALUE="Wert1">
+<BR>
+<INPUT TYPE="Hidden" NAME="Verborgen" VALUE="Wert2">
+<BR>
+<INPUT TYPE="Radio" NAME="RadioKnopf" VALUE="Radio1">Radio 1<BR>
+<INPUT TYPE="Radio" NAME="RadioKnopf" VALUE="Radio2" CHECKED>Radio 2<BR>
+<BR>
+<INPUT TYPE="Checkbox" NAME="Checkbox" VALUE="Wert5">Checkbox 1<BR>
+<INPUT TYPE="Checkbox" NAME="Checkbox" VALUE="Wert6" CHECKED>
+Checkbox 2<BR>
+<BR>
+<INPUT TYPE="Submit" NAME="Abschicken" VALUE="Absenden">
+<INPUT TYPE="Reset" VALUE="Zur&uuml;cksetzen">
+</p>
+<p>
+Es hat diesen HTML Code:
+<pre style="background='silver';">
+&lt;FORM ACTION="empfang.asp" METHOD="GET"&gt;
+Text1: &lt;INPUT TYPE="Text" NAME="Text1" VALUE="Wert1"&gt;
+&lt;BR&gt;
+&lt;INPUT TYPE="Hidden" NAME="Verborgen" VALUE="Wert2"&gt;
+&lt;BR&gt;
+&lt;INPUT TYPE="Radio" NAME="RadioKnopf" VALUE="Radio1"&gt;Radio 1&lt;BR&gt;
+&lt;INPUT TYPE="Radio" NAME="RadioKnopf" VALUE="Radio2" CHECKED&gt;Radio 2&lt;BR&gt;
+&lt;BR&gt;
+&lt;INPUT TYPE="Checkbox" NAME="Checkbox" VALUE="Wert5"&gt;Checkbox 1&lt;BR&gt;
+&lt;INPUT TYPE="Checkbox" NAME="Checkbox" VALUE="Wert6" CHECKED&gt;
+Checkbox 2&lt;BR&gt;
+&lt;BR&gt;
+&lt;INPUT TYPE="Submit" NAME="Abschicken" VALUE="Absenden"&gt;
+&lt;INPUT TYPE="Reset" VALUE="Zur&uuml;cksetzen"&gt;
+&lt;/FORM&gt;
+</pre>
+</p>
+<p>
+Wenn sie dieses Formular absenden wird es an die ASP Seite <b>empfang.asp</b> geschickt.
+Da der Parameter METHOD auf GET gesetzt ist, werden die Daten des Formulars im sogenannten QueryString 
+der URL &uuml;bertragen. Daher k&ouml;nnte die URL beim Absenden des Formulars wie folgt aussehen:
+</p>
+<p>
+<i>http://www.aspgerman.com/empfang.asp?Text1=Wert1&HiddenName=Wert2&RadioName=Radio2&CheckboxName=Wert6&Abschicken=Absenden</i>
+</p>
+<p>
+Der Teil hinter dem Fragezeichen wird als QueryString bezeichnet und enth&auml;lt die Daten in Form von 
+FELDNAME=WERT Paaren. Die FELDNAME=WERT Paare werden mit <b>&amp;</b> aneinandergereiht. 
+</p>
+<p>
+Wenn sie beide Checkboxen im vorhergehenden Formular ankreuzen, dann kommt der Feldname Checkbox5 zweimal vor, 
+einmal mit dem Wert "Wert5", und einmal mit "Wert6".
+</p>
+<p>
+Wie kann nun eine ASP Seite (empfang.asp) dieses abgeschickte Formular auswerten? ASP stellt &uuml;ber das ASP 
+<i>Request</i> Object  die sogennanten <i>QueryString</i> und <i>Form</i> Collection (Auflistung) zur Verf&uuml;gung, in der alle 
+Formulardaten enthalten sind. 
+Wird das Formular mit der Method "POST" abgeschickt, dann kommt die Form Collection zur Anwendung, 
+andernfalls die QueryString Collection.
+</p>
+
+<h3>Auswertung nach GET &Uuml;bermittlung</h3>
+<p>
+Die Daten des vorhergehenden Formulares wurde nun mit der GET Methode &uuml;bermittelt. Daher stehen die Daten 
+in der QueryString Collection zur Verf&uuml;gung. Den Wert eines Feldes bekommt man indem man den Wert der 
+Collection ausliest:
+<pre style="background='silver';">
+StrText1 = Request.QueryString("Text1")
+StrVerborgen = Request.QueryString("Verborgen")
+StrRadio = Request.QueryString("RadioKnopf")
+StrAbschicken = Request.QueryString("Abschicken")
+</pre>
+Was macht man aber, wenn ein Feldname mehreren Werten zugeordnet sein kann, wie das beim Checkbox Feld names 
+Checkbox der Fall sein kann? In diesem Fall pr&uuml;ft man zuerst mit der Count Eigenschaft wieviele Werte mit 
+dem Feldname Checkbox &uuml;bergeben wurden:
+<pre style="background='silver';">
+Anzahl = Request.QueryString("Checkbox").Count
+</pre>
+Danach liest man &uuml;ber die Item Collection des jeweiligen Feldes alle Werte aus, speichert es in einem 
+Array oder wertet es sofort aus.
+<pre style="background='silver';">
+Dim arrCheck(2)
+For intI = 1 To Anzahl
+	arrCheck(intI) = Request.QueryString("Checkbox").Item(intI)
+Next
+</pre>
+Diese Art des Auslesens mehrerer Werte f&uuml;r den selben Feldnamen wird nat&uuml;rlich auch bei der Mehrfachliste 
+angewendet.
+</p>
+<p>
+Achtung: Bei der &Uuml;bermittlung mit der GET Methode k&ouml;nnen sie nur ungef&auml;hr zwischen 500 und 2000 Zeichen pro 
+Formular &uuml;bermitteln.
+</p>
+
+<h3>Auswertung nach POST &Uuml;bermittlung</h3>
+<p>
+Wenn ein Formular mit der POST Method &uuml;bermittelt wird, so ist kein QueryString zu sehen. Stattdessen werden 
+alle Daten im sogenannten Rumpf (Body) des Seitenaufrufes zur Auswertungsseite gesendet.
+</p>
+<p>
+Ein mit der Post Method &uuml;bermitteltes Formular wertet man &uuml;ber die Form Collection des Request Objektes aus. 
+Das Auslesen der Werte unseres Beispielformulares (METHOD ge&auml;ndert zu POST) k&ouml;nnte daher folgenderma&szlig;en 
+geschehen:
+<pre style="background='silver';">
+Dim arrCheck(2)
+StrText1 = Request.Form("Text1")
+StrVerborgen = Request.Form("Verborgen")
+StrRadio = Request.Form("RadioKnopf")
+StrAbschicken = Request.Form("Abschicken")
+
+Anzahl = Request.Form("Checkbox").Count
+For intI = 1 To Anzahl
+	arrCheck(intI) = Request.Form("Checkbox").Item(intI)
+Next
+</pre>
+</p>
+
+
+<p>
+Da es f&uuml;r die &Uuml;bermittlung nur die GET und POST METHOD gibt, bin ich somit am Ende der Ausf&uuml;hrungen zur Auswertung
+von Formularen mittels ASP angelangt. Mit den in diesem Artikel pr&auml;sentierten Grundlagen sind sie in der
+Lage, Formulare f&uuml;r ihre Website zu bauen, und erfolgreich mit ASP auszulesen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000529.htm">&Uuml;bergeben von Informationen von einer ASP-Seite zur n&auml;chsten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000529.htm</span><br>
+<a href="../artikel/20000522.htm">&Uuml;berpr&uuml;fen von HTML-Formularen mit ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000522.htm</span><br>
+<a href="../artikel/20001121.htm">AutoCompletion f&uuml;r Web Formulare</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001121.htm</span><br>
+<a href="../artikel/20020429.htm">Benutzerverwaltung leicht gemacht: Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020429.htm</span><br>
+<a href="../artikel/20010531.htm">Keine gefakten Bestellungen mehr!</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010531.htm</span><br>
+<a href="../artikel/20000505.htm">Session Variablen - Verwendung und Stolpersteine</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000505.htm</span><br>
+<a href="../artikel/20010404.htm">Sonderzeichen f&uuml;r Forms decodieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010404.htm</span><br>
+<a href="../artikel/20011112.htm">Strukturierter Aufbau in der ASP-Programmierung</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011112.htm</span><br>
+<a href="../artikel/20001030.htm">Uploaden einer beliebigen Datei in eine Datenbank</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001030.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

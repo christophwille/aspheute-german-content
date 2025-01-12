@@ -1,0 +1,289 @@
+<HTML>
+<HEAD>
+<TITLE>Wetterbericht per SMS versenden</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wenn es sich bei der gescrapten Website um eine Wetterprognoseseite handelt, kann man per SMS (Short Message Service) Nachricht die Informationen zum Handy eines Segelkollegen schicken. Diese Aufgabe wird mittels C# und dem .NET Framework gel&ouml;st.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Framework,.NET,Csharp,C sharp,C#,Wetter,SMS,Short Message Service,Gateway,Scrapen,Datenbank,SQL Server">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Wetterbericht per SMS versenden</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010913"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Den gescrapten Content einer Website kann man vielseitig weiterverwerten. Wenn es sich bei der Website
+ um eine Wetterprognoseseite handelt kann man z.B, abgelegt in einer Datenbank, eine statistische
+Auswertung erstellen. Oder wie in diesem Artikel gezeigt, per SMS (Short Message Service) Nachricht die Informationen
+zum Handy eines Segelkollegen schicken. Diese Aufgabe wird mittels C# und dem .NET Framework gel&ouml;st.
+</p>
+
+<p>
+Dieser Artikel ist die Fortsetzung der Artikel &uuml;ber das automatisierte Scrapen einer Webseite,
+<a href="../artikel/20010910.htm">Webseiten automatisiert scrapen</a> und 
+<a href="../artikel/20010911.htm">Webseiten automatisiert scrapen, Teil 2</a>. Da die
+Beispiel-Konsolenanwendung in C# geschrieben war, war es auch &quot;leicht&quot; m&ouml;glich, die Klasse f&uuml;r das Versenden
+von SMS Nachrichten aus dem Artikel <a href="../artikel/20010912.htm">SMS versenden in .NET</a> in den heutigen
+Sourcecode miteinzubinden. Am Rande sei bemerkt, da&szlig; die Konsolenapplikation nat&uuml;rlich in jeder anderen zum .NET Framework kompatiblen
+Programmiersprache geschrieben werden kann. 
+</p>
+
+<p>
+Da der Artikel auf vorigen Artikel aufbaut, k&ouml;nnen wir uns direkt mit den kleinen Problemen befassen,
+die das Verschicken von solchen Wetterprognosen per SMS so mit sich bringt. Aus dem Artikel 
+<a href="../artikel/20010911.htm">Webseiten automatisiert scrapen, Teil 2</a> wissen Sie ja schon wie man 
+automatisiert den Content einer Webseite 
+(hier: <a href="http://prognoza.hr/jadran_e.html" target="_blank">Wettervorhersage fuer die Adria</a>) scrapt und
+ohne l&auml;stigen Ballast in eine SQL Datenbank schreibt. Heute drehen wir den Spie&szlig; sozusagen um und holen diese Daten
+aus der Datenbank, formatieren sie passend f&uuml;r eine SMS Nachricht und k&ouml;nnen diese dann wiederum automatisch per
+Scheduled Task verschicken.
+</p>
+
+<p>
+Da die Konsolenapplikation in C# geschrieben ist, l&auml;&szlig;t sich die Funktionali&auml;t ja leicht modular gliedern.
+Befassen wir uns daher mit jener Klasse, die f&uuml;r das Holen der Daten aus der Datenbank und das passende Formatieren
+der Daten f&uuml;r die SMS Nachrichten verantwortlich ist. Diese Klasse hei&szlig;t im Beispielcode <i>SendWeatherData</i>.
+Diese Klasse hat zwei Methoden - <i>GetLatestWeatherReport</i>, diese holt die aktuellen Daten aus der Datenbank.
+Die zweite, <i>Send</i> hat die Aufgabe die Daten f&uuml;r die SMS Nachricht zu formatieren und durch zu Hilfenahme
+einer anderen Klasse diese auch zu versenden.
+</p>
+
+<p>
+Sehen wir uns zun&auml;chst die <i>GetLatestWeatherReport</i> Methode an:
+</p>
+
+<pre style="background='silver';">
+public void GetLatestWeatherReport(out string strRetData)
+{
+string strConn = "server=(local)\\NetSDK;database=ScrapAppImproved;Trusted_Connection=yes"; 
+string strSql =  "SELECT TOP 1 Title, Heading1, Heading2, Heading3, Heading4 FROM 
+      tContent WHERE Success=1 ORDER BY ForecastTimestamp DESC";
+
+SqlConnection RetrSqlConn = new SqlConnection(strConn);
+SqlCommand RetrSqlCmd = new SqlCommand(strSql, RetrSqlConn);  
+
+RetrSqlConn.Open();
+SqlDataReader MySqlReader = RetrSqlCmd.ExecuteReader();
+
+MySqlReader.Read();
+strRetData = MySqlReader["Title"].ToString();
+strRetData += MySqlReader["Heading1"].ToString();
+strRetData += MySqlReader["Heading2"].ToString();
+strRetData += MySqlReader["Heading3"].ToString();
+strRetData += MySqlReader["Heading4"].ToString();
+MySqlReader.Close(); 
+RetrSqlConn.Close();
+}
+</pre>
+
+<p>
+Diese Methode hat einen Ausgabeparameter der die aktuellen Daten zur Wetterlage, in diesem Fall der Adria, zur&uuml;ckgibt.
+Doch bevor wir diesen erhalten, m&uuml;ssen ein paar Schritte durchgef&uuml;hrt werden. Nach dem Festlegen des
+Connectionstrings (<i>strConn</i>) wird das SQL-Statment angegeben. Dieses holt genau eine Datenreihe
+aus der Datenbank die aus dem Artikel <a href="../artikel/20010911.htm">Webseiten automatisiert scrapen, Teil 2</a>
+bekannt sein sollte.
+</p>
+
+<p>
+Hierbei ist aber eine Einschr&auml;nkung zu treffen. Und zwar sollen nur Daten verschickt werden, die einem erfolgreichen
+Scrap-Vorgang entsprechen (durch <i>Success=1</i>) und nat&uuml;rlich ist nur die aktuellste Wetterprognose interessant
+(durch <i>ORDER BY ForecastTimestamp DESC</i>). Nach dem obligatorischen Erstellen der Objekte f&uuml;r
+die Datenbankverbindung (<i>RetrSqlConn</i>) und des SqlCommands (<i>RetrSqlCmd</i>), kann die Verbindung
+mit Hilfe der <i>Open</i> Methode des SqlConnection Objektes hergestellt werden.
+</p>
+
+<p>
+Da wir f&uuml;r diese Aufgabe kein DataGrid oder &auml;hnliche Annehmlichkeiten ben&ouml;tigen, verwende ich den 
+SqlDataReader der mir nur einen read- und forwardonly Stream mit den enthaltenen Daten &uuml;bergibt. Nachher
+k&ouml;nnen die Objekte wieder zur Zerst&ouml;rung freigegeben werden, damit die Applikation nicht so viel Resourcen
+verbr&auml;t.
+</p>
+
+<p>
+Nun k&ouml;nnen wir die aktuellen Wetterdaten, die wir &uuml;ber den Ausgabeparameter <i>strRetData</i> der Methode
+erhalten haben, f&uuml;r SMS Nachrichten formatiern. Die &quot;Formatierung&quot; der Daten ist deshalb vonn&ouml;ten,
+da wie allgemein bekannt, maximal 160 Zeichen auf einmal per SMS Nachricht versandt werden k&ouml;nnen. Der Ausgabeparameter
+kann aber durchschnittlich zwischen 1000 und mehr Zeichen enthalten. Dieses Aufteilen der Daten ist eine
+Teilaufgabe der <i>Send</i> Methode der <i>SendWeatherData</i> Klasse:
+</p>
+
+<pre style="background='silver';">
+public void Send(string strUsername, string strPassword, string strTelNoTo)
+{
+int nSMSDataIdx =0;
+int nMaxLength;
+ArrayList arSMSData = new ArrayList();
+string strResponse, strRetData;
+SMSGateway SendSMS = new SMSGateway();
+SendSMS.Username = strUsername;
+SendSMS.Password = strPassword;
+
+GetLatestWeatherReport(out strRetData);
+
+if ("" != strRetData)
+{
+    nMaxLength = strRetData.Length;
+    for(int i=0;i &lt; nMaxLength-157;i+=157)
+{
+    arSMSData[nSMSDataIdx] = nSMSDataIdx.ToString() + " " + strRetData.Substring(i,157);
+    nSMSDataIdx++;
+}
+
+for(int j=0;j &lt; nSMSDataIdx;j++)
+{
+    bool bResult = SendSMS.SendMessage(arSMSData[j].ToString(), strTelNoTo, out strResponse);
+}
+
+}
+else
+{
+    Console.WriteLine("No Data To Send");
+}
+
+}
+</pre>
+
+<p>
+Da diese Methode schlie&szlig;lich auch die Daten versenden mu&szlig;, werden ihr Credentials des SMS-Senders &uuml;bergeben
+(<i>strUsername</i> und <i>strPassword</i>), da es sich hier um einen kostenpflichtigen SMS-Service eines Drittanbieters handelt.
+Zus&auml;tzlich mu&szlig; nat&uuml;rlich auch die Telefonnummer des Empf&auml;ngers (<i>strTelNoTo</i>) angegeben werden.
+Die Integervariable <i>nSMSDataIdx</i> enth&auml;lt die Anzahl der zu sendenden SMS Nachrichten, die sich durch die
+Aufteilung der Wetterdaten aus der Datenbank ergibt. Wie der Name schon sagt stellt die <i>nMaxLength</i>
+Integervariable die maximale L&auml;nge des Datenstrings <i>strRetData</i> dar.
+</p>
+
+<p>
+Um die Daten leicher aufteilen zu k&ouml;nnen, verwende ich ein <i>ArrayList (arSMSData)</i> in das die einzelnen &quot;Datensplitter&quot;
+eingetragen werden. Sie werden sich nat&uuml;rlich fragen, warum ich hier kein Array benutzt habe. Da die Anzahl der
+SMS Nachrichten erst w&auml;hrend der Runtime der Applikation bekannt werden und es in C# nicht mehr sinnvoll
+ist normale Arrays dynamisch zu allokieren, ist der Gebrauch einer ArrayList mehr als gerechtfertigt.
+</p>
+
+<p>
+Nach dem Aufruf der <i>GetLatestWeatherReport</i> Methode die die Daten aus der Datenbank holt, k&ouml;nnen
+wir nun die Wetterdaten in SMS-gerechte Teile aufteilen. Dies ist hier einfach mit einem for-Statement
+gel&ouml;st. Jede SMS Nachricht erh&auml;lt dabei auch einen Pr&auml;fix, der hier aus einer fortlaufenden Nummer
+(<i>nSMSDataIdx</i>) der jeweiligen SMS besteht.
+</p>
+
+<p>
+Da wir damit auch die Anzahl der zu versendenden SMS Nachrichten kennen, k&ouml;nnen wir uns sogleich ans Verschicken machen.
+Wir &uuml;bergeben die einzelen Datenpakete an die <i>SendMessage</i> Methode der <i>SMSGateway</i> Klasse, die
+Sie schon aus dem Artikel <a href="../artikel/20010912.htm">SMS versenden in .NET</a> kennen.
+Was noch unserer Konsolenapplikation fehlt ist ihre Basisklasse <i>MainClass</i> samt der n&ouml;tigen
+Referenzierungen auf die Namespaces des .NET Frameworks:
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.Net;
+using System.Text;
+using System.Data;
+using System.Data.SqlClient;
+using System.IO;
+using System.Web;
+using System.Collections;
+
+class MainClass
+{
+  
+  public static void Main(string[] args)
+  {    
+  string strTelNoTo ="PhoneNumber";
+  string strUsername ="Username";
+  string strPassword ="Password";
+    
+  SendWeatherData MySendWeatherData = new SendWeatherData();
+  MySendWeatherData.Send(strUsername, strPassword, strTelNoTo);
+  }
+}
+</pre>
+
+<p>
+Die <i>Main</i> Methode der Basisklasse ist, wie man sieht sehr einfach gehalten. Sie m&uuml;ssen lediglich
+die Telefonnummer des Empf&auml;ngers und Ihre Credentials eingeben, die Sie zur Verwendung des kostenpfichtigen
+SMS-Dienstes berechtigen. Nun steht Ihnen nichts mehr im Wege Ihren Kollegen auf hoher See den Wetterbericht
+zuzuschicken.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Das gezeigte Beispiel l&auml;&szlig;t sich nat&uuml;rlich f&uuml;r jede Anforderung anpassen sofern die Daten schon in einer 
+vorbereiteten Form vorhanden sind. Der eigentliche Aufwand ist das Aufparsen der jeweiligen Seite von der
+man die Daten bezieht.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010913.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010913.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001025.htm">Die Performancefalle ReDim Preserve</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001025.htm</span><br>
+<a href="../artikel/20010912.htm">SMS versenden in .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010912.htm</span><br>
+<a href="../artikel/20000731.htm">Verwendung von Arrays in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000731.htm</span><br>
+<a href="../artikel/20010910.htm">Webseiten automatisiert scrapen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010910.htm</span><br>
+<a href="../artikel/20010911.htm">Webseiten automatisiert scrapen, Teil 2</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010911.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fprognoza%2Ehr%2Fjadran%5Fe%2Ehtml">Seewetterbericht Adria</a><br>
+<SPAN class="content">http://prognoza.hr/jadran_e.html</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

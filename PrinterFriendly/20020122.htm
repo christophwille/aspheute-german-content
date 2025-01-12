@@ -1,0 +1,262 @@
+<HTML>
+<HEAD>
+<TITLE>Wordfiles richtig &ouml;ffnen!</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wer hat es noch nicht erlebt: Man hat auf einer Intranetseite einen Link auf eine Worddatei (*.doc oder *.dot). Wenn man diesen Link anklickt, dann wird Word direkt im Browserfenster ge&ouml;ffnet.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Word,CreateObject,Intranet,Sicherheit,Sicherheitsstufen,Internet Explorer,VBScript,UNC,File Share,Netzwerklaufwerk">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Wordfiles richtig &ouml;ffnen!</H1>
+<p>
+Geschrieben von: <a href="../autoren/herberthahn.htm">Herbert Hahn</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020122"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wer hat es noch nicht erlebt: Man hat auf einer Intranetseite einen Link auf eine Worddatei (*.doc oder *.dot). Wenn man 
+diesen Link anklickt, dann wird Word direkt im Browserfenster ge&ouml;ffnet. Da hilft es auch nicht, das target als "_blank" 
+vorzugeben, da dies dann den gleichen Effekt im neuen Browserfenster hat. Ein Weg, wie man ganz gem&uuml;tlich Word 2000 als 
+eigenst&auml;ndiges Programm &ouml;ffnet und dann auch noch die Datei richtig &ouml;ffnet ist &uuml;ber ein kleines clientseitiges Script 
+(mit serverseitiger Hilfe, ist ja klar). Der Nachteil allerdings ist der, da&szlig; man die Berechtigungen f&uuml;r die lokalen 
+Intranetsites beim IE korrekt konfigurieren mu&szlig;.
+</p>
+
+<p>
+So richtig "gestolpert" bin ich &uuml;ber das Problem als ich firmeninterne Wordvorlagen (Dateiendung .dot) im Intranet 
+ver&ouml;ffentlichen wollte. So intelligent das automatische Anzeigen eines Worddokuments im Browser auch sein mag, um so 
+st&ouml;render ist es wenn man diese Worddatei zum Editieren &ouml;ffnen will.
+</p>
+
+<h2>Konfiguration des Internet Explorers</h2>
+
+<p>
+Wie bereits angek&uuml;ndigt, man mu&szlig; den Internet Explorer etwas umkonfigurieren. Das geht folgenderma&szlig;en vonstatten: Unter 
+Extras / Internetoptionen auf Sicherheit gehen,
+</p>
+
+<IMG SRC="/artikel/Bilder/200201/20020122_1.png" width="406" height="470" alt="" border="0">
+
+<p>
+und dort dann auf Sites... klicken und die neue vertrauensw&uuml;rdige Site einf&uuml;gen (in diesem Beispiel ist es <b>sw1</b>): 
+</p>
+
+<IMG SRC="/artikel/Bilder/200201/20020122_2.png" width="384" height="335" alt="" border="0">
+
+<p>
+Ein weiterer Schritt ist im Tab Sicherheit noch zu erledigen - die Sicherheitsstufe mu&szlig; angepasst werden 
+("Stufe Anpassen"):
+</p>
+
+<IMG SRC="/artikel/Bilder/200201/20020122_3.png" width="381" height="405" alt="" border="0">
+
+<p>
+Mit diesen Einstellungen ("sehr niedrig") kann man die Seite mit dem clientseitigen Script dann korrekt aufrufen.
+</p>
+
+<h2>Das Client-Script</h2>
+
+<p>
+Das Hauptproblem ist in unserem Fall wie man am Client Word startet, und zwar eigenst&auml;ndig, und nicht im Browser. 
+Dazu habe ich ein clientseitiges (IE-only) Script geschrieben, und die Funktion hei&szlig;t sinnvollerweise <b>load_word</b>:
+</p>
+
+<pre style="background='silver';">
+&lt;script Language=VBScript&gt;
+
+function load_word(mode, pfad) 
+'mode 0 = normal document open 
+'mode 1 = open as document template
+</pre>
+
+<p>
+Die Funktion nimmt zwei Parameter entgegen: mode bestimmt, ob wir ein normales Worddokument oder eine Vorlage f&uuml;r ein 
+neues Dokument erhalten, und pfad nat&uuml;rlich den Pfad zur zu &ouml;ffnenden Datei.
+</p>
+
+<pre style="background='silver';">
+Set appWord = CreateObject("Word.Application") 
+
+appWord.WindowState = 0 
+appWord.Height = 600 
+appWord.Width = 800 
+appWord.Left = 40 
+appWord.Top = 20 
+appWord.Visible = True  ' Display the application.
+</pre>
+
+<p>
+Danach &ouml;ffnen wir die Word Applikation. Mit den Parametern height, width usw bestimmen wir die Gr&ouml;&szlig;e und den 
+Erscheinungsort des Fensters.
+</p>
+
+<pre style="background='silver';">
+' Open the document. 
+' mode 1 = dot file, 0 = docfile 
+If mode = 1 Then appWord.Documents.Add (pfad) 
+If mode = 0 Then appWord.Documents.Open (pfad) 
+</pre>
+
+<p>
+Hier wird - abh&auml;ngig ob Vorlage oder Dokument - ein Dokument nach Vorlage erstellt oder einfach ge&ouml;ffnet. Der Unterschied 
+ist die Verwendung der Add und Open Methoden.
+</p>
+
+<pre style="background='silver';">
+' Close the object variable. 
+Set appWord = Nothing
+end function
+&lt;/Script&gt;
+</pre>
+
+<p>
+Und zum Schlu&szlig; wird noch aufger&auml;umt.
+</p>
+
+<h2>Anwendung</h2>
+
+<p>
+Sinnvollerweise bettet  man das clientseitige Script in die Downloadseite f&uuml;r Dokumente und Vorlagen ein. Dort kann man 
+dann die Links dynamisch generieren (zB wenn die Dokumente in der Datenbank verwaltet werden). 
+</p>
+
+<p>
+Das folgende Codebeispiel (<b>wordopen.asp</b>) stammt aus einem Projekt das geringe Anforderungen (Speicherung der 
+Dokumente auf Netzwerkshares) hat. Die Variable URL h&auml;lt den gesamten Pfad der Datei, inklusive Filenamen. Das s&auml;he 
+also zb so aus:
+</p>
+
+<pre style="background='silver';">
+\\Server\Freigabe\Pfad\file.doc
+</pre>
+
+<p>
+Nat&uuml;rlich funktioniert auch
+</p>
+
+<pre style="background='silver';">
+H:\ Pfad\file.doc
+</pre>
+
+<p>
+Allerdings mu&szlig; in diesem Fall auf allen Rechner das gleiche Laufwerkmapping eingestellt sein. Das Beispiel in 
+<b>wordopen.asp</b> generiert einen Link sowohl f&uuml;r ein Template als auch ein Dokument, die beide auf einem 
+Netzwerkshare liegen, das mittels UNC Pfad angesprochen wird:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Pfad = "\\Sw1\www\softwing\wordopen\"
+dot="meinFile.dot"
+doc="meinFile.doc"
+url1 = pfad &amp; dot
+url2 = pfad &amp; doc
+%&gt;
+
+&lt;table width="100%" border="1" cellspacing="0" cellpadding="0"&gt;
+  &lt;tr&gt;
+    &lt;td width="25%"&gt;Wordopen Demo&lt;/td&gt;
+    &lt;td width="27%"&gt;1. DOT:&lt;/td&gt;
+    &lt;td width="48%"&gt;
+      &lt;input type=image onClick="load_word '1', '&lt;% = Url1 %&gt;'" 
+            src="./disk.gif" name="image"&gt;
+    &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td width="25%"&gt;&amp;nbsp;&lt;/td&gt;
+    &lt;td width="27%"&gt;2. DOC:&lt;/td&gt;
+    &lt;td width="48%"&gt;
+      &lt;input type=image onClick="load_word '0', '&lt;% = Url2 %&gt;'" 
+            src="./disk.gif" name="image2"&gt;
+    &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td width="25%"&gt;&amp;nbsp;&lt;/td&gt;
+    &lt;td width="27%"&gt;&amp;nbsp;&lt;/td&gt;
+    &lt;td width="48%"&gt;&amp;nbsp;&lt;/td&gt;
+  &lt;/tr&gt;&lt;/table&gt;
+</pre>
+
+<p>
+Im Ereignis "onClick" rufen wir das clientseitige Script auf. Und siehe da, Word l&auml;&szlig;t sich ohne weiteres &ouml;ffnen und 
+sogar korrekt mit Dokumentvorlagen beschicken. Diese werden nun als Dokument mit der angegebenen Vorlage als "Dokument1" 
+ge&ouml;ffnet.
+</p>
+
+<p>
+Der Vollst&auml;ndigkeit wegen sei hier noch angemerkt, da&szlig; es sehr klug ist wenn man an dieser Stelle noch mittels 
+FileSystemObject pr&uuml;ft, ob es die entsprechende Datei (Vorlage oder Dokument) am Server auch wirklich gibt.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Wenn Sie mit diesen Codefragmenten experimentieren, dann &uuml;berzeugen Sie sich gelegentlich ob in Ihrem System nicht 
+unz&auml;hlige Word-Tasks laufen. Sollte es n&auml;mlich passieren da&szlig; die Funktion word_open mit dem Fehler da&szlig; die Datei nicht 
+existiert terminiert, bleibt die Wordinstanz einfach stehen. So geschehen bei mir, nach l&auml;ngerem experimentieren. 
+</p>
+
+<p>
+Wer nun auf die Idee kommt das gezeigte auch mit Excel-Dateien zu probieren wird schnell merken, da&szlig; Excel diesbez&uuml;glich 
+seine eigenen Wege geht. Dazu mehr im n&auml;chsten Artikel.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020122.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020122.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010319.htm">Mit ASP ein Word Dokument am Server generieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010319.htm</span><br>
+<a href="../artikel/20020128.htm">Serverdaten clientseitig in Exceltemplates importieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020128.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

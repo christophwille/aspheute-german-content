@@ -1,0 +1,260 @@
+<HTML>
+<HEAD>
+<TITLE>Navigation durch Webseiten mit Hilfe der Content Linking Komponente</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Eine Website mit einigen Unterseiten sollte immer eine Navigationsm&ouml;glichkeit bieten. Eine einfache M&ouml;glichkeit hierzu bietet die Verwendung der Content Linking Komponente.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,MSWC.NextLink,NextLink,Content linking list file,content,content linking">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Navigation durch Webseiten mit Hilfe der Content Linking Komponente</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000705"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Eine Website mit einigen Unterseiten sollte immer eine Navigationsm&ouml;glichkeit bieten. Eine einfache M&ouml;glichkeit 
+hierzu bietet die Verwendung der Content Linking Komponente. Diese erm&ouml;glicht es, Ihre Site wie ein Buch zu 
+pr&auml;sentieren bzw. zu organisieren. Auch wenn weitere Seiten hinzukommen, ist der Aufwand gering, diese 
+nachtr&auml;glich einzubinden. 
+</p>
+<p>
+Die Content Linking Komponente ist bereits ab dem Internet Information Server (IIS) Version 4 verf&uuml;gbar, und wird
+standardm&auml;&szlig;ig mitinstalliert.
+</p>
+<p>
+Voraussetzungen f&uuml;r die Verwendung der Komponente:
+<ul>
+<li>Internet Information Server 4, PWS unter Windows NT Workstation oder Windows 9x
+<li>MS Windows 2000 Family; Internet Information Services Version 5 werden bei der Standardinstallation 
+mitinstalliert. Andernfalls nachtr&auml;glich installieren &uuml;ber Start | Einstellungen | Systemsteuerung | 
+Software hinzuf&uuml;gen | hinzuf&uuml;gen/entfernen von Windows Komponenten
+</ul>
+</p>
+<p>
+Um diese Komponente zu verwenden gehen Sie wie folgt vor: 
+</p>
+
+<h2>Erstellen der Content Linking List Datei</h2>
+<p>
+Bei Sites mit mehreren Unterseiten mu&szlig;ten Sie diese  mit Links verkn&uuml;pfen, um diese aufzurufen. Bei 
+nachtr&auml;glichen Site-Aktualisierungen bei denen sich die Sitestruktur ge&auml;ndert hat, d. h. Unterseiten hinzugef&uuml;gt 
+oder entfernt wurden, mu&szlig;ten Sie diese "Verkn&uuml;pfungs-Links" h&auml;ndisch aktualisieren. Bei umfangreichen Sites kann dies 
+unter Umst&auml;nden zu Fehlern f&uuml;hren. Mit dieser Komponente, welche in ASP inkludiert ist und wie schon erw&auml;hnt, 
+mit IIS mit installiert wird, bietet sich eine einfache M&ouml;glichkeit an dies zuvermeiden.
+</p>
+<p>
+Erstellen Sie eine Datei, welche aus der Inhaltstextdatei die ben&ouml;tigten Navigationsinformationen ausliest 
+z.B. <b>linkinhalt.asp</b>. Diese wird als Includedatei ausgelegt, die an mehreren Stellen wiederverwendet werden
+wird.
+</p>
+<p>
+Diese Datei ist das Inhaltsverzeichnis Ihrer Website und wird im TXT-Format abgespeichert. Sie enth&auml;lt die 
+URLs der Seiten die innerhalb der Site verlinkt werden sollen, deren Beschreibung und eventuell ein Kommentar. Die Trennung der 
+Informationen erfolgt durch Tabulatoren, damit die Komponente die Informationen richtig einliest. Im folgenden 
+Beispiel sind die Tabulatoren durch den String &lt;TAB&gt; gekennzeichnet.
+</p>
+<p>
+Beispiel einer Content Linking List Datei (z.B. <b>inhalt.txt</b>):
+<pre style="background='silver';">
+1:	default.asp&lt;TAB&gt;Hauptseite
+2:	sub1.asp&lt;TAB&gt;Unterseite 1
+3:	sub2.asp&lt;TAB&gt;Unterseite 2
+4:	sub3.asp&lt;TAB&gt;Unterseite 3 
+</pre>
+</p>
+<p>
+Sie k&ouml;nnen jede beliebige Datei welche auf Ihrem lokalen Serververzeichnis physikalisch gespeichert ist, 
+angeben. URLs die nicht auf ihrem lokalen Serververzeichnis vorhanden sind, also "http:// - URLs" 
+werden von der Komponente nicht unterst&uuml;tzt und ignoriert.
+</p>
+<p>
+<b>Beachte</b> Sie sollten Mehrfacheinbindungen von ein und derselben Seite vermeiden. Wenn Sie also in Ihrer 
+Content Linking List Datei die folgende Reihenfolge stehen haben: <i>Hautpseite-Seite A- Seite B- Seite A- Seite C</i>, 
+werden Sie wenn Sie auf der Seite B sind und auf die N&auml;chste wechseln wollen, wieder auf die Seite A verwiesen. 
+Das kommt daher, da die Content Linking List Datei sequentiell vom Anfang ausgelesen wird.
+</p>
+
+<h2>Einbinden der Content Linking Komponente</h2>
+<p>
+Alle Links zu den Seiten werden mit ihrer URL und einer Beschreibung in einer Textdatei ("Content Linking List 
+Datei") gespeichert, die Sie bereits in der vorangegangenen Sektion kennengelernt haben. &Auml;ndern Sie diese, so 
+wird das Site-Inhaltsverzeichnis und die Links automatisch aktualisiert - und zwar mit Hilfe der Content
+Linking Komponente.
+</p>
+<p>
+Content Linking Komponente unterst&uuml;tzt folgende Methoden:
+</p>
+<p>
+<table>
+<tr><th>Methode</th><th>Beschreibung</th></tr>
+<tr><td valign="top"><i>GetListCount</i></td><td>Gibt die Anzahl der Elemente in der Content Linking List Datei zur&uuml;ck</td></tr>		
+<tr><td valign="top"><i>GetListIndex</i></td><td>Zeigt den Index der aktuellen Seite in der Content Linking List Datei. Wenn man als Ergebnis Null (0) erh&auml;lt, ist die Seite nicht in der Datei enthalten.</td></tr>
+<tr><td valign="top"><i>GetPreviousURL</i></td><td>Gibt die URL der vorigen Seite in der Liste zur&uuml;ck; wenn die aktuelle Seite nicht Element der Liste ist wird der erste Eintrag der Liste zur&uuml;ckgegeben.  </td></tr>
+<tr><td valign="top"><i>GetNextURL</i></td><td>Gibt die URL der n&auml;chsten Seite in der Liste zur&uuml;ck; wenn die aktuelle Seite nicht Element der Liste ist wird der letzte Eintrag der Liste zur&uuml;ckgegeben.</td></tr>
+<tr><td valign="top"><i>GetPreviousDescription</i></td><td>Zeigt die Beschreibung des vorigen Links der Liste</td></tr>
+<tr><td valign="top"><i>GetNextDescription</i></td><td>Zeigt die Beschreibung des n&auml;chsten Links der Liste</td></tr>
+<tr><td valign="top"><i>GetNthURL</i></td><td>Gibt die URL des n-ten Elements der Liste zur&uuml;ck; falls es weniger als n Elemente gibt wird das Letzte der Liste zur&uuml;ckgegeben.</td></tr>
+<tr><td valign="top"><i>GetNthDescription</i></td><td>Zeigt die Beschreibung des n-ten Elements der Liste</td></tr>
+</table>
+</p>
+<p>
+Mit Hilfe dieser Methoden als auch der Content Linking List Datei (<b>inhalt.txt</b>) kann man ASP Seiten einfach
+verkn&uuml;pfen. Damit diese Funktionalit&auml;t nicht &uuml;ber mehrere Seiten verstreut und somit dupliziert wird, habe
+ich die Funktionalit&auml;t in eine Datei Namens <b>linkinhalt.asp</b> zusammengefasst:
+<pre style="background='silver';">
+ 1: &lt;% @LANGUAGE = &quot;VBScript&quot; %&gt;
+ 2: &lt;% 
+ 3: ' Option Explicit
+ 4:  
+ 5: ' Variablen definieren
+ 6: Dim ListCount,ListIndex, PrevURL,NextURL
+ 7: Dim PrevDesc,NextDesc,CurrDesc
+ 8: Dim objContLink
+ 9: 
+10: ' Das NextLink Objekt erstellen
+11: Set objContLink = Server.Createobject(&quot;MSWC.NextLink&quot;) 
+12: 
+13: ' Verwendung einiger Methoden der Component Linking Komponente 
+14: ' um Informationen der beinhaltenden URLs zu erhalten
+15: ListCount = objContLink.GetListCount(&quot;inhalt.txt&quot;)
+16: ListIndex = objContLink.GetListIndex(&quot;inhalt.txt&quot;)
+17: PrevURL = objContLink.GetPreviousURL(&quot;inhalt.txt&quot;) 
+18: NextURL = objContLink.GetNextURL(&quot;inhalt.txt&quot;)
+19: PrevDesc = objContLink.GetPreviousDescription(&quot;inhalt.txt&quot;)
+20: NextDesc = objContLink.GetNextDescription(&quot;inhalt.txt&quot;)
+21: CurrDesc = objContLink.GetNthDescription(&quot;inhalt.txt&quot;, ListIndex)
+22: Response.Write(&quot;&lt;table width='100%'&gt;&lt;tr&gt;&quot;)
+23: 
+24: ' &Uuml;berpr&uuml;fen ob es die erste Seite ist, damit nicht eine 
+25: ' ung&uuml;ltige URL angezeigt wird
+26: If ListIndex &lt;&gt; 1 Then
+27:   Response.Write(&quot;&lt;td align=left&gt;&lt;A HREF=&quot; &amp; PrevURL &amp; _
+28:     &quot;&gt;&quot; &amp; PrevDesc &amp; &quot;&lt;/A&gt;&lt;/td&gt;&quot;)
+29: End If
+30: 
+31: ' &Uuml;berpr&uuml;fen ob es die letzte Seite ist, damit nicht eine 
+32: ' ung&uuml;ltige URL angezeigt wird 
+33: If ListCount &lt;&gt; ListIndex Then
+34:   Response.Write(&quot;&lt;td align=right&gt;&lt;A HREF=&quot; &amp; NextURL &amp; _
+35:     &quot;&gt;&quot; &amp; NextDesc &amp; &quot;&lt;/A&gt;&lt;/td&gt;&quot;)
+36: End If
+37: Response.Write(&quot;&lt;/tr&gt;&lt;/table&gt;&quot;)
+38: Response.Write(&quot;&lt;hr&gt;&quot;)
+39: 
+40: ' Aktuelle Seitenbeschreibung schreiben
+41: Response.Write(&quot;&lt;br&gt;&lt;br&gt;&lt;center&gt;&lt;h2&gt;&quot; &amp; _
+42:   CurrDesc &amp; &quot;&lt;/h2&gt;&lt;/center&gt;&quot;)
+43:   
+44: Set objContLink = Nothing
+45: %&gt;
+</pre>
+</p>
+<p>
+Zeile 5 bis 11: Hier werden die ben&ouml;tigten Variablen deklariert, und das NextLink Objekt erstellt.
+</p>
+<p>
+Zeile 15 bis 22: Verwendung einiger Methoden der Component Linking Komponente um Informationen aus der Content
+Linking Datei zu erhalten, wie z.B. die n&auml;chste URL, vorige URL, die Beschreibung der URL. Diese Informationen werden 
+aus der <b>inhalt.txt</b> Datei gewonnen. Beschreibung der einzelnen Methoden siehe oben.
+</p>
+
+<h2>Seiten erstellen</h2>
+<p>
+Wir haben jetzt den Sourcecode f&uuml;r das Linken von Seiten - es fehlen uns jetzt noch einige Testseiten. Diese
+sollten sinnvollerweise die Namen der URLs aus der Content Linking List Datei haben (ok, das war nun aber zu
+offensichtlich &lt;g&gt;).
+</p>
+<p>
+Hier sei ein Beispiel der ersten Seite angegeben (<b>default.asp</b>):
+<pre style="background='silver';">
+ 1: &lt;html&gt;
+ 2: &lt;head&gt;
+ 3: &lt;title&gt;Hauptseite&lt;/title&gt;
+ 4: &lt;/head&gt;
+ 5: &lt;body&gt;
+ 6: &lt;!-- #include file=&quot;linkinhalt.asp&quot; --&gt;
+ 7: &lt;hr&gt;
+ 8: Das ist die Startseite
+ 9: &lt;/body&gt;
+10: &lt;/html&gt;
+</pre>
+<p>
+In Zeile 6 wird die Datei <b>linkinhalt.asp</b> eingebunden, welche den Navigationscode enth&auml;lt. Die ASP Datei
+selbst hat keinen anderen VBScript Code aufzuweisen.
+</p>
+Der folgende Screenshot zeigt die Startseite im Explorerfenster:
+</p>
+<p><IMG SRC="/artikel/Bilder/200007/20000705_1.png" width="449" height="320" border="0" alt=""></p>
+<p>
+Da dies die Startseite bzw. der erste Listeneintrag der Datei <b>inhalt.txt</b> ist, wird hier nur die n&auml;chste 
+URL - "Unterseite 1" - angezeigt.
+</p>
+<p>
+Der folgende Screenshot zeigt die erste Unterseite "Unterseite 1" im Explorerfenster:
+</p>
+<p><IMG SRC="/artikel/Bilder/200007/20000705_2.png" width="449" height="320" border="0" alt=""></p>
+<p>
+Da dies nicht mehr der erste Listeneintrag der Datei <b>inhalt.txt</b> ist, wird hier sowohl die vorige URL "Hauptseite" 
+als auch die n&auml;chste URL "Unterseite 2" angezeigt.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dieser Artikel beschreibt die grunds&auml;tzliche Einbindung der Content Link Komponente in Websites. Dem Artikel lag nur 
+ein grunds&auml;tzliches Beispiel zugrunde, um dem Leser einen m&ouml;glichst einfachen Einstieg zu erm&ouml;glichen. 
+Nat&uuml;rlich k&ouml;nnen die Funktionen der Komponente f&uuml;r weitere Dinge ausgebaut werden - Inhaltsverzeichnisse, zum Beispiel.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000705.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000705.zip</span></p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,423 @@
+<HTML>
+<HEAD>
+<TITLE>Deutsche Personalausweisnummern verifizieren</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im Internet findet man immer wieder interessante Ans&auml;tze, das Alter der Surfer zu bestimmen. Einer davon ist die Personalausweisnummer vom Surfer eintippen zu lassen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Prüfziffer,Personalausweisnummer,Prüfsumme,Quersumme,Verifizierung,Überprüfung,Gültigkeit">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Deutsche Personalausweisnummern verifizieren</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020507"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Im Internet findet man immer wieder interessante Ans&auml;tze, die Identit&auml;t bzw. das Alter der Surfer zu bestimmen.
+Einer davon ist die Personalausweisnummer vom Surfer eintippen zu lassen, da diese neben allgemeinen Angaben auch
+das Alter beinhaltet. Mit Hilfe von in der Personalausweisnummer eingebauten Pr&uuml;fziffern kann man kontrollieren, ob die Eingaben 
+korrekt sind.
+</p>
+<p>
+<b>Sicherheitshinweis</b> Nicht nur wir k&ouml;nnen die Pr&uuml;fziffern verifizieren, sondern die "Gegenseite" kann da der Algorithmus
+bekannt ist, sich g&uuml;ltige Personalausweisnummern generieren lassen. Ein Beispiel dazu ist auf der Seite
+<a href="http://365-24-7.net/perso/" target="_blank">Berechnung der Personalausweis-Nummern inklusive Pr&uuml;ziffern </a> zu finden.
+</p>
+<p>
+Wie sieht nun eine Personalausweisnummer aus? Im Newsarchiv von Google findet sich ein 
+<a href="http://groups.google.com/groups?selm=8ns4ll%24c2t%2413%241%40news.t-online.com&output=gplain" target="_blank">Posting</a>, aus dem diese 
+Aufschl&uuml;sselung herauskopiert ist:
+</p>
+
+<pre style="background='silver';">
+731731731    731731  731731
+*********    ******  ******
+wwwwNNNNNaD&lt;&lt;yyMMddb&lt;YYmmDDc&lt;&lt;&lt;&lt;&lt;&lt;d
+<font color="#bb6600">|||||||||||  ||||||| |||||||      |
+|||||||||||  ||||||| |||||||      -\__ Pruefsumme ALLER Ziffern
+|||||||||||  ||||||| |||||||</font>
+<font color="#000099">|||||||||||  ||||||| ||||||-\__ Pruefsumme Ablaufdatum</font>
+<font color="#007777">|||||||||||  ||||||| ||||--\__ Ablaufdatum Tag</font>
+<font color="#bb6600">|||||||||||  ||||||| ||--\__ Ablaufdatum Monat</font>
+<font color="#990000">|||||||||||  ||||||| --\__ Ablaufdatum Jahr
+|||||||||||  |||||||</font>
+<font color="#007777">|||||||||||  ||||||-\__ Pruefsumme Geb.-Datum</font>
+<font color="#bb6600">|||||||||||  ||||--\__ Geb.-Tag</font>
+<font color="#990000">|||||||||||  ||--\__ Geb.-Monat</font>
+<font color="#660066">|||||||||||  --\__ Geb.-Jahr
+|||||||||||</font>
+<font color="#bb6600">|||||||||| \__ Staatszugehoerigkeit D = Deutsch ?</font>
+<font color="#000099">||||||||| \__ Pruefsumme fuer wwwwNNNNN</font>
+<font color="#000099">||||-----\__ laufende Zaehlnummer</font>
+----_ Erstwohnsitz Kennzahl
+</pre>
+
+<p>
+Wie man sieht, gibt es vier Pr&uuml;fziffern <i>a</i>, <i>b</i>, <i>c</i> und <i>d</i>. Die erste Pr&uuml;fziffer, <i>a</i>, wird
+&uuml;ber die Kennzahl des Erstwohnsitzes und eine fortlaufende Ausweisnummer errechnet. Die zweite &uuml;ber das Geburtsdatum, und die
+dritte &uuml;ber das Ablaufdatum. Die Pr&uuml;fziffer <i>d</i> ist etwas spezieller: diese wird nach Errechnung von <i>a</i>, <i>b</i> 
+und <i>c</i> &uuml;ber alle Ziffern errechnet (also mit den drei Pr&uuml;fziffern inkludiert, damit man die Pr&uuml;fziffern pr&uuml;fen kann).
+</p>
+<p>
+Details &uuml;ber den Algorithmus finden sich im <a href="http://groups.google.com/groups?selm=8ns4ll%24c2t%2413%241%40news.t-online.com&output=gplain" target="_blank">Posting</a>
+beziehungsweise sehr detailliert aufgeschl&uuml;sselt im Artikel <a href="http://www.pruefziffernberechnung.de/P/Personalausweis-DE.shtml" target="_blank">Pr&uuml;fziffern: Deutscher Personalausweis</a>.
+</p>
+<p>
+Die Kurzform des Algorithmus zur Pr&uuml;fziffernberechnung: Man nimmt die erste Zahl, und multipliziert sie mit 7. Dazu addiert man die
+zweite Zahl, die zuvor mit 3 multipliziert wird. Die dritte wird einfach dazuaddiert (mit 1 multipliziert). Hat man mehr als drei Zahlen,
+beginnt man bei der vierten Zahl wieder mit 7 zu multiplizieren (und so weiter). Von der so errechneten Pr&uuml;fsumme nimmt man die Einerstelle,
+und schon ist die Pr&uuml;fziffer fertig. Wie einfach das ist, wird jeder im Code sehen.
+</p>
+
+<h2>Die Klasse <i>Personalausweisnummer</i></h2>
+<p>
+Um die Wiederverwendung in allen Programmiersprachen zu erleichtern, habe ich die Klasse <i>Personalausweisnummer</i> in eine eigene Datei 
+namens <b>PersoClass.cs</b> ausgelagert. Das erlaubt das direkte Einbinden in C# Projekte, beziehungsweise das Kompilieren als eigenst&auml;ndige
+Assembly, die dann auch in zB VB.NET ASP.NET Projekten eingebunden werden kann. 
+</p>
+<p>
+Die Klasse besitzt folgende Eigenschaften und Methoden:
+</p>
+
+<pre style="background='silver';">
+public class Personalausweisnummer
+{
+  public Personalausweisnummer();
+  
+  public string ErstwohnsitzKennzahl {
+    set;
+  }
+  
+  public string Zaehlnummer {
+    set;
+  }  
+
+  public string Geburtsdatum {
+    set;
+  }  
+  
+  public string Ablaufdatum {
+    set;
+  }
+
+  public bool IsDataValid();
+
+  public bool PruefsummenBerechnung(out byte PruefsummeAZiffer, out byte PruefsummeBZiffer, 
+                                    out byte PruefsummeCZiffer, out byte PruefsummeDZiffer);
+}
+</pre>
+
+<p>
+Die Eigenschaften sind alle nur mit einem <i>set</i> Accessor ausgestattet, das hei&szlig;t, man kann die Eigenschaften nur setzen, nicht aber
+lesen. Die Methode <i>IsDataValid</i> wird von der Methode <i>PruefsummenBerechnung</i> aufgerufen, bevor die vier Pr&uuml;fziffern
+berechnet werden - damit stelle ich sicher, da&szlig; alle vier Eigenschaften korrekt gesetzt wurden.
+</p>
+
+<h3>Die Eigenschaften</h3>
+<p>
+Die vier Properties der Klasse <i>Personalausweisnummer</i> nehmen jeweils einen String als Input an. Diese Strings werden in den
+set Accessors in die Einzelziffern umgewandelt, und diese in Arrays gespeichert:
+</p>
+
+<pre style="background='silver';">
+public class Personalausweisnummer
+{
+  private int[] abErstwohnsitzKennzahl;
+  private int[] abZaehlnummer;
+  private int[] abGeburtsdatum;
+  private int[] abAblaufdatum;
+  private int ValidData;
+  
+  public Personalausweisnummer()
+  {
+    abErstwohnsitzKennzahl = new int[4];
+    abZaehlnummer = new int[5];
+    abGeburtsdatum = new int[6];
+    abAblaufdatum = new int[6];
+    ValidData = 0;
+  }
+</pre>
+
+<p>
+Die Arrays sind 4, 5 beziehungsweise zweimal 6 Elemente gro&szlig;. Die Arrays werden im Konstruktor initialisiert, ebenso wie die
+Membervariable <i>ValidData</i>, die wir zum Mitf&uuml;hren der G&uuml;ltigkeit der vier Arrays verwenden. Diese Variable wird jeweils in
+den set Accessor gesetzt; sehen wir uns den <i>ErstwohnsitzKennzahl</i> Accessor exemplarisch an:
+</p>
+
+<pre style="background='silver';">
+  public string ErstwohnsitzKennzahl {
+    set {
+      ValidData &amp;= ~((int)Persodaten.ErstwohnsitzKennzahl);
+      if (value.Length != 4) {
+        throw new ArgumentException("Erstwohnsitz Kennzahl mu&szlig; 4 Ziffern lang sein");
+      }
+      try {
+        for (int i=0; i &lt;= 3; i++) {
+          abErstwohnsitzKennzahl[i] = Int32.Parse(value[i].ToString());
+        }
+      }
+      catch(Exception e) {
+        throw e;
+      }
+      ValidData |= ((int)Persodaten.ErstwohnsitzKennzahl);
+    }
+  }
+</pre>
+
+<p>
+Bei <i>Persodaten</i>, die bei der Zuweisung von <i>ValidData</i> verwendet wird, handelt es sich um eine Enumeration:
+</p>
+
+<pre style="background='silver';">
+public enum Persodaten {
+  ErstwohnsitzKennzahl = 1,
+  Zaehlnummer = 2,
+  Geburtsdatum = 4,
+  Ablaufdatum = 8
+}
+</pre>
+
+<p>
+Damit habe ich den Trick auch schon verraten, wie man die G&uuml;ltigkeit von vier Variablen in einer einzigen speichert: mit bitweisen
+Operationen. Am Anfang des Accessors wird die Variable auf ung&uuml;ltig gesetzt (Und-en mit dem Komplement&auml;r), und falls kein Fehler
+aufgetreten ist, wird am Ende des Accessors geodert. Fehlerf&auml;lle sind inkorrekte Stringl&auml;ngen und Nicht-Ziffern in den Strings,
+auf weitere &Uuml;berpr&uuml;fungen habe ich verzichtet.
+</p>
+
+<h3>IsDataValid - Kontrolle vor der Berechnung</h3>
+<p>
+Bevor <i>PruefsummenBerechnung</i> mit der Berechnung startet, ruft diese die Methode <i>IsDataValid</i> auf. Und diese vergleicht
+die Membervariable <i>ValidData</i> mit den geoderten Enumerationmembers (es sind nur dann alle Bits gesetzt, wenn alle Daten korrekt
+waren):
+</p>
+
+<pre style="background='silver';">
+  public bool IsDataValid()
+  {
+    int nValidIf = ((int)Persodaten.ErstwohnsitzKennzahl) | ((int)Persodaten.Zaehlnummer) |
+      ((int)Persodaten.Geburtsdatum) | ((int)Persodaten.Ablaufdatum);
+    
+    return (nValidIf == ValidData);
+  }
+</pre>
+
+<p>
+Nach diesem Check kann die Pr&uuml;fziffernberechnung starten.
+</p>
+
+<h3>Pr&uuml;fziffernberechnung</h3>
+<p>
+Beginnen wir in der Methode <i>PruefsummenBerechnung</i> ganz oben:
+</p>
+
+<pre style="background='silver';">
+  public bool PruefsummenBerechnung(out byte PruefsummeAZiffer, out byte PruefsummeBZiffer, 
+                                    out byte PruefsummeCZiffer, out byte PruefsummeDZiffer)
+  {
+    PruefsummeAZiffer = PruefsummeBZiffer = PruefsummeCZiffer = PruefsummeDZiffer = 0;
+    if (!IsDataValid()) return false;
+</pre>
+
+<p>
+Die <i>out</i> Variablen m&uuml;ssen initialisiert werden, damit falls <i>IsDataValid</i> ein <i>false</i> liefert, diese Variablen auf
+g&uuml;ltige Werte gesetzt sind (uninitialisierte <i>out</i> Variablen d&uuml;rfen niemals die Methode verlassen). Nach diesem ersten (und einzigen) Check
+wird auch schon die Pr&uuml;fziffer <i>a</i> berechnet:
+</p>
+
+<pre style="background='silver';">
+    int PruefsummeA;
+    PruefsummeA = (abErstwohnsitzKennzahl[0] * 7) +
+      (abErstwohnsitzKennzahl[1] * 3) +
+      (abErstwohnsitzKennzahl[2]* 1) +
+      (abErstwohnsitzKennzahl[3] * 7) +
+      (abZaehlnummer[0] * 3) +
+      (abZaehlnummer[1] * 1) +
+      (abZaehlnummer[2] * 7) +
+      (abZaehlnummer[3] * 3) +
+      (abZaehlnummer[4] * 1);
+    string strPruefsummeA = Convert.ToString(PruefsummeA);
+    PruefsummeAZiffer = Convert.ToByte(strPruefsummeA.Substring(strPruefsummeA.Length - 1));
+</pre>
+
+<p>
+Hier sieht man den Algorithmus bei der Arbeit, und er ist tats&auml;chlich nicht schwer zu verstehen. Die letzten beiden Zeilen
+erledigen das Ermitteln der Einerstelle - diese wird dann auf die erste <i>out</i> Variable zugewiesen.
+</p>
+
+<p>
+Die Berechnung f&uuml;r <i>b</i> und <i>c</i> l&auml;uft ident, interessant ist wieder <i>d</i>, damit man sieht, wie die anderen Pr&uuml;fziffern
+in die Berechnung einfliessen:
+</p>
+
+<pre style="background='silver';">
+    int PruefsummeD;
+    PruefsummeD = (abErstwohnsitzKennzahl[0] * 7) +
+      (abErstwohnsitzKennzahl[1] * 3) +
+      (abErstwohnsitzKennzahl[2]* 1) +
+      (abErstwohnsitzKennzahl[3] * 7) +
+      (abZaehlnummer[0] * 3) +
+      (abZaehlnummer[1] * 1) +
+      (abZaehlnummer[2] * 7) +
+      (abZaehlnummer[3] * 3) +
+      (abZaehlnummer[4] * 1) +
+      (PruefsummeAZiffer * 7) +
+      (abGeburtsdatum[0] * 3) +
+      (abGeburtsdatum[1] * 1) +
+      (abGeburtsdatum[2] * 7) +
+      (abGeburtsdatum[3] * 3) +
+      (abGeburtsdatum[4] * 1) +
+      (abGeburtsdatum[5] * 7) + 
+      (PruefsummeBZiffer * 3) +
+      (abAblaufdatum[0] * 1) +
+      (abAblaufdatum[1] * 7) +
+      (abAblaufdatum[2] * 3) +
+      (abAblaufdatum[3] * 1) +
+      (abAblaufdatum[4] * 7) +
+      (abAblaufdatum[5] * 3) +
+      (PruefsummeCZiffer * 1);
+    string strPruefsummeD = Convert.ToString(PruefsummeD);
+    PruefsummeDZiffer = Convert.ToByte(strPruefsummeD.Substring(strPruefsummeD.Length - 1));
+</pre>
+
+<p>
+Der Algorithmus wird einfach auf alle Zahlen in ihrer Reihenfolge angewendet. Und damit haben wir alle vier Pr&uuml;fziffern, und die 
+Methode beendet mit <i>true</i>.
+</p>
+
+<h2>Verwendung der Klasse <i>Personalausweisnummer</i></h2>
+<p>
+Im Download mit dabei ist eine kleine Kommandozeilenanwendung, die die Verwendung anhand eines Datensatzes demonstriert:
+</p>
+
+<pre style="background='silver';">
+class MainClass
+{
+  public static void Main(string[] args)
+  {
+    Personalausweisnummer perso = new Personalausweisnummer();
+    try {
+      perso.ErstwohnsitzKennzahl = "1000";  // vierstellig
+      perso.Zaehlnummer = "10000";  // f&uuml;nfstellig
+      perso.Geburtsdatum = "730729";  // Jahr, Monat, Tag
+      perso.Ablaufdatum = "050101";  // Jahr, Monat Tag
+    }
+    catch(Exception e) {
+      Console.WriteLine("Daten inkorrekt: ");
+      Console.WriteLine(e.Message);
+    }
+    
+    byte a, b, c, d;
+    bool bOk = perso.PruefsummenBerechnung(out a, out b, out c, out d);
+    if (bOk) {
+      Console.WriteLine("a: {0} b: {1} c: {2} d: {3}",a, b, c, d);
+    }
+    else {
+      Console.WriteLine("Berechnung der Pr&uuml;fsummen konnte nicht durchgef&uuml;hrt werden.");
+    }
+    
+  }
+}
+</pre>
+
+<p>
+Bei den vier Eigenschaften k&ouml;nnen Exceptions auftreten, daher ist der Zuweisungsblock in <i>try...catch</i> eingebettet.
+Danach wird die Methode <i>PruefsummenBerechnung</i> aufgerufen, und die Resultate an die Console ausgegeben. 
+</p>
+<p>
+Wer die Klasse in ASP.NET oder anderen Programmiersprachen als C# verwenden will, kann die Batch-Datei <b>builddll.bat</b>
+aufrufen - damit erh&auml;lt man eine Assembly, die beliebig weiterverwendet werden kann.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Falls man die Personalausweisnummer zur Verifizierung des Alters einsetzt, sollte man sich immer bewu&szlig;t sein, da&szlig; jeder eine
+"g&uuml;ltige" Nummer errechnen kann. F&auml;lschungssicher - ohne die physische Karte in H&auml;nden zu halten - ist die Personalausweisnummer
+nicht.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020507.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020507.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000726.htm">Datentypen in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000726.htm</span><br>
+<a href="../artikel/20000803.htm">Die String Klasse in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000803.htm</span><br>
+<a href="../artikel/20010215.htm">Enums lesbar machen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010215.htm</span><br>
+<a href="../artikel/20000724.htm">Exception Handling in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000724.htm</span><br>
+<a href="../artikel/20000714.htm">Kontrollstatements in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000714.htm</span><br>
+<a href="../artikel/20000717.htm">Schleifenbefehle in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000717.htm</span><br>
+<a href="../artikel/20011010.htm">Sprachenintegration in .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011010.htm</span><br>
+<a href="../artikel/20000731.htm">Verwendung von Arrays in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000731.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eicsharpcode%2Enet%2Fopensource%2Fsd%2F">#develop</a><br>
+<SPAN class="content">http://www.icsharpcode.net/opensource/sd/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2F365%2D24%2D7%2Enet%2Fperso%2F">Berechnung der Personalausweis-Nummern inklusive Prüziffern</a><br>
+<SPAN class="content">http://365-24-7.net/perso/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Esylence%2Ede%2Fperso%2F">perso - Berechnung der Personalausweis-Nummern</a><br>
+<SPAN class="content">http://www.sylence.de/perso/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Epruefziffernberechnung%2Ede%2FP%2FPersonalausweis%2DDE%2Eshtml">Prüfziffern: Deutscher Personalausweis</a><br>
+<SPAN class="content">http://www.pruefziffernberechnung.de/P/Personalausweis-DE.shtml</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fgroups%2Egoogle%2Ecom%2Fgroups%3Fselm%3D8ns4ll%2524c2t%252413%25241%2540news%2Et%2Donline%2Ecom%26output%3Dgplain">Subject: Algorithmus Personalausweisnummer (was Re: Jugendschutz im WWW)</a><br>
+<SPAN class="content">http://groups.google.com/groups?selm=8ns4ll%24c2t%2413%241%40news.t-online.com&output=gplain</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

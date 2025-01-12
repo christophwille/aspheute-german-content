@@ -1,0 +1,252 @@
+<HTML>
+<HEAD>
+<TITLE>Die LookUpTable Komponente</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Diese Komponente dient &auml;hnlich wie das Dictionary Objekt von VBScript dazu, anhand eines Keys (Schl&uuml;ssel) den dazugeh&ouml;rigen Wert schnell aufzufinden.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,LookupTable,Dictionary,Apartment,Free-threading,both-threaded,Thread,Application,Session,Performance,Optimierung,Geschwindigkeit">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Die LookUpTable Komponente</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Komponenten.htm">Komponenten</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010323"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Diese Komponente dient &auml;hnlich wie das Dictionary Objekt von VBScript dazu, anhand eines Keys (Schl&uuml;ssel)
+den dazugeh&ouml;rigen Wert schnell aufzufinden. Dieser
+Artikel erkl&auml;rt Ihnen, warum Sie der LookUpTable Komponente den Vorzug gegen&uuml;ber dem
+Dictionary Objekt geben sollten, und welche Methoden unterst&uuml;tzt werden.
+</p>
+
+<p>
+Die LookUpTable Komponente samt dem dazugeh&ouml;rigen Sourcecode (!) k&ouml;nnen Sie 
+<a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/dnvbpj00/html/dictionary.asp" target="_blank">hier</a> nach dem
+Akzeptieren der Lizenzbedingungen von http://msdn.microsoft.com downloaden. Mithilfe des mitgelieferten
+Sourcecodes k&ouml;nnen Sie falls erforderlich das Objekt in seiner Funktionali&auml;t nach Ihren
+Vorstellungen erweitern.
+</p>
+
+<p>
+Prinzipiell ist die Funktionalit&auml;t bei der LookUpTable Komponente ja &auml;hnlich der des Dictionary Objekts - sie fungieren
+beide als assoziative Arrays, d.h. ein Eintrag des Arrays besteht immer aus einem sogenannten
+<i>Key</i> und einem dazugeh&ouml;rigen <i>Wert</i> - und anhand des Schl&uuml;ssels kann ich den Wert auffinden. 
+Der Anwendungsfall eines assoziativen Arrays ist oft das
+Konfigurationsmanagement, weshalb diese auch oft auf Applikationsebene zur Verf&uuml;gung gestellt werden sollen.
+</p>
+
+<p>
+Jedoch unterscheiden sich die beiden Objekte in einem wesentlichen Punkt: Das <i>Dictionary</i> Objekt
+ist Apartment-threaded und das <i>LookUpTable</i> Objekt ist <i>both-threaded</i>, unterst&uuml;tzt also das
+apartment-threading und das free-threading Modell. Da man es vermeiden sollte apartment-threaded Objekte 
+im Application oder Session Scope zu speichern, ist das LookUpTable Objekt dem Dictionary vorzuziehen - es behindert
+die Performance des Servers nicht. 
+</p>
+
+<h3>Kurze &Uuml;bersicht &uuml;ber die Threadingmodelle</h3>
+<p>
+Beim <i>Free-Threading</i> Modell kann ein Objekt von beliebigen Threads aus aufgerufen werden, und es mu&szlig; selbst
+darum k&uuml;mmern, da&szlig; die Zugriffe auf interne Daten korrekt serialisiert werden (Synchronisation).  
+Im Gegensatz dazu bietet das <i>Apartment-Threading</i> Modell die Serialisierung als Service von COM, und
+das Objekt mu&szlig; sich nicht um die Threadsicherheit selbst k&uuml;mmern.
+</p>
+
+<p>
+Das Apartment Modell ist leichter zu programmieren, ist aber auch f&uuml;r Webserver kritischer: speichere
+ich ein Apartment Objekt in die Session, kann ich erst wieder darauf zugreifen, wenn der ASP Thread frei ist,
+der das Apartment urspr&uuml;nglich erzeugt hat (also der Thread, der das Objekt in die Session gespeichert hat).
+Der Grund ist die Serialisierung der Zugriffe auf Apartment Objekte &uuml;ber einen einzigen Thread.
+</p>
+
+<h2>Die Verwendung der LookUpTable Komponente</h2>
+<p>
+Nach dem Downloaden, Entpacken und Registrieren der DLL auf einem Webserver k&ouml;nnen Sie die 
+im Artikel gezeigten Beispiele ausf&uuml;hren.
+</p>
+
+<p>
+Nachteilig beim LookUpTable Objekt ist, da&szlig; es nur die Datentypen <i>String</i> und <i>Integer</i> unterst&uuml;tzt. Da keine
+<i>Add</i> Methode in der Ursprungsversion unterst&uuml;tzt wird, m&uuml;ssen die Daten aus einer Textdatei eingelesen werden.
+Damit w&auml;ren wir schon bei unserem ersten Beispiel.
+</p>
+
+<p>
+Wir bef&uuml;llen einfach das LookUpTable Objekt mit &quot;Daten&quot; aus der Textdatei. Dabei sind &auml;hnliche
+Konventionen wie bei Datenbanktabellen zu verwenden. Man gibt einen numerischen Key (wie der Prim&auml;rschl&uuml;ssel)
+und die Wertepaare, also die eigentlichen Daten - alle getrennt durch Beistriche - an (<b>StringString.txt</b>):
+</p>
+
+<pre style="background='silver';">
+1,John Doe, JohnDoe@company.com
+2,John McLane, JMcLane@diehard.com
+3,Martin Riggs, MRiggs@shooter.com
+</pre>
+
+<p>
+Diese Daten werden dann in ASP so eingelesen:
+</p>
+
+<pre style="background='silver';">
+Set objLookUpTbl = Server.CreateObject("IISSample.LookupTable")
+
+strFileName = "StringString.txt"
+strPathFile = Server.MapPath(strFileName)
+
+objLookUpTbl.LoadValues strPathFile,2
+</pre>
+
+<p>
+Das Einlesen der Daten erfolgt durch die <i>LoadValues</i> Methode, die als Parameter die Textdatei mit Pfad und
+das Format in welchen die Daten vorliegen (Datentyp String oder Integer) akzeptiert.
+</p>
+
+<p>
+Der Format Parameter kann folgende Werte annehmen:
+</p>
+
+<ul>
+<li><b>0</b>: String Key, String Wert(e)</li>
+<li><b>1</b>: String Key, Integer Wert(e)</li>
+<li><b>2</b>: Integer Key, String Wert(e)</li>
+<li><b>3</b>: Integer Key, Integer Wert(e)</li>
+</ul>
+
+<p>
+Nun wollen wir die eingelesenen Werte im Browser wieder darstellen. Hierf&uuml;r gibt es zwei M&ouml;glichkeiten.
+Entweder die Adressierung durch den Wert des Keys (<i>LookupValues</i> Methode, <b>LookupValues.asp</b>):
+</p>
+
+<pre style="background='silver';">
+For i=1 To objLookUpTbl.Count
+    Response.Write objLookUpTbl.LookUpValue(i) &amp; "&lt;br&gt;"
+Next
+</pre>
+
+<p>
+Wenn man nun die LookUpValues.asp Datei auf einem Web Server ausf&uuml;hrt, erh&auml;lt man im Browser folgendes Ergebnis:
+</p>
+
+<p>
+<IMG SRC="/artikel/Bilder/200103/20010323_1.png" width="441" height="249" alt="" border="0">
+</p>
+
+<p>
+Oder, die andere M&ouml;glichkeit, wie man es schon von den
+Arrays gewohnt ist durch den Index des Elements im Objekt (<i>Value</i> Methode, <b>ValueMethod.asp</b>)
+</p>
+
+<pre style="background='silver';">
+For i=0 To objLookUpTbl.Count
+    Response.Write objLookUpTbl.Value(i) &amp; "&lt;br&gt;"
+Next
+</pre>
+
+<p>
+Weiters werden noch einige n&uuml;tzliche Methoden unterst&uuml;tzt (<b>SampleMethods.asp</b>):
+</p>
+
+<p>
+Die <i>Count</i> Methode gibt die Anzahl der Elemente zur&uuml;ck:
+</p>
+
+<pre style="background='silver';">
+Response.Write "There are <b>" &amp; objLookUpTbl.Count &amp; "</b> entries in the <b>" &amp; strFileName &amp; "</b> file."
+</pre>
+
+<p>
+Die <i>KeyExists</i> Methode gibt den Wert <i>True</i> zur&uuml;ck, wenn der Key im Objekt enthalten ist:
+</p>
+
+<pre style="background='silver';">
+Response.Write "Does a key with value 1 exist: "
+Response.Write objLookUpTbl.KeyExists("1") 
+</pre>
+
+<p>
+Den Arrayindex eines Elementes erh&auml;lt man durch die <i>Key</i> Methode:
+</p>
+
+<pre style="background='silver';">
+Response.Write "Element index 0 contains key: " &amp; objLookUpTbl.Key(0)
+</pre>
+
+<p>
+Wenn man nun die SampleMethods.asp Datei auf einem Web Server ausf&uuml;hrt, erh&auml;lt man im Browser folgendes Ergebnis:
+</p>
+
+<p>
+<IMG SRC="/artikel/Bilder/200103/20010323_2.png" width="441" height="248" alt="" border="0">
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dies war eine kleine Einf&uuml;hrung in die vom LookupTable Objekt unterst&uuml;tzten Methoden. 
+Diese sind zwar nicht viele an der Zahl, aber durch die M&ouml;glichkeit des erweiterbaren Sourcecodes
+kann man diese ja die eigenen Anforderungen anpassen. Viel wichtiger ist aber, da&szlig; man dieses Objekt beinahe
+bedenkenlos in Application oder Session speichern kann.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010323.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010323.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/19990806.htm">Das Dictionary Objekt - Dein Feind und Helfer</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990806.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3Furl%3D%2Flibrary%2Fen%2Dus%2Fdnvbpj00%2Fhtml%2Fdictionary%2Easp">Download LookupTable Komponente</a><br>
+<SPAN class="content">http://msdn.microsoft.com/library../default.htm?url=/library/en-us/dnvbpj00/html/dictionary.asp</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

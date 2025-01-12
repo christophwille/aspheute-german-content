@@ -1,0 +1,342 @@
+<HTML>
+<HEAD>
+<TITLE>Logfiles auswerten mit Webalizer</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wer heutzutage statistische Auswertungen aus seinen Logfiles generieren will, hat die Qual der Wahl. Auf AspHeute wurde schon Analog pr&auml;sentiert, und in diesem Artikel wird mit Webalizer ein weiteres Freewareprogramm vorgestellt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Analog,Webalizer,Logfiles,Logfileauswertung,Statistik,Zugriff,Auswertung,Logfileformat">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Logfiles auswerten mit Webalizer</H1>
+<p>
+Geschrieben von: <a href="../autoren/stephantroxler.htm">Stephan Troxler</a><br>
+Kategorie: <a href="../kategorien/Server.htm">Server</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20021030"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wer heutzutage statistische Auswertungen aus seinen Logfiles generieren will, hat die Qual der Wahl aus hunderten von Tools 
+das passende auszuw&auml;hlen. Auf AspHeute wurde schon Analog pr&auml;sentiert, und in diesem Artikel wird mit Webalizer ein weiteres 
+Freewareprogramm vorgestellt. Gegen&uuml;ber Analog bietet Webalizer diverse Vorteile, die Handhabung bedarf jedoch anfangs etwas 
+Gew&ouml;hnung.
+</p>
+<p>
+Die wesentlichen St&auml;rken von Webalizer sind:
+</p>
+
+<ul>
+	<li>Zus&auml;tzlich zu Analog die Auswertung des HTTP-Referers, welcher Auskunft &uuml;ber die Auffindbarkeit und Verlinkung 
+		einer Webseite gibt
+	<li>Detaillierte  Infos &uuml;ber das Surfverhalten der Nutzer mittels Ermittlung der Ein- und Ausgangsseite
+	<li>Ausgiebige Formatierungsm&ouml;glichkeiten des Outputs, z.B. Anpassung an Firmen CI etc.
+	<li>Volle Automatisierbarkeit des Tools, z.B. mittels Batchjobs und einer Liste aller virtuellen Webserver
+</ul>
+
+<p>
+Im Artikel gehe ich von einer "out of the box" Installation von W2k Server mit IIS5 aus. Dateipfade sind bei 
+Abweichungen entsprechend anzupassen.
+</p>
+
+<h2>Das Erstellen der Logfiles</h2>
+<p>
+Sowohl Apache als auch IIS unterst&uuml;tzen diverse Logfileformate welche ich hier schnell genauer erl&auml;utern m&ouml;chte. Da Webalizer 
+urspr&uuml;nglich im Unix-Umfeld entwickelt wurde, unterst&uuml;tzt er standardm&auml;&szlig;ig das "Common Logfile Format" und das "Combined 
+Logfile Format" des Apache Webservers. Der IIS bietet uns die Wahl zwischen den Formaten NCSA (entspricht dem "Common Logfile 
+Format"), W3C (RFC Standard des W3C Konsortiums) und "IIS" (ein Microsoft-eigenes Format). 
+</p>
+<p>
+Der wesentlichste Unterschied in den verschiedenen Typen liegt neben der Formatierung im Umfang der mitgeloggten Daten. 
+Grunds&auml;tzlich sollte unter IIS immer mit dem W3C-Format gearbeitet werden, da es als einziges auch Informationen wie den 
+Http-Referer oder den User-Agent  protokolliert. Zudem l&auml;&szlig;t es uns im Detail die Wahl, welche Informationen wir loggen wollen 
+und welche nicht. Zu beachten ist beim W3C-Format, dass die Uhrzeit jeweils nach GMT mitgeloggt wird, was einen Zeitversatz 
+zur Mitteleurop&auml;ischen Zeit bedeutet.
+</p>
+
+<IMG SRC="/artikel/Bilder/200210/20021030_1.png" width="763" height="460" alt="" border="0">
+
+<p>
+In der Managementkonsole des IIS wechselt man zun&auml;chst in die Eigenschaften eines Webs. Auf der ersten Seite (Reiter "Web 
+Site") w&auml;hlen wir die Option "Enable Logging" an und setzen das Format auf "W3C Extended Log File Format". Diese Einstellungen 
+sind standardm&auml;&szlig;ig schon vorgew&auml;hlt.
+</p>
+
+<IMG SRC="/artikel/Bilder/200210/20021030_2.png" width="461" height="453" alt="" border="0">
+
+<p>
+&Uuml;ber "Properties" gelangt man in die detaillierten Einstellungen. Der vorgegebene Ort f&uuml;r die Dateiablage der Logfiles ist der
+Pfad "c:\winnt\system32\logfiles". Darin legt der IIS f&uuml;r jeden virtuellen Webserver ein fortlaufend numeriertes Verzeichnis 
+an (W3SVC1, W3SVC2, W3SVC3, etc.). Nach M&ouml;glichkeit sollte das Zielverzeichnis der Logfiles auf eine andere, m&ouml;glichst gro&szlig;e 
+Partition verlegt werden. F&uuml;r unser Beispiel belassen wir die Logfiles im Standardverzeichnis. Das Intervall der Logfiles 
+sollte je nach Besucheraufkommen gew&auml;hlt werden. In der Regel f&auml;hrt man mit "monatlich" oder "w&ouml;chentlich" gut.
+</p>
+
+<IMG SRC="/artikel/Bilder/200210/20021030_3.png" width="404" height="384" alt="" border="0">
+
+<p>
+Wichtig ist hier au&szlig;erdem, da&szlig; die Option zur Verwendung des Tageswechsels zur Lokalzeit angew&auml;hlt wird, da ansonsten der 
+Tageswechsel nach GMT erfolgt und sich dadurch die geloggten Zugriffszeiten von den Logfilenamen unterscheiden. 
+</p>
+<p>
+&Uuml;ber den Reiter "Extended Properties" gelangen wir schlie&szlig;lich zu den zu loggenden Werten. Um sinnvolle Statistiken zu 
+erhalten, sollten mindestens die folgenden Optionen gesetzt werden: "Date", "Time", "Client IP", "Method", "URI Stem", 
+"Protocol Status", "Bytes Sent", "Bytes Received", "User Agent" und "Referer".
+</p>
+
+<IMG SRC="/artikel/Bilder/200210/20021030_4.png" width="404" height="384" alt="" border="0">
+
+<h2>Der Webalizer</h2>
+<p>
+Webalizer ist ein Open Source Projekt mit Portierungen f&uuml;r diverse Betriebsysteme, welches unter 
+<a href="http://www.webalizer.org" target="_blank">http://www.webalizer.org</a> beheimatet ist. Die dort erh&auml;ltliche 
+Win32-Version liest jedoch nur Logfiles des Formats CLF und kann somit nur verwendet werden wenn die W3C Logfiles zuvor mit 
+einem Konverter umgewandelt werden, oder wenn mit dem NCSA Format geloggt wird.
+</p>
+<p>
+Unter <a href="http://www.medasys-lille.com/webalizer/" target="_blank">http://www.medasys-lille.com/webalizer/</a> gibt es 
+eine auf den IIS optimierte Version welche auch W3C Logfiles lesen kann. Webalizer ist auf dieser Seite in diversen Sprachen 
+und Entwicklungsstadien erh&auml;ltlich. Im Umfang eines jeden Downloads sind folgende Dateien enthalten, welche man zun&auml;chst in 
+ein Verzeichnis (in unserem Beispiel ist das  "d:\webalizer\") entpackt:
+</p>
+
+<ul>
+	<li><b>webalizer.exe</b> - das eigentliche Programm
+	<li><b>sample.conf</b> - eine dokumentierte Beispielkonfiguration
+</ul>
+
+<h2>Die Konfiguration</h2>
+<p>
+Webalizer l&auml;&szlig;t sich auf zwei Arten anwenden. Einerseits k&ouml;nnen s&auml;mtliche Parameter als Kommandozeilenargumente &uuml;bergeben 
+werden, andererseits kann auf ein Konfigurationsfile wie das mitgelieferte verwiesen werden. Wir schauen uns die zweite 
+Variante an, da diese komfortabler und flexibler ist. Das Konfigurationsfile nenne ich im untenstehenden Beispiel 
+<b>wconfig.txt</b>.
+</p>
+<p>
+&Uuml;ber ein weiteres Steuerfile lassen sich zudem s&auml;mtliche virtuellen Webserver eines Servers erfassen. Nennen wir diese 
+Datei <b>serverlist.txt</b>.
+</p>
+
+<h3>Inhalt von wconfig.txt</h3>
+<p>
+Nachfolgend sehen wir die wichtigsten Parameter des Konfigurationsfiles. Diese lassen sich beliebig anhand der 
+Beispielkonfiguration erg&auml;nzen und anpassen. So kann beispielsweise ein CSS-File eingebunden werden welches die Statistiken 
+formatiert.
+</p>
+
+<pre style="background='silver';">
+Debug		yes
+</pre>
+
+<p>
+Gibt Informationen &uuml;ber Fehler in den Logfiles w&auml;hrend der Verarbeitung aus.
+</p>
+
+<pre style="background='silver';">
+DNSCache		D:\webalizer\dnscache.txt
+DNSChildren	20
+</pre>
+
+<p>
+Erm&ouml;glicht die Verwendung von Reverse DNS-Lookups. Die Datei dnscache.txt wird von Webalizer als Cachefile verwendet. DNSChildren 
+gibt an wie viele parallele Verbindungen f&uuml;r die Lookups ge&ouml;ffnet werden d&uuml;rfen.
+</p>
+
+<pre style="background='silver';">
+ServerList	D:\webalizer\serverlist.txt
+</pre>
+
+<p>
+Der Pfad zu unserer Liste der virtuellen Webserver
+</p>
+
+<pre style="background='silver';">
+Incremental	yes
+</pre>
+
+<p>
+Erm&ouml;glicht es Webalizer selbstst&auml;ndig mehrere fortlaufende (monatliche, w&ouml;chentliche, etc.) Logfiles aus einem Verzeichnis 
+heraus zu verarbeiten.
+</p>
+
+<pre style="background='silver';">
+LogType		iis
+</pre>
+
+<p>
+Anweisung, da&szlig; das W3C Format verarbeitet werden soll
+</p>
+
+<pre style="background='silver';">
+PageType	htm*
+PageType	asp*
+</pre>
+
+<p>
+Deklaration, was im Bericht als Webseite betrachtet werden soll.
+</p>
+
+<pre style="background='silver';">
+HideURL		*.gif
+HideURL		*.jpg
+HideURL		*.png
+HideURL		*.ra
+HideURL		*.dll
+</pre>
+
+<p>
+Mittels des Parameters "HideURL" k&ouml;nnen Dateitypen und Verzeichnisse angegeben werden, welche im Bericht nicht dargestellt 
+werden. Die Angabe dieser Dateitypen fokussiert den Bericht besser auf die oben deklarierten Webseiten.
+</p>
+
+<pre style="background='silver';">
+IgnoreURL		/_vti*
+</pre>
+
+<p>
+Mittels des Parameters "IgnoreURL" k&ouml;nnen Dateitypen und Verzeichnisse angegeben werden, welche im Bericht nicht ausgewertet 
+werden. Obiges Beispiel ist sinnvoll, wenn die Frontpage Servererweiterungen installiert sind.
+</p>
+
+<pre style="background='silver';">
+SearchEngine	yahoo.com		p=
+SearchEngine	altavista.com	q=
+SearchEngine	google.com	q=
+</pre>
+
+<p>
+Mit diesem Parameter k&ouml;nnen Suchmaschinen und deren Queryvariablen deklariert werden. Anhand dieser Angaben wertet Webalizer 
+aus, mit welchen Suchanfragen die Benutzer auf die Webseite gelangt sind.
+</p>
+
+<h3>Inhalt von serverlist.txt</h3>
+<p>
+Die Datei <b>serverlist.txt</b> beinhaltet s&auml;mtliche Hosts, von welchen Statistiken erstellt werden sollen. F&uuml;r jeden Host wird eine 
+Zeile mit den nachfolgenden Angaben angelegt. Die Werte werden mittels Leerschlag (" ") getrennt: Name des Hosts, Pfad zu den 
+Logfiles, Outputpfad des Statistikberichts, Hostheadernamen.
+</p>
+<p>
+Beispiel:
+</p>
+
+<pre style="background='silver';">
+meinServer c:\winnt\system32\logfiles\w3svc3\ d:\wwwroot\ <i>[cont.]</i>
+     meinserver\stats\ www.meinserver.com;meinserver.com
+</pre>
+
+<p>
+Erl&auml;uterung:
+</p>
+
+<ul>
+	<li><b>MeinServer</b> Ein frei w&auml;hlbarer Name.
+	<li><b>c:\winnt\system32\logfiles\w3svc3\</b> Standardpfad der IIS Logfiles plus durchnumeriertes Verzeichnis welches 
+		vom IIS f&uuml;r jeden virtuellen Webserver angelegt wird.
+	<li><b>d:\wwwroot\ meinserver\stats\</b> Verzeichnis in das die Statisiken nach dem Erstellen kopiert werden.
+	<li><b>www.meinserver.com;meinserver.com;www.mein-server.com,etc.</b> S&auml;mtliche konfigurierte Hostheadernamen des 
+		Hosts. Diese Angaben sind f&uuml;r Webalizer relevant um Zugriffe &uuml;ber verschiedene Adressen zu gruppieren.
+</ul>
+
+<h2>Starten der Auswertung</h2>
+<p>
+Nachdem wir nun s&auml;mtliche notwendigen Anpassungen vorgenommen haben k&ouml;nnen wir den Webalizer starten. Mittels des Parameters "-c" 
+verweisen wir auf unser Konfigurationsfile. Der Aufruf des Programms sieht wie folgt aus:
+</p>
+
+<pre style="background='silver';">
+webalizer.exe -c wconfig.txt
+</pre>
+
+<IMG SRC="/artikel/Bilder/200210/20021030_5.png" width="668" height="331" alt="" border="0">
+
+<p>
+Webalizer geht nun alle Hosts der Serverliste durch, generiert gem&auml;&szlig; der Konfiguration aus <b>wconfig.txt</b> die Statistiken und legt 
+sie im jeweiligen Zielverzeichnis ab.
+</p>
+<p>
+Um regelm&auml;&szlig;ig Statistiken zu erhalten, kann dieser Aufruf beispielsweise &uuml;ber einen AT Job in regelm&auml;ssigem Intervall 
+gestartet werden. Webalizer erkennt jeweils den Stand der letzen Verarbeitung und f&auml;hrt bei der zuletzt ausgewerteten 
+Zeile mit den Auswertungen fort.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Webalizer ist ein geeignetes Analysewerkzeug f&uuml;r all jene, welche ohne gro&szlig;en Aufwand automatisierte, monatliche 
+Web-Statistiken Ihrer Hosts generieren wollen. Durch die Vielfalt an  Konfigurationsm&ouml;glichkeiten deckt es ein breites Band 
+an Bed&uuml;rfnissen ab. Dennoch kennt auch Webalizer seine Grenzen, sobald tiefgr&uuml;ndige Analysen des Surfverhaltens etc. gefragt 
+sind. Bevor man jedoch viel Geld und Zeit in die Hand nimmt und sich mit kostenpflichtigen Auswertungs-Tools herumschl&auml;gt 
+lohnt sich auf jeden Fall ein Test des Webalizers.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20021030.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20021030.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010517.htm">Gratis Loganalyse mit Analog</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010517.htm</span><br>
+<a href="../artikel/20011204.htm">IIS, was machst du gerade?</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011204.htm</span><br>
+<a href="../artikel/20010502.htm">Logfiles mit Access auswerten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010502.htm</span><br>
+<a href="../artikel/20010523.htm">ReportMagic f&uuml;r Analog</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010523.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ewebalizer%2Eorg%2Fsample%2Findex%2Ehtml">Beispielauswertung</a><br>
+<SPAN class="content">http://www.webalizer.org/sample/index.html</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ew3%2Eorg%2FTR%2FWD%2Dlogfile%2Ehtml">Das W3C Logfile Format</a><br>
+<SPAN class="content">http://www.w3.org/TR/WD-logfile.html</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ewebalizer%2Eorg%2F">Das Webalizer Projekt</a><br>
+<SPAN class="content">http://www.webalizer.org/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emedasys%2Dlille%2Ecom%2Fwebalizer%2F">Downloadseite Win32 Client</a><br>
+<SPAN class="content">http://www.medasys-lille.com/webalizer/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

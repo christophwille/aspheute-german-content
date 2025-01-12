@@ -1,0 +1,461 @@
+<HTML>
+<HEAD>
+<TITLE>Arrays mit Index und Schl&uuml;ssel</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Was wenn man sowohl per Index als auch Schl&uuml;ssel auf Elemente einer Collection zugreifen will? Auch dann wird man von .NET nicht alleine gelassen, denn es gibt die SortedList Klasse, eine Mischung aus Array und Hashtable.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SortedList,Hashtable,Array,ContainsKey,ContainsValue,foreach,IsSynchronized,Synchronize,thread-safety,static,Indexer">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Arrays mit Index und Schl&uuml;ssel</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020124"></SCRIPT>
+</p>
+<p>
+Arrays sind ein tolle Erfindung - man greift per Index bequem auf die Elemente zu. Will man nicht per
+Index auf ein Element zugreifen sondern per Schl&uuml;ssel, dann verwendet man die Hashtable Klasse. Doch 
+was wenn man sowohl per Index als auch Schl&uuml;ssel auf Elemente zugreifen will? Auch dann wird man von .NET
+nicht alleine gelassen, denn es gibt die <i>SortedList</i> Klasse, eine Mischung aus Array und Hashtable.
+</p>
+
+<h2>1,2,3 - so einfach geht's!</h2>
+<p>
+Die <i>SortedList</i> ist also eine Mischung aus <a href="20000731.htm">Array</a> und <a href="20000823.htm">Hashtable</a>.
+Da&szlig; die Verwendung dadurch nicht komplizierter wird, demonstriert gleich das erste Beispiel (<b>access.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Collections" %&gt;
+&lt;%
+SortedList slDotNetLists = new SortedList();
+slDotNetLists.Add("ASP.NET", "aspDEdotnet@aspfriends.com");
+slDotNetLists.Add("C#", "dotnetDEcsharp@aspfriends.com");
+slDotNetLists.Add("VB.NET", "dotnetDEvb@aspfriends.com");
+
+Response.Write(slDotNetLists.GetByIndex(0).ToString() + "&lt;br&gt;");
+Response.Write(slDotNetLists["C#"].ToString() + "&lt;br&gt;");
+int nIndex = slDotNetLists.IndexOfKey("VB.NET");
+Response.Write(slDotNetLists.GetByIndex(nIndex).ToString() + "&lt;br&gt;");
+%&gt;
+</pre>
+<p>
+Das Hinzuf&uuml;gen von Elementen funktioniert schon wie bei der Hashtable Klasse gelernt. Die Zugriffe
+auf die Elemente sind der interessante Part, zuerst per Index:
+</p>
+
+<pre style="background='silver';">
+object objValue = slDotNetLists.GetByIndex(0);
+</pre>
+<p>
+Der Zugriff auf ein Element passiert via <i>GetByIndex</i> Methode. Warum nicht per Indexer, also den
+eckigen Klammern? Nun, die sind f&uuml;r den Zugriff via Schl&uuml;ssel reserviert:
+</p>
+<pre style="background='silver';">
+object objValue = slDotNetLists["C#"];
+</pre>
+<p>
+Um zu zeigen da&szlig; man auch mit der Kirche um's Kreuz zum Ziel kommen kann, habe ich noch folgende
+Zugriffsvariante eingebaut:
+</p>
+<pre style="background='silver';">
+int nIndex = slDotNetLists.IndexOfKey("VB.NET");
+object objValue = slDotNetLists.GetByIndex(nIndex);
+</pre>
+<p>
+Man kann den Indexwert eines Schl&uuml;ssel ermitteln, und dann per <i>GetByIndex</i> an den Wert kommen.
+</p>
+
+<h2>Die korrekte Verwendung von foreach</h2>
+<p>
+Was soll man da eigentlich falsch machen k&ouml;nnen, werden sich einige fragen. Sehen wir uns
+einmal die Standardanwendung an (<b>iterateforeach.aspx</b>):
+</p>
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Collections" %&gt;
+&lt;%
+SortedList slDotNetLists = new SortedList();
+slDotNetLists.Add("ASP.NET", "aspDEdotnet@aspfriends.com");
+slDotNetLists.Add("C#", "dotnetDEcsharp@aspfriends.com");
+slDotNetLists.Add("VB.NET", "dotnetDEvb@aspfriends.com");
+
+foreach (DictionaryEntry de in slDotNetLists)
+{
+  Response.Write(de.Key + " - " + de.Value + "&lt;br&gt;\r\n");
+}
+%&gt;
+</pre>
+
+<p>
+Prinzipiell ist das in ASP.NET auch so OK, nur: der Enumerator ist nicht thread-safe. Was bedeutet das?
+Angenommen, ich habe eine gr&ouml;&szlig;ere Anwendung, in der ein Teil des Programms die SortedList &auml;ndert 
+(Eintr&auml;ge hinzuf&uuml;gt oder l&ouml;scht), und ein
+anderer die Daten listet. Was passiert, wenn w&auml;hrend des Auflistens ein Wert herausgel&ouml;scht wird? Nun, 
+das foreach wird m&ouml;glicherweise mit einer Exception "sterben", weil ich ohne "Wissen" des Enumerators
+ein Element herausgel&ouml;scht habe, auf das er m&ouml;glicherweise zugreifen wird.
+</p>
+<p>
+Um dies zu verhindern, kann man die SortedList synchronisieren, das hei&szlig;t sich eine thread-sichere Kopie
+geben lassen. Da&szlig; dies keineswegs ein grober Mehraufwand ist demonstriert <b>iteratesynchronized.aspx</b>:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Collections" %&gt;
+&lt;%
+SortedList slDotNetLists = new SortedList();
+slDotNetLists.Add("ASP.NET", "aspDEdotnet@aspfriends.com");
+slDotNetLists.Add("C#", "dotnetDEcsharp@aspfriends.com");
+slDotNetLists.Add("VB.NET", "dotnetDEvb@aspfriends.com");
+
+SortedList slSynchronized = SortedList.Synchronized(slDotNetLists);
+Response.Write(slSynchronized.IsSynchronized.ToString() + "&lt;br&gt;");
+
+foreach (DictionaryEntry de in slSynchronized)
+{
+  Response.Write(de.Key + " - " + de.Value + "&lt;br&gt;\r\n");
+}
+%&gt;
+</pre>
+
+<p>
+Nur der Aufruf der statischen Methode <i>Synchronized</i> ist notwendig, um thread-sicher mit foreach arbeiten
+zu k&ouml;nnen. Die Abfrage von <i>IsSynchronized</i> dient eigentlich nur der Demonstration da&szlig; man leicht herausfinden
+kann, ob man mit einer synchronisierten SortedList arbeitet oder nicht.
+</p>
+
+<h2>Suchen in der SortedList</h2>
+<p>
+Oftmals m&ouml;chte man sich versichern, da&szlig; bestimmte Eintr&auml;ge auch wirklich in der SortedList sind. Dann
+wird man die auch schon von der Hashtable Klasse bekannten Methoden <i>ContainsKey</i> und <i>ContainsValue</i>
+verwenden. Das folgende Beispiel (<b>search.aspx</b>) ist nichts weiter als eine leicht angepasste 
+Version des Scripts, das ich auch schon f&uuml;r die Hashtable Klasse verwendet habe.
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Collections" %&gt;
+&lt;%
+SortedList slDotNetLists = new SortedList();
+slDotNetLists.Add("ASP.NET", "aspDEdotnet@aspfriends.com");
+slDotNetLists.Add("C#", "dotnetDEcsharp@aspfriends.com");
+slDotNetLists.Add("VB.NET", "dotnetDEvb@aspfriends.com");
+
+// Anzahl der Element in der SortedList
+int nElementCount = slDotNetLists.Count;
+
+// existiert der Schl&uuml;ssel?
+bool bKeyCont = slDotNetLists.ContainsKey("C#");
+
+// existiert der Wert?
+bool bValueCont = slDotNetLists.ContainsValue("dotnetDEvb@aspfriends.com");
+
+// Element korrekt suchen
+if (true == bKeyCont)
+{
+  Response.Write(slDotNetLists["C#"].ToString());
+}
+%&gt;
+</pre>
+
+<h2>Updaten und L&ouml;schen</h2>
+<p>
+&Uuml;blicherweise bef&uuml;llt man eine Collection nicht nur, sondern man m&ouml;chte auch Werte &auml;ndern und 
+sogar l&ouml;schen k&ouml;nnen. Das kann die <i>SortedList</i> Klasse nat&uuml;rlich auch - wie im folgenden 
+Beispiel gezeigt (<b>updateremove.aspx</b>):
+</p>
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Collections" %&gt;
+&lt;%
+SortedList slDotNetLists = new SortedList();
+slDotNetLists.Add("ASP.NET", "aspDEdotnet@aspfriends.com");
+slDotNetLists.Add("C#", "dotnetDEcsharp@aspfriends.com");
+slDotNetLists.Add("VB.NET", "dotnetDEvb@aspfriends.com");
+
+// existiert der Schl&uuml;ssel?
+bool bKeyCont = slDotNetLists.ContainsKey("VB.NET");
+
+// Element korrekt updaten
+if (true == bKeyCont)
+{
+  slDotNetLists["VB.NET"] = "deadinthewater@nowhere.org";
+}
+
+// Element l&ouml;schen; existiert es nicht --&gt; Exception
+slDotNetLists.Remove("VB.NET");
+
+// und jetzt l&ouml;schen wir alles
+slDotNetLists.Clear();
+%&gt;
+</pre>
+<p>
+Die Methode <i>ContainsKey</i> ist bereits ein alter Bekannter, ebenso wie der Indexer - nur da&szlig; ich
+ihn hier zum &Auml;ndern des Wertes verwende. Ebenso einfach ist die Verwendung der <i>Remove</i> Methode,
+die ein einzelnes Element anhand des Schl&uuml;ssels aus der SortedList entfernt. Last but not least 
+bleibt mir die <i>Clear</i> Methode zu erkl&auml;ren: diese l&ouml;scht s&auml;mtliche Elemente aus der SortedList.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die SortedList Klasse ist ein weiterer Beweis daf&uuml;r, da&szlig; man im Framework f&uuml;r fast jeden Bedarf eine
+bereits existierende Klasse finden kann.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020124.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20000926.htm">Collections einmal anders: Stacks und Queues</a><br>
+<a href="20000720.htm">Das foreach Statement</a><br>
+<a href="20020401.htm">Debugging in der Tiefe</a><br>
+<a href="20000823.htm">Die Hashtable Klasse</a><br>
+<a href="20020417.htm">Sortieren mit dem IComparer Interface</a><br>
+<a href="20000731.htm">Verwendung von Arrays in C#</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20020124" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Arrays mit Index und Schl&uuml;ssel"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20020124.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20020124"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20020124.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

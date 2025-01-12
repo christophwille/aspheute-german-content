@@ -1,0 +1,442 @@
+<HTML>
+<HEAD>
+<TITLE>Asynchrone Programmierung mit Message Queues</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Ist man nicht gezwungen auf das Resultat einer externen Komponente zu warten, kann man die Performance seiner Applikation enorm steigern: mit Message Queueing.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Message Queue,Queueing,Message Queue Server,Queueing Services,ASP.NET,C#,Csharp,C Sharp,.NET,Services,Remoting">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Asynchrone Programmierung mit Message Queues</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010702"></SCRIPT>
+</p>
+<p>
+Ein Problem sowohl f&uuml;r Web Sites als auch "normale" Anwendungen sind externe "Komponenten", die entweder
+&uuml;ber eine langsame Verbindung angesprochen werden m&uuml;ssen, oder (sehr) lange zur Abarbeitung brauchen. Ist man
+nicht gezwungen auf das Resultat zu warten, kann man die Performance seiner Applikation enorm steigern:
+mit Message Queueing.
+</p>
+<p>
+Das Message Queueing hat mit dem NT 4 Option Pack Einzug in die Windows Server Welt gehalten. Seit Windows
+2000 ist es integrierter Teil des Betriebssystems, und mit .NET kann man nun in den verschiedensten 
+Programmiersprachen bequem und einfach darauf zugreifen. Wer Message Queues in Visual Basic programmiert hat,
+der wird den Umstieg besonders leicht haben.
+</p>
+<p>
+Das Hauptfeature von Message Queueing ist folgendes: garantierte Zustellung. Egal ob gerade die Verbindung
+zum Zielserver verf&uuml;gbar ist oder nicht, die Nachricht kommt am Ziel an - und wenn nicht, dann wird man
+als Sender davon in Kenntnis gesetzt. Was soweit geht, da&szlig; eine solche Mi&szlig;erfolgsmeldung eine gesamte
+Transaktion zur&uuml;ckrollen kann. Und man kann sogar "Queued Components" programmieren.
+</p>
+<p>
+Heute wollen wir uns aber noch mit den einfachen Dingen des Message Queueings auseinandersetzen. Und darunter
+verstehe ich das Verschicken von einfachen Textnachrichten aus einer Anwendung, sowie das Abholen von 
+Nachrichten durch eine andere Anwendung. Die sendende Anwendung k&ouml;nnte zB eine ASP.NET Seite sein, und
+die abholende ein Service auf einem anderem Server. Die sendende Anwendung ist sofort "fertig", und wie
+lange die abholende Anwendung dann zur Durchf&uuml;hrung der gesendeten Anweisungen braucht ist f&uuml;r die
+sendende Anwendung nicht mehr ma&szlig;geblich.
+</p>
+<p>
+Vorbedingung ist, da&szlig; ein Message Queue Server existiert. F&uuml;r den heute vorgestellten Code reicht es,
+einen lokal installierten Workgroup Server zu konfigurieren. Die Installation erfolgt &uuml;ber Control Panel,
+Add/Remove Programs, Windows Components:
+</p>
+
+<IMG SRC="Bilder/200107/20010702_2.png" width="607" height="492" alt="" border="0">
+
+<p>
+Der erste Schritt ist, den Typ des Server festzulegen. Um die AD Unterst&uuml;tzung gleich von vorne
+herein h&auml;ndisch zu konfigurieren, w&auml;hlen Sie "Manually select access mode..." aus:
+</p>
+
+<IMG SRC="Bilder/200107/20010702_3.png" width="503" height="385" alt="" border="0">
+
+<p>
+Im zweiten und letzten Schritt w&auml;hlen Sie dann die zweite Option, und schon ist der Message Queue
+Server im Workgroup Modus konfiguriert.
+</p>
+
+<IMG SRC="Bilder/200107/20010702_4.png" width="503" height="385" alt="" border="0">
+
+<p>
+Sp&auml;ter kann man dann jederzeit auf Active Directory basierte Message Queue Server umsteigen. F&uuml;r unsere
+heutigen Beispiele reicht aber bereits der kleine Workgroupserver.
+</p>
+
+<h2>Nachrichten schicken</h2>
+<p>
+Eigentlich w&uuml;rde man ja vermuten, da&szlig; der erste Schritt das Einrichten der notwendigen Message Queues
+sein sollte. Aber wozu h&auml;ndisch konfigurieren, wenn man das als Teil des Sendens automatisch mit
+erledigen kann (<b>send2queue.cs</b>)?
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.Messaging;
+   
+public class MQSend 
+{
+   public static void Main(String[] args) 
+   {
+      string mqPath = ".\\private$\\MyQueue2";
+      if (!MessageQueue.Exists(mqPath))
+      {
+         MessageQueue.Create(mqPath);
+      }
+      
+      MessageQueue mq = new MessageQueue(mqPath);
+      mq.Send("whateverdata");
+   }
+}
+</pre>
+
+<p>
+Der vorgestelle Code ist eine Consolenanwendung, kann aber leicht in eine ASP.NET Seite portiert 
+werden (genauso wie er auch leicht nach VB.NET portiert werden kann).
+</p>
+
+<p>
+Die Queue, die ich verwende, ist eine private am lokalen Server abgelegte Queue mit dem Namen
+<b>MyQueue2</b>. Als erstes kontrolliere ich, ob die Queue existiert - ist diese nicht vorhanden,
+lege ich sie an. Dadurch kann der erste Aufruf des Programms auch etwas l&auml;nger dauern, aber dann
+existiert die Queue als auch die einfache Textnachricht:
+</p>
+
+<IMG SRC="Bilder/200107/20010702_1.png" width="638" height="480" alt="" border="0">
+
+<p>
+Wenn man die Eigenschaften der Nachricht ansieht, findet man auch den Textinhalt der Nachricht - die wir
+uns nun auch wieder abholen wollen.
+</p>
+
+<IMG SRC="Bilder/200107/20010702_5.png" width="404" height="448" alt="" border="0">
+
+<h2>Nachrichten abholen &amp; bearbeiten</h2>
+<p>
+Der Code zum Abholen von Nachrichten aus einer Message Queue f&auml;llt deutlich umfangreicher aus (<b>queryqueue.cs</b>).
+Der Grund hierf&uuml;r ist, da&szlig; das Nichtexistieren der Queue ein fataler Fehler ist, und wir auch einige Fehlerf&auml;lle
+bearbeiten m&uuml;ssen: da&szlig; keine Nachrichten in der Queue sind, oder auch da&szlig; die Nachricht nicht unserem erwarteten
+Format entspricht:
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.Messaging;
+using System.IO;
+using System.Runtime.Serialization;
+
+public class MQReceive
+{
+    public static void Main()
+    {
+        string mqPath = ".\\private$\\MyQueue2";
+
+        if ( !MessageQueue.Exists(mqPath) ) 
+        {
+            Console.WriteLine("The queue '" + mqPath + "' does not exist!");
+            return;
+        }
+
+        MessageQueue mq = new MessageQueue(mqPath);
+        ((XmlMessageFormatter)mq.Formatter).TargetTypeNames = new string[]{"System.String"};
+
+        try 
+        {
+            Message m = mq.Receive(new TimeSpan(0,0,3));
+            Console.WriteLine("Message: " + (string)m.Body);
+        }
+        catch ( MessageQueueException ) 
+        {
+            Console.WriteLine("There are no messages in the queue");
+            return;
+        }
+        catch ( InvalidOperationException ) 
+        {
+            Console.WriteLine("The message removed from the queue is not a string");
+            return;
+        }
+    }
+}
+</pre>
+
+<p>
+Auch diesmal gilt, da&szlig; der Code leicht auf ASP.NET oder VB.NET portiert werden kann.
+</p>
+
+<p>
+Existiert die Queue nicht (<i>MessageQueue.Exists</i>), wird das Programm verlassen. Nach diesem Check
+&ouml;ffne ich die Queue, und erzeuge einen Formatter, der es mir erlaubt, die Nachricht wie gew&uuml;nscht 
+auszulesen. In diesem Falle ist es <i>System.String</i>, es k&ouml;nnte aber durchwegs ein eigens programmiertes
+Objekt sein (die Serialisierung findet ja immer mit XML statt).
+</p>
+<p>
+Der Code zum auslesen und ausgeben der Nachricht ist in einem <i>try/catch</i> Block programmiert. Der
+Grund hierf&uuml;r ist wie immer Exception Handling, und zwar die beiden Gr&uuml;nde, die ich anfangs erw&auml;hnt habe:
+keine weiteren Nachrichten, oder die Nachricht war kein String.
+</p>
+<p>
+Geht alles gut, zeigt die Anwendung den Inhalt der Nachricht an. In allen anderen F&auml;llen bekommt man
+eine Fehlermeldung spezifisch f&uuml;r die Exception angezeigt. Nat&uuml;rlich ist dies nur ein Beispiel - anstatt
+den Inhalt anzuzeigen, w&uuml;rde eine echte Anwendung die Daten zur Weiterverabeitung verwenden.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Der heutige Artikel zeigte die einfachste Art der Programmierung mit Message Queues. Obwohl das Beispiel
+einfach war, sollte man nicht vergessen, da&szlig; asynchrone Programmierung ein wichtiger Grundstein zu
+skalierbarer Software ist.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010702.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Edotnetgerman%2Ecom%2F">DotNetGerman Diskussionslisten</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eicsharpcode%2Enet%2Fopensource%2Fsd%2F">SharpDevelop</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20010702" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Asynchrone Programmierung mit Message Queues"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20010702.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20010702"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20010702.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

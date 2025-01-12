@@ -1,0 +1,190 @@
+<HTML>
+<HEAD>
+<TITLE>Ein G&auml;stebuch in ASP erstellen - Teil 3</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Programmierung der Administrationsseiten f&uuml;r ein G&auml;stebuch. Mit Benutzermanagement, &Auml;ndern, sowie L&ouml;schen von Eintr&auml;gen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ADO,ASP,Gästebuch,Guestbook,Sourcecode,Datenbank,AspGerman">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Ein G&auml;stebuch in ASP erstellen - Teil 3</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000404"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+In den bisherigen beiden Teilen der G&auml;stebuchserie haben wir uns mit dem Frontend f&uuml;r den Endbenutzer
+besch&auml;ftigt - einen eigenen Eintrag eingeben, sowie die Liste der existierenden Eintr&auml;ge durchbl&auml;ttern. Heute,
+im letzten Teil der Serie, besch&auml;ftigen wir uns mit dem administrativen Frontend - um Eintr&auml;ge l&ouml;schen
+und editieren zu k&ouml;nnen.
+</p>
+<p>
+Worauf mu&szlig; man bei einem administrativen Frontend besonders aufpassen? Richtig, da&szlig; nur berechtigte
+Personen darauf Zugriff bekommen. Um dies ohne Zutun des Providers zu erreichen (zB via NTFS Zugriffsrechten),
+habe ich eine neue Tabelle namens AdminLogins in die Datenbank eingebaut:
+</p>
+<p>
+<IMG SRC="/artikel/Bilder/200004/20000404_5.png" width="272" height="128" border="0" alt="AdminLogins">
+</p>
+<p>
+Dazugeh&ouml;rig ist die ASP Datei <b>logon.asp</b>, die ein Frontend f&uuml;r die Eingabe des Benutzernamens und 
+Passworts darstellt, das auch den Code zur &Uuml;berpr&uuml;fung dieser Daten beeinhaltet.
+</p>
+<p>
+<IMG SRC="/artikel/Bilder/200004/20000404_4.png" width="527" height="438" border="0" alt="Logon">
+</p>
+<p>
+An dieser Stelle m&ouml;chte ich mich auch gleich daf&uuml;r entschuldigen, da&szlig; die Administrationsseiten in Englisch
+gehalten sind - dies ist Standard in unserer Firma, und da das pr&auml;sentierte G&auml;stebuch auf auch AspGerman.com
+seinen Dienst tut, entsprechen diese Seiten auch den Vorgaben.
+</p>
+<p>
+Was passiert nun nach einem erfolgreichen Logon? Man wird auf die Hauptseite weitergeleitet:
+</p>
+<p>
+<IMG SRC="/artikel/Bilder/200004/20000404_1.png" width="363" height="211" border="0" alt="Hauptseite">
+</p>
+<p>
+Die Datei <b>adminnav.asp</b> beeinhaltet einige DHTML "Spielereien", und ist nicht weiter interessant. 
+Im Gegensatz dazu allerdings gibt die Datei <b>instructions.asp</b> trotz ihrer Kleinheit einen Einblick in den
+Aufbau der ganzen Administrationssite:
+<pre style="background='silver';">
+&lt;% @ Language=VBScript %&gt;
+&lt;!--#include file=&quot;security.asp&quot;--&gt;
+&lt;%
+ Const cstrPagetitle = &quot;Instructions&quot;
+%&gt;
+&lt;!--#include file=&quot;includes.asp&quot;--&gt;
+&lt;!--#include file=&quot;pageheader.asp&quot;--&gt;
+&lt;!--#include file=&quot;pagebegin.asp&quot;--&gt;
+&lt;H1&gt;&lt;%=cstrPagetitle%&gt;&lt;/H1&gt;
+
+&lt;p&gt;
+Instructions on how to administer the guestbook is going to be shown here!
+&lt;/p&gt;
+
+&lt;!--#include file=&quot;pageend.asp&quot;--&gt;
+</pre>
+</p>
+<p>
+Auf den ersten Blick ist diese Seite eine Ansammlung von Includes, allerdings erf&uuml;llen alle ihren Zweck:
+<ul>
+<li><b>security.asp</b> f&uuml;hrt die &Uuml;berpr&uuml;fung durch, ob der Administrator eingeloggt ist. Wenn nicht,
+	wird er auf logon.asp weitergeleitet.
+<li><b>includes.asp</b> Inkludiert die Datenbankverbindung und Parameter f&uuml;r alle Seiten.
+<li><b>pageheader.asp</b> Der erste Teil des HTML Headers.
+<li><b>pagebegin.asp</b> Schlie&szlig;t den HTML Header und definiert den Seitenbeginn. 
+<li><b>pageend.asp</b> Schlie&szlig;t die Seite korrekt.
+</ul>
+</p>
+<p>
+Es gibt 2 Aufgaben, die die Administrationsseiten zulassen: die Benutzer zu administrieren (<b>usermanagement.asp</b>),
+und die G&auml;stebucheintr&auml;ge zu warten (<b>gbentries.asp</b>). Das Benutzermanagement ist straight-forward, und 
+bedarf keiner gro&szlig;en Erkl&auml;rungen. Der wirklich interessante Teil ist die Eintr&auml;gewartung.
+</p>
+<p>
+Die Datei <b>gbentries.asp</b> ist vom Prinzip her v&ouml;llig gleich wie <b>entries.asp</b> aufgebaut, mit dem Unterschied,
+da&szlig; es Links f&uuml;r das L&ouml;schen und Editieren des Eintrags gibt. Das Paging funktioniert v&ouml;llig ident wie beim
+Frontend f&uuml;r den Benutzer.
+</p>
+<p>
+<IMG SRC="/artikel/Bilder/200004/20000404_6.png" width="518" height="226" border="0" alt="gbentries.asp">
+</p>
+<p>
+Wie habe ich das &Auml;ndern eines Eintrags implementiert? Das folgende Flowchart zeigt den Ablauf:
+</p>
+<p>
+<IMG SRC="/artikel/Bilder/200004/20000404_2.png" width="368" height="321" border="0" alt="Eintrag &auml;ndern">
+</p>
+<p>
+Von gbentries.asp wird auf <b>change.asp</b> gelinkt, das ein Formular f&uuml;r den Administrator zur Verf&uuml;gung stellt - mit
+den alten Werten aus der Datenbank. Klickt der Administrator auf &Auml;nderungen speichern (Save changes), wird das
+Skript <b>persistchanges.asp</b> aufgerufen, und die gew&uuml;nschten &Auml;nderungen in die Datenbank geschrieben.
+</p>
+<p>
+Das L&ouml;schen von Eintr&auml;gen geht leichter von statten - es ist nur eine Datei notwendig, n&auml;mlich <b>delete.asp</b>:
+</p>
+<p>
+<IMG SRC="/artikel/Bilder/200004/20000404_3.png" width="368" height="321" border="0" alt="Eintrag l&ouml;schen">
+</p>
+<p>
+Aus Sicherheitsgr&uuml;nden frage ich den Administrator, ob er die L&ouml;schung wirklich durchf&uuml;hren m&ouml;chte.
+</p>
+<p>
+In der Administrationssite gibt es dann nur noch eine einzige Datei, die ich noch nicht erw&auml;hnt habe: 
+<b>logout.asp</b>. Sie macht ihrem Namen auch alle Ehre, indem sie den Benutzer wirklich definitiv hinauswirft
+(alle Session Variablen werden gel&ouml;scht, und dann auch noch die Session selbst beendet). Somit hat man
+die Administrationssite verlassen.
+</p>
+<p>
+Damit bin ich am Ende der Serie &uuml;ber die Erstellung eines G&auml;stebuches mit ASP und ADO. Der gesamte
+Sourcecode des Projekts (Teile 1-3) befindet sich im Download. Ich hoffe, Ihnen damit den Start Ihres 
+eigenen G&auml;stebuchprojekts etwas erleichtert zu haben.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000404.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000404.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000331.htm">Ein G&auml;stebuch in ASP erstellen - Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000331.htm</span><br>
+<a href="../artikel/20000403.htm">Ein G&auml;stebuch in ASP erstellen - Teil 2</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000403.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpgerman%2Ecom%2Faspgerman%2Fguestbook%2F">AspGerman G&auml;stebuch</a><br>
+<SPAN class="content">http://www.aspgerman.com/aspgerman/guestbook/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

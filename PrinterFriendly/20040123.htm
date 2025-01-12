@@ -1,0 +1,385 @@
+<HTML>
+<HEAD>
+<TITLE>DataViews als DataTable persistieren</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Sie haben aus der ber&uuml;hmten Northwind Datenbank alle Kunden geholt. Nun verwenden Sie eine DataView, um nur Kunden anzuzeigen, die in Buenos Aires ihren Firmensitz haben. Dieser Artikel zeigt, die View als DataTable weiterzureichen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,DataView,DataTable,DataSet,ADO.NET,SqlClient,ToTable,2.0,1.x,1.1,1.0,convert,Konvertieren,Rows,RowFilter,zeilen">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>DataViews als DataTable persistieren</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ADOdotNET.htm">ADO.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20040123"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Datenzugriff ist mit ADO.NET sehr einfach - Daten werden mit Hilfe eines DataAdpaters vom Server geholt und in ein
+DataSet gespeichert, und dann kann man Daten aus den DataTables auslesen. Und braucht man eine andere Sortierung oder
+Filterung, wozu zum Server gehen, mit Hilfe der DataView Klasse kann man das Client-seitig erledigen. Einziger
+Sch&ouml;nheitsfehler in .NET 1.x an dieser Sache ist, da&szlig; man aus der eben erzeugten Sicht (DataView mit .Sort oder .RowFilter
+Kriterien) nicht einfach einen neuen DataTable machen kann.
+</p>
+<p>
+Stellen wir uns also folgendes Szenario vor: Sie haben aus der ber&uuml;hmten Northwind Datenbank alle Kunden geholt.
+Nun verwenden Sie eine DataView, um nur Kunden anzuzeigen, die in Buenos Aires ihren Firmensitz haben. Alles kein
+Problem - au&szlig;er Sie m&ouml;chten jetzt diese Kunden (und nur diese!) als DataTable weiterreichen. Es gibt auf der DataView 
+keine Methode, die Ihnen diese Arbeit erledigt.
+</p>
+<p>
+Daher: man schreibt sich die notwendigen Methoden selbst, um diese Arbeit zu erledigen. Fragt sich nur, wie macht
+man das am besten? Eine neue Klasse? Statische oder Instanzmethoden? Was soll die Methode k&ouml;nnen?
+</p>
+<p>
+Da ich "nebenbei" mit .NET 2.0 arbeite, das bereits - weil genug Kunden mehr als laut geschrien haben - diese Funktionalit&auml;t
+anbietet, was liegt also n&auml;her, als die 2.0 Funktionalit&auml;t zur&uuml;ckzuportieren, um sp&auml;ter bei der Umstellung m&ouml;glichst
+wenig &Auml;rger zu haben? Klar ist das die beste L&ouml;sung, und zwar wird man sinnvollerweise die normale DataView Klasse in der neuen
+kapseln, und nur die notwendigen Methoden hinzuf&uuml;gen:
+</p>
+
+<pre style="background='silver';">
+public class DataViewEx : DataView
+{
+ public DataTable ToTable();
+ public DataTable ToTable(bool isDistinct, string[] columnNames);
+}
+</pre>
+
+<p>
+Die erste <i>ToTable</i> Implementierung ruft die zweite mit <i>false, null</i> Parametern auf, sie h&auml;lt selbst keine Funktionalit&auml;t.
+Wir m&uuml;ssen uns also nur die zweite ansehen, was ihre Aufgabe sein soll. Der erste Parameter dient dazu, um doppelte Zeilen im
+DataTable auszuschlie&szlig;en, was speziell dann zur Anwendung kommt, wenn im Ziel-DataTable keine Indexspalten mehr dabei sind. 
+Der zweite Parameter ist auch n&uuml;tzlich: damit kann man angeben, da&szlig; nur eine Untermenge der orginalen Spalten in den Ziel-DataTable
+&uuml;bernommen werden sollen.
+</p>
+<p>
+Beginnen wir am Anfang - der Klasse DataViewEx und ihren Konstruktoren. Sinnvollerweise sind die Konstruktorensignaturen 
+identisch mit denen der DataView Klasse, und leiten an deren Implementierungen weiter:
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.Data;
+using System.Text;
+using System.Collections;
+
+namespace DotNetGerman
+{
+  public class DataViewEx : DataView
+  {
+    #region Mapped Constructors
+    public DataViewEx() : base()
+    {
+    }
+
+    public DataViewEx(DataTable table) : base(table)
+    {
+    }
+
+    public DataViewEx(DataTable table, string RowFilter, string Sort, 
+	  DataViewRowState RowState) : base(table, RowFilter, Sort, RowState)
+    {
+    }
+</pre>
+
+<p>
+Damit haben wir die Anforderungen erf&uuml;llt, um unsere neue Klasse anstelle der originalen DataView Klasse verwenden zu k&ouml;nnen,
+ohne da&szlig; der Unterschied auffallen w&uuml;rde.
+Bevor wir nun in die Implementierung der "echten" <i>ToTable</i> Methode eintauchen, m&ouml;chte ich Ihnen der &Uuml;bersicht halber eine auf 
+das absolute Minimum abgespeckte <i>ToTable</i> Methode zeigen, damit Sie die verwendeten Klassen und Methoden leichter ersehen:
+</p>
+
+<pre style="background='silver';">
+    public DataTable ToTable()
+    {
+      // short circuiting out here
+      int nRowCount = this.Count;
+      if (0 == nRowCount) return null;
+
+      // #1: clone the schema
+      DataTable tableNew = Table.Clone();
+
+      // #2: get the column count, we need it repeatedly
+      int nColumnCount = tableNew.Columns.Count;
+
+      // #3: copy the values to the new table
+      for (int iRow = 0; iRow &lt; nRowCount; iRow++)
+      {
+        DataRow rowNew = tableNew.NewRow();
+
+        for (int iColumn=0; iColumn &lt; nColumnCount; iColumn++)
+        {
+          rowNew[iColumn] = this[iRow][iColumn];
+        }
+        tableNew.Rows.Add(rowNew);
+      }
+      return tableNew;
+    }
+</pre>
+
+<p>
+Wenn man alle Spalten kopiert, ist die Implementierung wirklich simpel: unter #1 wird ein Schema-Klon der unter der DataView
+liegenden DataTable Klasse erzeugt. Dieser Klon ist bis auf die Spaltendefinitionen leer, er enth&auml;lt keine Daten. Diese werden
+unter #3 mit Hilfe eines Loops &uuml;ber die Zeilen (eingeschr&auml;nkt durch die .Sort und .RowFilter Kriterien) und die Spalten kopiert.
+Und damit sind wir auch schon fertig, und k&ouml;nnen die DataTable, die nur die gew&uuml;nschten gefilterten Daten enth&auml;lt, zur&uuml;ckgeben.
+</p>
+<p>
+Jetzt werden wir diese Methode umbauen, um unseren Anforderungen an DISTINCT Zeilen und Spalten-Subsets gerecht zu werden.
+Zuerst die <i>ToTable()</i> Methode ohne Parameter:
+</p>
+
+<pre style="background='silver';">
+    public DataTable ToTable()
+    {
+      return ToTable(false, null);
+    }
+</pre>
+
+<p>
+Wie angek&uuml;ndigt verweist diese nur auf unsere parametrisierte <i>ToTable</i> Methode. Diese beginnt mit einigen 
+"Informationserhebungen":
+</p>
+
+<pre style="background='silver';">
+    public DataTable ToTable(bool isDistinct, string[] columnNames)
+    {
+      // short circuiting out here
+      int nRowCount = this.Count;
+      if (0 == nRowCount) return null;
+
+      // get the column count, we need it repeatedly
+      int nColumnCount = Table.Columns.Count;
+      int nTargetColumnCount = nColumnCount;
+
+      // if second param == null, we copy the entire table
+      if (null != columnNames) nTargetColumnCount = columnNames.Length;
+
+      string[] tableColumnNames = new string[nColumnCount];
+      
+      for (int iColumn = 0; iColumn &lt; nColumnCount; iColumn++)
+        tableColumnNames[iColumn] = Table.Columns[iColumn].ColumnName;
+</pre>
+
+<p>
+Was immer wieder im Code vorkommt, ist die Kontrolle, ob wir jetzt alle Spalten, oder nur bestimmte Spalten kopieren werden.
+F&uuml;r diesen Zweck wird auch das Array mit den Spaltennamen bef&uuml;llt, wir brauchen dieses sp&auml;ter um auf nicht-kopierte Spalten
+zugreifen zu k&ouml;nnen. Weiter geht es:
+</p>
+
+<pre style="background='silver';">
+      bool[] keepColumn = new bool[nColumnCount];
+      int[] tableColumnIndexes = new int[nTargetColumnCount];
+      int[] newtableColumnIndexes = new int[nTargetColumnCount];
+
+      // check to see if the selected columns actually exist &amp; map indexes
+      if (null != columnNames)
+      {
+        for (int i=0; i &lt; columnNames.Length; i++)
+        {
+          if (Table.Columns.Contains(columnNames[i]))
+          {
+            int colIndex = Table.Columns.IndexOf(columnNames[i]);
+            tableColumnIndexes[i] = colIndex;
+            keepColumn[colIndex] = true;
+          }
+          else
+          {
+            throw new ArgumentException("Column does not exist in base table");
+          }
+        }
+      }
+      else
+      {
+        for (int i=0; i &lt; nColumnCount; i++)
+        {
+          tableColumnIndexes[i] = i;
+          newtableColumnIndexes[i] = i; 
+          keepColumn[i] = true;
+        }
+      }
+</pre>
+
+<p>
+Hier werden die zu kopierenden Spalten auf den Index gemappt, und klarerweise gecheckt, ob der Programmierer nicht unbeabsichtigt
+eine nicht existierende Spalte gew&auml;hlt hat. Zus&auml;tzlich f&uuml;hren wir mit, welche Spalten nicht kopiert werden sollen. Der <i>else</i>
+Zweig behandelt den Fall, da&szlig; alle Spalten kopiert werden sollen. Damit haben wir alle Infos um die DataTable mit den entsprechenden
+Spalten zu erzeugen:
+</p>
+
+<pre style="background='silver';">
+      // clone the schema and remove unnecessary columns
+      DataTable tableNew = Table.Clone();
+
+      // now we can build the final table... all we need to do is map the 
+      // string[] to the column indexes
+      // in the new table that was now created
+      if (null != columnNames)
+      {
+        // remove columns we no longer need
+        for (int k = 0; k &lt; nColumnCount; k++)
+        {
+          if (keepColumn[k] == false)
+            tableNew.Columns.Remove(tableColumnNames[k]);
+        }
+
+        // map column names to column indexes
+        for (int i=0; i &lt; columnNames.Length; i++)
+        {
+          int colIndex = tableNew.Columns.IndexOf(columnNames[i]);
+          newtableColumnIndexes[i] = colIndex;
+        }
+      }
+</pre>
+
+<p>
+Zugegebenerma&szlig;en habe ich das Pferd von der verkehrten Seite aufgez&auml;umt: zuerst den DataTable geklont, und dann alles an Spalten
+entfernt, was der Programmierer in der Zieltabelle nicht wollte. Und was ich auch noch tun mu&szlig; ist mir das Mapping der Indizes
+zu den verbliebenen Spalten zu holen, damit das Kopieren klappt:
+</p>
+
+<pre style="background='silver';">
+      // both variables used for determining duplicate rows
+      StringBuilder stb = new StringBuilder();
+      Hashtable ht = new Hashtable();
+
+      // copy the values to the new table
+      for (int iRow = 0; iRow &lt; nRowCount; iRow++)
+      {
+        DataRow rowNew = tableNew.NewRow();
+
+        if (isDistinct)
+          stb.Remove(0, stb.Length);
+
+        for (int iColumn=0; iColumn &lt; tableColumnIndexes.Length; iColumn++)
+        {
+          object currentValue = this[iRow][tableColumnIndexes[iColumn]];
+
+          if (isDistinct &amp;&amp; (null != currentValue))
+            stb.Append(currentValue.ToString());
+
+          rowNew[newtableColumnIndexes[iColumn]] = currentValue;
+        }
+        
+        // do the DISTINCT checks before inserting row
+        if (isDistinct)
+        {
+          string strRowKey = stb.ToString();
+          if (!ht.ContainsKey(strRowKey))
+          {
+            ht.Add(strRowKey, null);
+            tableNew.Rows.Add(rowNew);
+          }
+        }
+        else
+        {
+          tableNew.Rows.Add(rowNew);
+        }
+      }
+
+      // return the new table
+      return tableNew;
+    }
+  }
+</pre>
+
+<p>
+Der Grund warum dieser Teil so angewachsen ist liegt in der Behandlung der DISTINCT Zeilen begr&uuml;ndet. Der einfachste Weg
+Zeilen zu vergleichen ist die Spaltenwerte zusammenzuf&uuml;gen, einen Hash zu bilden, und mit den Hashes der bereits eingef&uuml;gten
+Zeilen zu vergleichen. Und um mir diese Arbeit zu erleichtern, verwende ich <i>StringBuilder</i> und <i>Hashtable</i>. Abgesehen davon ist
+der Code mit der einfachen Version von <i>ToTable</i> beinahe identisch, und wir sind fertig.
+</p>
+<p>
+Zum Abschlu&szlig; m&ouml;chte ich Ihnen noch ein Beispiel zeigen, wie die Klasse in Applikationen eingesetzt werden kann (diese ist auch
+im heutigen Download inkludiert):
+</p>
+
+<pre style="background='silver';">
+SqlConnection conn = new SqlConnection("data source=(local)\\NetSDK;" + 
+   "initial catalog=Northwind; integrated security=SSPI");
+SqlDataAdapter da = new SqlDataAdapter("select * from Customers", conn);
+DataSet ds = new DataSet("Demo");
+da.Fill(ds, "Customers");
+
+DataViewEx demoFilter = new DataViewEx(ds.Tables[0]);
+demoFilter.RowFilter = "City='Buenos Aires'";
+
+DataTable table = demoFilter.ToTable(true, new string[] {"ContactTitle", "CompanyName", "ContactName"});
+// DataTable table = demoFilter.ToTable(true, new string[] {"ContactTitle"});
+// DataTable table = demoFilter.ToTable();
+
+dg.DataSource = table;
+</pre>
+
+<p>
+Es hat sich nur die Klasse ver&auml;ndert, und man bekommt die <i>ToTable</i> Overloads - sonst ist es die altbekannte DataView
+geblieben. 
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Mit etwas Programmieraufwand kann man auch die .NET Framework Klassen um Funktionalit&auml;t bereichern. Speziell dieses Konvertieren
+einer DataView in eine DataTable ist ein immer wiederkehrendes Problem, das nun hoffentlich ein f&uuml;r alle Mal einer L&ouml;sung zugef&uuml;hrt
+ist.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20040123.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20040123.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001116.htm">Das DataTable Objekt in ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001116.htm</span><br>
+<a href="../artikel/20001102.htm">Datenbankzugriff mittels ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001102.htm</span><br>
+<a href="../artikel/20040622.htm">Einf&uuml;hrung in Typed DataSets</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040622.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

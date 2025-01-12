@@ -1,0 +1,245 @@
+<HTML>
+<HEAD>
+<TITLE>Schritt-f&uuml;r-Schritt Debuggen von Sicherheitsproblemen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Eines der l&auml;stigsten Probleme beim Entwicklen und Administrieren von Web Sites ist das Troubleshooten von Sicherheitsproblemen. Die absolute #1 ist hierbei Access Denied - Zugriff verweigert.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Access Denied,ACL,Access Control List,Debugging security problems,Debug,Fehlersuche,NTFS,Registry,Privileg,User Right,Recht,Troubleshooting,ACE">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Schritt-f&uuml;r-Schritt Debuggen von Sicherheitsproblemen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20011119"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Eines der l&auml;stigsten Probleme beim Entwicklen und Administrieren von Web Sites ist das
+Troubleshooten von Sicherheitsproblemen. Die absolute #1 ist hierbei Access Denied - Zugriff
+verweigert. Effizient herauszufinden warum man einen solchen Fehler erh&auml;lt ist Ziel des heutigen
+Artikels. Und wenn man den Grund kennt, ist die L&ouml;sung auch nicht mehr weit.
+</p>
+
+<h2>Wodurch ensteht ein Access Denied Fehler</h2>
+
+<p>
+Was sind die Gr&uuml;nde f&uuml;r Access Denied bei der Verwendung von ASP und IIS? Nun, grunds&auml;tzlich kommt
+Sicherheit bei beiden von Windows NT / 2000. Dieses bietet die Benutzerverwaltung, sowie verschiedenste
+Sicherheitsmechanismen. 
+F&uuml;r unsere Betrachtung sind Privilegien und ACL's (Access Control Lists), die auf
+Dateien (bekannt als NTFS Zugriffsberechtigungen) oder in der Registrierdatenbank gesetzt sein k&ouml;nnen,
+von Interesse.
+</p>
+
+<p>
+NTFS Zugriffsberechtigungen (ACL's) sind jedem bekannt, der schon einmal mit Windows Explorer sich
+den Security Tab einer Datei angesehen hat:
+</p>
+
+<IMG SRC="/artikel/Bilder/200111/20011119_1.png" width="370" height="443" alt="" border="0">
+
+<p>
+Hier ist die unsicherste Variante zu sehen - Vollzugriff (Full Control) f&uuml;r Jeder (Everyone). Das 
+sollte durch entsprechende Berechtigungen ersetzt sein, nur k&ouml;nnen eben restriktive Berechtigungen
+- auf ASP Dateien oder Komponenten und deren abh&auml;ngigen Dateien - unter Umst&auml;nden zu Access Denied
+Fehlern f&uuml;hren.
+</p>
+
+<p>
+Das Konzept der NTFS Zugriffsberechtigungen erschlie&szlig;t sich relativ leicht f&uuml;r den Programmierer,
+etwas ungewohnter sind die Privilegien (User Rights), mit denen &uuml;berlicherweise nur der Netzwerkadministrator zu
+tun bekommt. Hier ein Screenshot der Local Security Settings:
+</p>
+
+<IMG SRC="/artikel/Bilder/200111/20011119_2.png" width="599" height="406" alt="" border="0">
+
+<p>
+Hier sind sehr viele Rechte "vergraben", die Kopfweh bereiten k&ouml;nnen, so zB die verschiedenen
+Varianten von <b>Log on as...</b>, die man als User f&uuml;r das Logon an lokale FTP Server brauchen
+kann. In den meisten aller F&auml;lle denkt man als Programmierer gar nicht daran, da&szlig; man unter
+Umst&auml;nden an einem fehlenden Recht scheitert.
+</p>
+
+<p>
+<b>Stolperstein</b> Diese Security Settings sind doppelt gef&auml;hrlich, da diese in sogenannten
+<b>Policies</b> verwendet werden. Und diese Policies k&ouml;nnen an folgenden Orten vergeben
+werden: Local (lokaler Computer), Site (Active Directory), Domain (Active Directory) und
+Organizational Unit (Active Directory). Das Problem ist, da&szlig; Policies in dieser Reihenfolge
+angewandt werden, und die letzte Einstellung "greift". Das hei&szlig;t, da&szlig; unter Umst&auml;nden die
+lokale Einstellung zwar korrekt ist, aber von einer nicht passenden Group Policy 
+"&uuml;berstimmt" wird.
+</p>
+
+<h2>Debuggen des Access Denied Fehlers</h2>
+<p>
+Raten woher der Fehler kommt ist immer die schlechteste Idee, auch wenn es hin und wieder
+zum Ziel f&uuml;hrt. Vorzuziehen ist eine Checkliste, anhand derer man vorgeht. Erstens vergisst
+man nichts, zweitens ver&auml;ndert man nichts durch "herumprobieren".
+</p>
+<p>
+Folgende Schritte sollten ausgef&uuml;hrt werden, damit man in grob einer Stunde (sp&auml;testens) den Fehler
+gefunden hat:
+</p>
+
+<ol>
+    <li>Auditing von Privilegienverwendung (fehlgeschlagener) einschalten &amp; kontrollieren
+    <li>ACL Problem am Dateisystem
+    <li>ACL Problem in der Registry
+</ol>
+
+<p>
+Findet man den Fehler in einem der oberen Schritte, sind die nachfolgenden nat&uuml;rlich nicht
+mehr durchzuf&uuml;hren.
+</p>
+
+<h3>Auditing von Privilegienverwendung</h3>
+<p>
+Am schnellsten herauszufinden ist ob ein fehlendes Privileg (User Right) den Fehler verursacht
+hat. Dazu mu&szlig; man zuerst das Auditing f&uuml;r Privilegien einschalten. Dies geschieht &uuml;ber Local
+Security Settings, oder &uuml;ber Group Policies (Active Directory).
+</p>
+<p>
+<b>Achtung</b> Es gelten die genau gleichen
+Probleme wie f&uuml;r die Zuweisung von Privilegien - wer zuletzt kommt gewinnt.
+</p>
+
+<IMG SRC="/artikel/Bilder/200111/20011119_3.png" width="710" height="473" alt="" border="0">
+
+<p>
+Um nun herauszufinden, ob ein fehlendes Privileg schuld an unserem Access Denied Fehler
+war, mu&szlig; man nur im Security Log des Event Logs nachsehen. Dort steht dann, welches Privileg
+gefehlt hat. Bevor man an den Privilegien herumdreht, sollte man allerdings den Netzwerkadministrator
+zu Rate ziehen, welche Nebenwirkungen eine solche Umstellung haben k&ouml;nnte!
+</p>
+
+<h3>ACL Problem am Dateisystem</h3>
+<p>
+Bei einem ACL Problem auf einer Datei wird die Suche schon ein wenig interessanter - einerseits
+k&ouml;nnte man es mit Auditing erledigen, nur allerdings ist das ziemlich aufwendig. Ein schnellerer
+Weg zum Ziel ist <a href="http://www.sysinternals.com/ntw2k/source/filemon.shtml" target="_blank">FileMon von SysInternals</a>.
+</p>
+
+<p>
+Das Tool startet das Mitloggen sofort nach dem Start (Achtung: man ben&ouml;tigt Administratorenrechte
+um dieses Tool ausf&uuml;hren zu k&ouml;nnen):
+</p>
+
+<IMG SRC="/artikel/Bilder/200111/20011119_5.png" width="670" height="423" alt="" border="0">
+
+<p>
+Das Mitloggen kann mittels <b>Ctrl+E</b> gestoppt werden. Ob etwas schiefgegangen ist, kann man
+mittels der <i>Result</i> Spalte ermitteln, einfacher ist es jedoch, das Log als Textdatei zu 
+speichern, und in Notepad ganz einfach nach "Access Denied" zu suchen. 
+</p>
+
+<p>
+Wie kuriert man ein Access Denied auf einer Datei? Nun, hierzu lockert man die NTFS Berechtigungen
+solange, bis der Access Denied Fehler nicht mehr auftritt. Die Radikalkur des Vollzugriffs f&uuml;r Jeder
+ist sicherlich keine L&ouml;sung!
+</p>
+
+
+<h3>ACL Problem in der Registry</h3>
+<p>
+Auch wenn es viele Leute nicht wissen, auch die Registrierungsdatenbank ist mit ACL's abgesichert.
+Man sieht dies mit <b>regedit.exe</b> nicht, diese ACL's werden erst mit <b>regedt32.exe</b> sichtbar:
+</p>
+
+<IMG SRC="/artikel/Bilder/200111/20011119_4.png" width="636" height="463" alt="" border="0">
+
+<p>
+Um einem Registry-ACL-Fehler auf die Schliche zu kommen hilft nur eines -
+<a href="http://www.sysinternals.com/ntw2k/source/regmon.shtml" target="_blank">RegMon von Sysinternals</a>.
+Auch dieses Tool ist wie FileMon gratis, und man kann sogar den Sourcecode downloaden.
+</p>
+
+<IMG SRC="/artikel/Bilder/200111/20011119_6.png" width="600" height="300" alt="" border="0">
+
+<p>
+Die Verwendung ist ident zu Filemon - zuerst mitloggen, dann nach "Access Denied" suchen. Am wahrscheinlichsten
+findet sich das Problem f&uuml;r Access Denied im Zweig HKEY_LOCAL_MACHINE.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Es gibt drei Gr&uuml;nde f&uuml;r Access Denied Fehler: fehlende Privilegien, ACL's auf Dateien und ACL's
+auf Registrierungsschl&uuml;sseln. Mit der richtigen Strategie zur Fehlersuche erspart man sich Zeit
+und kann den Fehler gezielt einkreisen und eliminieren.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010508.htm">Dateizugriff auf Netzlaufwerken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010508.htm</span><br>
+<a href="../artikel/20020123.htm">Impersonation mit ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020123.htm</span><br>
+<a href="../artikel/20020129.htm">Komponentenverwendung einschr&auml;nken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020129.htm</span><br>
+<a href="../artikel/20010402.htm">NT Account Management via ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010402.htm</span><br>
+<a href="../artikel/20010926.htm">Schlu&szlig; mit lustig - das IIS Lockdown Tool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010926.htm</span><br>
+<a href="../artikel/20010927.htm">Schlu&szlig; mit lustig Teil 2 - das URLScan Tool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010927.htm</span><br>
+<a href="../artikel/20010928.htm">Schlu&szlig; mit lustig Teil 3 - das Hfnetchk Tool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010928.htm</span><br>
+<a href="../artikel/20001109.htm">Verzeichnissicherheit mit NTFS und IIS Authentifizierung</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001109.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Esysinternals%2Ecom%2Fntw2k%2Fsource%2Ffilemon%2Eshtml">FileMon</a><br>
+<SPAN class="content">http://www.sysinternals.com/ntw2k/source/filemon.shtml</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Esysinternals%2Ecom%2Fntw2k%2Fsource%2Fregmon%2Eshtml">RegMon</a><br>
+<SPAN class="content">http://www.sysinternals.com/ntw2k/source/regmon.shtml</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

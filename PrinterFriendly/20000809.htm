@@ -1,0 +1,505 @@
+<HTML>
+<HEAD>
+<TITLE>Performance Monitoring a la .NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor, wie man mit ASP.NET und dem MS .NET Framework ein einfaches Web-basiertes Performance-Monitoring implementieren kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Performance Monitoring,performance counter,.NET,system.diagnostics,namespace,assembly,PerformanceCounter,PerformanceCounterCategory,ASP.NET">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Performance Monitoring a la .NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000809"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Im Artikel <a href="../artikel/20000428.htm">Einf&uuml;hrung in Performance Monitoring</a> habe ich 
+grunds&auml;tzlich erkl&auml;rt, wie Performance Monitoring funktioniert. Im daran anschlie&szlig;enden Artikel
+<a href="../artikel/20000502.htm">Monitoring von ASP</a> ging es dann darum die Performance
+Counter innerhalb einer ASP Seite auszulesen - mit Hilfe einer Komponente. 
+</p>
+<p>
+Im heutigen Artikel werde ich Ihnen zeigen, um wieviel einfacher es in ASP.NET unter Zuhilfenahme des
+<i>System.Diagnostics</i> Namespaces des .NET Frameworks geht. Keine externen Komponenten mehr, daf&uuml;r umso
+mehr Funktionalit&auml;t. Man kann sogar Teile des NT Performance Monitors nachbauen, ohne wirklich viel Zeit
+daf&uuml;r aufwenden zu m&uuml;ssen.
+</p>
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation des Microsoft .NET Framework SDK's
+auf einem Webserver. Weiters ist es von Vorteil, da&szlig; der Leser schon Grundkenntnisse bzw. Erfahrung in
+Programmiertechniken besitzt - es finden sich etliche Artikel auf diesem Server, um das notwendige Wissen von Grund auf zu erlernen. 
+</p>
+<p>
+Sicherheitshinweis: die Beispielannahme ist, da&szlig; der ASP.NET Worker Prozess unter dem SYSTEM Konto l&auml;uft
+(standardm&auml;&szlig;ig l&auml;uft er unter dem ASPNET Account). Bitte &auml;ndern Sie <i>processModel</i> in <i>machine.config</i> entsprechend
+ab, oder geben nur Administratoren Zugriff auf die Dateien (Impersonation).
+</p>
+
+<h2>Was ist das Ziel des Artikels?</h2>
+<p>
+Schauen Sie sich den folgenden Screenshot an, das ist die Add Counters Dialogbox des Performance
+Monitors:
+</p>
+
+<IMG SRC="/artikel/Bilder/200008/20000809_1.png" width="398" height="313" border="0" alt="">
+
+<p>
+In diesem Artikel m&ouml;chte ich Ihnen zeigen, wie man diese Dialogbox (fast) ident in ASP.NET nachprogrammieren
+kann, ohne in die Tiefen der Windows Programmierung eintauchen zu m&uuml;ssen. Die einzig prominente
+Auslassung ist die Auswahl des Computers, und zwar deswegen, weil man sich damit schnell Sicherheitsprobleme
+einhandelt - da das Auslesen von Performance Countern mehr Rechte ben&ouml;tigt, als der anonyme Websiteuser
+hat.
+</p>
+
+
+<h2>Die ersten Schritte</h2>
+<p>
+Starten wir also mit einem minimalen Beispiel. Dieses testet nur, ob ein spezifischer Counter in der 
+Kategorie "ASP.NET" auf dem Rechner, auf dem es abl&auml;uft, installiert ist (<b>basictest.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Diagnostics" %&gt;
+&lt;%
+if ( !PerformanceCounterCategory.CounterExists("State Server Sessions Active", 
+     "ASP.NET", ".") ) 
+{
+  Response.Write("No state server counters on this machine");
+}
+else
+{
+  Response.Write("State Server counter is available.");
+}
+%&gt;
+</pre>
+
+<p>
+Hinweisen m&ouml;chte ich speziell auf das <i>@Import Namespace</i> Statement: dieses ben&ouml;tige ich, damit der Namespace
+<i>System.Diagnostics</i> korrekt zu meiner ASP.NET Seite gebunden wird. Sonst kann ich das <i>PerformanceCounterCategory</i>
+Objekt (hier die Klasse mit einer statischen Methode) nicht verwenden.
+</p>
+
+<h2>Kategorien abfragen</h2>
+<p>
+Gehen wir nun zu einem etwas umfangreicheren und funktionalerem Beispiel - das Auflisten aller
+Performance Counter Kategorien in einer Drop Down Liste (<b>listcounters.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Diagnostics&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Collections&quot; %&gt;
+&lt;script language=&quot;C#&quot; runat=&quot;server&quot;&gt;
+void Page_Load(Object Src, EventArgs E) 
+{
+  if (!Page.IsPostBack)
+  {
+    ArrayList arrItems = new ArrayList();
+    PerformanceCounterCategory[] arrCategories = 
+	          PerformanceCounterCategory.GetCategories();
+    for (int i=0; i &lt; arrCategories.Length;i++)
+      arrItems.Add(arrCategories[i].CategoryName);
+    Category.DataSource = arrItems;
+    Category.DataBind();
+  }
+}
+&lt;/script&gt;
+
+&lt;html&gt;
+&lt;body&gt;
+
+&lt;h3&gt;Performance Counter Kategorien auflisten&lt;/h3&gt;
+
+&lt;form runat=&quot;server&quot; method=&quot;post&quot;&gt;
+Kategorie:  
+&lt;asp:dropdownlist id=&quot;Category&quot; runat=&quot;server&quot;/&gt;
+&lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Z&auml;umen wir das Pferd von hinten auf, und zwar beim Formular: das ist ein Web Form, der nur eine
+einzige Drop Down Liste beinhaltet. Diese hat den Namen <i>Category</i>, und ist leer. Woher kommen
+also die Eintr&auml;ge in dieser Liste?
+</p>
+<p>
+Gef&uuml;llt wird diese Drop Down im <i>Page_Load</i> Event. Dieses wird jedesmal aufgerufen, wenn die
+Seite ausgef&uuml;hrt wird, also auch dann, wenn es sich bereits um einen Post Back mit Resultaten handelt.
+Da der View State die Eintr&auml;ge f&uuml;r uns managt, kann man darauf verzichten, die Liste nochmals aufzuf&uuml;llen.
+</p>
+<p>
+Der interessante Teil des Codes, der die Kategorien ausliest ist folgender:
+</p>
+
+<pre style="background='silver';">
+PerformanceCounterCategory[] arrCategories = 
+         PerformanceCounterCategory.GetCategories();
+</pre>
+
+<p>
+Damit habe ich ein Array von <i>PerformanceCounterCategory</i> Objekten in der Hand, das in der Eigenschaft
+<i>CategoryName</i> den Namen der Kategorie speichert. Und wie bekomme ich nun dieses Array in die Drop Down
+Liste? Eine Brute-Force Variante zeigt dieser Code:
+</p>
+
+<pre style="background='silver';">
+ArrayList arrItems = new ArrayList();
+for (int i=0; i &lt; arrCategories.Length;i++)
+      arrItems.Add(arrCategories[i].CategoryName);
+Category.DataSource = arrItems;
+Category.DataBind();
+</pre>
+
+<p>
+Einfach das Array von <i>PerformanceCounterCategory</i> Objekten durchlaufen, die <i>CategoryName</i>'s herauskopieren
+und in eine einfache <i>ArrayList</i> stecken. Diese kann als <i>DataSource</i> dem Drop Down zugewiesen werden, und mit
+<i>DataBind</i> wird die Liste dann aufgef&uuml;llt.
+</p>
+<p>
+Da&szlig; das Herumkopieren nicht wahnsinnig elegant geschweige denn performancef&ouml;rderlich ist, sieht man leicht.
+In den n&auml;chsten Beispielen zeige ich dann, wie es schneller und besser geht, und wie einfach ASP.NET 
+diesen Task f&uuml;r uns macht.
+</p>
+
+<h2>Hilfetexte zu Kategorien und Countern anzeigen</h2>
+<p>
+Gehen wir mit dem Beispiel einen Schritt weiter. Der Performance Monitor kann zu jeder Kategorie
+als auch zu jedem Counter einen Hilfetext anzeigen. W&auml;re es nicht toll, wenn unsere Applikation das
+auch k&ouml;nnte? Der folgende Code zeigt, wie man es f&uuml;r die Kategorien realisiert (<b>categoryhelp.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Diagnostics&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Collections&quot; %&gt;
+&lt;script language=&quot;C#&quot; runat=&quot;server&quot;&gt;
+void Page_Load(Object Src, EventArgs E) 
+{
+  if (!Page.IsPostBack)
+  {
+    PerformanceCounterCategory[] arrCategories = 
+         PerformanceCounterCategory.GetCategories();
+    Category.DataSource = arrCategories;
+    Category.DataBind();
+  }
+}
+
+void OnDisplayCategory(Object sender, EventArgs e)
+{
+  string strCategory = Category.SelectedItem.Value;
+  PerformanceCounterCategory pcInfo = 
+         new PerformanceCounterCategory(strCategory);
+  Message.Text = pcInfo.CategoryHelp;
+}
+&lt;/script&gt;
+
+&lt;html&gt;
+&lt;body&gt;
+
+&lt;h3&gt;Performance Counter Hilfe&lt;/h3&gt;
+
+&lt;form runat=&quot;server&quot; method=&quot;post&quot;&gt;
+Kategorie:  
+&lt;asp:dropdownlist id=&quot;Category&quot; AutoPostBack=&quot;True&quot; 
+    DataTextField=&quot;CategoryName&quot; DataValueField=&quot;CategoryName&quot;
+      runat=server OnSelectedIndexChanged=&quot;OnDisplayCategory&quot;/&gt;
+
+&lt;p&gt;&lt;b&gt;Hilfetext:&lt;/b&gt;&amp;nbsp;
+&lt;asp:Label id=&quot;Message&quot; runat=&quot;server&quot; /&gt;
+&lt;/p&gt;
+&lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Gut, fangen wir wieder von hinten an. Das Formular sieht jetzt bereits deutlich umfangreicher aus
+als zuvor. Die wichtigsten &Auml;nderungen betreffen die Drop Down Liste: 
+</p>
+
+<ul>
+	<li>Das <i>AutoPostBack</i> Attribut gibt an, da&szlig; wenn sich die Auswahl &auml;ndert, das Formular an den Server
+	gepostet wird.
+	<li>Passiert das, so wird am Server die Methode <i>OnDisplayCategory</i> aufgerufen, die im Attribut
+	<i>OnSelectedIndexChanged</i> definiert ist
+	<li>Last but not least haben wir die Attribute <i>DataTextField</i> und <i>DataValueField</i> - diese definieren,
+	welche Eigenschaften auf den Items der <i>DataSource</i> aufgerufen werden sollen, um die Werte und Anzeigewerte
+	auszulesen.
+</ul>
+
+<p>
+Die letzten beiden Attribute sind unser Ticket zur Vereinfachung des <i>Page_Load</i> Codes: adieu zus&auml;tzliche
+Collection, ASP.NET &uuml;bernimmt das jetzt alles f&uuml;r uns, und zwar ohne Umkopieren!
+</p>
+
+<pre style="background='silver';">
+PerformanceCounterCategory[] arrCategories = 
+         PerformanceCounterCategory.GetCategories();
+Category.DataSource = arrCategories;
+Category.DataBind();
+</pre>
+
+<p>
+Das Event <i>OnDisplayCategory</i> ist im Grund sehr einfach gehalten. Die selektierte Kategorie wird
+ausgelesen, damit ein <i>PerformanceCounterCategory</i> Objekt erstellt, und von diesem die <i>CategoryHelp</i>
+Eigenschaft ausgelesen. Und um es dem Benutzer auch pr&auml;sentieren zu k&ouml;nnen, wird dieser String in
+eine Label Control geschrieben (als <i>SPAN</i> Tag im Browser repr&auml;sentiert).
+</p>
+<p>
+Damit haben wir allerdings erst einen Teil der Miete - die Performance Counter Kategorien. Ein 
+Schritt weiter ist das Anzeigen der Counter f&uuml;r die jeweilige Kategorie, sowie der Hilfetexte
+f&uuml;r die Counter. Da der Sourcecode daf&uuml;r doch etwas "l&auml;nglich" ist, kann man das
+<a href="../artikel/20000809_1.htm" target="_blank">Listing</a> hier betrachten
+<a href="../artikel/20000809_1.htm" target="_blank">(<b>fullhelp.aspx</b>)</a>.
+</p>
+<p>
+Die wichtigste Neuerung ist eine Listbox f&uuml;r die Performance Counter:
+</p>
+
+<pre style="background='silver';">
+&lt;asp:ListBox id=&quot;Counters&quot; Width=&quot;200px&quot; runat=&quot;server&quot; 
+  DataTextField=&quot;CounterName&quot; DataValueField=&quot;CounterName&quot;
+  AutoPostBack=&quot;True&quot; 
+  runat=server OnSelectedIndexChanged=&quot;OnHelpCounter&quot;/&gt;
+</pre>
+
+<p>
+Diese Listbox l&ouml;st ebenfalls ein <i>AutoPostBack</i> aus, und ich verwende wieder <i>DataTextField</i> und <i>DataValueField</i>
+um die Werte hineinzuschreiben. Um das zum Laufen zu bringen, mu&szlig; ich nat&uuml;rlich den Code in 
+<i>OnDisplayCategory</i> dahingehend adaptieren, da&szlig; auch die <i>Counters</i> Listbox mit Daten gef&uuml;llt wird,
+nicht nur das Label mit der Hilfe &uuml;ber die Kategorie:
+</p>
+
+<pre style="background='silver';">
+PerformanceCounter[] arrCntrs = pcInfo.GetCounters();
+Counters.DataSource = arrCntrs;
+Counters.DataBind();
+</pre>
+
+<p>
+Zu guter Letzt mu&szlig; man noch den Hilfetext f&uuml;r den Counter anzeigen, und dies geschieht in <i>OnHelpCounter</i>:
+</p>
+
+<pre style="background='silver';">
+void OnHelpCounter(Object sender, EventArgs e)
+{
+  string strCategory = Category.SelectedItem.Value;
+  string strCounter = Counters.SelectedItem.Value;
+  try
+  {
+    PerformanceCounter pcInfo = new PerformanceCounter(strCategory, strCounter);
+    CounterHelp.Text = pcInfo.CounterHelp;
+  }
+  catch
+  {
+     // drop dead silently - mostly on category changes
+  }
+}
+</pre>
+
+<p>
+Wie man sieht, nicht gerade "Magic", aber sehr effektiv. Man hat zwar sehr viele Roundtrips zum Server,
+aber theoretisch k&ouml;nnte man mit versteckten SPAN's und Client-side Code arbeiten, um es Netzwerk-effizienter
+zu machen.
+</p>
+
+<h2>Performance Counter Werte abfragen</h2>
+<p>
+Wir n&auml;hern uns unserem Ziel mit Riesenschritten - also was fehlt uns noch? Das prominenteste sind
+die Instanzen der Counter. Instanzen f&uuml;r Counter werden f&uuml;r eine ganze Kategorie definiert, allerdings
+hat nicht jeder Counter der Kategorie auch Instanzen. Ein Beispiel f&uuml;r Instanzen w&auml;re etwa die
+<i>Processor</i> Kategorie, wo jeder Prozessor &uuml;ber eine Instanz angesprochen werden kann (oder
+alle auf einmal).
+</p>
+<p>
+Ebenso fehlt auf der Liste der To-Do's noch das Abfragen des Wertes des Performance Counters. Auch das habe ich 
+in das Abschlu&szlig;beispiel eingebaut, das sich dem Anwender wie folgt pr&auml;sentiert:
+</p>
+
+<IMG SRC="/artikel/Bilder/200008/20000809_2.png" width="594" height="384" border="0" alt="">
+
+<p>
+Aus &Uuml;bersichtlichkeitsgr&uuml;nden im Sourcecode habe ich den Code f&uuml;r die Hilfetexte herausgenommen,
+damit man sich auf das Wesentliche konzentrieren kann. Zeilenm&auml;&szlig;ig gesehen ist das
+<a href="../artikel/20000809_2.htm" target="_blank">Listing</a> dennoch lange genug!
+<a href="../artikel/20000809_2.htm" target="_blank">(<b>querycounter.aspx</b>)</a>
+</p>
+<p>
+Starten wir aus alter Gewohnheit "wieder mal" beim Formularcode:
+</p>
+
+<pre style="background='silver';">
+&lt;form runat=&quot;server&quot; method=&quot;post&quot;&gt;
+&lt;table width=&quot;400&quot;&gt;
+&lt;tr&gt;&lt;td&gt;Kategorie:&lt;/td&gt;&lt;td&gt;Counter:&lt;/td&gt;&lt;td&gt;Instances&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td valign=&quot;top&quot;&gt;
+&lt;asp:dropdownlist id=&quot;Category&quot;  AutoPostBack=&quot;True&quot; 
+	DataTextField=&quot;CategoryName&quot; DataValueField=&quot;CategoryName&quot;
+	runat=server OnSelectedIndexChanged=&quot;OnDisplayCategory&quot; /&gt;
+&lt;/td&gt;&lt;td valign=&quot;top&quot;&gt;
+&lt;asp:ListBox id=&quot;Counters&quot; Width=&quot;200px&quot; runat=&quot;server&quot; 
+	DataTextField=&quot;CounterName&quot; DataValueField=&quot;CounterName&quot;
+  	AutoPostBack=&quot;True&quot; 
+	OnSelectedIndexChanged=&quot;OnCounterInfo&quot;/&gt;
+&lt;/td&gt;&lt;td valign=&quot;top&quot;&gt;
+&lt;asp:ListBox id=&quot;CounterInstances&quot; Width=&quot;100px&quot; runat=&quot;server&quot; /&gt;
+&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;asp:button OnClick=&quot;SubmitBtn_Click&quot; text=&quot;Lookup&quot; runat=&quot;server&quot;/&gt;
+&lt;/form&gt;
+</pre>
+
+<p>
+Wie man sehen kann, ist eine weitere Listbox dazugekommen, und zwar f&uuml;r die etwaigen Instanzen eines
+Counters. Sonst hat sich eigentlich nichts ge&auml;ndert. Ach ja, eine Schaltfl&auml;che namens "Lookup" ist dazugekommen,
+die einen Postback ausl&ouml;st, der dann das Auslesen des Performance Counters triggert.
+</p>
+<p>
+Was uns zum Event <i>OnCounterInfo</i> bringt - dieses hat so einige &Auml;nderungen &uuml;ber sich ergehen lassen
+m&uuml;ssen:
+</p>
+
+<pre style="background='silver';">
+void OnCounterInfo(Object sender, EventArgs e)
+{
+	string strCategory = Category.SelectedItem.Value;
+	CounterInstances.Items.Clear();
+	
+	PerformanceCounterCategory pcCat = new PerformanceCounterCategory(strCategory);
+	string[] arrInstanceNames = pcCat.GetInstanceNames();
+	if (arrInstanceNames.GetLength(0) > 1)
+	{
+	  CounterInstances.DataSource = arrInstanceNames;
+	  CounterInstances.DataBind();
+	}
+}
+</pre>
+
+<p>
+Wie ich bereits ausgef&uuml;hrt habe, sind die Instanzen pro Kategorie definiert, allerdings mu&szlig; nicht
+jeder Counter der Kategorie die Instanzen auch zur Verf&uuml;gung stellen - daher wird die 
+<i>CounterInstances</i> Listbox nach Bedarf mit Werten gef&uuml;llt. Und ab diesem Zeitpunkt kann
+man durch Klicken auf die Lookup Schaltfl&auml;che den aktuellen Wert ermitteln:
+</p>
+
+<pre style="background='silver';">
+void SubmitBtn_Click(Object sender, EventArgs e) 
+{
+  string strCat = Category.SelectedItem.Value;
+  string strCounter = Counters.SelectedItem.Value;
+  string strInstance = "";
+  
+  if (CounterInstances.Items.Count > 0)
+    strInstanceName = CounterInstances.SelectedItem.Value;
+    
+  PerformanceCounter pc = 
+        new PerformanceCounter(strCat, strCounter, strInstance);
+
+  float dResult = pc.NextValue();
+  Message.Text = "&lt;" + strCat + "&gt; [" + strCounter + 
+	               "] {" + strInstance + "} = " + dResult.ToString();
+}
+</pre>
+
+<p>
+Der &Uuml;bersichtlichkeit halber habe ich den Exception Handling Code herausgenommen (f&uuml;r Sicherheitsverletzungen
+gedacht). Ein einziger Aufruf an <i>NextValue</i> liefert den aktuellen Wert zur&uuml;ck, und der wird dann dem
+Benutzer pr&auml;sentiert. Damit w&auml;re unsere heutige Aufgabe erledigt.
+</p>
+<p>
+Wer mit den Performance Countern in diesem Beispiel jetzt ein wenig herumspielt wird sehen, da&szlig; einige Werte nicht so sind
+wie erwartet. Ich habe nat&uuml;rlich nicht die volle Funktionalit&auml;t aller Countertypen implementiert
+(Prozent, Total, etc.). Wer das implementieren m&ouml;chte, der findet die notwendigen Informationen, wie man korrekt mit Performance Countern rechnet,
+in der Hilfe des .NET Framework SDK unter folgendem Eintrag:
+</p>
+
+<IMG SRC="/artikel/Bilder/200008/20000809_3.png" width="388" height="275" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Im heutigen Artikel haben wir uns mit Performance Monitoring a la .NET besch&auml;ftigt, und ich hoffe
+die Leistungsf&auml;higkeit anhand der trotzdem eigentlich simplen Beispiele ganz gut demonstriert zu haben.
+Nehmen Sie sich die Zeit, und lesen in der Dokumentation &uuml;ber den Leistungsumfang des Performance
+Monitorings nach!
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000809.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000809.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000811.htm">Ausgabe der Event Log Eintr&auml;ge a la ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000811.htm</span><br>
+<a href="../artikel/20000808.htm">Einf&uuml;hrung in ASP.NET Web Forms</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000808.htm</span><br>
+<a href="../artikel/20000428.htm">Einf&uuml;hrung in Performance Monitoring</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000428.htm</span><br>
+<a href="../artikel/20000502.htm">Monitoring von ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000502.htm</span><br>
+<a href="../artikel/20011206.htm">Performancemessungen in .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011206.htm</span><br>
+<a href="../artikel/20000925.htm">Services &uuml;ber das Web managen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000925.htm</span><br>
+<a href="../artikel/20000814.htm">Webserver-Tuning mit XTune</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000814.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Edotnetgerman%2Ecom%2Flisten%2FaspDEdotnet%2Easp">Die aspDEdotnet Diskussionsliste</a><br>
+<SPAN class="content">http://www.dotnetgerman.com/listen/aspDEdotnet.asp</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

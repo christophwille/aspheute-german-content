@@ -1,0 +1,512 @@
+<HTML>
+<HEAD>
+<TITLE>Sortieren von Arrays in VBScript</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel beschreibt mit Hilfe von Beispielen die beiden Sortier-Alogorithmen Bubble-Sort und Quicksort unter Verwendung von VBScript.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Bubblesort, Quicksort, Bubble, Quick, Sortieralgorithmen, Arrays, VBScript, Sortieren von Arrays">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Sortieren von Arrays in VBScript</H1>
+<p>
+Geschrieben von: <a href="../autoren/stefangruendhammer.htm">Stefan Gründhammer</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000906"></SCRIPT>
+</p>
+<p>
+In diesem Artikel werden Sie lernen Elemente in einem eindimensionalen Array zu sortieren, da
+dies hin und wieder von gro&szlig;en Nutzem ist. Da VBScript keine passende Funktion und auch 
+keine Sortierbefehle zur Verf&uuml;gung stellt, m&uuml;ssen wir auf das gute alte Selberprogrammieren 
+zur&uuml;ckgreifen. Ich werde Ihnen zwei bekannte Sortieralgorithmen vorstellen. Wir werden Beispiele 
+mit dem sehr weit verbreiteten Bubble-Sort-Algorithmus und einem &auml;lteren, aber dennoch sehr 
+schnellen Alogorithmus, dem Quick-Sort-Algorithmus ausprogrammieren und besprechen.
+</p>
+<h2>Vorbereitung</h2>
+<p>
+Jeder fortgeschrittene ASP-Programmierer sollte sich mit Arrays auskennen, ich setze also voraus, 
+da&szlig; Sie bereits einmal ein Array dimensioniert haben und auch wissen was <i>ReDim</i> und das 
+Zauberwort <i>Preserve</i> bewirken. Infos zu dynamischen Arrays finden Sie im Artikel 
+<a href="19990807.htm">Dynamische Arrays - Fluch und Segen</a>.
+</p>
+<p>
+Ich werde mich in diesem Artikel auf eindimensionale Arrays konzentrieren, da diese ausreichen, um die
+Algorithmen der Sortierung zu beschreiben. Nat&uuml;rlich geht das Sortieren auch mit mehrdimensionalen 
+Arrays.
+</p>
+<p>
+Nehmen wir folgende Problemstellung an: Sie haben 500 unsortierte Zahlen in einem Array und wollen 
+eine Ordnung dieses Haufens. Wie machen Sie das am schnellsten und elegantesten? Wenn Sie ein Array 
+mit 500 Eintr&auml;gen h&auml;ndisch sortieren m&uuml;&szlig;ten, w&uuml;rden Sie sicher einige Stunden 
+damit verbringen. Deshalb w&auml;re es doch toll ein kleines Programmlein zu haben, das uns die Arbeit 
+abnimmt und noch dazu die Arbeit in Sekundenbruchteilen erledigt.
+</p>
+<h2>Sortieralgorithmen</h2>
+<p>
+Es gibt bestimmt hunderte Sortieralgorithmen, aber nur wenige die sich so gut zum einfachen und schnellen
+Sortieren von Arrays eignen wie Bubblesort und Quicksort. Oft ist es schneller, einfache Algorithmen 
+zu nutzen als sich mit komplexen Mehrzweckverfahren herumzuschlagen. In der Regel ben&ouml;tigen 
+einfache Sortieralgorithmen ungef&auml;hr N&sup2; Schritte zum Sortieren von N zuf&auml;llig 
+angeordneten Elementen. Wenn die Menge der Elemente hinreichend klein ist und die Elemente nicht 
+zuf&auml;llig angeordnet sind, sortieren einige der einfachen Sortierverfahren schneller als die 
+komplizierten.
+</p>
+<h3>Bubblesort</h3>
+<p>
+Einer der bekanntesten und einfachsten Algorithmen ist der Bubblesort-Algorithmus, er wird in nahezu jedem
+einf&uuml;hrenden Programmierkurs lang und breit diskutiert. Dieser Algorithmus durchl&auml;uft das zu 
+sortierende Array, wobei immer zwei benachbarte Elemente miteinander verglichen und wenn 
+n&ouml;tig auch ausgetauscht. Sortiert ist das Array dann, wenn kein Vertauschen zweier benachbarter 
+Elemente im Array mehr n&ouml;tig ist.
+</p>
+<p>
+Ich habe zur Demonstration dieses Verfahrens ein kurzes Script (<i>bubblesort_1.asp</i>), welches Sie 
+sich mittels Link am Ende dieses Artikels downloaden k&ouml;nnen, geschrieben, in dem Sie z.B. einen
+String sortieren lassen k&ouml;nnen, in dem die Elemente durch Leerzeichen voneinander getrennt sind 
+(Sie k&ouml;nnen das Trennzeichen nat&uuml;rlich auch ab&auml;ndern und an Ihr Script anpassen).
+</p>
+<p>
+<pre style="background='silver';">  
+ ...
+ 
+ 6: function bubblesort(arrSortieren)
+ 7:   for i = 0 to ubound(arrSortieren)
+ 8:     for j = i + 1 to ubound(arrSortieren)
+ 9:       if arrSortieren(i) &gt; arrSortieren(j) then
+10:         arrTemp = arrSortieren(i)
+11:         arrSortieren(i) = arrSortieren(j)
+12:         arrSortieren(j) = arrTemp
+13:       end if
+14:     next
+15:   next
+16:   bubblesort = arrSortieren
+17: end function
+
+ ...
+
+44: arrSort = bubblesort(arrTest) 
+45:
+46: for x = 0 to ubound(arrSort)
+47:   response.write &quot;arrSort&quot; &amp; &quot;(&quot;&amp; x &amp; &quot;) enth&auml;lt &quot; &amp; x &amp; &quot;&lt;br&gt;&quot;
+48: next
+</pre>
+</p>
+
+<p>
+In Zeile 44 wird die Funktion <i>bubblesort</i> aufgerufen. In der Funktion bubblesort wird das Array 
+<i>arrSortieren</i> initialisiert. In Zeile 7 beginne ich eine <i>For...Next</i>-Schleife, welche von
+0 bis zu <i>UBound(arrSortieren)</i> l&auml;uft. Geschlossen wird diese Schleife in Zeile 15. 
+Innerhalb der ersten Schleife befindet sich noch eine zweite <i>For...Next</i>-Schleife (von Zeile 8 
+bis 14) in der ich der Variable <i>j</i> den Wert <i>i+1</i> zugewiesen habe, in den Zeilen 9 bis 13 
+kommt es zum Vergleichen der einzelnen Eintr&auml;ge auf Gr&ouml;&szlig;e und zum Sortieren der 
+Eintr&auml;ge gegeneinander. Mit <i>arrTemp</i> f&uuml;hre ich eine tempor&auml;re Hilfsvariable ein, 
+welche ich zum Zwischenspeichern von Werten w&auml;hrend des Vertauschens zweier Werte des Arrays 
+brauche.
+</p>
+<p>
+Wir durchlaufen das Array von ersten bis zum (n-1)-ten Element. Wenn der Wert von <i>Array(i+1)</i>
+kleiner ist als der Wert von <i>Array(i)</i>, dann wird <i>Array(i)</i> mit <i>Array(i+1)</i> vertauscht. 
+Um das Array sicher sortieren zu k&ouml;nnen m&uuml;ssen wir diese Vergleiche (n-1) mal durchlaufen.
+</p>
+<p>
+Das Gute am Datentyp Variant (von VBScript verwendet) ist, da&szlig; man ohne Probleme Daten jedes 
+beliebigen Typs, W&auml;hrungen, Zeichenketten etc. aufsteigend oder absteigend ordnen kann.
+</p>
+<p>
+Die Laufzeit des Bubblesort Verfahrens kann man hinreichend genau mit N&sup2; bestimmen.
+</p>
+<p>
+Nun möchte ich den nächsten Algorithmus, der in seiner Gewschwindigkeit nicht zu unterschätzen ist,
+erläutern.
+</p>
+<h3>Quicksort</h3>
+<p>
+Dieser Algorithmus beruht auf dem Prinzip "Teile und Herrsche" und funktioniert wie folgt: 
+Man teile die Datei bzw. das Array in zwei Teile und sortiere diese unabhänging voneinander und dann 
+werden beide Teile wieder zusammengefügt.
+Etwas genauer sollte man sich das Sortieren als halbieren der Hälften vorstellen und zwar solange bis
+nur mehr zwei Teile sind dann dann vertauscht werden können.
+</p>
+<p>
+Speichern Sie nun die Datei quicksort.asp auf Ihrer Maschine ab und starten Sie es. Die Fehlerbehandlung dieses Script ist nicht sehr aufwendig gestalltet, sollte aber zur Erklärung dieses Beispiels ausreichen. 
+</p>
+<p>
+<pre style="background='silver';"> 
+ ...
+ 
+ 4: Sub quicksort(mitt, anfang, ende)
+ 5:   Dim hilf, obenTau, untenTau, temp
+ 6: 
+ 7:   if ende - anfang = 1 And mitt(anfang) &gt; mitt(ende) Then
+ 8:       temp=mitt(anfang)
+ 9:       mitt(anfang) = mitt(ende)
+10:       mitt(ende) = temp
+11:   End If
+12: 
+13:   ' Mehr als 3 Elemente muessen sortiert werden
+14:   hilf = mitt(int((anfang + ende) / 2))
+15:   mitt(int((anfang + ende) / 2)) = mitt(anfang)
+16:   mitt(anfang) = hilf
+17:   obenTau = anfang + 1
+18:   untenTau = ende  
+19:   
+20:   do
+21:       'Finden von obenTau
+22:       while obenTau &lt; untenTau and mitt(obenTau) &lt;= hilf
+23:       obenTau = obenTau + 1
+24:       wend
+25:
+26:       'Finden von untenTau
+27:       while mitt(untenTau) &gt; hilf
+28:       untenTau = untenTau - 1
+29:       wend
+30:       'Vertausche die Werte wenn obenTau kleiner als untenTau 
+31:       if obenTau &lt; untenTau then
+32:       temp = mitt(obenTau)
+33:       mitt(obenTau) = mitt(untenTau)
+34:       mitt(untenTau) = temp
+35:       End If
+36:   loop while obenTau &lt; untenTau
+37:   
+38:   mitt(anfang) = mitt(untenTau)
+39:   mitt(untenTau) = hilf
+40:   'Aufruf der Sub rekursiv
+41:   'Sind zwei oder mehr Elemente in der ersten Teilmenge
+42:   if anfang &lt; (untenTau - 1) then 
+43:     Call quicksort(mitt,anfang,untenTau-1)
+44:   end if
+45: 
+46:   'Sind zwei oder mehr Elemente in der zweiten Teilmenge
+47:   if untenTau + 1 &lt; ende then 
+48:     Call quicksort(mitt,untenTau+1,ende)
+49:   end if
+50: End Sub
+
+...
+</pre>
+</p>
+<p>In Zeile 4 beginnt der eigentliche Algorithmus und reicht mit einigen kleinen Ausnahmen bis Zeile 50.
+In den Zeilen 46 bis 51 vertausche ich die Werte der Variablen <i>anfang</i> und <i>ende</i> wenn <i>ende</i>
+kleiner als <i>anfang</i> ist, um die aufsteigende Sortierung gew&auml;hrleisten zu k&ouml;nnen. 
+Die selbe Prozedur geschieht in den Zeilen 13 bis 18 bei drei oder mehr Elementen.
+Das eigentliche Sortieren geschieht in den Zeile 20 bis 36 mittels <i>do..loop</i>-Schleife und einer 
+darin verschachtelten <i>If</i>-Schleife.
+</p>
+
+<p>Und das Sch&ouml;ne an diesem Algorithmus ist in den Zeilen 42 bis 49, das rekursive Aufrufen der einzelnen Teilprozeduren bis das Array sortiert ist.</p>
+
+<p>Im n&auml;chsten Codeblock werden eigentlich nur die Ausgaben und Erzeugung der Zufallzahlen
+besprochen, die n&auml;here Erkl&auml;rung folgt unterhalb.</p>
+
+<p>
+<pre style="background='silver';"> 
+...
+
+52: 'Anzeigen des Arrays
+53: Sub ZeigeArray(mitt,lo,hi)
+54:   Dim i
+55:    For i = lo to hi
+56:      Response.Write mitt(i) &amp; &quot;&lt;br&gt;&quot;
+57:    Next
+58: End Sub 
+ 
+ ...
+ 
+109: Randomize
+110: sAnzahl = Anzahl-1
+111: reDim Arr(sAnzahl)
+112: For z = 0 to sAnzahl
+113:   Arr(z) = int(Rnd*100)
+114:   If (Rnd &lt; 0.5) then 
+115:   Arr(z) = Arr(z)-100
+116:   end if
+117: Next
+118: 
+119: Response.Write &quot;&lt;h2&gt;Hier ist Ihr unsortiertes Array&lt;/h2&gt;&quot;
+120: Call ZeigeArray(Arr,0,sAnzahl)
+121: 
+122: Call quicksort(Arr,0,sAnzahl)
+123: 
+124: Response.Write &quot;&lt;h2&gt;Jetzt ist es mit dem &quot; &amp;&nbsp;_
+125:     &nbsp;&quot;Quicksort-Algorithmus sortiert worden!&lt;/h2&gt;&quot;
+126: Call ZeigeArray(Arr,0,sAnzahl)
+
+...
+</pre>
+</p>
+<p>
+Das Anzeigen des Arrays erfolgt in von Zeile 53 bis 58. Dieser Block ist f&uuml;r  die Ausgabe des 
+sortierten und auch des unsortierten Arrays (zur Arbeitserleichterung) zust&auml;ndig. Die Prozedur 
+wird in den Zeilen 120 und 126 zur Ausgabe des Arrays aufgerufen.
+</p>
+<p>
+Die Zufallszahlen, mit welche das Array in diesem Beispiel bef&uuml;llt wird, generiere ich in den Zeilen 
+109 bis 117, wobei ich, um eine gr&ouml;&szlig;ere Vielfalt an Zahlen zu erreichen, auch  negative Zahlen
+erzeuge.
+</p>
+<p>
+Wenn man es genau nimmt sieht man eigentlich nur die Arbeit, welche in den Zeilen 119 bis 126 ausgef&uuml;hrt
+wird. Die Verwendung des Quicksort-Algorithmus verlangt schon um einiges mehr Aufwand vom Programmierer als 
+der Bubblesort Algorithmus.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dadurch, da&szlig; VBScript keine eigene Funktion und auch keinen Befehl f&uuml;r die Sortierung 
+bereitstellt, m&uuml;ssen wir uns selber helfen. Sie haben in diesem Artikel gelernt wie man ein 
+ein-dimensionales Array sortiert. Dabei habe ich Ihnen anhand zweier Sortieralgorithmen gezeigt, wie 
+man Arryas mit verschiedenen Datentypen sortiert.
+</p>
+<p>
+Die einfachere Version der Sortierung ist zweifelsohne der Bubblesort-Algorithmus. Er ist leicht und 
+schnell auf Ihre Aufgabe angepasst und f&uuml;hrt Sortierungen von kleinen Arrays 
+hinreichend schnell aus. Sollten Sie allerdings gro&szlig;e Arrays sortieren m&uuml;ssen, und das 
+noch dazu mehrere Male, dann empfehle ich Ihnen, sich etwas Arbeit anzutun und die Sortierung mit 
+Quicksort durchzuf&uuml;hren. Noch viel Spa&szlig; beim Sortieren.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000906.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20010126.htm">Am Server installierte Schriftarten auslesen</a><br>
+<a href="20001002.htm">Arrayfunktionen</a><br>
+<a href="20000927.htm">Das Array, unendliche Weiten?</a><br>
+<a href="19990807.htm">Dynamische Arrays - Fluch und Segen</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000906" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Sortieren von Arrays in VBScript"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000906.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Stefan Gründhammer"><input type="hidden" name="AuthorEmail" value="stefang@xitra.com"><input type="hidden" name="Artikel" value="20000906"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000906.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

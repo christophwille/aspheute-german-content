@@ -1,0 +1,172 @@
+<HTML>
+<HEAD>
+<TITLE>Datens&auml;tze mit dem DELETE Statement l&ouml;schen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im heutigen Artikel besch&auml;ftigen wir uns mit einem weiteren SQL Statement - dem DELETE Kommando. Mit diesem kann man einfach, schnell und bequem Datens&auml;tze aus einer Tabelle l&ouml;schen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SQL,ADO,OLEDB,UPDATE,DELETE,INSERT,DELETE Statement,ActiveX Data Objects">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Datens&auml;tze mit dem DELETE Statement l&ouml;schen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001127"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Im heutigen Artikel besch&auml;ftigen wir uns mit einem weiteren SQL Statement - dem DELETE Kommando.
+Mit diesem kann man einfach, schnell und bequem Datens&auml;tze aus einer Tabelle l&ouml;schen - und man
+&uuml;berl&auml;sst dabei die gesamte Arbeit der Datenbank.
+</p>
+<p>
+Im Vergleich zu INSERT oder UPDATE ist die Syntax sogar noch um einiges einfacher:
+</p>
+<p>
+<pre style="background='silver';">
+DELETE FROM <i>TableName</i> WHERE <i>Condition</i>
+</pre>
+</p>
+<p>
+Wenn man also vor hat, die gesamte Tabelle unwiderbringlich (au&szlig;er durch Restore) von Datens&auml;tzen
+zu s&auml;ubern, so sieht das DELETE Statement wie folgt aus (f&uuml;r die titleauthor Tabelle aus der
+Datenbank pubs des SQL Server):
+<pre style="background='silver';">
+DELETE FROM titleauthor
+</pre>
+</p>
+<p>
+Zugegebenerma&szlig;en kommt das wohl eher etwas selten vor - eher will man Datens&auml;tze gezielt aus der
+Tabelle l&ouml;schen, und zwar vielleicht so:
+<pre style="background='silver';">
+DELETE FROM titleauthor WHERE title_id='BU2075'
+</pre>
+</p>
+<p>
+Wie man sieht, gelten hier die gleichen Regeln f&uuml;r Zeichenketten wie &uuml;berall anders in SQL auch -
+die Strings m&uuml;ssen mit Apostrophen eingegrenzt werden. Weiters gilt f&uuml;r DELETE auch das gleiche
+wie f&uuml;r UPDATE - entspricht mehr als ein Datensatz dem Kriterium, wird auch dieser von der Aktion
+ber&uuml;hrt, was im Falle des DELETE Statements die L&ouml;schung ist.
+</p>
+<p>
+Sehen wir uns das oben gezeigte DELETE Statement einmal in "Action" an - in einer einfachen, aber
+bereits sehr optimierten ASP Seite:
+</p>
+<p>
+<pre style="background='silver';">
+&lt;%
+strSQLServerName = &quot;StrangeLove&quot;
+strDatebaseName = &quot;pubs&quot;
+strUserName = &quot;sa&quot;
+strPassword = &quot;&quot;
+	
+strConnection = &quot;Provider=SQLOLEDB;Data Source=&quot; &amp; strSQLServerName &amp; _
+  &quot;;Initial Catalog=&quot; &amp; strDatebaseName &amp; &quot;;User ID=&quot; &amp; strUserName &amp; _
+  &quot;;Password=&quot; &amp; strPassword &amp; &quot;;&quot;
+	
+Set conn = Server.CreateObject(&quot;ADODB.Connection&quot;)
+conn.Open strConnection
+
+Const adCmdText = 1
+Const adExecuteNoRecords = 128
+nRowsAffected = CLng(0)
+conn.Execute &quot;DELETE FROM titleauthor WHERE title_id='BU2075'&quot;, _
+    nRowsAffected, adCmdText Or adExecuteNoRecords
+
+Response.Write nRowsAffected &amp; &quot; Records gel&ouml;scht&quot;
+%&gt;
+</pre>
+</p>
+<p>
+Der Grund, warum ich hier von einer hochoptimierten Seite rede, ist folgender: ich teile der 
+<i>Execute</i> Methode sehr genau mit, was sie von mir bekommt (<i>adCmdText</i>), und was ich von ihr nicht
+will (<i>adExecuteNoRecords</i>). Der Vorteil Nummer Eins ist, ADO mu&szlig; nicht herausfinden, welche Art von
+Kommando ich absetzen will. Der Vorteil Nummer Zwei ist, ADO erstellt kein Recordset Objekt umsonst, was eine
+deutliche Beschleunigung bringt.
+</p>
+<p>
+Erw&auml;hnenswert ist sicherlich auch noch die Variable <i>nRowsAffected</i>. Diese liefert mir die Anzahl
+der Datens&auml;tze, die vom DELETE Kommando gel&ouml;scht wurden. Damit kann man eine nette Benutzerausgabe
+generieren.
+</p>
+<p>
+Die beiden Konstanten <i>adCmdText</i> und <i>adExecuteNoRecords</i> sind in dieser ASP Datei h&auml;ndisch deklariert,
+ich h&auml;tte diese allerdings auch &uuml;ber das METADATA Statement automatisch deklarieren lassen k&ouml;nnen:
+<pre style="background='silver';">
+&lt;!--METADATA NAME="Microsoft ActiveX Data Objects 2.5 Library" 
+	TYPE="TypeLib" 
+	UUID="{00000205-0000-0010-8000-00AA006D2EA4}"
+--&gt;
+</pre>
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Auch das DELETE Statement kann ADO Fehler ausl&ouml;sen, und zwar meist dann, wenn Fremdschl&uuml;sselbeziehungen
+durch das Statement verletzt werden w&uuml;rden. Ergo - eine Fehlerbehandlung sollte man auf alle
+F&auml;lle einplanen!
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001124.htm">Aktualisieren von Daten mit dem UPDATE Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001124.htm</span><br>
+<a href="../artikel/20020429.htm">Benutzerverwaltung leicht gemacht: Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020429.htm</span><br>
+<a href="../artikel/20010420.htm">Ein einfacher Query Analyzer</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010420.htm</span><br>
+<a href="../artikel/20001107.htm">Einf&uuml;gen eines Datensatzes mit dem INSERT Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001107.htm</span><br>
+<a href="../artikel/20020903.htm">Stored Procedures einfach erstellt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020903.htm</span><br>
+<a href="../artikel/20010213.htm">Update und UpdateBatch zum Einf&uuml;gen von Datens&auml;tzen in Datenbanken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010213.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

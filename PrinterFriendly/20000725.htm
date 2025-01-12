@@ -1,0 +1,222 @@
+<HTML>
+<HEAD>
+<TITLE>Schreiben einer Textdatei auf den Server</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch¸tzt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Mit Hilfe des FileSystemObject Objektes kann man nicht nur Dateien und Dateiattribute lesen, sondern auch Text in eine Datei schreiben oder an eine Datei anh&auml;ngen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,VBScript,FileSystemObject,CreateTextFile,Write,WriteLine,Replace,CreateObject,TextStream,stream,MapPath">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Schreiben einer Textdatei auf den Server</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000725"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wie schon in den Artikeln
+<a href="../artikel/20000530.htm">Lesen von Textdateien</a>
+und <a href="../artikel/20000706.htm">Dynamische Includes in ASP</a>
+beschrieben, kann man von einer ASP-Seite aus den Inhalt einer Textdatei lesen und 
+in Variablen speichern.
+</p>
+<p>
+Dazu benutzt man die Funktionalit&auml;t, die das <i>FileSystemObject</i> Objekt bietet.
+Mit Hilfe dieses Objektes kann man Dateien und Dateiattribute lesen, aber auch 
+Text in eine Datei schreiben oder an eine Datei anh&auml;ngen.
+</p>
+<p>
+Das folgende ASP-Listing zeigt, wie einfach es prinzipiell ist, 
+eine Textdatei auf den Server zu schreiben:
+</p>
+<p>
+<pre style="background='silver';">
+&lt;%
+ ' FileSystemObject objFs oeffnen
+ Set objFs= CreateObject("Scripting.FileSystemObject")
+
+ ' Dateiname festlegen
+ strDateiname = Server.MapPath("/testdatei.txt") 
+
+ ' Einen Textstream (objTextStream) zur Textdatei oeffnen 
+ Set objTextStream = objFs.CreateTextFile(strDateiname, True)
+
+ ' Inhalt fuer Datei in String strWriteString speichern:
+ strWriteString = "Text fuer die Datei"
+
+ ' String in Datei schreiben:
+ objTextStream.Write strWriteString
+
+ ' Objekte schliessen
+ objTextStream.Close
+ Set objTextStream = Nothing
+ Set objFs = Nothing
+
+ Response.Write "Der folgende Inhalt wurde in die Datei "
+ Response.Write strDateiname & " geschrieben:&lt;BR&gt;" 
+ Response.Write Replace(Server.HTMLEncode(strWriteString) , _ 
+      vbCrLf,"&lt;BR&gt;" & vbCrLf)
+%&gt;
+</pre>
+</p>
+<p>
+Der VBScript Code in diesem Listing erzeugt eine Instanz des <i>FileSystemObject</i>
+und speichert es in der Variable <i>objFs</i>. 
+Danach wird der volle physikalische Pfad der zu erstellenden Datei
+in der Variablen <i>strDateiname</i> gespeichert. Ein Beispiel f&uuml;r eine
+g&uuml;ltige Dateiangabe w&auml;re etwa <i>C:\Inetpub\wwwroot\</i>.
+</p>
+<p>
+Die Datei selbst wird mit der Methode <i>CreateTextFile</i> des <i>FileSystemObject</i>
+Objektes angelegt, wobei der erste Parameter den Pfad der zu erstellenden Datei angibt,
+und der zweite Parameter (<i>True</i> oder <i>False</i>) angibt, ob eine
+bereits bestehende Datei &uuml;berschrieben werden soll.
+</p>
+<p>
+Die <i>CreateTextFile</i> Methode gibt ein <i>TextStream</i> Objekt zur&uuml;ck,
+das man ben&uuml;tzt, um Text in die Datei zu schreiben.
+</p>
+<p>
+Der Schreibvorgang selbst wird mittels der Write Methode des <i>TextStream</i> Objektes
+durchgef&uuml;hrt. Der Parameter dieser Anweisung ist der Textstring, der als Inhalt
+in die Datei geschrieben wird. Man kann die Write Methode mehrmals aufrufen,
+um auf diese Weise Text St&uuml;ck f&uuml;r St&uuml;ck in die Datei zu schreiben.
+Durch die <i>Write</i> Methode wird allerdings kein Zeilenumbruch in die Datei geschrieben - 
+einen Zeilenumbruch mu&szlig; man explizit durch </i>vbCrLf</i> angeben.
+</p>
+<p>
+Alternativ zu <i>Write</i> kann man auch die <i>WriteLine</i> Methode verwenden,
+die nach dem Schreiben des &uuml;bergebenen Textstrings automatisch einen Zeilenumbruch hinzuf&uuml;gt.
+</p>
+
+
+<h2>Probleme mit der Zugriffserlaubnis</h2>
+<p>
+Wenn man das obige Listing auf einem Webserver laufen l&auml;sst, so erh&auml;lt man
+oftmals eine Fehlermeldung mit einer &auml;hnlichen Aussage wie der folgenden:
+</p>
+<p>
+<pre style="background='silver';">
+Microsoft VBScript runtime error '800a0046' 
+
+Permission denied 
+
+/file1.asp, line 9 
+</pre>
+</p>
+<p>
+Dieses <i>Permission denied</i> oder <i>Zugriff verweigert</i> bedeutet nichts anderes,
+als da&szlig; der Benutzer-Kontext (User-Kontext), in dem diese ASP Seite l&auml;uft, keine
+Erlaubnis zum Schreiben einer Datei besitzt. Dies sollte die standardm&auml;&szlig;ige
+Einstellung auf einem Internet Information Server sein.
+</p>
+<p>
+Der Benutzername, in dessen Kontext anonym abgefragte ASP Seiten laufen,
+ist IUSR_<i>Computername</i>, also zum Beispiel IUSR_RunningMan - wenn der Server RunningMan
+heiﬂt. Verlangt man von den Benutzern, daﬂ Sie Benutzername und Kennwort beim Seitenzugriff eingeben
+(die "Standardloginbox" des Internet Explorer oder Netscape Navigators), so l‰uft
+die Seite dann im Kontext dieses NT Useraccounts.
+</p>
+<p>
+Wenn man auf einem fremden Webserver hostet, so mu&szlig; man den Betreiber also bitten,
+f&uuml;r den IUSR_<i>Computername</i> Account die Lese-/Schreibrechte f&uuml;r 
+den Ordner des Root-Directories des Webservers (oder die entsprechenden Ordner)
+zu setzten. (Dies ist nur notwendig, wenn die Ordner mit dem NTFS Filesystem arbeiten.)
+</p>
+<p>
+Um auf dem eigenen Webserver die Rechte umzustellen klickt man mit der rechten Maustaste
+auf den entsprechenden Ordner, w‰hlt "Sicherheit" und stellt die entsprechenden Rechte ein.
+</p>
+<p>
+Auf einem PWS (Windows 9x) sollte dieses Problem im Allgemeinen nicht auftreten,
+da Windows 9x standardm&auml;&szlig; keine Userrechte f&uuml;r Ordner kennt.
+</p>
+
+<h2>Schlu&szlig;bemerkung:</h2>
+<p>
+Wie gezeigt wurde ist es verh&auml;ltnism&auml;&szlig;ig einfach, aus einer ASP-Seite
+heraus eine Textdatei zu erzeugen und Text in eine Datei zu schreiben.
+</p>
+<p>
+Um sich die volle Funktionalit&auml;t des FileSystemObject Objektes zu erschlie&szlig;en,
+empfiehlt sich ein Blick in die Dokumentation des IIS, des Platform SDK, oder der
+VBScript Dokumentation (zum Download bei Microsoft erh&auml;ltlich).
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000725.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000725.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010605.htm">CSVs aus MDBs leicht gemacht</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010605.htm</span><br>
+<a href="../artikel/20010508.htm">Dateizugriff auf Netzlaufwerken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010508.htm</span><br>
+<a href="../artikel/20000706.htm">Dynamische Includes in ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000706.htm</span><br>
+<a href="../artikel/20011116.htm">Erstellen von XML-Dateien mit dem DOM</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011116.htm</span><br>
+<a href="../artikel/20001011.htm">Fehlerbehandlung richtig eingesetzt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001011.htm</span><br>
+<a href="../artikel/20000530.htm">Lesen von Textdateien</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000530.htm</span><br>
+<a href="../artikel/20000921.htm">Ver- und entschl&uuml;sseln von Texten mit PGP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000921.htm</span><br>
+<a href="../artikel/20001005.htm">Zippen und entzippen von Dateien</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001005.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Fscripting%2F">MSDN Scripting</a><br>
+<SPAN class="content">http://msdn.microsoft.com/scripting/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

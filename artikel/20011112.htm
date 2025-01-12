@@ -1,0 +1,723 @@
+<HTML>
+<HEAD>
+<TITLE>Strukturierter Aufbau in der ASP-Programmierung</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im heutigen Artikel m&ouml;chte ich Ihnen zeigen, da&szlig; es sinnvoll sein kann, seinen ASP-Dateien mehr Struktur zu verleihen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Struktur,strukturierte Programmierung,Design,Programmablauf,Methoden,Funktionen,Funktionsaufruf,call">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Strukturierter Aufbau in der ASP-Programmierung</H1>
+<p>
+Geschrieben von: <a href="../autoren/renedrescher-hackel.htm">Rene Drescher-Hackel</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20011112"></SCRIPT>
+</p>
+<p>
+Im heutigen Artikel m&ouml;chte ich Ihnen zeigen, da&szlig; es sinnvoll sein kann, seinen ASP-Dateien mehr "Struktur" zu verleihen. 
+Der Artikel wird Ihnen zeigen, wie Sie selbst bei &uuml;berm&auml;&szlig;ig vielen Programmzeilen immer noch den &Uuml;berblick behalten.
+</p>
+
+<p>
+In meiner t&auml;glichen Praxis erlebe ich immer wieder, wie wichtig es ist, sauber und &uuml;bersichtlich zu programmieren. Fast 
+jeder von Ihnen wird immer &ouml;fter mit Arbeiten konfrontiert, die vor Monaten - oder Jahren - einmal fertiggestellt wurden.
+ Wer will da noch die genauen &Uuml;berlegungen kennen, die einst bei der Scripterstellung leitend waren.
+</p>
+
+<p>
+ASP-Einsteigern soll der Artikel dazu dienen, von Anfang an auf eine saubere und &uuml;bersichtliche Programmierung zu achten 
+und zeigen, wie man dies unter anderem erreichen kann.
+</p>
+
+<h2>Allgemeiner Aufbau der Seite</h2>
+
+<p>
+Der erste Eintrag auf der ASP-Seite ist
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Language=VBScript %&gt;
+</pre>
+
+<p>
+wenn VBScript die von Ihnen bevorzugte Script-Sprache ist.
+</p>
+
+<p>
+Sie sollten auf gar keinen Fall die erste Zeile umbrechen und innerhalb der ersten Begrenzungszeichen weiteren Code 
+unterbringen. Dies f&uuml;hrt regelm&auml;&szlig;ig zu folgender Fehlermeldung:
+</p>
+
+<pre style="background='silver';">
+Active Server Pages- Fehler 'ASP 0221' 
+Ung&uuml;ltige @ Kommandozuweisung
+</pre>
+
+<p>
+Als n&auml;chstes folgen daher wieder die typischen Script-Begrenzungszeichen:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+...
+%&gt;
+</pre>
+
+<p>
+Innerhalb dieser Begrenzungszeichen steht dann der eigentliche Code.
+</p>
+
+<p>
+Ihr n&auml;chster Eintrag sollte dann die Anweisung
+</p>
+
+<pre style="background='silver';">
+Option Explicit
+</pre>
+
+<p>
+sein. Diese Anweisung "zwingt" Sie dazu, da&szlig; Sie Ihre im Script sp&auml;ter benutzten Varaiablen vor ihrer ersten Verwendung 
+deklarieren, also bekannt machen. Dies macht aus zweierlei Gr&uuml;nden Sinn: Zum einen wissen Sie beim ersten Lesen Ihres 
+Scriptes sp&auml;ter, welche Variablen Sie alle benutzen. Zum anderen ist der Zugriff auf deklarierte Variablen schneller, da 
+hier &uuml;ber die  Ordinalzahl (der Variable) auf sie zugegriffen wird, w&auml;hrend im anderen Fall &uuml;ber den Varaiablennamen der 
+Zugriff erfolgt.
+</p>
+
+<p>
+Die Variablendeklarationen k&ouml;nnen dabei mit 
+</p>
+
+<pre style="background='silver';">
+Private | Public | Dim Variablenname
+</pre>
+
+<p>
+erfolgen. Es empfiehlt sich dabei, die einzelne Anweisung gleichzeitig zu kommentieren:
+</p>
+
+<pre style="background='silver';">
+Dim strName    <font color="Green">' Name des Benutzers</font>
+</pre>
+
+<p>
+Ein weiterer Punkt ist die Namensgebung bei der Variablenbenennung. Ich empfand es bislang als &auml;u&szlig;erst hilfreich, den 
+von mir in der Variable erwarteten Variablentyp im Namen mit anzugeben. Wenn also der Typ "String" erwartet wird, dann wurde 
+dem Variablennamen das K&uuml;rzel "str" voran gestellt. Beim Typ "Integer" dann "int", bei "Boolean" dann "bln" und 
+so weiter. Dar&uuml;ber hinaus sollten Sie sich angew&ouml;hnen, sinnvolle Namen als Bezeichnung zu w&auml;hlen. So kann die Variable 
+f&uuml;r eine Kundennummer z.B. "intKundenNr" hei&szlig;en, statt nur "KNR".
+</p>
+
+<p>
+Wie oben f&uuml;r die Variablendeklaration schon angesprochen, sollten Sie Ihre Scripte kommentieren - das erh&ouml;ht die 
+sp&auml;tere Lesbarkeit. Kommentare k&ouml;nnen dabei u.a. den dann folgenden Scriptblock n&auml;her beschreiben oder gar nur eine 
+einzelne Anweisung n&auml;her erl&auml;utern.
+</p>
+
+<h2>H&auml;ufig wiederkehrende Anweisungen in Prozeduren/Methoden  verpacken</h2>
+
+<p>
+Stellen Sie sich vor, sie m&uuml;ssen aus diversen Datenbanktabellen verschiedene Informationen zusammentragen und in einer 
+SELECT-BOX darstellen. Es w&auml;re m&uuml;&szlig;ig, jedes Mal den selben Codeabschnitt neu zu verfassen. 
+</p>
+
+<p>
+Hier kann man sich die Arbeit dadurch erleichtern, in dem man immer wiederkehrende Programmteile in einzelne Prozeduren 
+verpackt. Dabei k&ouml;nnen Sie zwischen
+</p>
+
+<pre style="background='silver';">
+Private | Public <b>Sub | Function (<i>[parameter]</i>) </b>
+</pre>
+
+<p>
+w&auml;hlen.
+</p>
+
+<p>
+Ob Sie nun "<b>Sub</b>" oder "<b>Function</b>" w&auml;hlen h&auml;ngt ganz davon ab, was Sie von Ihrer Prozedur erwarten. Soll ein 
+bestimmter Codeblock nur abgearbeitet werden, so ist "Sub" die richtige Wahl. M&ouml;chten Sie aber durch den Aufruf der 
+Prozedur einen Wert zur&uuml;ck erhalten, dann ist Function die richtige Entscheidung. Hier wird also deutlich: <b>Sub</b> kann 
+keine Werte zur&uuml;ck geben (mit einer Ausnahme, wie Sie weiter unten noch sehen werden) - <b>Function</b> schon.
+</p>
+
+<p>
+Die Prozedur bzw. Methode wird durch die Angabe des G&uuml;ltigkeitsbereiches (Private oder Public) , der Methodenart (Sub 
+oder Function) und der an die Prozedur zu &uuml;bergebenden Parameter gekennzeichnet. Die Angabe von Parametern ist optional. 
+Sind keine Parameter zu &uuml;bergeben, entf&auml;llt also diese Angabe. Hier ist jedoch noch zu beachten: &Uuml;bergeben Sie Parameter 
+an die Prozedur immer " ByVal " (Wert&uuml;bergabe). Dies hat den Vorteil, da&szlig; innerhalb der Prozdur der Wert der Variablen 
+sich &auml;ndern kann, jedoch au&szlig;erhalb der Prozedur der urspr&uuml;ngliche Variablenwert erhalten bleibt. Wollen Sie jedoch 
+gerade diesen Umstand bezwecken, da&szlig; sich aufgrund des Prozeduraufrufes die an die Prozedur &uuml;bergebene Variable sich 
+mit &auml;ndert, lassen Sie den Zusatz "ByVal" weg. Standardm&auml;&szlig;ig werden Variablen an Prozeduren "ByRef" &uuml;bergeben.
+</p>
+
+<p>
+Das Ende einer Prozedur wird mit der Anweisung
+</p>
+
+<pre style="background='silver';">
+<b>End</b> Sub | Function
+</pre>
+
+<p>
+gekennzeichnet. Ist es erforderlich die Prozedur vorzeitig zu verlassen, so erfolgt dies mit
+</p>
+
+<pre style="background='silver';">
+<b>Exit</b> Sub | Function
+</pre>
+
+<p>
+Schauen wir uns das ganze mal an einem Beispiel an - einer dynamisch erzeugten SELECT-BOX. Der Code hierf&uuml;r k&ouml;nnte 
+wie folgt aussehen:
+</p>
+
+<pre style="background='silver';">
+Public Sub meineSelectBox(ByVal strTable, ByVal strColumn, ByVal strElement)
+    ' Prozedur erzeugt anhand der &uuml;bergebenen Werte f&uuml;r
+    ' Tabelle, Spalte und Elementname eine Select-Box
+    Dim strTemp         ' Tempor&auml;rvariable
+        strTemp = "&lt;select name=" &amp; strElement &amp; "&gt;"
+        strTemp = strTemp &amp; "&lt;Option value=0 &gt;Bitte w&auml;hlen Sie&lt;/Option&gt;"
+        ' Datenbankteil
+        ' SQL-Abfrage
+        Dim sql
+        sql = " SELECT id, " &amp; strColumn &amp; " FROM " &amp; strTable &amp; " "
+            call dbconnect()    ' Datenbankverbindung herstellen
+                set rs = conn.Execute(sql)
+                    if rs.eof then
+                        ' Prozedur vorzeitig verlassen
+                        ' und nur Textfeld ausgeben
+                        Response.Write "&lt;input type=text name=" &amp; strElement &amp; "&gt;"
+                        call dbclose()	' Datenbankverbindung vorher schlie&szlig;en
+                        Exit Sub    ' Prozedurende
+                    else
+                    while not rs.eof
+                        strTemp = strTemp &amp; "&lt;Option value=" &amp; rs(0) &amp; "&gt;" &amp; rs(1) &amp; 
+                            "&lt;/Option&gt;"
+                        rs.MoveNext
+                    wend
+                    end if
+                call dbclose()      ' Datenbankverbindung schlie&szlig;en
+            strTemp = strTemp &amp; "&lt;/select&gt;"
+            ' SelectBox ausgeben
+            Response.Write strTemp
+End Sub
+</pre>
+
+<p>
+Nach der einleitenden Kommentierung erfolgt zun&auml;chst die Deklarierung einer lokalen Variable <i><b>strTemp</b></i>. Dies ist 
+insoweit vorteilhaft, als da&szlig; der Zugriff auf lokale Variablen (also solchen, die innerhalb von Prozeduren deklariert 
+werden), wieder schneller ist, als der Zugriff auf globale (au&szlig;erhalb von Prozeduren deklarierte) Variablen. F&uuml;r die 
+Datenbankverbindung ist es jedoch ratsamer die Variable "conn" global zu deklarieren, damit andere Prozeduren das 
+conn-Objekt nutzen k&ouml;nnen. Dabei sollten Sie beachten, da&szlig; im Fall der "conn"-Variable, diese PUBLIC deklariert werden 
+sollte.
+</p>
+
+<p>
+Dann folgt der erste Teil der Select-Box. Dadurch, da&szlig; der Elementname mit&uuml;bergeben wurde, kann die Select-Box mit 
+jedem Aufruf der Prozedur einen beliebigen Namen bekommen, soda&szlig; am Ende dieselbe Prozedur auf ein und derselben 
+Seite mehrfach aufgerufen werden kann und dennoch immer wieder (namentlich) verschiedene HTML-Elemente erzeugt werden.
+</p>
+
+<p>
+Jetzt folgt die SQL-Anweisung. Auch hier ist die SQL-Anweisung so formuliert, da&szlig; sie am Ende variabel einsetzbar ist. 
+Hierbei wurde jedoch davon ausgegangen, da&szlig; die abzufragende Tabelle &uuml;ber eine Prim&auml;rschl&uuml;sselspalte mit der Bezeichnung "<b>id</b>"
+verf&uuml;gt. Dies ist dann f&uuml;r die Wertzuweisung im Option-Value hilfreich. An das SQL-Statement wird die auszulesende 
+Spalte und Tabelle &uuml;bergeben. Dadurch ist es wieder m&ouml;glich jede x-beliebige Tabelle/Spalte auszulesen und das Ergebnis 
+in einer Select-Box darzustellen.
+</p>
+
+<p>
+Sofern kein Datensatz gefunden wurde, wird - um das HTML-Design nicht zu zerst&ouml;ren - ein einfaches Textfeld ausgegeben 
+und die Prozedur vorzeitig verlassen.
+</p>
+
+<p>
+Ist ein Datensatz vorhanden,  so werden die Option-Eintr&auml;ge der Select-Box erzeugt. An dieser Stelle kommt uns der 
+Prim&auml;rschl&uuml;ssel des ausgelesenen Datensatzes zu gute. Um dem value nicht eine unn&ouml;tig lange Zeichenkette zuzuweisen, 
+wird hier einfach ein Integer-Wert - die Datensatz-ID - zugewiesen.
+</p>
+
+<p>
+Abschlie&szlig;end wird die HTML-Anweisung komplettiert und ausgegeben.
+</p>
+
+<p>
+Das ganze lie&szlig;e sich mit einer Function genauso realisieren. Lediglich die erste und die letzten beiden Zeilen w&uuml;rden 
+sich &auml;ndern:
+</p>
+
+<pre style="background='silver';">
+Public Function meineSelectBox(ByVal strTable, ByVal strColumn, ByVal strElement)
+...
+        meineSelectBox = strTemp
+End Function
+</pre>
+
+<p>
+Damit die Function den Wert entsprechend zur&uuml;ckgibt, wird ihr der Wert von "<b>strTemp</b>" entsprechend zugewiesen. 
+Die Ausgabe erfolgt dann mit dem Funktionsaufruf:
+</p>
+
+<pre style="background='silver';">
+Response.Write meineSelectBox(...)
+</pre>
+
+<p>
+In den runden Klammern sind dann die Werte f&uuml;r die entsprechende Tabelle/Spalte und der Elementname an die Function 
+mitzu&uuml;bergeben.
+</p>
+
+<h2>Richtige &Uuml;bergabe der Parameter an die Prozedur</h2>
+
+<p>
+Bei der &Uuml;bergabe der Parameter an die Prozedur sollte folgendes beachtet werden:
+</p>
+
+<p>
+Wie oben in unserem kleinen Beispiel schon zu sehen war, k&ouml;nnen die Parameter durch Voranstellen des Schl&uuml;sselwortes 
+<b>ByVal</b> an die jeweilige Prozedur &uuml;bergeben werden. <b>ByVal</b> bewirkt dabei, da&szlig; <i>nur</i> der Wert der Variablen &uuml;bergeben wird. 
+Arbeiten Sie innerhalb der Prozedur mit der gleichen Varaiablen weiter, so bleibt der Wert der Variablen au&szlig;erhalb der 
+Prozedur erhalten - gleich welchen Wert Sie der Variablen innerhalb der Prozedur zuweisen. Folgendes Codebeispiel soll 
+Ihnen dies hier einmal verdeutlichen:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+dim a   ' Variable a
+a=5     ' Wertzuweisung
+Response.Write "Die Variable a= " &amp; a &amp; " vor Prozeduraufruf 
+        &lt;hr&gt;" 'vor Prozeduraufruf
+call meineProzedur(a)
+Response.Write "Die Variable a= " &amp; a &amp; " nach Prozeduraufruf 
+        &lt;hr&gt;" 'vor Prozeduraufruf
+
+Public Sub meineProzedurByVal(ByVal a)
+    Response.Write "Die Variable a= " &amp; a &amp; " in der Prozedur vor 
+        Wert&auml;nderung &lt;hr&gt;"
+    a=10        ' Wert &auml;ndern
+    Response.Write "Die Variable a= " &amp; a &amp; " in der Prozedur nach 
+        Wert&auml;nderung &lt;hr&gt;"
+End Sub
+%&gt;
+</pre>
+
+<p>
+In diesem Beispiel wird der Variablen a der Wert 5 zu gewiesen. Dann erfolgt der Aufruf einer Prozedur, wobei die 
+Variable a <b>ByVal</b> an die Prozedur &uuml;bergeben wird. Um deutlich zu machen, wie sich eine Wert&auml;nderung innerhalb der 
+Prozedur au&szlig;erhalb dieser wieder auf a wertm&auml;&szlig;ig auswirkt, habe ich hier in der Prozedur a den Wert 10 zugewiesen. 
+Die nachfolgende Grafik zeigt recht deutlich, welchen Wert a jeweils angenommen hat und wie sich <b>ByVal</b> in der 
+Parameter&uuml;bergabe auf den Wert der Variablen ausgewirkt hat.
+</p>
+
+<IMG SRC="Bilder/200111/20011112_1.png" width="384" height="319" alt="" border="0">
+
+<p>
+Das Gegenst&uuml;ck zu <b>ByVal</b> ist <b>ByRef</b>. Hier wird die Adresse der Variable &uuml;bergeben, so da&szlig; - das obige 
+Beispiel entsprechend abge&auml;ndert - a den Wert aus der Prozedur automatisch &uuml;bernimmt.
+</p>
+
+<pre style="background='silver';">
+dim a   ' Variable a
+a=5     ' Wertzuweisung
+Response.Write "Die Variable a= " &amp; a &amp; " vor Prozeduraufruf &lt;hr&gt;" 'vor Prozeduraufruf
+call meineProzedur(a)
+Response.Write "Die Variable a= " &amp; a &amp; " nach Prozeduraufruf &lt;hr&gt;" 'vor Prozeduraufruf
+
+Public Sub meineProzedurByRef(ByRef b)
+    Response.Write "Die Variable a= " &amp; a &amp; " in der Prozedur vor Wert&auml;nderung &lt;hr&gt;"
+    b=10        ' Wert &auml;ndern
+    Response.Write "Die Variable a= " &amp; a &amp; " in der Prozedur nach Wert&auml;nderung &lt;hr&gt;"
+End Sub
+</pre>
+
+<p>
+Um deutlich zu machen, wie <b>ByRef</b> sich verh&auml;lt, habe ich jetzt die Prozedurvariable b eingef&uuml;hrt. Im Gegensatz zu 
+dem vorangegangenen Beispiel habe ich hier b den Wert 10 zugewiesen. Dennoch hat sich der Wert von a ge&auml;ndert, wie 
+die nachfolgende Grafik wieder zeigt:
+</p>
+
+<IMG SRC="Bilder/200111/20011112_2.png" width="384" height="319" alt="" border="0">
+
+<p>
+Anders als bei PHP, erfolgt die &Uuml;bergabe der Variablen standardm&auml;&szlig;ig - also ohne Angabe von <b>ByVal</b> oder <b>ByRef</b> - 
+<i>By Reference</i>. Die &Uuml;bergabe von Variablen <b>ByRef</b> an die Prozedur ist also dann sinnvoll, wenn der Variablenwert mit 
+ge&auml;ndert werden soll. Daneben ist der Einsatz von <b>ByRef</b> wieder etwas schneller als <b>ByVal</b>.  
+</p>
+
+<p>
+Wenn man dabei ist, sich Gedanken zu machen wie und wann es am sinnvollsten erscheint <b>ByVal</b> oder <b>ByRef</b> einzusetzen, 
+so m&ouml;chte ich Ihnen noch folgenden Hinweis geben:
+</p>
+
+<p>
+Gelegentlich kommt es vor, da&szlig; man mehr als einen Wert durch den Funktionsaufruf zur&uuml;ckgegeben haben m&ouml;chte, 
+eine Function aber andererseits <b>nur einen</b> R&uuml;ckgabewert erlaubt. Wie kann man dem Abhelfen? Nun, Sie &uuml;bergeben einfach 
+eine zus&auml;tzliche Variable an die Funktion  - allerdings diesmal bewu&szlig;t <b>ByRef</b>. Da Sie nun wissen, wie sich der Wert der 
+Variable &auml;ndern kann, die <b>ByRef</b> an die Funktion &uuml;bergeben wurde, haben Sie auch zugleich den Weg, mehr als einen 
+Wert aus einem Funktionsaufruf zur&uuml;ckzuerhalten. Und genau so k&ouml;nnten Sie mit einer <b>Sub</b>-Prozedur verfahren. Die 
+<b>Sub</b>-Routinen geben nie einen Wert an die aufrufende Stelle zur&uuml;ck. Ben&ouml;tigen Sie aber gerade durch den Aufruf einer 
+<b>Sub</b> einen bestimmten R&uuml;ckgabewert, so &uuml;bergeben Sie an die Sub einfach einen Wert <b>ByRef</b>. Das Ergebnis ist analog den 
+obigen Ausf&uuml;hrungen zur <b>Function</b>.
+</p>
+
+<h2>Private oder Public oder doch Dim?</h2>
+
+<p>
+Lassen Sie mich an dieser Stelle ein paar Ausf&uuml;hrungen zum Unterschied der Schl&uuml;sselw&ouml;rter <b>Private</b> und <b>Public</b> machen.
+</p>
+
+<p>
+Beide Schl&uuml;sselw&ouml;rter beschreiben den Geltungsbereich  - sowohl der Prozedur als auch der einzelnen Variable. 
+Hinsichtlich der Variablendeklaration sollten Sie folgende &Uuml;berlegungen beachten: 
+</p>
+
+<ol>
+<li>Wo ben&ouml;tige ich Zugriff auf die einzelne Variable?<br>
+Ben&ouml;tigen Sie Ihre Variable lediglich innerhalb einer bestimmten Prozedur, so gen&uuml;gt es, wenn Sie diese mit der 
+Anweisung <b>Dim</b> innerhalb der Prozedur definieren. Sie m&uuml;ssen jedoch beachten, da&szlig; diese Variable auch nur innerhalb 
+der jeweiligen Prozedur g&uuml;ltig ist. <b>Public</b> und <b>Private</b> k&ouml;nnen innerhalb einer Prozedur nicht zur Variablendeklaration 
+benutzt werden.</li>
+<li>Welchen G&uuml;ltigkeitsbereich hat die Prozedur?<br>
+Die Frage ist von Bedeutung, wenn Sie innerhalb von VBScript mit Klassen arbeiten. So sind <b>Private</b> deklarierte Variablen 
+und Methoden nur innerhalb der Klasse verf&uuml;gbar, jedoch nicht von au&szlig;en (&uuml;ber das Objekt der Klasse) aufrufbar.</li>
+</ol>
+
+<h2>ASP-Logik kapseln</h2>
+
+<p>
+Wenn Sie denn so detailiert vorgehen und fast alles in Prozeduren verpacken, dann stellt sich die Frage, wie man 
+am besten die ASP-Script-Logik zentral verf&uuml;gbar (administrierbar) machen kann.
+</p>
+
+<p>
+Dies erreichen Sie &uuml;ber ein entsprechendes INCLUDE der jeweiligen Logik-Seite.
+</p>
+
+<pre style="background='silver';">
+&lt;!--#include file="../meineLogik.asp"--&gt;
+</pre>
+
+<p>
+Hierbei m&uuml;ssen Sie aber beachten, da&szlig; die Seite, in welcher der INCLUDE-Befehl steht, ebenfalls eine 
+ASP-Seite sein mu&szlig;. Dies ist dadurch begr&uuml;ndet, da Sie ja hier die Prozedur aus der includierten Seite aufrufen 
+wollen, was regelm&auml;&szlig;ig wie folgt geschieht:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+<b>call</b> meinProzedurname(meineParameter,...)
+%&gt;
+</pre>
+
+<p>
+Die <b>call</b>-Anweisung ist dabei nicht zwingend, bringt aber einen entscheidenen Syntax-Vorteil im Aufruf der Prozedur. 
+Nehmen wir hier wieder das obige Beispiel der Select-Box. Hier haben wir uns f&uuml;r eine SUB-Prozedur entschieden. 
+Der Aufruf dieser SUB-Prozedur ohne dem Schl&uuml;sselwort <b>call</b> m&uuml;&szlig;te dann korrekter Weise folgenderma&szlig;en erfolgen:
+</p>
+
+<pre style="background='silver';">
+MeineSelectBox  strTable, strColumn, strElement
+</pre>
+
+<p>
+Wenn wir nun call verwenden sieht das Ganze so aus:
+</p>
+
+<pre style="background='silver';">
+<b>call</b> meineSelectBox<b>(</b>strTable, strColumn, strElement<b>)</b>
+</pre>
+
+<p>
+Sie sehen also, beim Einsatz von <b>call</b> ist es erforderlich, die &uuml;bergebenen Parameter in runden Klammern zu fassen. W&auml;re 
+unsere Prozedur als FUNCTION definiert worden, so m&uuml;&szlig;ten wir in jedem Fall die Parameter in entsprechender Umklammerung 
+mit angeben. 
+</p>
+
+<p>
+Die Benutzung von <b>call</b> beim Prozeduraufruf hat also den Vorteil der einheitlichen Syntax - ich mu&szlig; also nicht mehr 
+darauf achten, ob ich nun eine SUB oder eine FUNCTION aufrufe - in jedem Fall werden die Parameter in runder 
+Umklammerung an die Prozedur &uuml;bergeben.
+</p>
+
+<p>
+Des weiteren wird durch <b>call</b> im Script deutlich, da&szlig; an dieser Stelle eine Prozedur <b>aufgerufen</b> wird.
+</p>
+
+<h2>Zusammenfassung</h2>
+
+<p>
+Der Artikel soll insbesondere ASP-Einsteigern dazu dienen, von Anfang an darauf zu achten, sauber und &uuml;bersichtlich - 
+strukturiert - zu programmieren.
+</p>
+
+<p>
+Durch den Einsatz von Prozeduren, lassen sich insbesondere mit Blick auf die Ressourcen, verschiedenste Programmteile 
+gezielt ansteuern. So kann eine Datenbankverbindung z.B. erst dann angefordert werden, wenn diese auch explizit ben&ouml;tigt 
+wird und sobald sie nicht mehr erforderlich ist, entsprechend wieder freigegeben werden.
+</p>
+
+<p>
+Mit Prozeduren kann man seinen Code so gestalten, da&szlig; er weitgehend allgemeing&uuml;ltig bleibt, was die Wiederverwendbarkeit 
+in anderen Projekten enorm erleichtert.  Eine weitere M&ouml;glichkeit w&auml;re auch Kapselung des Script-Codes in einzelne 
+Klassen (Class ... End Class). 
+</p>
+
+<p>
+Durch die "Auslagerung" der einzelnen Prozeduren in eine eigenst&auml;ndige ASP-Datei kann man auch noch klarer Design und 
+Programmierung voneinander trennen, was am Ende die Wartungsfreundlichkeit des ASP-Codes und die Zusammenarbeit der 
+Abteilungen (Designer/Programmierer) enorm erleichtert.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20011112.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20000522.htm">&Uuml;berpr&uuml;fen von HTML-Formularen mit ASP</a><br>
+<a href="20000405.htm">@-Direktiven auf ASP Seiten</a><br>
+<a href="20000406.htm">Auswertung von HTML Formularen mit ASP</a><br>
+<a href="20000706.htm">Dynamische Includes in ASP</a><br>
+<a href="20001003.htm">Einf&uuml;hrung in Stringoperationen</a><br>
+<a href="20000503.htm">Einfache String Operationen</a><br>
+<a href="20001011.htm">Fehlerbehandlung richtig eingesetzt</a><br>
+<a href="20001018.htm">Global.asa: Verwendung, Events und Probleme</a><br>
+<a href="20000526.htm">Klassen in VBScript</a><br>
+<a href="20000505.htm">Session Variablen - Verwendung und Stolpersteine</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20011112" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Strukturierter Aufbau in der ASP-Programmierung"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20011112.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Rene Drescher-Hackel"><input type="hidden" name="AuthorEmail" value="rene@drescher-hackel.de"><input type="hidden" name="Artikel" value="20011112"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20011112.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

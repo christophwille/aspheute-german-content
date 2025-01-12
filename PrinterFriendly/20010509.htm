@@ -1,0 +1,268 @@
+<HTML>
+<HEAD>
+<TITLE>Neue Inhalte einer Web Site f&uuml;r den Benutzer hervorheben</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Es gibt bestimmte Web Sites, auf die wir regelm&auml;&szlig;ig zugreifen. Gerade hier ist es von Vorteil auf den ersten Blick zu sehen, welche Beitr&auml;ge neu und welche schon bekannt sind.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Cookie,Cookies,Hervorhebung,Aktuelle News,Newsflash">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Neue Inhalte einer Web Site f&uuml;r den Benutzer hervorheben</H1>
+<p>
+Geschrieben von: <a href="../autoren/fredericganner.htm">Frederic Ganner</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010509"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Es gibt bestimmte Web Sites, auf die wir regelm&auml;&szlig;ig zugreifen. Gerade hier ist es von Vorteil auf den ersten Blick zu 
+sehen, welche Beitr&auml;ge neu und welche schon bekannt sind. Am einfachsten ist das mit Hilfe hervorhebender Grafiken zu 
+erreichen  - vor allem farbliche Unterschiede erh&ouml;hen die Aufnahmegeschwindigkeit dieser relevanten Informationen 
+um ein Vielfaches.
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010509_1.png" width="292" height="282" alt="" border="0">
+
+<p>
+Wie auf dem obigen Bild zu erkennen ist, werden jedem Beitrag eine der zwei charakteristischen Grafiken zugewiesen. 
+Um zu entscheiden, ob der Benutzer den jeweiligen Datensatz schon kennt, m&uuml;ssen wir den Zeitpunkt, an dem der Beitrag 
+erstellt wurde mit dem Zeitpunkt an dem der User die Seite zuletzt besucht hat vergleichen. Hierf&uuml;r speichern wir 
+jedes Mal, wenn der User auf die Seite zugreift, die aktuelle Zeit in einen Cookie. Beim Durchlaufen der Datens&auml;tze 
+findet schlie&szlig;lich der Abgleich der zwei Zeitpunkte statt, und es wird entschieden, welches Bild angezeigt wird.
+</p>
+
+<p>
+Unser Vorgehen f&uuml;r den Code sieht demnach wie folgt aus:
+</p>
+
+<ul>
+    <li>Auslesen des Cookies</li>
+    <li>Erstellen des Recordset-Objekts</li>
+    <li>Ausgeben der HTML-Seite mit den richtigen Grafiken</li>
+</ul>
+
+<h2>Auslesen des Cookies</h2>
+
+<pre style="background='silver';">
+&lt;% @LANGUAGE = "VBSCRIPT" %&gt;
+&lt;% Option Explicit %&gt;
+&lt;%
+Const cstrCookieName = "visit"
+Dim objCookieValue, dtLastVisit, bFirstVisit, strConnStr, Inhalte
+
+objCookieValue = Request.Cookies(cstrCookieName)
+If IsDate(objCookieValue) Then
+    dtLastVisit = CDate(objCookieValue)
+    bFirstVisit = False
+Else
+    ' dieser Fall tritt auch ein, wenn User Cookies nicht erlaubt
+    dtLastVisit = CDate("1/1/1990")
+    bFirstVisit = True
+End If
+
+Response.Cookies(cstrCookieName).Expires = DateAdd("d",365,Date())
+Response.Cookies(cstrCookieName) = Now()
+</pre>
+
+<p>
+Zuerst lesen wir den Cookie aus. Wenn der User schon einen Cookie besitzt, speichern wir den in ein Datum 
+umgewandelten Wert in der Variable <i>dtLastVisit</i>. Ist der Besucher dagegen zum ersten Mal auf der Seite, wird die 
+Variable <i>dtLastVisit</i> mit einem Datum, das weit in der Vergangenheit liegt, belegt. Somit erscheinen f&uuml;r 
+Erstbesucher bei allen Beitr&auml;gen die "neu"-Grafiken. 
+</p>
+
+<p>
+Da wir nun den ben&ouml;tigten Zeitpunkt in einer Variable gespeichert haben, &uuml;berschreiben wir den Cookie auf dem 
+Client-Rechner mit der aktuellen Zeit, die wir dann beim n&auml;chsten Besuch verwenden k&ouml;nnen. Das gr&ouml;&szlig;te Problem bei 
+diesem Feature sind die Datentypen der Datumsfelder. Bei der Verwendung von VBScript ist es m&ouml;glich den String aus 
+dem Cookie in ein Datum-Objekt zu konvertieren. Bei JScript mu&szlig; man im schlimmsten Fall die Strings aufparsen und 
+nacheinander von der Sekunde bis zum Jahr einzeln auswerten.
+</p>
+
+<h2>Erstellen des Recordset-Objekts</h2>
+
+<p>
+Dem heutigen Artikel liegt eine Beispieldatenbank bei, die fiktive Artikel speichert - und wir bauen f&uuml;r diese 
+Artikel eine Seite &auml;hnlich zu bekannten Newssites auf, wo nur die Titel und das Erstellungsdatum angezeigt werden 
+(das Beispiel kann leicht um Zusammenfassungen, Links usw. erweitert werden). Der folgende Code zeigt das Auslesen der 
+Artikeltabelle:
+</p>
+
+<pre style="background='silver';">
+strConnStr = "Provider=Microsoft.Jet.OLEDB.4.0;" &amp; _
+      "Data Source=C:\yourpath\neueinhalte.mdb"
+
+Set Inhalte = Server.CreateObject("ADODB.Recordset")
+Inhalte.ActiveConnection = strConnStr
+Inhalte.Source = "SELECT Titel, Zeit FROM Artikel ORDER BY ID DESC"
+Inhalte.CursorType = 0
+Inhalte.CursorLocation = 2
+Inhalte.LockType = 3
+Inhalte.Open
+%&gt;
+</pre>
+
+<p>
+In diesem Abschnitt wird ein Recordset-Objekt (<i>Inhalte</i>) erstellt, das die einzelnen Beitr&auml;ge und die Zeitpunkte 
+der Erstellung enth&auml;lt. Die Datenbank enth&auml;lt neben den Spalten <i>Inhalt</i> und <i>Zeit</i> noch eine <i>ID</i>-Spalte, 
+nach deren Werten die Datens&auml;tze absteigend (DESC) geordnet werden.
+</p>
+
+<h2>Anzeigen der korrekten Grafiken</h2>
+
+<p>
+Letzlich fehlt noch die Auswertung welchen Content der Web Seite der User noch nicht gesehen hat und welchen schon. 
+Dies habe ich unter Zuhilfenahme von zwei selbst geschriebenen VBScript Funktionen 
+(<i>ShowNewsImage</i> und <i>MyDateFormat</i>) gel&ouml;st:
+</p>
+
+<pre style="background='silver';">
+&lt;HTML&gt;
+&lt;BODY bgcolor="#999999"&gt;
+&lt;p&gt;
+&lt;%
+If Not bFirstVisit Then
+    Response.Write "Letzter Besuch am: " &amp; MyDateFormat(dtLastVisit)
+Else
+    Response.Write "Ihr erster Besuch auf der Seite!"
+End If
+%&gt;
+&lt;/p&gt;
+&lt;table cellspacing="2"&gt;	
+&lt;%
+While Not Inhalte.EOF
+%&gt; 
+ &lt;tr&gt;
+  &lt;td&gt;
+	&lt;img src="&lt;%=ShowNewsImage(Inhalte.Fields("Zeit"), dtLastVisit)%&gt;.gif" border="0"&gt;
+  &lt;/td&gt;
+  &lt;td&gt;
+    &lt;%= Inhalte.Fields("Titel") %&gt;&lt;br>
+  &lt;/td>
+  &lt;td>
+    &amp;nbsp;&amp;nbsp;Eintrag erstellt: &lt;%=MyDateFormat(Inhalte.Fields("Zeit")) %&gt;
+  &lt;/td&gt;
+ &lt;/tr&gt;
+&lt;%
+ Inhalte.MoveNext
+Wend
+Inhalte.Close
+Set Inhalte = Nothing
+%&gt;	
+&lt;/table&gt;
+
+&lt;/BODY&gt;
+&lt;/HTML&gt;
+</pre>
+
+<p>
+In diesem Teil der Seite geben wir alle Datens&auml;tze des Recordsets in einer Tabelle aus. Weiters werden der Zeitpunkt 
+aus dem Cookie (<i>dtLastVisit</i>) und der Zeitpunkt der Erstellung des Beitrags verglichen (<i>Inhalte.Fields("Zeit")</i>). 
+Das geschieht durch die Funktion <i>ShowNewsImage</i>, welche in einem separaten VBScript Block zu finden ist:
+</p>
+
+<pre style="background='silver';">
+&lt;script language="vbscript" runat="server"&gt;
+Function ShowNewsImage(ByVal timeOfEntry, ByVal timeOfLastVisit)
+ If timeOfEntry &gt; timeOfLastVisit Then
+  ShowNewsImage = "neu"
+ Else
+  ShowNewsImage = "alt"
+ End If
+End Function
+
+Function MyDateFormat(dtDate)
+ If Not IsDate(dtDate) Then
+   MyDateFormat = ""
+ Else
+   MyDateFormat = Day(dtDate) &amp; "." &amp; Month(dtDate) &amp; "." &amp; Year(dtDate)
+ End If
+End Function
+&lt;/script&gt;
+</pre>
+
+<p>
+Die <i>ShowNewsImage</i> Funktion erwartet zwei Zeitpunkte als Parameter. F&uuml;r alle Beitr&auml;ge deren Erstellungsdatum 
+(<i>timeOfEntry</i>) gr&ouml;&szlig;er als das letzte Besuchsdatum (<i>timeOfLastVisit</i>) ist, wird der String "neu" in 
+die Seite geschrieben, und umgekehrt. Die Icons, die wir f&uuml;r die Kennzeichnung verwenden, m&uuml;ssen deshalb in 
+diesem Fall "neu.gif" bzw. "alt.gif" genannt werden, da der Dateiname f&uuml;r die jeweilige Grafik im ersten Teil 
+des Sourcecodes so ermittelt wird (siehe <i>IMG</i>-Tag). 
+</p>
+
+<p>
+Mit Hilfe der Funktion <i>MyDateFormat</i> wird zu guter Letzt noch das Datum an dem der Beitrag erstellt wurde einfach 
+lesbar formatiert (=immer Deutsch, egal welcher Webserver) in die Seite geschrieben. Mit dem eigentlichen Feature 
+hat dies aber nichts zu tun. Es dient in diesem Fall nur dazu, alte und neue Beitr&auml;ge voneinander zu unterscheiden.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Wenn dieses Feature in ein Forum oder eine Newsseite eingebaut wird, hat diese sicherlich eine bessere Usability 
+f&uuml;r Besucher, die die Site h&auml;ufig besuchen. Blicken wir &uuml;ber den Einsatz eines GIF-Bildes hinaus, ergeben sich viele 
+weitere M&ouml;glichkeiten dieses Feature einzusetzen: von der Ver&auml;nderung der Stylesheets f&uuml;r die &Uuml;berschriften 
+der neuen Artikel , bis hin zur kompletten Trennung des Layouts in "alte" und "neue" Beitr&auml;ge. 
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010509.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010509.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010306.htm">Dynamische Stylesheets</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010306.htm</span><br>
+<a href="../artikel/20000907.htm">Einfacher Test, ob der Browser Cookies annimmt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000907.htm</span><br>
+<a href="../artikel/20000413.htm">Probleme beim Verarbeiten von Datumswerten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000413.htm</span><br>
+<a href="../artikel/20001004.htm">Sprache des Benutzers erkennen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001004.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

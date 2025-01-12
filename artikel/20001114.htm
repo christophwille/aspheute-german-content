@@ -1,0 +1,580 @@
+<HTML>
+<HEAD>
+<TITLE>ASP.NET User Controls im Einsatz</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="User Controls (vormals Pagelets) sind ja ganz praktisch - da&szlig; man aber auch mehr als ein simples Email-Standard-Formular mit den ASP.NET User Controls erstellen kann, soll dieser Artikel zeigen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,User Control,Pagelet,ASP.NET,.NET,SDK,C#,C Sharp,Csharp,ASCX,ASPX,Hello World,ADO.NET,DataSet,DataTable">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>ASP.NET User Controls im Einsatz</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001114"></SCRIPT>
+</p>
+<p>
+User Controls (vormals Pagelets) sind ja ganz praktisch - man schreibt sich kleine Code Snippets
+die man immer wieder in seinen ASP.NET Web Projekten ben&ouml;tigt. Wenn sie dann zum Einsatz kommen sollen -
+einfach in dem ASP.NET File registrieren und aufrufen. Da&szlig; man aber auch mehr als ein simples 
+Email-Standard-Formular mit den ASP.NET User Controls erstellen kann, soll dieser Artikel zeigen.
+</p>
+
+<p>
+Obwohl der Artikel einfachst gehalten ist, baut er auf den folgenden Voraussetzungen auf:
+</p>
+
+<p>
+<li>Da der Sourcecode der Beispiele in <a href="../kategorien/Csharp.htm">C#</a> geschrieben ist, sollten Sie grundlegende Kenntnisse &uuml;ber diese 
+Programmiersprache haben - es finden sich dazu nat&uuml;rlich etliche Artikel bei 
+AspHeute, die Ihnen das notwendige Wissen vermitteln.
+</p>
+
+<p>
+<li>Es ist zu beachten, da&szlig; wie immer bei unseren ASP.NET Artikeln, Sie nur dann vom downloadbaren 
+Sourcecode profitieren k&ouml;nnen, wenn Sie das Microsoft .NET Framework SDK auf einem Webserver installiert 
+haben.
+</p>
+
+</p>
+<li>Weiters verwendet dieser Artikel bereits ASP+ Web Form Controls (TextBox, Label). F&uuml;r den Fall, da&szlig; 
+Sie noch nicht sattelfest auf diesem Gebiet sind, bietet der Artikel 
+<a href="20000808.htm">Einf&uuml;hrung in ASP.NET Web Forms</a> das n&ouml;tige Grundwissen daf&uuml;r. 
+</p>
+
+<h2>ASP.NET User Controls</h2>
+
+<p>
+Seit Microsoft die BETA 1 des .NET Framwork SDKs freigegeben hat, hat sich einiges ver&auml;ndert. So auch bei 
+den User Controls, die vormals <i>Pagelets</i> hie&szlig;en. Abgesehen von der  neuen Namensgebung
+ist auf den ersten Blick die neue Dateiendung <i>*.ascx</i> auff&auml;llig. Die ehemalige Endung *.aspc ist 
+somit ung&uuml;ltig, und wird von der Runtime mit 
+"<i>User control source files must have a .ascx file extension</i>" quittiert.
+</p>
+
+<p>
+Kehren wir aber zum eigentlichen Artikelthema wieder zur&uuml;ck. In dem Artikel 
+<a href="20000913.htm">Einf&uuml;hrung in ASP.NET Validation Controls (Teil 2)</a> hatte
+ich ja das Thema kurz angeschnitten und habe gezeigt, wie man einfache Web Form Controls einf&uuml;gt und
+in einer ASP.NET Datei registriert und aufruft. Heute m&ouml;chte ich Ihnen zeigen wie man ganzen Sourcecode
+darin verpacken kann und welche Probleme dabei auftreten k&ouml;nnen.
+</p>
+
+<p>
+Nach zwei einfachen Beispielen die nur das Notwendigste zeigen, habe ich ein Beispiel vorbereitet,
+das einige M&ouml;glichkeiten der User Controls zeigt. Zudem zeigt es auch wie man ASP.NET User Controls
+dynamisch l&auml;dt, das hei&szlig;t, diese erst zu laden, wenn man wei&szlig;, welche man laden m&ouml;chte.
+Zun&auml;chst aber zu den einfachen Beispielen.
+</p>
+
+<h3>Hello World einmal anders</h3>
+
+<p>
+Programmierer werden diese Phrase sicher kennen bzw. sich dabei langweilen. Es gibt viele M&ouml;glichkeiten 
+jemanden mit diesem schon leicht verstaubten Gru&szlig; zu begl&uuml;cken -  diesmal steckt aber ASP.NET dahinter!
+In dem nun folgenden Beispiel - welches Sie unter <i>HelloWorld.aspx</i> bzw. die User Control
+<i>hello.ascx</i> im Download finden - wird der Ausdruck einfach in der User Control mit einem 
+<i>Response.Write</i> ausgegeben.
+</p>
+
+<p>
+Beginnen wir mit der ASP.NET <i>HelloWorld.aspx</i> Datei:
+</p>
+
+
+<p>
+<pre style="background='silver';">
+&lt;%@ Register TagPrefix="Say" TagName="HelloWorld" Src="hello.ascx" %&gt;
+
+&lt;Say:HelloWorld runat="server" /&gt;
+</pre>
+</p>
+
+<p>
+Wie Sie sehen nichts Neues. Sie registrieren einfach die gew&uuml;nschte User Control, in diesem Fall
+die <i>hello.ascx</i>, mit Hilfe der <i>Register</i> Direktive. Danach m&uuml;ssen Sie sie nur noch an der
+gew&uuml;nschten Stelle im Sourcecode aufrufen. <i>TagPrefix</i> und <i>TagName</i> geben hier die n&ouml;tige
+Identifikation an - diese wird wie bei den Web Form Controls gehandhabt.
+</p>
+
+<p>
+Der Code der User Control sieht folgenderma&szlig;en aus:
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;% @Control Language="C#" %&gt;
+&lt;%
+  Response.Write("Hello World!");
+%&gt;
+</pre>
+</p>
+
+<p>
+Damit die Runtime wei&szlig; was hier geschehen soll, ist die <i>Control</i> Directive anzugeben. Damit ist
+eindeutig festgelegt, da&szlig; sich Code in der User Control befindet, der ausgef&uuml;hrt werden soll.
+Das Ergebnis kennen wir ja alle.
+</p>
+
+<p>
+Solange es bei so einfachen, event-losen Statements bleibt, ist diese Methode haltbar. Was aber wenn Sie Events triggern
+wollen, bzw. der Client auf Ihrer ASP.NET Webseite interagieren soll? Auch das ist kein Problem! Sie verwenden
+einfach den <i>&lt;script&gt;</i>-Block um dies zu bewerkstelligen. Hier k&ouml;nnen Sie dann nach Herzenslust
+Ihren C# Code eintragen, d.h Methoden anf&uuml;hren, somit Events triggern, komplexere Datenbankoperationen durchf&uuml;hren,
+etc.
+<p>
+
+<p>
+Das n&auml;chste Beispiel hat die selbe Aufgabenstellung, allerdings mit Verwendung des serverseitigen &lt;script&gt;-Blockes.
+Der Sourcecode der Datei <i>Helloworld2.aspx</i> enth&auml;lt keine Ver&auml;nderungen gegen&uuml;ber dem ersten Beispiel.
+</p>
+
+<p>
+Sehen wir uns daher gleich die User Control <i>usrcontr.ascx</i> an:
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;% @Control Language="C#" %&gt;
+&lt;script language="C#" runat="server"&gt;
+
+ void btnSubmit_Click(Object Src, EventArgs E)
+ {
+    txtHW.Text = "Hello World";
+ }
+&lt;/script&gt;
+
+&lt;form runat=server&gt;
+&lt;asp:Button id="btnSubmit" text="Click" 
+    onclick="btnSubmit_Click" runat="server"/&gt;
+&lt;asp:Label id="txtHW" runat="server" /&gt;
+&lt;/form&gt;
+</pre>
+</p>
+
+<p>
+In der Methode  <i>btnSubmit_Click</i> weisen wir der <i>Label</i> Web Control mit der ID "txtHW"
+den String "Hello World" zu. Wie schon erw&auml;hnt, mu&szlig; sich diese Methode innerhalb des &lt;script&gt;-Blockes
+befinden damit sie ausgef&uuml;hrt werden kann. Damit wir einen Event triggern k&ouml;nnen, verwende ich eine 
+ASP.NET Button Web Control. Diese mu&szlig; sich, um einen <i>Postback</i> durchf&uuml;hren zu k&ouml;nnen innerhalb des
+<i>&lt;form&gt;</i>-Blocks befinden. Wenn wir also einen Postback durchf&uuml;hren indem wir die Button Control bet&auml;tigen
+wird in der <i>_Click Event</i> Methode der Label Web Control der angegebene String zugewiesen.
+</p>
+
+<p>
+Damit h&auml;tten wir die beiden Grundf&auml;lle der User Control Code Execution bzw. die Event-Triggerung in 
+User Controls besprochen. Nun folgt wie versprochen das etwas anspruchsvollere Beispiel.
+</p>
+
+<h3>SQL Datenbank Abfrage mit User Controls</h3>
+
+<p>
+Wie die &Uuml;berschrift schon verr&auml;t, werden wir Informationen aus einer SQL Datenbank
+gewinnen. Mit Hilfe von ADO.NET werden wir die Verbindung aufbauen, ein einfaches SQL-Statement
+ausf&uuml;hren, die erhaltenen Daten in ein <i>DataSet</i> Objekt schreiben und dieses einem <i>DataGrid</i>
+mit Hilfe von <i>DataBind</i> zuweisen um die Daten im Browser anzuzeigen.
+</p>
+
+<p>
+Damit es nicht allzu einfach wird kann man auf der Startseite eine Tabelle der SQL-Datenbank ausw&auml;hlen.
+Der Auswahl Event (AutoPostBack einer DropDownList Web Control) l&auml;dt dann erst zu diesem Zeitpunkt
+die richtige User Control, wo der Client dann eine Auswahl der Datenspalten treffen kann, die er 
+angezeigt haben m&ouml;chte.
+</p>
+
+<p>
+Dieses Beispiel umfa&szlig;t die im Download erh&auml;ltlichen Dateien <i>DBQuery.aspx</i> sowie die 
+beiden User Controls <i>ProdChkBox.ascx</i> und <i>SupplChkBox.ascx</i>. Als Datenbank  habe ich der
+Einfachheit halber wieder die <i>Northwind</i> Datenbank verwendet, die bei jeder Standard-Installation 
+des Microsoft SQL Servers 7.0 oder h&ouml;her mitinstalliert wird. 
+</p>
+
+<p>
+Das Beispiel verwendet die folgende Zugangsberechtigung (Username / Password): <i>uid=sa; pwd=;</i>.
+Wenn die SQL Server Datenbank nicht auf dem lokalen Computer (dem Webserver) installiert ist, so m&uuml;ssen 
+Sie zus&auml;tzlich den <i>Data Source</i> Parameter im <i>Connection-String</i> auf den Namen 
+(oder die IP Adresse) des Datenbankservers &auml;ndern. 
+</p>
+
+<p>
+Da der gesamte Sourcecode etwas zu umfangreich f&uuml;r den Artikel ist, m&ouml;chte ich nur den Artikel-relevanten
+Sourcecode besprechen. Beginnen wir mit der Hauptseite <i>DBQuery.aspx</i>:
+</p>
+
+<p>
+<pre style="background='silver';">
+void TableSelChange(Object Source, EventArgs E)
+{
+    if (TableSel.Controls.Count &gt; 0) return;
+
+    string strTableSel;
+    strTableSel = drpdTableSel.SelectedItem.Text;
+      
+    switch(strTableSel)
+    {
+    case "Produkte": 
+       TableSel.Controls.Add( Page.LoadControl("ProdChkBox.ascx") );
+       break;
+    
+    case "Lieferanten": 
+       TableSel.Controls.Add( Page.LoadControl("SupplChkBox.ascx") );
+       break;
+    }
+} 
+</pre>
+</p>
+
+<p>
+Nachdem eine Entscheidung &uuml;ber die gew&uuml;nschte Tabelle der Datenbank in der 
+DropDownList Web Control <i>drpdTableSel</i> getroffen wurde, wird das Ergebnis durch einen
+<i>AutoPostBack</i> mit Hilfe eines <i>switch</i> Statements ausgewertet. Je nach ausgew&auml;hlter Option wird
+erst jetzt die erforderliche User Control geladen. Dies geschieht durch die <i>Page.LoadControl</i> 
+Methode.
+</p>
+
+<p>
+Nehmen wir an, wir haben in der DropDownList Control "Produkte" ausgew&auml;hlt. Dadurch wird die
+User Control <i>ProdChkBox.ascx</i> geladen.
+</p>
+
+<p>
+Wir erhalten nun die M&ouml;glichkeit uns bis zu drei Datenspalten anzeigen zu lassen, indem wir 
+in den dazugeh&ouml;rigen <i>CheckBox</i> Web Form Controls ein H&auml;kchen setzen. Wenn wir dann auf den Button 
+"Abschicken" klicken erhalten wir die Daten in den selektierten Datenspalten. Dadurch, da&szlig; das SQL-Statement
+einfach gehalten ist, erhalten wir alle in der ausgew&auml;hlten Tabelle enthaltenen Datens&auml;tze.
+</p>
+
+<p>
+Das Ergebnis sieht dann im Browser Fenster (mit bereits formatierter <i>DataGrid</i> Web Control)
+folgenderma&szlig;en aus:
+</p>
+
+<p><IMG SRC="Bilder/200011/20001114_Produkte.png" width="420" height="450" alt="" border="0"></p>
+
+<p>
+Wir k&ouml;nnen nat&uuml;rlich auch eine andere Auswahl treffen und wiederum auf "Abschicken" klicken um
+eine neue Anordnung zu treffen.
+</p>
+
+<p>
+F&uuml;r den Fall, da&szlig; wir auf der Startseite "Lieferanten" ausgew&auml;hlt haben, sieht das Ergebnis so aus:
+</p>
+
+<p><IMG SRC="Bilder/200011/20001114_Lieferanten.png" width="539" height="451" alt="" border="0"></p>
+
+<p>
+Sehen wir uns aber nun den relavanten Sourcecode an:
+</p>
+
+<p>
+<pre style="background='silver';">
+...
+void btnSubmit_Click (Object Sender, EventArgs E)
+{
+     
+     char[] chTrim ={','};
+     string strSQLCol;
+     string strConn ="server=(local)\\NetSDK;database=northwind;Trusted_Connection=yes";
+     string strSQL="";
+
+     StringBuilder strColumns = new StringBuilder();
+   
+     for (int i=0; i &lt; ColumnChkBox.Items.Count; i++)
+     {
+       if (true == ColumnChkBox.Items[i].Selected)
+       {
+         strColumns.Append(ColumnChkBox.Items[i].Text);
+         strColumns.Append(",");       
+         
+       }   
+     }
+   
+    strSQLCol = strColumns.ToString();
+    strSQLCol = strSQLCol.TrimEnd(chTrim);
+    strSQL = "SELECT " + strSQLCol + " FROM Products";
+	
+	...
+</pre>
+</p>
+
+<p>
+Das SQL-Statement baue ich mir mit der <i>StringBuilder</i> Klasse zusammen, indem ich die in der 
+<i>CheckBoxList</i> Web Form Control mit der ID "ColumnChkBox" angehakten Listitems mit <i>Append</i>
+anf&uuml;ge. Zus&auml;tzlich mu&szlig; ich sicherstellen, da&szlig; die einzelnen Datenspalten durch einen Beistrich getrennt werden.
+Danach das StringBuilder Objekt noch auf den Datentyp String umcasten, und den letzten &uuml;berfl&uuml;ssigen 
+Beistrich wieder mit der <i>Trim</i> Funktion entfernen.
+</p>
+
+<p>
+Schlie&szlig;lich baue ich mir das SQL-Statment zusammen indem ich einfach die fehlenden Statments an den bestehenden String
+anf&uuml;ge. Dieses Beispiel ist sicher nicht die optimierteste (bei jedem PostBack wird eine Connection und ein
+neues DataSet erstellt) und sicherste (KEINE Fehlerbehandlung) Version, aber zum Testen der User Controls ganz gut geeignet.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Dieser Artikel zeigte Ihnen wie man in ASP.NET <i>User Controls</i> Sourcecode ausf&uuml;hren
+kann. Zus&auml;tzlich wurde gezeigt, da&szlig; es ebenfalls m&ouml;glich ist in User Controls Events zu triggern und
+PostBacks durchzuf&uuml;hren.
+</p>
+
+<p>
+Das abschlie&szlig;ende Beispiel hat gezeigt, wie man basierend auf einer Client Auswahl einer 
+ASP.NET Web Form Control User Controls erst bei Bedarf l&auml;dt.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001114.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20000913.htm">Einf&uuml;hrung in ASP.NET Validation Controls (Teil 2)</a><br>
+<a href="20000808.htm">Einf&uuml;hrung in ASP.NET Web Forms</a><br>
+<a href="20031010.htm">Einstieg in Visual Studio.NET - die erste Webanwendung mit Visual C#</a><br>
+<a href="20020321.htm">Flash Movies einbetten einfach gemacht</a><br>
+<a href="20020801.htm">MS IE WebControls 101</a><br>
+<a href="20011009.htm">Page Fragment Caching 101</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20001114" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="ASP.NET User Controls im Einsatz"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20001114.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Holm"><input type="hidden" name="AuthorEmail" value="office@holmcs.com"><input type="hidden" name="Artikel" value="20001114"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20001114.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,286 @@
+<HTML>
+<HEAD>
+<TITLE>Auslesen von Emails aus einem POP3 Account</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Obwohl es auf den ersten Anschein komisch anmutet Emails via ASP auszulesen, so
+kann es f&uuml;r gewisse automatisierte Vorg&auml;nge doch sehr n&uuml;tzlich werden. Dieser Artikel zeigt, wie es geht.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,POP3,email,Emailserver,SMTP,Postoffice,Mail,Attachment,Auslesen,Komponente,ServerObjects">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Auslesen von Emails aus einem POP3 Account</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/Komponenten.htm">Komponenten</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000810"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><P>
+Obwohl es auf den ersten Anschein komisch anmutet Emails via ASP auszulesen, so
+kann es f&uuml;r gewisse automatisierte Vorg&auml;nge doch sehr n&uuml;tzlich werden (als Beispiel
+sei hier ein Web-basiertes Support-System genannt). Allerdings - um Emails auslesen zu k&ouml;nnen,
+braucht man eine Komponente, die das von den meisten Emailservern gesprochene POP3
+(PostOffice Protocol) Protokoll versteht. Mit ASP alleine geht es nicht.
+</P>
+<P>
+Dieser Artikel soll eine Einf&uuml;hrung in die Verwendung von POP3-Komponenten 
+geben, exemplarisch gezeigt an der AspPOP3 Komponente der Firma 
+<A HREF="http://www.serverobjects.com/" target="_blank">ServerObjects</A>. Diese Komponente 
+erlaubt das Auslesen von Emails (inklusive Attachments) von einem beliebigen
+POP3-Server &uuml;ber das Internet.
+</P>
+
+
+<H2>Installation der AspPOP3 Komponente</H2>
+<P>
+Um die Komponente von ASP (oder einem anderen Programm, das ActiveX 
+Komponenten unterst&uuml;tzt) nutzen zu k&ouml;nnen, mu&szlig; die Komponente mit Hilfe des 
+Regsvr32 Tools registriert werden.
+</P>
+<P>
+Dazu verschieben Sie die DLL <I>pop3svg.dll</I> in ein Unterverzeichnis Ihrer Wahl. 
+Danach gehen Sie in die Eingabeaufforderung und &auml;ndern das augenblickliche 
+Verzeichnis in das Unterverzeichnis, das die DLL enth&auml;lt. Rufen Sie nun Regsvr32 
+durch folgenden Befehl auf:
+<PRE style="BACKGROUND: silver">
+regsvr32 pop3svg.dll 
+</PRE>	
+</p>
+<P>
+Nun sollte die Komponente einsatzbereit sein.
+</P>
+<P>
+Wenn Sie auf einem fremden Server hosten, so mu&szlig; der Webmaster f&uuml;r Sie diese 
+Schritte erledigen.
+</P>
+
+
+<H2>Einfaches Auslesen einer Email</h2>
+<P>
+Zuerst will ich Ihnen vorf&uuml;hren, wie einfach es prinzipiell ist, eine Email 
+auszulesen. Dazu m&uuml;ssen Sie nur die folgenden Schritte ausf&uuml;hren:
+<UL>
+	<LI>Erstellen des AspPOP3 Objektes</LI>
+	<LI>Setzen der n&ouml;tigen Eigenschaften des Objektes</LI>
+	<LI>Aufruf der <I>Retrieve</I> Methode um die Email(s) zu lesen</LI>
+</UL>
+</P>
+<P>
+Das folgende kleine Beispiel liest eine Email aus und zeigt die einzelnen Teile 
+der Nachricht an:
+<PRE style="BACKGROUND: silver">
+&lt;%
+Set Mailer = Server.CreateObject("POP3svg.Mailer")
+Mailer.RemoteHost = "mail.domain.com"
+Mailer.UserName   = "Benutzername"
+Mailer.Password   = "Passwort"
+
+
+' Verbindung zum Server oeffnen
+Mailer.OpenPop3
+
+' Die Anzahl der Nachrichten pruefen:
+If Mailer.MessageCount &gt; 0 Then
+   ' erste Email auslesen:
+   Mailer.Retrieve 1
+
+   'Die einzelnen Teile der Nachricht auslesen:
+   strM = "Date: " &amp; Mailer.Date &amp; vbcrlf &amp; _
+   "Subject: " &amp; Mailer.Subject &amp; vbcrlf &amp; _
+   "From: " &amp; Mailer.FromName &amp; _
+   Mailer.FromAddress &amp; vbcrlf &amp; vbcrlf &amp; _
+   Mailer.BodyText &amp; vbcrlf
+End If
+
+strM = Server.HTMLEncode(strM)
+Response.Write(Replace(strM,vbcrlf,"&lt;BR&gt;" &amp; vbcrlf))
+%&gt;
+</PRE>	
+</p>
+<P>
+Die Nachricht, die die Methode <I>Retrieve</I> am Server ausliest,
+wird vom Parameter der Methode bestimmt. <I>Retrieve 1</I> liest die erste 
+Nachricht am Mailserver aus. Mit der Eigenschaft <I>MessageCount</I> kann
+man bestimmen, wieviele Nachrichten gesamt am Emailserver liegen - und somit
+den h&ouml;chsten Index ermitteln, der f&uuml;r die <i>Retrieve</i> Methode noch zul&auml;ssig ist.
+</P>
+<P>
+Um einen &Uuml;berblick &uuml;ber alle Nachrichten im Account zu geben, ist es 
+sinnvoll, nur Datum, Absender und Betreff (Subject) auszulesen und anzuzeigen. 
+Danach l&auml;&szlig;t man den Benutzer w&auml;hlen, welche Email er vollst&auml;ndig auslesen will. 
+Das folgende Script zeigt, wie man diesen Vorgang in ASP implementieren 
+kann:
+<PRE style="BACKGROUND: silver">
+&lt;%
+Set Mailer = Server.CreateObject("POP3svg.Mailer")
+Mailer.RemoteHost = "mail.domain.com"
+Mailer.UserName   = "Benutzername"
+Mailer.Password   = "Passwort"
+
+' Verbindung zum Server oeffnen
+Mailer.OpenPop3
+
+self = Request.ServerVariables("SCRIPT_NAME")
+id = Request.QueryString("Id")
+
+If id &lt;&gt; 0 Then
+   ' Spezifische Nachricht anzeigen
+   Mailer.Retrieve id
+   Response.Write("Datum: ")
+   Response.Write(Server.HTMLEncode(Mailer.Date) &amp; "&lt;BR&gt;")
+   Response.Write("Absender: ")
+   strAbsender = Mailer.FromAddress &amp; " " &amp;Mailer.FromName
+   Response.Write(Server.HTMLEncode(strAbsender) &amp; "&lt;BR&gt;")
+   Response.Write("CC: ")
+   strCC = Mailer.CC
+   Response.Write(Server.HTMLEncode(strCC) &amp; "&lt;BR&gt;")
+   ' Text:
+   Response.Write("&lt;BR&gt;&lt;BR&gt;")
+   strText = Server.HTMLEncode(Mailer.BodyText)
+   strText = Replace(strText,vbcrlf,"&lt;BR&gt;" &amp; vbcrlf)
+   Response.Write(strText)
+
+Else
+   ' Email Ueberblick anzeigen
+   Response.Write("&lt;TABLE&gt;" &amp; vbcrlf)
+   Response.Write("  &lt;TR&gt;" &amp; vbcrlf)
+   Response.Write("    &lt;TH&gt;" &amp; vbcrlf)
+   Response.Write("Datum")
+   Response.Write("    &lt;/TH&gt;" &amp; vbcrlf)
+   Response.Write("    &lt;TH&gt;" &amp; vbcrlf)
+   Response.Write("Absender")
+   Response.Write("    &lt;/TH&gt;" &amp; vbcrlf)
+   Response.Write("    &lt;TH&gt;" &amp; vbcrlf)
+   Response.Write("Betreff")
+   Response.Write("    &lt;/TH&gt;" &amp; vbcrlf)
+   Response.Write("    &lt;TH&gt;" &amp; vbcrlf)
+   Response.Write(" ")
+   Response.Write("    &lt;/TH&gt;" &amp; vbcrlf)
+   Response.Write("  &lt;/TR&gt;" &amp; vbcrlf)
+
+   For intI = 1 to Mailer.MessageCount 
+      Mailer.Retrieve intI
+      Response.Write("  &lt;TR&gt;" &amp; vbcrlf)
+      Response.Write("    &lt;TD&gt;" &amp; vbcrlf)
+      Response.Write(Server.HTMLEncode(Mailer.Date))
+      Response.Write("    &lt;/TD&gt;" &amp; vbcrlf)
+      Response.Write("    &lt;TD&gt;" &amp; vbcrlf)
+      Response.Write(Server.HTMLEncode(Mailer.FromAddress))
+      Response.Write("    &lt;/TD&gt;" &amp; vbcrlf)
+      Response.Write("    &lt;TD&gt;" &amp; vbcrlf)
+      Response.Write(Server.HTMLEncode(Mailer.Subject))
+      Response.Write("    &lt;/TD&gt;" &amp; vbcrlf)
+      Response.Write("    &lt;TD&gt;" &amp; vbcrlf)
+      Response.Write("&lt;A HREF=""" &amp; self &amp; "?id=" &amp; intI)
+      Response.Write("""&gt;Nachricht lesen&lt;/A&gt;" &amp; vbcrlf)
+      Response.Write("    &lt;/TD&gt;" &amp; vbcrlf)
+      Response.Write("  &lt;/TR&gt;" &amp; vbcrlf)
+   Next
+   
+   Response.Write("&lt;/TABLE&gt;")
+End If
+
+
+Mailer.ClosePop3
+Set Mailer = Nothing
+%&gt;
+</PRE>	
+</p>
+<P>
+Dieses ASP Script zeigt einen &Uuml;berblick &uuml;ber alle Emails, indem es Datum, Absender und 
+Betreff (Subject) jeder Email anzeigt (Else-Zweig des If-Konstrukts). 
+Will man eine spezifische Nachricht lesen, so klickt man im &Uuml;berblick auf 
+"Nachricht lesen" neben den Headern der Nachricht. Dadurch ruft man das Script 
+noch einmal auf, wobei die aufgerufene URL im QueryString die Nachrichten ID 
+enth&auml;lt.
+</P>
+<P>
+Bei jedem Aufruf des Scripts wird nun gepr&uuml;ft, ob sich eine Nachrichten-ID im 
+Querystring befindet. Dies geschieht durch Auslesen von 
+<I>Request.QueryString("id")</I> und Speichern des Wertes in der Variablen id. 
+Die entsprechende Nachricht wird dann durch <I>Retrieve id</I> vom POP3
+Server ausgelesen und der vollst&auml;ndige Inhalt angezeigt.
+</P>
+<P>
+Eine kleine Mahnung zur Vorsicht: Wenn sich sehr viele Emails auf dem Email-
+Account befinden, so kann das Auslesen aller Emails sehr lange dauern. Besser 
+ist es, nur eine bestimmte Anzahl von Emails auszulesen und dem Benutzer zu 
+pr&auml;sentieren. Dies gilt auch, wenn man eigentlich nur den Absender und den 
+Betreff der Emails anzeigen will.
+</P>
+
+
+<H2>Schlu&szlig;bemerkung</H2>
+<P>
+Neben dem Auslesen des Emailtextes und anderer einfacher Emaileigenschaften bietet die 
+AspPOP3 Komponente noch andere M&ouml;glichkeiten. So kann man Attachments auslesen und am 
+Webserver speichern, oder Nachrichten vom POP3-Server l&ouml;schen. Ein vollst&auml;ndiges
+Online-Emailmanagement in ASP ist damit in greifbarer N&auml;he.
+</P>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000810.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000810.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20021028.htm">ACT MetaMailer - Mails verschicken leicht gemacht</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021028.htm</span><br>
+<a href="../artikel/20010625.htm">Html Emails mit Dundas Mailer verschicken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010625.htm</span><br>
+<a href="../artikel/20000912.htm">Mit PGP verschl&uuml;sselte e-Mails senden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000912.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eserverobjects%2Ecom%2Fproducts%2Ehtm%23asppop3">AspPOP3 Komponente</a><br>
+<SPAN class="content">http://www.serverobjects.com/products.htm#asppop3</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

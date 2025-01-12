@@ -1,0 +1,225 @@
+<HTML>
+<HEAD>
+<TITLE>Den Webserver umsiedeln (IIS 4 oder 5)</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel besch&auml;ftigt sich mit dem Problem, das man hat, wenn man daran denkt einen Webserver mit mehreren konfigurierten Websites auf eine andere (neue) Servermaschine umzusiedeln.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,MetaEdit,Metabase,Shares,Freigaben,IIS Export,IISExport,kopieren,migrieren,Serverinstallation,SSL,Settings,Einstellungen">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Den Webserver umsiedeln (IIS 4 oder 5)</H1>
+<p>
+Geschrieben von: <a href="../autoren/herberthahn.htm">Herbert Hahn</a><br>
+Kategorie: <a href="../kategorien/Server.htm">Server</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020729"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Dieser Artikel besch&auml;ftigt sich mit dem Problem, das man hat, wenn man daran denkt einen Webserver 
+mit mehreren konfigurierten Websites auf eine andere (neue) Servermaschine umzusiedeln. Ohne 
+Handarbeit geht es n&auml;mlich mit den mitgelieferten Bordmitteln nicht. Wenn dann noch dazukommt 
+da&szlig; sich der Pfad zur Site &auml;ndert, hat man nat&uuml;rlich gleich eine Menge an zus&auml;tzlich m&ouml;glichen 
+Fehlerquellen. Praktisch w&auml;re es also, wenn man die ganze Konfiguration einfach kopieren k&ouml;nnte.
+</p>
+<p>
+Praktischerweise gibt es ein Tool, das den Anspr&uuml;chen gerecht werden kann: 
+<a href="http://www.adsonline.co.uk/iisexport" target="_blank">IIS Export v3.0</a> von Adsonline. 
+Dieses Tool ist ShareWare, kann also kostenlos getestet werden ob es entspricht. Die Registrierung 
+zahlt sich auf alle F&auml;lle aus wenn man mehrere Websites kopieren will.
+</p>
+
+<h2>Das Programm im &Uuml;berblick</h2>
+<p>
+Nach dem Herunterladen von IIS Export einfach das Installationsprogramm aufrufen. Der Rechner auf 
+dem installiert wird mu&szlig; nicht unbedingt der Webserver sein. Des weiteren gilt - und wird auch 
+w&auml;hrend der Installation angemerkt -  da&szlig; man die Metabase des Webservers sichern sollte. Dazu 
+empfehle ich <a href="http://support.microsoft.com../default.htmx?scid=kb;EN-US;q232068" target="_blank">MetaEdit</a>. 
+</p>
+<p>
+Nach dieser obligatorischen Sicherung geht es ans Werk. Hinweis: In der ShareWare Version k&ouml;nnen Sie jeweils 
+nur eine Website umkopieren. Das Umkopieren kann auf zwei Wegen geschehen. Der erste f&uuml;hrt &uuml;ber die lokale 
+Datenbank des IIS Export Tools. Hier werden alle Informationen in einer lokalen Datenbank zwischengespeichert. 
+Das hat jedoch den Nachteil da&szlig; nur die Konfiguration und nicht die Dateien umkopiert werden. Praktisch f&uuml;r 
+das Duplizieren von Websitekonfigurationen, minder praktisch f&uuml;r das Migrieren von einem Server auf 
+einen neuen.
+</p>
+<p>
+Der zweite Weg ist da&szlig; die Website direkt umkopiert wird. Wenn man direkt kopiert, dann hat man zur Auswahl ob 
+man die Dateien und auch die Dateiberechtigungen (Permissions) mitkopieren m&ouml;chte. Dabei ist zu beachten, 
+da&szlig; man beim IIS Server links oben nicht <i>localhost</i> angibt, sondern die IP Adresse (oder den Namen) 
+des Servers. 
+</p>
+
+<IMG SRC="/artikel/Bilder/200207/20020729_1.png" width="269" height="145" alt="" border="0">
+
+<p>
+Der Grund daf&uuml;r ist, da&szlig; das Programm &uuml;ber Shares auf die Dateien des Webs zugreift. Der Pfad 
+<b>\\localhost\D$\www</b> funktioniert einfach nicht, au&szlig;er wenn der Rechnername zuf&auml;lligerweise localhost 
+hei&szlig;t (eher auszuschlie&szlig;en). Klarerweise mu&szlig; man die administrativen Freigaben aktiviert haben 
+(C$, D$, E$ usw.). Als Anmerkung sei noch gesagt, da&szlig; das Thema Sicherheit in diesem Zusammenhang 
+eine wichtige Rolle spielt. Sollten Sie n&auml;mlich auf die Idee kommen und die Dateien mit Berechtigungen von 
+einer Dom&auml;ne in eine andere Dom&auml;ne kopieren, m&uuml;ssen Sie vorher auch die einzelnen User umkopieren. 
+</p>
+<p>
+Die zweite Einstellung in Sachen Berechtigungen kopieren ist f&uuml;r die Sicherheit sehr relevant. Wenn man die 
+Auswahl <i>Fast File Permission</i> setzt, dann werden die Dateiberechtigungen der &uuml;bergeordneten Ordner 
+mit&uuml;bernommen. Wenn man innerhalb einer Website Dateien oder Verzeichnisse mittels Berechtigungen gesch&uuml;tzt 
+hat bekommt dann pl&ouml;tzlich unter Umst&auml;nden wieder jeder Leseberechtigung.
+</p>
+<p>
+Auch ist wichtig die Servervarianten (IIS 4 oder 5) richtig einzustellen. Wenn Sie von IIS 4 auf IIS 5 migrieren 
+sollten sie <b>beide</b> Server als IIS 5 angeben, da der IIS 5 um einen Anwendungssschutz mehr hat (niedrige, mittlere 
+und hohe Isolation). Mit dieser Einstellung haben Sie den besten Erfolg, da sonst die 
+Anwendungsschutzeinstellungen nicht korrekt transferiert werden. F&uuml;r den Fall da&szlig; am Zielserver diese 
+Website bereits existiert, kann man angeben ob ein Web neu angelegt wird oder ob das existierende Web 
+&uuml;berschrieben werden soll. Weiters hat man nun noch die M&ouml;glichkeit bestimmte Dinge w&auml;hrend des Kopierens zu 
+&auml;ndern. 
+</p>
+
+<ol>
+	<li>Der Speicherort: Das Web kann sich am Zielserver in einem anderen Ordner befinden.<br>
+	<IMG SRC="/artikel/Bilder/200207/20020729_2.png" width="451" height="180" alt="" border="0"></li>
+	<li>Die IP Adresse: Wenn in der Konfiguration die IP Adressen explizit eingetragen sind. Weiters 
+	lassen sich hier die Hostheader auch &auml;ndern - das ist ein echtes Highlight, da man so eine komplette 
+	Kopie bekommen kann.<br>
+	<IMG SRC="/artikel/Bilder/200207/20020729_3.png" width="449" height="169" alt="" border="0"></li>
+	<li>Die SSL IP Adresse (Hinweis: die SSL Unterst&uuml;tzung ist nur in der gekauften Version vorhanden)</li>
+	<li>Find &amp; Replace: Dies ist der interessanteste Punkt. Das Ersetzen von Textteilen im Web. Man 
+	denke da an Pfadangaben im Sourcecode des Webs: diese k&ouml;nnen ganz einfach ersetzt werden. Aber Achtung: 
+	die Angaben, die man hier macht, gelten f&uuml;r alle Sites die man kopiert!<br>
+	<IMG SRC="/artikel/Bilder/200207/20020729_4.png" width="447" height="168" alt="" border="0"></li>
+</ol>
+
+<p>
+Wenn wir diese Einstellungen gemacht haben, dann geht es ans kopieren. Ist das Web nicht allzu gro&szlig;, dann 
+ist innerhalb von wenigen Sekunden das gesamte Web umgezogen. 
+</p>
+
+<IMG SRC="/artikel/Bilder/200207/20020729_5.png" width="736" height="500" alt="" border="0">
+
+<p>
+Je nach dem wie man diesen Umzug geplant hat, kann man nun sofort testen ob es funktioniert hat. Sollen der 
+Quell- und der Zielserver erhalten bleiben, so mu&szlig; man nat&uuml;rlich die entsprechenden &Auml;nderungen im zust&auml;ndigen 
+DNS-Server vornehmen. Andernfalls mu&szlig; man sowieso vorher beziehungsweise nachher die IP-Adressen der Server 
+&auml;ndern. Ein weiterer wichtiger Punkt ist der, da&szlig; man nun das neue Web auf dem neuen Server noch starten mu&szlig;.
+</p>
+
+<h2>IIS Export als Backuptool</h2>
+<p>
+Dieses Tool l&auml;&szlig;t sich auch hervorragend als Backuptool verwenden. Man kann dieses Tool mit der Option 
+<i>/runbackup</i> und <i>/d</i> und Jobnamen (den Job kann man generieren und unter einem Namen abspeichern) aufrufen. Damit 
+hat man die M&ouml;glichkeit den IIS zu sichern. 
+</p>
+<p>
+Mittels AT Job zum Beispiel: 
+</p>
+
+<pre style="background='silver';">
+AT \\webserver 00:00 /every:F c:\progra~1\Adsonl~1\IISExp~1\IISExport.exe RUNBACKUP
+</pre>
+
+<p>
+Damit startet das Programm im Backupmodus und den Default Backup Job "backup.job" starten.
+</p>
+
+<h2>Was man mit diesem Tool nicht kann</h2>
+<ol>
+	<li>ActiveX Komponenten m&uuml;ssen von Hand kopiert / installiert werden.</li>
+	<li>Anwendungseinstellungen werden nicht mitkopiert. Es sind die nicht mitkopierten Werte, die 
+	maschinenbezogen sind, extra unter <i>Properties to Exclude</i> angef&uuml;hrt. Das sollte man vielleicht 
+	vorher schon bedenken. Wie etwa die Debugeinstellungen, Isolation der Anwendung usw. <br>
+	<IMG SRC="/artikel/Bilder/200207/20020729_6.png" width="265" height="128" alt="" border="0"></li>
+	<li>Einstellungen f&uuml;r Frontpage Extentions werden nicht exportiert. Daher auch kein Zugriff mit 
+	Frontpage solange Sie diese nicht manuell konfigurieren.</li>
+	<li>Die Einstellungen der Verzeichnissicherheit (bei ausgeschaltetem anonymen Zugriff) k&ouml;nnten nicht 
+	funktionieren weil die Standardberechtigungen f&uuml;r den Webserver nicht reichen. Sie m&uuml;ssen dazu bei 
+	Standardauthentifizierung (Basic Authentication) die Standarddom&auml;ne richtig angeben aus der die User 
+	kommen. Dazu siehe MS knowledge base article Q168908 and Q184319. Ebenso kann das beim Ftp-Server 
+	passieren (User hat keinen Zugriff mehr) und hat die gleiche Ursache.</li>
+	<li>Die Einstellungen im FTP-Server, vor allem die IP-Restrictions Einstellungen, k&ouml;nnen nicht exportiert 
+	werden. </li>
+</ol>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Was das eigentlich geniale an diesem Tool ist, ist die Tatsache da&szlig; man bei bestehenden Webservern die sich 
+nicht &auml;ndern sollen, einfach ein Web auf einen anderen Server, sozusagen mittels ein paar Handgriffen, 
+verschieben kann. 
+</p>
+<p>
+Das Tool ist nicht kostenlos, aber wenn bedenkt wie viel Arbeit man sich erspart und wie viele Fehler man 
+vermeiden kann, dann ist der Kaufpreis nicht der Rede wert.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000801.htm">Eine IP Adresse f&uuml;r mehrere Websites</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000801.htm</span><br>
+<a href="../artikel/20010504.htm">Script-basierte IIS Administration</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010504.htm</span><br>
+<a href="../artikel/20010419.htm">Site&uuml;berwachung mit Scheduled Tasks</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010419.htm</span><br>
+<a href="../artikel/20030911.htm">Virtuelle Verzeichnisse umbenennen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20030911.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eadsonline%2Eco%2Euk%2Fiisexport">IIS Export</a><br>
+<SPAN class="content">http://www.adsonline.co.uk/iisexport</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsupport%2Emicrosoft%2Ecom%2Fdefault%2Easpx%3Fscid%3Dkb%3BEN%2DUS%3Bq232068">MetaEdit</a><br>
+<SPAN class="content">http://support.microsoft.com../default.htmx?scid=kb;EN-US;q232068</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsupport%2Emicrosoft%2Ecom%2Fdefault%2Easpx%3Fscid%3Dkb%3BEN%2DUS%3Bq168908">Q168908: How to Authenticate a User Against All Trusting Domains</a><br>
+<SPAN class="content">http://support.microsoft.com../default.htmx?scid=kb;EN-US;q168908</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsupport%2Emicrosoft%2Ecom%2Fdefault%2Easpx%3Fscid%3Dkb%3BEN%2DUS%3Bq184319">Q184319: FTP Service's DefaultLogonDomain Not Available in MMC</a><br>
+<SPAN class="content">http://support.microsoft.com../default.htmx?scid=kb;EN-US;q184319</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

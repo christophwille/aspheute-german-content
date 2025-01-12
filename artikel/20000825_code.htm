@@ -1,0 +1,56 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML>
+<HEAD>
+<TITLE> queryregistries.aspx </TITLE>
+<STYLE>
+BODY {
+  font-family: "sans-serif";
+  bgcolor: "#FFFFFF";
+}
+
+PRE {
+  font-family: "monospaced";
+  }
+
+#statement {
+  color: "#0000FF"; /* Color for Script Statements (things like Call, Dim, If...Then...Else, etc) */
+  }
+
+#function {
+  color: "#FF0000"; /* Color for Script Functions (things like Instr, Abs, etc) */
+  }
+
+#script {
+  color: "#800000"; /* Color for anything that is not in one of the above script categories, but is
+                      contained inside script delimeters */
+  }
+
+#scripton {
+  color: "#FF00FF"; /* Color for anything that is not in one of the above script categories, but is
+                      contained inside script delimeters, inside quotation marks */
+  }
+
+#html {
+  color: "#0000FF"; /* Color for any non-script html output */
+  }
+
+#base {
+  color: "#000000"; /* Color for any non-script, non-html output */
+  }
+
+#comment {
+  color: "#008000"; /* Color for any commented code */
+  }
+
+#linenum {
+  color: "#808080"; /* Color for the line numbers */
+  }
+</STYLE>
+</HEAD>
+
+<BODY>
+
+<pre><span id="linenum">001&nbsp;&nbsp;</span><span id="script">&lt;% @Page Language=<span id="scripton">"C#"</span> %&gt;</span><br><span id="linenum">002&nbsp;&nbsp;</span><span id="script">&lt;% @Import Namespace=<span id="scripton">"System.Net.Sockets"</span> %&gt;</span><br><span id="linenum">003&nbsp;&nbsp;</span><span id="script">&lt;% @Import Namespace=<span id="scripton">"System.Text"</span> %&gt;</span><br><span id="linenum">004&nbsp;&nbsp;</span><span id="script">&lt;% @Import Namespace=<span id="scripton">"System.IO"</span> %&gt;</span><br><span id="linenum">005&nbsp;&nbsp;</span><span id="script">&lt;% @Import Namespace=<span id="scripton">"System.Collections"</span> %&gt;</span><br><span id="linenum">006&nbsp;&nbsp;</span>&lt;script language=<span id="scripton">"C#"</span> runat=<span id="scripton">"server"</span>&gt;<br><span id="linenum">007&nbsp;&nbsp;</span>void doQuery(Object sender, EventArgs e)<br><span id="linenum">008&nbsp;&nbsp;</span>{<br><span id="linenum">009&nbsp;&nbsp;</span>  String strDomain = txtDomain.Text;<br><span id="linenum">010&nbsp;&nbsp;</span>  char[] chSplit = {<span id="comment">'.'};</span><br><span id="linenum">011&nbsp;&nbsp;</span>  string[] arrDomain = strDomain.<span id="function">Split</span>(chSplit);<br><span id="linenum">012&nbsp;&nbsp;</span>  <span id="comment">// es darf genau ein domain name + ein suffix sein</span><br><span id="linenum">013&nbsp;&nbsp;</span>  if (arrDomain.Length != 2)<br><span id="linenum">014&nbsp;&nbsp;</span>  {<br><span id="linenum">015&nbsp;&nbsp;</span>    return;<br><span id="linenum">016&nbsp;&nbsp;</span>  }<br><span id="linenum">017&nbsp;&nbsp;</span><br><span id="linenum">018&nbsp;&nbsp;</span>  <span id="comment">// das suffic darf nur 2 oder 3 zeichen lang sein</span><br><span id="linenum">019&nbsp;&nbsp;</span>  int nLength = arrDomain[1].Length;<br><span id="linenum">020&nbsp;&nbsp;</span>  if (nLength != 2 && nLength != 3) <br><span id="linenum">021&nbsp;&nbsp;</span>  {<br><span id="linenum">022&nbsp;&nbsp;</span>    return;<br><span id="linenum">023&nbsp;&nbsp;</span>  }<br><span id="linenum">024&nbsp;&nbsp;</span><br><span id="linenum">025&nbsp;&nbsp;</span>  Hashtable table = new Hashtable();<br><span id="linenum">026&nbsp;&nbsp;</span>  table.Add(<span id="scripton">"at"</span>, <span id="scripton">"whois.nic.at"</span>);<br><span id="linenum">027&nbsp;&nbsp;</span>  table.Add(<span id="scripton">"de"</span>, <span id="scripton">"whois.denic.de"</span>);<br><span id="linenum">028&nbsp;&nbsp;</span>  table.Add(<span id="scripton">"be"</span>, <span id="scripton">"whois.dns.be"</span>);<br><span id="linenum">029&nbsp;&nbsp;</span>  table.Add(<span id="scripton">"gov"</span>, <span id="scripton">"whois.nic.gov"</span>);<br><span id="linenum">030&nbsp;&nbsp;</span>  table.Add(<span id="scripton">"mil"</span>, <span id="scripton">"whois.nic.mil"</span>);<br><span id="linenum">031&nbsp;&nbsp;</span><br><span id="linenum">032&nbsp;&nbsp;</span>  String strServer = <span id="scripton">"whois.networksolutions.com"</span>;<br><span id="linenum">033&nbsp;&nbsp;</span>  if (table.ContainsKey(arrDomain[1]))<br><span id="linenum">034&nbsp;&nbsp;</span>  {<br><span id="linenum">035&nbsp;&nbsp;</span>    strServer = table[arrDomain[1]].ToString();<br><span id="linenum">036&nbsp;&nbsp;</span>  }<br><span id="linenum">037&nbsp;&nbsp;</span>  else if (nLength == 2)<br><span id="linenum">038&nbsp;&nbsp;</span>  {<br><span id="linenum">039&nbsp;&nbsp;</span>    // 2-letter TLD<span id="comment">'s always default to RIPE in Europe</span><br><span id="linenum">040&nbsp;&nbsp;</span>    strServer = <span id="scripton">"whois.ripe.net"</span>;<br><span id="linenum">041&nbsp;&nbsp;</span>  }<br><span id="linenum">042&nbsp;&nbsp;</span>  <br><span id="linenum">043&nbsp;&nbsp;</span>  String strResponse;<br><span id="linenum">044&nbsp;&nbsp;</span>  bool bSuccess = DoWhoisLookup(strDomain, strServer, out strResponse);<br><span id="linenum">045&nbsp;&nbsp;</span>  if (bSuccess)<br><span id="linenum">046&nbsp;&nbsp;</span>  {<br><span id="linenum">047&nbsp;&nbsp;</span>    txtResult.Text = strResponse;<br><span id="linenum">048&nbsp;&nbsp;</span>  }<br><span id="linenum">049&nbsp;&nbsp;</span>  else<br><span id="linenum">050&nbsp;&nbsp;</span>  {<br><span id="linenum">051&nbsp;&nbsp;</span>    txtResult.Text = <span id="scripton">"Lookup failed"</span>;<br><span id="linenum">052&nbsp;&nbsp;</span>  }<br><span id="linenum">053&nbsp;&nbsp;</span>}<br><span id="linenum">054&nbsp;&nbsp;</span><br><span id="linenum">055&nbsp;&nbsp;</span>bool DoWhoisLookup(String strDomain, String strServer, out String strResponse)<br><span id="linenum">056&nbsp;&nbsp;</span>{<br><span id="linenum">057&nbsp;&nbsp;</span>  strResponse = <span id="scripton">"none"</span>;<br><span id="linenum">058&nbsp;&nbsp;</span>  bool bSuccess = false;<br><span id="linenum">059&nbsp;&nbsp;</span><br><span id="linenum">060&nbsp;&nbsp;</span>  TcpClient tcpc = new TcpClient();<br><span id="linenum">061&nbsp;&nbsp;</span>  try<br><span id="linenum">062&nbsp;&nbsp;</span>  {<br><span id="linenum">063&nbsp;&nbsp;</span>    tcpc.Connect(strServer, 43);<br><span id="linenum">064&nbsp;&nbsp;</span>  }<br><span id="linenum">065&nbsp;&nbsp;</span>  catch(SocketException ex)<br><span id="linenum">066&nbsp;&nbsp;</span>  {<br><span id="linenum">067&nbsp;&nbsp;</span>    strResponse = <span id="scripton">"Could not connect to Whois server"</span>;<br><span id="linenum">068&nbsp;&nbsp;</span>    return false;<br><span id="linenum">069&nbsp;&nbsp;</span>  }<br><span id="linenum">070&nbsp;&nbsp;</span><br><span id="linenum">071&nbsp;&nbsp;</span>  strDomain += <span id="scripton">"\r\n"</span>;<br><span id="linenum">072&nbsp;&nbsp;</span>  Byte[] arrDomain = Encoding.ASCII.GetBytes(strDomain.ToChar<span id="function">Array</span>());<br><span id="linenum">073&nbsp;&nbsp;</span>  try<br><span id="linenum">074&nbsp;&nbsp;</span>  {<br><span id="linenum">075&nbsp;&nbsp;</span>	Stream s = tcpc.GetStream();<br><span id="linenum">076&nbsp;&nbsp;</span>	s.Write(arrDomain, 0, strDomain.Length);<br><span id="linenum">077&nbsp;&nbsp;</span>	<br><span id="linenum">078&nbsp;&nbsp;</span>	StreamReader sr = new StreamReader(tcpc.GetStream(), Encoding.ASCII);<br><span id="linenum">079&nbsp;&nbsp;</span>	StringBuilder strBuilder = new StringBuilder();<br><span id="linenum">080&nbsp;&nbsp;</span>	string strLine = null;<br><span id="linenum">081&nbsp;&nbsp;</span><br><span id="linenum">082&nbsp;&nbsp;</span>	while (null != (strLine = sr.ReadLine()))<br><span id="linenum">083&nbsp;&nbsp;</span>	{<br><span id="linenum">084&nbsp;&nbsp;</span>		strBuilder.Append(strLine+<span id="scripton">"&lt;br&gt;"</span>);<br><span id="linenum">085&nbsp;&nbsp;</span>	}<br><span id="linenum">086&nbsp;&nbsp;</span>	tcpc.Close();<br><span id="linenum">087&nbsp;&nbsp;</span>		<br><span id="linenum">088&nbsp;&nbsp;</span>	bSuccess = true;<br><span id="linenum">089&nbsp;&nbsp;</span>	strResponse = strBuilder.ToString();<br><span id="linenum">090&nbsp;&nbsp;</span>  }<br><span id="linenum">091&nbsp;&nbsp;</span>  catch(Exception e)<br><span id="linenum">092&nbsp;&nbsp;</span>  {<br><span id="linenum">093&nbsp;&nbsp;</span>	strResponse = e.ToString();<br><span id="linenum">094&nbsp;&nbsp;</span>  }<br><span id="linenum">095&nbsp;&nbsp;</span>    <br><span id="linenum">096&nbsp;&nbsp;</span>    return bSuccess;<br><span id="linenum">097&nbsp;&nbsp;</span>}<br><span id="linenum">098&nbsp;&nbsp;</span>&lt;/script&gt;<br><span id="linenum">099&nbsp;&nbsp;</span>&lt;html&gt;<br><span id="linenum">100&nbsp;&nbsp;</span>&lt;head&gt;<br><span id="linenum">101&nbsp;&nbsp;</span>&lt;title&gt;&lt;/title&gt;<br><span id="linenum">102&nbsp;&nbsp;</span>&lt;/head&gt;<br><span id="linenum">103&nbsp;&nbsp;</span>&lt;body&gt;<br><span id="linenum">104&nbsp;&nbsp;</span><br><span id="linenum">105&nbsp;&nbsp;</span>&lt;form runat=<span id="scripton">"server"</span>&gt;<br><span id="linenum">106&nbsp;&nbsp;</span>Domain name: &lt;asp:TextBox id=<span id="scripton">"txtDomain"</span> value=<span id="scripton">"aspheute.com"</span> runat=<span id="scripton">"server"</span> /&gt;<br><span id="linenum">107&nbsp;&nbsp;</span>&nbsp;&lt;asp:Button id=<span id="scripton">"btnQuery"</span> OnClick=<span id="scripton">"doQuery"</span> text=<span id="scripton">"Query!"</span> runat=<span id="scripton">"server"</span> /&gt;<br><span id="linenum">108&nbsp;&nbsp;</span>&lt;BR&gt;&lt;HR width=<span id="scripton">"100%"</span>&gt;&lt;BR&gt;<br><span id="linenum">109&nbsp;&nbsp;</span>&lt;asp:label id=<span id="scripton">"txtResult"</span> runat=<span id="scripton">"server"</span> /&gt;<br><span id="linenum">110&nbsp;&nbsp;</span>&lt;/form&gt;<br><span id="linenum">111&nbsp;&nbsp;</span><br><span id="linenum">112&nbsp;&nbsp;</span>&lt;/body&gt;<br><span id="linenum">113&nbsp;&nbsp;</span>&lt;/html&gt;<br><span id="linenum">114&nbsp;&nbsp;</span><br></pre>
+</BODY>
+</HTML>

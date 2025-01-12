@@ -1,0 +1,634 @@
+<HTML>
+<HEAD>
+<TITLE>Das ASP.NET DataGrid selbst erweitern</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Das als Standard im .NET-Framework enthaltene DataGrid-Steuerelement ist bereits ein m&auml;chtiges Objekt zur Darstellung und Bearbeitung von Daten in tabellarischer Form. M&ouml;chte man das DataGrid allerdings in ein fixes Design implementieren...">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,DataGrid,BoundColumn,Header,Footer,anpassen,customize,fixed height,vorgegebene Höhe,Ableitung,ableiten,Subklasse">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Das ASP.NET DataGrid selbst erweitern</H1>
+<p>
+Geschrieben von: <a href="../autoren/alexanderzeitler.htm">Alexander Zeitler</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20030909"></SCRIPT>
+</p>
+<p>
+Das als Standard im <a href="http://msdn.microsoft.com/netframework/" target="_blank">.NET-Framework</a> enthaltene 
+<a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsdatagridclasstopic.asp" target="_blank">DataGrid-Steuerelement</a> 
+ist bereits ein m&auml;chtiges Objekt zur Darstellung und Bearbeitung von Daten in tabellarischer Form. M&ouml;chte man das DataGrid 
+allerdings in ein fixes Design implementieren, st&ouml;rt unter Umst&auml;nden das etwas "sprunghafte Verhalten" des DataGrids, d.h. die 
+Zeilenzahl und damit die H&ouml;he des DataGrids variiert mit der Zahl der anzuzeigenden Datens&auml;tze:
+</p>
+
+<IMG SRC="Bilder/200309/20030909_1.png" width="510" height="270" alt="" border="0">
+
+<p>
+Geringf&uuml;gige Abhilfe schafft hier die Verwendung des bereits implementierten Pagings - das vorgenannte Problem verlagert sich 
+damit allerdings nur - in meist umgekehrter Form - auf die letzte anzuzeigende Seite:
+</p>
+
+<IMG SRC="Bilder/200309/20030909_2.png" width="500" height="240" alt="" border="0">
+
+<p>
+Um das Problem dauerhaft zu l&ouml;sen, ist es notwendig, das DataGrid etwas aufzubohren. Und ebendies werden wir 
+in diesem Artikel realisieren.
+</p>
+
+<h2>Ordnung mu&szlig; sein</h2>
+<p>
+Da wir zur Gen&uuml;ge betrachtet haben, was wir nicht erreichen m&ouml;chten, wollen wir nun unser tats&auml;chliches Ziel ins Auge fassen:
+</p>
+
+<IMG SRC="Bilder/200309/20030909_3.png" width="510" height="270" alt="" border="0">
+
+<p>
+Da die gezeigte L&ouml;sung wiederverwendbar sein soll, empfiehlt es sich, sie in ein vom DataGrid abgeleitetes Steuerelement zu 
+packen, welches sich in der Klasse <i>FixedHeightGrid</i> befinden wird. Der Sourcecode der Klasse befindet sich damit konsequenterweise
+in der Datei FixedHeightGrid.cs. Somit ist auch klar, da&szlig; wir die L&ouml;sung in C# implementieren werden.
+</p>
+<p>
+Wie bereits erw&auml;hnt, stellt unser neues DataGrid eine sog. Ableitung des DataGrids aus der 
+<a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrols.asp" target="_blank">WebControls-Collection</a>
+des .NET-Frameworks dar. In Code ausgedr&uuml;ckt, sieht das wie folgt aus:
+</p>
+
+<pre style="background='silver';">
+public class FixedHeightGrid : System.Web.UI.WebControls.DataGrid
+</pre>
+
+<p>
+Der Doppelpunkt teilt unserer Klasse mit, da&szlig; sie alle Eigenschaften der DataGrid-Klasse erben soll, d.h. unser neues DataGrid 
+besitzt bereits jetzt den vollen Leistungsumfang des bekannten DataGrids.
+</p>
+
+<h2>Der Weg ist das Ziel</h2>
+<p>
+Der L&ouml;sungsansatz an sich d&uuml;rfte klar sein: Wir ben&ouml;tigen eine Methode, die pr&uuml;ft, wie viele Elemente in der aktuellen Ansicht 
+(sei es mit oder ohne Paging), vorhanden sind. Unsere gew&uuml;nschte H&ouml;he definieren wir &uuml;ber die bereits im DataGrid implementierte 
+<a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsdatagridclasspagesizetopic.asp" target="_blank">PageSize-Property</a>, 
+welche bisher allerdings nur bei aktiviertem Paging zum Tragen kam. Unsere Methode mu&szlig; also die Anzahl der tats&auml;chlich vorhandenen 
+Zeilen mit der gew&uuml;nschten Zeilenzahl vergleichen und ggf. fehlende Zeilen als Leerzeilen anh&auml;ngen.
+</p>
+<p>
+Nun stellt sich allerdings die Frage, wie wir in das Geschehen bei der Erzeugung des DataGrids, welches sich bisher als
+Blackbox darstellte, eingreifen k&ouml;nnen.
+</p>
+
+<h2>Vor dem Rendern ist nach dem Rendern</h2>
+<p>
+Nichts leichter als das - wie viele Objekte, die von der <a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuicontrolclasstopic.asp" target="_blank">System.Web.UI.Control-Klasse</a> 
+abgeleitet wurden, besitzt das DataGrid die gesch&uuml;tzte <a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuicontrolclassonprerendertopic.asp" target="_blank">OnPreRender-Methode</a>, 
+welche vor dem <a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuicontrolclassrendercontroltopic.asp" target="_blank">Rendern</a>
+(=Erzeugen des HTML-Codes f&uuml;r das DataGrid) aufgerufen wird. In diesem Stadium liegt das DataGrid in seiner wahren und endg&uuml;ltigen 
+Sch&ouml;nheit bereits vor uns - jedoch noch in Form in Objekten - also genau dem, wonach wir suchen.
+</p>
+
+<h2>Objekt-Orientierung</h2>
+<p>
+Da&szlig; wir Zeilen ins DataGrid einf&uuml;gen m&ouml;chten, haben wir bereits festgestellt. Ebenso ist die Frage gekl&auml;rt, wann wir die Zeilen 
+einf&uuml;gen werden. Ungekl&auml;rt blieb bisher allerdings die Frage nach dem Wo? Um diese Frage beantworten zu k&ouml;nnen, ist ein genauerer 
+Blick in den Aufbau des DataGrids notwendig:
+</p>
+
+<IMG SRC="Bilder/200309/20030909_4.png" width="509" height="275" alt="" border="0">
+
+<p>
+Wie man in der Darstellung sieht, besteht das DataGrid aus einer Tabelle vom Typ DataGridTable, welche wiederum Tabellenzeilen 
+vom Typ <a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsdatagriditemclasstopic.asp" target="_blank">DataGridItem</a> 
+beinhaltet. Diese stellen eine Ableitung der Klasse <a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolstablerowclasstopic.asp" target="_blank">TableRow</a>
+dar, welche der HTML-Tag-Kombination &lt;TR&gt;&lt;/TR&gt; entspricht. Die DataGridItems sind in verschiedene Typen, wie z.B. Pager, 
+Header, Item usw. unterteilt. Wenn es ein Pendant f&uuml;r die &lt;TR&gt;&lt;/TR&gt;-Tags in der WebControls-Collection gibt, sollte es so 
+etwas wohl auch f&uuml;r die &lt;TD&gt;&lt;/TD&gt;-Tags, welche das "Innenleben" einer Tabellenzeile darstellen, geben. Und tats&auml;chlich, die 
+Klasse <a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolstablecellclasstopic.asp" target="_blank">TableCell</a>
+erledigt genau diese Aufgabe.
+</p>
+<p>
+Die Grafik zeigt auch, da&szlig; der Index der Controls durchgehend ist, d.h. der Index bezieht sich auf die gesamte Tabelle 
+(DataGridTable) des DataGrids. Man sollte jedoch tunlichst vermeiden, diesen Index mit dem Wert von 
+<a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsdatagridclassitemstopic.asp" target="_blank">this.Items</a> 
+zu verwechseln, dieser liefert n&auml;mlich die Anzahl der Datens&auml;tze in der aktuellen Ansicht zur&uuml;ck.
+</p>
+<p>
+Um beim Thema Verwechslungen und Mi&szlig;verst&auml;ndnissen zu bleiben: Das DataGrid erlaubt Header und Footer mittels
+</p>
+
+<pre style="background='silver';">
+ShowHeader = True/False 
+</pre>
+
+<p>
+bzw.
+</p>
+
+<pre style="background='silver';">
+ShowFooter = True/False
+</pre>
+
+<p>
+ein (=True) bzw. auszublenden (=False).
+</p>
+<p>
+Beides hat keinen Einflu&szlig; auf die Erzeugung des Indexes, d.h. die Header- und Footer-Items werden trotzdem generiert, aber nicht 
+angezeigt. Ganz anders verh&auml;lt es sich mit den Pagern: Deren Generierung, d.h. auch der Index der DataGridTable, ist abh&auml;ngig 
+von dem Attribut "AllowPaging", welches ebenfalls True bzw. False sein kann. Um die Verwirrung komplett zu machen, werden die 
+Pager dann aber nicht konsequenterweise abh&auml;ngig von dem Attribut 
+<a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsdatagridpagerstyleclasspositiontopic.asp" target="_blank">PagerStyle-Position</a> 
+(welches "Top", "Bottom" oder "TopAndBottom" lauten kann) erzeugt, sondern immer komplett. Dem Verhalten der Pager m&uuml;ssen wir 
+also ebenfalls Rechnung tragen.
+</p>
+
+<h2>Lasst uns endlich Daten (:Taten) sehen!</h2>
+<p>
+Da wir jetzt gen&uuml;gend Grundlagen f&uuml;r die Umsetzung der L&ouml;sung in lauff&auml;higen C#-Code gesammelt haben, 
+k&ouml;nnen wir uns der Umsetzung widmen.
+</p>
+<p>
+Wie bereits erw&auml;hnt, starten unsere Eingriffe in der Methode OnPreRender. Hier rufen wir unsere Methode 
+<i>AddPaddingItems()</i> auf, welche den eigentlichen Einf&uuml;ge-Vorgang durchf&uuml;hrt.
+</p>
+
+<pre style="background='silver';">
+protected override void OnPreRender(EventArgs e)
+{
+	AddPaddingItems();
+}
+</pre>
+
+<p>
+In <i>AddPaddingItems()</i> deklarieren wir zun&auml;chst einige Variablen:
+</p>
+
+<pre style="background='silver';">
+int indexCount;
+int indexStop = this.PageSize;
+int indexStart = 1;
+</pre>
+
+<p>
+Der Integer <i>indexCount</i> stellt den Index f&uuml;r unsere DataGridTableItems dar.
+</p>
+<p>
+Der Integer <i>indexStop</i> beinhaltet den Endwert f&uuml;r unseren Index und wird mit der Seitengr&ouml;&szlig;e, 
+also der Anzahl der darzustellenen Eintr&auml;ge initialisiert.
+</p>
+<p>
+Der dritte im Bunde ist der Integer <i>indexStart</i>, der angibt, nach welcher Index-Position das erste ListItem erscheint.
+</p>
+<p>
+Die beiden zuletzt genannten Integer-Werte sind abh&auml;ngig von dem bereits erw&auml;hnten Verhalten der Pager. Sind die Pager 
+aktiviert (<i>AllowPaging</i>=True), m&uuml;ssen der Einstiegspunkt (=<i>indexStart</i>) sowie der Endpunkt (=<i>indexStop</i>) um 1 erh&ouml;ht werden.
+</p>
+
+<pre style="background='silver';">
+if(this.AllowPaging==true)
+{
+	indexStart++;
+	indexStop++;
+}
+</pre>
+
+<p>
+Nun k&ouml;nnen wir in einer Schleife, die beginnend an der Summe des Startpunktes und der Anzahl der tats&auml;chlich 
+vorhandenen Listeneintr&auml;ge beginnt, die neuen Zeilen einf&uuml;gen lassen:
+</p>
+
+<pre style="background='silver';">
+Table myTable = (Table)this.Controls[0];
+for(indexCount=indexStart+this.Items.Count;indexCount&lt;=indexStop;indexCount++)
+{
+	myTable.Controls.AddAt(indexCount,PaddingItem());
+}
+</pre>
+
+<p>
+Wie man sieht, ist das Einf&uuml;gen nur ein einfacher <i>AddAt</i>-Befehl, da es sich bei mytable.Controls um eine abgeleitete Collection 
+handelt. Die Umwandlung von this.Controls[0] in eine <a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolstableclasstopic.asp" target="_blank">Table</a>
+k&ouml;nnte man sich auch sparen, der besseren Nachvollziehbarkeit des Codes wegen habe ich sie aber implementiert.
+</p>
+<p>
+Allerdings fehlt uns jetzt noch die aufgerufene Funktion <i>PaddingItem()</i>, welche uns ein neues DataGridItem 
+zur&uuml;ckliefern wird. Diese ist ebenso kurz wie einfach:
+</p>
+
+<pre style="background='silver';">
+Table myTable = (Table)this.Controls[0];
+private DataGridItem PaddingItem()
+{
+	Table myTable = (Table)this.Controls[0];
+	int numberOfColumns = myTable.Rows[1].Cells.Count;
+	DataGridItem myItem = new DataGridItem(0,0,ListItemType.Item);	
+	for(int indexCount=1;indexCount&lt;=numberOfColumns;indexCount++)
+	{
+		TableCell myCell = new TableCell();
+		myItem.Cells.Add(myCell);
+	}
+	return myItem;
+}
+</pre>
+
+<p>
+Zun&auml;chst wandeln wir wieder this.Controls[0] in eine Table um. Danach erzeugen wir ein  neues DataGridItem vom Typ 
+<a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolslistitemtypeclasstopic.asp" target="_blank">ListItemType.Item</a>
+(also ein normales Item). Die ersten beiden Werte f&uuml;r den Index des Items im DataGrid sowie den Index der Daten im DataSet 
+setzen wir kurzerhand auf 0, da beide Werte nicht relevant sind bzw. beim Anf&uuml;gen an das DataGrid &uuml;berschrieben werden. 
+Nun durchlaufen wir in einer Schleife mit der Spaltenzahl der Header-Zeile (da diese, wie bereits erw&auml;hnt, immer erzeugt 
+wird und somit eine verbindliche Information &uuml;ber die Spaltenzahl liefert) das Erzeugen der Tabellenzellen. Hierbei wird 
+immer eine neue Zelle generiert und an das Ende des DataGridItems angef&uuml;gt.
+</p>
+<p>
+Nach dem Durchlauf der Schleife liefern wir schlie&szlig;lich das erzeugte DataGridItem zur&uuml;ck an die aufrufende Funktion und 
+haben somit unsere gew&uuml;nschte L&ouml;sung bereits grundlegend realisiert.
+</p>
+
+<h2>Neue Attribute braucht das Land</h2>
+<p>
+Um die eingef&uuml;gten Zeilen (PaddingItem(s)) nun auch ordentlich formatieren zu k&ouml;nnen, ben&ouml;tigen wir noch eine 
+Eigenschaft, die die CSS-Style-Definition f&uuml;r diese Zeilen aufnimmt:
+</p>
+
+<pre style="background='silver';">
+private TableItemStyle _paddingItemStyle = new TableItemStyle();
+public TableItemStyle PaddingItemStyle
+{
+	get
+	{
+		return _paddingItemStyle;
+	}
+	set
+	{
+		_paddingItemStyle = value;
+	}
+}
+</pre>
+
+<p>
+Auch hierf&uuml;r bietet das .NET-Framework bereits eine fast komplette L&ouml;sung an. Wir erzeugen einfach ein neues Objekt vom Typ 
+<a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolstableitemstyleclasstopic.asp" target="_blank">TableItemStyle</a>, 
+welches eine Collection von CSS-Attributen entgegennimmt.
+</p>
+<p>
+Allerdings m&uuml;ssen wir uns noch um die Zuweisung zu unseren PaddingItems k&uuml;mmern. Wir kehren deshalb nochmals zu unserer 
+Methode PaddingItem() zur&uuml;ck und erweitern diese wie folgt:
+</p>
+
+<pre style="background='silver';">
+if(this.PaddingItemStyle.CssClass!=null)
+{
+	myItem.ApplyStyle(this.PaddingItemStyle);
+}
+return myItem;
+</pre>
+
+<p>
+Wir pr&uuml;fen, ob f&uuml;r die PaddingItems eine CSS-Klasse &uuml;bergeben wurde. Ist dies der Fall, weisen wir den damit &uuml;bergebenen 
+PaddingItem-Style an das aktuelle PaddingItem mittels .ApplyStyle zu. Wird nichts &uuml;bergeben, wird automatisch der Style 
+der normalen Items verwendet, da wir ja ein Item vom Typ ListItemType.Item erzeugt haben.
+</p>
+<p>
+Als weiteres Feature werden wir au&szlig;erdem noch die M&ouml;glichkeit zum Verbinden von Tabellenzellen der PaddingItems 
+implementieren. Dies entspricht dem von HTML bekannten "ColSpan".
+</p>
+<p>
+Unsere Klasse wird also um eine weitere Eigenschaft erg&auml;nzt:
+</p>
+
+<pre style="background='silver';">
+private bool _mergePaddingColumns;
+public bool MergePaddingRows
+{
+	get
+	{
+		return _mergePaddingRows;
+	}
+	set
+	{
+		_mergePaddingRows = value;
+	}
+}
+</pre>
+
+<p>
+Ebenso erf&auml;hrt die Methode PaddingItem() eine weitere &Auml;nderung:
+</p>
+
+<pre style="background='silver';">
+		int numberOfColumns = myTable.Rows[1].Cells.Count;
+		if(this.MergePaddingColumns==true)
+		{			
+			TableCell myCell = new TableCell();
+			myCell.ColumnSpan = numberOfColumns;		
+			myItem.Cells.Add(myCell);
+		}
+		else
+		{
+			for(int indexCount=1;indexCount&lt;=numberOfColumns;indexCount++)
+			{
+				TableCell myCell = new TableCell();
+				myItem.Cells.Add(myCell);
+			}
+		}			
+
+		myitem.Cells.Add(mycell);
+	}
+}
+</pre>
+
+<p>
+Zun&auml;chst pr&uuml;fen wir, ob das Verbinden der Spalten aktiviert wurde. Ist dies der Fall, f&uuml;gen wir nur eine Tabellenzelle hinzu 
+und setzen die von HTML bekannte Eigenschaft Columnspan auf den Wert der Spaltenzahl der Headerzeile. Schlie&szlig;lich f&uuml;gen wir 
+die Zelle an das neue DataGridItem an.
+</p>
+<p>
+Das neue DataGrid ist nun bereits einsatzbereit. Allerdings nur, solange wir die Spalten per 
+<a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsdatagridclassautogeneratecolumnstopic.asp" target="_blank">AutoGenerateColumns</a>
+erzeugen lassen. M&ouml;chten wir das Spaltendesign mittels BoundColumn &amp; Co. selbst beinflussen, erhalten wir folgende 
+Parser-Fehlermeldung:
+</p>
+
+<pre style="background='silver';">
+Der Typ learncontrols.BoundColumn in der Assembly learncontrols, 
+Version=1.0.1339.22102, Culture=neutral, PublicKeyToken=null konnte nicht geladen werden.
+</pre>
+
+<p>
+Der Grund hierf&uuml;r ist, da&szlig; wir die BoundColumn mit dem Prefix "aspx" versehen haben. In der Assembly learncontrols (welcher der 
+TagPrefix aspx zugeordnet ist) existiert aber keine Definition f&uuml;r diese Klasse. Die Abhilfe folgt aber auf dem Fu&szlig;: wir m&uuml;ssen 
+einfach in unserer Assembly Ableitungen der urspr&uuml;nglichen Klassen definieren:
+</p>
+
+<pre style="background='silver';">
+public class BoundColumn : System.Web.UI.WebControls.BoundColumn
+{
+}
+</pre>
+
+<p>
+Damit sind wir auch schon am Ende unseres kleinen, aber wie ich hoffe, interessanten Ausflugs in die Welt der 
+Steuerelement-Entwicklung  mit ASP.NET und C# angelangt. Die Verwendung des neuen DataGrids finden Sie in der Datei 
+testfixedheightgrid.aspx bzw. testfixedheightgrid.aspx.cs.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die hier vorgestellte L&ouml;sung ist nat&uuml;rlich noch ausbauf&auml;hig und erhebt auch keinen Anspruch auf Vollst&auml;ndigkeit. Vielmehr sollen 
+die fast unbegrenzten M&ouml;glichkeiten, die das .NET-Framework bietet, aufgezeigt werden und Lust auf mehr machen. Das heute 
+erzeugte DataGrid wird Gegenstand eines weiteren Artikels sein, der die Integration des neuen DataGrids in die 
+Entwicklungsumgebung Visual Studio.NET behandelt, denn z. Zt steht f&uuml;r das neue DataGrid z.b. noch keine IntelliSense im 
+HTML-Editor zur Verf&uuml;gung.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20030909.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20020318.htm">Das using Schl&uuml;sselwort</a><br>
+<a href="20040929.htm">DataGrid - Daten bearbeiten leicht gemacht</a><br>
+<a href="20040317.htm">Eintr&auml;ge numerieren im DataGrid</a><br>
+<a href="20040628.htm">MouseOver-Effekte beim DataGrid</a><br>
+<a href="20040318.htm">Pager- und Footerzeilen des DataGrid erweitern</a><br>
+<a href="20040303.htm">Vergleich von DataGrid, DataList und Repeater-Control - was verwende ich wann?</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20030909" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Das ASP.NET DataGrid selbst erweitern"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20030909.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Alexander Zeitler"><input type="hidden" name="AuthorEmail" value="azeitler@aspintranet.de"><input type="hidden" name="Artikel" value="20030909"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20030909.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

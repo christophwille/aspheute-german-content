@@ -1,0 +1,635 @@
+<HTML>
+<HEAD>
+<TITLE>Die String Klasse in C#</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel bespricht der Autor die Verwendung der String Klasse in C#.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,String,StringBuilder,Append,Remove,IndexOf,LastIndexOf,Equals,Compare,C#,class">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Die String Klasse in C#</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000803"></SCRIPT>
+</p>
+<p>
+Diesmal besch&auml;ftigen wir uns mit dem Funktionsumfang der <i>String</i> Klasse in C#. Ausgehend von einfachen 
+Beispielen werde ich M&ouml;glichkeiten wie das Splitten von Strings, Finden von Zeichen und Zeichenketten, 
+das Trimmen von Strings und vieles mehr besprechen. Abschlie&szlig;end pr&auml;sentiere ich Ihnen noch die 
+effizientere Methode der Stringbehandlung mit der <i>StringBuilder</i> Klasse.
+</p>
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation des <i>Microsoft .NET Framework SDK's</i> auf
+einem Webserver. Weiters setze ich voraus, da&szlig; der Leser die Programmiersprache C# zu einem gewissen Grad beherrscht -
+es finden sich etliche Artikel auf diesem Server, um das notwendige Wissen zu erlernen.
+</p>
+
+<h2>Die String Klasse</h2>
+<p>
+Die String Klasse enth&auml;lt Methoden um Strings zu vergleichen, formatieren und manipulieren. Methoden 
+wie <i>Replace</i> (Ersetzen), <i>Remove</i> (Entfernen) und <i>Trim</i> (K&uuml;rzen) erzeugen bei Verwendung einen neuen String, 
+der auf dem orginalen basiert. Dies geschieht deshalb, weil eine Instanz von einem String nach dessen Erstellung 
+nicht mehr ver&auml;ndert werden kann.
+</p>
+<p>
+Die Position (Index) der Zeichen in einem String beginnt, wie bei Arrays, mit <b>0</b>. Die Methoden f&uuml;r 
+den Vergleich und die Suche von Strings sind case-sensitive. Wenn man Vergleiche von Texten durchf&uuml;hrt, 
+sollte man die <i>Compare</i> (vergleichen) und <i>Equals</i> (entspricht) Methoden verwenden, welche von der String Klasse 
+zur Verf&uuml;gung gestellt werden.
+</p>
+<p>
+Diese Methoden &uuml;berpr&uuml;fen Strings auf Referenzgleicheit, falls sie nicht vom Programmierer
+&uuml;berladen werden. Das Framework erm&ouml;glicht aber auch String Objekte mit 
+relationalen Operatoren zu vergleichen. Ein dynamisch erstellter String, welcher durch den StringBuilder oder 
+durch die String-Klassenmethoden <i>Replace</i>, <i>Remove</i> oder <i>Trim</i> erzeugt wurde, k&ouml;nnen nicht mit 
+relationalen Operatoren verglichen werden. Hier m&uuml;ssen die Methoden <i>Compare</i> oder <i>Equals</i> verwendet werden.
+</p>
+
+<h2>Eigenschaften der String Klasse</h2>
+<p>
+Die String-Klasse hat nur 2 Eigenschaften, und diese lassen sich in einem Beispiel verpacken - 
+in diesem Beispiel m&ouml;chte ich Ihnen zeigen, wie man einen String als Folge von Zeichen ausgibt
+<b>charsindexer.aspx</b>:
+
+<pre style="background='Silver';">
+&lt;% @Page Language="C#" %&gt; 
+&lt;% @Import Namespace="System" %&gt; 
+&lt;% 
+// String als Folge von Zeichen ausgeben 
+string str = "Das ist ein Test";
+for (int i=0;i &lt; str.Length; i++) 
+{ 
+	// Chars indexer 
+	Response.Write(str[i].ToString()); 
+} 
+%&gt;
+</pre>
+</p>
+<p>
+In der ersten Zeile werden die f&uuml;r ASP.NET ben&ouml;tigten Direktiven (gekennzeichnet durch "@") deklariert. Zuerst 
+die Definition der verwendeten Codesprachen (in diesem Fall C#) und dann die Definition des verwendeten 
+Namespaces (hier "System"). Danach folgt die Deklaration der Stringvariable "str" samt Inhalt. 
+</p>
+<p>
+Mittels eines 
+<i>for</i> Statements werden die einzelnen Buchstaben (Datentyp: char) des Strings &uuml;ber den <i>Chars</i> Indexer des String
+Objekts ausgeben. Da aber <i>Response.Write</i> Strings ausgibt, mu&szlig; ich den char mit Hilfe der <i>ToString</i> Methode
+auf einen String r&uuml;ckumwandeln.
+</p>
+
+<h2>Konvertierungsfunktionen der String Klasse</h2>  
+<p>
+Etwas, das man als Programmierer oft macht ist Daten von einem Typ auf einen anderen zu konvertieren. 
+Im Gegensatz zur 1 gibt es in der Beta 2 gibt es nur mehr Konvertierungsmethoden die auch mit Strings zu tun haben.
+(Fast) alles was man für Stringbehandlungen brauchen kann, wird von der
+String Klasse durch ihre Konvertierungsroutinen zur Verf&uuml;gung gestellt:
+</p>
+
+<table cellspacing="1" cellpadding="0" border="1">
+<tr>
+	<td>ToCharArray</td>
+	<td>Gibt den String als Array von Buchstaben zur&uuml;ck (overloaded)</td>
+</tr>
+	<td>ToLower</td>
+	<td>Erstellt eine Kopie des Strings in Kleinbuchstaben (overloaded)</td>
+</tr>
+<tr>
+	<td>ToString</td>
+	<td>Gibt die Instanz des Strings zur&uuml;ck</td>
+</tr>
+<tr>
+	<td>ToUpper</td>
+	<td>Erstellt eine Kopie des Strings in Gro&szlig;buchstaben (overloaded)</td>
+</tr>
+</table>
+
+<h2>Strings splitten</h2>
+<p>
+Mit der <i>Split</i> Methode k&ouml;nnen Sie einen String, anhand bestimmter Separatoren aufteilen. Dies
+ist &auml;quivalent zur Funktion Split in VBScript. Das folgende Beispiel verdeutlicht die Verwendung
+<b>splittingipaddress.aspx</b>:
+
+<pre style="background='Silver';">
+&lt;% @Page Language="C#" %&gt; 
+&lt;% @Import Namespace="System" %&gt; 
+&lt;% 	
+	char[] chSplit = {'.'};
+	string[] arrIP = "192.168.1.105".Split(chSplit);
+	// Ausgabe der Anzahl der gesplitteten Strings
+	Response.Write(arrIP.Length.ToString());
+%&gt;
+</pre>
+</p>
+<p>
+Wie man sieht, mu&szlig; man an die Split Methode ein Array &uuml;bergeben, was einem die Option er&ouml;ffnet, mehrere
+Separationszeichen zu verwenden. &Uuml;brigens: der Code funktioniert wirklich, auch wenn es etwas komisch
+aussieht wenn man an einen String einen Funktionsaufruf anflanscht.
+</p>
+
+<h2>Finden von Strings und Characters in einem String</h2> 
+<p>
+Ebenfalls ein sehr beliebtes Thema bei der Verwendung von Strings ist das Auffinden von einzelnen Zeichen
+beziehungsweise Zeichenketten in einem String. Anwendungsf&auml;lle w&auml;ren zum Beispiel: Finden des letzten
+Backslashes ("\") in einem Pfad, das Auffinden des @-Zeichens in einer Emailadresse und vieles anderes mehr.
+</p>
+<p>
+Und wie geht das mit der String-Klasse? Einfach. Man hat 2 Methoden names <i>IndexOf</i> und <i>LastIndexOf</i>,
+die zur Zeichen und Zeichenkettensuche geeignet sind.
+</p>
+<p>
+<table cellspacing="1" cellpadding="0" border="1">
+<tr>
+    <th>Typ</th>
+    <th>Beschreibung</th>
+</tr>
+<tr>
+	<td><i>IndexOf</i></td>
+	<td>Gibt den Index des ersten Auftretens eines Zeichens oder Strings zur&uuml;ck (overloaded)</td>
+</tr>
+<tr>
+	<td><i>LastIndexOf</i></td>
+	<td>Gibt den Index des letzten Auftretens eines Zeichens oder Strings zur&uuml;ck (overloaded)</td>
+</tr>
+<tr>
+</table>
+</p>
+<p>
+Das nun folgende Beispiel veranschaulicht die Verwendung der beiden Methoden:
+<pre style="background='Silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Text" %&gt;
+&lt;%
+	string strTest = "Wahnsinn, der hat in Leoben Methode";
+
+	// findet die Position des "L" in Leoben
+	int nIndex = strTest.IndexOf("Leoben");
+	// findet die Position des "d" in Methode
+	int nIndex2 = strTest.LastIndexOf("de");
+%&gt;
+</pre>
+</p>
+
+<h2>Stringvergleiche</h2> 
+<p>
+Wie die &Uuml;berschrift schon sagt, wird hier vorgestellt, wie man 2 Strings miteinander vergleicht. 
+Dazu verwendet man die Compare Methode, die, wenn die beiden Strings ident sind, 
+das Ergebnis 0 (die Zahl) liefert.
+</p>
+<p>
+Der Sourcecode zum Beispiel <b>comparison.aspx</b>:
+<pre style="background='Silver';">
+&lt;% @Page Language="C#" %&gt; 
+&lt;% @Import Namespace="System" %&gt; 
+&lt;% 	
+ string strA = "Leoben";
+ string strB = "Bad Ischl";
+ int nTest;
+ nTest = String.Compare(strA,strB);
+
+ //Ausgabe	
+ Response.Write("1. String: " + strA + "&lt;br&gt");
+ Response.Write("2. String: " + strB + "&lt;br&gt");
+ Response.Write("Die Strings sind gleich wenn Ergebnis = 0." + "&lt;br&gt");
+ Response.Write("Ergebnis: " + nTest.ToString());
+%&gt;
+</pre>
+</p>
+<p>
+<b>Beachte:</b> Hier wiederum nicht vergessen, da&szlig; das Response.Write Statement nur Strings ausgeben kann.
+Anyway: der Compiler meckert eh'.
+</p>
+
+
+<h2>Trimmen von Strings</h2>
+<p>
+Es gibt f&uuml;r VBScript Programmierer in der String Klasse alte Bekannte: die Methoden zum String Trimmen, 
+allerdings um so einiges ver&auml;ndert:
+</p>
+<p>
+<table cellspacing="5" cellpadding="0" border="0">
+<tr>
+    <th>Typ</th>
+    <th>Beschreibung</th>
+</tr>
+<tr>
+	<td><i>Trim</i></td>
+	<td>Scheidet die Leerzeichen eines Strings weg (overloaded)</td>
+</tr>
+<tr>
+	<td><i>TrimEnd</i></td>
+	<td>Entfernt einen angegebenen String von Buchstaben vom Ende des Strings</td>
+</tr>
+<tr>
+	<td><i>TrimStart</i></td>
+	<td>Entfernt einen angegebenen String von Buchstaben vom Anfang des Strings</td>
+</tr>
+</table>
+</p>
+<p>
+Hier das Beispiel zur Verwendung der <i>TrimEnd</i> Funktion (<b>trimend.aspx</b>):
+
+<pre style="background='Silver';">
+&lt;% @Page Language="C#" %&gt; 
+&lt;% @Import Namespace="System" %&gt; 
+&lt;% 	
+	
+	string strA = "Bad Ischl      ";
+	char[] ch2Trim = {' '};
+	string strB = strA.TrimEnd(ch2Trim);
+	// Ausgabe - man sollte sich den Source der Ergebnisseite ansehen!
+	Response.Write("String vorher:" + strA.ToString() + "&lt;br&gt;");
+	Response.Write("String nachher: " + strB.ToString() + "&lt;br&gt;");
+	
+%&gt;
+</pre>
+</p>
+
+<h2>Hinzuf&uuml;gen von Strings an Strings</h2>
+<p>
+Warum sollte das eine gro&szlig;e Hexerei sein? Viele Beispiele haben ja bereits das verwendet:
+</p>
+
+<pre style="background='Silver';">
+strTest = "hans" + " hansi";
+</pre>
+
+<p>
+Eine Alternative hierfür wäre die Verwendung der <i>Concat</i> Methode (<b>StringConcat.aspx</b>):
+</p>
+
+<pre style="background='Silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System" %&gt; 
+&lt;% 
+
+  string strA="Leoben", strB="Bad Ischl", strC="Bruck", strD;
+  
+  strD = String.Concat(strA,", ",strB,", ",strC);
+  
+  Response.Write(strD);
+  
+%&gt;
+</pre>
+
+<p>
+Der erste Ansatz funktioniert zwar auch, er ist allerdings heftig ineffizient, vor allem dann, wenn man
+mehr als nur zwei Anf&uuml;gefunktionen durchf&uuml;hrt (in einer Schleife zB). Warum, erkl&auml;re ich in K&uuml;rze, zuerst
+schauen wir uns den effizienten Weg an.
+</p>
+
+<p>
+Der effiziente Weg ist die StringBuilder Klasse. Diese verf&uuml;gt &uuml;ber die Methode Append, mit welcher man
+den internen Stringpuffer um den anzuh&auml;ngenden String erweitert (in-place sozusagen). Damit arbeitet
+man schneller als mit dem + Operator, da dieser immer String Objekte erzeugt, kopiert und zerst&ouml;rt.
+</p>
+
+<p>
+Das Beispiel zeigt, wie man mit der StringBuilder Klasse arbeitet.
+</p>
+
+<pre style="background='Silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Text" %&gt;
+&lt;%
+StringBuilder strBuilder = new StringBuilder("");
+// string strTest = new String("");
+
+for (int i=1;i&lt;=5;i++)
+{
+  strBuilder.Append("Hello World&lt;br&gt;");
+  
+  // strTest += "Hello world&lt;br&gt;";
+  // strTest = strTest + "Hello world&lt;br&gt;";
+  // strTest = strTest + new String("Hello world&lt;br&gt;");
+  // strTest = new String(strTest + new String("Hello world&lt;br&gt;"));
+}
+Response.Write(strBuilder.ToString());
+%&gt;
+</pre>
+
+<p>
+In den Kommentaren steht, was mit der String Klasse und dem + Operator passiert w&auml;re. Die erste Zeile in der
+for Schleife zeigt das Statement, wie es der Programmierer geschrieben h&auml;tte. In jeder weiteren Zeile habe ich
+dann die vom Compiler implizit vorgenommenen Erweiterungen eingebaut. Und in der letzten Zeile sieht man dann
+sehr deutlich, warum Strings aneinanderf&uuml;gen ineffizient ist: zwei String Objekte werden angelegt, und drei
+werden zerst&ouml;rt (inklusive dem originalen strTest).
+</p>
+
+<p>
+Im Gegensatz dazu hat StringBuilder einen Puffer, der an die Gr&ouml;&szlig;enbed&uuml;rfnisse angepasst werden kann - auch
+f&uuml;r L&ouml;sch- und Einf&uuml;geoperationen.
+</p>
+
+<h2>Erweiterte Verwendung des StringBuilder Objekts</h2>
+
+<p>
+Ich habe es bereits in der vorangegangen Sektion angesprochen - man kann im StringBuilder auch nach Belieben
+l&ouml;schen und einf&uuml;gen. Im folgenden Beispiel verwende ich Remove und Insert, um einen String zu 
+modifizieren (<b>removeandinsert.aspx</b>):
+</p>
+
+<pre style="background='Silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Text" %&gt;
+&lt;%
+	string strTest = "Ich finde, Leoben ist eine sch&ouml;ne Stadt.";
+	StringBuilder strBuilder = new StringBuilder(strTest);
+
+	int nIndex = strTest.IndexOf("Leoben");
+	strBuilder.Remove(nIndex, "Leoben".Length);
+	strBuilder.Insert(nIndex, "Bad Ischl");
+	// Ausgabe
+	Response.Write(strBuilder.ToString());
+%&gt;
+</pre>
+
+<p>
+Das Wort "Leoben" wird in dem String "Ich finde, Leoben ist eine sch&ouml;ne Stadt." durch "Bad Ischl" ausgetauscht.
+Zuerst wird "Leoben" mit Hilfe von <i>Remove</i> gel&ouml;scht, und dann "Bad Ischl" mit <i>Insert</i> bei der 
+Position des zuvor gel&ouml;schten Strings eingef&uuml;gt.
+</p>
+
+<p>
+Alternativ erh&auml;lt man das gleiche Ergebnis mit dieser k&uuml;rzeren Version (<b>replace.aspx</b>):
+</p>
+
+<pre style="background='Silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Text" %&gt;
+&lt;%
+StringBuilder strBuilder = 
+   new StringBuilder("Ich finde, Leoben ist ein sch&ouml;ne Stadt.");
+
+// der folgende Befehl tauscht alle Strings "Leoben" aus
+strBuilder.Replace("Leoben", "Bad Ischl");
+// Ausgabe des ver&auml;nderten Strings
+Response.Write(strBuilder.ToString());
+%&gt;
+</pre>
+
+<h2>Schlu&szlig;bemerkung:</h2>
+<p>
+Die angef&uuml;hrten Beispiele sollen Ihnen dabei helfen, bei der Stringbehandlung in C# m&ouml;glichst schnell
+mit Ihren bisherigen Kenntnissen und Techniken aus anderen Programmiersprachen gleichzuziehen. 
+In diesem Artikel habe ich M&ouml;glichkeiten gezeigt, wie man Strings partiell l&ouml;schen, austauschen, 
+k&uuml;rzen und aufteilen kann - mit Hinblick auf die Praxis des t&auml;glichen Programmierens.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000803.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20000713.htm">A Brief History of C#</a><br>
+<a href="20020507.htm">Deutsche Personalausweisnummern verifizieren</a><br>
+<a href="20011115.htm">Eine Klasse f&uuml;r sich - die .NET Zip Library</a><br>
+<a href="20020906.htm">On-the-fly Erstellung von vCard's</a><br>
+<a href="20020125.htm">Variable Parameterlisten in Funktionen</a><br>
+<a href="20010621.htm">Web Services 101 in ASP.NET</a><br>
+<a href="20010911.htm">Webseiten automatisiert scrapen, Teil 2</a><br>
+<a href="20000825.htm">WHOIS Abfragen a la .NET</a><br>
+<a href="20020704.htm">Zahl, Datum und W&auml;hrung korrekt formatiert ausgeben</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000803" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Die String Klasse in C#"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000803.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Holm"><input type="hidden" name="AuthorEmail" value="office@holmcs.com"><input type="hidden" name="Artikel" value="20000803"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000803.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

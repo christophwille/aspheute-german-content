@@ -1,0 +1,438 @@
+<HTML>
+<HEAD>
+<TITLE>Delay Signing von Assemblies</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Assemblies unter .NET m&uuml;ssen signiert werden, wenn sie in den Global Assembly Cache (GAC) installiert werden sollen. Wir werden uns heute mit der Frage auseinandersetzen, ob es denn klug ist, einem Entwickler den Private Key der Firma zu geben.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,sn.exe,Signing,Signierung,Kryptographie,Cryptography,hash,Hashing,Assembly,Delay signing,AssemblyDelaySign">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Delay Signing von Assemblies</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020904"></SCRIPT>
+</p>
+<p>
+Assemblies unter .NET m&uuml;ssen signiert werden, wenn sie in den Global Assembly Cache (GAC) installiert werden sollen.
+Auch sonst sollten Assemblies signiert werden, da die Runtime dann &uuml;berpr&uuml;fen kann, ob die zu ladende Assembly mit
+der &uuml;bereinstimmt, die zum Kompilierungszeitpunkt verwendet wurde. Dies passiert mittels Public und Private Keys, und wir
+werden uns heute mit der Frage auseinandersetzen, ob es denn klug ist, einem Entwickler den Private Key der Firma
+zu geben.
+</p>
+<p>
+Zuerst zur Kl&auml;rung der rein technischen Fragen. Der Private Key wird vom Komponentenhersteller verwendet, um
+den &uuml;ber die Assembly errechneten Hash zu signieren. In die Assembly wird der Public Key (vorher, und somit ist dieser
+Teil des Hashes) eingebettet, mit dem der Hash verfizierbar ist. Stimmt eingebetteter Hash und der nachgerechnete Hash 
+&uuml;berein, ist die Assembly vom Hersteller und unver&auml;ndert.
+</p>
+<p>
+Besitzt jemand den Private Key, kann er also immer g&uuml;ltige Assemblies herstellen. Ohne diesen Key geht gar nichts. Daher
+gilt, ger&auml;t der Key in falsche H&auml;nde, kann die Firma nicht mehr erfolgreich abstreiten, da&szlig; ein Code nicht von ihnen kam -
+weil ja g&uuml;ltig signiert wurde.
+</p>
+<p>
+Kein Problem denkt man sich - meine Programmierer sind ja zuverl&auml;ssig, und unsere Firewall ist gut. Nur, was passiert zB wenn
+ein Mitarbeiter der Zugang zu den Keys hatte, unter unerfreulichen Bedingungen geht/gegangen wird? Sind Sie sich dann noch
+immer sicher, da&szlig; Ihre Keys nicht den Weg nach au&szlig;en finden werden?
+</p>
+<p>
+Der sicherste Weg ist, da&szlig; Programmierer zum Entwicklungszeitpunkt die Private Keys nicht brauchen - erst wenn das Produkt
+die Firma verl&auml;&szlig;t, wird signiert. Doch halt - wie kommen dann die Public Keys und Hashes in die Assemblies? Das passiert
+&uuml;ber Delay Signing, das es den Programmieren erlaubt, diese einzubetten, aber die Signierung sp&auml;ter durch eine andere Person
+nachgeholt werden kann.
+</p>
+
+<h2>Ein Praxisbeispiel</h2>
+<p>
+An einem Beispiel l&auml;&szlig;t es sich am leichtesten verstehen, wie man vorzugehen hat - und wie es in der Praxis funktionieren
+kann. Dazu habe ich ein Projekt mit einer Assembly und einer Applikation erstellt (mittels 
+<a href="http://www.icsharpcode.net/opensource/sd/" target="_blank">#develop</a>):
+</p>
+
+<IMG SRC="Bilder/200209/20020904_1.png" width="660" height="488" alt="" border="0">
+
+<p>
+Das <b>HelloAssembly</b> Projekt ist die Komponente unserer Firma. Die Applikation, die diese Komponente einsetzt, ist
+<b>HelloTestApp</b>. Die <i>helloassembly.dll</i> soll in den Global Assembly Cache installiert werden, daher braucht 
+man ein Keypair f&uuml;r die Signierung (<b>generatekeypair.bat</b>):
+</p>
+
+<pre style="background='silver';">
+sn -k keypair.bin
+</pre>
+
+<p>
+Damit wird ein Schl&uuml;sselpaar - Public und Private Key - erstellt. Dies wird im normalen Falle des sofortigen Signierens
+in der Datei <i>AssemblyInfo.cs</i> dann so verwendet:
+</p>
+
+<pre style="background='silver';">
+[assembly: AssemblyDelaySign(false)]
+[assembly: AssemblyKeyFile("keypair.bin")
+</pre>
+
+<p>
+Damit kann man <i>helloassembly.dll</i> sofort in den GAC installieren (<b>gacinstall.bat</b>):
+</p>
+
+<pre style="background='silver';">
+gacutil -i helloassembly.dll
+</pre>
+
+<IMG SRC="Bilder/200209/20020904_5.png" width="653" height="323" alt="" border="0">
+
+<p>
+Und in unserer (tollen) Testapplikation verwenden:
+</p>
+
+<IMG SRC="Bilder/200209/20020904_2.png" width="660" height="488" alt="" border="0">
+
+<p>
+Durch diese Referenz wird der Public Key Token (die verk&uuml;rzte Version des Public Keys) der <i>helloassembly.dll</i> in 
+das Manifest unserer Applikation eingebaut:
+</p>
+
+<IMG SRC="Bilder/200209/20020904_3.png" width="447" height="323" alt="" border="0">
+
+<p>
+Ab sofort kann uns niemand mehr eine gef&auml;lschte <i>helloassembly.dll</i> unterschieben - au&szlig;er er hat den Private Key
+zur Verf&uuml;gung. Und das h&auml;tte der Programmierer, weil er das Key Pair hat. Erwischt.
+</p>
+
+<h2>Delay Signing in der Praxis</h2>
+<p>
+Also wie sorgt man daf&uuml;r, da&szlig; der Programmierer den Private Key nicht hat? Nun, man gibt ihm den Key einfach nicht, 
+man teilt das Key Pair auf (<b>extractpublickey.bat</b>):
+</p>
+
+<pre style="background='silver';">
+sn -p keypair.bin pubkey.bin
+</pre>
+
+<p>
+Dadurch erh&auml;lt man in <i>pubkey.bin</i> den &ouml;ffentlichen Schl&uuml;ssel: diesen gibt man dem Programmierer. Die Datei
+<i>keypair.bin</i> hingegen wandert auf eine Diskette in den Safe, m&ouml;glichst kryptographisch gesichert soda&szlig; man 
+mehr als ein Person braucht, um sie wieder entschl&uuml;sseln zu k&ouml;nnen.
+</p>
+
+<p>
+Der Programmierer kann die Assembly nun Delay-Signen, und das passiert wieder &uuml;ber die Assembly Information der
+Komponente (<b>AssemblyInfoDelaySign.cs</b>):
+</p>
+
+<pre style="background='silver';">
+using System.Reflection;
+using System.Runtime.CompilerServices;
+
+[assembly: AssemblyTitle("")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("AlphaSierraPapa")]
+[assembly: AssemblyProduct("")]
+[assembly: AssemblyCopyright("")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+
+[assembly: AssemblyVersion("1.0.0.0")]
+
+// Delay Signing enabled
+[assembly: AssemblyDelaySign(true)]
+[assembly: AssemblyKeyFile("pubkey.bin")]
+</pre>
+
+<p>
+Dadurch da&szlig; die Assembly jetzt keinen signierten Hash mehr hat, funktioniert der Verification Check nicht mehr,
+das Installieren in den GAC schl&auml;gt fehl:
+</p>
+
+<IMG SRC="Bilder/200209/20020904_4.png" width="668" height="331" alt="" border="0">
+
+<p>
+Um dieses Problem zu umgehen, mu&szlig; der Programmierer der Komponente die Assembly vom Verification Checking ausnehmen 
+(<b>reg4verificationskipping.bat</b>):
+</p>
+
+<pre style="background='silver';">
+sn -Vr HelloAssembly.dll
+</pre>
+
+<p>
+Und jetzt geht das Installieren in den GAC auch wieder - genauso wie es wieder m&ouml;glich ist, andere Assemblies gegen
+diese zu linken.
+</p>
+
+<p>
+Was mu&szlig; man nun aber tun, damit man die Assembly zum Kunden ausliefern kann? Sie mu&szlig; signiert werden, und zwar mit
+Hilfe der weggesperrten <i>keypair.bin</i> Datei und dem Skript <b>beforeshipping.bat</b>:
+</p>
+
+<pre style="background='silver';">
+sn -R helloassembly.dll keypair.bin
+</pre>
+
+<p>
+Und damit ist die Komponente vollst&auml;ndig signiert. Der Programmierer kann die ganze Zeit entwicklen und testen, und
+erst kurz bevor die Komponente das Haus verl&auml;&szlig;t, wird der signierte Hash eingef&uuml;gt. So l&auml;uft auch die Entwicklung der
+Base Class Library (BCL) bei Microsoft.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Auf den ersten Blick mag das Problem des Private Key in H&auml;nden des Programmierers gering im Vergleich zum Aufwand
+des Delay Signings sein - doch stellen Sie sich vor, was passiert, wenn Sie nicht abstreiten k&ouml;nnen, da&szlig; ein Virus /
+was auch immer <i>nicht</i> von Ihrer Firma kommt.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020904.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eicsharpcode%2Enet%2Fopensource%2Fsd%2F">#develop (SharpDevelop)</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3Furl%3D%2Flibrary%2Fen%2Dus%2Fcpguide%2Fhtml%2Fcpcondelayedsigningassembly%2Easp">Delay Signing an Assembly</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3Furl%3D%2Flibrary%2Fen%2Dus%2Fcpguide%2Fhtml%2Fcpconassigningassemblystrongname%2Easp">Signing an Assembly with a Strong Name</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3Furl%3D%2Flibrary%2Fen%2Dus%2Fcptools%2Fhtml%2Fcpgrfstrongnameutilitysnexe%2Easp">Strong Name Tool (Sn.exe)</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20020904" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Delay Signing von Assemblies"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20020904.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20020904"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20020904.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

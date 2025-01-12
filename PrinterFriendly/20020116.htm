@@ -1,0 +1,493 @@
+<HTML>
+<HEAD>
+<TITLE>XML-Daten verarbeiten mit XSLT</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Bei der Datenspeicherung und besonders beim Datenaustausch r&uuml;ckt XML immer mehr in den Vordergrund. Mit XSLT k&ouml;nnen die XML Daten in verschiedene Zielformate konvertiert - ohne viel M&uuml;he, wie dieser Artikel zeigt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,XML,XSL,XSLT,transformation,Transformierung,Extensible Stylesheet Language,Xpath,W3C">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>XML-Daten verarbeiten mit XSLT</H1>
+<p>
+Geschrieben von: <a href="../autoren/fredericganner.htm">Frederic Ganner</a><br>
+Kategorie: <a href="../kategorien/XML.htm">XML</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020116"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Bei der Datenspeicherung und besonders beim Datenaustausch r&uuml;ckt XML immer mehr in den Vordergrund. Damit die 
+Anwendung (oder der Mensch) mit der wir Daten austauschen diese auch aufnehmen kann, m&uuml;ssen diese meist 
+aufbereitet werden - in ein Zielformat "transformiert" werden. Hierzu gibt es die eXtended Stylesheet 
+Language (XSL). Und da&szlig; diese weit mehr kann (und f&uuml;r weit mehr gedacht ist) als ein XML-File in HTML zu 
+verwandeln, m&ouml;chte ich heute vermitteln.
+</p>
+
+<p>
+Zun&auml;chst werden wir uns XSL im Allgemeinen zuwenden, um dann anhand von praktischen Beispielen die Verwendung von 
+XSLT, der eXtended Stylesheet Language for Transformations, zu erlernen, und zu verstehen wie sich in einer ASP-Umgebung 
+Stylesheets einbinden lassen. Um am Server mit XSL arbeiten zu k&ouml;nnen, m&uuml;ssen nat&uuml;rlich die Microsoft XML Core 
+Services (MSXML 4.0 oder h&ouml;her) installiert sein.
+</p>
+
+<h2>XSL und Familie</h2>
+
+<p>
+Die W3C-Spezifikation von XSL beschreibt eine Sprache zur Transformation und Formatierung von Dokumenten. Die folgende 
+Grafik beschreibt grunds&auml;tzlich wie eine XML-Datei mit einem Stylesheet vom XSLT-Prozessor verarbeitet wird. Das 
+Ergebnis der Verarbeitung kann eine XML-, HTML-, oder irgendein Textformat sein, zum Beispiel Comma Separated 
+Values (CSV).
+</p>
+
+<IMG SRC="/artikel/Bilder/200201/20020116_1.png" width="408" height="251" alt="" border="0">
+
+<p>
+Neben der Umwandlung strukturierter Daten durch XSLT z&auml;hlt zu XSL auch der Bereich Formatting Objects, die zum 
+Beispiel f&uuml;r Printformate verwendet werden. XSLT bildet also einen Teilbereich der XSL-Empfehlung. 
+</p>
+
+<p>
+Der dritte wichtige Teil von XSL ist die XML Path Language, kurz XPath. XPath ist eine Sprache die, bei der 
+Verarbeitung von Dokumenten durch XSLT, dem Programmierer die n&ouml;tigen Werkzeuge bereitstellt, um die Daten 
+nicht nur auszuzeichnen, sondern auch komplexe Ver&auml;nderungen an ihnen vorzunehmen. Im Kontext von XSLT wird diese 
+Sprache haupts&auml;chlich dazu verwendet, um Elemente zu adressieren und Zeichenketten oder Zahlen zu manipulieren. 
+</p>
+
+<p>
+Oft wird auch nach dem Unterschied von XSL zu Cascading Style Sheets gefragt. XSL bietet eine komplette Sprache um 
+Dokumente umfassend zu manipulieren, dagegen beschr&auml;nkt sich CSS auf die Auszeichnung von Elementen, zum Zweck der 
+einfachen Darstellung im Browser
+</p>
+
+<h2>So arbeitet XSLT</h2>
+
+<p>
+Der wichtigste Punkt zum Verst&auml;ndnis der Funktionsweise von XSLT ist, da&szlig; die Abarbeitung der XSLT-Datei nicht 
+prozedural ist. Es wird also nicht jedes Element nach seinem Vorkommen in der Datei bearbeitet, sondern sowohl die 
+XSLT-Datei als auch das XML-File werden vom MSXML zu DOM-Trees geparsed. Diese Herangehensweise erm&ouml;glicht es zu jedem 
+Zeitpunkt der Laufzeit auf alle Elemente und Daten zuzugreifen, und nur das erm&ouml;glicht letztendlich umfangreiche 
+Formatierungen. 
+</p>
+
+<p>
+Der Parser selbst akzeptiert deshalb auch nicht ausschlie&szlig;lich XML-Files, sondern kann mit jedem beliebigen 
+DOM-Dokument gef&uuml;ttert werden, und kann ebenso DOM-Dokumente an andere Anwendungen weitergeben. 
+</p>
+
+<p>
+Der Parser hat w&auml;hrend der Ausf&uuml;hrung zwei DOM-Dokumente gespeichert. Das eine besteht aus einer Baumstruktur 
+dessen Nodes mit den Elementen der XML-Datei gef&uuml;llt sind, das andere besteht analog dazu aus einer Baumstruktur der 
+Formatierungsanweisungen die die XSLT-Datei vorgibt. Diese Anweisungen sind sogenannte Template Rules. Die folgende 
+Grafik zeigt anhand eines Abschnitts einer XSLT-Datei die grunds&auml;tzliche Funktion einer Template-Regel:
+</p>
+
+<IMG SRC="/artikel/Bilder/200201/20020116_2.png" width="408" height="251" alt="" border="0">
+
+<p>
+Wenn der Parser auf diese Regel st&ouml;&szlig;t, durchsucht er das gesamte XML-Dokument nach Elementen die auf das 
+Suchmuster, auch Pattern genannt, passen. In diesem Fall w&auml;re das ein "&lt;autor&gt;"-Element. Sofern der Parser ein 
+Element, auf das der Pattern zutrifft, findet, f&uuml;gt er das Template dem Output-Stream hinzu. Im gezeigten Beispiel w&uuml;rde 
+ein "&lt;Name&lt;"-Element mit dem Inhalt des Elements "<autor>" entstehen. Das Beispiel &auml;ndert demnach die Bezeichnung 
+des Elements "autor" in "Name", der Inhalt des Elements bleibt gleich. 
+</p>
+
+<p>
+Der ganze Verarbeitungsprozess besteht aus einem Suchen von Elementen und einem Anf&uuml;gen der entsprechenden Templates 
+an den Output. Um Daten in die entstehende Datei zu &uuml;bernehmen, m&uuml;ssen diese explizit angegeben und verarbeitet 
+werden. Wenn f&uuml;r Elemente des bearbeiteten XML-Files keine Templates vorhanden sind, kommen sie im Output-Dokument 
+auch nicht vor.
+</p>
+
+<h2>Daten finden mit XPath</h2>
+
+<p>
+Der Pattern "autor" war auch schon unsere erste Begegnung mit XPath, denn alle Suchmuster in XSLT sind XPath 
+Syntax. Mit XPath kann man sich durch den  XML-Tree navigieren, und die Elemente ausw&auml;hlen, und ver&auml;ndern, die man 
+in das neu entstehende Dokument aufnehmen will. Das folgende Beispiel zeigt eine einfache XML Datei, auf die sich 
+die weiteren Erkl&auml;rungen der XPath Syntax beziehen werden.
+</p>
+
+<pre style="background='silver';">
+&lt;?xml version="1.0" ?&gt;
+&lt;?xml-stylesheet type="text/xsl" href="sample.xsl" ?&gt;
+&lt;!-- Kunden mit Namen und ID --&gt;
+&lt;Kunden&gt;
+    &lt;Kunde id="45325"&gt;
+        &lt;Name&gt;Meier&lt;/Name&gt;
+        &lt;Vorname&gt;Peter&lt;/Vorname&gt;
+        &lt;Umsatz&gt;1423&lt;/Umsatz&gt;
+        &lt;Kaeufe&gt;28&lt;/Kaeufe&gt;
+    &lt;/Kunde&gt;
+    &lt;Kunde id="45326"&gt;
+        &lt;Name&gt;Schmidt&lt;/Name&gt;
+        &lt;Vorname&gt;Harald&lt;/Vorname&gt;
+        &lt;Umsatz&gt;7421.00&lt;/Umsatz&gt;
+        &lt;Kaeufe&gt;19&lt;/Kaeufe&gt;
+    &lt;/Kunde&gt;
+    &lt;Kunde id="45327"&gt;
+        &lt;Name&gt;Weinberg&lt;/Name&gt;
+        &lt;Vorname&gt;Simon&lt;/Vorname&gt;
+        &lt;Umsatz&gt;5742.94&lt;/Umsatz&gt;
+        &lt;Kaeufe&gt;23&lt;/Kaeufe&gt;
+    &lt;/Kunde&gt;
+    &lt;Kunde id="45328"&gt;
+        &lt;Name&gt;Franz&lt;/Name&gt;
+        &lt;Vorname&gt;Gans&lt;/Vorname&gt;
+        &lt;Umsatz&gt;3650&lt;/Umsatz&gt;
+        &lt;Kaeufe&gt;15&lt;/Kaeufe&gt;
+    &lt;/Kunde&gt;
+&lt;/Kunden&gt;
+</pre>
+
+<p>
+Mit folgender Template Rule werden durch das "value-of"-Tag einzelne Werte aus der XML Datei extrahiert. Durch 
+XPath Ausdr&uuml;cke k&ouml;nnen dabei genau die gew&uuml;nschten Elemente mit dem Attribut "select" angesteuert werden.
+</p>
+
+<pre style="background='silver';">
+&lt;xsl:template match="/"&gt;
+   &lt;xsl:value-of select="Kunden/Kunde[2]/@id" /&gt;
+   &lt;xsl:value-of select="/Kunden/Kunde/Name | Kunden/Kunde/@id" /&gt;
+   &lt;xsl:value-of select="/*/Kunde[@id &gt; '45326']/Name" /&gt;
+   &lt;xsl:value-of select="//node()" /&gt;
+   &lt;xsl:value-of select="processing-instruction() | comment()" /&gt;
+&lt;/xsl:template&gt;
+</pre>
+
+<p>
+Im folgenden Screenshot sieht man das Ergebnis des Listings. Zum besseren Verst&auml;ndnis sind in der HTML-Seite 
+sowohl die Ausgaben der obigen Elemente als auch die Tags selbst dargestellt. Au&szlig;erdem ist zu beachten, da&szlig; 
+mit einem "value-of"-Tag immer nur der erste Werte der angew&auml;hlten Elemente ausgegeben wird. M&ouml;chte man mehrere 
+Werte anzeigen, m&uuml;ssen dazu Schleifen verwendet werden.
+</p>
+
+<IMG SRC="/artikel/Bilder/200201/20020116_3.png" width="574" height="244" alt="" border="0">
+
+<p>
+Das "match" Attribut der Template Rule legt den Kontext des Templates fest. Ein "/" setzt den Cursor auf die Root Node, 
+deshalb k&ouml;nnen bis ein neuer Kontext gesetzt wird alle Pfade relativ zu diesem angegeben werden. Im ersten 
+select-Attribut ist der Pfad relativ, da kein "/" am Anfang steht. Im zweiten dagegen ist der Pfad durch den 
+Schr&auml;gstrich, unabh&auml;ngig vom Kontext, absolut gesetzt. 
+</p>
+
+<p>
+Die "2" in den eckigen Klammern des ersten Ausdrucks verweist auf das zweite von mehreren gleichen Elementen. Um auf 
+die Attribute der Elemente zugreifen zu k&ouml;nnen, wird ein "@" verwendet. Das dritte Tag beginnt mit dem "*", der f&uuml;r 
+einen beliebigen Wert steht. Welche der drei Schreibweisen verwendet wird, um zu dem Element "Kunde" zu gelangen, ist 
+in diesem Fall egal. Die Funktion "node()" gibt alle Nodes zur&uuml;ck, die durch die Pfadangabe erreichbar sind.
+</p>
+
+<p>
+Durch die vielen M&ouml;glichkeiten auf Objekte zuzugreifen gibt es in XPath oft viele Wege zum gleichen Ziel. Der zweite 
+Ausdruck verf&uuml;gt noch &uuml;ber einen Trennungsstrich, dem eine zweite Anweisung folgt. Diese Konstruktion sagt dem 
+Prozessor: W&auml;hle alle Elemente aus, die von einem oder von beiden Ausdr&uuml;cken angew&auml;hlt werden. Der Ausdruck in den 
+eckigen Klammern des dritten Elements hat zum Ergebnis, da&szlig; nur Kunden mit einer Kundennummer h&ouml;her als "45326" 
+ausgew&auml;hlt werden. In eckigen Klammern stehen demnach immer Beschr&auml;nkungen oder Ausdr&uuml;cke die eine Anwahl pr&auml;zisieren.
+Der letzte Ausdruck gibt die Processing Instructions, und die Kommentare die an die Root Node angh&auml;ngt sind zur&uuml;ck.
+</p>
+
+<p>
+Die zwei Slashes vor dem Aufruf der "node()"-Funktion schr&auml;nken die Funktion auf die aktuelle Node und die 
+darunterliegenden ein. Zwei Schr&auml;gstriche verweisen auf die Kontextnode und auf alles unterhalb. Anstelle der aktuellen 
+Node k&ouml;nnte man einfach einen Punkt verwenden ("."). Zwei Punkte in einem Pfad w&uuml;rden auf die dar&uuml;berliegende Ebene 
+verweisen. Diese Zeichenfolgen sind eigentlich Kurzschreibweisen der Achsen-Ausdr&uuml;cke von XPath, die eine Node und 
+eine Richtung mit weiteren Nodes angeben. Es reicht in der Regel jedoch aus, wenn man mit den gel&auml;ufigen Abk&uuml;rzungen 
+vertraut ist.
+</p>
+
+<p>
+Der in den eckigen Klammern verwendete Operator ist ein "&gt;" Zeichen. Da diese Entity auch von XML verwendet wird, mu&szlig; 
+sie umgeschrieben werden. Die Umschreibungen der Zeichen sind zwar meistens die, die man auch in HTML verwendet, jedoch 
+gibt es Ausnahmen wie zB. die Leerstelle &amp;nbsp; die als &amp;#160; geschrieben werden mu&szlig; (analog dazu: Carriage Return 
+"&amp;#13;", Tab "&amp;#9;", Newline "&amp;#10;").
+</p>
+
+<ul>
+<li>"&gt;" bzw. "&lt;" wird zu "&amp;gt;" bzw. "&amp;lt;"</li>
+<li>"&gt;=" bzw. "&lt;=" wird zu "&amp;gt;="  bzw. "&amp;lt;"</li>
+<li>/ (Division) wird zu "div"</li>
+</ul>
+
+<p>
+Mit diesem grunds&auml;tzlichen Wissen &uuml;ber die Verwendung von XPath kann man bereits  beginnen XSL Stylesheets zu schreiben.
+Um allerdings komplexe Formatierungen durchzuf&uuml;hren, ben&ouml;tigt man nat&uuml;rlich noch einfache Konstrukte wie "if then", das 
+in XSLT "when otherwise" hei&szlig;t, und "for each", sowie weitergehende Funktionen die die Behandlung der Daten erm&ouml;glichen.
+</p>
+
+<h2>Daten transformieren</h2>
+
+<p>
+Neben den M&ouml;glichkeiten Elemente zu finden und zu adressieren bietet XPath auch eine Reihe von Funktionen, die das 
+Formatieren von Elementen erleichtern, und Informationen &uuml;ber Daten liefern. Die wichtigsten vier sind hier 
+zusammengefasst:
+</p>
+
+<pre style="background='silver';">
+&lt;xsl:template match="/"&gt;
+    &lt;xsl:value-of select="format-number(Kunden/Kunde/Zahl,'####,000')"/&gt;
+    &lt;xsl:value-of select="sum(Kunden/Kunde/Zahl)"/&gt;
+    &lt;xsl:value-of select="round(Kunden/Kunde[@='45327']/Zahl)"&gt;
+    &lt;xsl:value-of select='substring("zerhackt", 4, 7)'/&gt;
+&lt;/xsl:template&gt;
+</pre>
+
+<p>
+Die Funktion "format-number()" verlangt zum einen ein Element dessen Inhalt eine Zahl ist, zum anderen die Vorgabe wie 
+die Zahl zu formatieren ist. Die Rauten stehen dabei f&uuml;r Integer, die 0 f&uuml;r eine Stelle die mit 0 belegt wird wenn 
+sie nicht durch einen Integer belegt werden kann. 
+</p>
+
+<p>
+Die "sum()" Funktion gibt die Summe aller Zahl-Elemente zur&uuml;ck. Wie zu erwarten rundet "round()" den &uuml;bergebenen 
+Parameter. Durch "substring()" wird ein Teil eines Strings zur&uuml;ckgegeben, die erste Stelle hat dabei den Index "1". 
+Das Beispiel gibt demnach den String "hack" zur&uuml;ck. 
+</p>
+
+<p>
+Im folgenden Code-Abschnitt wird ein Beispiel f&uuml;r die Verwendung einer Schleife, einer Variable und der Funktion 
+"count()" gegeben.
+</p>
+
+<pre style="background='silver';">
+&lt;xsl:template match="/"&gt;
+ &lt;xsl:for-each select="/Kunden/Kunde[not(Umsatz &amp;lt; 5000)]"&gt;
+    &lt;xsl:choose&gt;
+       &lt;xsl:when test="number(//Kaeufe &amp;lt;= 20)"&gt;
+       schlecht
+       &lt;/xsl:when&gt;
+       &lt;xsl:otherwise&gt;
+       gut
+       &lt;/xsl:otherwise&gt;
+   &lt;/xsl:choose&gt;
+ &lt;/xsl:for-each&gt;
+
+ &lt;xsl:variable name="Anzahl_Kunden" select="/Kunden/Kunde"/&gt;
+ &lt;xsl:value-of select="count($Anzahl_Kunden)"/&gt;
+&lt;/xsl:template&gt;
+</pre>
+
+<p>
+Das obige Tempate beinhaltet eine "for-each"-Schleife. Die Schleifenbedingung wird in dem "select"-Attribut des 
+&ouml;ffnenden "for-each"-Elements formuliert. Im Beispiel werden alle "Kunde"-Elemente mit dem Schleifeninhalt verarbeitet, 
+bei denen der Inhalt des "Umsatz"-Elements gr&ouml;&szlig;er als 5000 ist. Die verwendete Funktion "not()" gibt "true" zur&uuml;ck, 
+wenn das &uuml;bergebene Argument "false" ergibt. 
+</p>
+
+<p>
+In der Schleife wird durch das "choose"-Element eine "when-otherwise"-Bedingung eingeleitet. Das Attribut "test" des 
+Elements "when" enth&auml;lt die Bedingung des Statements. Um sich Arbeit zu ersparen gibt es nat&uuml;rlich auch die M&ouml;glichkeit 
+Variablen zu definieren. Eine solche kann in XSLT durch das "variable"-Element erstellt werden. Die obige Variable 
+enth&auml;lt ein Node-Set, ein Array von Elementen, aller "Kunde"-Elemente. Eine definierte Variable steht immer in dem 
+Kontext den das Template, in dem sie erstellt wird, vorgibt. 
+</p>
+
+<p>
+Bei der relativen Angabe von Pfaden ist also zu beachten wo in der Baumstruktur sich das Template befindet. Das folgende 
+Element bezieht sich auf diese Variable und schreibt &uuml;ber die Funktion "count()" die Anzahl aller vorkommenden 
+"Kunde"-Elemente in den Output-Stream.
+</p>
+
+<h2>Praktische Verwendung in ASP</h2>
+
+<p>
+Wenn man in ASP mit XSL arbeitet, werden einem simple M&ouml;glichkeiten des Parsers zur Verf&uuml;gung gestellt, die Stylesheets 
+in bestehende Anwendungen einzubinden. Ein h&auml;ufiger Anwendungsfall des DOMs ist, eine XML-Datei zu erstellen, um diese 
+dann einer Anwendung zu &uuml;bergeben. Anstatt dem User und der Anwendung die selbe XML-Datei vorzusetzen, k&ouml;nnte man 
+einerseits das "rohe" XML speichern, dem Benutzer dagegen eine aufbereitete HTML-Datei zusenden. 
+</p>
+
+<p>
+F&uuml;r solche F&auml;lle gibt es den IXSL-Processor. Wie ein DOM-Dokument wird zuerst ein XSL-Template-Objekt als Server-Objekt 
+instanziert. Diesem wird dann ein Stylesheet zugewiesen, und mit der Methode ".CreateProcessor()" wird der 
+XSL-Prozessor erstellt. &Uuml;ber die Eigenschaft "Input" kann diesem  ein DOM-Dokument zugewiesen werden. Nach der 
+Verarbeitung durch den ".Transform()"-Aufruf  steht unter ".Output" der transformierte Inhalt parat. Selbigen schreibt 
+man dann nach Gusto entweder gleich in den Output Stream oder man speichert ihn im Lieblingsformat ab.
+</p>
+
+<p>
+Die Beispiel-Datei <b>Transform.asp</b> wird die Datei <b>products.xml</b> in folgende anregende Darstellung verwandeln. Diese 
+k&ouml;nnte dann zum Beispiel auch als Mail versendet werden:
+</p>
+
+<IMG SRC="/artikel/Bilder/200201/20020116_4.png" width="450" height="493" alt="" border="0">
+
+<p>
+So sieht die zugrundeliegende XML-Datei aus:
+</p>
+
+<pre style="background='silver';">
+&lt;?xml version="1.0" ?&gt;
+&lt;?xml-stylesheet type="text/xsl" href="products.xsl" ?&gt;
+&lt;Statistik&gt;
+    &lt;Info&gt;
+        &lt;Inhalt&gt;Verkaufszahlen&lt;/Inhalt&gt;
+        &lt;Von&gt;10.11.2000&lt;/Von&gt;
+        &lt;Bis&gt;10.11.2001&lt;/Bis&gt;
+    &lt;/Info&gt;
+    &lt;Software&gt;
+        &lt;Produkt id="03485"&gt;
+            &lt;Name&gt;Mailbuster&lt;/Name&gt;
+            &lt;System&gt;WIN&lt;/System&gt;
+            &lt;Preis&gt;350&lt;/Preis&gt;
+            &lt;Sold quartal1="146" quartal2="163"
+                quartal3="157" quartal4="143"&gt;&lt;/Sold&gt;
+        &lt;/Produkt&gt;
+        &lt;Produkt id="03478"&gt;
+            &lt;Name&gt;Personnel Firewall&lt;/Name&gt;	
+            &lt;System&gt;WIN&lt;/System&gt;
+            &lt;Preis&gt;90&lt;/Preis&gt;
+            &lt;Sold quartal1="751" quartal2="760"
+                quartal3="694" quartal4="708"&gt;&lt;/Sold&gt;
+        &lt;/Produkt&gt;
+        &lt;Produkt id="03490"&gt;
+            &lt;Name&gt;Filtering Smart&lt;/Name&gt;
+            &lt;System&gt;UNX&lt;/System&gt;
+            &lt;Preis&gt;890&lt;/Preis&gt;
+            &lt;Sold quartal1="147" quartal2="269"
+                quartal3="375" quartal4="512"&gt;&lt;/Sold&gt;
+        &lt;/Produkt&gt;
+        &lt;Produkt id="03417"&gt;
+            &lt;Name&gt;Final Sniff&lt;/Name&gt;
+            &lt;System&gt;UNX&lt;/System&gt;
+            &lt;Preis&gt;120&lt;/Preis&gt;
+            &lt;Sold quartal1="245" quartal2="241"
+                quartal3="230" quartal4="259"&gt;&lt;/Sold&gt;
+        &lt;/Produkt&gt;
+        &lt;Produkt id="03450"&gt;
+            &lt;Name&gt;Space Panic&lt;/Name&gt;
+            &lt;System&gt;WIN&lt;/System&gt;
+            &lt;Preis&gt;60&lt;/Preis&gt;
+            &lt;Sold quartal1="156" quartal2="123"
+                quartal3="138" quartal4="154"&gt;&lt;/Sold&gt;
+        &lt;/Produkt&gt;
+    &lt;/Software&gt;
+&lt;/Statistik&gt;
+</pre>
+
+<p>
+Aufgrund der Gr&ouml;&szlig;e ist das Stylesheet <b>product.xsl</b> unter folgendem Link zu finden:
+<a href="../artikel/20020116_products.xsl" target="_blank">products.xsl</a>
+
+</p>
+Wie oben beschrieben findet in der <b>Transform.asp</b> die Verarbeitung durch den IXSL-Processor statt. Das Ergebnis
+wird "on the fly" in den Output geschrieben. Hier das vollst&auml;ndige Script:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Language = "VBScript" %&gt;
+&lt;%
+    Set XSLTMP = Server.CreateObject("Msxml2.XSLTemplate.4.0")
+    Set XSLDOK = Server.CreateObject("Msxml2.FreeThreadedDOMDocument.4.0")
+    XSLDOK.Async = false
+    XSLDOK.Load(Server.MapPath("products.xsl"))
+    XSLTMP.Stylesheet = XSLDOK
+    Set XMLDOK = Server.CreateObject("Msxml2.DOMDocument.4.0")
+    XMLDOK.Async = false
+    XMLDOK.Load(Server.MapPath("products.xml"))
+    Set XSLPU = XSLTMP.CreateProcessor()
+    XSLPU.Input = XMLDOK
+    XSLPU.Transform()
+    Response.Write(XSLPU.output)
+%&gt;
+</pre>
+
+<p>
+Wie man sehen kann ist der letztendlich entstehende ASP-Code sehr kurz, da die eigentliche Arbeit von der XSL-Datei 
+verrichtet wird. Wenn man die Formatierung der XML-Daten  nicht mehr in der ASP-Datei vornimmt, hat das eben auch 
+den Vorteil, da&szlig; Anpassungen der Formatierungen sehr leicht in einer XSL-Datei vorgenommen werden k&ouml;nnen, und nicht 
+in jeder einzelnen ASP-Datei.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+XSL is here to stay. Die M&ouml;glichkeiten XML zu verarbeiten sind vielf&auml;ltig, durchsetzen werden sich aber letztendlich nur die, 
+die am breitesten und von den meisten Plattformen unterst&uuml;tzt werden. Als W3C-Standard erf&uuml;llt XSL genau dieses 
+Kriterium. XSL wird in XML-Syntax geschrieben, in diese Richtung bewegen sich auch Technologien wie CSS. Diese N&auml;he zu 
+XML macht XSL &uuml;ber kurz oder lang zum idealen Werkzeug um den Datenaustausch von Menschen und Anwendungen, das 
+Haupteinsatzgebiet von XML, abzuwickeln.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020116.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020116.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020416.htm">Arbeiten mit dem SQL Server XML View Mapper</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020416.htm</span><br>
+<a href="../artikel/20000417.htm">Auslesen von XML Dateien mit dem DOM</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000417.htm</span><br>
+<a href="../artikel/20020730.htm">C# XML-Kommentare &mdash; Dokumentation von selbst</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020730.htm</span><br>
+<a href="../artikel/20011116.htm">Erstellen von XML-Dateien mit dem DOM</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011116.htm</span><br>
+<a href="../artikel/20010925.htm">Verwendung von XML-Schemas (XSD)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010925.htm</span><br>
+<a href="../artikel/20010514.htm">Was sind XML Schemas?</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010514.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ediprogmbh%2Ede%2Fdownload%2FXSLT%2Epdf">Deutsche XSLT Kurzreferenz (PDF)</a><br>
+<SPAN class="content">http://www.diprogmbh.de/download/XSLT.pdf</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Fmsdn%2Dfiles%2F027%2F000%2F540%2Fxsl%2Dxslt%2Dconverter%2Eexe">MS XSL to XSLT Converter for XSLT compliance</a><br>
+<SPAN class="content">http://msdn.microsoft.com/msdn-files/027/000/540/xsl-xslt-converter.exe</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Fxml%2F">MSDN XML Core</a><br>
+<SPAN class="content">http://msdn.microsoft.com/xml/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Etopxml%2Ecom%2Fxsl%2Fxsltref%2Easp">Umfassende XSLT Referenz von topxml.com</a><br>
+<SPAN class="content">http://www.topxml.com/xsl/xsltref.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Evbxml%2Ecom%2Fdownloads%2Ffiles%2Fxpathvisualiserseptember%2Ezip">XPath Visualiser for checking XPath Queries</a><br>
+<SPAN class="content">http://www.vbxml.com/downloads/files/xpathvisualiserseptember.zip</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fnwalsh%2Ecom%2Fxsl%2Fxslint%2F">XSL Lint semantic Checker for XSLT</a><br>
+<SPAN class="content">http://nwalsh.com/xsl/xslint/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ew3%2Eorg%2FStyle%2FXSL%2F">XSL Seite des W3C</a><br>
+<SPAN class="content">http://www.w3.org/Style/XSL/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

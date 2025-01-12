@@ -1,0 +1,280 @@
+<HTML>
+<HEAD>
+<TITLE>Tracing in ASP.NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel erkl&auml;rt der Autor die Verwendung der Trace Funktion von ASP.NET. Mit dieser lassen sich in einer ASP.NET Seite Debugmeldungen ausgeben und die Zeit eines Scripts timen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Tracing,Trace Information,Script,Timing,Debugmeldung,Debug,ASP.NET,trace.axd,localOnly,traceMode">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Tracing in ASP.NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001006"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wer hat nicht schon einmal zu Debuggingzwecken das <i>Response.Write</i> Statement verwendet, um sich
+SQL Strings, Servervariablen, Variablenwerte und Rechenergebnisse auszugeben? Meistens hat man sich
+dadurch das Layout (kurzfristig) zerst&ouml;rt, und man mu&szlig;te die Statements sp&auml;ter wieder l&ouml;schen oder
+auskommentieren.
+</p>
+<p>
+Ebenso beliebt wie schwierig ist das Messen der Geschwindigkeit einzelner Codebl&ouml;cke - entweder man
+zieht eine externe Komponente zu Rate, oder es geht nicht. Mit all diesen Unzul&auml;nglichkeiten r&auml;umt
+die Tracing Funktionalit&auml;t von ASP.NET auf: man kann Debugmeldungen ausgeben, und die Zeit eines
+Scripts timen - und das, ohne zwischen Test- und Releaseversion einer ASP.NET Seite Unterschiede machen 
+zu m&uuml;ssen.
+</p>
+<p>
+Ausgangsbasis der ganzen Beispiele des heutigen Artikels ist ein zugegebenerma&szlig;en wirklich
+einfaches Script:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;%
+Response.Write(&quot;Trace Test&quot;);
+%&gt;
+</pre>
+
+<p>
+Das Tracing kann per Seite ein- bzw. ausgeschaltet werden, als auch f&uuml;r alle Seiten einer gesamten
+Applikation. Anhand des obigen Beispiels werde ich beides erkl&auml;ren, und beginne mit dem Tracing auf
+Seitenbasis.
+</p>
+
+<h2>Tracing auf per-Seiten Basis</h2>
+<p>
+Die einfachste Methode des Tracings ist es pro Seite ein- oder auszuschalten. Dazu mu&szlig; man nur
+das <i>Trace</i> Attribut in der <i>Page</i> Direktive auf True setzen (<b>pagetrace.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; Trace="True" %&gt;
+&lt;%
+Response.Write(&quot;Trace Test&quot;);
+%&gt;
+</pre>
+
+<p>
+Durch diesen "Eingriff" wird die Tracinginformation an das Dokument angeh&auml;ngt. Dies zeigt
+der folgende Screenshot:
+</p>
+
+<IMG SRC="/artikel/Bilder/200010/20001006_1.png" width="683" height="547" alt="" border="0">
+
+<p>
+Die Informationen, die man erh&auml;lt, sind sehr vielf&auml;ltig (nicht alles ist im Screenshot sichtbar):
+</p>
+
+<ul>
+<li>Details zur Anfrage (Request Details)
+<li>Informationen zum Trace - mit Zeitmessung (Trace Information)
+<li>Der Abh&auml;ngigkeitsbaum der Web Form Controls auf dieser Seite (Control Tree)
+<li>Cookies Collection - ein Dump aller Cookies
+<li>Headers Collection - ein Dump aller Request Header
+<li>Weiters: alle Server Variablen werden gedumpt.
+</ul>
+
+<p>
+Damit hat man automatisch (ohne selbst etwas zu programmieren) bereits sehr viel Debugginginformation
+an der Hand. 
+</p>
+<p>
+Die einzige von ASP.NET noch zus&auml;tzlich zur Verf&uuml;gung gestellte Option ist da&szlig; man sich die Trace
+Information nicht nach Zeit, sondern nach Ereigniskategorie anzeigen lassen kann. Dazu mu&szlig; man
+das <i>TraceMode</i> Attribut in der <i>Page</i> Direktive ver&auml;ndern (<b>pagetrace-bycategory.aspx</b>)):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; Trace="True" TraceMode="SortByCategory" %&gt;
+&lt;%
+Response.Write(&quot;Trace Test&quot;);
+%&gt;
+</pre>
+
+<p>
+Wenn alles gutgeht, sieht der Trace dann so aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200010/20001006_2.png" width="644" height="185" alt="" border="0">
+
+<p>
+Da die Seite (fast) nichts an Code ausf&uuml;hrt, sind die Zeiten alle nahe bei 0. Sobald man allerdings zu 
+programmieren beginnt, erh&auml;lt man hier eine gute M&ouml;glichkeit herauszufinden, welche Aufgabe wie
+lange gedauert hat.
+</p>
+
+<h2>Tracing auf per-Applikations Basis</h2>
+<p>
+Die zweite Variante des Tracings ist die der Kontrolle auf Ebene der Applikation. Dies
+beinflu&szlig;t alle Seiten, und man kann es so machen, da&szlig; man eine zentrale Seite hat, auf der
+die Tracinginformationen angezeigt werden.
+</p>
+<p>
+Da ich von Tracing auf Applikationsebene spreche, kann es sich nur um Einstellungen handeln, die
+in der Datei <i>web.config</i> gemacht werden (im Root der jeweiligen Applikation abgelegt). Der
+folgende Code zeigt ein Beispiel, wie man Tracing einschalten kann (<b>web.config</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;configuration&gt;
+ &lt;system.web&gt;
+  &lt;trace enabled="true" requestLimit="40" 
+         pageOutput="false" traceMode="SortByTime"/&gt;
+ &lt;/system.web&gt;
+&lt;/configuration&gt;
+</pre>
+
+<p>
+Das <i>trace</i> Statement hat f&uuml;nf (optionale) Parameter, die folgende Funktionen haben:
+</p>
+
+<ul>
+<li><b>enabled</b>: Gibt an, ob das Tracing eingeschalten (True) oder abgeschalten (False) ist.
+<li><b>requestLimit</b>: Anzahl der Requests, f&uuml;r die die Traceresultate gespeichert werden sollen.
+<li><b>pageOutput</b>: True, falls man den Traceoutput an die Seite anh&auml;ngen will, False, falls man die Ergebnisse auf einer separaten Seite angezeigt haben m&ouml;chte.
+<li><b>traceMode</b>: Definiert die Anzeige der Traceinformationen. <b>SortByTime</b> definiert Sortierung nach Ablauf der Ereignisse, <b>SortByCategory</b> nach Kategorie der Ereignisse.
+<li><b>localOnly</b>: Gibt an, ob <i>trace.axd</i> nur lokal (True) anzeigbar ist. True ist die Standardeinstellung.
+</ul>
+
+<p>
+Wenn man diese &Auml;nderungen an der Datei web.config durchgef&uuml;hrt hat (und einige Seiten aufgerufen
+hat), kann man sich die Tracestatistiken mit Hilfe der von ASP.NET automatisch eingemappten Datei
+<b>trace.axd</b> ansehen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200010/20001006_3.png" width="683" height="404" alt="" border="0">
+
+<p>
+Die Datei pagetrace.aspx ist uns schon bekannt, allerdings hat tracetest.aspx einige interessante
+Funktionen, die wir uns in der n&auml;chsten Sektion ansehen werden. Ebenso gehen wir dann ins Detail -
+mit dem <i>View Details</i> Link.
+</p>
+
+<h2>Tracemeldungen ausgeben</h2>
+<p>
+Bis jetzt haben wir uns mit Tracemeldungen des Systems zufrieden gegeben. Jetzt wollen wir unsere
+eigenen Meldungen mit in die Traceinformationen aufnehmen. Dazu bietet uns das <i>Trace</i> Objekt zwei
+Funktionen: <i>Trace</i> und <i>Warn</i> (<b>tracetest.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; Trace="True" %&gt;
+&lt;%
+Trace.Write(&quot;Kategorie&quot;,&quot;Meldungstext&quot;);
+Trace.Warn(&quot;Kategorie&quot;, &quot;Meldungstext&quot;);
+%&gt;
+</pre>
+
+<p>
+Beide Funktionen erwarten einen Kategoriestring und den Meldungstext. Der einzige Unterschied ist
+der, da&szlig; <i>Warn</i> den Text in roter Farbe darstellt (diese Seite erreicht man &uuml;ber den
+View Details Link):
+</p>
+
+<IMG SRC="/artikel/Bilder/200010/20001006_4.png" width="683" height="527" alt="" border="0">
+
+<p>
+Die Traceinformationen sind die gleichen, die man auch f&uuml;r das Seiten-weise Tracing erh&auml;lt.
+</p>
+
+<h2>Die globalen Tracing Einstellungen</h2>
+<p>
+Zu guter letzt habe ich noch die Standardeinstellungen f&uuml;r das Tracing nachzutragen.
+Diese Standardeinstellungen finden sich in der globalen <b>machine.config</b>, welche 
+in folgendem Folder zu finden ist (Versionsnummer k&ouml;nnte differieren):
+</p>
+
+<IMG SRC="/artikel/Bilder/200010/20001006_5.png" width="690" height="265" alt="" border="0">
+
+<p>
+Die Einstellungen in dieser <b>machine.config</b> sind wie folgt:
+</p>
+
+<pre style="background='silver';">
+&lt;trace
+            enabled="false"
+            localOnly="true"
+            pageOutput="false"
+            requestLimit="10"
+            traceMode="SortByTime"
+        /&gt;
+</pre>
+
+<p>
+Wie man sieht, sind aus Gr&uuml;nden der Geschwindigkeit alle Tracingfunktionen ausgeschaltet - und das
+sollte auf einer Produktionsmaschine auch immer der Fall sein!
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Das Beispiel war nicht sehr lang, hat aber deutlich gezeigt, wieviel Information man automatisch
+in die Hand "gedr&uuml;ckt" bekommt. Mit Hilfe des <i>Trace</i> Objekts kann man dann das ausgeben, wozu man
+heute <i>Response.Write</i> mi&szlig;braucht - und bekommt alles noch sch&ouml;n sortiert angezeigt.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001006.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20001006.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020705.htm">Formularbasierte Authentifizierung in f&uuml;nf Minuten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020705.htm</span><br>
+<a href="../artikel/20011206.htm">Performancemessungen in .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011206.htm</span><br>
+<a href="../artikel/20010423.htm">Tracing in ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010423.htm</span><br>
+<a href="../artikel/20010802.htm">Web.Config 101</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010802.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

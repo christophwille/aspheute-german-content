@@ -1,0 +1,56 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML>
+<HEAD>
+<TITLE>fullhelp.aspx</TITLE>
+<STYLE>
+BODY {
+  font-family: "sans-serif";
+  bgcolor: "#FFFFFF";
+}
+
+PRE {
+  font-family: "monospaced";
+  }
+
+#statement {
+  color: "#0000FF"; /* Color for Script Statements (things like Call, Dim, If...Then...Else, etc) */
+  }
+
+#function {
+  color: "#FF0000"; /* Color for Script Functions (things like Instr, Abs, etc) */
+  }
+
+#script {
+  color: "#800000"; /* Color for anything that is not in one of the above script categories, but is
+                      contained inside script delimeters */
+  }
+
+#scripton {
+  color: "#FF00FF"; /* Color for anything that is not in one of the above script categories, but is
+                      contained inside script delimeters, inside quotation marks */
+  }
+
+#html {
+  color: "#0000FF"; /* Color for any non-script html output */
+  }
+
+#base {
+  color: "#000000"; /* Color for any non-script, non-html output */
+  }
+
+#comment {
+  color: "#008000"; /* Color for any commented code */
+  }
+
+#linenum {
+  color: "#808080"; /* Color for the line numbers */
+  }
+</STYLE>
+</HEAD>
+
+<BODY>
+
+<pre><span id="linenum">001&nbsp;&nbsp;</span><span id="script">&lt;% @Page Language=<span id="scripton">"C#"</span> %&gt;</span><br><span id="linenum">002&nbsp;&nbsp;</span><span id="script">&lt;% @Assembly Name=<span id="scripton">"System.Diagnostics"</span> %&gt;</span><br><span id="linenum">003&nbsp;&nbsp;</span><span id="script">&lt;% @Import Namespace=<span id="scripton">"System.Diagnostics"</span> %&gt;</span><br><span id="linenum">004&nbsp;&nbsp;</span><span id="script">&lt;% @Import Namespace=<span id="scripton">"System.Collections"</span> %&gt;</span><br><span id="linenum">005&nbsp;&nbsp;</span>&lt;script language=<span id="scripton">"C#"</span> runat=<span id="scripton">"server"</span>&gt;<br><span id="linenum">006&nbsp;&nbsp;</span>void Page_Load(Object Src, EventArgs E) <br><span id="linenum">007&nbsp;&nbsp;</span>{<br><span id="linenum">008&nbsp;&nbsp;</span>	if (!Page.IsPostBack)<br><span id="linenum">009&nbsp;&nbsp;</span>	{<br><span id="linenum">010&nbsp;&nbsp;</span>		PerformanceCounterCategory[] arrCategories = PerformanceCounterCategory.GetCategories();<br><span id="linenum">011&nbsp;&nbsp;</span>		Category.DataSource = arrCategories;<br><span id="linenum">012&nbsp;&nbsp;</span>		Category.DataBind();<br><span id="linenum">013&nbsp;&nbsp;</span>	}<br><span id="linenum">014&nbsp;&nbsp;</span>}<br><span id="linenum">015&nbsp;&nbsp;</span><br><span id="linenum">016&nbsp;&nbsp;</span>void OnDisplayCategory(Object sender, EventArgs e)<br><span id="linenum">017&nbsp;&nbsp;</span>{<br><span id="linenum">018&nbsp;&nbsp;</span>	string strCategory = Category.SelectedItem.Value;<br><span id="linenum">019&nbsp;&nbsp;</span>	PerformanceCounterCategory pcInfo = new PerformanceCounterCategory(strCategory);<br><span id="linenum">020&nbsp;&nbsp;</span>	<br><span id="linenum">021&nbsp;&nbsp;</span>	CategoryHelp.Text = pcInfo.CategoryHelp;<br><span id="linenum">022&nbsp;&nbsp;</span>	CounterHelp.Text = <span id="scripton">""</span>;<br><span id="linenum">023&nbsp;&nbsp;</span>	<br><span id="linenum">024&nbsp;&nbsp;</span>	PerformanceCounter[] arrCntrs = pcInfo.GetCounters();<br><span id="linenum">025&nbsp;&nbsp;</span>	Counters.DataSource = arrCntrs;<br><span id="linenum">026&nbsp;&nbsp;</span>	Counters.DataBind();	<br><span id="linenum">027&nbsp;&nbsp;</span>}<br><span id="linenum">028&nbsp;&nbsp;</span><br><span id="linenum">029&nbsp;&nbsp;</span>void OnHelpCounter(Object sender, EventArgs e)<br><span id="linenum">030&nbsp;&nbsp;</span>{<br><span id="linenum">031&nbsp;&nbsp;</span>	string strCategory = Category.SelectedItem.Value;<br><span id="linenum">032&nbsp;&nbsp;</span>	string strCounter = Counters.SelectedItem.Value;<br><span id="linenum">033&nbsp;&nbsp;</span>	PerformanceCounter pcInfo = new PerformanceCounter(strCategory, strCounter);<br><span id="linenum">034&nbsp;&nbsp;</span>	CounterHelp.Text = pcInfo.CounterHelp;<br><span id="linenum">035&nbsp;&nbsp;</span>}<br><span id="linenum">036&nbsp;&nbsp;</span>&lt;/script&gt;<br><span id="linenum">037&nbsp;&nbsp;</span><br><span id="linenum">038&nbsp;&nbsp;</span>&lt;html&gt;<br><span id="linenum">039&nbsp;&nbsp;</span>&lt;body&gt;<br><span id="linenum">040&nbsp;&nbsp;</span><br><span id="linenum">041&nbsp;&nbsp;</span>&lt;h3&gt;Performance Counter Hilfetexte&lt;/h3&gt;<br><span id="linenum">042&nbsp;&nbsp;</span><br><span id="linenum">043&nbsp;&nbsp;</span>&lt;form runat=<span id="scripton">"server"</span> method=<span id="scripton">"post"</span>&gt;<br><span id="linenum">044&nbsp;&nbsp;</span>&lt;table width=<span id="scripton">"400"</span>&gt;<br><span id="linenum">045&nbsp;&nbsp;</span>&lt;tr&gt;&lt;td valign=<span id="scripton">"top"</span>&gt;Kategorie:&lt;/td&gt;&lt;td valign=<span id="scripton">"top"</span>&gt;Counter:&lt;/td&gt;&lt;/tr&gt;<br><span id="linenum">046&nbsp;&nbsp;</span>&lt;tr&gt;&lt;td valign=<span id="scripton">"top"</span>&gt;<br><span id="linenum">047&nbsp;&nbsp;</span>&lt;asp:dropdownlist id=<span id="scripton">"Category"</span> AutoPostBack=<span id="scripton">"True"</span> <br><span id="linenum">048&nbsp;&nbsp;</span>     DataTextField=<span id="scripton">"CategoryName"</span> DataValueField=<span id="scripton">"CategoryName"</span><br><span id="linenum">049&nbsp;&nbsp;</span>	runat=server OnSelectedIndexChanged=<span id="scripton">"OnDisplayCategory"</span>/&gt;<br><span id="linenum">050&nbsp;&nbsp;</span>&lt;/td&gt;&lt;td valign=<span id="scripton">"top"</span>&gt;<br><span id="linenum">051&nbsp;&nbsp;</span>&lt;asp:ListBox id=<span id="scripton">"Counters"</span> Width=<span id="scripton">"200px"</span> runat=<span id="scripton">"server"</span> <br><span id="linenum">052&nbsp;&nbsp;</span>	DataTextField=<span id="scripton">"CounterName"</span> DataValueField=<span id="scripton">"CounterName"</span><br><span id="linenum">053&nbsp;&nbsp;</span>	AutoPostBack=<span id="scripton">"True"</span> <br><span id="linenum">054&nbsp;&nbsp;</span>	runat=server OnSelectedIndexChanged=<span id="scripton">"OnHelpCounter"</span>/&gt;<br><span id="linenum">055&nbsp;&nbsp;</span>&lt;/td&gt;&lt;/tr&gt;<br><span id="linenum">056&nbsp;&nbsp;</span>&lt;tr&gt;&lt;td colspan=<span id="scripton">"2"</span>&gt;&lt;b&gt;Kategorie:&lt;/b&gt; &lt;asp:Label id=CategoryHelp runat=<span id="scripton">"server"</span> /&gt;&lt;/td&gt;&lt;/tr&gt;<br><span id="linenum">057&nbsp;&nbsp;</span>&lt;tr&gt;&lt;td colspan=<span id="scripton">"2"</span>&gt;&lt;b&gt;Counter:&lt;/b&gt; &lt;asp:Label id=<span id="scripton">"CounterHelp"</span> runat=<span id="scripton">"server"</span> /&gt;&lt;/td&gt;&lt;/tr&gt;<br><span id="linenum">058&nbsp;&nbsp;</span>&lt;/table&gt;<br><span id="linenum">059&nbsp;&nbsp;</span>&lt;/form&gt;<br><span id="linenum">060&nbsp;&nbsp;</span><br><span id="linenum">061&nbsp;&nbsp;</span>&lt;/body&gt;<br><span id="linenum">062&nbsp;&nbsp;</span>&lt;/html&gt;<br></pre>
+</BODY>
+</HTML>

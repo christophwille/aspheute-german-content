@@ -1,0 +1,814 @@
+<HTML>
+<HEAD>
+<TITLE>Debuggen von ASP Skripts - Teil 1</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel erkl&auml;rt der Autor die Grundlagen des Debuggings, die grunds&auml;tzliche Verwendung des MS Script Debuggers und wie man damit im ASP Environment arbeiten sollte.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Debugging,Debugger,Fehler,Exception,Fehlerbehandlung,Script Debugger,ASP Debugging">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Debuggen von ASP Skripts - Teil 1</H1>
+<p>
+Geschrieben von: <a href="../autoren/stefangruendhammer.htm">Stefan Gründhammer</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000818"></SCRIPT>
+</p>
+<P>
+Es wird Ihnen schon aufgefallen sein, da&szlig; in Ihren ASP-Scripts kleinere oder gr&ouml;&szlig;ere 
+Fehler auftauchen, nach denen Sie oft lange suchen m&uuml;ssen. Auch wenn Ihre Scripts schon einmal 
+dem Anschein nach fehlerfrei gelaufen sind, ist es die Pflicht eines jeden verantwortungsvollen 
+Programmieres, jede Zeile seines Codes auf Fehler zu pr&uuml;fen.
+</p>
+<p>
+Damit Sie Fehler schneller aufsp&uuml;ren k&ouml;nnen, m&ouml;chte ich Ihnen in diesem Artikel die 
+Verwendung des Microsoft Script Debuggers vorstellen und Ihnen einige kleine Tips und Tricks f&uuml;r 
+dessen Anwendung geben. 
+</p>
+<p>
+<b>Folgende Themen werde ich in diesem Artikel behandeln:</b>
+<ul>
+	<li>Vorbereitungen f&uuml;rs Debuggen</li>
+	<li>Fehlerarten</li>
+	<li>Techniken zum Debuggen</li>
+	<li>Einfache Tips und Tricks</li>
+	<li>Verwenden des Microsoft Script Debuggers</li>
+</ul>
+</p>
+ 
+<h2>Vorbereitungen f&uuml;rs Debuggen</h2>
+<h3>Internet Explorer Einstellungen</h3>
+<p>
+Sie m&uuml;ssen im Internet Explorer einige Einstellungen vornehmen, damit Ihnen der Browser sagen kann 
+in welcher Zeile Ihres ASP-Scripts sich ein Fehler befindet.
+&Ouml;ffnen Sie dazu den <b>Microsoft Internet Explorer</b>, w&auml;hlen Sie im Men&uuml; den Punkt <b>Extras</b>, 
+<b>Internetoptionen</b> und selektieren Sie die Karteikarte <b>Erweitert</b> (Advanced).
+Unter dem Hauptpunkt <b>Browsing</b> befindet sich der Punkt <i>Disable script debugging</i>. Stellen Sie sicher,
+da&szlig; dieser Punkt nicht aktiviert ist. Darunter deaktivieren Sie <i>Show friendly HTTP error messages</i> und 
+best&auml;tigen Ihre Auswahl mit OK.
+</p>
+<p><IMG SRC="Bilder/200008/20000818_05.png" width="408" height="451" border="0" alt=""></p>
+ 
+<h3>Server-Side Script Debugging erm&ouml;glichen</h3>
+<p>
+Bevor Sie Ihre ASP Scripts debuggen k&ouml;nnen, m&uuml;ssen Sie f&uuml;r den IIS das Debuggen von serverseitigen Scripts erlauben.
+Ich gehe bei meiner Beschreibung davon aus, da&szlig; Sie mit Windows 2000 Server arbeiten.
+Um das Debuggen zu erlauben, machen Sie folgende Einstellungen:
+<ol>
+<li>&Ouml;ffnen Sie den Internet Services Manager: <i>Start, Programs, Administrative Tools, Internet Services Manager</i>.
+<li>Expandieren Sie den Webserver, auf dem die Website liegt, die Sie debuggen m&ouml;chten.
+<li>Klicken Sie mit der rechten Maustaste auf die zu debuggende Site um das Kontextmen&uuml; zu &ouml;ffnen.<br>
+	<IMG SRC="Bilder/200008/20000818_02.png" width="465" height="415" border="0" alt=""><br>
+<li>W&auml;hlen Sie Properties (Eigenschaften) und das zugeh&ouml;rige Fenster &ouml;ffnet sich.
+<li>Wechseln Sie auf die Karteikarte <i>Home Directory</i> und klicken Sie auf <i>Configuration</i>.
+	<br><IMG SRC="Bilder/200008/20000818_03.png" width="458" height="452" border="0" alt=""><br>
+<li>Es &ouml;ffnet sich die <i>Application Configuration</i> Dialogbox, in der Sie die <i>App Debugging</i> Karteikarte w&auml;hlen.
+<li>Selektieren Sie <i>Enable ASP server-side script debugging</i> (wenn Sie auf der gleichen Maschine arbeiten), und
+	<i>Enable ASP client-side script debugging</i> (wenn der Server und Ihre Maschine 2 verschiedene Rechner sind; allerdings
+	ben&ouml;tigen Sie dann Visual InterDev 6 zum Debuggen).<br>
+	<IMG SRC="Bilder/200008/20000818_04.png" width="405" height="447" border="0" alt=""><br>
+<li>Speichern Sie diese Einstellung durch das Dr&uuml;cken des OK Buttons.
+</ol>
+</p>        
+	  
+<h2>Fehlerarten</h2>
+<p>
+Hier sind einige der h&auml;ufigsten Fehlerarten, die Ihnen begegnen k&ouml;nnen, angef&uuml;hrt:
+<ul>
+<li><b>Syntax Errors</b>
+<br>Der Syntax Error ist einer der am weitesten verbreiteten Fehlertypen und entsteht vor allem durch 
+falsche Schreibweise von Befehlen, durch Fehler beim Zuweisen von Werten zu Variablen und durch 
+das Vergessen einen Mehr-Zeilen-Befehl zu schlie&szlig;en (z.B. <i>For ... Next</i> Schleifen).
+Ein Syntax Error verhindert das Ausf&uuml;hren Ihres Programmes, stattdessen erscheint eine Fehlermeldung sobald der 
+Browser oder der Server die Datei ausf&uuml;hrt.
+<li><b>Logical Errors</b>
+<br>Der Logical Error ist ein schwer auffindbarer Fehler. Die Syntax des Scripts ist zwar in Ordnung
+das Script l&auml;uft erfolgreich ab aber es liefert falsche Werte zur&uuml;ck oder tut etwas anderes als erw&uuml;nscht. Nun beginnt die Suche. Meistens
+wird dieser Error durch Fehler in Formeln wie durch Vertauschen von Variablen und deren Werten ausgel&ouml;st und
+ist oftmals schwer zu finden. <br>
+Wenn Sie z.B ein &lt; (kleiner)-Zeichen mit einem &gt; (gr&ouml;&szlig;er)-Zeichen
+verwechseln, so ist das Ergebnis ganz anderes als beabsichtigt.
+<li><b>Run-Time Errors</b>
+<br>Run-Time-Errors sind, wie der Name schon sagt, Fehler die w&auml;hrend der Ausf&uuml;hrung eines Scripts oder Programms auftreten.
+Dieser Fehler ensteht wenn eine unerlaubte Operation ausgef&uuml;hrt wird. Ein Beispiel: Sie wollen eine Kalkulation
+durchf&uuml;hren die 2 Funktionen enth&auml;lt - eine der beiden Funktionen existiert nicht und so erhalten Sie einen Run-Time-Error. 
+Wenn dieser Fehler auftritt wird das Script sofort gestoppt und eine sogenannte <i>Exception Routine</i> wird gestartet. Diese entscheidet &uuml;ber das Verhalten des Skripts im Falle eines Fehlers.
+</ul>
+</p>
+
+<h2>Techniken zum Debuggen</h2>
+<p>
+Es gibt verschieden Techniken zum Aufsp&uuml;ren und Ausbessern von Bugs (Fehlern). 
+Hier sind einige angef&uuml;hrt:
+<ul>
+<li>Breakpoint Debugging</li>
+<li>JIT (Just in Time) Debugging</li>
+<li>Das VBScript "Stop" Statement Debugging</li>
+<li>Debugging mit dem JScript "debugger" Statement</li>
+</ul>	
+</p>
+
+<h3>Breakpoint Debugging</h3>
+<p>
+Wenn ein Fehler in Ihrem Code auftaucht und Sie nicht genau wissen was den Fehler verursacht,
+dann setzen Sie einen Breakpoint vor der Stelle, an der Sie den Fehler vermuten. 
+Es ist nat&uuml;rlich auch m&ouml;glich mehrere Breakpoints vor der Position des vermuteten Fehlers zu setzen. 
+Mit Hilfe des Debuggers k&ouml;nnen Sie dann die Werte von Variablen oder Eigenschaften abfragen und 
+auf Richtigkeit pr&uuml;fen. So k&ouml;nnen Sie mitverfolgen, welche Zeile einen falschen Wert produziert 
+oder ein falsches Ergebnis zur&uuml;ckliefert.
+Nachdem der Fehler ausgebessert wurde, kann man die Breakpoints wieder l&ouml;schen.
+</p>
+<p>
+Wie setzt man einen Breakpoint in einer ASP Seite? Eigentlich ganz einfach: Rufen Sie zuerst einmal die ASP Seite im Browser auf. 
+&Ouml;ffnen Sie den Microsoft Script Debugger, w&auml;hlen Sie aus dem Men&uuml; <i>View</i>, <i>Running Documents</i> 
+und das Running Documents Fenster &ouml;ffnet sich. In diesem Fenster expandieren Sie die Applikationsb&auml;ume der 
+Darstellung und &ouml;ffnen das Script, welches Sie debuggen wollen, mit einem Doppelklick. Um den Breakpoint zu setzen 
+gehen Sie in die Zeile Ihres Codes, in die der Breakpoint gesetzt werden soll: Dazu w&auml;hlen Sie  <i>Toggle Breakpoint</i> 
+aus dem <i>Debug</i> Men&uuml; aus.
+</p>
+<p>
+Wenn Sie dann Ihr Script erneut mit dem Browser aufrufen, arbeitet sich der IIS nur 
+bis zum Breakpoint durch, &ouml;ffnet dann sofort den Script Debugger und setzt den Cursor auf die Stelle des 
+Breakpoints (Vorausgesetzt es ist kein Fehler vor dem Breakpoint aufgetreten). Danach k&ouml;nnen Sie Zeile f&uuml;r 
+Zeile das Skript ausf&uuml;hren lassen und die Werte der Variablen sowie die Browserausgabe kontrollieren bis Sie den
+Fehler entdeckt haben.
+</p>
+
+<h3>JIT Debugging</h3>
+<p>
+Wenn in Ihrem serverseitigen Script ein <i>Runtime Error</i> auftaucht so startet der 
+Microsoft Script Debugger auotmatisch und setzt den Cursor in die Zeile des Skripts, in der der Fehler aufgetreten ist. 
+Die Ausf&uuml;hrung des Skripts ist nun unterbrochen aber nicht abgebrochen, man kann also die Werte von Variablen
+&uuml;berpr&uuml;fen. Nach erfolgter Suche kann man den Fehler (oder seine Ursache)
+in einem Editor ausbessern und die &Auml;nderungen speichern bevor man das Script erneut ablaufen l&auml;&szlig;t.
+</p>
+
+<h3>VBScript "Stop" Statement Debugging</h3>
+<p>
+Man kann Breakpoints auch direkt im VBScript Code einbauen.
+Alles was man machen mu&szlig; ist ein <i>STOP</i> Statement vor die fragliche Stelle im Script zu setzen.
+Das folgende Beispiel eines serverseitigen Scripts enth&auml;lt ein <i>STOP</i> Statement, welches die	
+Ausf&uuml;hrung des Scripts stoppt - und zwar in Zeile 17.
+<pre style="background='silver';">
+1: &lt;% @language = VBScript %&gt;
+2: &lt;% Option Explicit 
+3:
+4: ' Variablen deklarieren
+5: Dim strError
+6: Dim ANZ
+7: Dim i
+8:
+9:  Function Fehler(ANZ)
+10:   For i = 1 to ANZ
+11:      strError = strError &amp; "F E H L E R !&lt;br&gt;"
+12:   Next
+13:   Fehler = strError
+14: End Function
+15:
+16: ' Setzen des Breakpoints
+17: Stop
+18:
+19: strError = Fehler(7)
+20: Response.Write(strError)
+21: %&gt;
+</pre>
+</p>
+<p>
+Wenn Sie dieses Script im Browser aufrufen so startet der Microsoft Script Debugger und zeigt automatisch
+auf die Zeile mit dem <i>STOP</i> Statement (gekennzeichnet durch einen gelben Pfeil).
+Jetzt sind Sie am Zug. Sie k&ouml;nnen nun die Werte der Variablen kontrollieren (bevor diese weiter verarbeitet
+werden), im Einzelschrittmodus den Code testen, usw.
+</p>
+<p>
+Vergessen Sie aber nicht alle <i>STOP</i> Statements nach der &Uuml;berpr&uuml;fung aus Ihrem Script zu entfernen!
+</p>
+
+<h3>JScript "debugger" Statement Debugging</h3>
+<p>
+Nat&uuml;rlich k&ouml;nnen Breakpoints auch in serverseitigen Scripts, die in JScript geschrieben sind, 
+gesetzt werden. Um einen Breakpoint in JScript zu provozieren mu&szlig;
+man das <i>debugger</i> Statement in den Code einf&uuml;gen. 
+<pre style="background='silver';">
+1: &lt;% @language = JScript %&gt;
+2: &lt;%
+3: for (var ANZ = 1; ANZ &lt;=8; ANZ++)
+4:  {
+5:    var fehlermeldung = ANZ%2;  
+6:
+7:    // Setzen des Breakpoints
+8:    debugger;
+9:    if (fehlermeldung == 0)
+10:      Response.Write("Der Fehlermeldungswert ist " + ANZ + " &lt;br&gt;")
+11: }
+12: %&gt;
+</pre>
+</p>
+
+<h2>Einfache Tips und Tricks</h2>
+<p>
+Der beste Tip ist sicher, keine Fehler zu machen, aber  Spa&szlig; beiseite - Fehlervermeidung ist effektiver als
+Fehlerbehandlung.
+<ul>
+<li>
+	Achten Sie schon bei der Variablenbennung auf Einfachheit und gew&ouml;hnen Sie sich
+	wom&ouml;glich gleich die ungarische Notation an (die Stringvariable <i>Anzahl</i> = <i>strAnzahl</i>) so k&ouml;nnen Sie den 
+	Datentyp schon vom Variablennamen ableiten.
+	<li>Beim Entwickeln von ASP-Seiten ist es wichtig <i>Option Explicit</i> zu setzen. Dies zwingt Sie  dazu,
+	Variablen zu deklarieren. Vorteil ist, da&szlig; die Benutzung eines falscher Variablennames sofort gemeldet wird.
+</ul>
+</p>
+<p>
+	<pre style="background='silver';">
+	1: &lt;% @Language = VBScript %&gt;
+	2: &lt;% Option Explicit
+	3: ' Variablen deklarieren
+	4: Dim strError
+	5: Dim ANZ
+	6: Dim i
+	7: %&gt;
+	</pre>
+</p>
+<p>
+<ul>
+<li>
+	Wenn ein Fehler aufgetreten ist und Sie auch die ungef&auml;hre Position des Fehlers wissen, empfiehlt
+	es sich die Variable mittels <i>Response.Write</i> vor und nach einem Befehl im Skript in den Browser zu schreiben um die Werte kontrollieren zu k&ouml;nnen.
+<li>
+	Oft kann es n&uuml;tzlich sein den Datentyp einer Variable zu kennen, da man dann Fehlerquellen
+	ausschlie&szlig;en kann. Wenn Sie den Typ der Variable aber nicht kennen (z.B. Integer) k&ouml;nnen Sie diesen
+	ohne gro&szlig;e Probleme ausschreiben. Dieses kurze Beispiel zeigt Ihenen wie Sie die <nobr><i>VarType()</i></nobr>
+	Funktion dazu verwenden k&ouml;nnen:
+</ul>
+</p>
+<p>
+	<pre style="background='silver';">
+	1: &lt;% @Language = VBScript %&gt;
+	2: &lt;% Option Explicit
+	3: Dim IntVar, VarCheck
+	4: ' Initialisieren der Variable IntVar
+	5: IntVar = 123
+	6: ' Zuweisen des Wert von IntVar zu VarCheck
+	7: VarCheck = VarType(IntVar)   
+	8: ' Ausschreiben des VarType Wertes
+	9: Response.Write VarType(IntVar)
+	10: %&gt; 
+	</pre>
+</p>
+
+
+<h2>Der Microsoft Script Debugger 1.0</h2>
+<p>
+Der Microsoft Script Debugger erlaubt es Ihnen Active Server Pages Scripts mittels 
+Variablenkontrolle, Setzen von Breakingpoints und Step Through, zu debuggen -  und hilft Ihnen dadurch 
+bei der Diagnose von Fehlern.
+</p>
+<p>
+Sie finden den Script Debugger unter <b>Start</b>, <b>Programme</b>, <b>Zubeh&ouml;r</b> und 
+<b>Microsoft Script Debugger</b> wenn Sie Windows 2000 Server auf Ihrem Rechner installiert haben.
+Sollten Sie noch mit Windows NT 4.0 arbeiten, dann wird der Script Debugger zusammen mit dem Option Pack installiert.
+</p>
+
+<h3>Ein kleiner &Uuml;berblick</h3>
+<p>
+Der Microsoft Script Debugger liefert eine gut Debugging Umgebung f&uuml;r den Entwickler und 
+erm&ouml;glicht diesem seine server- und clientseitigen Scripts, wie VBScript und JScript, zur Laufzeit
+zu debuggen. Ausbessern m&uuml;ssen Sie die gefundenen Fehler aber wieder in Ihrem 
+Editor, da der Script Debugger nur das Lesen der Scripts erlaubt.
+</p>
+<p>
+Der Script Debugger ist &auml;hnlich wie der Debugger in Visual Basic und erm&ouml;glicht es Ihnen den Source
+Code des Scripts einzusehen und die Ausf&uuml;hrung mittels der folgenden Debugging Befehlen zu 
+kontrollieren: Step into, Step over, Step out und Run.  Werte von Variablen k&ouml;nnen mit Hilfe des Debugger Command 
+Windows ausgelesen und ver&auml;ndert werden.
+</p>
+
+<p>
+Client-side und server-side Scripts werden unterschiedlich behandelt.
+</p>
+<p>
+<b>Client-side Scripts</b> welche in VBScript oder JScript geschrieben sind, werden direkt im Internet 
+Explorer ausgef&uuml;hrt. Das Script das in HTML eingebettet ist wird in den Browser geladen. Der Browser
+parst die Seite und sobald ein Fehler auftritt, erzeugt dieser eine Fehlermeldung.
+</p>
+<p>
+<b>Server-side Scripts</b> bestehen aus VBScript oder JScript und sind in einer ASP Datei eingebaut.
+Die <i>.asp</i> Datei wird vom IIS ausgef&uuml;hrt sobald sie vom Browser angefordert wird. Erst zu diesem Zeitpunkt wird der Inhalt
+an den Browser &uuml;bermittelt. Da <i>.asp</i> Dateien von oben nach unten ausgef&uuml;hrt werden, werden sowohl Syntax
+als auch Run-Time-Error erst dann entdeckt und ausgegeben wenn ein Browser-Request erfolgt. Daher sollte man jede ASP Seite mindestens 
+einmal mit dem Browser aufrufen um sie grob auf Fehler zu kontrollieren.
+</p>
+<p>
+<b>WICHTIG:</b> Um server-side Scripts zu debuggen mu&szlig; sichergestellt sein, da&szlig; der Script Debugger auf der
+selben Maschine wie der Webserver l&auml;uft. Ist das nicht der Fall so ist kein Debuggen m&ouml;glich.
+</p>
+<p>
+Ich werde Ihnen nun anhand kleiner Beispiele einen 
+kurzen Einblick in die Verwendung des Script Debuggers geben.
+</p>
+
+
+<h3>Vorbereitung f&uuml;r die Nutzung des Script Debuggers</h3>
+<p>
+Bevor wir nun zu den Einstellungen f&uuml;rs Debuggen kommen m&ouml;chte ich Sie noch an einige wichtige Dinge
+erinnern.
+<ol>
+<li>Erstens, wenn Sie server-side Scripts debuggen wollen mu&szlig; sichergestellt sein, da&szlig; der Browser und IIS 
+auf der selben Maschine sind. Wenn Sie eine Seite, die Sie debuggen wollen, von einem fremden Client 
+&ouml;ffnen so kann diese Seite nicht debugged werden.
+Sie bekommen bei einem Fehler nur die Meldung, da&szlig; der Browser die Seite nicht &ouml;ffen kann, und das ist 
+nicht Sinn der Sache. (wie schon fr&uuml;her erw&auml;hnt ginge es aber mit Visual InterDev 6)
+<li>Zweitens, wenn Sie client-side Scripts debuggen wollen, m&uuml;ssen Sie zuerst das Debuggen von Scripts im
+Internet Explorer erlauben( das wurde bereits unter &rdquo;Vorbereitungen f&uuml;rs Debuggen&rdquo; erkl&auml;rt).
+<li>Drittens, wenn Sie server-side Scripts debuggen, m&uuml;ssen Sie speziell f&uuml;r diese ASP Application das
+Debuggen erlauben (Erkl&auml;rung unter &rdquo;Vorbereitungen f&uuml;rs Debuggen&rdquo;). 
+</ol>
+</p>
+
+<h3>Verwenden des Script Debuggers</h3>
+<p>
+Grunds&auml;tzlich gibt es 4 Wege den Script Debugger aufzurufen:
+<ul>
+<li><b>Mittels Scripting Befehl.</b>
+	<br>F&uuml;r VBScript der Befehl <i>Stop</i> und f&uuml;r JScript der Befehl <i>debugger</i>
+
+<li><b>H&auml;ndisch.</b>
+	<br>Start, Programs, Accessories, Microsoft Script Debugger und dann die ASP Datei im Browser aufrufen.
+
+<li><b>Aus dem Internet Explorer.</b>
+	<br>Indem Sie zuerst die Seite im Browser &ouml;ffnen, dann klicken Sie im Hauptmen&uuml; auf <i>View</i>, <i>Script 
+	Debugger</i> und dann <i>Open</i>. (nur client-side Debugging)
+	
+<li><b>Aufgrund eines Fehlers im Script</b>
+	<br>Wenn das Debuggen eingeschaltet ist und ein server- oder clientseitiger
+	Fehler im Browser auftritt, so &ouml;ffnet sich automatisch der Debugger.
+</ul>
+</p>
+<p>
+Wenn Sie nun den Debugger &ouml;ffnen sollten Sie vier Fenster (Read only, Running Documents,
+Call Stack und Command) sehen. Ist das nicht der Fall, dann klicken Sie im Hauptmen&uuml; auf <i>View</i> und 
+klicken Sie die nicht mit H&auml;kchen makierten Fenster an.
+</p>
+<p>
+<b>Running Documents:</b> Dieses Fenster zeigt Ihnen alle auf dem Server laufenden Applikationen (sowie f&uuml;r 
+client-side den IE). Unter den Applikationen sind die Dokumente die debugged werden k&ouml;nnen. Durch Klicken auf das (+)
+bei den Knoten k&ouml;nnen Sie den Baum expandieren und das zum Debuggen ben&ouml;tigte Script ausw&auml;hlen.
+</p>
+<p>
+<b>Call Stack:</b> Das Call Stack Fenster zeigt alle zur Zeit aktiven Prozeduren.
+Sobald eine Prozedur aufgerufen wird kommt sie mit Namen und Scriptsprache in die Liste des Stacks. 
+Ist die Prozedur beendet wird diese Zeile sofort wieder aus der Liste gel&ouml;scht.
+</p>
+<p>
+In der Combo-Box oben im Fenster wird der momentan laufende Thread angezeigt, oft laufen auch 
+mehrere Threads zugleich. Dann k&ouml;nnen Sie mittels Dropdown Auswahl einen bestimmten aussuchen und ihn debuggen. 
+Dadurch, das jeder Thread seinen eigen Call Stack hat, wird das Fenster sofort upgedated sobald Sie den
+Thread wechseln.
+</p>
+<p>
+<b>Command Window:</b> Hier kann der Entwickler direkt ins Geschehen eingreifen und Werte von Variablen
+&auml;ndern, Prozeduren aufrufen (in der selben Weise wie man sie im Script aurufen w&uuml;rde).
+Wenn Sie Befehle ins Command Fenster schreiben, vergessen Sie nicht auch die passende Scriptsprache
+zu verwenden. VBScript verlangt zur Ausgabe der Variablen ein Fragezeichen 
+(<i>?</i>) vor dem Variablennamen.
+</p>
+<p>
+<b>Read only Window:</b> Vielleicht der falsche Name f&uuml;r diese Fenster, denn Sie k&ouml;nnen hier sehr wohl
+Aktionen t&auml;tigen. Sie k&ouml;nnen in diesem Fenster Breakingpoints setzen und l&ouml;schen, Stepping Through Befehle 
+(Step into, Step over und Step out) ausf&uuml;hren und sogar Bookmarks setzen.
+In diesem Fenster wird Ihnen auch die Position des Errors gezeigt wenn sich der Debugger aufgrund eines
+Fehlers &ouml;ffnet. 
+</p>
+
+<h3>Debugging eines Client-Side Scripting Errors</h3>
+<p>
+Nun wird es ernst. Um das Debuggen demonstrieren zu k&ouml;nnen m&uuml;ssen wir zuerst einmal ein Script 
+schreiben und dann auch noch einen Fehler einbauen (nicht alle Fehler bauen sich von selbst ein).
+Speichern Sie folgenden Code unter einer TestSite (Website im IIS welche Sie zum Testen Ihrer Scripts 
+bereits angelegt haben sollten) als <i>debug.asp</i> im Root ab.
+<pre style="background='silver';">
+1: &lt;html&gt;
+2:   &lt;head&gt;
+3:    &lt;title&gt;Debug.asp&lt;/title&gt;
+4:   &lt;/head&gt;
+5:   &lt;body&gt;
+6:   &lt;script language="JavaScript"&gt;
+7:      document.write("&lt;h1&gt;Client-side scripting error debugging&lt;/h1&gt;");
+8:      for (i=1, Fehler=" Kein Fehler"; i&lt;=8; i++, Fehler+=" Kein Fehler")
+9:       {
+10:       document.writ(Fehler);
+11:       document.write("&lt;br&gt;");
+12:       }
+13:   &lt;/script&gt;
+14:   &lt;/body&gt;
+15: &lt;/html&gt;
+</pre>
+</p>
+<p>
+Rufen Sie nun die Datei <i>debug.asp</i> im Browser auf. Sobald Sie das getan haben bekommen Sie schon eine 
+Fehlermeldung. Keine Angst, der Fehler liegt nicht bei Ihnen.
+Vorrausgesetzt Sie haben das Script "fehlerfrei" abgeschrieben werden Sie die folgende Fehlermeldung
+erhalten:
+</p>
+<p><IMG SRC="Bilder/200008/20000818_10.png" width="534" height="359" border="0" alt=""></p>
+<p>
+Sollten Sie keinen Script Debugger auf Ihrer Maschine haben, dann zeigt Ihnen Internet Explorer die unten
+dargestellte Dialogbox (IE 5.5 Screenshot). Sie m&uuml;ssen also Ihre Installation "nachbessern".
+</p>
+<p><IMG SRC="Bilder/200008/20000818_14.png" width="437" height="290" border="0" alt=""></p>
+<p>
+Zur&uuml;ck in der "richtigen" Dialogbox dr&uuml;cken Sie jetzt auf <b>Yes</b>, der Script Debugger &ouml;ffnet sich 
+und ein gelber Pfeil zeigt Ihnen die Position des Fehlers an.
+</p>
+<p><IMG SRC="Bilder/200008/20000818_09.png" width="482" height="249" border="0" alt=""></p>
+<p>
+Wie Sie unschwer erkennen k&ouml;nnen habe ich das <i>e</i> im <i>document.write(Fehler)</i>
+weggelassen. Um den Fehler ausbessern zu k&ouml;nnen m&uuml;ssen Sie diese Datei wieder in Ihrem Editor &ouml;ffnen und
+das <i>e</i> hinzuf&uuml;gen. Speichern Sie nun die Datei ab und &ouml;ffnen Sie diese im Browser noch einmal. Jetzt sollte 
+die Seite einwandfrei dargestellt werden.
+</p>
+<p>
+<b>Achtung:</b> Wenn Sie client-seitige Scripts, welche in einer ASP-Datei generiert werden, debuggen, so kann es 
+vorkommen, da&szlig; die in der Fehlermeldung angegebene Zeilennummer nicht mit der des Fehlers &uuml;bereinstimmt.
+Der Grund daf&uuml;r ist, da&szlig; sich die Fehlermeldung auf das HTML-Document bezieht und nicht auf die ASP-Datei.
+</p>	
+
+
+<h3>Debugging eines Server-Side Runtime Errors</h3>
+<p>
+Wie werden serverseitige Runtime Fehler vom Debugger abgearbeitet? 
+Hierzu werden wir wieder ein kleines Script schreiben. Speichern Sie dieses unter dem Namen
+<i>debugserver.asp</i> auf Ihrer Testsite im Root ab.
+<pre style="background='silver';">
+1: &lt;%  @Language = VBScript %&gt;
+2: &lt;% Option Explicit
+3: Dim IntVar, VarCheck
+4: ' Initialisieren der Variable IntVar
+5: IntVar = 459
+6: ' Zuweisen des Wert von IntVar zu VarCheck
+7: VarCheck = VarType(IntVar)
+8: ' Ausschreiben des Wertes 
+9: 
+10: Response.Write VarType(Interror) 
+11: %&gt;
+</pre>
+</p>
+<p>
+Rufen Sie nun die Datei <i>debugserver.asp</i> im Browser auf, und sp&auml;testens jetzt wird Ihnen etwas 
+auffallen. Der serverseitige Fehler verursacht das sofortige &Ouml;ffnen des Debuggers, ohne Sie zuvor
+zu fragen ob Sie &uuml;berhaupt debuggen wollen.
+</p>
+<p>
+F&uuml;r uns Entwickler ist das aber sehr brauchbar, es l&auml;&szlig;t sich dadurch n&auml;mlich unterscheiden ob der
+Fehler client- oder serverseitig ist.
+Wenn ein serverseitiger Error auftritt und das Debuggen im IIS erlaubt ist, &ouml;ffnet sich der Debugger von selbst.
+Wenn der Fehler aber clientseitigen Ursprungs ist so erscheint zuvor eine Dialogbox und Sie k&ouml;nnen
+entscheiden, ob Sie das Skript debuggen wollen oder nicht.
+Ist das Debuggen im IIS nicht erlaubt und ein serverseitiger Fehler tritt auf, dann wird die Fehlermeldung
+direkt im HTML-Document angezeigt, vorausgesetzt Sie haben die oben angef&uuml;hrten Einstellungen f&uuml;r den Internet 
+Explorer durchgef&uuml;hrt.
+</p>
+<p><IMG SRC="Bilder/200008/20000818_11.png" width="530" height="244" border="0" alt=""></p>
+<p>
+Wie auch immer, um den Fehler ausbessern zu k&ouml;nnen m&uuml;ssen Sie das Script in Ihrem Editor bearbeiten 
+und die Seite erneut laden. In unserem Beispiel w&auml;re die Korrektur der Zeile 
+<i>Response.Write VarType(Interror)</i> auf <i>Response.Write VarType(IntVar)</i> durchzuf&uuml;hren.
+</p>
+
+
+<h3>Debuggen eines Logischen Fehlers</h3>
+<p>
+Was ist wenn sich ein sogenannter logischer Fehler in unser Script eingeschlichen hat? Um dies veranschaulichen zu 
+k&ouml;nnen werden wir uns ein neues Script basteln. Speichern Sie dieses unter <i>logical.asp</i> im Root Ihrer Website
+ab. Der Code dazu ist folgender:
+<pre style="background='silver';">
+1: &lt;% @Language = VBScript %&gt;
+2: &lt;% Option Explicit
+3: dim x
+4: dim y
+5: dim Ergebnis
+6: 
+7: x=1
+8: y=0
+9: Ergebnis=x/y
+10: Response.Write "Das Ergebnis ist: " &amp; Ergebnis
+11:%&gt;
+</pre>
+</p>
+<p>
+&Ouml;ffnen Sie nun das Script im Browser. Sobald der Browser die Seite geladen hat &ouml;ffnet sich 
+der Script Debugger und stellt den Cursor auf die Zeile 9 in unserem Script. Die Fehlermeldung besagt, da&szlig; wir
+eine Division durch 0 (Null) gemacht haben, und diese ist nicht erlaubt.
+</p>
+<p><IMG SRC="Bilder/200008/20000818_12.png" width="574" height="396" border="0" alt=""></p>
+<p>
+Wenn Sie den Wert der Variable y ungleich 0 (Null) setzten dann wird das Script funktionieren. 
+</p>
+
+<h3>Arbeiten mit Breakpoints</h3>
+<p>
+Jetzt zeige ich Ihnen noch wie man mit Breakpoints arbeitet. Dadurch kann man das Script an speziellen
+Punkten (Breakpoints) anhalten um z.B. den Wert von Variablen abzufragen, oder die Befehle im Einzelschrittmodus
+abarbeiten zu k&ouml;nnen.
+</p>
+<p>
+Wir werden nun den Wert der Variable y (vor dem Ausbessern) kontrollieren, indem wir in der Zeile 7 unseres
+Script einen Breakpoint setzen. Sie haben grunds&auml;tzlich 2 M&ouml;glichkeiten einen Breakpoint im Debugger
+zu setzen: Stellen Sie den Cursor in die Zeile in der der Breakpoint plaziert werden soll und dr&uuml;cken 
+Sie auf F9, oder gehen Sie ins Hauptmen&uuml; zu <i>Debug</i> und dr&uuml;cken dann auf <i>Toggle Breakpoint</i>.
+Wie schon weiter oben besprochen gibt es auch noch die M&ouml;glichkeit einen Breakpoint mittels Scriptbefehl
+zu setzen. In VBScript ist dies der Befehl <i>Stop</i> und in JScript <i>debugger</i>.
+</p>
+
+<p>
+Wenn Sie nach dem Setzen des Breakpoint dann im Browser auf Refresh dr&uuml;cken, dann wird der Debugger wieder g&ouml;ffnet
+und ein roter Pfeil signalisiert Ihnen, da&szlig; das Script an dieser Stelle gestoppt wurde. 
+Als n&auml;chstes dr&uuml;cken Sie F8 und springen bis zur Zeile 9 (<i>Ergebnis=x/y</i>), wo wir nun den Wert der Variable
+<i>y</i> bestimmen k&ouml;nnen.
+</p>
+<p> 
+Normalerweise sollte das Command Window bereits ge&ouml;ffnet sein. Wenn nicht, dann &ouml;ffnen Sie 
+es jetzt. Das Command Window erlaubt es Ihnen die aktuelle Zeile in Ihrem Script auszuf&uuml;hren. Wir sind 
+im Moment in der Mitte eines Scripts welches in VBScript geschrieben ist, deshalb erwartet der Debugger im 
+Command Window Befehle in VBScript (bei JScript erwartet er dann nat&uuml;rlich JScript).
+Tippen Sie nun in das Command Window <i>? y</i> oder <i>print y</i> ein und best&auml;tigen Sie. In der zweiten 
+Zeile mu&szlig; <i>0</i> erscheinen.
+</p> 
+<p><IMG SRC="Bilder/200008/20000818_13.png" width="554" height="397" border="0" alt=""></p>
+<p>
+Bevor wir weitergehen &auml;ndern wir den Wert von <i>y</i> auf <i>1</i>. Tippen Sie in das Command
+Window <i>y=1</i> und dr&uuml;cken Sie auf Enter. Bei der n&auml;chsten Abfrage mit <i>? y</i> wird der 
+Wert f&uuml;r <i>y</i> daher <i>1</i> sein. Um das Script weiterlaufen zu lassen dr&uuml;cken Sie nun F5. Im Browser 
+sollten Sie nun das Ergebnis 1 lesen k&ouml;nnen. Jetzt wissen wir also, wie wir den Fehler ausbessern m&uuml;ssen!
+</p>  	
+
+<h3>Debugging vom global.asa Dateien</h3>
+<p>
+Ich m&ouml;chte hier nur kurz &uuml;ber das Debuggen der global.asa sprechen, da ich der Meinung bin, da&szlig; 
+eine ausf&uuml;hrliche Beschreibung den Rahmen dieses Artikels sprengen w&uuml;rde. Dem Anf&auml;nger w&uuml;rde ich 
+raten die Finger vom Debuggen der global.asa zu lassen. Fortgeschrittene sollten wissen, da&szlig; man die global.asa 
+programmatisch debuggen mu&szlig;. Dies bedeutet, da&szlig; man in den Sourcode bei VBScript den Befehl <i>Stop</i> und 
+bei JScripts <i>debug</i> setzen kann.
+</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>	
+<p>
+Sie haben nach diesem Artikel einen Einblick in die Welt des Debuggens erhalten. Sie haben gelernt
+wie man mit dem Microsoft Script Debugger umgeht, Sie wissen nun &uuml;ber verschiedenste Fehlerarten und 
+Techniken zum Debuggen bescheid. Ich habe Ihnen auch noch gezeigt welche Einstellungen Sie im Internet
+Explorer und im IIS machen m&uuml;ssen, damit das Debuggen m&ouml;glich wird.
+</p>
+<p>
+Damit Sie in Zukunft weniger Debuggen m&uuml;ssen, sollten Sie sich vielleicht das Buch <i>Writing Solid Code</i> von Steve Maguire
+einmal durchlesen - darin erhalten Sie wichtige Tips zu Fehlervermeidung (Achtung: Beispiele sind in C).
+</p>
+<p>
+Mit den Informationen und dem Wissen aus diesem Artikel sind Sie f&uuml;r Ihre ersten gro&szlig;en Debuggingerfahrungen
+bestens ger&uuml;stet, nach Ihren Fehlern m&uuml;ssen Sie aber trotzdem selber suchen.  Noch Viel Spa&szlig; beim Fehlersuchen.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000818.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20000512.htm">ASP-Fehlerbehandlung unter IIS5</a><br>
+<a href="20001018.htm">Global.asa: Verwendung, Events und Probleme</a><br>
+<a href="19990819.htm">JavaScript &amp; DHTML - Wie man Fehler findet bevor die Kunden es tun</a><br>
+<a href="20000426.htm">Verf&uuml;gbarkeit von Objekten pr&uuml;fen</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000818" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Debuggen von ASP Skripts - Teil 1"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000818.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Stefan Gründhammer"><input type="hidden" name="AuthorEmail" value="stefang@xitra.com"><input type="hidden" name="Artikel" value="20000818"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000818.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

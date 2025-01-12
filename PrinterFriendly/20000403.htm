@@ -1,0 +1,186 @@
+<HTML>
+<HEAD>
+<TITLE>Ein G&auml;stebuch in ASP erstellen - Teil 2</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Erstellen Sie das Ausgabeformular f&uuml;r das G&auml;stebuch - eine Liste der Eintr&auml;ge, geschwindigkeitsoptimiert dargestellt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ADO,ASP,Gästebuch,Guestbook,Sourcecode,Datenbank,AspGerman">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Ein G&auml;stebuch in ASP erstellen - Teil 2</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000403"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Willkommen zum zweiten Teil der Erstellung eines G&auml;stebuchs mit ASP und ADO. Heute besch&auml;ftigen
+wir uns damit, m&ouml;glichst effizient (das hei&szlig;t schnell) die Eintr&auml;ge des G&auml;stebuchs in einer
+Liste darzustellen. Damit sie eine Idee bekommen, wie es am Ende aussehen soll, hier ein Screenshot
+der fertigen Seite:
+</p>
+<p>
+<IMG SRC="/artikel/Bilder/200004/20000403.png" width="510" height="238" border="0" alt="Eintragsseite">
+</p>
+<p>
+Wie sie sehen, enth&auml;lt die Seite 2 identische Navigationsleisten (oben und unten auf der Seite angeordnet),
+die in hellgelb gehalten sind. Diese zeigen - je nach Verf&uuml;gbarkeit als Hyperlink ausgef&uuml;hrt - folgende 
+Navigationsbefehle: <i>10 zur&uuml;ck</i>, <i>Anfang</i>, <i>n&auml;chsten 10</i>. Um die Mehrfachanzeige der
+Navigationsleisten zu erleichtern, habe ich sie in einer Funktion implementiert - mehr dazu sp&auml;ter.
+</p>
+<p>
+Weiters sehen sie einen Eintrag, der die gespeicherten Informationen ausgibt: Name und Emailadresse, die
+jeder Benutzer eingeben mu&szlig;, sowie die freiwillig anzugebenden Felder Homepage und Kommentar. Von den
+automatisch erfassten Werten wird der Browser, das Betriebssystem und das Eintragsdatum ausgegeben. Die Ausgabe
+ist auch in einer Funktion implementiert und wird f&uuml;r jeden Datensatz aufgerufen.
+</p>
+<p>
+Zuletzt bleibt noch der blaue Balken: hier wird die Anzahl der Eintr&auml;ge insgesamt ausgegeben.
+</p>
+<h2>Implementierung des Pagings</h2>
+<p>
+In vielen B&uuml;chern &uuml;ber ASP oder ADO findet sich eine Technik des Pagings (seitenweises Durchbl&auml;ttern eines
+gro&szlig;en Recordsets), die nicht sehr effizient ist: die <i>PageSize</i>/<i>AbsolutePage</i> Technik (beides sind
+Methoden des Recordset Objekts). Bei dieser Technik wird das Recordset
+ge&ouml;ffnet, die Anzahl der Records pro Seite mit <i>PageSize</i> angegeben, und dann mit <i>AbsolutePage</i> auf die gew&uuml;nschte
+Seite gesprungen. Dabei werden sehr viele Records unn&ouml;tig ausgelesen, und zwischen Datenbank(server) und
+Webserver ein ebensolcher Traffic erzeugt.
+</p>
+<p>
+Nun da ich mich so negativ &uuml;ber diesen Ansatz ge&auml;u&szlig;ert habe, mu&szlig; ich wohl eine bessere Technik anzubieten haben:
+der <i>TOP</i> Ansatz. Dabei handelt es sich um das TOP Schl&uuml;sselwort eines SELECT Statements, und im Grunde
+macht es nichts anderes, als nur die TOP x Records einer SELECT Abfrage auch tats&auml;chlich zu liefern - zB 10
+von 10.000 die aufgrund des WHERE Statements geholt werden m&uuml;&szlig;ten.
+</p>
+<p>
+Und so sieht eine TOP Abfrage aus:
+<pre>
+SELECT TOP 10 IdField,Name,EmailAddress,Homepage,
+	Browser,OperatingSystem,EntryDate,Comment 
+	FROM Guestbook 
+	ORDER BY IdField DESC
+</pre>
+Dieses Statement holt die ersten 10 Eintr&auml;ge des G&auml;stebuchs, und zwar die neuesten zuerst (absteigende
+Sortierordnung wird zuerst durchgef&uuml;hrt). Der 11te Record verl&auml;&szlig;t den Datenbankserver nicht.
+</p>
+<p>
+Das Zusammenbauen der SQL Statements f&uuml;r das Paging (Start, Next, Prev) wird in den Zeilen 13 bis 35 durchgef&uuml;hrt 
+(<a href="../artikel/pg000001.htm" target="_blank">Listing</a>). Die Statementteile sind in Konstanten definiert, und der
+Grund f&uuml;r das explizite Anf&uuml;hren der einzelnen Spalten ist der, da&szlig; ich mich damit von &Auml;nderungen an der Tabelle
+unabh&auml;ngig mache.
+</p>
+<p>
+Obwohl ich nur 10 Eintr&auml;ge (und nur genau 10 Eintr&auml;ge maximal) von der Datenbank abhole, gibt es noch eine
+weitere M&ouml;glichkeit, die Datenbankzugriffe zu beschleunigen: die <i>GetRows</i> Methode (Zeilen 42-46). Damit
+werden die Zeilen des Recordsets in ein Array kopiert, und ich kann das Recordset schlie&szlig;en und somit Resourcen
+auf der Datenbank freigeben (Cursor, etc). Aber auch auf der ASP-Seite hole ich mir Geschwindigkeit, da ich
+auf kein Objekt mehr zugreife, sondern auf einen Speicherblock.
+</p>
+<h2>Ermitteln der Anzahl der Eintr&auml;ge</h2>
+<p>
+Um die Gesamtanzahl der Eintr&auml;ge in das G&auml;stebuch zu ermitteln, habe ich eine UNION Abfrage <b>qSummaries</b> in die Datenbank
+eingef&uuml;gt:
+<pre>
+SELECT COUNT(*) FROM Guestbook
+UNION ALL
+SELECT MAX(IdField) FROM Guestbook
+UNION ALL SELECT MIN(IdField) FROM Guestbook;
+</pre>
+Die erste Zeile ermittelt die Anzahl der Eintr&auml;ge (das gew&uuml;nschte Ziel), aber ich hole noch 2 Zeilen: den
+Wert von IdField f&uuml;r den letzten sowie ersten Eintrag. Diese Informationen verwende ich wieder f&uuml;r die
+Navigationsleisten. Nach dem Auslesen mittels ADO (52-58) kann ich die Datenbankverbindung nun endg&uuml;ltig 
+schlie&szlig;en (Zeile 61ff).
+</p>
+<h2>Darstellen der Eintr&auml;ge</h2>
+<p>
+Das &quot;Hauptprogramm&quot; dieser ASP Seite (<a href="../artikel/pg000001.htm" target="_blank">entries.asp</a>) befindet sich in den Zeilen 66 bis 94. Hier korrigiere ich 
+mit der Variable <i>bTopDown</i> die Sortierreihenfolge aus den Abfragen, was mit der TOP Abfrage leider auch
+einhergeht - damit der Trick mit maxmimal 10 Eintr&auml;gen funktioniert, m&uuml;ssen die vorhergehenden 10 Eintr&auml;ge in der
+falschen Reihenfolge sortiert werden (siehe auch das SELECT Statement).
+</p>
+<p>
+Die Zeilen 83 und 87 rufen <i>WriteRecord</i> auf, eine Funktion die in den Zeilen 96 bis 121 implementiert ist. Wer das
+Aussehen seines G&auml;stebuchs ver&auml;ndern m&ouml;chte, mu&szlig; hier seine Ver&auml;nderungen vornehmen. An die Funktion wird das
+Array mit den Records &uuml;bergeben, ebenso wie der Index des Records, der ausgegeben werden soll. Da Variablen
+standardm&auml;&szlig;ig per Referenz &uuml;bergeben werden, entsteht auch hier kein Geschwindigkeitsverlust.
+</p>
+<h2>Die Navigationsleisten</h2>
+<p>
+Zuletzt bleibt noch die Navigationsleiste zu erkl&auml;ren. Diese ist ebenso wie <i>WriteRecord</i> als Funktion 
+implementiert, und zwar unter dem Namen <i>WritePagingHeaders</i>. Das Besondere an dieser Funktion ist, da&szlig;
+ich hier VBScript und HTML mische (123 bis 155). Aber beides (VBScript, HTML) ist das Resultat, das beim Aufruf der 
+Funktion an den Browser geschickt wird.
+</p>
+<p>
+Speziell hinweisen m&ouml;chte ich hier noch auf die Variablen <i>nPrevPaging</i> und <i>nLastPaging</i>. Diese enthalten jeweils
+den ersten sowie letzten Eintrag der aktuell angezeigten Seite - deshalb auch in den SELECT Abfragen die &lt; und &gt;
+Bedingungen f&uuml;r IdField (und nicht etwa &lt;=). Last but not least erf&uuml;llen hier auch <i>nTotalMax</i> und <i>nTotalMin</i> ihren Zweck,
+weil vorw&auml;rts und r&uuml;ckw&auml;rts pagen nur dann erlaubt wird, wenn es auch tats&auml;chlich noch Records zum Anzeigen
+gibt!
+</p>
+
+
+<p>
+Damit w&auml;re ich am Ende f&uuml;r heute, und w&uuml;nsche ihnen viel Spa&szlig; beim Ausprobieren des Sourcecodes, und ich 
+hoffe wir lesen uns wieder beim 3 und letzten Artikel der G&auml;stebuchserie.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000403.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000403.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000331.htm">Ein G&auml;stebuch in ASP erstellen - Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000331.htm</span><br>
+<a href="../artikel/20000404.htm">Ein G&auml;stebuch in ASP erstellen - Teil 3</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000404.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

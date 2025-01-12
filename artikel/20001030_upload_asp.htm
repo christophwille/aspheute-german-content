@@ -1,0 +1,110 @@
+<table>
+<tr>
+	<td>
+
+<p><pre style="background='silver';">
+&lt;%
+' ScriptTimeout und Session.Timeout setzen, sodass ein Upload 
+' nicht durch eine Timeout des Scripts unterbrochen wird.
+Server.ScriptTimeout = 600   ' Sekunden
+Session.TimeOut = 20      ' Minuten
+
+Set Post = Server.CreateObject("ActiveFile.Post")
+
+' Pfad zum Ablegen temporaerer Dateien angeben
+strTempPfad = "C:\TEMP"
+
+' Entferne "resource fork" bei Upload von MacBinary Dateien
+Post.CheckMacBinary = True
+
+' Dateigroesse begrenzen auf 50 KB
+Post.MaxFileSize  = 50000   ' Bytes
+
+' Initiiere Upload
+Post.Upload strTempPfad, 0
+Post.Flush
+
+' Referenz zu upgeloadeter (temporaerer) Datei
+Set UploadFile = Post.FormInputs("DATEI1").File
+
+' Pruefen ob Datei empfangen
+If isObject(UploadFile) And _
+   Not(StrComp(TypeName(UploadFile),"Nothing",1) = 0) Then
+   ' Pruefen ob Datei auch Daten enthaelt
+   If UploadFile.Size &gt; 0 Then
+      strUserFileName = Post.FormInputs("DATEI1").Value
+      strFileContentType = Post.FormInputs("DATEI1").ContentType
+      Response.Write "Datei " &amp; strUserFileName &amp; "' " &amp; _
+        " vom Typ '" &amp; strFileContentType &amp; "' empfangen.&lt;BR&gt;"
+      ' Eigentlichen Dateinamen extrahieren:
+      strFileName = Mid(Replace(strUserFileName,"/","\"), _
+         InstrRev(strUserFileName,"\")+1)
+
+      ' Physikalischer Pfad zur Datenbank
+      strScriptName = Request.ServerVariables("Script_Name")
+      strCurrentDir = Left(strScriptName, InstrRev(strScriptName,"/"))
+      
+      strDatabase = Server.MapPath(strCurrentDir &amp; "uploadDB.mdb")
+      strUserName = ""
+      strPasswort = ""
+      ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;" &amp; _
+         "Data Source=" &amp; strDatabase &amp; ";User ID=" &amp; strUserName &amp; _
+         ";Password=" &amp; strPasswort &amp; ";"
+   
+      ' Datenbankverbindung oeffnen:
+      Set conn = Server.CreateObject("ADODB.Connection")
+      conn.Open ConnectionString
+   
+      ' Recordset fuer Zugriff auf Tabellendaten oeffnen:
+      Set rs = CreateObject("ADODB.Recordset")
+      rs.CursorLocation = 2   ' adUseServer
+      rs.CursorType     = 1   ' adOpenKeyset 
+      rs.LockType       = 3   ' adLockOptimistic
+      
+      ' Verbindung zu Tabelle tUpload aufbauen:
+      strSQL = "SELECT * FROM tUpload WHERE 1 = 0"
+      rs.Open strSQL, conn
+      
+      ' Datensatz in Tabelle tUpload einfuegen:
+      rs.AddNew 
+      rs("Dateiname") = strFileName
+      rs("DateiContentType" ) = strFileContentType
+      
+      ' Upgeloadete Datei in Field Datei speichern
+      UploadFile.Import rs("Datei")
+   
+      rs.Update
+      ' Auslesen der generierten ID:
+      lngID = rs("ID")
+      
+      ' Schliessen des Recordsets und der Connection
+      rs.Close
+      conn.Close
+      Set rs = Nothing
+      Set conn = Nothing
+      
+      Response.Write("Die Datei '" &amp; strFileName &amp; "' " &amp; _
+       "wurde in der Datenbank unter der ID = " &amp; lngID &amp; _
+       " gespeichert.&lt;br&gt;" &amp; vbCrLf)
+       
+       Response.Write("Klicken Sie " &amp; _
+         "&lt;a href=""download.asp?ID=" &amp; lngID &amp; """&gt;hier&lt;/a&gt; " &amp; _
+         "(download.asp?ID=" &amp; lngID &amp; ") um die Datei wieder " &amp; _
+         "aus der Datenbank auszulesen. Die Datei wird " &amp; _
+         "angezeigt bzw. downgeloadet.&lt;br&gt;" &amp; vbcrlf)
+   End If
+   ' Loesche temporaere Datei
+   UploadFile.Delete
+Else
+   ' Keine Datei empfangen
+   Response.Write "Es wurde keine Datei empfangen..."
+End If   
+
+Set UploadFile = Nothing
+Set Post = Nothing
+%&gt;
+</pre></p>
+
+</td>
+</tr>
+</table>

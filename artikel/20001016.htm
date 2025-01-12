@@ -1,0 +1,497 @@
+<HTML>
+<HEAD>
+<TITLE>Manipulieren von ZIP Archiven am Server</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel  erkl&auml;rt verschiedene M&ouml;glichkeiten im Zugriff und in der Manipulation von ZIP Archiven in ASP Seiten.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Zippen,Manipulation,ActiveFile Komponente,ActiveFile,Erstellen eines Archives">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Manipulieren von ZIP Archiven am Server</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001016"></SCRIPT>
+</p>
+<p>In einem meiner letzen Artikel habe ich mich mit dem Entzippen von ZIP Archiven
+auf dem Webserver besch&auml;ftigt. Dieser Artikel geht einen Schritt weiter
+und erkl&auml;rt verschiedene M&ouml;glichkeiten im Zugriff und in der Manipulation von ZIP
+Archiven in ASP Seiten.</p>
+
+
+<p>Ich habe f&uuml;r diesen Artikel die <i>ActiveFile</i> Komponente herangezogen,
+da sie keine W&uuml;nsche im Bereich der ZIP-Archive offen l&auml;sst.</p>
+
+<p>Eine andere ASP Komponente, die sehr viele M&ouml;glichkeiten der 
+Manipulation von ZIP Archiven aber auch von CAB Archiven bietet, ist die ActiveX Komponente 
+<a href="http://www.softartisans.com/softartisans/saarchive.html">SA-Archive</a>
+der Firma <a href="http://www.softartisans.com/">Software Artisans, Inc.</a>.
+Auch dieses Komponente ist als Evaluierungsversion gratis zum Download verf&uuml;gbar.
+Der einzige Nachteil der SA-Archive Komponente in der aktuellen Version 1.0
+ist, das beim Erstellen eines ZIP Archives die Pfadangaben der gezippten Dateien
+verloren gehen. Bei Verwendung der ActiveFile Komponente ist dies nicht der Fall.</p>
+
+
+<h2>Die ActiveFile Komponente</h2>
+
+<p>Die Installation und grunds&auml;tzliche Verwendung der 
+ActiveFile Komponente habe ich bereits im Artikel
+<a href="20001005.htm">Zippen und entzippen von Dateien</a>
+beschrieben.</p>
+
+<p>Daher m&ouml;chte ich hier gleich Anwendungsbeispiele
+der ActiveFile Komponenten demonstrieren:</p>
+
+
+
+<h2>Extrahieren einer einzelnen Datei aus einem ZIP Archiv</h2>
+
+<p>Um eine einzelne Datei zu extrahieren, gen&uuml;gt der Aufruf
+der Extract Methode des <i>ActiveFile.Archive</i> Objektes:</p>
+
+<p><pre style="background='silver';">
+<i>Archive</i>.Extract <i>SourcePath</i>, <i>DestPath</i>
+</pre></p>
+
+<p>Der <i>SourcePath</i> Parameter enth&auml;lt den Namen (und den Relativpfad) der 
+Datei oder der Dateien, die extrahiert werden sollen. 
+Um mehrere Dateien zu extrahieren kann man Wildcards (*.*) benutzen.
+Der <i>DestPath</i> Parameter gibt das Verzeichnis an, in das die Dateien
+extrahiert werden.</p>
+
+<p>Zur Veranschaulichung der <i>Extract</i> Methode hier ein vollst&auml;ndiges
+Beispiel.</p>
+
+<p><pre style="background='silver';">
+&lt;%
+ Set Archive = Server.CreateObject("ActiveFile.Archive")
+ ' Hier physikalischen Pfad zum ZIP Archiv angeben
+ Archive.OpenArchive "C:\Test\Archiv.zip"
+ ' Extrahiere Dateien in Verzeichnis C:\temp
+ Archive.Extract "Artikel*.htm","C:\temp"
+%&gt;
+</pre></p>
+
+<p>Dieses Beispiel extrahiert alle Dateien des Archives deren
+Name mit "Artikel" beginnt, und die vom Typ HTM Datei sind. 
+Die extrahierten Dateien werden in das Verzeichnis <i>C:\temp</i>
+geschrieben. <b>Achtung:</b> ActiveFile &uuml;berschreibt bereits vorhandene Dateien
+des gleichen Namens in Zielverzeichnis (<i>DestPath</i>).</p>
+
+
+
+<h2>Erstellen eines neuen Archives am Webserver</h2>
+
+<p>Die ActiveFile Komponente kann auch Dateien packen und in ein ZIP Archiv schreiben.
+Dazu verwendet man die <i>NewArchive</i>, <i>Add</i> und <i>SaveArchive</i> Methoden des 
+<i>ActiveFile.Archive</i> Objektes.</p>
+
+<p><i>NewArchive</i> erstellt ein neues ZIP Archiv und legt es auf der Festplatte
+des Webservers ab:</p>
+
+<p><pre style="background='silver';">
+<i>Archive</i>.NewArchive <i>Path</i>, <i>ArchiveType</i>
+</pre></p>
+
+<p>Der <i>Path</i> Parameter gibt den physikalischen Pfad und den Namen des zu erstellenden
+ZIP Archives an (z.B. <i>C:\Websites\AspExpert\Archives\test71.zip</i>).</p>
+
+<p>Der optionale <i>ArchiveType</i> Parameter gibt die Art des Archives an.
+F&uuml;r gew&ouml;hnlich wird dieser Parameter nicht ben&ouml;tigt, da
+die ActiveFile Komponente den Archiv Typ gem&auml;&szlig; der Dateiendung des 
+Archives festlegt. So wird die Datei <i>Test.zip</i> automatisch als ZIP
+Archiv angelegt.</p>
+
+<p>Neben ZIP Archiven beherrscht ActiveFile auch noch denm Umgang mit Stuffit, 
+TAR, GNU und MacBinary BIN Dateien.</p>
+
+
+<p>Mittels der <i>Add</i> Methode f&uuml;gt man neue Dateien zum ZIP Archiv hinzu.
+Die Originaldateien bleiben dabei erhalten:</p>
+
+<p><pre style="background='silver';">
+<i>Archive</i>.Add <i>Path</i>, <i>Recurse</i>, <i>Flatten</i>
+</pre></p>
+
+<p>Der <i>Path</i> Parameter gibt die Dateien oder Verzeichnisse an, die zum ZIP Archiv 
+hinzugef&uuml;gt werden sollen. Wildcards (* und ?) sind in dieser Angabe erlaubt.</p>
+
+<p><i>Recurse</i> ist ein optionaler Parameter, der bestimmt, ob die Unterverzeichnisse
+von Verzeichnissen samt Dateien auch in das Archiv geschrieben werden.</p>
+
+<p>Der optionale <i>Flatten</i> Parameter gibt nur an, ob die Verzeichnisinformationen
+von hinzugef&uuml;gten Dateien entfernt werden sollen oder nicht.</p>
+
+<p>Nur das Hinzuf&uuml;gen einer Datei zu einem Archiv mittels <i>Add</i> Methode
+bewirkt noch nicht, da&szlig; die Datei auch im ZIP Archiv auf der Festplatte
+gespeichert wird. Dazu ist der Aufruf der <i>SaveArchive</i> Methode n&ouml;tig:</p>
+
+<p><pre style="background='silver';">
+<i>Archive</i>.SaveArchive <i>Pfad</i>
+</pre></p>
+
+<p>Der Pfad Parameter ist optional. Der Aufruf der <i>SaveArchive</i>
+Methode schreibt alle &Auml;nderungen des Archives in die Archiv Datei
+der Festplatte.</p>
+
+<p>Hier nun das vollst&auml;ndige Beispiel, wie man mehrere Dateien am Webserver zu
+einem ZIP Archiv zusammenfasst, ohne dabei die Pfadinformationen der Dateien zu
+verlieren.</p>
+
+<p><pre style="background='silver';">
+&lt;% 
+ Set Archive = Server.CreateObject("ActiveFile.Archive")
+ Archive.NewArchive "C:\testzip\TestArchiv.zip"
+ ' Archive.Add Path, Recurse, Flatten
+ Archive.Add "C:\Data\Websites\AspHeute Online\*.*", True, False
+ Archive.SaveArchive
+%&gt;
+</pre></p>
+
+<p>Das vorliegende Skript komprimiert alle Dateien des Verzeichnisses 
+<i>C:\Data\Websites\AspHeute Online\</i> und der darunter liegenden Verzeichnisse
+in das Archiv <i>C:\testzip\TestArchiv.zip</i>.</p>
+
+<p>Da der <i>Recurse</i> Parameter auf <i>True</i> gesetzt ist, werden alle Dateien
+in s&auml;mtlichen Unterverzeichnissen erfasst.
+Der <i>Flatten</i> Parameter auf <i>False</i> gesetzt stellt sicher, da&szlig; 
+zu allen Dateien im Archiv die relativen Pfadinformationen des Urspr&uuml;nglichen
+Quellverzeichnisses gespeichert werden.</p>
+
+<p>Zum Schlu&szlig; dieses Artikels m&ouml;chte ich noch die
+On-The-Fly Generierung eines ZIP Archives zeigen, das direkt zum Browser
+geschickt wird, ohne da&szlig; man dabei den Umweg &uuml;ber die Festplatte 
+gehen mu&szlig;:</p>
+
+
+<h2>Erstellen eines ZIP Archives <i>On-The-Fly</i></h2>
+
+
+<p>Die vielf&auml;ltigen M&ouml;glichkeiten der ActiveFile Komponente,
+die Fileupload und Filedownload umfassen, erlaubt die
+On-The-Fly Generierung von ZIP Archiven.</p>
+
+<p>Der Begriff <i>On-The-Fly</i> steht hier f&uuml;r den Vorgang,
+da&szlig; ein ASP Skript ein ZIP Archiv erstellt und es dann direkt zum
+Browser sendet.</p>
+
+
+ <p><pre style="background='silver';">
+&lt;%
+' Temporaeres Verzeichnis fuer Operationen
+ Set File = Server.CreateObject("ActiveFile.File")
+ File.CreateTemp "C:\TEMP"
+
+ ' Erstelle ZIP Archiv
+ Set Archive = Server.CreateObject("ActiveFile.Archive")
+ Archive.NewArchive File, 0
+
+ ' Fuege Dateien zu ZIP Archiv
+ Archive.Add "C:\testzip\dir\*.*", True, False
+
+ ' Speichere das ZIP Archiv 
+ Archive.SaveArchive
+ ' Resourcen des Archiv Objektes freigeben
+ Set Archive = Nothing
+
+ ' Download und Loeschen der temporaeren Datei
+ Response.AddHeader "Content-Disposition", "inline; filename=Archiv.zip"
+ File.Download "application/x-zip-compressed", Now(), True, True
+%&gt;
+</pre></p>
+
+
+<p>Das Skript erstellt eine Tempor&auml;re Datei mittels
+<i>File</i> Objekt und <i>CreateTemp</i> Methode.</p>
+
+<p>Das ZIP Archiv wird wie &uuml;blich mittels <i>NewArchive</i> Methode des
+<i>Archive</i> erzeugt. Die <i>Add</i> Methode f&uuml;gt alle Dateien 
+eines bestimmten Verzeichnisses zum ZIP Archiv hinzu. <i>SaveArchive</i><br>
+schlie&szlig;lich speichert das tempor&auml;re ZIP Archiv
+im Verzeichnis <i>C:\TEMP</i> ab.</p>
+
+<p>Der Download zum Client wird mit Setzen des HTTP Headers 
+<i>Content-Disposition</i> eingeleitet. Dadurch teilt das ASP Skript
+dem Browser mit, da&szlig; die Datei, die er empf&auml;ngt, den
+Namen <i>Archiv.zip</i> hat. &Auml;ltere Browser leiten aus der Dateiendung
+diese Namens auch den Typ des gesendeten Inhaltes ab.</p>
+
+<p>Mit der <i>Download</i> Methode des <i>File</i> Objektes schickt dann
+das ASP Skript den Inhalte des ZIP Archives zum Browser. Die Syntax f&uuml;r 
+die <i>Download</i> Methode ist &uuml;brigens wie folgt:</p>
+
+<p><pre style="background='silver';">
+<i>File</i>.Download <i>Mimetype</i>, <i>ModDate</i>, <i>ResponseEnd</i>, <i>DeleteFile</i>
+</pre></p>
+
+<p>S&auml;mtliche Parameter sind optional. Der <i>Mimetype</i> Parameter zeigt dem
+Browser den Typ des Inhaltes an, den er gesendet bekommt. <i>ModDate</i> 
+schreibt eine Wert f&uuml;r das "Datum der letzen &Auml;nderung der Datei"
+zum Browser. <i>ResponseEnd</i> beendet automatisch das ASP Skript nach dem
+Aufrufen der <i>Download</i> Methode. Und <i>DeleteFile</i> auf <i>True</i> 
+gesetzt sorgt daf&uuml;r, da&szlig; die Datei (das ZIP Archiv) nach dem Download
+von der Festplatte gel&ouml;scht wird.</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>Auch das Manipulieren von ZIP Dateien am Server ist mit der <i>ActiveFile</i> Komponente
+sehr einfach und komfortabel zu erledigen. Das Erstellen von ZIP Archiven
+und Bef&uuml;llen mit Dateien ist einfach &uuml;ber das <i>Archive</i> Objekt zu erledigen.</p>
+
+<p>Dar&uuml;berhinaus kann man ZIP Dateien sogar <i>On-The-Fly</i> generieren und
+zum Browser schicken. Dies ist speziell f&uuml;r den gesicherten Download sehr praktisch,
+da die ASP Seite die Sicherung mittels User Identifizierung (Einloggen oder Cookie)
+&uuml;bernehmen kann, bevor das ZIP Archiv erstellt und zum Browser geschickt wird.</p>
+
+<p>Ein weiteres interessantes Feature der <i>ActiveFile</i> Komponente
+(ab Version 2.2) ist die M&ouml;glichkeit, Dateien pa&szlig;wortgesch&uuml;tzt in
+ZIP Archive zu komprimieren. Damit wird das Entpacken von Dateien verhindert
+wenn der Benutzer nicht das richtige Pa&szlig;wort angibt.</p><h2>Verwandte Artikel</h2>
+<p>
+<a href="20010507.htm">Web-basiertes Dateimanagement mit dem ASP FileMan</a><br>
+<a href="20001005.htm">Zippen und entzippen von Dateien</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Einfomentum%2Ecom%2Factivefile">ActiveFile Komponente</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Einfomentum%2Ecom">Infomentum</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20001016" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Manipulieren von ZIP Archiven am Server"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20001016.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Koller"><input type="hidden" name="AuthorEmail" value="christiank@aspexpert.com"><input type="hidden" name="Artikel" value="20001016"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20001016.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

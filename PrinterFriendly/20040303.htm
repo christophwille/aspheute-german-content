@@ -1,0 +1,464 @@
+<HTML>
+<HEAD>
+<TITLE>Vergleich von DataGrid, DataList und Repeater-Control - was verwende ich wann?</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Das DataGrid ist nicht das einzige Control, das das .NET-Framework zur Darstellung von Daten bereithält. Zwei weitere Vertreter dieser Gattung stellen das DataList- und das Repeater- Control dar.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,DataGrid,DataList,Repeater,Control,DataSource,DataBind,Framework,ADO.NET,IEnumerable,Daten,Darstellung,Binden,Überblick,Leistungen">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Vergleich von DataGrid, DataList und Repeater-Control - was verwende ich wann?</H1>
+<p>
+Geschrieben von: <a href="../autoren/alexanderzeitler.htm">Alexander Zeitler</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20040303"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wie bereits im Artikel <a href="../artikel/20030909.htm">Das ASP.NET DataGrid selbst erweitern</a> beschrieben, 
+handelt es sich beim DataGrid um ein sehr flexibles Webcontrol zur tabellarischen Darstellung von Daten. Doch das 
+<a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfSystemWindowsFormsDataGridClassTopic.asp" target="_blank">DataGrid</a>
+ist nicht das einzige Control, das das .NET-Framework zur Darstellung von Daten bereith&auml;lt. Zwei weitere Vertreter dieser Gattung 
+stellen das <a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfSystemWebUIWebControlsDataListClassTopic.asp" target="_blank">DataList</a>- 
+und das <a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfSystemWebUIWebControlsRepeaterClassTopic.asp" target="_blank">Repeater</a>-
+Control dar. Die Unterschiede - aber auch Gemeinsamkeiten - zwischen diesen drei Controltypen und die jeweils 
+sinnvollen Einsatzbereiche zeigt dieser Artikel auf.
+</p>
+
+<h2>Historisches zur Darstellung von Daten in Webseiten mit ASP</h2>
+<p>
+Der Weg der Darstellung von Daten aus Datenbanken, XML-Dateien usw. lief mit klassischem ASP immer nach dem gleichen Schema ab:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+'Verbindung zur Datenquelle
+'Erzeugen eines ADO-Recordsets durch Abfrage der Datenquelle
+
+'Erzeugen von HTML-basierten Kopfzeilen
+
+'Durchlaufen des Recordsets
+For Each Record in Recordset
+'	Ausgabe des aktuellen Records eingebettet in HTML
+'N&auml;chster Datensatz
+Next Record
+
+'Erzeugen HTML-basierter Fu&szlig;zeilen
+%&gt;
+</pre>
+
+<p>
+Dieser Vorgang war je nach Umfang der Daten und des zu erzeugenden Layouts mehr oder weniger zeitraubend - meist eher mehr.
+</p>
+<p>
+Dies war aber nicht der einzige Grund, weshalb das Anzeigen von Daten eine undankbare Aufgabe war: Der ASP-Code wurde mit den 
+HTML-Tags in einem Dokument wild gemischt, was weder &Auml;nderungen noch der Wiederverwertbarkeit des Codes entgegenkam. Letztlich 
+lief die Darstellung von Daten immer wieder auf eine Neuentwicklung hinaus. 
+</p>
+<p>
+Microsoft hat mit den eingangs erw&auml;hnten WebControls mehr als eine brauchbare Abhilfe geschaffen - vielmehr wird praktisch die 
+gesamte Bandbreite an textbasierten Datenvisualisierungen abgedeckt. Um diese jedoch sinnvoll einsetzen zu k&ouml;nnen, ist es 
+wichtig, diese Controls grundlegend zu verstehen.
+</p>
+
+<h2>Gemeinsamkeiten</h2>
+<p>
+Da alle drei Controls dem gleichen Zweck dienen, ist davon auszugehen, da&szlig; auch einige Gemeinsamkeiten vorhanden sind - diese 
+werden wir nun kurz betrachten. 
+</p>
+<p>
+Aus dem vorgenannten Zweck ergibt sich auch gleich die wohl grundlegendste Gemeinsamkeit - die Art der Datenbindung:
+</p>
+
+<pre style="background='silver';">
+DataWebControl.DataSource = GetDataFromDataSource()
+DataWebControl.DataBind()
+</pre>
+
+<p>
+Auf die DataSource-Eigenschaft k&ouml;nnen alle Objekte zugewiesen werden, die das 
+<a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemcollectionsienumerableclasstopic.asp" target="_blank">System.Collections.IEnumerable-Interface</a> 
+implementieren - somit k&ouml;nnen Sie also auch Ihre selbst erstellten Datenquellen zuweisen.
+</p>
+<p>
+Hieraus resultiert die n&auml;chste Gemeinsamkeit: die Art der Datenspeicherung. Alle drei Controls speichern die Daten in sogenannten 
+Items (jeder Datensatz entspricht einem Item), deren Art und Anzahl variieren jedoch von Control zu Control: das DataGrid besitzt 
+<a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsdatagriditemclasstopic.asp" target="_blank">DataGridItems</a>, 
+die DataList <a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsdatagriditemclasstopic.asp" target="_blank">DataListItems</a> 
+und der Repeater <a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsrepeateritemclasstopic.asp" target="_blank">RepeaterItems</a>.
+</p>
+<p>
+Wird nun die DataBind-Methode aufgerufen, iteriert das betreffende WebControl durch die Items der DataSource und erzeugt f&uuml;r 
+jeden Datensatz der &uuml;bergebenen DataSource ein DataWebControlItem vom entsprechenden Typ (DataGridItem etc.). Auf die Unterschiede 
+zwischen den Itemtypen gehen wir sp&auml;ter in diesem Artikel ein.
+</p>
+<p>
+Im Zusammenhang mit den Items ergibt sich eine weitere &Uuml;bereinstimmung, n&auml;mlich die Events 
+<a href="http://msdn.microsoft.com/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsdatalistclassitemcreatedtopic.asp" target="_blank">ItemCreated</a>, 
+<a href="http://msdn.microsoft.com/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsdatalistclassitemdataboundtopic.asp" target="_blank">ItemDataBound</a> 
+und <a href="http://msdn.microsoft.com/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsdatalistclassitemcommandtopic.asp" target="_blank">ItemCommand</a>.
+</p>
+<p>
+<i>ItemCreated</i> wird immer ausgel&ouml;st, bevor dem Item des WebControl die jeweilige DataItem-Eigenschaft zugewiesen wird. <i>ItemDataBound</i> 
+hingegen wird nach dieser Zuweisung ausgel&ouml;st. <i>ItemCommand</i> schlie&szlig;lich wird ausgel&ouml;st, wenn das Command-Event eines Buttons oder 
+Linkbuttons innerhalb des WebControls ausgel&ouml;st wird.
+</p>
+<p>
+Eine weitere Gemeinsamkeit ist die M&ouml;glichkeit, den Controls sogenannte Templates zuzuweisen. Hierbei handelt es sich um Vorlagen, 
+die die Ausgestaltung des jeweiligen Items mittels HTML-Befehlen (bzw. HTML- oder WebControls) definieren. Einen kleinen Unterschied 
+gibt es hier allerdings bereits: w&auml;hrend beim DataGrid die Verwendung von Templates optional ist, ist sie bei der DataList und dem 
+Repeater zwingend notwendig.
+</p>
+<p>
+Durch die Tatsache, da&szlig; DataGrid und DataList eine Ableitung von 
+<a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfSystemWebUIWebControlsWebControlClassTopic.asp" target="_blank">System.Web.UI.WebControls.WebControl</a> 
+darstellen, erben beide auch eine Reihe von Methoden und Eigenschaften, welche &uuml;berwiegend der visuellen Ausgestaltung des Controls 
+dienen. Beispiele hierf&uuml;r sind die 
+<a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfSystemWebUIWebControlsWebControlClassCssClassTopic.asp" target="_blank">CssClass</a>-, 
+<a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfSystemWebUIWebControlsWebControlClassStyleTopic.asp" target="_blank">Style</a>- 
+und <a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolswebcontrolclasswidthtopic.asp" target="_blank">Width</a>-Eigenschaften, 
+die sich sowohl in System.Web.UI.WebControls.WebControl als auch den beiden Ableitungen wiederfinden. Der Repeater f&auml;llt hierbei 
+aus der Reihe, da er eine Ableitung von 
+<a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuicontrolclasstopic.asp" target="_blank">System.Web.UI.Control</a> 
+darstellt. Details hierzu werden wir in der Abhandlung des Repeaters konkret ansprechen.
+</p>
+
+<h2>Das DataGrid im Detail</h2>
+<p>
+Das DataGrid ist das von Haus aus mit den meisten Features best&uuml;ckte unserer drei WebControls. Leider resultiert hieraus auch ein 
+Verlust an Flexibilit&auml;t, da weite Teile des Controls bereits vordefiniert sind. Allerdings geschieht dies nicht ohne Grund, denn das 
+DataGrid dient in erster Linie und fast ausschlie&szlig;lich der Darstellung und Bearbeitung von Daten in Listenform, welche einer 
+HTML-Tabelle (HTML: &lt;table&gt;) entspricht. Jeder Datensatz der Datenquelle bzw. jedes DataGridItem in 
+<a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwindowsformsdatagridclassdatasourcetopic.asp" target="_blank">DataGrid.DataSource</a> 
+entspricht einer Tabellenzeile (HTML: &lt;tr&gt;).  Die Felder der Datenquelle werden als Tabellenzellen (HTML: &lt;td&gt;) dargestellt.
+</p>
+<p>
+Eine der vielen Darstellungsm&ouml;glichkeiten des DataGrids sehen Sie hier:
+</p>
+
+<IMG SRC="/artikel/Bilder/200403/20040303_1.png" width="546" height="578" alt="" border="0">
+
+<p>
+Da bei der Entwicklung des DataGrids viel Wert auf eine einfache und schnell verwendbare Darstellung von Daten gelegt wurde, ist 
+es m&ouml;glich, das DataGrid mit den bereits Eingangs genannten beiden Anweisungen
+</p>
+
+<pre style="background='silver';">
+MyDataGrid.DataSource = GetDataFromDataSource();
+MyDataGrid.DataBind();
+</pre>
+
+<p>
+sowie dem Einf&uuml;gen des DataGrids in die .aspx-Datei mittels
+</p>
+
+<pre style="background='silver';">
+&lt;asp:DataGrid id="MyDataGrid" runat="Server"/&gt;
+</pre>
+
+<p>
+darzustellen.
+</p>
+<p>
+&Auml;hnlich einfach und mit relativ geringem Aufwand lassen sich auch die Sortierung von Daten und das Paging (seitenweise Darstellung 
+von Daten) im DataGrid implementieren. Wie das im Detail funktioniert, wird allerdings Gegenstand weiterer Artikel sein.
+</p>
+<p>
+Wie bereits erw&auml;hnt, entsprechen die Felder der Datens&auml;tze (&lt;TR&gt;) der Datenquelle (DataSource) den TD-Tags einer 
+HTML-Tabellenzeile. Diese Spalten des DataGrids stellen eine Ableitung der Klasse 
+<a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsdatagridcolumnclasstopic.asp" target="_blank">DataGridColumn</a>. 
+Das DataGrid beinhaltet f&uuml;nf abgeleitete Spaltentypen:
+</p>
+
+<ul>
+<li><a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsboundcolumnclasstopic.asp" target="_blank">BoundColumn</a>
+<li><a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsbuttoncolumnclasstopic.asp" target="_blank">ButtonColumn</a>
+<li><a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolseditcommandcolumnclasstopic.asp" target="_blank">EditCommandColumn</a>
+<li><a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolshyperlinkcolumnclasstopic.asp" target="_blank">HyperLinkColumn</a>
+<li><a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolstemplatecolumnclasstopic.asp" target="_blank">TemplateColumn</a>
+</ul>
+
+<p>
+Jede dieser Spalten stellt entweder Daten dar oder stellt in gewisser Weise ein "Interface" zur Verf&uuml;gung, &uuml;ber das der Benutzer 
+das DataGrid bzw. die darin enthaltenen Daten bearbeiten kann. Die BoundColumn stellt z.B. die Inhalte der Datenquelle als 
+(formatierbaren) Text dar, w&auml;hrend z.B. die EditCommandColumn Eingabefelder zum Bearbeiten von Daten bereith&auml;lt. 
+</p>
+<p>
+Nun k&ouml;nnte die Vielzahl der Spaltentypen vielleicht die Vermutung aufkommen lassen, da&szlig; das DataGrid doch nicht so unflexibel 
+ist, wie eingangs erw&auml;hnt - dem ist aber nicht so.
+</p>
+<p>
+Deshalb sei hier nochmals herausgestellt, da&szlig; das DataGrid aufgrund seines urspr&uuml;nglichen Verwendungszwecks immer als ein Block 
+in Form einer HTML-Tabelle erscheinen wird, auch wenn man Schriften, Hintergr&uuml;nde, Spalten etc. sehr flexibel anpassen kann. 
+Dieses grundlegende Design l&auml;&szlig;t sich nicht &auml;ndern. M&ouml;chten Sie z.B. mehrere Datens&auml;tze innerhalb einer Tabellenzeile darstellen 
+ist dies mit dem DataGrid nicht oder nur mit erh&ouml;htem Aufwand m&ouml;glich. In diesem Fall ist es geschickter, eine DataList oder 
+einen Repeater zu verwenden. &Auml;hnlich verh&auml;lt es sich, wenn Sie aus dem starren &lt;table&gt;-Design des DataGrids ausbrechen m&ouml;chten.
+</p>
+<p>
+Dennoch d&uuml;rfte das DataGrid das am h&auml;ufigsten verwendete WebControl zur Darstellung von Daten sein.
+</p>
+
+<h2>Das DataList-Control</h2>
+<p>
+Nat&uuml;rlich hat Microsoft dem soeben genannten Umstand, da&szlig; das DataGrid immer in Form einer HTML-Tabelle dargestellt wird, 
+Rechnung getragen und ein Control geschaffen, das eine flexiblere Layoutgestaltung zul&auml;&szlig;t: die DataList.
+Die DataList arbeitet generell mit ItemTemplates in verschiedenen Auspr&auml;gungen, welche hier aufgef&uuml;hrt sind:
+</p>
+
+<ul>
+<li><a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsdatalistclassalternatingitemtemplatetopic.asp" target="_blank">AlternatingItemTemplate</a>
+<li><a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsdatalistclassedititemtemplatetopic.asp" target="_blank">EditItemTemplate</a>
+<li><a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsdatalistclassfootertemplatetopic.asp" target="_blank">FooterTemplate</a>
+<li><a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsdatalistclassheadertemplatetopic.asp" target="_blank">HeaderTemplate</a>
+<li><a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsdatalistclassitemtemplatetopic.asp" target="_blank">ItemTemplate</a>
+<li><a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsdatalistclassitemtemplatetopic.asp" target="_blank">SelectedItemTemplate</a>
+<li><a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsdatalistclassseparatortemplatetopic.asp" target="_blank">SeparatorTemplate</a>
+</ul>
+
+<p>
+Standardm&auml;&szlig;ig wird jedes DataItem einer DataList als Zeile in einer HTML-Table dargestellt. Im Gegensatz zum DataGrid-Control kann man 
+bei der DataList jedoch mit der 
+<a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfSystemWebUIWebControlsDataListClassRepeatColumnsTopic.asp" target="_blank">RepeatColumns-Eigenschaft</a> 
+angeben, wie viele Eintr&auml;ge der der DataList zugeordneten Datenquelle in einer Tabellenzeile dargestellt werden sollen.
+</p>
+<p>
+Au&szlig;erdem kann mit der 
+<a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsdatalistclassrepeatlayouttopic.asp" target="_blank">RepeatLayout-Eigenschaft</a>
+festgelegt werden, ob die darzustellenden Daten in einer HTML-Tabelle oder fortlaufend dargestellt werden sollen. Damit l&auml;&szlig;t sich 
+das Layout der DataList also wesentlich flexibler gestalten, als das beim DataGrid m&ouml;glich ist.
+</p>
+<p>
+Zur Verdeutlichung der DataList und Ihrer Deklaration dient der folgende Code:
+</p>
+
+<pre style="background='silver';">
+&lt;asp:DataList  id="DataList1" 
+      runat="server" 
+      RepeatColumns="2" 
+      BorderColor="#CC9966" 
+      BorderStyle="None" 
+      BackColor="White" 
+      CellPadding="4" 
+      GridLines="Both" 
+      BorderWidth="1px"&gt;
+
+  &lt;ItemStyle  ForeColor="#330099" 
+        BackColor="White"
+        Font-Name="Verdana"
+        Font-Size="8pt"&gt;
+  &lt;/ItemStyle&gt;
+
+  &lt;ItemTemplate&gt;
+  &lt;b&gt;
+    &lt;%# DataBinder.Eval(Container.DataItem, "Website") %&gt;
+  &lt;/b&gt;
+  &lt;/ItemTemplate&gt;
+
+  &lt;FooterStyle  ForeColor="#330099" 
+        BackColor="#FFFFCC"&gt;
+  &lt;/FooterStyle&gt;
+
+  &lt;HeaderStyle  Font-Bold="True" 
+        ForeColor="#FFFFCC" 
+        BackColor="#990000"&gt;
+  &lt;/HeaderStyle&gt;
+  
+  &lt;SelectedItemStyle  Font-Bold="True" 
+          ForeColor="#663399" 
+          BackColor="#FFCC66"&gt;
+  &lt;/SelectedItemStyle&gt;
+&lt;/asp:DataList&gt;
+</pre>
+
+<p>
+Das Resultat sehen Sie hier: 
+</p>
+
+<IMG SRC="/artikel/Bilder/200403/20040303_2.png" width="469" height="283" alt="" border="0">
+
+<p>
+Doch die DataList ist nicht die oft gew&uuml;nschte eierlegende Wollmilchsau - auch sie hat Nachteile, z.B. den, da&szlig; die im DataGrid 
+bereits vordefinierten Buttons, bereitgestellt &uuml;ber die 
+<a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolseditcommandcolumnclasstopic.asp" target="_blank">EditCommandColumn</a>, 
+f&uuml;r das Editieren, Updaten und L&ouml;schen von Daten hier h&auml;ndisch eingef&uuml;gt werden m&uuml;ssen.
+</p>
+<p>
+Auch fehlt der DataList die &uuml;ber die beim DataGrid per BoundColumn bereits implementierte TextBox zum Editieren von Daten, d.h. 
+das Interface zum Bearbeiten von Daten mu&szlig; hier komplett erstellt werden.
+</p>
+<p>
+Ebenso fehlen Funktionalit&auml;ten zur Pr&auml;sentation der Daten, wie z.B. Paging oder das Sortieren, welche im Gegensatz zum vorgenannten 
+Interface f&uuml;r die Bearbeitung der Daten eher schwer zu implementieren sind.
+</p>
+<p>
+Wie man sieht, bezahlt man die Flexibilit&auml;t in der Darstellung der DataList mit einem erh&ouml;hten Programmieraufwand f&uuml;r die f&uuml;r den 
+User durchaus sinnvollen Funktionen zur Bearbeitung und leichteren Navigation in den Daten. 
+</p>
+<p>
+Letztlich ist es also h&auml;ufig sinnvoller, der bereits verf&uuml;gbaren Funktionalit&auml;t des DataGrids den Vorzug gegen&uuml;ber dem #
+flexibleren Layout der DataList zu geben. 
+</p>
+
+<h2>Das Repeater-Control</h2>
+<p>
+Wie bereits erw&auml;hnt, ist das Repeater-Control im Gegensatz zu DataGrid und DataList nicht von der 
+System.Web.UI.WebControls.WebControl-Klasse abgeleitet, wodurch es auch keine Stil-Eigenschaften wie 
+<a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfSystemWebUIWebControlsWebControlClassFontTopic.asp" target="_blank">Font</a>, 
+<a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolswebcontrolclassforecolortopic.asp" target="_blank">ForeColor</a>, 
+<a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolswebcontrolclassborderstyletopic.asp" target="_blank">BorderStyle</a>
+usw. erbt.
+</p>
+<p>
+Dies w&uuml;rde auch gar keinen Sinn machen, denn das Repeater-Control ist das flexibelste der drei Data-WebControls, was die 
+Layoutgestaltung angeht. Das Repeater-Control verwendet weder &lt;table&gt; noch &lt;span&gt;-Tags, in welchen Ihre Daten eingebettet sind, 
+sondern ist &auml;hnlich wie die DataList &uuml;ber Templates absolut frei gestaltbar. Damit erkl&auml;rt sich auch, warum die 
+Stil-Eigenschaften nicht vererbt wurden bzw. keine Ableitung von System.Web.UI.WebControls.WebControl f&uuml;r den Repeater 
+verwendet wird: es gibt schlicht keine Standard-HTML-Elemente, auf welche diese angewendet werden k&ouml;nnten.
+</p>
+<p>
+Die verf&uuml;gbaren Templates des Repeaters sind folgende:
+</p>
+
+<ul>
+<li><a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsrepeaterclassalternatingitemtemplatetopic.asp" target="_blank">AlternatingItemTemplate</a>
+<li><a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfSystemWebUIWebControlsRepeaterClassItemTemplateTopic.asp" target="_blank">ItemTemplate</a>
+<li><a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfSystemWebUIWebControlsRepeaterClassItemTemplateTopic.asp" target="_blank">HeaderTemplate</a>
+<li><a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfSystemWebUIWebControlsRepeaterClassItemTemplateTopic.asp" target="_blank">FooterTemplate</a>
+<li><a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/cpref/html/frlrfsystemwebuiwebcontrolsrepeaterclassseparatortemplatetopic.asp" target="_blank">SeparatorTemplate</a>
+</ul>
+
+<p>
+Die HeaderTemplate und FooterTemplate bestimmen, welcher HTML-Content vor bzw. nach den an den Repeater gebundenen Daten 
+dargestellt wird.
+</p>
+<p>
+ItemTemplate und AlternatingItemTemplate werden f&uuml;r jeden entsprechenden Datensatz der Datenquelle gerendert. Die SeparatorTemplate 
+schlie&szlig;lich gibt an, wie die Trennung zwischen den Templates aussehen soll.
+</p>
+<p>
+Da der Repeater keinerlei Stil-Definition beinhaltet, mu&szlig; man diese mit HTML-Mitteln wie &lt;b&gt;, &lt;font&gt; etc. nachbilden. Dies kann 
+sehr schnell zu un&uuml;bersichtlichem HTML-Code f&uuml;hren, was gerade bei der Entwicklung im Team oder einer sp&auml;teren Fehlersuche 
+nicht sehr vorteilhaft ist.
+</p>
+<p>
+Au&szlig;erdem leidet der Repeater unter den gleichen Schw&auml;chen wie die DataList, d.h. Sortieren, Editieren und Paging m&uuml;ssen von 
+Hand implementiert werden und k&ouml;nnen den Zeitaufwand f&uuml;r die Entwicklung schnell in die H&ouml;he treiben.
+</p>
+<p>
+Nichtsdestotrotz sei auch hier ein Code-Beispiel dargestellt, welches unsere bereits bekannte Datenquelle in Form einer 
+unsortierten Liste darstellt:
+</p>
+
+<pre style="background='silver';">
+&lt;asp:Repeater runat="server" id="rptWebsites"&gt;
+  &lt;HeaderTemplate&gt;
+    &lt;ul&gt;
+  &lt;/HeaderTemplate&gt;
+  &lt;ItemTemplate&gt;
+    &lt;li&gt;&lt;%# DataBinder.Eval(Container.DataItem, "Website") %&gt;&lt;/li&gt;
+  &lt;/ItemTemplate&gt;
+  &lt;FooterTemplate&gt;
+    &lt;/ul&gt;
+  &lt;/FooterTemplate&gt;
+&lt;/asp:Repeater&gt;
+</pre>
+
+<p>
+Das Ergebnis stellt sich wie folgt dar:
+</p>
+
+<IMG SRC="/artikel/Bilder/200403/20040303_3.png" width="408" height="351" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Das DataGrid d&uuml;rfte aufgrund seines standardm&auml;&szlig;ig gro&szlig;en Funktionsumfanges das wohl am h&auml;ufigsten verwendete DataWebControl 
+sein. Doch man sollte nicht immer blind darauf zur&uuml;ckgreifen, denn ab und zu ist weniger auch mehr und die DataList oder der 
+Repeater k&ouml;nnen Ihre St&auml;rken ausspielen.
+</p>
+<p>
+Oft gibt es aber auch nicht DAS beste WebControl f&uuml;r einen Zweck, sondern die geschickte Kombination der drei WebControls 
+f&uuml;hrt zu dem gew&uuml;nschten Resultat.
+</p>
+<p>
+Deshalb werden die vielen Features des DataGrids sowie die Kombinationsm&ouml;glichkeiten mit DataList und Repeater - aber auch 
+anderen WebControls - Gegenstand weiterer Artikel sein.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20040303.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20040303.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20030909.htm">Das ASP.NET DataGrid selbst erweitern</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20030909.htm</span><br>
+<a href="../artikel/20040929.htm">DataGrid - Daten bearbeiten leicht gemacht</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040929.htm</span><br>
+<a href="../artikel/20000802.htm">Dateiupload mit ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000802.htm</span><br>
+<a href="../artikel/20031010.htm">Einstieg in Visual Studio.NET - die erste Webanwendung mit Visual C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20031010.htm</span><br>
+<a href="../artikel/20040317.htm">Eintr&auml;ge numerieren im DataGrid</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040317.htm</span><br>
+<a href="../artikel/20000918.htm">Emails mit ASP.NET versenden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000918.htm</span><br>
+<a href="../artikel/20020321.htm">Flash Movies einbetten einfach gemacht</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020321.htm</span><br>
+<a href="../artikel/20020705.htm">Formularbasierte Authentifizierung in f&uuml;nf Minuten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020705.htm</span><br>
+<a href="../artikel/20040628.htm">MouseOver-Effekte beim DataGrid</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040628.htm</span><br>
+<a href="../artikel/20011008.htm">Output Caching 101</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011008.htm</span><br>
+<a href="../artikel/20040318.htm">Pager- und Footerzeilen des DataGrid erweitern</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040318.htm</span><br>
+<a href="../artikel/20010802.htm">Web.Config 101</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010802.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

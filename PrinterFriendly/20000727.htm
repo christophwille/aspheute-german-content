@@ -1,0 +1,219 @@
+<HTML>
+<HEAD>
+<TITLE>Berechnen von beliebigen mathematischen Formeln</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Vielleicht ist Ihnen das Problem bekannt: Sie wollen eine Berechnung in einer ASP Seite durchf&uuml;hren, aber die mathematische Formel f&uuml;r diese Operation steht nicht von vorne herein fest.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Mathematik,Formel,Execute,Vbscript,Berechnung">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Berechnen von beliebigen mathematischen Formeln</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000727"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Vielleicht ist Ihnen das Problem bekannt: Sie wollen eine Berechnung
+in einer ASP Seite durchf&uuml;hren, aber die mathematische Formel 
+f&uuml;r diese Operation steht nicht von vorne herein fest. Wie kann man
+diese Problemstellung l&ouml;sen, ohne einen Mathematikparser zu kaufen
+(von selbst schreiben möchte ich erst gar nicht reden)?
+</p>
+
+<p>M&ouml;glicherweise haben Sie die Formel aus der Datenbank 
+oder von einer Benutzereingabe in einer Variablen gespeichert.
+Doch wie bringen Sie VBScript dazu, da&szlig; es die Formel
+als Rechenanweisung akzeptiert und durchf&uuml;hrt?</p>
+
+<p>
+Betrachten wir ein einfaches Beispiel, um den Sachverhalt "live" nachzuvollziehen:
+Sie wollen ein Benutzerformular auf Basis ASP erstellen, in das 
+man einen mathematischen Ausdruck (und nicht nur einen Wert) 
+f&uuml;r <i>X</i> eingeben kann.
+</p>
+<p>
+Vielleicht wollen Sie weiters, da&szlig; man f&uuml;r <i>Y</i>
+einen mathematischen Ausdruck eingeben kann, der sogar <i>X</i>
+als Variable beinhaltet.
+Die ASP Seite soll dann in der Lage sein, beide Ausdr&uuml;cke
+(f&uuml;r <i>X</i> und <i>Y</i>) zu errechnen und auszugeben.</p>
+
+<p>Wenn Sie nun meinen, Sie m&uuml;ssten einen Parser schreiben, 
+der die Ausdr&uuml;cke auswertet und die zugeh&ouml;rigen mathematischen
+Operationen durchf&uuml;hrt, so werden Sie angenehm &uuml;berrascht sein,
+da&szlig; VBscript mit der <i>Execute</i> Funktion das Ausf&uuml;hren 
+eines beliebigen Ausdrucks, und damit auch das Berechnen 
+eines mathematischen Ausdrucks erlaubt, solange der Ausdruck der VBScript
+Berechnungssyntax folgt.</p>
+
+<p>Die <i>Execute</i> Funktion habe ich schon kurz im Artikel
+<a href="../artikel/20000706.htm">
+Dynamische Includes in ASP</a>
+vorgestellt. Die einzige Voraussetzung, die ein 
+Windows NT/2000 Webserver erf&uuml;llen mu&szlig;, um die
+VBScript Funktion <i>Execute</i> benutzen zu k&ouml;nnen ist,
+da&szlig; mindestens VBScript Version 5.0 auf dem Server
+installiert ist.</p>
+
+<p>Das nun nachfolgende Beispiel erlaubt es dem Benutzer einen beliebigen (der VBScript Syntax) 
+entsprechenden mathematischen Ausdruck f&uuml;r X und Y einzugeben, und diese in der ASP-Seite
+berechnen zu lassen.</p>
+
+<p>G&uuml;ltige mathematische Ausdr&uuml;cke in VBScript sind zum Beispiel:
+
+<table cellspacing="2" cellpadding="2" border="2">
+<tr>
+    <th>Ausdruck</th>
+    <th>Ergebnis</th>
+</tr>
+<tr>
+    <td>2000 + 1</td>
+    <td>2001</td>
+</tr>
+<tr>
+    <td>17 / 4 + (25 * 3)</td>
+    <td>79.25</td>
+</tr>
+<tr>
+    <td>sqr(2)</td>
+    <td>1.4142135623731</td>
+</tr>
+<tr>
+    <td>sin(90 / 360 * 3.1415926)</td>
+    <td>0.707106771713121</td>
+</tr>
+<tr>
+    <td>2 ^ 8</td>
+    <td>256</td>
+</tr>
+<tr>
+    <td>abs(-36)</td>
+    <td>36</td>
+</tr>
+</table>
+</p>
+
+<p>Um einen mathemathischen Ausdruck zu berechnen, gibt der Benutzer 
+den Ausdruck in ein HTML Formular ein, 
+und schickt dieses zum Server. Am Server, genauer in der ASP-Seite, wird der Ausdruck aus der
+<i>Request.Form</i> (oder <i>Request.QueryString</i>) Collection 
+gelesen und in der Variablen <i>AusdruckX</i> gespeichert.</p>
+
+<p>Danach wird dieser Ausdruck berechnet und der Variablen <i>X</i>
+zugewiesen. Dies geschieht mit Hilfe der VBScript Funktion
+<i>Execute</i> wie folgt:</p>
+
+<pre style="background='silver';">
+Execute("X = " &amp; AusdruckX)
+</pre>
+
+<p>Wenn also die Variable <i>AusdruckX</i> den Ausdruck
+"<i>(25 / 5) + 1</i>" enth&auml;lt, so wird nach dem Aufruf von
+<i>Execute("X = " &amp; AusdruckX)</i> die Variable <i>X</i>
+den Wert <i>6</i> enthalten.</p>
+
+<p>
+Der Vollst&auml;ndigkeit halber habe ich noch die L&ouml;sung zu
+unserem Anfangsproblem ausprogrammiert, wo der Benutzer 
+beliebige Ausdr&uuml;cke f&uuml;r <i>X</i> und <i>Y</i> eingeben 
+k&ouml;nnen soll. Sie finden dieses Beispiel im Download zu diesem Artikel.
+</p>
+<p>
+Geben Sie im downloadbaren Beispiel einmal die folgenden 
+Ausdr&uuml;cke ein:
+<pre style="background='silver';">
+X = 17 + 4
+Y = X / 3
+</pre>
+</p>
+<p>
+und Sie erhalten als Ergebnis
+<pre style="background='silver';">
+X = 21
+Y = 7
+</pre>
+</p>
+<p>
+Nat&uuml;rlich habe ich in das Script einige 
+Sicherheitsma&szlig;nahmen eingebaut, soda&szlig; der Benutzer nicht
+einen (g&uuml;ltigen) VBScript Ausdruck eingibt, der 
+zum Beispiel das <i>FileSystemObject</i> Objekt benutzt um
+Dateien auf dem Webserver zu l&ouml;schen oder den Sourcecode
+von ASP Seiten (eventuell inklusive Pa&szlig;w&ouml;rtern)
+auszugeben. Sie halten mit diesem Beispiel also einen voll "on the fly"
+einsetzbaren Taschenrechner mit VBScript Funktionalit&auml;t.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Mit VBScript 5.0 (oder h&ouml;her) ist es keine Hexerei mehr,
+wenn man beliebige mathematische Ausdr&uuml;cke berechnen will - oder andere 
+Funktionen dynamisch ausf&uuml;hren m&ouml;chte (siehe Verwandte Artikel).
+</p>
+<p>
+Dies ist nat&uuml;rlich nur ein m&ouml;gliches Einsatzgebiet
+der <i>Execute</i> Funktion. Experimentieren Sie ruhig ein wenig,
+aber bedenken Sie, da&szlig; in der <i>Execute</i> Funktion auch
+Ausdr&uuml;cke ausgef&uuml;hrt werden k&ouml;nnen, die
+Dateien auf dem Server l&ouml;schen, oder Datenbankinformationen
+zug&auml;nglich machen k&ouml;nnen!
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000727.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000727.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000706.htm">Dynamische Includes in ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000706.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,473 @@
+<HTML>
+<HEAD>
+<TITLE>Crystal Reports mit DataSets bef&uuml;llen - Teil 1</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Nicht immer ist es optimal, einen Report direkt aus einer Datenbank zu bef&uuml;llen. Man w&uuml;nscht sich, Daten kurz vor dem Anzeigen noch zu manipulieren. Diese Artikelserie zeigt wie.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Crystal,Crystal Reports,CrystalReportViewer,Report,DataSet,ADO.NET,disconnected,in-memory,Performance,Geschwindigkeit,Design">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Crystal Reports mit DataSets bef&uuml;llen - Teil 1</H1>
+<p>
+Geschrieben von: <a href="../autoren/rudolfball.htm">Rudolf Ball</a><br>
+Kategorie: <a href="../kategorien/ADOdotNET.htm">ADO.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20030402"></SCRIPT>
+</p>
+<p>
+Nicht immer ist es optimal, einen Report direkt aus einer Datenbank zu bef&uuml;llen. Man w&uuml;nscht sich, Daten kurz vor dem 
+Anzeigen noch zu manipulieren. Ob es sich nun um das Hinzuf&uuml;gen von Werten oder korrektes Runden handelt, in jedem Fall 
+ist das Unterlegen eines DataSets hinter Crystal Reports eine gelungene Alternative. Anhand eines durchg&auml;ngigen Beispiels 
+werden die Vorteile von DataSets und XML Schemas aufgezeigt.
+</p>
+<p>
+DataSets bieten sich als Quelle f&uuml;r den Inhalt eines Reports an, da sie von der Datenbank disconnected sind. Doch es ist 
+ein wenig knifflig, dieses DataSet hinter den Report zu schieben. Dies wird Ihnen anhand dieses Beispiels n&auml;hergebracht: 
+Es wird eine Kochrezeptdatenbank angelegt, und auf einer Website k&ouml;nnen Sie das zu kochende Gericht w&auml;hlen, welches Ihnen 
+als Report angezeigt wird.
+</p>
+
+<h2>System&uuml;berblick</h2>
+
+<IMG SRC="Bilder/200304/20030402_1.png" width="621" height="308" alt="" border="0">
+
+<p>
+Auf der Seite Default.aspx haben wir die M&ouml;glichkeit, ein Rezept unserer Wahl auszuw&auml;hlen. Es wird die Seite Report.aspx 
+aufgerufen, welche einen <i>CrystalReportViewer</i> enth&auml;lt - dieser referenziert auf einen Report. Es wird eine Verbindung zu 
+einem SQL Server erzeugt, welcher ein DataSet zur&uuml;ckliefert. Bevor wir dieses DataSet hinter den Crystal Report legen, 
+manipulieren wir den Inhalt noch ein wenig.
+</p>
+<p>
+Ein Ziel des Beispiels war es, eine Master-Detail Beziehung im Report korrekt darzustellen. In unserem Fall handelt es sich um 
+die Beziehung "Rezept hat Zutaten". Das Datenbankdiagramm sieht wie folgt aus:
+</p>
+
+<IMG SRC="Bilder/200304/20030402_2.png" width="362" height="268" alt="" border="0">
+
+<h2>Default.aspx</h2>
+<p>
+Die Seite Default.aspx enth&auml;lt eine Dropdownliste, welche die Rezepte anzeigt:
+</p>
+
+<IMG SRC="Bilder/200304/20030402_3.png" width="533" height="276" alt="" border="0">
+
+<p>
+Als DataText Eigenschaft setzen wir den Wert "Rezeptname", als DataValue Eigenschaft jedoch die RezeptID, welche bei Klick des 
+"Anzeigen" Buttons als Parameter im Querystring mit&uuml;bergeben wird. Das PageLoad Event der Default.aspx Seite sieht wie folgt 
+aus:
+</p>
+
+<pre style="background='silver';">
+if (!Page.IsPostBack)
+{
+   DataSet4Report myDS4R = new DataSet4Report();
+   ddRezepte.DataSource = myDS4R.Rezepte();
+   ddRezepte.DataTextField = "Rezeptname";
+   ddRezepte.DataValueField = "RezeptID";
+   ddRezepte.DataBind();
+}
+</pre>
+
+<p>
+Als erstes fangen wir das PostBack Event ab. Nach Erzeugung eines neuen DataSet4Report Objekts (siehe n&auml;chste Sektion) weisen 
+wir den R&uuml;ckgabewert der Methode Rezepte(), ein DataReader, der Dropdownliste zu.
+</p>
+
+<h2>Die DataSet4Report Klasse</h2>
+<p>
+Um die Daten aus der Datenbank zu bekommen ben&ouml;tigen wir eine Datenklasse (<b>DataSet4Report.cs</b>). Wir werden exemplarisch die 
+Methode Kochrezept beschreiben, welche ein DataSet mit zwei Tabellen, Rezept und Zutaten, zur&uuml;ckliefert.
+</p>
+
+<pre style="background='silver';">
+public DataSet Kochrezept(int RezeptID)
+{
+   DataSet dsKochrezept = null;
+   SqlConnection mySqlConnection = null;
+   SqlCommand myCommand = null;		
+   SqlDataAdapter myDA = null;
+   DataRelation myDR = null;
+   DataColumn columnMaster = null;
+   DataColumn columnDetail = null;
+</pre>
+
+<p>
+Gleich am Anfang dieser Methode definieren wir alle Variablen, die wir sp&auml;ter noch ben&ouml;tigen. Die zwei DataColumns columnMaster 
+und columnDetail werden uns in der Relation myDR die Verbindung zwischen den zwei Tabellen (1:n) definieren.
+</p>
+
+<pre style="background='silver';">
+try
+{
+   dsKochrezept = new DataSet("Kochrezept");
+   mySqlConnection = new SqlConnection(connectionString);
+   string query = "SELECT * FROM Rezept WHERE RezeptID='" + RezeptID.ToString() + "';";
+   mySqlConnection.Open();
+   myCommand = new SqlCommand(query, mySqlConnection);
+   myDA = new SqlDataAdapter (myCommand);
+   myDA.Fill(dsKochrezept, "Rezept");
+   query = "SELECT * FROM Zutaten WHERE RezeptID='" + RezeptID.ToString() + "';";
+   myCommand = new SqlCommand(query, mySqlConnection);
+   myDA.SelectCommand = myCommand;
+   myDA.Fill(dsKochrezept, "Zutaten");
+   mySqlConnection.Close();
+</pre>
+
+<p>
+Nachdem wir das DataSet "Kochrezept" initialisiert haben, erzeugen wir eine SqlConnection zur Datenbank. Das dynamisch 
+erzeugte Command wird gegen die Datenbank abgesetzt. Ein DataAdapter erzeugt und f&uuml;llt die Tabelle "Rezept" in das DataSet. 
+Dieser Vorgang wird f&uuml;r die Tabelle "Zutaten" wiederholt. Da wir die Datenbankverbindung nun nicht mehr ben&ouml;tigen, schlie&szlig;en 
+wie sie.
+</p>
+
+<pre style="background='silver';">
+   columnMaster = dsKochrezept.Tables["Rezept"].Columns["RezeptID"];
+   columnDetail = dsKochrezept.Tables["Zutaten"].Columns["RezeptID"];
+   myDR = new DataRelation("RezeptZutaten", columnMaster, columnDetail);
+   dsKochrezept.Relations.Add(myDR);
+   return dsKochrezept;
+}
+catch (Exception ex)
+{
+   throw ex;
+}
+</pre>
+
+<p>
+Nun m&ouml;chten wir die Relation zwischen den Tabellen darstellen. Aus diesem Grund m&uuml;ssen wir die Schl&uuml;sselspalten (RezeptID) 
+definieren. Diese werden columnMaster und columnDetail bezeichnet. Auch die Relation wird dem DataSet "Kochrezept" hinzugef&uuml;gt, 
+welches wir retournieren. Die zweite Methode der Klasse DataSet4Report.cs namens "Rezepte" liefert als R&uuml;ckgabewert 
+einen DataReader mit der gesamten Tabelle "Rezept".
+</p>
+
+<h2>Report.aspx</h2>
+<p>
+Nachdem wir auf der Seite Default.aspx den Button "anzeigen" geklickt haben, werden wir auf die Seite Report.aspx gelinkt. 
+Diese Seite beinhaltet einen CrystalReportViewer, welcher per "Drag and Drop" von der Toolbox auf die Designansicht der 
+Seite gezogen werden kann.
+</p>
+
+<IMG SRC="Bilder/200304/20030402_4.png" width="332" height="289" alt="" border="0">
+
+<p>
+Das PageLoad Event von Report.aspx sieht wie folgt aus:
+</p>
+
+<pre style="background='silver';">
+private void Page_Load(object sender, System.EventArgs e)
+{
+   try
+   {
+      this.RezeptID = Int32.Parse(Request.Params["RezeptID"]);
+   }
+   catch
+   {
+      Response.Redirect("default.aspx");
+   }
+}
+</pre>
+
+<p>
+Hier wird nur der Parameter RezeptID aus der URL ausgelesen und der privaten Eigenschaft RezeptID zugewiesen. Sollte jedoch 
+keine Zahl &uuml;bergeben werden wird eine Exception ausgel&ouml;st, der "catch" Abschnitt des "try" Blocks aufgerufen und auf die 
+Startseite default.aspx redirected. Als n&auml;chstes m&uuml;ssen wir den Load-Event des Reports implementieren. Diesen erzeugen wir 
+am einfachsten &uuml;ber die Eigenschaften des ReportViewers, wie folgendes Bild zeigt:
+</p>
+
+<IMG SRC="Bilder/200304/20030402_5.png" width="332" height="349" alt="" border="0">
+
+<pre style="background='silver';">
+private void OnViewerLoad(object sender, System.EventArgs e)
+{
+   RezeptReport myReport = new RezeptReport();
+   DataSet4Report myDS4R = new DataSet4Report();
+   DataSet ReportSet = myDS4R.Kochrezept(this.RezeptID);
+</pre>
+
+<p>
+Hier wird eine neue Instanz unseres Reports "RezeptReport" sowie eine neue Instanz unserer Datenklasse erstellt. Ein DataSet 
+namens ReportSet wird mit Hilfe der Methode Kochrezept gef&uuml;llt. Da wir aber nicht das DataSet pur &uuml;bernehmen wollen, sondern 
+eine Manipulation vornehmen werden, f&uuml;gen wir im folgenden Code daf&uuml;r hinzu.
+</p>
+
+<pre style="background='silver';">
+   DataRow myNewRow = ReportSet.Tables["Zutaten"].NewRow();
+   myNewRow["RezeptID"] = this.RezeptID.ToString();
+   myNewRow["Zutat"] = "Gesamtkosten";
+   double kosten = 0;
+   foreach (DataRow x in ReportSet.Tables["Zutaten"].Rows)
+   {
+      kosten = kosten + double.Parse(x["Kosten"].ToString());
+   }
+   myNewRow["Kosten"] = kosten.ToString();
+   ReportSet.Tables["Zutaten"].Rows.Add(myNewRow);
+</pre>
+
+<p>
+Wir f&uuml;llen die Spalte "RezeptID", "Zutat" und "Kosten". Um die Gesamtkosten zu errechnen, durchlaufen wir das DataSet mit 
+einer foreach-Schleife und addieren die Einzelkosten der Zutaten. Am Schlu&szlig; f&uuml;gen wir die neue Reihe der DataSet Tabelle 
+"Zutaten" hinzu. Jetzt m&uuml;ssen wir nur noch das DataSet hinter den Report klemmen.
+</p>
+
+<pre style="background='silver';">
+   myReport.SetDataSource(ReportSet);
+   this.CrystalReportViewer1.ReportSource = myReport;
+}
+</pre>
+
+<p>
+Dem Report myReport wird als Datenquelle das DataSet zugewiesen, dem ReportViewer der Report. 
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Wie dieser Report erstellt wurde, sehen Sie in Teil 2 dieser Artikelserie. Bis dahin viel Spa&szlig; beim "Nachkochen" der heute
+vorgestellten Rezepte!
+</p><h2>Verwandte Artikel</h2>
+<p>
+<a href="20030403.htm">Crystal Reports mit DataSets bef&uuml;llen - Teil 2</a><br>
+<a href="20001102.htm">Datenbankzugriff mittels ADO.NET</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20030402" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Crystal Reports mit DataSets bef&uuml;llen - Teil 1"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20030402.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Rudolf Ball"><input type="hidden" name="AuthorEmail" value="rball@edu.uni-klu.ac.at"><input type="hidden" name="Artikel" value="20030402"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20030402.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

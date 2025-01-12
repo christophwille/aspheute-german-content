@@ -1,0 +1,271 @@
+<HTML>
+<HEAD>
+<TITLE>Am Server installierte Schriftarten auslesen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im heutigen Artikel besch&auml;ftigen wir uns mit einem eher etwas "eigenartigem" Thema, n&auml;mlich dem Auslesen der am Web Server installierten Schriftarten.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Font,EnumFontFamilies,EnumFontFamiliesEx,Callback,ATL,MFC,Cstring,GetDC,ReleaseDC,Server,JavaScript,Rendering">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Am Server installierte Schriftarten auslesen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Komponenten.htm">Komponenten</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010126"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Im heutigen Artikel besch&auml;ftigen wir uns mit einem eher etwas "eigenartigem" Thema,
+n&auml;mlich dem Auslesen der am Web Server installierten Schriftarten. Dies ist n&auml;mlich
+ein gutes Thema um die N&uuml;tzlichkeit von C++ Kenntnissen zur Komponentenerstellung
+zu illustrieren.
+</p>
+
+<p>
+Das Aufz&auml;hlen von Schriften kann unter C++ relativ einfach mit der <i>EnumFontFamiliesEx</i>
+Funktion bewerkstelligt werden. Diese Funktion ben&ouml;tigt zum Aufz&auml;hlen eine Callback Funktion,
+und diese ist eben am leichtesten mit C++ zu bewerkstelligen.
+Diejenigen, die die Komponente nur verwenden wollen, k&ouml;nnen den n&auml;chsten Abschnitt gerne
+&uuml;berspringen - es werden C++ und ATL Kenntnisse vorausgesetzt!
+</p>
+
+<h2>Die EnumFonts Komponente</h2>
+<p>
+F&uuml;r die EnumFonts Komponente habe ich mich aus Gewohnheit f&uuml;r eine ATL Komponente
+entschieden, und aus Faulheit, f&uuml;r einige Belange in der Komponente die MFC zu 
+verwenden. Zuallererst brauche ich ein ATL Project (<b>EnumFonts</b>), und die Auswahl der
+entsprechenden Optionen im Wizard:
+</p>
+<IMG SRC="/artikel/Bilder/200101/20010126_1.png" width="477" height="384" alt="" border="0">
+<p>
+Damit habe ich ein "nacktes" ATL Projekt, ohne Objekte, die von au&szlig;en angreifbar w&auml;ren.
+Um diesen Umstand zu &auml;ndern, klickt man mit der rechten Maustaste auf das Projekt, und w&auml;hlt
+New ATL Object aus dem Kontextmen&uuml;. Es stehen einige ATL Objekte zur Auswahl, wir ben&uuml;gen uns
+mit dem <i>Simple Object</i>.
+</p>
+<IMG SRC="/artikel/Bilder/200101/20010126_2.png" width="413" height="257" alt="" border="0">
+<p>
+Die Namensgebung erfolgt ebenso simpel: <b>InstalledFonts</b> - und der Rest passt, wie er ist.
+</p>
+<IMG SRC="/artikel/Bilder/200101/20010126_3.png" width="421" height="279" alt="" border="0">
+<p>
+Im Prinzip ist unser Projekt durch die neue Klasse noch nicht um vieles funktionaler geworden
+- dazu m&uuml;ssen wir unsere Methode einf&uuml;gen, die uns die Schriftliste zur&uuml;ckliefert:
+</p>
+<IMG SRC="/artikel/Bilder/200101/20010126_4.png" width="366" height="257" alt="" border="0">
+<p>
+Jetzt haben wir alle Wizards ausgereizt, jetzt hei&szlig;t es selbst Hand anlegen und programmieren.
+Das Enumerieren von Fonts geschieht mit Hilfe der <i>EnumFontFamiliesEx</i> Funktion des WIN32 APIs.
+Wir m&uuml;ssen also diese in der Methode <b>RetrieveFontList</b> entsprechend aufrufen:
+</p>
+
+<pre style="background='silver';">
+STDMETHODIMP CInstalledFonts::RetrieveFontList(BSTR *strFontList)
+{
+  AFX_MANAGE_STATE(AfxGetStaticModuleState())
+
+  // TODO: Add your implementation code here{
+  HDC hDC = ::GetDC(NULL);
+  LOGFONT lf;
+  CString strEnumerateFont;
+
+  // initialise the LOGFONT structure for the font enumeration
+  lf.lfCharSet = ANSI_CHARSET;
+  *lf.lfFaceName = 0;
+  lf.lfPitchAndFamily = 0;
+  
+  EnumFontFamiliesEx(hDC, 
+    &amp;lf, 
+    (FONTENUMPROC)EnumFontFamExProc, 
+    (LPARAM)(&amp;strEnumerateFont), 
+    0);
+
+  ::ReleaseDC(NULL,hDC);
+
+  *strFontList = strEnumerateFont.AllocSysString();
+  return S_OK;
+}
+</pre>
+
+<p>
+Viel L&auml;rm um nichts, k&ouml;nnte man sagen. Wir initialisieren alle Datenstrukturen, und dann rufen
+wir <i>EnumFontFamiliesEx</i> auf. Dabei ist der Parameter <b>EnumFontFamExProc</b> interessant, da 
+dieser eine Callback Funktion ist, die wir zur Verf&uuml;gung stellen m&uuml;ssen:
+</p>
+
+<pre style="background='silver';">
+int CALLBACK EnumFontFamExProc(
+                 ENUMLOGFONTEX *lpelfe,    // logical-font data
+                 NEWTEXTMETRICEX *lpntme,  // physical-font data
+                 DWORD FontType,           // type of font
+                 LPARAM lParam             // application-defined data
+)
+{
+  CString *pEnumerateFont = (CString*)lParam;
+  *pEnumerateFont += CString("|") + ((char *)lpelfe->elfLogFont.lfFaceName);
+  return 1;
+}
+</pre>
+
+<p>
+Diese Callback Funktion wird f&uuml;r jede installierte Schrift aufgerufen. Und hier kommt
+mir meine Faulheit der Verwendung der MFC zu Gute: Als Applikations-spezifischen Parameter
+habe ich die String-Klasse CString &uuml;bergeben, und bei jedem Aufruf h&auml;nge ich die neu
+gefundene Font einfach an das Ende der Fontliste an (getrennt durch "|").
+</p>
+
+<p>
+Das Font-Trennzeichen "|" k&ouml;nnen wir dann in ASP verwenden, um aus dem String mit Hilfe der
+<i>Split</i> Funktion ein wunderbar zu verwendendes Array zu erstellen.
+</p>
+
+<p>
+Die Komponente ist nun fertig programmiert - wir m&uuml;ssen sie nur noch kompilieren.
+Danach mu&szlig; sie noch auf den Web Server kopiert und registriert werden:
+</p>
+
+<pre style="background='silver';">
+regsvr32.exe EnumFonts.dll
+</pre>
+
+<h2>Verwenden der Komponente</h2>
+<p>
+Die Anwendung der Komponente ist extrem einfach, da sie ja nur eine Methode, n&auml;mlich
+<b>RetrieveFontList</b> zur Verf&uuml;gung stellt. Die k&uuml;rzeste Version w&auml;re somit:
+</p>
+
+<pre style="background='silver';">
+Set xObj = Server.CreateObject("EnumFonts.InstalledFonts")
+strFonts = xObj.RetrieveFontList() 
+Response.Write strFonts
+</pre>
+
+<p>
+Damit wollen wir uns aber nicht zufrieden geben - es mu&szlig; schon mehr hermachen. Der folgende
+Screenshot zeigt das Ergebnis, das ich erreichen m&ouml;chte:
+</p>
+
+<IMG SRC="/artikel/Bilder/200101/20010126_5.png" width="584" height="335" alt="" border="0">
+
+<p>
+Besch&auml;ftigen wir uns zuallererst mit dem Bef&uuml;llen der Combobox:
+</p>
+
+<pre style="background='silver';">
+Am Server installierte Schriften:&amp;nbsp;
+&lt;select name="InstalledFonts" onChange="changeFont();"&gt;
+&lt;%
+Dim xObj, strFonts, i, arrFonts
+If "" = Application("InstalledFonts") Then
+    Set xObj = Server.CreateObject("EnumFonts.InstalledFonts")
+    strFonts = xObj.RetrieveFontList()  ' diese Liste ist nicht sortiert!
+    Set xObj = Nothing
+    Application("InstalledFonts") = strFonts
+Else
+    strFonts = Application("InstalledFonts")
+End If
+
+arrFonts = Split(strFonts, "|")
+For i = 0 To UBound(arrFonts)
+    Response.Write "&lt;OPTION&gt;" &amp; arrFonts(i) &amp; "&lt;/OPTION&gt;" &amp; vbCrLf
+Next
+%&gt;
+&lt;/select&gt;
+</pre>
+
+<p>
+Ich habe mir eine kleine Optimierung nicht verkneifen k&ouml;nnen - wozu soll die Fontliste mit
+jedem Seitenaufruf neu generiert werden? Eine Kopie innerhalb der ganzen Application reicht
+v&ouml;llig aus, da sich die Fontliste am Server wohl doch nicht so schnell &auml;ndern wird...
+</p>
+
+<p>
+Jetzt fehlt nur noch der JavaScript-Teil, den ich zum visuellen Aufpeppen mit hineingenommen
+habe:
+</p>
+
+<pre style="background='silver';">
+&lt;script language="JavaScript"&gt;
+// &lt;!--
+function changeFont()
+{
+  var nSelectedIndex, strFontName;
+  nSelectedIndex = document.all.InstalledFonts.selectedIndex;
+  strFontName = document.all.InstalledFonts.options[nSelectedIndex].text;
+  document.all.myTestElement.style.fontFamily = strFontName;
+}
+// --&gt;
+&lt;/script&gt;
+
+...
+
+&lt;div id="myTestElement"&gt;
+Willkommen in der wunderbaren Welt der Schriften. Dieser Beispielabsatz
+dient zum Herumspielen mit der Combobox - allerdings nur dann sinnvoll,
+wenn der Server gleichzeitig der Client ist &amp;lt;g /&amp;gt;...
+&lt;/div&gt;
+</pre>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Damit h&auml;tten wir eine Komponente, mit der man am Server installierte Schriften einfach
+Auflisten kann. Wichtig ist, da&szlig; die Liste der Schriften nicht sortiert ist - aber das
+Sortieren von Arrays kann man in anderen Artikeln auf AspHeute nachlesen!
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010126.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010126.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000906.htm">Sortieren von Arrays in VBScript</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000906.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

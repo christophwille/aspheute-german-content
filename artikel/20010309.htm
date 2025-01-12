@@ -1,0 +1,461 @@
+<HTML>
+<HEAD>
+<TITLE>Excel Diagramme als GIF's serven</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel zeigt Ihnen wie Sie Grafiken aus einem serverseitig generierten Microsoft Excel Diagramm erstellen k&ouml;nnen. Die Grafiken werden dabei als GIF-Dateien im Server Pfad abgespeichert.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Excel,GIF,Speichern,Diagramm,Rendering,xlHtml,GetTempName,xlFileFormat">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Excel Diagramme als GIF's serven</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010309"></SCRIPT>
+</p>
+<p>
+Dieser Artikel zeigt Ihnen wie Sie Grafiken aus einem serverseitig generierten Microsoft
+Excel Diagramm erstellen k&ouml;nnen. Die Grafiken werden dabei als GIF-Dateien im Server Pfad abgespeichert.
+Diese k&ouml;nnen dann von anderen Scripts weiterverwendet werden, oder einfach zum Client geschickt werden.
+</p>
+
+<p>
+Der heutige Artikel baut auf den beiden Artikeln 
+<a href="20010305.htm">Ein Excel-Sheet am Server generieren und zum Client schicken</a>
+und <a href="20010307.htm">Ein Excel-Diagramm am Server generieren und zum Client schicken</a> auf.
+Daher ist, wie in den vorigen beiden Artikeln, auch diesmal der Web Server dementsprechend zu konfigurieren, um
+den Beispiel Sourcecode erfolgreich verwenden zu k&ouml;nnen. Die n&ouml;tigen
+Vorbereitungen entnehmen Sie bitte aus einem der genannten Artikel.
+</p>
+
+<p>
+Seit Beginn dieser Artikelserie, die sich mit dem serverseitigen Generieren eines Excel SpreadSheets
+inklusive ADO Datenbankabfrage und mit der Erstellung eines passenden Charts befa&szlig;t, erweitern wir die 
+Funktionalit&auml;t - und heute wieder, und zwar durch eine browserf&auml;hige Grafik des generierten Diagramms. Der Vorteil: der Client
+braucht kein Excel, um das Diagramm betrachten zu k&ouml;nnen.
+</p>
+
+<p>
+Die Erstellung einer Gif-Datei ist als zus&auml;tzliches Feature in einer Speicheroption von Excel versteckt. Der &quot;Speichern als&quot; Dialog bietet
+n&auml;mlich die zus&auml;tzliche M&ouml;glichkeit das Workbook im <i>HTML</i>-Format abzuspeichern. Dabei werden vorhandene Diagramme
+als GIF-Datei abgespeichert - praktisch! Dies ist dann unsere Grafik. Die erstellten
+Grafiken haben eine brauchbare Aufl&ouml;sung von 800x600 Pixel.
+</p>
+
+<p>
+Da wie gesagt der Artikel auf die obig genannten Artikel aufbaut, interessieren wir uns nur f&uuml;r den heute
+ver&auml;nderten Teil. Der hier verwendete Sourcecode fokusiert sich dabei speziell nur auf die Erstellung der Grafik.
+Das hei&szlig;t der Code f&uuml;r die Formatierung des SpreadSheets ist rausgeflogen, da uns ja heute nur die Diagrammerstellung
+und der ver&auml;nderte Speichervorgang interessiert.
+</p>
+
+<p>
+Beginnen wir mit der Sourcecodebesprechung an der Stelle, wo das zu generierende Diagramm erstellt wird. Die Datenbankoperationen sind bereits
+abgschlossen und die daf&uuml;r ben&ouml;tigte Verbindung ist nun wieder geschlossen. Die benutzten Objekte sind zerst&ouml;rt.
+Die Daten sind auch schon in die Zellen des SpreadSheets eingetragen und wir treffen nun die Vorbereitungen f&uuml;r das Diagramm:
+</p>
+
+<pre style="background='silver';">
+...
+'--- Creating Chart
+xlBook.Charts.Add
+xlBook.ActiveChart.Name = "Graph"
+xlBook.Charts("Graph").SetSourceData (xlBook.Sheets("Data").Range("A4:B9"))
+
+'--- 3DPieExploded
+With xlBook.Charts("Graph")
+    .ChartType = 70
+    .PlotBy = 2
+    .HasTitle = 1
+    .charttitle.Characters.Text = "Overall Product Sales 2000"
+    .charttitle.Font.Name = "Tahoma"
+    .charttitle.Font.FontStyle = "Bold"
+    .charttitle.Font.Size = 30
+    .charttitle.Font.ColorIndex = 3
+End With
+...
+</pre>
+
+<p>
+Gro&szlig;teils nichts Neues. Da wir zum Schlu&szlig; nur mehr eine Gif-Datei mit dem entsprechenden Diagramm erhalten wollen, ist es ganz angebracht
+z.B. dem Diagramm eine &Uuml;berschrift zu verpassen. Diese habe ich optisch ein klein wenig aufgeputzt. Betont nur ein klein wenig,
+da f&uuml;r die meisten Business-Grafiken ein 70er Jahre LSD-Trip Design wohl fehl am Platz ist. Au&szlig;erdem, wer schreibt schon
+gern freiwillig Unmengen Code, der &quot;nur&quot; den Zweck der Formatierung hat.
+</p>
+
+<p>
+Da nun der Diagrammcode soweit fertig ist, k&ouml;nnen wir eigentlich schon die Datei abspeichern. Bevor wir dies codieren wollen,
+sind aber noch einge Punkte zu ber&uuml;cksichtigen.
+<p>
+
+<p>
+Wie schon erw&auml;hnt wollen wir eigentlich nur eine Grafik des generierten Diagramms, und das m&ouml;glichst einfach und schnell.
+Da aber im Gegensatz zu Microsoft PowerPoint eine direkte Speicherung der Datei in einem Grafikformat nicht so einfach m&ouml;glich ist,
+verwenden wir nun die Option <i>Speichern als HTML</i>. Dabei werden wie gesagt unter anderem Diagramme als Gif-Datei abgespeichert.
+</p>
+
+<p>
+Damit man aber die Excel Datei bequem mit einem Browser betrachten kann, werden auch andere Dateien und ein Verzeichnis erstellt.
+Da uns diese Dateien heute aber nicht wirklich interessieren, l&ouml;schen wir sie einfach. Ist zwar nicht die besonders elegante Methode
+zu einer Diagrammgrafik zu kommen, aber sie ist einfach und bis jetzt hat noch immer der Zweck die Mittel geheiligt.
+</p>
+
+<p>
+Der n&auml;chste Punkt der zu erw&auml;hnen ist, ist da&szlig; sich der Web Server verschluckt, wenn mehrere User die ASP Seite gleichzeitig
+verwenden wollen (und wir auf die gleiche Datei schreiben). Das l&auml;&szlig;t sich mit der <i>GetTempName</i> Methode von VBScript umgehen. Diese dr&uuml;ckt Ihnen
+n&auml;mlich einen einzigartigen Dateinamen in die Hand - somit w&auml;re auch dieses Problem gel&ouml;st. Gehen wir also weiter im Sourcecode.
+</p>
+
+<pre style="background='silver';">
+Set fso = CreateObject("Scripting.FileSystemObject")
+strTempName = fso.GetTempName    
+strFileName= Replace(strTempName,".tmp",".htm")
+
+xlBook.Charts("Graph").SaveAs Server.MapPath(strFileName),44
+
+xlApp.Application.Quit
+</pre>
+
+<p>
+Wir erstellen uns also mit der <i>GetTempName</i> Methode einen zuf&auml;llig generierten Dateinamen, den wir in der Variablen
+<i>strTempName</i> speichern. Sagte ich eigentlich &quot;DateiNAME&quot;? Nun, die Methode ist ja an sich ganz praktisch: wir
+erhalten einen beliebigen Namen und zus&auml;tzlich aber auch eine <i>.tmp</i> Extension. Dies ist in anderen F&auml;llen nat&uuml;rlich 
+praktisch - in unserem Fall aber zuviel des Guten. 
+</p>
+
+<p>
+Deshalb schreiben wir eine Zeile mehr Code und tauschen mit der <i>Replace</i> Methode die <i>.tmp</i> Erweiterung
+mit der ben&ouml;tigten <i>.htm</i>. Nun k&ouml;nnen wir die Datei mit dem zuf&auml;llig generierten Namen speichern. Damit wir
+Excel nicht verwirren, da es standardm&auml;&szlig;ig die Endung <i>.xls</i> erwartet, versichern wir Excel, da&szlig; wir wissen
+was wir tun. Dies erreichen wir mit der Angabe von <i>44</i> - da&szlig; wir eben im HTML-Format speichern wollen. 
+</p>
+
+<p>
+<i>44</i> ist das numerische &Auml;quvivalent zur Excel Konstante <i>xlHtml</i>. Diese ist wiederum Member der
+<i>XlFileFormat</i> Collection - also nix mit Voodoo, alles legal! Die Dateien, die durch diese Option erstellt
+werden, sind nun am Web Server gespeichert. Nun ist es h&ouml;chste Zeit mit <i>Application.Quit</i> Excel zu schlie&szlig;en.
+</p>
+
+<p>
+Nun k&ouml;nnen wir auch, um ein wenig aufzur&auml;umen, die restlichen Objekte, die von Excel gebraucht wurden getrost
+vernichten. Was noch fehlt ist, und diese Schritte sind optional, da&szlig; wir alle generierten Dateien bis auf unsere
+GIF Datei l&ouml;schen. F&uuml;r den Fall, da&szlig; Sie auch die generierten Html und anderen Dateien ben&ouml;tigen ist der nun folgende Code
+&uuml;berfl&uuml;ssig. Heute wollen wir aber eben nur die Grafik - also m&uuml;ssen wir folgendes programmieren:
+</p>
+
+<pre style="background='silver';">
+strTempDir =Replace(strFileName,".htm","_files")
+
+If (fso.FileExists(Server.MapPath(strTempDir &amp; "\image001.gif"))) Then
+    Set MyFile = fso.GetFile(Server.MapPath(strTempDir &amp; "\image001.gif"))
+    strGifName = Replace(strTempDir, "_files",".gif")
+    MyFile.Move Server.MapPath(strGifName)
+    
+    strDelFile=Replace(strTempDir, "_files",".htm")
+    Set MyDelFile = fso.GetFile(Server.MapPath(strDelFile))
+    MyDelFile.Delete
+    fso.DeleteFolder (Server.MapPath(strTempDir))
+End If
+</pre>
+
+<p>
+Die zus&auml;tzlichen Dateien, au&szlig;er der Html-Datei die zum betrachen des Workbooks erforderlich ist, werden
+immer in einem Unterverzeichnis gespeichert. Dieses Unterverzeichnis setzt sich aus dem Dateinamen der 
+gespeicherten Datei und dem Zusatz <i>&quot;_files&quot;</i> zusammen. In diesem Unterverzeichnis befindet sich auch unsere
+hei&szlig; ersehnte Grafik!
+</p>
+
+<p>
+Standardm&auml;&szlig;ig setzt sich der Dateiname der Grafik aus <i>&quot;image&quot;</i>, einer dreistelligen Zahlenfolge, die als
+fortlaufende Numerierung dient und eben der Dateiendung <i>*.gif</i> zusammen. Zuerst suchen wir mit der <i>GetFile</i>
+Methode nach dieser Datei. Da wir in diesem Beispiel nur ein Diagramm erstellen, brauchen wir ja auch nur nach einer,
+eben dieser zu suchen. Deshalb habe ich hier auch der Einfachheit halber den Dateinamen hardcodiert.
+</p>
+
+<p>
+Da ja unsere Grafiken einzigartig sein sollen, wenden wir wieder die <i>Replace</i> Methode an, und k&ouml;nnen uns somit 
+einen neuen einzigartigen Namen aus dem noch zur Verf&uuml;gung stehenden Variablen <i>strTempDir</i> basteln.
+</p>
+
+<p>
+Dann verschieben wir die umbenannte Grafik mit der <i>Move</i> Methode eine Ebene h&ouml;her. Nun k&ouml;nnen wir ruhig
+das nicht mehr ben&ouml;tigte Verzeichnis samt der Html-Datei l&ouml;schen. Da diese Html-Datei und das dazugeh&ouml;rige
+Verzeichnis nach dem generierten Namen der <i>GetTempName</i> Methode benannt wurden, m&uuml;ssen wir das bei den L&ouml;schaktionen
+ber&uuml;cksichtigen.
+</p>
+
+<p>
+Wie erwartet bleibt nach vollst&auml;ndigem Ablauf des Scripts nur mehr die Grafik &uuml;brig. Diese, ich zeige ihnen wieder
+beide aus dem Script generierbaren Diagrammtypen, sehen dann hier zweckm&auml;&szlig;g verkleinert so aus:
+</p>
+
+<p>
+Das S&auml;ulen Diagramm (Original: 800x600x256):
+</p>
+
+<p>
+<IMG SRC="Bilder/200103/20010309_1.png" width="580" height="435" alt="" border="0">
+</p>
+
+<p>
+Das Kuchen Diagramm (Original: 800x600x256):
+</p>
+
+<p>
+<IMG SRC="Bilder/200103/20010309_2.png" width="580" height="435" alt="" border="0">
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Nun h&auml;tten wir die wichtigsten Punkte zum Thema Excel-SpreadSheets Generierung besprochen. Sie k&ouml;nnen
+nun ein SpreadSheet mit Daten aus einer Datenbank samt dazugeh&ouml;rigen Diagramm und sogar einer Grafik f&uuml;r
+Rechner ohne Excel erstellen. Und dies wird alles ohne menschliches Zutun am Web Server generiert.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010309.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20010307.htm">Ein Excel-Diagramm am Server generieren und zum Client schicken</a><br>
+<a href="20010305.htm">Ein Excel-Sheet am Server generieren und zum Client schicken</a><br>
+<a href="20001110.htm">Excel Dateien ohne Excel anzeigen</a><br>
+<a href="20020128.htm">Serverdaten clientseitig in Exceltemplates importieren</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20010309" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Excel Diagramme als GIF's serven"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20010309.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Holm"><input type="hidden" name="AuthorEmail" value="office@holmcs.com"><input type="hidden" name="Artikel" value="20010309"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20010309.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

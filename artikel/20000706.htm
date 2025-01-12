@@ -1,0 +1,665 @@
+<HTML>
+<HEAD>
+<TITLE>Dynamische Includes in ASP</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Der Nachteil der #Include Direktive ist, da&szlig; man dan Namen der inkludierten Datei fix in den Sourcecode der ASP-Seite (oder des ASP-Skripts) schreiben mu&szlig;. Um dies zu umgehen habe ich eine Sammlung von Funktionen erstellt…">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Execute,VBScript,dynamisch,Include,Include Anweisung,Code,Source Code">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Dynamische Includes in ASP</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000706"></SCRIPT>
+</p>
+<p>
+Vielen ASP Programmieren ist die #Include Direktive vertraut, mit der man 
+weiteren ASP-Code aus einer Datei in eine ASP-Seite einbinden kann.</p>
+
+<p>Eine #Include Direktive mu&szlig; au&szlig;erhalb der &lt;% und %&gt; Begrenzungszeichen stehen.
+Ebenso ist der Einsatz in einem &lt;SCRIPT RUNAT=SERVER LANGUAGE=VBScript&gt;&lt;/SCRIPT&gt; 
+Block nicht erlaubt.</p>
+
+<p>Wo setzt man nun Includes ein?
+Zum Beispiel wenn man eine immer wiederkehrende Funktion in vielen ASP-Seiten verwenden will,
+so definiert man diese VBScript Funktion in einer Include Datei, und f&uuml;gt dann mittels
+der #Include Direktive diese Datei in die gew&uuml;nschte ASP Seite ein.</p>
+
+<p>Nehmen wir einmal an, die Datei "Add.asp" definiert eine VBScript Funktion, die
+2 Werte addiert:</p>
+
+<pre style="background='silver';">
+&lt;%
+Function Add(x,y)
+   Add = x + y
+End Function
+%&gt;
+</pre>
+
+<p>Wenn die Datei "Add.asp" im Unterverzeichnis "Includes" am Webservers liegt,
+so kann man sie mit folgenden Befehl in eine beliebige ASP-Seite des
+Webservers einbinden:</p>
+
+<pre style="background='silver';">
+&lt;!-- #include virtual="/Includes/Add.asp" --&gt;</pre>
+
+<p>Wenn man den absoluten Pfad zur Datei angeben m&ouml;chte, so kann man dies
+in folgender Form tun:</p>
+<pre style="background='silver';">
+&lt;!-- #include file="D:\Web\AspHeute\www\Includes\Add.asp" --&gt;</pre>
+
+
+<p>Die folgende ASP-Seite greift auf die Funktionalit&auml;t der 
+Add-Funktion zur&uuml;ck:</p>
+
+<pre style="background='silver';">
+&lt;% Option Explicit %&gt;
+&lt;!-- #include virtual="/Includes/Add.asp" --&gt; 
+&lt;%
+Dim a, b, c
+a = 17
+b = 4
+c = Add(a,b)
+Response.Write a &amp; " + " &amp; b &amp; " = " &amp; c
+%&gt;</pre>
+
+<p>Man kann nicht nur Funktionen, sondern nat&uuml;rlich auch komplette Teile
+einer ASP-Seite, wie zum Beispiel ein Men&uuml; oder einen Copyright-Vermerk in ein Include geben.</p>
+
+<p>So schreibt die folgende Include Datei "copyright.asp" einen Copyright Vermerk zum User:</p>
+
+<pre style="background='silver';">
+&lt;div align="center"&gt;
+   &lt;font size="-1"&gt;
+      Copyright &amp;copy; &lt;%= Year(Date) %&gt; by AspHeute.com
+   &lt;/font&gt;
+&lt;/div&gt;
+</pre>
+
+<p>Diese Datei kann man dann in alle ASP-Dateien inkludieren.</p>
+
+<p>Der Nachteil der #Include Direktive ist, da&szlig; man dan Namen
+der inkludierten Datei fix in den Sourcecode der ASP-Seite
+(oder des ASP-Skripts) schreiben mu&szlig;. Man kann also nicht zur Laufzeit des Skripts
+w&auml;hlen, welche Datei man includiert und ausgef&uuml;hrt haben m&ouml;chte.</p>
+
+<p>Um dies zu umgehen habe ich eine Sammlung von Funktionen erstellt, mit
+deren Hilfe es m&ouml;glich ist, zur Laufzeit des Skripts den Inhalt einer
+bestimmten Datei auszulesen und in VBScript mit der original VBScript Engine
+auszuf&uuml;hren.</p>
+
+<p>Da die Funktionen auf der VBScript <i>Execute</i> Methode beruhen, die
+ab VBScript Version 5.0 zur Verf&uuml;gung steht, mu&szlig; der ausf&uuml;hrende Webserver 
+die dementsprechende VBScript.dll (\WinNT\System32\VBScript.dll) 
+der Version 5 (oder h&ouml;her) installiert haben.</p>
+
+<p><u>Anmerkung</u>: Wenn Sie Internet Explorer Version 5.0 (oder h&ouml;her) installiert haben,
+so ist automatisch auch eine VBScript.dll der Version 5.0 installiert
+
+<p>Das folgende ASP-Script zeigt Ihnen, welche VBscript Version auf dem
+Webserver installiert ist:</p>
+
+<pre style="background='silver';">
+&lt;%
+Function GetScriptEngine()
+   Dim strSE
+   strSE = ScriptEngine &amp; " " 
+   strSE = strSE &amp; ScriptEngineMajorVersion &amp; "."
+   strSE = strSE &amp; ScriptEngineMinorVersion &amp; "."
+   strSE = strSE &amp; ScriptEngineBuildVersion
+   GetScriptEngine = strSE
+End Function
+
+Response.Write GetScriptEngine()
+ %&gt;</pre>
+
+ <p>Um dieses Script auf unserem Webserver auszuf&uuml;hren klicken Sie auf
+<a href="20000706_listing1.asp" target="_blank"> VBScript Version testen</a>.</p>
+ <p>Die neueste Version der VBscript.dll k&ouml;nnen Sie bei Microsoft auf folgenden
+ Seiten downloaden (ca. 750 KB):</p>
+ 
+ <p>US-Version: 
+ <a href="http://www.microsoft.com/msdownload/vbscript/scripting.asp" target="_blank">http://www.microsoft.com/msdownload/vbscript/scripting.asp</a>
+ <br>
+ Deutsche Version:
+ <a href="http://www.microsoft.com/msdownload/vbscript/scripting.asp?id=11" target="_blank">http://www.microsoft.com/msdownload/vbscript/scripting.asp?id=11</a>
+ </p>
+ 
+<h2>Dateien dynamisch inkludieren</h2>
+
+<p>Die folgenden Schritte zeigen auf, wie man eine Datei zur Laufzeit (also dynamisch) in
+eine ASP-Seite inkludiert und ihren Inhalt (VBScript Source Code) ausf&uuml;hrt.</p>
+
+<h3>VBScript Code zur Laufzeit ausf&uuml;hren</h3>
+
+<p>Die in der VBScript Version 5.0 enthaltene <i>Execute</i> Methode
+erlaubt das Ausf&uuml;hren von in Variablen gespeicherten VBscript Code
+zur Laufzeit. Sehen Sie dazu folgendes Beispiel:</p>
+
+<pre style="background='silver';">
+&lt;% Option Explicit %&gt;
+&lt;%
+Dim a, b, strFormel
+' Formel des Pythagoras
+<b>strFormel = "c = sqr(a*a + b*b)"</b>
+
+<b>a = 3
+b = 4</b>
+' Errechnen von c nach der Formel:
+<b>Execute strFormel</b>
+Response.Write "Formel des Pythagoras: a&amp;sup2;+b&amp;sup2;=c&amp;sup2; :&lt;br&gt;"
+Response.Write "a = " &amp; a &amp; "&lt;br&gt;"
+Response.Write "b = " &amp; b &amp; "&lt;br&gt;"
+Response.Write "c = " &amp; c &amp; "&lt;br&gt;"
+%&gt;
+</pre>
+
+<p>Wie leicht nachzuvollziehen ist, wird <i>a</i> der Wert <i>3</i> und <i>b</i> der Wert <i>4</i> 
+zugewiesen. Die Variable <i>strFormel</i> enth&auml;lt einen (in VBScript) g&uuml;ltigen Ausdruck, der aus den
+Werten von <i>a</i> und <i>b</i> den Wert von <i>c</i> errechnet.</p>
+
+<p>Die VbScript Methode <i>Execute strFormel</i> (entspricht <i>Execute "c = sqr(a*a + b*b)"</i>)
+f&uuml;hrt den in strFormel gespeicherten VBScript Code aus. Somit hat danach die Variable
+<i>c</i> den Wert <i>5</i>.</p>
+
+<a name="SafeExecuteExpression"></a>
+
+<p>Das folgende Skript f&uuml;hrt den in der Variablen <i>strAusdruck</i> gespeicherten VBScript-Ausdruck 
+zur Laufzeit aus. 
+Zus&auml;tzlich f&uuml;hrt das Script einen Check aus, um sicherzustellen, da&szlig; tats&auml;chlich eine 
+VBScript Version 5.0 (oder h&ouml;her) benutzt wird.</p>
+
+<pre style="background='silver';">
+&lt;%
+Dim blnOK, strMajorVersion, strAusdruck
+
+strFunction =               "Function Add(x,y)" &amp; VbCrLf
+strFunction = strFunction &amp; "   Add = x + y   " &amp; VbCrLf
+strFunction = strFunction &amp; "End Function     " &amp; VbCrLf
+
+strAusdruck = strFunction
+
+strMajorVersion = ScriptEngineMajorVersion
+If strMajorVersion &lt; 5 Then
+   Response.Write "Ihre Script Engine ist " &amp; GetScriptEngine &amp; _
+      ".&lt;br&gt;" &amp; VbCrLf
+   Response.Write "Bitte Updaten Sie die Scripting-Engine " &amp; _ 
+      "auf Version 5.0 oder hoeher!&lt;br&gt;" &amp; VbCrLf
+   Response.Write "Dowload der neuesten Scripting-Eninge unter &lt;br&gt;"
+   Response.write "&lt;a href =""http://www.microsoft.com/" &amp; _
+      "msdownload/vbscript/scripting.asp""&gt;"
+   Response.Write "http://www.microsoft.com/msdownload/" &amp; _
+      "vbscript/scripting.asp&lt;/a&gt;.&lt;br&gt;"
+   blnOK = False
+Else
+   On Error Resume Next
+   ' Ausdruck dynamisch ausfuehren:
+   Execute strAusdruck
+   On Error Goto 0      
+   If Err.Number &lt;&gt; 0 Then
+      blnOK = False
+   Else
+      blnOK = True
+   End If
+End If   
+
+If blnOK = True Then
+   Response.Write "Funktion Add(x,y) ist nun definiert:&lt;br&gt;"
+   Response.Write "Add(1,1) = " &amp; Add(1,1)
+Else
+   Response.Write "Ein Fehler ist aufgetreten ..."
+End If
+%&gt;</pre>
+
+<p>Wenn der Ausdruck in der Variable <i>strAusdruck</i> einen Laufzeitfehler verursacht,
+dann hat die Variable <i>blnOK</i> den Wert <i>False</i>, ansonsten den Wert <i>True</i>.</p>
+
+<p><b><u>Achtung</u></b>: Wenn Sie die Methode <u>Execute(strAusdruck)</u> in einer 
+Function oder Sub, anstatt im Hauptprogramm aufrufen, so k&ouml;nnen Sie
+eine im Argument <i>strAusdruck</i> definierte Function nicht benutzen!</p>
+
+<p>Daher einen Ausdruck, der eine Function oder Sub definiert, mittels
+der <i>Execute</i> Methode nur im Hauptprogramm ausf&uuml;hren, 
+anderenfalls ist die Function oder Sub nicht benutzbar!</p>
+
+<h3>Code aus einer Datei zur Laufzeit ausf&uuml;hren</h3>
+
+<p>Um nun einen VBScript Code, der in einer Datei enthalten ist, zur Laufzeit auszuf&uuml;hren,
+l&auml;dt man einfach den Inhalt der Datei, und f&uuml;hrt ihn dann mit
+der <i>Execute</i> Methode aus.</p>
+
+<p>Wie man eine Textdatei ausliest, wurde bereits im Artikel 
+<a href="20000530.htm">Lesen von Textdateien</a> gezeigt.</p>
+
+<p>Mit der <a href="20000706.htm#SafeExecuteExpression">ExecuteExpression</a> Funktion und 
+ der nachfolgend vorgestellten <i>ReadFile</i> Funktion, die den Inhalt einer Datei
+ausliest und zur&uuml;ck gibt, l&auml;sst sich die Funktionalit&auml;t einer dynamiscn inkludierten
+Datei verwirklichen:</p>
+
+<p>Auslesen des Inhaltes einer Textdatei in der Funktion <i>ReadFile</i>:</p>
+
+<pre style="background='silver';">
+Function ReadFile(strDateiname)
+   ' ### Listing aus dem Artikel "Lesen von Textdateien" ###
+   ' ### (http://www.aspheute.com) ###
+   ' strDateiname in der Form "C:\Testdateien\MeineDatei.txt"
+   Const fsForReading = 1
+   Dim strInhalt
+   Dim objFs           ' FileSystemObject Objekt
+   Dim objTextStream   ' Textstream Objekt
+   
+   Set objFs = CreateObject("Scripting.FileSystemObject")
+   
+   On Error Resume Next
+   Set objTextStream = objFs.OpenTextFile(strDateiname, fsForReading)
+   If Err.Number &lt;&gt; 0 Then
+      ' Fehler aufgetreten
+      strInhalt = ""
+   Else
+      strInhalt = objTextStream.ReadAll
+   End If
+   objTextStream.Close
+   On Error Goto 0
+   Set objTextStream = Nothing
+   Set objFs = Nothing
+   ReadFile = strInhalt
+End Function</pre>
+
+<p>Die Funktion <i>ReadFile</i> gibt den Inhalt der Textdatei zur&uuml;ck.</p>
+
+<p>Um nun den Inhalt einer Datei dynamisch auszuf&uuml;hren, benutzt man die Methode
+<i>Execute</i> im Hauptprogramm zusammen mit der Funktion 
+<i>ReadFile</i>. Das &Auml;quivalent zu 
+<pre style="background='silver';">
+&lt;!--#Include file="C:\www\text.asp"--&gt;
+</pre>
+</p>
+<p>
+sieht also wie folgt aus:
+</p>
+
+<pre style="background='silver';">
+Dim blnOK
+Dim strDateiInhalt
+
+' Localer Dateiname in der Form "C:\www\text.asp"
+Dim strLocalerDateiName
+strLocalerDateiName = "C:\www\text.asp"
+
+strDateiInhalt = <i>ReadFile</i>(strLocalerDateiName)
+If ScriptEngineMajorVersion &gt;= 5 Then
+   Execute strDateiInhalt
+End If
+</pre>
+
+<p>Die auszuf&uuml;hrende Datei darf dabei, im Gegensatz zu Dateien die mittels 
+#Include Direktive eingef&uuml;gt werden, nur den reinen VBScript Code enthalten,
+jedoch kein HTML oder irgendwelche Begrenzungszeichen (wie &lt% %&gt;) und nat&uuml;rlich auch
+keine #Include Direktiven enthalten.</p>
+
+<p>Um nun zum Beispiel die in der Datei "Add.asp" enthaltene Funktion <i>Add</i>
+in der ASP Seite verwenden zu k&ouml;nnen, ist es m&ouml;glich, die Datei "Add.asp" 
+dynamisch zu inkludieren.</p>
+
+<p>Der Inhalt der Datei "Add.asp":</p>
+
+<pre style="background='silver';">
+Function Add(x,y)
+   Add = x + y
+End Function
+</pre>
+
+<p>Ein Script, das die Methode <i>Execute</i> benutzt und
+die <i>Function Add(x,y)</i> aus der Datei Add.asp dynamisch inkludiert,
+k&ouml;nnte wie folgt aussehen.</p>
+
+<p>Beachten Sie, da&szlig; die Datei "Add.asp" in einem virtuellen Pfad angegeben
+ist, es ergibt sich somit das &Auml;quivalent zu folgender #Include Direktive <br>
+<i>&lt;!--#include virtual="/Includes/Add.asp"--&gt;</i></p>
+
+<pre style="background='silver';">
+&lt;%
+Dim x,y, strAusdruck, strDateiInhalt, strHTML
+Response.Write "Ihre ASP-Datei wird gerade unter " &amp; GetScriptEngine()
+Response.Write " ausgefuehrt!&lt;br&gt;&lt;br&gt;"
+
+x = 7 
+y = 0
+strAusdruck = "y = x + 2"
+
+Response.Write "x hat einen Wert von: " &amp; x &amp; "&lt;br&gt;"
+Response.Write "y hat einen Wert von: " &amp; y &amp; "&lt;br&gt;&lt;br&gt;"
+
+Response.Write "Ausfuehren des Ausdrucks """ &amp; strAusdruck
+Response.Write """:&lt;br&gt;"
+Execute strAusdruck
+Response.Write "x hat einen Wert von: " &amp; x &amp; "&lt;br&gt;"
+Response.Write "y hat einen Wert von: " &amp; y &amp; "&lt;br&gt;&lt;br&gt;"
+
+Response.Write "Inhalt der Datei &lt;i&gt;/Includes/add.asp&lt;/i&gt;:&lt;br&gt;"
+strDateiInhalt = ReadVirtualFile("Include.asp")
+strHTML = Replace(strDateiInhalt,vbCrLf,"&lt;br&gt;" &amp; VbCrLf)
+strHTML = Server.HTMLEncode(strHTML)
+Response.Write strHTML
+
+Response.Write "&lt;br&gt;&lt;br&gt;" &amp; VbCrLf
+
+Response.Write "Ausfuehren der Datei &lt;i&gt;/Includes/add.asp&lt;/i&gt;:&lt;br&gt;"
+
+Execute ReadVirtualFile("/Includes/Add.asp")
+
+Response.Write "x hat einen Wert von: " &amp; x &amp; "&lt;br&gt;"
+Response.Write "y hat einen Wert von: " &amp; y &amp; "&lt;br&gt;&lt;br&gt;"
+Response.Write "Add(x,y) = Add(" &amp; x &amp; "," &amp; y &amp; ") = "
+Response.Write Add(x,y)
+
+' ### Definition der Funktionen:
+Function ReadFile(strDateiname)
+   ' ### Listing aus dem Artikel "Lesen von Textdateien" ###
+   ' strDateiname in der Form "C:\Testdateien\MeineDatei.txt"
+   Const fsForReading = 1
+   Dim strInhalt, strInhaltHTML
+   Dim objFs           ' FileSystemObject Objekt
+   Dim objTextStream   ' Textstream Objekt
+   
+   Set objFs = CreateObject("Scripting.FileSystemObject")
+   
+   On Error Resume Next
+   Set objTextStream = objFs.OpenTextFile(strDateiname, fsForReading)
+   If Err.Number &lt;&gt; 0 Then
+      ' Fehler aufgetreten
+      strInhalt = ""
+   Else
+      strInhalt = objTextStream.ReadAll
+   End If
+   objTextStream.Close
+   On Error Goto 0
+   Set objTextStream = Nothing
+   Set objFs = Nothing
+   ReadFile = strInhalt
+End Function
+
+Function ReadVirtualFile(strVirtualDateiname)
+   ' strVirtualDateiname in der Form "/includes/add.asp" 
+   ' oder als "datei.asp" fuer relative Angaben
+   Dim strDateiname
+   strDateiname = Server.MapPath(strVirtualDateiname)
+   ReadVirtualFile = ReadFile(strDateiname)
+End Function
+
+Function GetScriptEngine()
+   Dim strSE
+   strSE = ScriptEngine &amp; " " 
+   strSE = strSE &amp; ScriptEngineMajorVersion &amp; "."
+   strSE = strSE &amp; ScriptEngineMinorVersion &amp; "."
+   strSE = strSE &amp; ScriptEngineBuildVersion
+   GetScriptEngine = strSE
+End Function
+%&gt;
+</pre>
+
+<h2>Schlu&szlig;bemerkung:</h2>
+
+<p>Die Methode Execute kann beliebige VBScript Ausdr&uuml;cke zur Laufzeit ausf&uuml;hren.
+So ist es auch m&ouml;glich, VBScript Code aus Dateien zu lesen und zur Laufzeit auszuf&uuml;hren.</p>
+
+<p>Damit werden quasi dynamische Includes m&ouml;glich, da man erst zur Laufzeit bestimmen mu&szlig;,
+welche Datei geladen und ausgef&uuml;hrt wird.</p>
+
+<p><u>Achtung</u>: Dynamisch inkludierte Dateien d&uuml;rfen nur reinen VBScript Code enthalten,
+aber keine Begrenzungszeichen oder HTML Code.</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000706.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20000727.htm">Berechnen von beliebigen mathematischen Formeln</a><br>
+<a href="20000710.htm">Cachen von Dynamischen Includes</a><br>
+<a href="20020319.htm">Ein einfacher Eventkalender f&uuml;r Projektteams</a><br>
+<a href="20000725.htm">Schreiben einer Textdatei auf den Server</a><br>
+<a href="20011112.htm">Strukturierter Aufbau in der ASP-Programmierung</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2Fmsdownload%2Fvbscript%2Fscripting%2Easp%3Fid%3D11">VBScript - Deutsche Version</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2Fmsdownload%2Fvbscript%2Fscripting%2Easp">VBScript - US Version</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000706" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Dynamische Includes in ASP"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000706.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Koller"><input type="hidden" name="AuthorEmail" value="christiank@aspexpert.com"><input type="hidden" name="Artikel" value="20000706"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000706.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

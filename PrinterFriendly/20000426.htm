@@ -1,0 +1,227 @@
+<HTML>
+<HEAD>
+<TITLE>Verf&uuml;gbarkeit von Objekten pr&uuml;fen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel zeigt, wie man die Installation von Objekten/Komponenten auf Webservern &uuml;berpr&uuml;fen kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,CreateObject,Server.CreateObject,MSWC,installed,Installation,Check,Komponenten">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Verf&uuml;gbarkeit von Objekten pr&uuml;fen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/Komponenten.htm">Komponenten</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000426"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Will man auf einem (fremden) Webserver ein bestimmtes Objekt in einer ASP-Seite 
+verwenden, so mu&szlig; die Objekt-Bibliothek, zu der das Objekt geh&ouml;rt, 
+auf dem Internet Server installiert sein.
+</p>
+
+<p>Ob nun ein Objekt tats&auml;chlich in ASP zur Verf&uuml;gung steht,
+pr&uuml;ft man am einfachsten indem man versucht das Objekt zu "instanzieren" -
+das hei&szlig;t, eine Kopie des Objektes in einer Variable zu speichern.
+Wenn das Objekt sich nicht erstellen l&auml;&szlig;t, so ist es am Webserver
+nicht installiert, und damit auch in ASP-Seiten nicht verf&uuml;gbar.
+</p>
+
+<p>
+Man kann zum Beispiel pr&uuml;fen, ob das ADO Stream Objekt (ProgID "ADODB.Stream") 
+in ASP-Seiten am Server verwendet werden kann, indem man das folgende 
+ASP-Script am Server laufen l&auml;&szlig;t:
+</p>
+
+
+<pre style="background='silver';">
+&lt;% @ Language="VBScript" %&gt;
+&lt;% Option Explicit %&gt;
+&lt;%
+' Verschiedene Objekte werden mit IIS 4.0 mitgeliefert.
+' Die Komponenten, deren ProgID im nachfolgenden
+' Array eingetragen sind, werden automatisch getestet
+Dim theInstalledObjects(8)
+
+theInstalledObjects(0) = "MSWC.AdRotator"
+theInstalledObjects(1) = "MSWC.BrowserType"
+theInstalledObjects(2) = "MSWC.NextLink"
+theInstalledObjects(3) = "MSWC.Tools"
+theInstalledObjects(4) = "MSWC.Status"
+theInstalledObjects(5) = "MSWC.Counters"
+theInstalledObjects(6) = "MSWC.ContentRotator"
+theInstalledObjects(7) = "MSWC.PageCounter"
+theInstalledObjects(8) = "MSWC.PermissionChecker"
+
+Function IsObjInstalled(strClassString)
+ On Error Resume Next
+ ' Initialisiere Werte
+ IsObjInstalled = False
+ Err.Number = 0
+ ' Teste ob Objekt sich initiieren laesst
+ Dim xTestObj
+ Set xTestObj = Server.CreateObject(strClassString)
+ If 0 = Err.Number Then 
+   IsObjInstalled = True
+ End If
+
+ Set xTestObj = Nothing
+ Err.Number = 0
+End Function
+%&gt;
+
+&lt;HTML&gt;
+&lt;HEAD&gt;
+&lt;TITLE&gt;Test auf installierte Objekte&lt;/TITLE&gt;
+&lt;/HEAD&gt;
+&lt;BODY&gt;
+
+Geben Sie die ProgID oder ClassId einer Komponente ein um zu testen, ob sie am
+Server installiert ist. Wenn Sie das Textfeld leer lassen, so werden 
+einige Standard-Komponenten getestet.
+
+&lt;FORM action=&lt;%=Request.ServerVariables("SCRIPT_NAME")%&gt; method=post&gt;
+&lt;input type=text value="" name="classname" size=40&gt;
+&lt;INPUT type=submit value=Submit&gt;
+&lt;INPUT type=reset value=Reset&gt; 
+&lt;/FORM&gt;
+
+&lt;%
+Dim strClass
+strClass = Trim(Request.Form("classname"))
+If "" &lt;&gt; strClass then
+  Response.Write strClass & " ist "
+  If Not IsObjInstalled(strClass) then 
+    Response.Write "&lt;strong&gt;nicht installiert&lt;/strong&gt;"
+  Else
+    Response.Write "installiert!"
+  End If
+  Response.Write "&lt;P&gt;" & vbCrLf
+Else
+  ' Default: Liste von Komponenten die installiert sein koennten.
+%&gt;
+
+&lt;TABLE BORDER=0&gt;
+&lt;%
+Dim i
+For i=0 to UBound(theInstalledObjects)
+  Response.Write "&lt;TR&gt;&lt;TD&gt;" & theInstalledObjects(i) & "&lt;/TD&gt;&lt;TD&gt;"
+  If Not IsObjInstalled(theInstalledObjects(i)) Then 
+    Response.Write "&lt;strong&gt;nicht installiert&lt;/strong&gt;"
+  Else
+    Response.Write "installiert!"
+  End If
+  Response.Write "&lt;/TD&gt;&lt;/TR&gt;" & vbCrLf
+Next
+%&gt;
+&lt;/TABLE&gt;
+
+&lt;%
+End If
+%&gt;
+
+&lt;/BODY&gt;
+&lt;/HTML&gt;</pre>
+
+<p>Dieses Script enth&auml;lt die Funktion <i>IsObjInstalled</i>. 
+Diese versucht mittles der <I>Server.CreateObject</I> 
+Funktion, ein Objekt mit einer bestimmten <B>ProgID</b> (zB: "<I>ADODB.Connection</i>") 
+zu erstellen und in einer Variablen zu speichern. 
+Wenn dies nicht gelingt, so wird vom Programm ein Laufzeit-Fehler initiiert.
+Normalerweise f&uuml;hrt so ein Laufzeitfehler zum
+Abbruch des Programmes, doch im vorhergehenden Skript verhindert der Befehl
+<I>On Error Resume Next</I> dies. Stattdessen l&auml;uft das Programm weiter,
+und im ASP Objekt <I>Err</I> stehen automatisch die Informationen dar&uuml;ber,
+ob und welcher Fehler aufgetreten ist.</p>
+
+<p>Wenn kein Fehler beim Erstellen des Objektes aufgetaucht ist,
+so enth&auml;lt die <I>Number</I>-Eigenschaft des <I>Err</I>-Objektes den Wert 
+<i>0</i> und das Objekt wurde erfolgreich instanziert. Dadurch wei&szlig;
+das Programm, da&szlig; das Objekt in ASP-Seiten zur Verf&uuml;gung steht 
+und gibt eine entsprechende Meldung aus.
+</p>
+
+<p>
+Das hier vorgestellte Skript testet standardm&auml;&szlig;ig f&uuml;r einige im Normalfall installierte Komponenten:
+<ul>
+<li><b>MSWC.AdRotator</b> Die Ad Rotator Komponente kann man zur Einblendung von Werbebannern verwenden.
+<li><b>MSWC.BrowserType</b> Das BrowserType Objekt zeigt Funktionalit&auml;ten des Browsers auf.
+<li><b>MSWC.NextLink</b> Mit NextLink kann man Seiten miteinander verlinken, oder Inhaltsverzeichnisse erstellen.
+<li><b>MSWC.Tools</b> Bietet Unterst&uuml;tzung bei der serverseitigen Programmierung.
+<li><b>MSWC.Status</b> Liefert Serverstatusinformationen.
+<li><b>MSWC.Counters</b> Leistungsf&auml;hige Counterkomponente (Individualcounter).
+<li><b>MSWC.ContentRotator</b> Funktioniert &auml;hnlich wie Ad Rotator, allerdings werden hier nicht Banner sondern HTML Inhalte rotiert.
+<li><b>MSWC.PageCounter</b> Spezifischer Counter f&uuml;r Webseiten.
+<li><b>MSWC.PermissionChecker</b> Kontrolliert Zugriffsrechte auf Dateien durch den aktuellen Benutzeraccount.
+</ul>
+Diese Liste kann im Array <i>theInstalledObjects</i> um gew&uuml;nschte Objekte erweitert werden.
+</p>
+
+<h3>Schlu&szlig;bemerkung</h3>
+<p>
+Einen Check kann dieses Skript leider nicht ausf&uuml;hren: ob ein Objekt mit <i>Server.CreateObject</i> erzeugt werden
+mu&szlig;, oder ein einfacher Aufruf der VBScript Funktion <i>CreateObject</i> ausreichen w&uuml;rde - CreateObject ist n&auml;mlich
+deutlich schneller.
+</p>
+<p>
+Was ist der Unterschied zwischen den beiden CreateObject's? Bestimmte Objekte (zB BrowserType) greifen auf die ASP Objekte
+zu, und diese werden bei <i>Server.CreateObject</i> mitgegeben. Ein Fehler (wegen fehlender ASP Objekte), tritt 
+allerdings erst beim Aufruf einer Funktion/Eigenschaft auf, die diese ASP Objekte ben&ouml;tigen w&uuml;rde.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000426.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000426.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000818.htm">Debuggen von ASP Skripts - Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000818.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

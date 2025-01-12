@@ -1,0 +1,484 @@
+<HTML>
+<HEAD>
+<TITLE>Einstellungssache - Applikationsdaten in web.config</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In der XML-basierten web.config Datei lassen sich auf einfache und strukturierte Weise Informationen f&uuml;r Web Applikationen oder Web Services speichern. Dieser Artikel beschreibt wie man f&uuml;r einen Web Service diverse Einstellungen speichern kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,XML,web.config,Konfiguration,Konfigurationsdatei,Einstellungen,DSN,sicher,strukturiert,Daten,connection string">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Einstellungssache - Applikationsdaten in web.config</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20011122"></SCRIPT>
+</p>
+<p>
+In der XML-basierten web.config Datei lassen sich auf einfache und strukturierte Weise Informationen f&uuml;r
+Web Applikationen oder Web Services speichern. Dieser Artikel beschreibt zwei M&ouml;glichkeiten, wie man
+f&uuml;r einen Web Service diverse Einstellungen speichern kann, und auch wie man  
+das Standardset der ASP.NET Configuration Settings mit eigenen Tags erweitern kann.
+</p>
+
+<p>
+Der Artikel <a href="20010802.htm">Web.Config 101</a> hat Ihnen die Grundlagen zur 
+Organisation bzw. Strukturierung, sowie die einzelnen Sections der web.config vermittelt. Heute wollen wir
+einen Schritt weiter gehen und Einstellungen eines einfachen Web Service konfigurieren. Hierf&uuml;r habe ich zwei Beispiele
+erstellt, die einen - je nach Anforderung - unterschiedlichen Ansatz verwenden.
+</p>
+
+<h2>Aufgabenstellung</h2>
+
+<p>
+Es ist ein Web Service zu erstellen, der aus einer Datenbank (Northwind) anhand eines Querystrings ein
+XML formatiertes DataSet zur&uuml;ckliefert. Die Parameter des Connection-Strings sollen dabei in der web.config
+abgelegt werden. Da im Connection-String meist Parameter wie User ID und Pa&szlig;wort vorkommen, sollen diese
+vor unerlaubtem Zugriff gesch&uuml;tzt werden. Hierf&uuml;r ist die web.config hervorragend geeignet, da .config Dateien
+vom IIS gesch&uuml;tzt werden und somit diese von au&szlig;en nicht angreifbar sind. 
+</p>
+
+<p>
+Kurz gesagt, die sicherheitssensitiven Informationen bleiben vom Client verborgen. Punkt. 
+</p>
+<p>
+Beginnen wir
+mit der einfachsten M&ouml;glichkeit einen Web Service mittels web.config zu konfigurieren. Beim ersten Beispiel verwenden
+wir die standardm&auml;&szlig;ig verf&uuml;gbaren Section Handler (&lt;appSettings&gt;). Die Definition dieses Handlers ist bereits
+in der <b>machine.config</b> vorgenommen worden.
+</p>
+
+<h2>Die appSettings Sektion</h2>
+<p>
+In der appSettings Sektion k&ouml;nnen schnell und einfach Werte eingetragen werden. Um die Settings aus dieser Section zu erhalten, ist nur wenig Code erforderlich.
+Diese Section ist zwar leicht zu erreichen , aber sie l&auml;&szlig;t auch keine Neudefinierung des
+Namens zu. Bei komplexern, bzw. umfangreichern Applikationskonfigurationen kann sich dies als Nachteil erweisen.
+</p>
+
+<p>
+Aber nun zum ersten Beispiel. F&uuml;r den oben genannten Fall ist folgendes in der web.config einzutragen:
+</p>
+
+<pre style="background='silver';">
+&lt;configuration&gt;
+        &lt;appSettings&gt;
+            &lt;add key="NorthwindConn" value="server=(local);database=northwind;Trusted_Connection=yes" /&gt;
+        &lt;/appSettings&gt;
+&lt;/configuration&gt;
+</pre>
+
+<p>
+Um den Connection-String in der web.config anzugeben, m&uuml;ssen sie einfach innerhalb der &lt;appSettings&gt; Sektion
+ein neues <i>add</i>-Element erzeugen, und den Connection-String dann im <i>value</i> Attribut eintragen.
+Das <i>key</i>-Attribut wird f&uuml;r die eindeutige Zuweisung ben&ouml;tigt. Typdefinition des
+Section Handlers ist hier nicht notwendig da, wie schon erw&auml;hnt dies in der <b>machine.config</b> erfolgt ist. Das w&auml;r's 
+zun&auml;chst f&uuml;r die Konfiguration unseres einfachen Web Service.
+</p>
+
+<p>
+Was noch fehlt ist der eigentliche Web Service (<b>DataSrv.asmx</b>), welcher als Ergebnis das XML formatierte DataSet 
+zur&uuml;ckliefert. Um dies zu realisieren, m&uuml;ssen wir nat&uuml;rlich zuerst den Connection String einlesen:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ WebService Language="C#" Class="SimpleDataService" %&gt;
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Web.Services;
+using System.Configuration;
+
+public class SimpleDataService 
+{
+    [WebMethod]
+    public DataSet GetProductData() 
+    {          		
+        string strNorthwindConn = ConfigurationSettings.AppSettings["NorthwindConn"];
+        SqlConnection MyConnection = new SqlConnection(strNorthwindConn);
+       	SqlDataAdapter MySqlCommand = new SqlDataAdapter ("SELECT ProductName,UnitPrice,
+            UnitsInStock FROM Products", MyConnection);
+	  	
+      	DataSet MyDataSet = new DataSet();
+       	MySqlCommand.Fill(MyDataSet, "Products");
+        return MyDataSet;
+    }
+}
+</pre>
+
+<p>
+Da dieses Beispiel einfach gehalten ist, besitzt dieser Web Service auch nur eine
+Web Method (<i>GetProductData</i>), die von au&szlig;en zug&auml;nglich ist. Diese Methode hat als R&uuml;ckgabewert
+ein DataSet.
+</p>
+Um die Einstellung aus <i>appSettings</i> verwenden zu k&ouml;nnen, m&uuml;ssen wir zun&auml;chst auf den <i>System.Configuration</i>
+Namspace referenzieren.  Dann lesen wir den Wert der Property ein (<i>ConfigurationSettings.AppSettings</i>) und weisen den Wert
+der String-Variable <i>strNorthwindConn</i> zu. Den Inhalt dieser verwenden wir dann um die Verbindung zur 
+Northwind SQL Datenbank aufzubauen. 
+</p>
+
+<p>
+Nach Instanzierung eines neuen DataSet Objektes und dessen Bef&uuml;llung geben wir die XML formatierten Datens&auml;tze
+zur&uuml;ck. Da hier kein Consumer vorhanden ist, der den Web Service konsumiert, erhalten wir nach Ausf&uuml;hrung der
+Web Method <i>GetProductData</i> die Rohdaten als XML. In diesem strukturierten, offenen Standard kann man die Daten
+einfachst jeder Client Applikation, die XML verarbeiten kann, &uuml;bergeben.
+</p>
+
+<p>
+Die beschriebene M&ouml;glichkeit des Auslesens der Applikationseinstellungen funktioniert aber nur, wenn Sie die Keys samt
+Values in die vordefinierte &lt;appSettings&gt; Sektion eintragen. Was aber, wenn Sie bei komplexeren Anwendungen oder
+speziell in diesem Fall eines Web Services, eigenes definierte Gruppen bzw. Section Handler in der web.config angeben wollen?
+</p>
+
+<h2>Benutzerdefinierte Section Handler</h2>
+
+<p>
+Um auf eigens definierte Sektionsgruppen bzw. Section Handler zugreifen zu k&ouml;nnen, m&uuml;ssen Sie u.a. die 
+<i>SingleTagSectionHandler</i> Klasse und die <i>NameValueSectionHandler</i> Klasse des .NET Frameworks
+verwenden. Wie dies zu machen ist, zeigt das zweite Beispiel. Zun&auml;chst definieren wir in der web.config
+eine neue Section Group (Sektionsgruppe) und neue Section Handler (Sektionen) innerhalb des &lt;configSections&gt;
+Container-Tags:
+</p>
+
+<pre style="background='silver';">
+&lt;configuration&gt;
+  &lt;configSections&gt;
+   &lt;sectionGroup name="SimpleDataService"&gt;
+      &lt;section name="DataAccessConnString" type="System.Configuration.NameValueSectionHandler,System" /&gt;
+      &lt;section name="DataAccessQuery" type="System.Configuration.NameValueSectionHandler,System" /&gt;
+   &lt;/sectionGroup&gt;
+  &lt;/configSections&gt;
+</pre>
+
+<p>
+Wie Sie sehen k&ouml;nnen, k&ouml;nnen Sie somit einfach das Standardset der ASP.NET Konfigurationseinstellungen mit Ihren eigenen 
+Tags erweitern. Die Tags m&uuml;ssen lediglich dem Typ eines Configuration Section Handlers entsprechen. Damit kann der
+Section Handler der <i>NameValueSectionHandler</i> Klasse den Tag interpretieren und abarbeiten. Vorteilhaft ist hier auch,
+da&szlig; Sie dadurch beim Configuration Object, welches Sie in weiterer Folge als Ergebnis erhalten, nicht an
+einen speziellen Datentyp gebunden sind.
+</p>
+
+<p>
+Nachdem die neue Section Group <i>SimpleDataService</i> und die beiden Section Handler <i>DataAccessConnString</i>
+(f&uuml;r Connection String) und <i>DataAccessQuery</i> (f&uuml;r Query String) definiert bzw. die Typen angegeben wurden, k&ouml;nnen 
+wir den Handlern Keys und Werte zuweisen: 
+</p>
+
+<pre style="background='silver';">
+   &lt;SimpleDataService&gt;
+        &lt;DataAccessConnString&gt;
+            &lt;add key="Northwind" value="server=(local);database=northwind;Trusted_Connection=yes" /&gt;
+        &lt;/DataAccessConnString&gt;
+	&lt;DataAccessQuery&gt;
+            &lt;add key="NorthwindQuery" value="SELECT ProductName,UnitPrice,UnitsInStock FROM Products" /&gt;
+        &lt;/DataAccessQuery&gt;
+    &lt;/SimpleDataService&gt;
+&lt;/configuration&gt;
+</pre>
+
+<p>
+Interessant ist nun, wie man innerhalb des Web Services (<b>DataSrvAdv.asmx</b>) die Werte ausliest:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ WebService Language="C#" Class="SimpleDataService" %&gt;
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Web.Services;
+using System.Configuration;
+using System.Collections.Specialized;
+
+public class SimpleDataService 
+{
+    [WebMethod]
+    public DataSet GetNWProductData()    
+    {       
+        NameValueCollection ConStringSection = (NameValueCollection)ConfigurationSettings
+            .GetConfig("SimpleDataService/DataAccessConnString");
+        NameValueCollection QuerySection = (NameValueCollection)ConfigurationSettings
+            .GetConfig("SimpleDataService/DataAccessQuery");		
+        string strNorthwindDSN = ConStringSection["Northwind"];
+        string strNorthwindQuery = QuerySection["NorthwindQuery"]; 
+        SqlConnection MyConnection = new SqlConnection(strNorthwindDSN);
+        SqlDataAdapter MySqlCommand = new SqlDataAdapter (strNorthwindQuery, MyConnection);
+	  	
+      	DataSet MyDataSet = new DataSet();
+       	MySqlCommand.Fill(MyDataSet, "Products");
+        return MyDataSet;
+    }
+}
+</pre>
+
+<p>
+Da die Werte der benutzerdefinierten Section Handler Teil von Collections sind, m&uuml;ssen Sie zuerst auf den 
+<i>System.Collections.Specialized</i> Namespace referenzieren. In der Web Method <i>GetNWProductData</i>
+verweisen Sie zuerst auf den jeweiligen Section Handler und k&ouml;nnen dann direkt den Wert daraus auslesen,
+da Sie den Key ja kennen. Nun m&uuml;ssen Sie nur noch die ausgelesenen Werte, die in einer Stringvariable
+(strNorthwindDSN bzw. strNorthwindQuery) gespeichert wurden dem <i>SqlConnection</i> und dem
+<i>SqlDataAdapter</i> Objekt &uuml;bergeben - fertig.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Je nach Anforderung k&ouml;nnen Sie die Einstellungen Ihrer Web Applikation in der web.config ablegen. Entweder
+Sie begn&uuml;gen sich mit dem standardm&auml;&szlig;igen Section Handler, der Ihnen von Haus aus zur Verf&uuml;gung gestellt wird, oder
+Sie erweitern die ASP.NET Configuration Settings durch Ihre eigenen Section Handler. Diese lassen sich, da
+XML basierend, auch leicht verschachteln und durch die Erfordernis der Eindeutigkeit korrekt anfordern.
+Weiters erweist sich als praktisch, da&szlig; die web.config von au&szlig;en f&uuml;r den Client nicht angreifbar ist, und somit
+zur Speicherung sensitiver Daten geeignet ist.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20011122.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20001102.htm">Datenbankzugriff mittels ADO.NET</a><br>
+<a href="20020705.htm">Formularbasierte Authentifizierung in f&uuml;nf Minuten</a><br>
+<a href="20021107.htm">Index Server Abfragen per Web Service</a><br>
+<a href="20020801.htm">MS IE WebControls 101</a><br>
+<a href="20010621.htm">Web Services 101 in ASP.NET</a><br>
+<a href="20010802.htm">Web.Config 101</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20011122" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Einstellungssache - Applikationsdaten in web.config"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20011122.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Holm"><input type="hidden" name="AuthorEmail" value="office@holmcs.com"><input type="hidden" name="Artikel" value="20011122"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20011122.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

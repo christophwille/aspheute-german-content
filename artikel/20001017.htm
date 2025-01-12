@@ -1,0 +1,718 @@
+<HTML>
+<HEAD>
+<TITLE>Generieren von PDF-Dokumenten</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel beschreibt die Einrichtung der ActivePDF Komponente am Web Server und damit die M&ouml;glichkeit der Generierung von PDF-Dateien mit Hilfe von ASP.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,PDF,Acrobat,ASP,Portable Document Format,activePDF,generieren,Dokument,Webserver">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Generieren von PDF-Dokumenten</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001017"></SCRIPT>
+</p>
+<p>Ein beliebtes Format f&uuml;r downloadbare Dokumente im Internet ist
+das <a href="http://www.adobe.de/products/acrobat/adobepdf.html">Adobe Portable Document Format </a> (PDF).
+Ein PDF Dokument ist unter fast jeder Plattform, sei es nun Windows, Mac OS, Unix, Linux
+oder OS/2 Warp auslesbar, solange man den 
+<a href="http://www.adobe.de/products/acrobat/readermain.html">Adobe Acrobat Reader</a> 
+benutzt, der gratis erh&auml;ltlich ist.</p>
+
+<p>Bei der Darstellung eines PDF Dokumentes bleiben alle Schriften,
+Formatierungen, Grafiken und Farben erhalten, egal unter welchem
+Betriebsystem und mit welcher Software das PDF Dokmuent erstellt wurde.</p>
+
+<p>&Uuml;berlicherweise benutzt man zur Erstellung von PDF Dokumenten
+die <a href="http://www.adobe.de/products/acrobat/main.html">Adobe Acrobat Software</a>,
+die unter Macintosh und Windows lauff&auml;hig und in verschiedenen Sprachen
+erh&auml;ltlich ist.</p>
+
+<p>Zum Lesen eines PDF Dokuments dient der gratis erh&auml;ltliche 
+<a href="http://www.adobe.de/products/acrobat/readermain.html">Adobe Acrobat Reader</a>
+(6.3 MB), der f&uuml;r die folgenden Plattformen und Sprachen erh&auml;ltlich ist:</p>
+
+
+<p><b>Plattformen, f&uuml;r die Acrobat Reader verf&uuml;gbar ist:</b></p>
+
+<p><ul>
+<li>Mac OS </li>
+<li>Windows 3.1x, 95, 98, ME</li>
+<li>Windows NT 4.0, 2000</li>
+<li>OS/2 Warp </li>
+<li>Linux</li>
+<li>UNIX: DEC Alpha, HP-UX, IBM AIX, SGI IRIX, Sun Solaris x86 &amp; SPARC</li>
+</ul></p>
+
+
+<p><b>Sprachenversionen von Acrobat Reader:</b></p>
+
+<p><ul>
+<li>Chinesisch, vereinfacht</li>
+<li>Chinesisch, traditionell</li>
+<li>Niederländisch</li>
+<li>Englisch</li>
+<li>Englisch, Mittlerer Osten (liest arabische und hebräische Schriften)</li>
+<li>Französisch</li>
+<li>Französisch, Mittlerer Osten (liest arabische und hebräische Schriften)</li>
+<li>Deutsch</li>
+<li>Italienisch</li>
+<li>Japanisch</li>
+<li>Koreanisch</li>
+<li>Portugiesisch, Brasilianisch</li>
+<li>Spanisch, Katalanisch</li>
+<li>Schwedisch</li>
+</ul></p>
+
+<p>Sollten Sie einmal in die Verlegenheit kommen, unter ASP dynamisch
+PDF Dokumente erzeugen zu m&uuml;ssen, so k&ouml;nnten Sie f&uuml;r diese
+Aufgabe die 
+<a href="http://www.activepdf.com../default.htm?PI=4791">ActivePDF Komponenten</a>
+der Firma <a href="http://www.activepdf.com">activePDF, Inc.</a> benutzen.
+Die Preisskala f&uuml;r eine ein einsetzbares activePDF Bundlebeginnt bei etwa $ 560.- 
+und ist je nach Einsatzzweck und Geschwindkeitsbedarf nach oben offen.</p>
+
+
+
+<h2>Aufbau PDF Dokument</h2>
+
+<p>Ein PDF Dokument ist prinzipiell &auml;hnlich
+wie ein HTML Formular aufgebaut. Es gibt formatierten Text,
+Links und sogar ein Fomular-Feature f&uuml;r PDF Dokumente, 
+das &uuml;ber einen JavaScript Dialekt angesteuert werden kann.</p>
+
+<p>Eine deutschsprachige 
+<a href="http://www.visionwork.net/vaw-frames-d.htm">Einleitung in die PDF Technologie</a>
+finden Sie zum Beispiel auf der Website von 
+<a href="http://www.visionwork.net/vaw-frames-d.htm">Vision Work</a>.</p>
+
+
+
+<h2>Einsatz von activePDF am Webserver</h2>
+
+<p>ActivePDF Komponenten sind in ASP Seiten und anderen Microsoft Produkten einsetzbar, 
+da Sie alle &uuml;ber COM Interfaces verf&uuml;gen.
+Allerdings gilt es bei der Installation der Komponenten, speziell unter 
+Windows 2000, einiges zu beachten. Dazu aber sp&auml;ter.</p>
+
+<p>Um die PDF-Ergebnisse der Komponente testen zu k&ouml;nnen, empfiehlt es sich
+die neueste Version des 
+<a href="http://www.adobe.de/products/acrobat/readermain.html">Adobe Acrobat Readers</a>
+zu installieren. 
+<a href="http://www.adobe.de/products/acrobat/readstep.html">Download direkt von Adobe Deutschland</a>
+m&ouml;glich.</p>
+
+<p>Die ActivePDF Software zum Einsatz auf einem Webserver besteht aus mehreren Komponenten, 
+die separat und in einem Bundle geordert werden k&ouml;nnen:</p>
+
+<p><ul>
+<li><a href="http://www.activepdf.com../default.htm?PI=4791"><b>activePDF Server</b></a>:
+Erlaubt einfachen Redirect von ASP auf PDF Dateien. Zusammen mit activePDF Printer
+f&uuml;r ASP bereits einsetzbar um PDF Dokumente zu erstellen und zum Browser zu schicken.
+Ein ASP Beispiel daf&uuml;r pr&auml;sentiere ich in diesem Artikel.</li>
+
+<li><a href="http://www.activepdf.com../default.htm?PI=4555"><b>activePDF Printer</b></a>:
+Erlaubt das Erstellen von PDF Dateien mit voller Kontrolle &uuml;ber den Inhalt, 
+Schriftlayout, Grafiklayout, Bilder, usw.</li>
+
+<li><a href="http://www.activepdf.com../default.htm?PI=4178"><b>activePDF WebGrabber</b></a>:
+Liest den Inhalt beliebiger HTML Seiten des Internets oder HTML aus einem String und 
+konvertiert diesen in ein PDF Dokument. Unterst&uuml;tzt vollst&auml;ndig <b>HTML 4.0</b> (nach W3C Spezifikation)
+einschlie&szlig;lich <b>CSS</b> and <b>SSL</b>. Integriert automatisch 
+<b>JPEG</b>, <b>GIF</b> Bilder sowie <b>Java Applets</b> und <b>Flash</b> Bilder!</li>
+
+<li><a href="http://www.activepdf.com../default.htm?PI=4994"><b>activePDF DocConverter</b></a>:
+Dieses Add-On zu activePDF Server erlaubt das Konvertieren von beliebigen Office 97 und Office 2000
+Dokumente (Word, Excel, PowerPoint), WordPerfect und vielen anderen Dokumentformaten. 
+Eine vollst&auml;ndige Liste konvertierbarer Dokumente finden Sie unter 
+<a href="http://www.activepdf.com../default.htm?PI=4994280">http://www.activepdf.com../default.htm?PI=4994280</a>.</li>
+
+<li><a href="http://www.activepdf.com../default.htm?PI=4585"><b>activePDF Toolkit</b></a>:
+Erlaubt die einfache Implementation von PDF Formularen inklusive der dahinterstehenden Logik. 
+Integration von Datenbank-Inhalten &uuml;ber OLE DB und ODBC ist m&ouml;glich.
+Die Erstellung von komplexen PDF Dokumenten wird damit wesentlich vereinfacht. Die PRO Version
+erlaubt dar&uuml;ber hinaus Verschl&uuml;sseln von PDF Dokumenten, Umwandlung verschiedenster 
+Bilder in PDF und bietet eine Text2PDF Funktionalit&auml;t.</li>
+
+<li><a href="http://www.activepdf.com../default.htm?PI=4661"><b>activePDF Spooler</b></a>:
+Druckt PDF Dokumente auf einem beliebigem Drucker aus.</li>
+</ul></p>
+
+
+<p>Daneben ist das <a href="http://www.activepdf.com../default.htm?PI=4333"><b>activePDF Portfolio</b></a>
+Bundle erh&auml;ltlich, das in der Standard- und Proversion unerschiedliche Einzelkomponenten umfasst.</p>
+
+<p>Um PDF Dateien generieren zu k&ouml;nnen, ben&ouml;tigen Sie mindestens die
+activePDF Server und die activePDF Printer Komponenten.</p>
+
+
+<h2>Installation von activePDF Server und activePDF Printer</h2>
+
+
+<p>Um die grundlegenden F&auml;higkeiten von activePDF n&uuml;tzen zu k&ouml;nnen,
+empfiehlt sich die Installation der zwei Komponenten 
+<a href="http://www.activepdf.com../default.htm?PI=4791">activePDF Server</a>
+und
+<a href="http://www.activepdf.com../default.htm?PI=4555">activePDF Printer</a>.</p>
+
+
+
+<h3>activePDF Server</h3>
+
+<p>Die activePDF Server Komponente stellt die grundlegenden Webserverfunktionen
+der activePDF Applikation bereit.</p>
+
+<p>Um die activePDF Server Komponente  zu installieren, 
+schlie&szlig;t man s&auml;mtliche Anwendungen und startet die
+Installationsdatei <i>apsrvr.exe</i>.</p>
+
+<p>F&uuml;r die einwandfreie Funktion der Komponente unter Windows 2000 ist es 
+in der aktuellen Version erforderlich, da&szlig; ein Postscript Drucker als lokaler
+Drucker am Webserver installiert wird.
+Der Drucker mu&szlig; aber keineswegs wirklich vorhanden sein.</p>
+
+<p>Dies ist ein Kunstgriff, damit die Komponente Zugriff auf Schriften 
+und Layout von Dokumenten &uuml;ber einen PostScript Treiber hat, 
+der (noch) nicht als Stand-Alone Driver f&uuml;r Windows 2000 verf&uuml;gbar ist.</p>
+
+<p>Der Hersteller empfiehlt unter Windows 2000 den "Apple Color LW 12/660 PS" Drucker 
+unter dem Namen "activePDF PostScript Printer" zu installieren 
+(Control Panel, Drucker, Drucker hinzuf&uuml;gen).</p>
+
+<p>Eine Schritt-f&uuml;r-Schritt Anweisung in Englisch dazu liegt im Installationsverzeichnis
+von activePDF Server in der Datei <i>win2K.txt</i> vor.
+Das Installationsverzeichnis ist standardm&auml;&szlig;ig <i>C:\Programme\ActivePDF</i>
+(Deutsches Windows 2000) oder <i>C:\Program Files\ActivePDF</i> (Englisches Windows 2000).</p>
+
+<p>Nach der "Installation" des Druckers mu&szlig; die activePDF Komponente
+konfiguriert werden, damit Sie auf den Treiber dieses Druckers zugreift.
+Dies bewerkstelligt man mittels activePDF Configuration Editor, einem Programm das 
+mit der activePDF Server Komponente automatisch installiert wird. 
+Daneben kann man auch direkt bei Benutzung des activePDF Server (APServer) Objektes festlegen,
+welcher Druckertreiber zum Erstellen des PDF Dokumentes herangezogen wird
+(<i>DefaultPrinter</i> Property des APServer Objektes).</p>
+
+<p>&Ouml;ffnen Sie also den activePDF Configuration Editor 
+(&uuml;ber das Start Men&uuml;, Programme, ActivePDF, Server, Configuration Editor)
+und stellen Sie den Drucker f&uuml;r die PostScript Emulation auf
+"activePDF PostScript Printer" (siehe Bild 1).</p>
+
+<p><IMG SRC="Bilder/200010/20001017_activePDFConfigurationEditor.png" width=568 height=172 alt="" border="0">
+<br>
+<i>Bild 1: activePDF Configuration Editor</i></p>
+
+<p>Nun testen Sie die Komponente auf korrekte Installation. F&uuml;hren Sie dazu
+das activePDF Test Utility (Start Button, Programme, ActivePDF, Server) aus.
+Ist die Komponente korrekt installiert, so erstellt das Test Utility ein PDF Dokument
+im Verzeichnis <i>C:\WINNT\ActivePDF</i>.</p>
+
+<p>Um die Komponente auch aus ASP Seiten heraus benutzen zu k&ouml;nnen,
+m&uuml;&szlig;en Sie f&uuml;r das Installationsverzeichnis <i>/WINNT/ActivePDF/</i>
+NTFS (NT File System) Lese- und Schreibrechte f&uuml;r den <i>IUSR_MachineName</i> Account 
+definiert haben (siehe auch MSDN Artikel 
+<a href="http://support.microsoft.com/support/kb/articles/Q188/7/12.ASP">
+HOWTO: Troubleshoot IUSR_machine Permissions Problem</a>).</p>
+
+<p>Nach der Installation der Komponente emfpiehlt sich ein Neustart des Computers.
+Man kann vor dem Neustart allerdings problemlos noch die activePDF Printer Komponente installieren.</p>
+
+
+<h3>activePDF Printer</h3>
+
+<p>Die activePDF Printer Komponente ben&ouml;tigt man um PDF Dateien 
+aus ASP Seiten heraus zu erstellen. Diese PDF Dateien werden entweder
+auf der Festplattte des Servers gespeichert oder mittels
+activePDF Server Komponente gleich zum Browser gesendet.</p>
+
+<p>Die Installation von activePDF Printer startet man durch das
+Ausf&uuml;hren der Installationsdatei <i>apprntr.exe</i>.</p>
+
+<p>Nach der Installation der Komponente mu&szlig; der Server neu gestartet werden 
+um die Installation abzuschlie&szlig;en.</p>
+
+<p>Wie man die activePDF Printer und die activePDF Server Komponenten einsetzt um
+ein PDF Dokument zu erstellen und zum Webserver zu senden, zeigt das folgende Beispiel.</p>
+
+
+
+<h2>Erstellen von PDF Dokumenten in ASP</h2>
+
+<p>Zum Erstellen und Versenden von PDF Dokumenten kommen im nachfolgenden Beispiel
+die activePDF Server und activePDF Printer Komponenten zum Einsatz.</p>
+
+<p>Beide Komponenten werden unter VBScript (in ASP) wie folgt instanziert:</p>
+
+<p><pre style="background='silver';">
+' activePDF Server Objekt
+Set APServer = Server.CreateObject("APServer.Object")
+
+' activePDF Printer Objekt
+Set APPrinter = Server.CreateObject("APPrinter.Object")
+</pre></p>
+
+<p>Nach Verwendung der Objekte ist darauf zu achten, da&szlig; die
+von den Objekten benutzen Resourcen wieder freigegeben werden:</p>
+
+
+<p><pre style="background='silver';">
+' activePDF Server Objekt loeschen
+Set APServer = Nothing
+
+' activePDF Printer Objekt loeschen
+Set APPrinter = Nothing
+</pre></p>
+
+
+<p>Nun aber zum Beispiel: Das folgende Skript generiert ein PDF Dokument,
+legt es am Webserver ab und schreibt den Link zum abgelegten PDF Dokument
+zum Browser:</p>
+
+
+<p><pre style="background='silver';">
+&lt;% Option Explicit %&gt;
+&lt;%
+Dim APServer, APPrinter
+Dim strText, arrZeilen, intI 
+Dim physOutputDirectory, OutputDirectory, lRet
+Dim physPDFFileName, PDFFileName
+
+strText = "Dies ist ein Probetext." &amp; vbcrlf &amp; _
+  "Sie können diesen Text lesen, also hat es funktioniert!"
+
+' Die Datei wird in das Root Verzeichnis geschrieben:
+OutputDirectory = "/"
+physOutputDirectory = Server.MapPath(OutputDirectory)
+
+' Instanziere activePDF Server Objekt
+Set APServer = Server.CreateObject("APServer.Object")
+
+' Instanziere activePDF Printer Objekt
+Set APPrinter = Server.CreateObject("APPrinter.Object")
+
+' Ausgabe Verzeichnis zum Schreiben des PDF Dokumentes
+APServer.OutputDirectory = physOutputDirectory
+
+' Erstellungsvorgang des PDF Dokumentes am Server starten
+lRet = APServer.StartPrinting() 
+If (lRet &lt;&gt; 0) Then
+   Response.Write  "Fehler bei StartPrinting aufgetreten!"
+   Response.End
+End If
+
+' Erstellen des Dokumentes beginnen:
+' APServer.NewPrinterName liefert den Namen
+' fuer die temporaere Spooling Datei
+APPrinter.StartDoc APServer.NewPrinterName
+
+' Font und Schriftgroesse festlegen
+APPrinter.FontName = "Arial"
+APPrinter.FontSize = 24
+
+' Text zum PDF Dokument schreiben
+arrZeilen = Split(strText , vbcrlf)
+For intI = 0 to UBound(arrZeilen)
+   APPrinter.PrintText arrZeilen(intI), 0
+Next
+
+' Erstellen des Dokumentes ist beendet 
+APPrinter.EndDoc
+
+' Warten bis der PDF Job beendet ist. 
+lRet = APServer.Wait(3)  ' Maximale Wartezeit: 3 Sekunden
+If (lRet &lt;&gt; 0) then
+   APServer.StopPrinting
+   Response.Write  "Es ist ein Fehler aufgetreten!"
+   Set APPrinter = Nothing
+   Set APServer = Nothing
+   Response.End
+End If
+
+' Erstellungsvorgang des PDF Dokumentes am Server ist fertig
+APServer.StopPrinting
+
+' PDF Datei mit phsyikalischem und virtuellem Pfad:
+physPDFFileName = APServer.OutputDirectory &amp; "\" &amp; _
+   APServer.NewUniqueID &amp; ".PDF"
+PDFFileName = OutputDirectory &amp;  APServer.NewUniqueID &amp; ".PDF"
+
+' Nachricht zum Browser schreiben
+' Nachricht zum Browser schreiben
+Response.Write "Das PDF Dokument&lt;br&gt;&lt;b&gt;" &amp; physPDFFileName &amp; _
+   "&lt;/b&gt;&lt;br&gt;wurde erzeugt und steht unter &lt;br&gt;&lt;b&gt;" &amp; _
+   "&lt;a href=""" &amp; PDFFileName &amp; """&gt;" &amp; PDFFileName &amp; "&lt;/a&gt;&lt;/b&gt;"  &amp; _
+   "&lt;br&gt;zum Download bereit."
+
+' WICHTIG: Resourcen der Objekte wieder freigeben
+Set APPrinter = Nothing
+Set APServer  = Nothing
+%&gt;
+</pre></p>
+
+
+<p>Das Skript speichert einen zweizeiligen Text in der Variablen <i>strText</i> ab.
+Das Verzeichnis, in dem das generierte PDF Dokument zu speichern ist,
+wird in den Variablen <i>OutputDirectory</i> (virtueller Pfad) und 
+<i>physOutputDirectory</i> (physikalischer Pfad) festgelegt.</p>
+
+<p>Danach werden die activePDF Server und Printer Objekte
+instanziert und in den Variablen <i>APServer</i> und <i>APPrinter</i> 
+gespeichert.</p>
+
+<p>Das Ausgabeverzeichnis, in dem das PDF Dokument erstellt wird,
+wird mittels <i>OutputDirectory</i> Eigenschaft des activePDF Server Objektes
+festgelegt:</p>
+
+
+<p><pre style="background='silver';">
+' Ausgabe Verzeichnis zum Schreiben des PDF Dokumentes
+APServer.OutputDirectory = physOutputDirectory
+</pre></p>
+
+
+<p>Der Erstellungsvorgang f&uuml;r das PDF Dokument wird durch den Aufruf
+der <i>StartPrinting</i> Methode des activePDF ServerObjektes eingeleitet.</p>
+
+<p>Die Erstellung des eigentlichen PDF Dokumentes beginnt mit dem Ausf&uuml;hren des
+Befehles <nobr><i>APPrinter.StartDoc APServer.NewPrinterName</i></nobr>.</p>
+
+<p>Der Syntax f&uuml;r die <i>StartDoc</i> Methode des Printer Objektes lautet dabei wie folgt:</p>
+
+
+<p><pre style="background='silver';">
+<i>APPrinter</i>.StartDoc <i>strPrinterName</i>
+</pre></p>
+
+
+<p>Der Parameter <i>strPrinterName</i> beinhaltet dabei den Namen des Druckers,
+dessen PostScript Treiber f&uuml;r die Erstellung des PDF Dokumentes verwendet wird.
+Wenn Sie im Configuration Editor der activePDF Server Komponente einen Drucker spezifiziert haben,
+so ist der Name dieses Druckers mittels <i>APServer.NewPrinterName</i> auslesebar.</p>
+
+<p>Daher macht der Befehl <i>APPrinter.StartDoc APServer.NewPrinterName</i> nichts anderes
+als den im Configuration Editor eingestellten Drucker als denjenigen festzulegen,
+dessen PostScript Treiber zur Erstellung des PDF Dokumentes benutzt wird.</p>
+
+<p>Schriftart und -gr&ouml;&szlig;e werden &uuml;ber die <i>FontName</i>
+und <i>FontSize</i> Eigenschaften des Printer Objektes festgelegt.</p>
+
+<p>Eine Textzeile wird mit dem folgenden Befehl zum PDF Dokument hinzugef&uuml;gt:</p>
+
+
+<p><pre style="background='silver';">
+<i>APPrinter</i>.PrintText <i>strText</i>, 0
+</pre></p>
+
+
+<p>Um den mehrzeiligen Text, der in der Variable <i>strText</i> gespeichert ist,
+zum PDF Dokument zu schreiben, ist es leider notwendig, die einzelnen Zeilen des Textes
+zu separieren. Genau dies macht der Befehl 
+<nobr><i>arrZeilen = Split(strText , vbcrlf)</i></nobr>. 
+Er schreibt jede einzelne Zeile in eine Zelle des Arrays <i>arrZeilen</i>.</p>
+
+<p>Die im Array <i>arrZeilen</i> gespeicherten Textzeilen werden in der <i>For..Next</i>
+Schleife in das PDF Dokument geschrieben.</p>
+
+<p>Nachdem das Erstellen des PDF Dokumentes beendet ist, ruft man
+<i>APPrinter.EndDoc</i> auf um das PDF Dokument auf die Festplatte zu schreiben.</p>
+
+<p>Der Befehl <i>APServer.StopPrinting</i> schlie&szlig;lich
+beendet den Erstellungsproze&szlig; des PDF Dokumentes.</p>
+
+<p>So schreibt das Skript noch den physikalischen und virtuellen Pfad
+des fertigen PDF Dokumentes zum Browser (siehe Bild 2).</p>
+
+<p><IMG SRC="Bilder/200010/20001017_ErgebnisSkript.png" width=509 height=279 alt="" border="0">
+<br>
+<i>Bild 2: Ausgabe des Skripts</i></p>
+
+
+<p>Die generierte PDF Datei sieht dann wie folgt aus:</p>
+
+<p><IMG SRC="Bilder/200010/20001017_PDFDatei.png" width=511 height=332 alt="" border="0">
+<br>
+<i>Bild 3: Generierte PDF Datei</i></p>
+
+
+<p>Dieses Skript zeigt nur die Grundfunktionen von activePDF auf.
+Die verf&uuml;gbare Funktionalit&auml;t ist schier &uuml;berw&auml;ltigend.
+So erlaubt das activePDF Printer Objekt das on-the-fly generieren von
+Zeichenobjekten (Linien, Kreise, Ellipsen, Radio Buttons, Textfelder) in PDF Dateien, 
+das Importieren von Grafiken in den Formaten OLEPicture, BMP, JPG, TGA, PCX, DCX, und noch
+vieles mehr.</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>Die activePDF Produktfamilie mit Ihren Komponenten erlaubt das
+Generieren von PDF Dokumenten direkt aus ASP heraus.</p>
+
+<p>Neben dem Importieren aller m&ouml;glichen Dokumente und Grafiken
+wird auch das direkte Schreiben von formatiertem Text und das 
+Zeichnen von Grafikobjekten unterst&uuml;tzt.</p>
+
+<p>Das activePDF Server Objekt ist der Dreh- und Angelpunkt zur
+Manipulation von PDF Dokumenten am Server. Diese Objekt ist nicht nur
+f&uuml;r den eigentlichen Generierungsproze&szlig; des PDF Dokumentes
+zust&auml;ndig, das activePDF Server Objekt erlaubt auch das direkte Downloaden
+von generierten PDF Dokumenten zum Browser.</p>
+
+<p>Dieses Beispiel und einige andere Tricks werde ich, bei entsprechendem Interesse,
+in einer Fortsetzung dieses Artikels vorstellen.</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001017.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20001103.htm">Generieren von Zeichnungen in PDF-Dokumenten</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eadobe%2Ede%2Fproducts%2Facrobat%2Fadobepdf%2Ehtml">&Uuml;ber Adobe PDF</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eactivepdf%2Ecom%2Fdefault%2Easp%3FPI%3D4333">ActivePDF Portfolio</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eactivepdf%2Ecom%2Fdefault%2Easp%3FPI%3D4555">activePDF Printer</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eactivepdf%2Ecom%2Fdefault%2Easp%3FPI%3D4791">ActivePDF Server</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eadobe%2Ede%2Fproducts%2Facrobat%2Fmain%2Ehtml">Adobe Acrobat 4.0</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eadobe%2Ede%2Fproducts%2Facrobat%2Freadermain%2Ehtml">Adobe Acrobat Reader 4.0</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fcpdf1%2Eadobe%2Ecom">Create Adobe PDF Online</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsupport%2Emicrosoft%2Ecom%2Fsupport%2Fkb%2Farticles%2FQ188%2F7%2F12%2EASP">HOWTO: Troubleshoot IUSR_machine Permissions Problem</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Evisionwork%2Enet%2Fvaw%2Dframes%2Dd%2Ehtm">PDF-Workflow, Einführung in die PDF Technologie</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20001017" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Generieren von PDF-Dokumenten"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20001017.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Koller"><input type="hidden" name="AuthorEmail" value="christiank@aspexpert.com"><input type="hidden" name="Artikel" value="20001017"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20001017.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

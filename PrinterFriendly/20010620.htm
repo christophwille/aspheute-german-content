@@ -1,0 +1,259 @@
+<HTML>
+<HEAD>
+<TITLE>Intelligente Meta-Tags</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im heutigen Artikel m&ouml;chte ich Ihnen eine bequeme Art und Weise vorstellen, wie wirklich jedes Dokument in Ihrem Projekt die passenden Meta-Tags bekommt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Metatag,Meta Tags,Meta-Tag,Indexierung,Indizierung,Suchmaschine,Ranking,Dynamisch">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Intelligente Meta-Tags</H1>
+<p>
+Geschrieben von: <a href="../autoren/darionuevo.htm">Dario Nuevo</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010620"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wir alle wissen, da&szlig; Meta-Tags f&uuml;r eine gute Indexierung in den Suchmaschinen wichtig sind. Doch leider ist es so, 
+da&szlig; man beim Erstellen einer Homepage nicht immer Zeit findet, bei jedem Dokument die Meta-Tags 
+dementsprechend anzupassen. Aus diesem Grund m&ouml;chte ich Ihnen mit diesem Artikel eine bequeme Art und Weise 
+vorstellen, wie wirklich jedes Dokument in  Ihrem Projekt die passenden Meta-Tags bekommt.
+</p>
+
+<p>
+Realisieren werden wir dies mit einem Script, welches wir per <i>Include</i> in alle Dateien der Website einbauen werden.
+Dieses Script versorgt jede Datei beim Aufruf mit den jeweiligen Meta-Tags, welche wir vorher in eine Datenbank 
+eingetragen haben. Die Identifizierung der Dateien erfolgt anhand der Umgebungsvariable <i>PATH_INFO</i>.
+</p>
+
+<h2>Die Tabelle tMeta</h2>
+
+<p>
+Unsere vordefinierten Meta-Tags befinden sich in der Tabelle <i>tMeta</i> der Access Datenbank <b>meta.mdb</b>, welche 
+folgende Struktur aufweist:
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010620_1.png" alt="" border="0">
+
+<p>
+Erl&auml;uterung der einzelnen Felder:<br>
+<i>AutoID</i> - Primary Key<br>
+<i>fString</i> - Name-Attribut des Meta-Tags (z.B. "robots", "keywords" usw.)<br>
+<i>fDocument</i> - Pfad des Dokuments, f&uuml;r welches der Meta-Tag bestimmt ist (PATH_INFO-Werte).<br>
+<i>fValue-Content</i> - Attribut des Meta-Tags (der eigentliche Inhalt, darum ein text/blob)<br>
+</p>
+
+<p>
+Website Struktur f&uuml;r das Artikelbeispiel: <b>getmeta.asp</b> und <b>connection.asp</b> sind im Webroot.
+<b>veilchen.asp</b> und <b>arangata.asp</b> befinden sich im Unterverzeichnis <b>/blumen</b>.
+<b>meta.mdb</b> liegt im Unterverzeichnis <b>/MetaDB</b>.
+Um die Datenbank leicht auf SQL-Server portieren zu k&ouml;nnen, befindet sich im Unterverzeichnis <b>/MetaDB</b> noch zus&auml;tzlich 
+das SQL-Script <b>meta.sql</b>.
+</p>
+
+<h2>Das Ausgabescript</h2>
+
+<p>
+Die ASP Datei <b>getmeta.asp</b> enth&auml;lt das Script, welches beim Aufruf einer Seite die Meta-Tags 
+hineinschreibt. Zu diesem Zweck wird es in alle Dateien inkludiert. Vorzugsweise sollte die Datei im 
+Rootverzeichnis  der Website platziert werden, damit man es absolut inkludieren kann (also mit /getmeta.asp).
+</p>
+
+<p>
+Die Parameter f&uuml;r die Datenbankverbindung enth&auml;lt hier die <b>connection.asp</b> Datei:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+	Set Conn = Server.CreateObject("ADODB.Connection")
+	Set objRSMeta = Server.CreateObject("ADODB.Recordset")
+	Conn.Provider="Microsoft.Jet.OLEDB.4.0"
+	Conn.Open Server.MapPath("/MetaDB/meta.mdb")
+%&gt;
+</pre>
+
+<p>
+Und hier der Quelltext von <b>getmeta.asp</b>:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+' Server-Variable PATH_INFO reinholen
+File = Request.ServerVariables("PATH_INFO")
+
+' DB-Abfrage, Auswahl von Meta-Tags zum aktuellen Dokument (anhand Variable File)
+Set objRSMeta = Conn.Execute("SELECT * FROM tMeta WHERE fDocument='" &amp; File &amp; _
+      "' ORDER BY fString ASC")
+
+
+While Not objRSMeta.EOF
+Response.Write "&lt;meta name=""" &amp; objRSMeta("fString") 
+&amp; """ content=""" &amp; objRSMeta("fValue") &amp; """&gt;" &amp; vbCrLf
+  	objRSMeta.MoveNext
+Wend
+
+' Aufr&auml;umen
+Set objRSMeta = Nothing
+Conn.Close
+%&gt;
+</pre>
+
+<p>
+Wie bereits erw&auml;hnt, identifizieren wir die Datei -welche die Meta-Tags anfordert- anhand der 
+Server-Umgebungsvariable 
+PATH_INFO. Diese Variable beinhaltet immer den vollen Pfad zum aktuellen Script inklusive dem 
+Scriptnamen selbst. Im Dokument <i>www.aspheute.com/beispiel/testemal.asp</i> h&auml;tte PATH_INFO den Wert 
+"/beispiel/testemal.asp". PATH_INFO ist also in jedem Dokument anders, was uns sehr dienlich ist.
+</p>
+
+<p>
+Die Abfrage liefert uns alle Meta-Tags aus der Datenbank, welche dem aktuellen Dokument zugeteilt sind. 
+Schlu&szlig;endlich geben wir die Meta-Tags mit einer While-Schleife  aus und r&auml;umen auf.
+</p>
+
+<h2>Die Einbindung</h2>
+
+<p>
+Haben wir <b>getmeta.asp</b> erstmal erstellt, k&ouml;nnen wir die Datei in jede Datei mit einer <i>include</i> Anweisung 
+referenzieren. Der Aufwand ist sehr gering:
+</p>
+
+<pre style="background='silver';">
+&lt;!--#include virtual="/getmeta.asp" --&gt;
+</pre>
+
+<p>
+Beachten Sie, da&szlig; Meta-Tags innerhalb des &lt;head&gt;-Bereiches eines Dokumentes stehen m&uuml;ssen. Folglich mu&szlig; 
+sich auch die include Anweisung dort befinden.
+</p>
+
+<h2>Ein praxisnahes Beispiel</h2>
+
+<p>
+Theorie mochte ich nie gerne, am besten sieht man den Sinn immer in der Praxis. Hier ein konkretes Beispiel, wie 
+das Ganze in einem produktiven Umfeld aussehen k&ouml;nnte.
+</p>
+
+<p>
+Nehmen wir an, wir sind Webmaster von <i>www.blumen-guide.org</i>. Als Beispieldokument nehmen wir 
+<i>www.blumen-guide.org/blumen/veilchen.asp</i>.
+Folgende Eintr&auml;ge befinden sich in der Tabelle <b>tMeta</b> der <b>meta.mdb</b> Datenbank:
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010620_2.png" width="458" height="105" alt="" border="0">
+
+<p>
+Nun der Sourcecode f&uuml;r die <b>veilchen.asp</b> Datei im Originalzustand, wie sie auf dem Webserverunterverzeichnis 
+<i>/blumen</i> abgelegt ist:
+</p>
+
+<pre style="background='silver';">
+&lt;html&gt;
+&lt;head&gt;
+&lt;!--#include virtual="/getmeta.asp"--&gt;
+&lt;title&gt;Blumen Guide - Verzeichnis&lt;/title&gt;
+&lt;/head&gt;
+&lt;body bgcolor="white"&gt;
+&lt;h1&gt;Das Veilchen&lt;/h1&gt;
+lorem ipsum lari fari..
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Beim Aufruf der Datei gibt nun <b>getmeta.asp</b> die Meta-Tags aus: 
+</p>
+
+<pre style="background='silver';">
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta name="robots" content="follow"&gt;
+&lt;meta name="keywords" content="Veilchen portr&auml;t informationen blumen"&gt;
+&lt;meta name="description" content="Mehr Informationen &uuml;ber Veilchen"&gt;
+&lt;title&gt;Blumen Guide - Verzeichnis&lt;/title&gt;
+&lt;/head&gt;
+&lt;body bgcolor="white"&gt;
+&lt;h1&gt;Das Veilchen&lt;/h1&gt;
+lorem ipsum lari fari...
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Sie sehen also, auf diese Weise k&ouml;nnen wir alle Meta-Tags einer gesamten Website bequem in einer Datenbank 
+verwalten. Der Vorteil dabei ist, da&szlig; der Besucher &uuml;berhaupt nichts davon merkt. Auch f&uuml;r die 
+Suchmaschinen ist das Resultat dasselbe, da auch sie immer die generierte Seite des Servers erhalten 
+(inklusive den Meta-Tags). Diese L&ouml;sung stellt also einen kompletten und vollwertigen Ersatz f&uuml;r eine "manuelle" 
+Meta-Tag-Indexierung dar.
+</p>
+
+<p>
+Ein kleiner Tip am Rande: Wenn Sie schon <b>getmeta.asp</b> in jedes Dokument einbinden, so nutzen Sie dies doch 
+auch f&uuml;r weitere Tags, welche in jedem Dokument erscheinen sollen.
+Denkbare Erweiterungen w&auml;ren z.B. noch der Dokumenttitel, ein Copyright-Hinweis, welcher auf jeder Seite 
+aufscheinen sollte usw. Nat&uuml;rlich ist damit noch viel mehr m&ouml;glich, aber das &uuml;berlasse ich Ihrem Ermessen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010620.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010620.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/19990825.htm">ADO und ASP - Datenbanken einmal n&auml;her betrachtet</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990825.htm</span><br>
+<a href="../artikel/20010329.htm">Auto-Generierung von performantem Abfragecode</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010329.htm</span><br>
+<a href="../artikel/20001201.htm">Die SQL ORDER BY Clause</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001201.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

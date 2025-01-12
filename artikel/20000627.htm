@@ -1,0 +1,434 @@
+<HTML>
+<HEAD>
+<TITLE>Einf&uuml;hrung in Data Shaping mit ADO</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wer kennt das Szenario nicht, wo man zu einem Datensatz aus einer Mastertabelle die entsprechenden Datens&auml;tze aus der Kindtabelle abholen mu&szlig; - so zum Beispiel alle Bestellungen eines Kunden.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ADO,Data Shaping Provider,Cursor Service,Shaped Recordsets,SHAPE,APPEND,RELATE,CHAPTER">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Einf&uuml;hrung in Data Shaping mit ADO</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000627"></SCRIPT>
+</p>
+<p>
+Wer kennt das Szenario nicht, wo man zu einem Datensatz aus einer Mastertabelle die entsprechenden
+Datens&auml;tze aus der Kindtabelle abholen mu&szlig; - so zum Beispiel alle Bestellungen eines Kunden. Das ist nat&uuml;rlich
+nur eines der vielen Szenarien die auf Fremdschl&uuml;sselbeziehungen aufbauen k&ouml;nnen.
+</p>
+<p>
+Das Problem kann man nun auf einige Arten l&ouml;sen:
+<ul>
+<li>Mit einem INNER JOIN zwischen den Tabellen (normales SELECT Statement &uuml;ber mehrere Tabellen). Der Nachteil:
+doppelte Daten werden geholt, und weiters kann man die Daten nicht aktualisieren - weil 2 Tabellen oder mehr
+gejoint sind.
+<li>Angesichts der Nachteile der vorherigen L&ouml;sung k&ouml;nnte man ja dazu &uuml;bergehen, zwei Recordsets aufzumachen: eines
+f&uuml;r die Mastertabelle, eines f&uuml;r die Kindtabelle - und Filter setzen. Nachteil: riesige Recordsets, und m&ouml;gliche
+Probleme bei vielen gleichzeitigen Benutzern.
+<li>Eine weitere Verfeinerung w&auml;re es, die Mastertabelle aufzumachen, aber immer nur die Kindrecords zu holen,
+die zum aktuellen Masterrecord geh&ouml;ren. Nachteil: wenn oft in der Mastertabelle gemovt wird, mu&szlig; man oft zur Datenbank,
+um die Kinddatens&auml;tze zu holen.
+<li>Shaped Recordsets: dieser Ansatz vereinigt das Beste der vorangehenden zwei Ans&auml;tze. Man kann Hierarchien
+automatisch aufbauen (auch auf Bedarf), Aggregierungen durchf&uuml;hren, und updaten darf man auch nach Herzenlust.
+</ul>
+</p>
+<p>
+Damit steht schon fest, womit wir uns heute besch&auml;ftigen werden: <b>Data Shaping</b>. Als Beispiel habe ich unsere
+Artikeldatenbank von AspHeute "abgespeckt", und sie sieht nun wie folgt aus:
+</p>
+<p><IMG SRC="Bilder/200006/20000627_2.png" width="250" height="115" border="0" alt=""></p>
+<p>
+Die Hierarchie, auf die in den folgenden Beispielen hinauswill ist die, da&szlig; eine Kategorie mehrere Artikel 
+beinhaltet. MS Access 2000 bietet einem eine Tabellenansicht, die bereits das Data Shaping Feature von ADO
+einsetzt - und wir werden es &auml;hnlich f&uuml;r uns in ASP nachbauen:
+</p>
+<p><IMG SRC="Bilder/200006/20000627_1.png" width="494" height="345" border="0" alt=""></p>
+
+<h2>Wie funktioniert Data Shaping</h2>
+<p>
+Nun da wir wissen, was wir wollen - und wie wir es anpacken wollen - steht nur noch die Frage im Raum, wie
+denn die Technologie funktioniert, derer wir uns bedienen wollen. <i>Data Shaping</i> erlaubt es, hierarchische
+Beziehungen aufzubauen, die nicht unbedingt auf bestehenden Schl&uuml;sselbeziehungen aufbauen m&uuml;ssen. Das Wichtige
+hierbei ist, da&szlig; ich nicht an Fremdschl&uuml;ssel gebunden bin - ich kann meine Hierarchien aufbauen wie ich das
+gerne m&ouml;chte.
+</p>
+<p>
+Da ADO auf OLE DB aufbaut, ist es eine sichere Annahme, da&szlig; auch Data Shaping im Hintergrund durch OLE DB 
+"gest&uuml;tzt" wird. Und richtig: es gibt den <b>Data Shaping Service for OLE DB</b>, als auch eine eigene <b>SHAPE</b> Sprache,
+die es einfach erlaubt, Hierarchien zu erzeugen.
+</p>
+<p>
+Was macht OLE DB im Hintergrund, wenn man per ASP und ADO ein Shaped Recordset anfordert? Schaut Euch zuerst
+die Grafik an, die Schritte werden dann in der darauffolgenden Liste erkl&auml;rt.
+</p>
+<p><IMG SRC="Bilder/200006/20000627_4.png" width="590" height="388" border="0" alt=""></p>
+<p>
+<ol>
+<li>Die ASP Seite schickt ein SHAPE Kommando an ADO, und gibt dabei den Data Shaping Provider als Service Provider
+an, und den JET OLE DB Treiber als Data Provider.
+<li>ADO schickt das SHAPE Kommando and den <i>Data Shaping Provider</i>, und dieser benutzt den angegebenen Data Provider
+um die Daten aus der Datenbank anzufordern.
+<li>Die geshapten Daten werden an den <i>Cursor Service</i> &uuml;bergeben, der daf&uuml;r zust&auml;ndig ist, da&szlig; man im Recordset
+dann navigieren und updaten kann.
+<li>Die OLE DB Ebene wird verlassen, und ADO bekommt die Recordsets zur Verwendung &uuml;bergeben.
+<li>Unsere ASP Applikation kann die Daten auslesen, darstellen und modifizieren.
+</ol>
+</p>
+<p>
+Der Inhalt eines geshapten Recordsets besteht aus den Feldern des Masterrecordsets als auch einem weiteren 
+Feld, dem <i>Chapter</i>. Ein <i>Chapter</i> ist nichts weiter als ein Recordset im Recordset - es enth&auml;lt die Daten
+der Kindtabelle(n).
+</p>
+
+<h2>Ein Beispiel</h2>
+<p>
+Damit das Ganze jetzt nicht in die Theorie abgleitet, starten wir mit unserem Beispiel. Unser Data Provider
+ist der JET OLE DB Provider, unsere beiden Tabellen sind auch bekannt, die Hierarchie haben wir uns auch schon ausgedacht,
+alles was uns jetzt definitiv noch fehlt ist die Syntax der SHAPE Sprache.
+</p>
+<p>
+In diesem ersten Artikel &uuml;ber Data Shaping m&ouml;chte ich mich bei der Syntax noch kurz halten, und das Kommando
+<p>
+<pre style="background=silver;">
+SHAPE { SELECT * FROM tCategories }
+APPEND ({ SELECT * FROM tArticles }
+RELATE CategoryID TO CategoryID) AS rsArticles
+</PRE>
+</p>
+<p>
+fast so stehen lassen - weil es bereits die allereinfachste Form eines SHAPE Statements ist. Die erste Zeile
+definiert das Masterrecordset, die zweite Zeile f&uuml;gt das Kindrecordset an, und die dritte Zeile teilt ADO mit,
+wie ich Master und Kind in Beziehung setzen m&ouml;chte - und wie das daraus entstehende Chapter hei&szlig;en soll.
+</p>
+<p>
+Bewaffnet mit dem SHAPE Kommando k&ouml;nnen wir nun den dazugeh&ouml;rigen Sourcecode in ASP schreiben:
+</p>
+<p>
+<pre style="background=silver;">
+&lt;% Option Explicit %&gt;
+&lt;%
+Dim strShapeCmd, cn, rs
+Dim chapter, theDate
+
+strShapeCmd = &quot;SHAPE { SELECT * FROM tCategories }  &quot;
+strShapeCmd = strShapeCmd &amp; &quot;APPEND ({ SELECT * FROM tArticles } &quot;
+strShapeCmd = strShapeCmd &amp; &quot;RELATE CategoryID TO CategoryID) AS rsArticles&quot;
+
+Set cn = CreateObject(&quot;ADODB.Connection&quot;)
+Set rs = CreateObject(&quot;ADODB.Recordset&quot;)
+cn.Provider = &quot;MSDataShape&quot;
+cn.Open &quot;data provider=Microsoft.Jet.OLEDB.4.0;data source=c:\aspheute.mdb&quot;
+
+rs.Open strShapeCmd, cn
+Response.Write &quot;&lt;table&gt;&quot;
+While Not rs.EOF
+    Response.Write &quot;&lt;tr&gt;&lt;td&gt;&lt;b&gt;&quot; 
+	   &amp; rs(&quot;CategoryName&quot;).Value &amp; &quot;&lt;/b&gt;&lt;br&gt;&quot; &amp; vbCrLf
+
+    Set chapter = rs(&quot;rsArticles&quot;).Value
+    Response.Write &quot;&lt;ul&gt;&quot;
+    While Not chapter.EOF
+      Response.Write &quot;&lt;li&gt;&lt;a href=&quot;&quot;http://www.aspheute.com/artikel/&quot; 
+      theDate = chapter(&quot;ArticleDate&quot;)
+      Response.Write Year(theDate) &amp; ZeroPad(Month(theDate)) 
+           &amp; ZeroPad(Day(theDate)) &amp; &quot;.htm&quot;&quot;&gt;&quot;
+      Response.Write chapter(&quot;ArticleTitle&quot;) &amp; &quot;&lt;/a&gt;&quot;
+      chapter.MoveNext
+    Wend
+    Response.Write &quot;&lt;/ul&gt;&lt;/tr&gt;&quot;
+    rs.MoveNext
+Wend
+Response.Write &quot;&lt;/table&gt;&quot;
+
+Function ZeroPad(theString)
+    If Len(theString) = 1 Then
+        theString = &quot;0&quot; &amp; theString
+    End If
+    ZeroPad = theString
+End Function
+%&gt;
+</pre>
+</p>
+<p>
+Ungew&ouml;hnlich an diesem Sourcecode verglichen zu normalen ADO Code ist, da&szlig; man sowohl den Provider 
+(Service Provider), als auch getrennt den Data Provider (im <i>Open</i> Statement) angeben mu&szlig; - damit wird
+der Data Shaping Provider aktiviert. Alles andere ist wie normaler ADO Code.
+</p>
+<p>
+Interessant ist, wie man das Chapter anspricht:
+<pre style="background=silver;">
+Set chapter = rs(&quot;rsArticles&quot;).Value
+</pre>
+</p>
+<p>
+Das Chapter ist ein Recordset Objekt, daher ben&ouml;tigt man das <i>Set</i> Statement. Apropos: sollte man <i>.Value</i>
+vergessen, kann das einige unsch&ouml;ne Fehler produzieren. Also Vorsicht Falle!
+</p>
+<p>
+Die Ausgabe aller Daten (Master und Kind) erfolgt in einer sehr einfachen Tabelle, mit ebenso einfacher
+Formatierung. Das einzige besondere, das ich eingebaut habe, ist ein Link zum tats&auml;chlichen Artikel auf AspHeute. Da unsere
+Linkstruktur yyyymmdd.htm ist, mu&szlig; ich daf&uuml;r sorgen, da&szlig; Monate und Tage mit nur einer Zahl eine 
+f&uuml;hrende Null bekommen - daf&uuml;r ist die Funktion <i>ZeroPad</i> zust&auml;ndig.
+</p>
+<p>
+Der Output, der generiert wird, sieht in Internet Explorer wie folgt aus:
+</p>
+<p><IMG SRC="Bilder/200006/20000627_3.png" width="539" height="500" border="0" alt=""></p>
+<p>
+Mit relativ wenig Aufwand haben wir einen durchwegs ansprechenden Output erzeugt. Und das, ohne uns bei
+der Master-Kind Beziehung ein zus&auml;tzliches Codeproblem aufzuhalsen (zus&auml;tzliche Recordsets &ouml;ffnen, JOIN's, ...).
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+In diesem Artikel ging es um ein erstes Kennenlernen der M&ouml;glichkeiten, die der Data Shaping Provider f&uuml;r
+eine Anwendung er&ouml;ffnen kann. Ausgespart habe ich eine genaue Syntax der SHAPE Kommandosprache, als auch
+die verschiedenen Arten der Hierarchien. Wir haben nur eine verwendet, obwohl es f&uuml;nf verschiedene
+Arten gibt - aber das ist eine andere Geschichte (Artikel).
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000627.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20000328.htm">Installation der neuesten ADO Version (ADO 2.5)</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000627" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Einf&uuml;hrung in Data Shaping mit ADO"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000627.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20000627"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000627.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

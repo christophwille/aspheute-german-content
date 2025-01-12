@@ -1,0 +1,312 @@
+<HTML>
+<HEAD>
+<TITLE>Emails mittels CDOSYS versenden</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel stellt der Autor die CDOSYS Library vor, mit der man Emails &uuml;ber beliebige Emailserver verschicken kann. Weitere Artikel werden die NNTP und anderen F&auml;higkeiten beleuchten.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,CDO,CDONTS,CDOSYS,Exchange Server,Exchange 2000,Email,Emailversand,Emailkomponente,SMTP,NNTP,Simple Mail Transport Protocol">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Emails mittels CDOSYS versenden</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/Komponenten.htm">Komponenten</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000919"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Mit dem Erscheinen von Windows 2000 und IIS 5.0 steht dem ASP Programmierer eine 
+neue M&ouml;glichkeit offen um Emails zu versenden. Mit dem Betriebssystem Windows 2000
+Server wird die "Collaboration Data Objects" (CDO) Library (<i>CDOSYS.DLL</i>) ausgeliefert, 
+die Nachrichten (Emails oder Newsgroupnachrichten) &uuml;ber SMTP (Simple Mail Transfer Protocol) 
+oder NNTP Protokoll versenden kann. 
+</p>
+<p>
+<i>CDO f&uuml;r Windows 2000</i> (auch CDO 2.0 oder CDOSYS),
+wurde von Grund auf neu programmiert und ist nur unter Windows 2000 Server verf&uuml;gbar. 
+Da es Teil des Betriebssystems ist, mu&szlig; es, im Gegensatz zu ActiveX Mail-Komponenten, 
+nicht erst am Webserver installiert werden. Vorhandene Mailapplikationen, die mit dem
+altbekannten <a href="../artikel/20000515.htm">CDONTS (CDO f&uuml;r NT Server)</a> arbeiten, k&ouml;nnen auch
+unter Windows 2000 und IIS 5.0 weiterverwendet werden.
+</p>
+
+
+<p>Warum sollte man CDOSYS in einer ASP Applikation verwenden?</p>
+
+<p><ul>
+
+<li>CDOSYS ist extrem schnell und kann Emails sowohl an einen lokalen EMail Server
+als auch &uuml;ber das Internet (mittels SMTP) an einen Remote-Emailserver versenden.
+Dies macht CDOSYS speziell f&uuml;r ein gro&szlig;es Mailaufkommen wie Massenmailings,
+Newsletter, etc. interessant.</li>
+
+<li>CDOSYS basiert auf den Internetstandards (SMTP, RFC 822) und erlaubt es auf 
+vielf&auml;ltige Art und Weise MIME/HTML Nachrichten zu erstellen und zu verwalten.
+SMTP und NNTP Protokolle werden voll unterst&uuml;tzt.</li>
+
+<li>Da CDOSYS ActiveX-kompatible COM Interfaces zur Verf&uuml;gung stellt,
+kann es in den verschiedensten Programmiersprachen und Windows Applikationen verwendet werden.</li>
+
+<li>CDOSYS ist eng mit ADO (ActiveX Data Objects) verzahnt, soda&szlig; man
+Nachrichten direkt aus ADO Streams oder anderen Datenbanken und Datenquellen
+mittels OLE DB und ODBC integrieren kann.</li>
+
+<li>CDOSYS ist vollst&auml;ndig zu CDO f&uuml;r Windows Exchange 2000 Server kompatibel.
+Daher k&ouml;nnen Applikationen, die auf CDO f&uuml;r Windows 2000 basieren,
+problemlos auf CDO f&uuml;r Exchange 2000 umgestellt werden.</li>
+
+<li>CDOSYS unterst&uuml;tzt verschiedene Standards, die auf dem RFC 822 
+(Einfache Internet Nachrichten) basieren. Solche Internet-Nachrichten k&ouml;nnen 
+auf MIME (Multipurpose Internet Mail Extensions) und UUENCODE basieren</li>
+
+</ul></p>
+
+
+
+<p>F&uuml;r die folgenden Applikationen ist CDOSYS sehr gut geeignet:</p>
+
+<p><ul>
+	<li>Massensendungen von Emails</li>
+	<li>Versenden von ganzen HTML Seiten inklusive Bilder und Links per Email</li>
+</ul></p>
+
+<p>Genug der grauen Theorie! F&uuml;r den ASP-Programmierer ist eigentlich nur eines
+wichtig: Wie setzte ich CDOSYS in einer ASP-Seite ein?</p>
+
+
+<h2>Emailversand aus ASP Seiten mittels CDOSYS</h2>
+
+<p>Gleich <i>in medias res</i>: Die CDOSYS Library stellt das <i>Message</i> Objekt
+zur Verf&uuml;gung, das eine Internetnachricht (zum Beispiel Email) repr&auml;sentiert.
+Um festzulegen, wie und wohin die Nachricht gesendet wird, verwendet man
+das <i>Configuration</i> Objekt. Durch dieses Objekt kann man
+die Konfiguration einstellen, an welchen Emailserver die Email versendet wird
+und welchen Port man am SMTP-Server anspricht.</p>
+
+<p>Ein (fast) fertiges ASP Skript, das die CDOSYS Library zum Versenden
+einer Email benutzt, ist das folgende:</p>
+
+<p><pre style="background='silver';">
+&lt;% ' Typeinformationen und CDOSYS Konstanten 
+' ueber das CDOSYS und das ADO 2.5 Objekt zugaenglich machen:
+%&gt;
+&lt;!--METADATA TYPE="typelib" 
+UUID="CD000000-8B95-11D1-82DB-00C04FB1625D" 
+NAME="CDO for Windows 2000 Library" --&gt;
+&lt;!--METADATA TYPE="typelib" 
+UUID="00000205-0000-0010-8000-00AA006D2EA4" 
+NAME="ADODB Type Library" --&gt;
+
+&lt;html&gt;
+&lt;body&gt;
+&lt;%
+
+Dim strFrom, strTo, strSubject, strBody
+Dim objMessage, objConfig
+
+' Absender
+strFrom = "user@aspheute.com"
+' Empfaenger
+strTo   = "redaktion@aspheute.com"
+' Betreff
+strSubject = "Testnachricht"
+' Emailtext
+strBody    = "Dies ist eine Testnachricht:" &amp; vbCrLf &amp; _
+	"CDOSYS hat funktioniert!"
+
+' Message und Configuration Objekte instanzieren
+Set objMessage = CreateObject("CDO.Message")
+Set objConfig = CreateObject("CDO.Configuration")
+
+' Konfigurieren:
+' Nachricht an externen Mailserver verschicken
+objConfig.Fields(cdoSendUsingMethod) = cdoSendUsingPort
+' Emailserver: mail.domain.com
+objConfig.Fields(cdoSMTPServer) = "mail.domain.com"
+' Emailport: 25 (Standard bei SMTP Server)
+objConfig.Fields(cdoSMTPServerPort) = 25
+' Authentifizierung am Emailserver: Keine
+objConfig.Fields(cdoSMTPAuthenticate) = cdoAnonymous
+
+' Configuration updaten
+objConfig.Fields.Update
+
+' CDO-Nachricht erstellen:
+' Konfiguration an Nachricht binden
+Set objMessage.Configuration = objConfig 
+
+objMessage.To       = strTo      ' Empfaenger
+objMessage.From     = strFrom    ' Absender
+objMessage.Subject  = strSubject ' Betreff
+' Versender der Nachricht:
+' objMessage.Sender   = "CDOSYS@aspheute.com" 
+objMessage.TextBody = strBody    ' Nachricht
+
+' Error Handling waehrend dem Versenden:
+On Error Resume Next
+
+' CDO-Nachricht senden
+objMessage.Send
+
+If Err.Number = 0 Then
+  Response.Write("Die Nachricht wurde versendet!")
+Else
+  Response.Write("Waehrend des Versendens ist " &amp; _
+  "ein Fehler aufgetreten, ueberpruefen Sie die " &amp; _
+  "Verbindung zum Internet oder dem Mailserver!" &amp; _
+  "&lt;br&gt; Moeglicherweise akzeptiert der Emailserver " &amp; _
+  "Ihre Nachricht nicht. ")
+  Err.Number = 0
+End If
+On Error Goto 0
+
+%&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></p>
+
+
+<p>Dieses Programm erstellt ein CDOSYS <i>Message</i> Objekt, und setzt seine
+<i>To</i>, <i>From</i>, <i>TextBody</i> Eigenschaften um die Emailnachricht zu erstellen. 
+Die Email wird schlie&szlig;lich mittels der Send Methode zum SMTP (EMail) Server geschickt,
+von wo aus Sie zu ihrem tats&auml;chlichen Empf&auml;nger gelangt.</p>
+
+<p>Die <i>METADATA TYPE="typelib"</i> Einf&uuml;gungen am Anfang des Skripts
+sind notwendig um die CDO-Konstanten (wie <i>cdoSendUsingMethod</i>, <i>cdoSMTPServer</i> oder 
+<i>cdoSendUsingMethod</i>) benutzen zu k&ouml;nnen.</p>
+
+<p>Das Skript benutzt der Einfachheit halber die Variablen strFrom, strTo, strSubject, strBody
+um die Emaildaten wie Absender, Empf&auml;nger, Betreff oder Nachrichtentext zu speichern,
+bevor Sie den <i>Message</i> Objekt Eigenschaften <i>To</i>, <i>From</i> oder <i>TextBody</i>
+zugewiesen werden.</p>
+
+<p>Die Konfiguration des CDOSYS <i>Message</i> Objektes zum Versenden der
+Email erreicht man durch das Erstellen eines CDOSYS <i>Configuration</i> Objektes.
+&Uuml;ber die Eigenschaften dieses <i>Configuration</i> Objektes kann man,
+wie im Beispiel gezeigt, unter anderem den Hostnamen und den SMTP Port des Emailservers 
+einstellen.</p>
+
+<p>W&auml;hrend des Sendens der Email mittels <i>Message.Send</i> k&ouml;nnen verschiedene
+Fehler auftreten. M&ouml;glicherweise ist der Emailserver nicht erreichbar,
+oder der Server akzeptiert nur Nachrichten mit einem bestimmten Empf&auml;nger
+oder Absender. Um dies abfangen zu k&ouml;nnen, benutzt das Skript einen Error-Handling
+Code. Ein m&ouml;glicher Fehler wird mittels <i>On Error Resume Next</i> abgefangen.
+Ein Laufzeitfehler kann im <i>Err</i> Objekt &uuml;ber die <i>Number</i> Eigenschaft
+festgestellt werden. Das Kommando <i>On Error Goto 0</i> setzt das Error Handling wieder au&szlig;er Kraft.</p>
+
+<p>
+Die gesendete Mailnachricht k&ouml;nnte dann schlu&szlig;endlich in der folgenden Form
+in der Mailbox des Empf&auml;ngers landen (Content mit allen Headern):
+</p>
+<p>
+<pre style="background='silver';">
+From: &lt;user@aspheute.com&gt;
+To: &lt;redaktion@aspheute.com&gt;
+Subject: Testnachricht
+Date: Mon, 18 Sep 2000 21:06:41 +0100
+Message-ID: &lt;000e01c021ab$f5fc70e0$c801a8c0@thunder&gt;
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft CDO for Windows 2000
+Thread-Index: AcAhq/X84yzuz864RiyB3kA4fIJtxg==
+Content-Class: urn:content-classes:message
+X-MimeOLE: Produced By Microsoft MimeOLE V5.00.2919.6700
+X-RCPT-TO: &lt;redaktion@aspheute.com&gt;
+X-UIDL: 269027218
+Status: U
+
+Dies ist eine Testnachricht:
+CDOSYS hat funktioniert!
+</pre>
+</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Auf jedem IIS 5.0 (unter Windows 2000 Server) steht Ihnen eine sehr schnelle 
+"Komponente" zum Vesenden von Emails zur Verf&uuml;gung: 
+<i>CDOSYS.DLL</i>! Die Funktionsweise von CDOSYS ist &auml;hnlich wie
+die von CDONTS.
+</p>
+<p>
+Da CDOSYS nicht nur Emails und Newsgroupnachrichten 
+in den vielf&auml;ltigsten Formaten &uuml;ber lokale oder externe
+Webserver versenden kann, ist es empfehlenswert, bei Webapplikationen die
+von dieser Funktionalit&auml;t Gebrauch machen, die Verwendung von CDOSYS
+in Betracht zu ziehen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000919.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000919.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20021028.htm">ACT MetaMailer - Mails verschicken leicht gemacht</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021028.htm</span><br>
+<a href="../artikel/20001009.htm">Das Versenden von Emails selbst programmieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001009.htm</span><br>
+<a href="../artikel/20000919.htm">Emails mittels CDOSYS versenden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000919.htm</span><br>
+<a href="../artikel/20010219.htm">Emails versenden mit ASPEmail</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010219.htm</span><br>
+<a href="../artikel/20010625.htm">Html Emails mit Dundas Mailer verschicken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010625.htm</span><br>
+<a href="../artikel/20000928.htm">Nachrichten an Newsserver (NNTP) mittels CDOSYS senden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000928.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Ftechart%2Fcdo%5Froadmap%2Ehtm">Collaboration Data Objects Roadmap</a><br>
+<SPAN class="content">http://msdn.microsoft.com/library/techart/cdo_roadmap.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

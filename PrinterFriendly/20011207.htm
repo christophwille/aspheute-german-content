@@ -1,0 +1,266 @@
+<HTML>
+<HEAD>
+<TITLE>On Demand Zugriffsrechte f&uuml;r Web Sites vergeben</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Sicher haben Sie auf Ihrer Web Site Content, der nicht von jedem 08/15 User eingesehen werden soll, zum Beispiel eine Members Only Area. Das gratis downloadbare AccessControl Tool bietet eine einfache L&ouml;sung mittels ISAPI Filter und ASP.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ISAPI,Filter,Freeware,AccessControl,ISM,Members Only,on demand,Sicherheit,Login,Security">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>On Demand Zugriffsrechte f&uuml;r Web Sites vergeben</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20011207"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Sicher haben Sie auf Ihrer Web Site Content, der nicht von jedem 08/15 User eingesehen werden soll, zum Beispiel
+eine &quot;Members Only Area&quot;. IIS beziehungsweise Windows 2000 bieten hierf&uuml;r auch gen&uuml;gend (ausreichend sichere) M&ouml;glichkeiten,
+um gewisse Bereiche einer Web Site zu sperren. Wie w&auml;re es aber, solche Aufgaben on-demand, also
+im laufenden Betrieb des Web Servers zu erledigen - ohne NTFS Berechtigungen setzen zu m&uuml;ssen. Das gratis downloadbare AccessControl 
+Tool bietet eine einfache L&ouml;sung mittels ISAPI Filter und ASP.
+</p>
+
+<p>
+Nehmen wir an, Sie haben eine Web Site mit Bereichen die z.B. nur f&uuml;r registrierte und/oder zahlende Benutzer
+zug&auml;nglich sein soll. Ein L&ouml;sungsansatz w&auml;re die Verwendung der Authentifizierungs/Authorisierungsm&ouml;glichkeiten die
+IIS 5 und Windows 2000 bereitstellen. Aber ist dies ausreichend? Meist ist dieser Ansatz f&uuml;r kleinere Sites zu aufwendig,
+allerdings bieten einfachere ASP L&ouml;sungen nicht ausreichend Sicherheit: diese sch&uuml;tzen nur ASP Seiten, nicht aber Resourcen
+wie zum Beispiel Bilder oder statische HTML Dokumente.
+</p>
+
+<p>
+Nebenbei bemerkt, wie Sie sicher aus der Problemstellung herauslesen konnten ist das URLScan Tool von
+Microsoft hier unbrauchbar, da man nur Dateiarten sperren (d.h diese werden nicht mehr geserved) kann und 
+nicht ganze Verzeichnisse per User (repr&auml;sentiert durch eine Session ID) sperren kann.
+</p>
+
+<p>
+F&uuml;r unsere Problemstellung bietet sich das AccessControl Tool an, das Sie gratis von 
+<a href="http://www.reneris.com/tools/" target="_blank">reneris.com</a> downloaden k&ouml;nnen. Dabei handelt es sich um einen
+ISAPI Filter, der leicht durch ein einfaches Objektmodell angesprochen werden kann. Dieses k&ouml;nnen Sie dann
+leicht in Ihre servergenerierten Seiten entweder mit VBScript oder JavaScript einbinden. Und es sch&uuml;tzt
+Ihre Inhalte auf Verzeichnisbasis, egal ob ASP oder nicht.
+</p>
+
+<h2>Installation</h2>
+
+<p>
+Nach dem Download der <b>accessbin.zip</b> (diese enth&auml;lt die Binaries und Sample Code) von 
+<a href="http://www.reneris.com/tools/" target="_blank">reneris.com</a> k&ouml;nnen Sie loslegen. Zum Zeitpunkt
+des Artikels war die Installationsanweisung noch etwas mangelhaft, daher sei hier die richtige
+Reihenfolge noch einmal kurz angef&uuml;hrt:
+</p>
+
+<ol>
+<li>Entpacken des Zip-Archivs in ein Web Server Verzeichnis</li>
+<li>ISM (Internet Services Manager) &ouml;ffnen, mit der rechten Maustaste auf die Web Site oder
+den gesamten Web Server klicken und die Properties (Eigenschaften) anw&auml;hlen.</li>
+<li>Im <i>ISAPI Filters</i>-Tab auf Add (Hinzuf&uuml;gen) klicken und die Beschreibung f&uuml;r den Filter und auf die 
+<b>AccessFilter.dll</b> aus dem Download referenzieren:</li>
+<p><IMG SRC="/artikel/Bilder/200112/20011207_1.png" width="457" height="450" alt="" border="0"></p>
+<li>Den IIS restarten</li>
+<li>Danach mit <i>regsvr32 C:\IhrPfad\AccessControl.dll</i> die eigentliche Komponente registrieren</li>
+</ol>
+
+<p>
+Um st&ouml;rende Fehlermeldungen zu vermeiden, sollten Sie diese Reihenfolge unbedingt einhalten.
+F&uuml;rs erste w&auml;re die Grobarbeit erledigt; nun m&uuml;ssen wir noch den ISAPI Filter in unserer ASP Site
+ansprechen. Ich habe daf&uuml;r ein vereinfachtes Beispiel herangezogen. Da es f&uuml;r hack-sichere Login-Seiten
+verschiedene Philosophien gibt und auch nicht Kernthema dieses Artikels ist, ist der Sourcecode hierf&uuml;r
+nicht angef&uuml;hrt.
+</p>
+
+<p>
+Das vereinfachte Beispiel einer Web Site hat folgende Struktur:
+</p>
+
+<ul>
+<li>root-Verzeichnis: dieses Verzechnis enth&auml;lt eine ASP-Datei <b>doLogin.asp</b>, die die serverseitige 
+Validierung vornimmt. Zus&auml;tzlich w&uuml;rde sich hier die Login-Seite befinden. Bei einem fehlgeschlagenen
+Login wird entweder die <b>Rejected.asp</b> Datei angezeigt oder man kann wieder auf die Login Seite redirecten.
+Die <b>Rejected.asp</b> Datei wird auch aufgerufen, wenn ein User unerlaubt auf den gesicherten
+Bereich zugreift. Das Tool verweigert auch den Zugriff, wenn der User versucht, mit einer direkten URL
+zuzugreifen (z.B. IhreSeite.xyz/restricted/content.xyz)</li>
+<li>Den eigentlichen geschlossenen Bereich (inklusive der Admin Seite <b>accessadmin.asp</b>, z.B. aus 
+dem Download) der in diesem Beispiel im <i>/restricted</i> Unterverzeichnis 
+liegt.</li>
+</ul>
+
+<p>
+Da wir den ISAPI Filter und die Komponente erfolgreich registriert haben, k&ouml;nnen wir uns nun ans Codieren der
+Beispielsite machen. Nach dem Authentifizieren des Users mu&szlig; noch die Authorisierung (<b>doLogin.asp</b>)
+erfolgen, d.h. u.a. eine Unterscheidung zwischen registriertem User und Administrator. Diese Unterscheidung
+wird durch das Setzen bzw. w&auml;hrend der Authorisierung durch Evaluieren einer Session Variable 
+(<i>AccessControlAdmin</i>) erreicht:
+</p>
+
+<pre style="background='silver';">
+Session("AccessControlAdmin") = 1
+</pre>
+
+<p>
+Wenn Adminrechte vorhanden sind, also die Session Variable nicht 0 ist, wird man zur Admin Seite
+<b>accessadmin.asp</b> weitergeleitet:
+</p>
+
+<IMG SRC="/artikel/Bilder/200112/20011207_2.png" width="590" height="195" alt="" border="0">
+
+<p>
+Hier einfach mit <i>Add New</i> die gesch&uuml;tzten Bereiche als URL eintragen und mit Submit best&auml;tigen.
+Aus Sicherheitsgr&uuml;nden geben Sie immer den DNS Namen und zus&auml;tzlich die IP Adresse an. So einfach w&auml;re die
+Administrierung abgeschlossen; die gesch&uuml;tzten Bereiche umfassen sowohl dynamische als auch statische Inhalte.
+</p>
+
+<h2>Authorisierung</h2>
+
+<p>
+Nun m&uuml;ssen wir noch die Authorisierung f&uuml;r den &quot;normalen&quot; User durchf&uuml;hren (VBScript Variante):
+</p>
+
+<pre style="background='silver';">
+' Login Prozedur
+IsAccessGranted = true
+
+Set SessObj = Server.CreateObject("AccessControl.SessAcc")
+Session("SessAcc") = SessObj
+Response.Cookies("SessAcc") = SessObj.ID
+
+If IsAccessGranted Then
+    SessObj.Grant "localhost", "/AccCtrl/DemoEx/restricted", true  
+    Response.Redirect "/AccCtrl/DemoEx/restricted/ConspiracyTheory.asp"
+Else  
+    Response.Redirect "/AccCtrl/DemoEx/Rejected.asp"
+End If
+</pre>
+
+<p>
+In dieses Beispiel ist einiges "hineingepackt": den Login habe ich abgek&uuml;rzt - <i>IsAccessGranted</i> repr&auml;sentiert
+jede der von Ihnen gew&auml;hlten Loginvarianten. Nach "erfolgreichem Login" erzeuge ich ein Objekt
+f&uuml;r das AccessControl Tool, welches Funktionen f&uuml;r die Zugriffsrechte enth&auml;lt. Da die Session permanent
+werden soll, speichern wir die Signatur (<i>SessObj.ID</i>) in einem Cookie.
+</p>
+
+<p>
+Bis dato haben wir in der Administration nur definiert, welche Sicherheitsbereiche es geben soll - jedoch
+nicht, wer darauf tats&auml;chlich Zugriff bekommen soll. Dies geschieht mit der 
+<i>Grant</i> Funktion, die das Verzeichnis f&uuml;r diese Session ID freigibt, d.h. nur diese Session ID hat nun 
+Zugang zum gesch&uuml;tzten Bereich. Wenn die Session durch ein Schlie&szlig;en des Browsers ung&uuml;ltig wird, verf&auml;llt 
+das Objekt.
+</p>
+
+<p>
+Die Parameter der <i>Grant</i>-Funktion sind:
+</p>
+
+<pre style="background='silver';">
+SessObj.Grant Server, URL, UnterverzeichnisseErlaubt
+</pre>
+
+<p>
+Zuerst der DNS/IP Adresse des Servers, dann der URL zur eigentlichen gesch&uuml;tzen Seite. Weiters k&ouml;nnen
+Sie noch angeben, ob der User (repr&auml;sentiert durch die Session ID) Zugang zu Unterverzeichnissen hat.
+</p>
+
+<p>
+Der Einfachheit halber redirecte ich auf eine definierte Seite - Sie k&ouml;nnen auf eine Men&uuml;seite, etc verzweigen.
+</p>
+
+<h2>Der Logout</h2>
+
+<p>
+Nat&uuml;rlich k&ouml;nnen Sie einen User auch ohne da&szlig; er den Browser schlie&szlig;en mu&szlig;, entweder ausloggen bzw.
+ausloggen lassen. Dies geschieht mit der <i>Revoke</i> Funktion:
+</p>
+
+<pre style="background='silver';">
+SessObj.Revoke "localhost", "/AccCtrl/DemoEx/restricted", true
+</pre>
+
+<p>
+Wiederum den DNS/IP Adresse des Servers angeben, dann der URL, und das Flag f&uuml;r die Unterverzeichnisse.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Dies war ein kleines Beispiel f&uuml;r die Anwendung des AccessControl Tools, das gratis erh&auml;ltlich ist.
+Dieses enth&auml;lt noch weitere Funktionen, die das Erstellen einer eigenen Admin Seite m&ouml;glich machen.
+&Uuml;brigens: der Sourcecode des Tools (C++) ist ebenfalls erh&auml;ltlich.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20011207.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20011207.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010608.htm">Formular-basierte Basic Authentication</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010608.htm</span><br>
+<a href="../artikel/20000531.htm">Generieren eines sicheren Pa&szlig;wortes</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000531.htm</span><br>
+<a href="../artikel/20020123.htm">Impersonation mit ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020123.htm</span><br>
+<a href="../artikel/20010330.htm">Passw&ouml;rter mit SHA1 absichern</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010330.htm</span><br>
+<a href="../artikel/20010927.htm">Schlu&szlig; mit lustig Teil 2 - das URLScan Tool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010927.htm</span><br>
+<a href="../artikel/20001109.htm">Verzeichnissicherheit mit NTFS und IIS Authentifizierung</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001109.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ereneris%2Ecom%2Ftools%2Fdownbin%2Easp">AccessControl Download</a><br>
+<SPAN class="content">http://www.reneris.com/tools/downbin.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ereneris%2Ecom%2Ftools%2Fusage%2Easp">AccessControl Usage Documentation</a><br>
+<SPAN class="content">http://www.reneris.com/tools/usage.asp</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

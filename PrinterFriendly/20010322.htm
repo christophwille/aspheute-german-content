@@ -1,0 +1,242 @@
+<HTML>
+<HEAD>
+<TITLE>In VB Komponenten auf ASP Objekte zugreifen (Variante 2)</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wie im letzten Artikel versprochen, kommen wir heute nun zur zweiten Variante des Zugriffs auf die ASP-internen Objekte innerhalb von VB Komponenten - dem ObjectContext von COM+ (oder MTS, wenn Sie NT 4.0 einsetzen).">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,COM+,COMplus,Application,MTS,Transaction Server,VB Komponente,ASP intrinsics,ObjectContext,GetObjectContext,Item">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>In VB Komponenten auf ASP Objekte zugreifen (Variante 2)</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Komponenten.htm">Komponenten</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010322"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wie im letzten Artikel versprochen, kommen wir heute nun zur zweiten Variante des Zugriffs auf die
+ASP-internen Objekte innerhalb von VB Komponenten - dem ObjectContext von COM+ (oder Microsoft
+Transaction Server [MTS], wenn Sie noch Windows NT 4.0 verwenden). Dieser wird jeder in COM+
+Applikationen gehosteten Komponente &uuml;bergeben, und wenn ASP die Applikation aufruft, enth&auml;lt
+der ObjectContext die von uns gew&uuml;nschten ASP-internen Objekte - und wir m&uuml;ssen nur noch darauf
+zugreifen.
+</p>
+
+<p>
+Wir besch&auml;ftigen uns heute rein mit dem Aspekt des Zugriffs auf die ASP Objekte - die erweiterten
+Funktionen (Transaktionen, etc) von COM+ werde ich v&ouml;llig au&szlig;er Acht lassen. Dazu werden wir in einem
+weiteren Artikel mehr bringen, der dann auch die technischen Hintergr&uuml;nde von COM+ besser beleuchtet.
+Daher m&ouml;gen einige Ausf&uuml;hrungen auch extra-effizient erscheinen.
+</p>
+
+<h2>Die Komponente erstellen</h2>
+<p>
+Da wir bereits im letzten Artikel sehr ausf&uuml;hrlich auf die Erstellung der Komponente eingegangen
+sind, machen wir dies heute im Eiltempo, und befassen uns haupts&auml;chlich mit den Unterschieden.
+</p>
+<p>
+Als erstes ben&ouml;tigen wir wieder ein <i>ActiveX DLL</i> Projekt. Dieses benennen wir <i>AspHeuteTx</i>,
+und die Klasse <i>HelloWorldTx</i>. Damit wir sowohl auf die COM+ Services (der ObjectContext kommt 
+von dort) als auch die ASP Objekte
+zugreifen k&ouml;nnen, ben&ouml;tigen wir diesmal zwei Typbibliothekreferenzen - der folgende Screenshot zeigt
+die References Dialogbox:
+</p>
+
+<IMG SRC="/artikel/Bilder/200103/20010322_02.png" width="449" height="357" alt="" border="0">
+
+<p>
+Damit sind die Voraussetzungen geschaffen, und wir k&ouml;nnen unseren Code schreiben (Klassenmodul):
+</p>
+
+<pre style="background='silver';">
+Option Explicit
+
+Public Sub SayHelloTx()
+    Dim objContext As ObjectContext
+    Dim objResponse As ASPTypeLibrary.Response
+    
+    Set objContext = GetObjectContext()
+    Set objResponse = objContext.Item("Response")
+    
+    objResponse.Write "Hello World!"
+End Sub
+</pre>
+
+<p>
+Was passiert hier? Es gibt eine &ouml;ffentliche Methode namens <i>SayHelloTx</i>, die zwei Variablen
+deklariert. Die eine ist f&uuml;r die Referenz auf den <i>ObjectContext</i> gedacht, die zweite auf
+die Referenz des <i>Response</i> Objekts, das wir aus dem <i>ObjectContext</i> erhalten.
+Es gibt keine spezielle Methode, die unser Objekt implementieren mu&szlig; - beim <i>ObjectContext</i> greifen
+wir auf die Objekte zu, und niemand von au&szlig;en &uuml;bergibt sie an eine von uns implementierte Methode
+(wie bei <i>OnStartPage</i> im letzten Artikel).
+</p>
+
+<p>
+Die Funktion <i>GetObjectContext</i> dient dazu, den <i>ObjectContext</i> zu erhalten (dies ist eine Hilfsfunktion,
+die COM+ zur Verf&uuml;gung stellt). Da wir in ASP laufen (werden), gibt es ein <i>Item</i> namens <b>Response</b> -
+das nicht anderes als unser bekanntes <i>Response</i> Objekt ist - und dann auch als solches verwendet wird.
+Hinweis: wenn man diese Komponente au&szlig;erhalb von ASP aufruft, wird man genau durch diesen <i>Item</i> Aufruf
+Fehlermeldungen bekommen.
+</p>
+
+<p>
+Eine kleine COM+ bezogene &Auml;nderung m&uuml;ssen wir an unserem Projekt noch machen - der <i>MTSTransactionMode</i>
+soll auf No Transactions umgestellt werden (mehr dazu, und zu Transaktionen in sp&auml;teren Artikeln). Der 
+folgende Screenshot zeigt wo diese Einstellung gemacht werden mu&szlig;.
+</p>
+
+<IMG SRC="/artikel/Bilder/200103/20010322_01.png" width="704" height="534" alt="" border="0">
+
+<h2>Die Komponente registrieren</h2>
+<p>
+Wir haben unsere Komponente mit COM+ Services ausgestattet, also m&uuml;ssen wir unsere
+Komponente auch bei COM+ anmelden. Dies geschieht im Administrationsmodul <i>Component Services</i>,
+und ich zeige alle Schritte, die notwendig sind, um korrekt lauff&auml;hig zu werden. Der erste Schritt
+dazu ist eine neue COM+ Applikation zu erstellen.
+</p>
+
+<h3>Erstellen einer COM+ Applikation</h3>
+<p>
+Das Erstellen einer neuen COM+ Applikation geht wie folgt von statten:
+</p>
+
+<ol>
+    <li>Starten von Administrative Tools/Component Services, expandieren des lokalen Computers.<br>
+        <IMG SRC="/artikel/Bilder/200103/20010322_03.png" width="665" height="433" alt="" border="0">
+    </li>
+    <li>Mit der rechten Maustaste auf <i>COM+ Applications</i> klicken, und <i>New/Application</i>
+        vom Contextmen&uuml; ausw&auml;hlen. Den ersten Schritt des Wizards &uuml;berspringen.</li>
+    <li>Aus dem Wizard <i>Create an empty application</i> ausw&auml;hlen.<br>
+        <IMG SRC="/artikel/Bilder/200103/20010322_04.png" width="503" height="386" alt="" border="0">
+    </li>
+    <li>Weiter geht's mit dem Benennen der Applikation. Ebenfalls ausw&auml;hlen mu&szlig; man ob es sich um
+    eine <i>Library</i> oder <i>Server</i> Applikation handelt. F&uuml;r unsere Zwecke ist eine Library
+    Application ausreichend.<br>
+        <IMG SRC="/artikel/Bilder/200103/20010322_05.png" width="503" height="386" alt="" border="0">
+    </li>
+    <li>Ein Klick auf Next und dann Finish erzeugt die Applikation f&uuml;r uns.</li>
+</ol>
+
+<p>
+Nun kann man Komponenten in die Applikation einf&uuml;gen.
+</p>
+
+<h3>Unsere Komponente installieren</h3>
+<p>
+Es gibt verschiedene Varianten um Komponenten in COM+ Applikationen zu registrieren, ich habe mich
+f&uuml;r den direktesten entschieden:
+</p>
+
+<ol>
+    <li>Auf der neu erzeugten COM+ Applikation mit der rechten Maustaste klicken, und <i>New/Component</i>
+        aus dem Kontextmen&uuml; ausw&auml;hlen. Auch in diesem Wizard kann der erste Schritt &uuml;bersprungen werden.
+    </li>
+    <li>
+        Unsere erste Entscheidung ist, wie und woher wir die Komponente installieren. Wir m&ouml;chten
+        eine neue Komponente installieren.<br>
+        <IMG SRC="/artikel/Bilder/200103/20010322_06.png" width="503" height="386" alt="" border="0">
+    </li>
+    <li>
+        In der sich &ouml;ffnenden Dateiauswahldialogbox unsere kompilierte Komponente <b>AspHeuteTx.dll</b>
+        ausw&auml;hlen. Nach der Auswahl erh&auml;lt man folgendes Fenster mit Informationen &uuml;ber die Komponente:<br>
+        <IMG SRC="/artikel/Bilder/200103/20010322_07.png" width="503" height="386" alt="" border="0">
+    </li>
+    <li>Mit Next &amp; Finish w&auml;re dann auch dieser Wizard erledigt.</li>
+</ol>
+
+<p>
+Unsere fertig installierte COM+ Applikation mit Komponente (und expandierter Funktionalit&auml;t) sieht nun
+wie folgt aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200103/20010322_08.png" width="665" height="433" alt="" border="0">
+
+<p>
+Und kann nun auch bereits schon verwendet werden.
+</p>
+
+<h2>Die Komponente verwenden</h2>
+<p>
+Die Verwendung selbst &auml;ndert sich durch den Einsatz einer COM+ Application nicht - die folgende
+kleine ASP Page (<b>test.asp</b>) beweist dies:
+</p>
+
+<pre style="background='silver';">
+Set xObj = Server.CreateObject("AspHeuteTx.HelloWorldTx")
+xObj.SayHelloTx
+</pre>
+
+<p>
+Alles funktioniert, wie es soll - nur schneller.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Zum letzten Absatz gilt noch hinzuzuf&uuml;gen, da&szlig; es noch schneller geht, wenn man sich weiter
+mit COM+ besch&auml;ftigt, vor allem mit Just In Time Activation und As Soon As Possible Deactivation.
+Aber das ist ein Thema eines weiteren Artikels.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010322.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010322.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020205.htm">Der Object Construct String</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020205.htm</span><br>
+<a href="../artikel/20010320.htm">In VB Komponenten auf ASP Objekte zugreifen (Variante 1)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010320.htm</span><br>
+<a href="../artikel/20020408.htm">Klassenauflistungen mit dem Dictionary-Objekt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020408.htm</span><br>
+<a href="../artikel/20010619.htm">Transaktionen in C# Business Tier Komponenten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010619.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

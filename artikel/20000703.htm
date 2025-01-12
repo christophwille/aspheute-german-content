@@ -1,0 +1,432 @@
+<HTML>
+<HEAD>
+<TITLE>SQL Server 2000 Volltextsuche</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Es gibt einen Weg, mehrere Text- als auch Memofelder zu durchsuchen (einzeln oder alle), der noch dazu einfach, schnell und sehr elegant ist: die Volltextsuche von SQL Server 2000. Die hier vorgestellte Technologie gibt es auch bereits in SQL Server 7.0.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ADO,Full Text,Search,Microsoft Search,Catalog,CONTAINS,FREETEXT,SQL Server,SQL Server 2000">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>SQL Server 2000 Volltextsuche</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000703"></SCRIPT>
+</p>
+<p>
+Wer kennt das Problem nicht - man soll in einer Tabelle suchen, und zwar nach Textfragmenten.
+Solange es nur eine Spalte ist, &uuml;ber die gesucht werden soll, kann man sich ja noch mehr oder minder
+elegant mit LIKE und dem Prozentzeichen &uuml;ber die Runden retten. Sollen es aber mehrere Spalten sein,
+&uuml;ber die nach einem bestimmten Fragment gesucht werden soll, wird es interessant. Und gesellen sich dann
+noch Memo Felder dazu, ist es endg&uuml;ltig aus.
+</p>
+
+<p>
+Habe ich gerade endg&uuml;ltig aus gesagt? Stimmt &uuml;berhaupt nicht! Es gibt einen Weg, der noch dazu einfach, schnell
+und sehr elegant ist: die Volltextsuche von SQL Server 2000. Die hier vorgestellte Technologie gibt es auch
+bereits in SQL Server 7, allerdings k&ouml;nnen einige Screenshots und Befehlsreihenfolgen differieren.
+</p>
+
+<h2>Installation der Volltextsuche</h2>
+<p>
+Standardm&auml;&szlig;ig findet die Volltextsuche ihren Weg leider nicht auf den Rechner - das mu&szlig; man durch ein Custom
+Setup mit SQL Server nachholen. Ist aber recht einfach, weil man nur ein H&auml;kchen in der Dialogbox Select
+Components setzen mu&szlig;.
+</p>
+<p><IMG SRC="Bilder/200007/20000703_1.png" width="479" height="357" border="0" alt=""></p>
+<p>
+Dieser Schritt installiert den Microsoft Search Service (der ist f&uuml;r die Volltextsuche zust&auml;ndig), sowie
+2 weitere SQL Kommandos: <i>FREETEXT</i> und <i>CONTAINS</i>.
+</p>
+
+<h2>Erstellen eines Volltextindexes</h2>
+<p>
+Standardm&auml;&szlig;ig ist die Volltextsuche f&uuml;r keine Datenbank aktiviert. Man mu&szlig; einen Volltextcatalog (&auml;hnlich zu
+Index Server) erzeugen, Tabellen f&uuml;r die Volltextsuche aktivieren, und in diesen Tabellen die Spalten w&auml;hlen,
+die indiziert werden sollen.
+</p>
+<p>
+Das klingt zwar nach viel Arbeit, ist es aber Dank eines Wizards nicht wirklich. Dazu w&auml;hlt man im SQL
+Server Enterprise Manager die in Frage kommende Datenbank aus (ich habe die Beispieldatenbank <b>pubs</b> gew&auml;hlt),
+und startet via <i>Tools/Full-Text Indexing...</i> den Full Text Indexing Wizard. Auf der ersten Seite sehen Sie,
+was Sie alles mit dem Wizard anstellen k&ouml;nnen.
+</p>
+<p>
+<b>Schritt 1</b> W&auml;hlen Sie die Tabelle aus, f&uuml;r die Sie einen Volltextindex anlegen wollen. In diesem Beispiel
+nehmen wir auch gleich die erste Tabelle, <b>[dbo].[authors]</b>. Obwohl auch der Wizard Sie darauf hinweist, m&ouml;chte
+ich es auch explizit tun: Sie m&uuml;ssen der Eigent&uuml;mer (oder alias) der Tabelle sein - "nur" Administrator reicht 
+nicht.
+</p>
+<p><IMG SRC="Bilder/200007/20000703_2.png" width="498" height="391" border="0" alt=""></p>
+<p>
+<b>Schritt 2</b> Jetzt werden Sie nach einem Index gefragt, der f&uuml;r JOIN's verwendet werden soll. Warum mu&szlig; 
+ich das angeben, werden sich einige fragen? Der Grund ist, da&szlig; der Microsoft Search Service getrennt vom
+Query Processor l&auml;uft, also Tabellensuchresultate aus defakto zwei verschiedenen authors "Tabellen" gejoint
+werden - die aus der Volltextsuche, und der Rest vom "normalen" Query Processor. 
+</p>
+<p>
+In unserem Fall ist bereits der richtige Index selektiert. Verwenden Sie immer den Primary Key Index f&uuml;r diese
+Selektion - dieser wird auch vom Query Processor verwendet.
+</p>
+<p>
+<b>Schritt 3</b> Nun k&ouml;nnen Sie die Spalten aussuchen, die in den Volltextindex integriert werden sollen (also alle
+Spalten, die ein Statement abfragen kann). Volltextindizes k&ouml;nnen nur &uuml;ber Textspalten (<i>char</i>, <i>varchar</i>, <i>text</i>) gemacht werden, daher w&auml;hlen
+wir der Einfachheit diesmal auch alle aus.
+</p>
+<p><IMG SRC="Bilder/200007/20000703_3.png" width="498" height="391" border="0" alt=""></p>
+<p>
+<b>Schritt 4</b> Die Grundangaben haben wir jetzt alle gemacht, allerdings m&uuml;ssen wir Microsoft Search jetzt
+noch sagen, wohin der Index gespeichert werden soll - der Speicherort des Catalogs (analog zu Index Server
+Catalogs). Am besten, Sie behalten das Verzeichnis bei, das vorgeschlagen wird, und geben nur den Namen des
+Catalogs an - <b>pubstest</b>.
+</p>
+<p><IMG SRC="Bilder/200007/20000703_4.png" width="498" height="391" border="0" alt=""></p>
+<p>
+<b>Schritt 5</b> Wichtig f&uuml;r die Aktualit&auml;t des Volltextindexes ist wann und wie er aktualisiert wird. Zur 
+Aktualisierung gibt es drei Varianten:
+<ul>
+	<li><b>Voller Rebuild</b> Baut den Volltextindex von Grund auf neu auf. Verbraucht naturgem&auml;&szlig; viel Rechenzeit,
+		kann aber als Task mit dem SQL Server Agent gescheduled werden.
+	<li><b>Inkrementeller Rebuild</b> Macht &Auml;nderungen im Volltextindex nur f&uuml;r Zeilen, die sich seit dem letzten
+		Rebuild ge&auml;ndert haben. Dazu ben&ouml;tigt man allerdings eine zus&auml;tzlich Spalte in der Tabelle, und zwar vom
+		Datentyp <i>timestamp</i>. Vorteil: deutlich schneller, l&auml;uft ebenso wie der Full Rebuild zu bestimmten Off-Hours,
+		ben&ouml;tigt weniger Resourcen.
+	<li><b>&Auml;nderungsverfolgung</b> Die &Auml;nderungen werden aktiv verfolgt, da&szlig; hei&szlig;t, eine Liste der ver&auml;nderten
+		Daten wird mitgef&uuml;hrt. Im Gegensatz zum inkrementellen Rebuild mu&szlig; die Tabelle nicht umgebaut werden,
+		allerdings bekommt man einen Geschwindigkeitsnachteil durch die aktive Nachverfolgung.
+</ul>
+</p>
+<p>
+Der inkrementelle Rebuild als auch die &Auml;nderungsverfolgung haben einen gemeinsamen Nachteil: alle &Auml;nderungen an
+Memofeldern, die mit <i>WRITETEXT</i> oder <i>UPDATETEXT</i> durchgef&uuml;hrt wurden, werden nicht erkannt. Daher sind regelm&auml;&szlig;ige
+Full Rebuilds zu&auml;tzlich notwendig.
+</p>
+<p>
+Daher legen wir uns einen Full Rebuild Schedule an, und lassen ihn einmal pro Woche am Sonntag um Mitternacht laufen.
+Die weiteren inkrementellen Rebuilds k&ouml;nnen Sie sich dann selbst anlegen.
+</p>
+<p><IMG SRC="Bilder/200007/20000703_5.png" width="420" height="327" border="0" alt=""></p>
+<p>
+<b>Schritt 6</b> Damit sind wir schon beim letzten Schritt des Wizards. Begutachten Sie nochmals die Einstellungen
+und klicken dann auf Finish.
+</p>
+<p>
+Damit wir den Index sofort verwenden k&ouml;nnen, gehen Sie danach zum Folder <i>Full-Text Catalogs</i>, klicken
+mit der rechten Maustaste auf den neuen Catalog und w&auml;hlen <i>Start Full Population</i>.
+</p>
+
+<h2>Abfragen mit dem CONTAINS Schl&uuml;sselwort</h2>
+<p>
+&Ouml;ffnen Sie den Query Analyzer um die Abfragen interaktiv ausprobieren zu k&ouml;nnen (nat&uuml;rlich hindere ich Sie nicht,
+es sofort in ASP auszuprobieren). Stellen Sie sicher, da&szlig; Sie in die <b>pubs</b> Datenbank gewechselt sind!
+</p>
+<p>
+Tippen Sie folgende einfache Abfrage ein:
+<pre style="background='silver';">
+SELECT * FROM authors
+</pre>
+</p>
+<p>
+Diese Abfrage liefert alle Autoren, die in dieser Tabelle gespeichert sind. Um das ganze jetzt auf Autoren
+einzuschr&auml;nken, die das Wort "green" in Ihren Nachnamen haben, k&ouml;nnten Sie folgendes <i>LIKE</i> Statement verwenden:
+<pre style="background='silver';">
+SELECT * FROM authors WHERE au_lname LIKE '%green%'
+</pre>
+</p>
+<p>
+Unter Ausnutzung der Volltextsuche w&uuml;rde das nun wie folgt aussehen:
+<pre style="background='silver';">
+SELECT * FROM authors WHERE CONTAINS(au_lname,'green')
+</pre>
+</p>
+<p>
+Nun k&ouml;nnten Sie berechtigt argumentieren, da&szlig; ich daf&uuml;r nun wirklich nicht den Volltextindex h&auml;tte bem&uuml;hen
+m&uuml;ssen. Stimmt. Allerdings wie machen Sie das folgende in normalen SQL?
+<pre style="background='silver';">
+SELECT * FROM authors WHERE CONTAINS(*,'green')
+</pre>
+</p>
+<p>
+Jetzt wird der Volltextindex f&uuml;r alle Spalten durchsucht, und wenn eine Spalte <i>green</i> aufweist, wird die Zeile 
+zur&uuml;ckgeliefert. Das w&auml;re mit normalen SQL zwar noch m&ouml;glich, allerdings ziemlich l&auml;nglich:
+<pre style="background='silver';">
+SELECT * FROM authors WHERE 
+	au_lname LIKE '%green%' OR
+	au_fname LIKE '%green%' OR
+	address LIKE '%green%' OR
+	city LIKE '%green%' OR
+	state LIKE '%green%'
+</pre>
+</p>
+<p>
+Mit der Volltextsuche kann man nat&uuml;rlich auch nach Phrasen suchen:
+<pre style="background='silver';">
+SELECT * FROM authors WHERE CONTAINS(address,'"Seventh Av"')
+</pre>
+</p>
+<p>
+Damit bekommt man beide Autoren Ringer zur&uuml;ckgeliefert, da diese in der Seventh Avenue leben. Will man nebenbei auch noch zus&auml;tzlich alle Autoren,
+die in einer Street leben, sieht das Statement wie folgt aus:
+<pre style="background='silver';">
+SELECT * FROM authors WHERE CONTAINS(address,'"Seventh Av" OR "St"')
+</pre>
+</p>
+<p>
+Neben <i>OR</i> kann man auch noch <i>AND</i> und <i>AND NOT</i> verwenden, um boolsche Abfragen zu gestalten. Obwohl die authors Tabelle keinerlei
+Memofelder beinhaltet, k&ouml;nnen diese nat&uuml;rlich auch &uuml;ber den Volltextindex gesucht werden - und das wird wohl
+das Hauptanwendungsgebiet dieser Technologie in Ihren Applikationen werden.
+</p>
+<p>
+Die Programmierung in ASP ist vollst&auml;ndig gleich zu einer normalen Abfrage, die keinen Volltextindex verwendet.
+Es gibt keinerlei Einschr&auml;nkungen in punkto Updatef&auml;higkeit des Recordsets, das man zur&uuml;ckgeliefert bekommt.
+Die Volltextsuche verh&auml;lt sich v&ouml;llig transparent.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dieser Artikel zeigt, wie man einen Volltextindex anlegt, und einfache Abfragen auf diesen absetzt. Ich habe
+Details wie Wortst&auml;mme oder die FREETEXT Funktion ausgelassen. Sie haben aber dennoch genug Wissen, um der
+LIKE Funktion Ade zu sagen - und Memofelder bequem suchen zu k&ouml;nnen.
+</p><h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Fsqlserver%2F">SQL Server Developer Center</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eswynk%2Ecom%2Fsysapps%2Fsql%2Easp">Stephen Wynkop's SQL Server Home</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000703" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="SQL Server 2000 Volltextsuche"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000703.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20000703"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000703.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

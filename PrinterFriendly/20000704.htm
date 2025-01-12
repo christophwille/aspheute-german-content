@@ -1,0 +1,293 @@
+<HTML>
+<HEAD>
+<TITLE>Erstellen von Balkendiagrammen in ASP</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wenn man Diagramme h&ouml;rt, denkt man sofort, da&szlig; man daf&uuml;r eine zus&auml;tzliche Komponente ben&ouml;tigt. Dem ist aber nicht so - bereits mit der normalen HTML Funktionalit&auml;t ist es m&ouml;glich eine einfache Balkengrafik zu erzeugen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,HTML,Diagramm,Balkendiagramm,Chart,Barchart,bar chart,Balken,Tabelle,Generierung">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Erstellen von Balkendiagrammen in ASP</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000704"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wenn man Diagramme h&ouml;rt, denkt man sofort, da&szlig; man daf&uuml;r eine zus&auml;tzliche Komponente ben&ouml;tigt. Dem
+ist aber nicht so - bereits mit der normalen HTML Funktionalit&auml;t ist es m&ouml;glich eine einfache Balkengrafik zu erzeugen.
+Dazu ben&ouml;tigt man nur HTML-Tabellen und Bilder (<i>&lt;IMG&gt;</i>). 
+</p>
+<p>
+Nat&uuml;rlich kann man auch aus einer ASP Seite heraus eine Balkengrafik zu erzeugen,
+um auf diese Weise Werte aus einer Datenbank oder einem Eingabeformular
+darzustellen (siehe Abbildung 1 und 2).
+</p>
+<p>
+<div align="center">
+<IMG SRC="/artikel/Bilder/200007/20000704_01.png" width=539 height=358 border="0">
+<br>
+Abbildung 1
+</div>
+</p>
+<p>
+<div align="center">
+<IMG SRC="/artikel/Bilder/200007/20000704_02.png" width=514 height=377 border="0">
+<br>
+Abbildung 2
+</div>
+</p>
+
+<h2>Darstellung variabler Balken in HTML</h2>
+<p>
+Mit Hilfe des &lt;IMG&gt; Tags und Tabellen lassen sich in HTML
+sowohl senkrechte als auch waagrechte Balkendiagramme darstellen. Die folgenden Sektionen
+beschreiben wie man diese in HTML aufbaut - und dieses HTML sich dann von ASP generieren lassen
+kann.
+</p>
+
+<h3>Waagrechte Balkendiagramme</h3>
+
+<p>
+Ein Balken kann mit Hilfe des <i>&lt;IMG&gt;</i>-Tags dargestellt werden,
+indem man einen Punkt einer bestimmten Farbe (zum Beispiel Gr&uuml;n) in
+variabler Gr&ouml;&szlig;e darstellt. Wenn die Grafik
+<b>green.jpg</b> ein JEPG-Image von der Gr&ouml;&szlig;e <b>1x1</b> und der Farbe Gr&uuml;n ist,
+so resultiert der folgende HTML-Source-Code in Balken:</p>
+
+<pre style="background='silver';">
+&lt;IMG src="green.jpg" <b>width=120</b> height=10 border=0&gt;&lt;br&gt;&lt;br&gt;
+&lt;IMG src="green.jpg" <b>width=70 </b> height=10 border=0&gt;&lt;br&gt;&lt;br&gt;
+&lt;IMG src="green.jpg" <b>width=90 </b> height=10 border=0&gt;&lt;br&gt;&lt;br&gt;
+</pre>
+
+<p>
+Das Ergebnis sind Balken von variabler L&auml;nge (<i>width=xx</i>) 
+und der Dicke 10 (<i>heigth=10</i>):
+</p>
+<p>
+<IMG SRC="/artikel/Bilder/200007/20000704_green.jpg" width=120 height=10 border=0><br><br>
+<IMG SRC="/artikel/Bilder/200007/20000704_green.jpg" width=70  height=10 border=0><br><br>
+<IMG SRC="/artikel/Bilder/200007/20000704_green.jpg" width=90  height=10 border=0><br><br>
+</p>
+<p>
+Mit Hilfe einer Tabelle kann man auch ein Balkendiagramm mit negativen Werten
+aufbauen. Dazu definiert man 3 Spalten. Die linke Spalte enth&auml;lt die
+Balken f&uuml;r die negativen Werte (rote Farbe), die mittlere Spalte die Null-Linie (schwarz),
+und die rechte Spalte die Balken der positiven Werte (gr&uuml;n):
+</p>
+<p>
+<pre style="background='silver';">
+&lt;table cellspacing=0 cellpadding=0 border=0&gt;
+&lt;!-- Erster Balken --&gt;
+&lt;tr&gt;
+    &lt;td align="RIGHT" valign="MIDDLE"&gt;
+      &lt;img src="red.jpg" <b>width=40</b> height=10 border=0&gt;&lt;/td&gt;
+    &lt;td valign="MIDDLE"&gt;
+      &lt;img src="black.jpg" width=2 height=15 border=0&gt;&lt;/td&gt;
+    &lt;td valign="MIDDLE"&gt;
+   &lt;/td&gt;
+&lt;/tr&gt;
+&lt;!-- Zweiter Balken --&gt;
+&lt;tr&gt;
+    &lt;td align="RIGHT" valign="MIDDLE"&gt;
+   &lt;/td&gt;
+    &lt;td valign="MIDDLE"&gt;
+      &lt;img src="black.jpg" width=2 height=15 border=0&gt;&lt;/td&gt;
+    &lt;td valign="MIDDLE"&gt;
+      &lt;img src="green.jpg" <b>width=90</b> height=10 border=0&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+</p>
+<p>
+Damit die Balken der linken Spalte an die Null-Linie anschlie&szlig;en, enth&auml;lt
+der &lt;TD&gt; der Tabelle das Attribut <i>align="RIGHT"</i>. 
+Das Ergebnis sieht wie folgt aus:
+</p>
+<p>
+<table cellspacing=0 cellpadding=0 border=0>
+<!-- Erster Balken -->
+<tr>
+    <td align="RIGHT" valign="MIDDLE">
+		<IMG SRC="/artikel/Bilder/200007/20000704_red.jpg" width=40 height=10 border=0></td>
+    <td valign="MIDDLE">
+		<IMG SRC="/artikel/Bilder/200007/20000704_black.jpg" width=2 height=15 border=0></td>
+    <td valign="MIDDLE">
+	</td>
+</tr>
+<!-- Zweiter Balken -->
+<tr>
+    <td align="RIGHT" valign="MIDDLE">
+	</td>
+    <td valign="MIDDLE">
+		<IMG SRC="/artikel/Bilder/200007/20000704_black.jpg" width=2 height=15 border=0></td>
+    <td valign="MIDDLE">
+		<IMG SRC="/artikel/Bilder/200007/20000704_green.jpg" width=90 height=10 border=0></td>
+</tr>
+</table>
+</p>
+<p>
+Wie man waagrechte Balkendiagramme automatisch in ASP erzeugt, erfahren Sie im
+Abschnitt <a href="20000704.htm#ASP">Balkendiagramme in ASP erzeugen</a>.
+</p>
+
+<h3>Senkrechte Balkendiagramme</h3>
+<p>
+Die senkrechten Diagramme lassen sich auch mit Hilfe von Tabellen
+und variablen Bildern erzeugen. So ben&ouml;tigt man f&uuml;r ein Balkendiagramm mit positiven 
+und negativen Werten, sowie einer Null-Linie dazwischen lediglich 3 Tabellen-Zeilen.
+</p>
+<p>
+In der obersten Zeile werden alle positiven Werte in Form von variablen Balken erzeugt
+(<i>&lt;IMG&gt;</i> Tag mit variablen Attribut <i>height=xx</i>). Die zweite Zeile enth&auml;lt
+die Null-Linie, und die dritte Zeile die Balken der negativen Werte.
+</p>
+<p>
+Zur Illustration sehen Sie sich das folgende Beispiel an:
+</p>
+<p>
+<pre style="background='silver';">
+&lt;table cellspacing=0 cellpadding=0 border=0&gt;
+&lt;!-- Erster Tabellenzeile, positive Werte --&gt;
+&lt;tr&gt;
+   &lt;td valign="BOTTOM"&gt;
+      &lt;img src="green.jpg" width=20 height=50 border=0&gt;&lt;/td&gt;
+   &lt;td valign="BOTTOM"&gt;
+      &lt;img src="green.jpg" width=20 height=70 border=0&gt;&lt;/td&gt;
+   &lt;td valign="BOTTOM"&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;!-- Zweite Tabellenzeile, Null-Linie --&gt;
+&lt;tr&gt;
+    &lt;td&gt;&lt;img src="black.jpg" width=25 height=2 border=0&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;img src="black.jpg" width=25 height=2 border=0&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;img src="black.jpg" width=25 height=2 border=0&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;!-- Dritte Tabellenzeile, negative Werte--&gt;
+&lt;tr&gt;
+    &lt;td valign="TOP"&gt;&lt;/td&gt;
+    &lt;td valign="TOP"&gt;&lt;/td&gt;
+    &lt;td valign="TOP"&gt;&lt;img src="red.jpg" width=20 height=30 border=0&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+</p>
+<p>
+Das Ergebnis sind 3 Balken, 2 zeigen positive Werte an und der letzte einen negativen Wert:
+</p>
+<p>
+<table cellspacing=0 cellpadding=0 border=0>
+<tr>
+	<td valign="BOTTOM">
+		<IMG SRC="/artikel/Bilder/200007/20000704_green.jpg" width=20 height=50 border=0></td>
+	<td valign="BOTTOM">
+		<IMG SRC="/artikel/Bilder/200007/20000704_green.jpg" width=20 height=70 border=0></td>
+	<td valign="BOTTOM"></td>
+</tr>
+<tr>
+    <td><IMG SRC="/artikel/Bilder/200007/20000704_black.jpg" width=25 height=2 border=0></td>
+    <td><IMG SRC="/artikel/Bilder/200007/20000704_black.jpg" width=25 height=2 border=0></td>
+    <td><IMG SRC="/artikel/Bilder/200007/20000704_black.jpg" width=25 height=2 border=0></td>
+</tr>
+<tr>
+    <td valign="TOP"></td>
+    <td valign="TOP"></td>
+    <td valign="TOP"><IMG SRC="/artikel/Bilder/200007/20000704_red.jpg" width=20 height=30 border=0></td>
+</tr>
+</table>
+</p>
+<p>
+Um nun die Darstellung unter ASP zu automatisieren,
+mu&szlig; man nur entscheiden, welche Werte positiv oder negativ sind,
+und die H&ouml;he der Balken dementsprechend anpassen.
+</p>
+
+<a name="ASP"></a><h2>Balkendiagramme unter ASP dynamisch erzeugen</h2>
+<p>
+Das folgende ASP-Programm speichert 12 Werte in dem Array <i>wert()</i>,
+und baut dann aus diesen Werten automatisch ein waagrechtes und ein senkrechtes
+Balkendiagramm auf. Jeder Balken erh&auml;lt eine Bezeichnung, die im 
+Array <i>name()</i> gespeichert ist. Der Wert wird zum zugeh&ouml;rigen Balken dazugeschrieben.
+</p>
+<p>
+Die Gr&ouml;&szlig;e der Balken wird automatisch so angepa&szlig;t, da&szlig; eine
+maximale Gesamtbreite (bzw. Gesamth&ouml;he) der Balkengrafik nicht &uuml;berschritten wird:
+</p>
+<p>
+<a href="../artikel/20000704_listing1.htm" target="_blank">Listing anzeigen</a>.
+</p>
+<p>
+Das Ergebnis ist dann schon recht eindrucksvoll: 
+<a href="../artikel/20000704_ergebnis1.htm" target="_blank">Ergebnis anzeigen</a>.
+</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Jeder moderne Browser verf&uuml;gt &uuml;ber die F&auml;higkeit, Tabellen darzustellen.
+Dies kann man sich zunutze machen, um mittels ASP dynamisch 
+waagrechte oder senkrechte Balkendiagramme zu erzeugen,
+die eine Vielzahl von Werten auf einen Blick anschaulich darstellen k&ouml;nnen.
+</p>
+<p>
+Dies ist n&uuml;tzlich f&uuml;r Internet oder Intranet Applikationen, ob nun
+f&uuml;r die Darstellung von Verkaufswerten, oder anderen statistischen Gr&ouml;&szlig;en.
+</p>
+<p>
+Au&szlig;erdem ist die Konstruktion von Balkendiagrammen mit Tabellen 
+keineswegs speicherintensiv - so hat das letzte Listing insgesamt etwa 5.8 KB.
+Somit sind beide Balkendiagramme auch bei einem sehr langsamen Internetzugang 
+in weniger als 5 Sekunden geladen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000704.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000704.zip</span></p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,339 @@
+<HTML>
+<HEAD>
+<TITLE>ASP-basierte Basic Authentication</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="IIS Authentication Methoden haben eines gemeinsam - sie greifen f&uuml;r die Validierung der Benutzeraccounts auf NT Accounts durch. Heute wollen wir Basic Authentication dazu &uuml;berreden, unsere von NT unabh&auml;ngigen Accounts zu validieren.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Integrated,Basic Authentication,Authorization Required,Realm,Digest,SSL,https,Sicherheit,Security,Login,Secure Area">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>ASP-basierte Basic Authentication</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010521"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Die verschiedenen Authentifizierungsmethoden des IIS sollten zumindest grob bekannt sein:
+Integrated, Digest und Basic Authentication, absteigend gelistet nach ihrer sicherheitstechnischen Integration
+mit Windows NT. Alle haben eines gemeinsam - sie greifen f&uuml;r die Validierung der Benutzeraccounts
+auf NT Accounts durch. Heute wollen wir Basic Authentication dazu &uuml;berreden, unsere von NT unabh&auml;ngigen
+Accounts zu validieren.
+</p>
+
+<h2>Wie funktioniert Basic Authentication?</h2>
+<p>
+Relativ simpel, soda&szlig; sich Basic Authentication in jedem
+am Markt befindlichen Browser wiederfindet - ein Vorteil, da man keine Benutzer ausschlie&szlig;t.
+Generell l&auml;uft es so ab: wenn der Client auf einen gesch&uuml;tzten Bereich zugreift, so schickt der 
+Server einen Authentication Request an den Client, dessen Header wie folgt aussehen k&ouml;nnten:
+</p>
+
+<pre style="background='silver';">
+HTTP/1.1 401 Unauthorized
+Server: Microsoft-IIS/5.0
+Date: Sun, 20 May 2001 17:55:41 GMT
+WWW-Authenticate: BASIC Realm=AspHeute Secure Area
+Connection: Keep-Alive
+Content-Length: 16
+Content-Type: text/html
+Set-Cookie: ASPSESSIONIDGQQQQJEC=OHPFICAALDHJBKBLJKBJCNKM; path=/
+Cache-control: private
+</pre>
+
+<p>
+Die interessanten Parts sind der HTTP Status Code in der ersten Zeile, als auch der Header
+<i>WWW-Authenticate</i>. Der Client wei&szlig; nun, da&szlig; er den Benutzer um Benutzername und Passwort
+fragen mu&szlig;, und zeigt eine Dialogbox an:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010521_2.png" width="583" height="413" alt="" border="0">
+
+<p>
+Diese Dialogbox d&uuml;rfte nun wirklich so ziemlich jedem bekannt sein. Dort gibt man nun seinen
+Benutzernamen und Passwort ein, und der Browser versucht nun noch einmal, das Dokument vom 
+Server zu requesten - dieses Mal jedoch mit Benutzernamen und Passwort im Request:
+</p>
+
+<pre style="background='silver';">
+HTTP_ACCEPT:image/gif, image/x-xbitmap, ...
+HTTP_ACCEPT_LANGUAGE:en-us
+HTTP_CONNECTION:Keep-Alive
+HTTP_HOST:localhost
+HTTP_USER_AGENT:Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.0; .NET CLR 1.0.2901)
+HTTP_COOKIE:visit=4%2F19%2F2001+8%3A26%3A15+PM; ASPSESSIONIDGQQQQJEC=PHPFICAAPEOPKDBODDAOPICN
+HTTP_AUTHORIZATION:Basic <font color="green">YWRtaW46cHdk</font>
+HTTP_ACCEPT_ENCODING:gzip, deflate
+</pre>
+
+<p>
+Die hier gezeigten Header habe ich &uuml;ber <i>ALL_HTTP</i> erhalten. Der Header f&uuml;r den Account ist
+<i>HTTP_AUTHORIZATION</i> - allerdings k&ouml;nnte man die Daten (Benutzername und Passwort, gr&uuml;n markiert) als unlesbar
+bezeichnen.
+Wer jetzt glaubt, da&szlig; diese Daten verschl&uuml;sselt sind, ist leider schief gewickelt. Die Daten sind
+nur Base64 encodet, das hat mit Verschl&uuml;sselung leider nichts zu tun. Und das Decodieren k&ouml;nnte man
+sogar als Kinderspiel bezeichnen.
+</p>
+
+<p>
+Gut - w&auml;re das jetzt Basic Authentication des IIS, w&uuml;rde jetzt der Account gegen die NT Accountdatenbank
+verglichen. Aber - wir wollen ja unsere Datenbank unterschieben, deshalb m&uuml;ssen einige Vorbereitungen
+getroffen werden.
+</p>
+
+<h2>Voraussetzungen f&uuml;r ASP-basierte Basic Authentication</h2>
+<p>
+Der wichtigste Punkt, den wir uns vor Augen f&uuml;hren m&uuml;ssen ist der, da&szlig; wir mittels ASP die Basic
+Authentication am IIS vorbei durchf&uuml;hren. Im Endeffekt f&uuml;hrt der IIS immer nur anonyme Zugriffe
+durch, was im Unterschied bei "normaler" Basic Authentication nicht der Fall ist: dort werden die
+Zugriffe dann mit dem impersonierten Account durchgef&uuml;hrt.
+</p>
+<p>
+Die Authentifizierung des Clients wird bei "normalen" IIS Zugriffsmethoden per NTFS Zugriffberechtigungen
+"provoziert". Da wir die NTFS Berechtigungen nicht angreifen, m&uuml;ssen wir die Authentifizierung
+anders provozieren: wir m&uuml;ssen die 401er Fehler selbst generieren, und auch selbst abfangen, ohne
+da&szlig; uns der IIS mit seinen anderen Methoden in die Quere kommt.
+</p>
+<p>
+Eine davon ist Integrated Authentication. Diese sollte abgeschaltet werden, wie im folgenden
+Screenshot gezeigt:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010521_1.png" width="371" height="334" alt="" border="0">
+
+<p>
+Jetzt sind wir "in charge", und k&ouml;nnen (beinahe) schalten und walten, wie wir wollen.
+</p>
+
+<h2>Die Implementierung</h2>
+<p>
+Zuerst m&ouml;chte ich meine Site-Sicherheitsarchitektur vorstellen, bevor ich die Basic Authentication
+code. Da wir unsere Sicherheit selbst verwalten, m&uuml;ssen auch alle Seiten separat gesichert werden,
+soda&szlig; niemand darauf Zugriff bekommt, der nicht eingeloggt ist. Dazu eignen sich Includes, die dann
+in die jeweiligen Dateien eingebunden werden k&ouml;nnen.
+</p>
+<p>
+Hier das Beispiel einer minimalen <b>default.asp</b>:
+</p>
+
+<pre style="background='silver';">
+&lt;!-- #include file="securitycheck.asp"--&gt;
+
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;Secure Area&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+Welcome 2 the secured area!
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Die wirklich interessante Datei ist somit <b>securitycheck.asp</b>:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+If Not Session("SecArea_LoginGranted") Then
+  Session("IntendedTarget") = Request.ServerVariables("SCRIPT_NAME") &amp; _
+     "?" &amp; Request.ServerVariables("QUERY_STRING")
+  Response.Redirect "login.asp"
+  Response.End
+End If
+%&gt;
+</pre>
+
+<p>
+Falls der Benutzer nicht eingeloggt ist, wird er zur Datei <b>login.asp</b> umgeleitet. Allerdings
+speichere ich mir zuvor noch den aktuellen Dateinamen plus den QueryString, um den User nach
+erfolgreichem Login sofort zu seiner urspr&uuml;nglich gew&uuml;nschten Seite zur&uuml;ckschicken zu k&ouml;nnen.
+N&uuml;tzlich, aber eigentlich auch nicht wirklich weltbewegend.
+</p>
+
+<p>
+Bleibt also nur <b>login.asp</b>, wo sich denn auch tats&auml;chlich der interessante Code findet:
+</p>
+
+<pre style="background='silver';">
+&lt;% 
+Option Explicit 
+Response.Buffer = True	' for iis 4.0 machines
+
+Const strThisRealm = "AspHeute Secure Area"
+Dim strUName, strPwd, strTargetPage
+GetAuthInfo strUName, strPwd
+
+If "" = strUName And "" = strPwd Then
+  RequestAuthentication strThisRealm
+  Response.End
+End If
+
+' log in the user... here: hardcoded
+If "admin" = strUName And "pwd" = strPwd Then
+  Session("SecArea_LoginGranted") = True
+  strTargetPage = Session("IntendedTarget")
+  ' check: no infinite loops please!
+  If ("" = strTargetPage Or _
+     LCase(strTargetPage) = LCase(Request.ServerVariables("SCRIPT_NAME"))) Then
+        strTargetPage = "default.asp"
+  End If
+
+  Response.Redirect strTargetPage
+  Response.End
+Else
+  RequestAuthentication strThisRealm
+  Response.End
+End If
+%&gt;
+</pre>
+
+<p>
+Dieser Code ruft zwei Methoden auf, die ich sp&auml;ter vorstelle: <i>RequestAuthentication</i> und 
+<i>GetAuthInfo</i>. Erstere schickt den <i>401</i>er Statuscode um die Authentifizierung zu provozieren,
+und letztere decodiert den <i>HTTP_AUTHORIZATION</i> Header und liefert Benutzernamen und Passwort.
+</p>
+
+<p>
+Der Login des Benutzers (<i>If "adm..."</i>) ist mit Absicht hardcodiert - hier m&uuml;ssen Sie nur eine Funktion Ihrer Wahl
+aufrufen, um zB Benutzer anhand einer speziellen Datenbank zu validieren. Ich wollte es so allgemein
+und anpassbar wie m&ouml;glich halten. 
+</p>
+<p>
+Der im If-Block folgende Code setzt
+die ben&ouml;tigte Session-Loginvariable, und schickt den Benutzer dorthin zur&uuml;ck, von wo aus der Login verlangt
+wurde. Ich ber&uuml;cksichtige den QueryString, als auch m&ouml;gliche Loops auf login.asp.
+</p>
+
+<p>
+Alles in allem ist es, ohne den Code der beiden noch vorenhaltenen Methoden, leicht verst&auml;ndlich wie
+der Prozess abl&auml;uft: beim ersten Request existieren noch kein Benutzername und Passwort, daher
+wird eine Authorization verlangt. Beim zweiten Aufruf existieren dann diese (hoffentlich),
+und der Benutzer wird mit der Benutzerdatenbank validiert. Existiert er, wird Einla&szlig; gew&auml;hrt.
+Ist er non-existent, wird eine weitere Autorisierung eingeleitet (<i>Else</i> Zweig).
+</p>
+
+<p>
+Als Abschlu&szlig; nun die beiden Methoden, die die eigentliche Arbeit &uuml;bernehmen:
+</p>
+
+<pre style="background='silver';">
+&lt;!-- #include file="base64.asp" --&gt;
+&lt;script language="vbscript" runat="server"&gt;
+Sub RequestAuthentication(ByVal strRealm)
+  Response.Write "401 Unauthorized"
+  Response.Status = "401 Unauthorized"
+  Response.AddHeader "WWW-Authenticate","BASIC Realm=" &amp; strRealm
+End Sub
+
+Sub GetAuthInfo(ByRef strUsername, ByRef strPassword)
+  Dim strAuth, strUserPwdPortion, nPos
+  strAuth = Request.ServerVariables("HTTP_AUTHORIZATION")
+  strUsername = ""
+  strPassword = ""
+
+  ' Check for basic authentication
+  If ("basic" = LCase(Left(strAuth, 5))) Then
+    strUserPwdPortion = Base64decode(Mid(strAuth, 7))
+    nPos = InStr(strUserPwdPortion, ":")
+    If nPos &gt; 1 Then
+      strUsername = Left(strUserPwdPortion, nPos - 1)
+      strPassword = Mid(strUserPwdPortion, nPos + 1)
+    End If
+  End If
+End Sub
+&lt;/script&gt;
+</pre>
+
+<p>
+Die Funktionalit&auml;t f&uuml;r Base64 Codierung und Decodierung habe ich in die Includedatei <b>base64.asp</b>
+verfrachtet. Verwendet wird <i>Base64decode</i> in der Funktion <i>GetAuthInfo</i>, bevor Benutzername
+und Passwort aus dem String herausgeparst werden k&ouml;nnen. Der Rest sind einfache Stringoperationen.
+</p>
+
+<p>
+Die Funktion <i>RequestAuthentication</i> ist noch einfacher gestrickt. Hier wird nur der Response
+Status ver&auml;ndert, und ein Header f&uuml;r die Authentifizierung gesetzt. Der <i>Realm</i> kann in 
+<b>login.asp</b> durch die Konstante <i>strThisRealm</i> gesetzt werden, und scheint in der 
+Dialogbox auf.
+</p>
+
+<p>
+Damit w&auml;ren wir auch schon am Ende des Codes angelangt. Bis auf das Aufparsen von Base64 ist das
+ben&ouml;tigte ASP Wissen nicht als "Rocket Science" zu qualifizieren.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Mit wenig Code und wenig Konfigurationsarbeit kann man Basic Authentication mittels ASP implementieren.
+Der Nachteil von Basic Authentication - keine Verschl&uuml;sselung der Accountdaten ohne SSL - bleibt aber
+leider dennoch bestehen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010521.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010521.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000508.htm">Erstellen eines HTTP Test Tools</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000508.htm</span><br>
+<a href="../artikel/20010608.htm">Formular-basierte Basic Authentication</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010608.htm</span><br>
+<a href="../artikel/20000531.htm">Generieren eines sicheren Pa&szlig;wortes</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000531.htm</span><br>
+<a href="../artikel/20010330.htm">Passw&ouml;rter mit SHA1 absichern</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010330.htm</span><br>
+<a href="../artikel/20000630.htm">Verwendung von SSL Test-Certificates</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000630.htm</span><br>
+<a href="../artikel/20001109.htm">Verzeichnissicherheit mit NTFS und IIS Authentifizierung</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001109.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

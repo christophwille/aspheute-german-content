@@ -1,0 +1,202 @@
+<HTML>
+<HEAD>
+<TITLE>MS Script Encoder dekodiert</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im Artikel ASP Scripts verschl&uuml;sseln habe ich beschrieben, wie man ASP Scripts mittels MS Script Encoder unlesbar machen kann. Dies reicht aber nur f&uuml;r den durchschnittlichen Benutzer als Abwehrmittel, wie dieser Artikel zeigt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Script Encoder,Script Decoder,Kodierung,Verschlüsselung,Sicherheit,Obfuscation,Security,encode,decode,obfuscate">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>MS Script Encoder dekodiert</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20011123"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Im Artikel <a href="../artikel/20000510.htm">ASP Scripts verschl&uuml;sseln</a> habe ich beschrieben, wie
+man ASP Scripts mittels MS Script Encoder unlesbar machen kann. Ich habe darauf hingewiesen, da&szlig; dies nur
+f&uuml;r den durchschnittlichen Benutzer als Abwehrmittel taugt, nicht aber gegen den, der wirklich den
+Sourcecode will. Um dieser Warnung Nachdruck zu verleihen, stelle ich heute ein Tool zur Umkehrung der
+Verschl&uuml;sselung vor.
+</p>
+<p>
+Genauso wie der Autor des Tools m&ouml;chte ich voranstellen, da&szlig; die Verwendung des Tools rein als Demonstration
+der im Endeffekt untauglichen Enkodierung durch den MS Script Encoder dienen soll. Da&szlig; man es nicht zum 
+Knacken anderer Leute Sourcecode verwenden darf, versteht sich wohl von selbst (und ich als Autor des Artikels nicht
+f&uuml;r Ihre Aktionen verantwortlich bin).
+</p>
+
+<h2>Script Encoder Revisited</h2>
+<p>
+Sehen wir uns am Anfang als kurze Aufw&auml;rm&uuml;bung noch einmal den Script Encoder und seine Verwendung
+an (<a href="http://msdn.microsoft.com/downloads../default.htm?URL=/downloads/sample.asp?url=/msdn-files/027/001/789/msdncompositedoc.xml" target="_blank">Download</a>).
+Hier ist meine Beispieldatei, die enkodiert werden soll (<b>sample.asp</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Language="VBScript" %&gt;
+&lt;%
+Option Explicit
+
+Response.Buffer = True
+Dim nVar, strVar, i
+
+nVar = 10
+strVar = "Hello World"
+
+For i=1 To nVar
+  Response.Write strVar
+  Response.Write "&lt;br&gt;"
+Next
+Response.End
+%&gt;
+</pre>
+
+<p>
+Nehmen wir an, das w&auml;re so sch&uuml;tzenswert, da&szlig; es niemand lesen k&ouml;nnen darf, der am Webserver physikalischen
+Zugriff auf die Datei hat. Deshalb w&uuml;rde ich es so enkodieren:
+</p>
+
+<pre style="background='silver';">
+screnc /l VBScript sample.asp encoded.asp
+</pre>
+
+<p>
+Die Ausf&uuml;hrung dieses Befehls liefert mir die enkodierte Datei <b>encoded.asp</b> (die zweite
+Zeile habe ich aus "Lesbarkeitsgr&uuml;nden" umgebrochen):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Language="VBScript.Encode" %&gt;
+&lt;%#@~^3gAAAA==@#@&amp;r2DkKxPA6ask1kO@#@&amp;@#@&amp;]/wKU/RA!WW+MP{PPD;n@#@&amp;9ks
+    ~xjl.S,/Y.#mDSPb@#@&amp;@#@&amp;	.mDP{P8T@#@&amp;/ODjl.~{PJ_nV^WPqG.V9J@#@&amp;@#@
+    &amp;oGMPr'8~KKPU#mD@#@&amp;~,In/aG	/ncMkYPkODjl.@#@&amp;P~]/wKU/RMrO+,J@!4.@*E@#@
+    &amp;1n6D@#@&amp;"+d2Kx/n Ax[@#@&amp;CDoAAA==^#~@%&gt;
+</pre>
+
+<p>
+Ausreichend unlesbar f&uuml;r jedermann der nicht viel Zeit investieren will, das zu dekodieren.
+</p>
+
+<h2>Vorhang auf f&uuml;r den Windows Script Decoder</h2>
+<p>
+Habe ich vorhin etwas von "viel Zeit investieren" geschrieben? Nun, wenn der derjenige wei&szlig; welche
+Tools es am Internet gibt (und Cracker tendieren dazu dieses Wissen zu haben), dann reduziert sich "viel" auf "einige wenige Sekunden". Das Tool von dem 
+ich rede, ist der <a href="http://www.virtualconspiracy.com/scrdec.html" target="_blank">Windows Script Decoder</a>.
+Dessen Verwendung ist (leider) genauso einfach wie die des Script Encoders:
+</p>
+
+<pre style="background='silver';">
+scrdec13.exe encoded.asp decoded.asp
+</pre>
+
+<p>
+Und tats&auml;chlich - der Output ist ein (beinahe) identes Script:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Language="VBScript.Encode" %&gt;
+&lt;%
+Option Explicit
+
+Response.Buffer = True
+Dim nVar, strVar, i
+
+nVar = 10
+strVar = "Hello World"
+
+For i=1 To nVar
+  Response.Write strVar
+  Response.Write "&lt;br&gt;"
+Next
+Response.End
+%&gt;
+</pre>
+
+<p>
+Mit "beinahe" meinte ich, da&szlig; man h&auml;ndisch <i>VBScript.Encode</i> durch <i>VBScript</i> ersetzen mu&szlig;. Ansonsten h&auml;lt man
+den originalen Sourcecode in H&auml;nden.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dieser Artikel dient als Warnung, da&szlig; die Verwendung des Script Encoders nur eine Ma&szlig;nahme gegen unbedarfte
+Kunden sein kann. Einem entschlossenen Angreifer malen enkodierte Dateien im H&ouml;chstfall ein mildes L&auml;cheln
+ins Gesicht. Dies ist wieder einmal der Beweis, da&szlig; wenn man "Sicherheitstechiken" einsetzt, man sich auch
+informieren sollte, was die Gegenseite an Tools zur Umgehung zu bieten hat.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20011123.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20011123.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000510.htm">ASP Scripts verschl&uuml;sseln</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000510.htm</span><br>
+<a href="../artikel/20020411.htm">Kopieren verboten - Lizenzsicherung bei ASP Scripts</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020411.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ewisdom%2Eweizmann%2Eac%2Eil%2F%7Eboaz%2FPapers%2Fobfuscate%2Ehtml">A mathematical paper demonstrating the impossibility of code obfuscation</a><br>
+<SPAN class="content">http://www.wisdom.weizmann.ac.il/~boaz/Papers/obfuscate.html</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eswishweb%2Ecom%2Fdec%2Ehtm">Obfuscated-HTML De-obfuscation Tools</a><br>
+<SPAN class="content">http://www.swishweb.com/dec.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Fdownloads%2Fdefault%2Easp%3FURL%3D%2Fdownloads%2Fsample%2Easp%3Furl%3D%2Fmsdn%2Dfiles%2F027%2F001%2F789%2Fmsdncompositedoc%2Exml">Script Encoder</a><br>
+<SPAN class="content">http://msdn.microsoft.com/downloads../default.htm?URL=/downloads/sample.asp?url=/msdn-files/027/001/789/msdncompositedoc.xml</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3Furl%3D%2Flibrary%2Fen%2Dus%2Fscript56%2Fhtml%2FSeconScriptEncoderOverview%2Easp">Script Encoder Documentation</a><br>
+<SPAN class="content">http://msdn.microsoft.com/library../default.htm?url=/library/en-us/script56/html/SeconScriptEncoderOverview.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Evirtualconspiracy%2Ecom%2Fscrdec%2Ehtml">Windows Script Decoder</a><br>
+<SPAN class="content">http://www.virtualconspiracy.com/scrdec.html</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,272 @@
+<HTML>
+<HEAD>
+<TITLE>JavaScript &amp; DHTML - Wie man Fehler findet bevor die Kunden es tun</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Client-side Code hat eine schlechte Eigenschaft - er l&auml;uft nicht wirklich auf jeder Plattform (NS, IE, Opera, etc). Und diese Fehler stehen leider in keinem Logfile. Daher mu&szlig; es einen anderen Weg geben.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,JScript,JavaScript,Client-side,DHTML,Fehlerbehebung,Debuggen,IIS,ASP">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>JavaScript &amp; DHTML - Wie man Fehler findet bevor die Kunden es tun</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=19990819"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wenn  man seine Seiten mit JavaScript oder DHTML aufpoliert, so kann man nie ganz sicher sein, da&szlig; es nicht doch 
+einen bestimmten Browser oder eine Version in irgendeiner Sprache gibt, die auf die Seite allergisch reagiert 
+sowie unsch&ouml;ne und nicht gerade imagef&ouml;rdernde Fehlermeldungen produziert.
+</p>
+<p>
+Um dies zu vermeiden gibt es 2 M&ouml;glichkeiten:
+<OL>
+<LI>Man h&auml;lt sich ein Archiv von unz&auml;hligen Browservarianten in allen m&ouml;glichen und unm&ouml;glichen Sprachen und 
+testet seine Seiten auf gebr&auml;uchlichen und weniger gebr&auml;uchlichen Betriebssystemen, Prozessoren und Service 
+Packs, wobei allein der Hardwareaufwand f&uuml;r einen Entwickler fast unbezahlbar ist.
+<LI>Man &uuml;berl&auml;&szlig;t es der HTML Seite selbst den JavaScript Fehler aufzufangen, die Fehlermeldung zu unterdr&uuml;cken 
+und eine m&ouml;glichst genaue Fehlermeldung, vom Benutzer unbemerkt, zum Webmaster zu senden.
+</ol>
+</p>
+<p>
+Gegen Punkt 1 spricht wohl, da&szlig; es sich niemand leisten kann, in eine Seite f&uuml;r deren Entwicklung er 
+eine Stunde gebraucht hat, etwa 100 Teststunden zu investieren und au&szlig;erdem eine h&uuml;bsche Anzahl von 
+Rechnern mit unterschiedlichen Betriebssystemen zu besitzen und zu warten. <a href="19990819.htm#Systeme">(*)</a>
+</p>
+<p>
+Gegen Punkt 2 spricht eigentlich nur, da&szlig; m&ouml;glicherweise die Erfahrung oder das Wissen fehlt um die 
+n&ouml;tigen Scripts zu erstellen. Dies ist der Punkt wo ich einhaken m&ouml;chte.
+</p>
+<p>
+Um einen Fehler in einer JavaScript- oder DHTML-Seite aufzufangen, ben&ouml;tigt man ein client-seitiges Script, 
+das diese Aufgabe &uuml;bernimmt. Weiters sollte dieses Script Daten &uuml;ber den Fehler, den verwendeten Browser und 
+das Betriebssystem dem Webmaster zur Verf&uuml;gung stellen. Optimal w&uuml;rde dies auf eine Art und Weise geschehen, 
+da&szlig; der Betrachter der Seite m&ouml;glichst keine Notiz von dem Fehler nimmt. Das folgende Script der JavaScript 
+Funktion mit dem Namen "ErrorFunction" &uuml;bernimmt diese Aufgabe weitgehend. Es f&auml;ngt einen etwaigen JavaScript 
+Fehler auf, sammelt Daten &uuml;ber diesen und leitet diese Daten im "Query String" an ein server-seitiges ASP Script 
+weiter.
+<pre>
+&lt;HTML&gt;
+&lt;HEAD&gt;
+  &lt;TITLE&gt;JavaScript Error&lt;/TITLE&gt;
+&lt;SCRIPT LANGUAGE=&quot;JavaScript&quot;&gt;
+<font face="" color="Green">&lt;!--</font>
+<font face="" color="Green">// Fehler abfangen in Internet Explorer und kompatiblen</font>
+window.onerror=ErrorFunction;
+<font face="" color="Green">// // Fehler abfangen in Netscape und kompatiblen</font>
+window.onError=ErrorFunction;
+
+function ErrorFunction(msg, url, line)
+{
+  var hr;       <font face="" color="Green">// URL der augenblicklichen Seite</font>
+  var appcode;  <font face="" color="Green">// Codename des Browsers</font>
+  var app;      <font face="" color="Green">// Programmname des Browsers</font>
+  var ver;      <font face="" color="Green">// Betriebssystem und Version des Browsers</font>
+  var usr;      <font face="" color="Green">// Programmheader in HTTP</font>
+  var wl;       <font face="" color="Green">// URL und Query String des serverseitigen Scripts </font>
+                <font face="" color="Green">// das den Fehler weiterverarbeitet</font>
+  var qs;       <font face="" color="Green">// Query String der beim Aufruf dieser Seite benutzt wird</font>
+  <font face="" color="Green">// Hier die URL des server-seitigen Scripts eintragen</font>
+  errorurl='http://194.8.136.198/silent/errorserversilent.asp';
+  <font face="" color="Green">// Die URL der augenblicklichen Seite speichern</font>
+  hr=window.location.href;
+  qs=window.location.search;
+  if (qs.indexOf('JsError=return')==-1)
+  {
+    appcode=navigator.appCodeName;
+    app=navigator.appName;
+    ver=navigator.appVersion;
+    usr=navigator.userAgent;
+    wl=errorurl+&quot;?JsErrorUrl=&quot;+escape(url);
+    wl+=&quot;&amp;JsErrorLine=&quot;+escape(line);
+    wl+=&quot;&amp;JsErrorMsg=&quot;+escape(msg);
+    wl+=&quot;&amp;JsErrorAppcode=&quot;+escape(appcode);
+    wl+=&quot;&amp;JsErrorApp=&quot;+escape(app);
+    wl+=&quot;&amp;JsErrorVer=&quot;+escape(ver);
+    wl+=&quot;&amp;JsErrorUsr=&quot;+escape(usr);
+    window.location=wl;
+  }
+  return true;
+}
+<font face="" color="Green">//--&gt;</font>
+&lt;/SCRIPT&gt;
+&lt;/HEAD&gt;
+&lt;BODY&gt;
+&lt;BR&gt;&lt;BR&gt;
+&lt;H3&gt;&lt;CENTER&gt;Hier zuerst mal eine ganz normale Webseite,
+bis pl&amp;ouml;tzlich ...&lt;BR&gt;&lt;BR&gt;&lt;/CENTER&gt;&lt;/H3&gt;
+&lt;SCRIPT LANGUAGE=&quot;JavaScript&quot;&gt;
+<font face="" color="Green">&lt;!--</font>
+<font face="" color="Green">// hier kommt der Fehler</font>
+self=null;
+<font face="" color="Green">//--&gt;</font>
+&lt;/SCRIPT&gt;
+&lt;BR&gt;&lt;BR&gt;
+&lt;H3&gt;&lt;CENTER&gt;... die Fehlermeldung wurde gesendet,
+der Benutzer hat (hoffentlich) nichts gemerkt.&lt;/CENTER&gt;&lt;/H3&gt;
+&lt;BR&gt;
+&lt;/BODY&gt;
+&lt;/HTML&gt;
+</pre>
+</p>
+<p>
+Was macht die JavaScript Funktion <i>ErrorFunction</i>? Sie f&auml;ngt erst einmal dank der Befehle
+<pre>
+window.onerror=ErrorFunction;
+window.onError=ErrorFunction;
+</pre>
+den JavaScript Fehler ab und verhindert somit das Erscheinen einer Fehlermeldung. Weiters sammelt 
+es Daten &uuml;ber den Browser, die aufgerufene Seite, das Betriebssystem und Werte, die nach einem 
+Fragezeichen an die URL angeh&auml;ngt worden sind (=Query String).
+</p>
+<p>
+Es benutzt die Eigenschaft <i>location</i> des JavaScript Objektes <i>window</i> um das server-seitige ASP Script 
+aufzurufen und die gesammelten Daten sowie die URL der augenblicklichen Seite an das serverseitige 
+Script zu &uuml;bergeben. Dort k&ouml;nnen die Daten dann gespeichert, ausgewertet und weitergeleitet werden. 
+Das server-seitige Script hat weiters die Aufgabe die alte Seite wieder darzustellen, damit der 
+Benutzer das sieht, was er eigentlich aufgerufen hat.
+</p>
+<p>
+<pre>
+&lt;% @ Language=VBScript %&gt;
+&lt;%
+Response.Expires=0
+Response.AddHeader &quot;Pragma&quot;,&quot;no-cache&quot;
+Response.AddHeader &quot;cache-control&quot;, &quot;no-store&quot;
+
+strM=&quot;&quot;
+strM=strM &amp; &quot;URL = &quot; &amp; Request.QueryString(&quot;JsErrorUrl&quot;) &amp; VbCrLf
+strM=strM &amp; &quot;Zeile = &quot; &amp; Request.QueryString(&quot;JsErrorLine&quot;) &amp; VbCrLf
+strM=strM &amp; &quot;Fehlermeldung = &quot; &amp; Request.QueryString(&quot;JsErrorMsg&quot;) &amp; VbCrLf
+strM=strM &amp; &quot;Codename des Browsers = &quot; &amp; Request.QueryString(&quot;JsErrorAppcode&quot;) &amp; VbCrLf
+strM=strM &amp; &quot;Programmname des Browsers = &quot; &amp; Request.QueryString(&quot;JsErrorApp&quot;) &amp; VbCrLf
+strM=strM &amp; &quot;Browserversion = &quot; &amp; Request.QueryString(&quot;JsErrorVer&quot;) &amp; VbCrLf
+strM=strM &amp; &quot;Browserheader = &quot; &amp; Request.QueryString(&quot;JsErrorUsr&quot;) &amp; VbCrLf
+
+strM=strM &amp; &quot;IP Adresse des Browsers = &quot; &amp; Request.ServerVariables(&quot;REMOTE_ADDR&quot;) &amp; VbCrLf
+strM=strM &amp; &quot;Server Alias des Browsers = &quot; &amp; Request.ServerVariables(&quot;REMOTE_HOST&quot;) &amp; VbCrLf
+
+<font face="" color="Green">' ### Verarbeiten der gewonnenen Daten ueber den Fehler,
+' ### die in strM gespeichert sind
+' ### Man kann die Daten in einer Datenbank oder einer Datei speichern,
+' ### oder sie ueber Email an den Webmaster schicken.</font>
+
+' Response.Write Replace(strM,vbcrlf,&quot;&lt;BR&gt;&quot; &amp; vbcrlf)
+
+<font face="" color="Green">' ### In diesem Beispiel wird von jedem Fehler mittels 
+' ### einer Mailkomponente ein Mail an den Webmaster geschickt</font>
+ 
+On Error Resume Next
+Set objMail = Server.CreateObject(&quot;CDONTS.NewMail&quot;)
+strEmpfaenger = &quot;ChristianK@softwing.com&quot;
+strBetreff = &quot;Javascript-Fehlermeldung von &quot; 
+strBetreff = strBetreff &amp; Request.ServerVariables(&quot;SCRIPT_NAME&quot;)
+strNachricht = strM
+objMail.Send &quot;&quot;,strEmpfaenger,strBetreff,strNachricht, 0
+
+<font face="" color="Green">' ### Hier erfolgt der Redirekt zurueck zur Seite,
+' ### die den Fehler verursacht hat.</font>
+strUrl=Request.QueryString(&quot;JsErrorUrl&quot;)
+If Instr(strUrl,&quot;?&quot;) = 0 Then
+	strRedirect = strURL &amp; &quot;?JsError=return&quot;
+Else
+	strRedirect = strURL &amp; &quot;&amp;JsError=return&quot;
+End If
+Response.Redirect(strRedirect)
+%&gt;
+</pre>
+</p>
+<p>
+Das ASP Script besteht aus drei Teilen:
+<ol>
+<li>Auslesen der Daten (&uuml;ber den Browser, das Betriebssystem, die aufgerufene Seite) aus dem Query String 
+und Erstellen der detailierten Fehlermeldung.
+<li>Verarbeiten der Fehlermeldung. In diesem Beispiel wird sie &uuml;ber eine Mail-Komponente an 
+den Webmaster geschickt.
+<li>Erneutes Aufrufen der urspr&uuml;ngliche Seite mit einem zus&auml;tzlichen Parameter, soda&szlig; das 
+client-seitige Script bei einem Fehler nicht wieder zum ASP Script springt, was unweigerlich 
+in einer Endlosschleife enden w&uuml;rde.
+</ol>
+</p>
+<p>
+Einen Nachteil dieser L&ouml;sung m&ouml;chte ich nicht verschweigen. Es wird nur der erste Fehler auch an 
+den Webmaster gesendet, alle weiteren Fehler werden zwar abgefangen, aber nicht mehr an des server-seitige 
+Script zur Bearbeitung weitergeleitet.
+</p>
+<p>
+Nun zur Frage, die sich dem aufmerksamen Leser vielleicht schon die ganze Zeit aufdr&auml;ngt. Was haben 
+client-seitige Fehler in einem Artikel im deutschen ASP Forum zu suchen? Man sollte sich auch mit 
+den Dingen besch&auml;ftigen die das eigene Fachgebiet tangieren um zumindest eine Ahnung davon zu haben, 
+wie die einzelnen Technologien sinnvoll zusammen eingesetzt werden k&ouml;nnen.
+</p>
+
+<p>
+<a name="Systeme">(*) Verschiedenen Parameter der Testszenarien sind unter anderem:</a>
+<ul>
+<li><b>Browser</b> Internet Explorer( IE) , Netscape (NN), AOL, ...
+<li><b>Versionen</b> IE 3, IE 4(diverse Versionen) , IE 5.0 (div. Vers.) , NN 2, 
+NN 3 (div. Vers.), NN 4 (div. Vers.), ...
+<li><b>Sprachen</b> Deutsch, Englisch, Franz&ouml;sisch, Italienisch, ....
+<li><b>Betriebssysteme</b> Windows 95, Win 95a, Win 95 OSR2, Win98, Win 98 SE, Win CE, 
+Win NT Workstation 4.0, Win NT Server 4.0, Windows 2000, OS/2, UNIX, Linux, Solaris,  Mac OS 8.5, ...
+<li><b>Service Packs</b> Allein f&uuml;r Win NT 4.0 gibt es bereits 5 Service Packs
+<li><b>Hardware</b> zum Beispiel CPU: Intel, Alpha, MIPS, Motorola, ...
+</ul>
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000818.htm">Debuggen von ASP Skripts - Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000818.htm</span><br>
+<a href="../artikel/20010530.htm">Redirects mit Frame-Targets</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010530.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

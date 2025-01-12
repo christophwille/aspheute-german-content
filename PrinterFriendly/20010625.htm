@@ -1,0 +1,254 @@
+<HTML>
+<HEAD>
+<TITLE>Html Emails mit Dundas Mailer verschicken</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Heute stelle ich Ihnen Dundas Mailer vor, das vollst&auml;ndig gratis ist, Html Emails mit eingebetteten Images verschicken kann, und keine Restriktionen in der Funktionalit&auml;t mit sich bringt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Mail,Html,Html Mail,Html Email,Email verschicken,Formularversand,eingebettete Bilder,inline images">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Html Emails mit Dundas Mailer verschicken</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Komponenten.htm">Komponenten</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010625"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Emailkomponenten gibt es wie Sand am Meer - allerdings unterst&uuml;tzen nicht alle das Versenden von 
+Html Emails, und wenn, dann kosten sie Geld, oder h&auml;ngen Werbung an jede Email an. Heute stelle
+ich Ihnen Dundas Mailer vor, das vollst&auml;ndig gratis ist, Html Emails mit eingebetteten Images kann,
+und keine Restriktionen in der Funktionalit&auml;t mit sich bringt.
+Klarerweise kann die Komponente auch Standardmails verschicken, wir wollen uns heute aber mit dem
+interessanteren Thema der Html Emails besch&auml;ftigen.
+</p>
+<p>
+ Die Komponente kann von 
+<a href="http://www.dundas.com/downloads/free/index.asp#mailer" target="_blank">Dundas</a>
+gratis downgeloadet werden, und sie kommt mit einem netten Setup Programm. Achtung: die Hilfe mu&szlig; 
+separat downgeloadet werden, und diese umfasst alle 
+gratis angebotenen Komponenten (es ist auch Dundas Upload zum Dateiupload gratis).
+</p>
+
+<h2>Einfache Html Emails versenden</h2>
+<p>
+Was verstehe ich unter einen einfachen Html Email? Nun, der folgende Screenshot zeigt's:
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010625_1.png" width="432" height="323" alt="" border="0">
+
+<p>
+Die Funktionalit&auml;t daf&uuml;r ist in der Datei <b>SendHtmlMail.asp</b> verpackt.  Ich habe auf Eingabeformulare
+verzichtet, damit wir uns rein auf den Code zum Verschicken einer Html Email konzentrieren k&ouml;nnen:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Language=VBScript %&gt;
+&lt;% 
+Option Explicit
+Response.Buffer = True 
+
+Dim objEmail, strHtml
+Set objEmail = Server.CreateObject("Dundas.Mailer")
+
+objEmail.TOs.Add "christophw@fx2.dev.alfasierrapapa.com"
+objEmail.FromAddress = "christophw@dev.alfasierrapapa.com"
+objEmail.Subject = "A simple HTML mail"
+' objEmail.CCs.Add "hostmaster@fx2.dev.alfasierrapapa.com"
+' objEmail.BCCs.Add "spook@fx2.dev.alfasierrapapa.com"
+objEmail.SMTPRelayServers.Add "fx2.dev.alfasierrapapa.com"
+
+strHtml = "&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body bgcolor=""#ffffff""&gt;"
+strHtml = strHtml &amp; "&lt;h1&gt;A Simple Email&lt;/h1&gt;&lt;p&gt;"
+strHtml = strHtml &amp; "...and some &lt;b&gt;body&lt;/b&gt; &lt;i&gt;text&lt;/i&gt;&lt;/p&gt;"
+strHtml = strHtml &amp; "&lt;/body&gt;&lt;/html&gt;"
+objEmail.HTMLBody = strHtml
+
+On Error Resume Next
+objEmail.SendMail
+
+If Err.Number &lt;&gt; 0 Then
+  Response.Write "Sending Email failed: " &amp; Err.Description
+Else
+  Response.Write "Email was sent successfully"
+End If
+%&gt;
+</pre>
+
+<p>
+Die Empf&auml;nger - To, Cc und Bcc - sind bei Dundas Mailer als Collections angelegt, in die man die 
+Empf&auml;nger mittels <i>Add</i> Methode eintr&auml;gt. Der (oder die) Mailserver wird mittels <i>SMTPRelayServers</i>
+Collection angegeben, hingegen sind <i>FromAddress</i>, <i>Subject</i> und <i>HTMLBody</i> Eigenschaften.
+</p>
+
+<p>
+Die <i>HTMLBody</i> Eigenschaft ist f&uuml;r uns das interessante: hier wird ein v&ouml;llig normales HTML Dokument
+zugewiesen, das ich in diesem Fall mehr oder weniger dynamisch zusammenbaue. Man k&ouml;nnte den Body allerdings
+auch mit der <i>LoadBodyFromFile</i> Methode aus einer Datei laden.
+</p>
+
+<p>
+Der Versand der Email geht kurz und schmerzlos mit der <i>SendMail</i> Methode von statten. Es empfiehlt sich,
+die etwaig auftretenden Fehler mittels des <i>On Error Resume Next</i> Statements abzufangen, und 
+selbst zu bearbeiten (<i>Err</i> Objekt).
+</p>
+
+<h2>Emails mit eingebetteten Bildern</h2>
+<p>
+Man kann zwar mit rein textbasierten Html Emails schon einiges anstellen, richtig interessant wird es allerdings
+erst dann, wenn man zus&auml;tzliche Dateien in die Emails einbindet - in den meisten F&auml;llen werden es zwar
+Bilder sein, man kann die Vorgangsweise aber auch auf Hintergrundmusik oder JavaScript Includes anwenden.
+</p>
+
+<p>
+Auch f&uuml;r diesen Anwendungsfall zuerst wieder das Ergebnis:
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010625_2.png" width="532" height="353" alt="" border="0">
+
+<p>
+Der Code dazu findet sich in <b>SendHtmlMail_WithImg.asp</b>:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Language=VBScript %&gt;
+&lt;% 
+Option Explicit
+Response.Buffer = True 
+
+Dim objEmail, strHtml
+Set objEmail = Server.CreateObject("Dundas.Mailer")
+
+objEmail.TOs.Add "christophw@fx2.dev.alfasierrapapa.com", "Christoph Wille"
+objEmail.FromAddress = "christophw@dev.alfasierrapapa.com"
+objEmail.Subject = "A cooler HTML mail"
+objEmail.SMTPRelayServers.Add "fx2.dev.alfasierrapapa.com"
+
+' Add(file name, unique content id, content name, custom header
+objEmail.HTMLEmbeddedObjs.Add Server.MapPath("aspheute.png"), _
+     "01", _
+     "aspheute.png"
+
+strHtml = "&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body bgcolor=""#ffffff""&gt;"
+strHtml = strHtml &amp; "&lt;h1&gt;A cooler Email&lt;/h1&gt;&lt;p&gt;"
+strHtml = strHtml &amp; "...go and visit &lt;a href=""http://www.aspheute.com/"
+strHtml = strHtml &amp; """&gt;&lt;img src=""cid:01"" border=0&gt;&lt;/a&gt;&lt;/p&gt;"
+strHtml = strHtml &amp; "&lt;/body&gt;&lt;/html&gt;"
+objEmail.HTMLBody = strHtml
+
+On Error Resume Next
+objEmail.SendMail
+
+If Err.Number &lt;&gt; 0 Then
+  Response.Write "Sending Email failed: " &amp; Err.Description
+Else
+  Response.Write "Email was sent successfully"
+End If
+%&gt;
+</pre>
+
+<p>
+Um Dateien an eine Email anzuf&uuml;gen, verwendet man die <i>Add</i> Methode der <i>HTMLEmbeddedObjs</i>
+Collection. Dieser mu&szlig; man den physikalischen Pfad zur Datei angeben, eine eindeutige Content-Id (diese
+verwendet man, um auf die eingebettete Datei zu referenzieren), sowie einen "freundlichen" Contentnamen.
+Und schon kann man die Datei in der Html Email verwenden.
+</p>
+
+<p>
+Dies passiert beim Zusammenbau des Html Strings. Um auf die Graphik zu referenzieren verwende ich im
+<i>IMG</i> Tag den String <i>cid:01</i>. Das ist kurz f&uuml;r <i>content id</i>, und die Zahl bezieht
+sich auf die eindeutige Content-Id, die wir mittels <i>HTMLEmbeddedObjs.Add</i> erzeugt haben.
+Apropos: die Content-Id kann eine Zahl sein, sie mu&szlig; nicht. Ein Mu&szlig; allerdings ist <i>cid</i>
+kleinzuschreiben, weil sonst bekommt man mit Outlook so seine Probleme...
+</p>
+
+<p>
+Damit h&auml;tten wir ein Bild in unserer Html Email, und sind damit auch schon (fast) am Ende des heutigen
+Artikels.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Gute Komponenten m&uuml;ssen nicht immer Geld kosten - und Dundas Mailer ist ein weiterer Beweis daf&uuml;r.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010625.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010625.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20021028.htm">ACT MetaMailer - Mails verschicken leicht gemacht</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021028.htm</span><br>
+<a href="../artikel/20000810.htm">Auslesen von Emails aus einem POP3 Account</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000810.htm</span><br>
+<a href="../artikel/20000330.htm">Downloads per Email verschicken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000330.htm</span><br>
+<a href="../artikel/19990809.htm">Email versenden mit AspMail</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990809.htm</span><br>
+<a href="../artikel/20010122.htm">Emails mit ASP.NET und VB.NET versenden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010122.htm</span><br>
+<a href="../artikel/20000918.htm">Emails mit ASP.NET versenden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000918.htm</span><br>
+<a href="../artikel/20000919.htm">Emails mittels CDOSYS versenden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000919.htm</span><br>
+<a href="../artikel/20000515.htm">Emails senden mit CDONTS</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000515.htm</span><br>
+<a href="../artikel/20010219.htm">Emails versenden mit ASPEmail</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010219.htm</span><br>
+<a href="../artikel/20000912.htm">Mit PGP verschl&uuml;sselte e-Mails senden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000912.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Edundas%2Ecom%2Fdownloads%2Ffree%2Findex%2Easp%23mailer">Dundas Mailer</a><br>
+<SPAN class="content">http://www.dundas.com/downloads/free/index.asp#mailer</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

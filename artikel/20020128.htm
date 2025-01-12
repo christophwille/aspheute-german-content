@@ -1,0 +1,522 @@
+<HTML>
+<HEAD>
+<TITLE>Serverdaten clientseitig in Exceltemplates importieren</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Was soll der Anwendungsfall sein, ein Exceltemplate vom Server downzuloaden und dann am Client mit Daten die am Server generiert wurden zu bef&uuml;llen?. Nun, ganz einfach: es ist wahrscheinlicher, da&szlig; am Client Excel installiert ist als am Server!">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Excel,Office,CreateObject,Sicherheit,Server,clientside,serverside,Script">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Serverdaten clientseitig in Exceltemplates importieren</H1>
+<p>
+Geschrieben von: <a href="../autoren/herberthahn.htm">Herbert Hahn</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020128"></SCRIPT>
+</p>
+<p>
+Was soll der Anwendungsfall sein, ein Exceltemplate vom Server downzuloaden und dann am Client mit 
+Daten die am Server generiert wurden zu bef&uuml;llen?. Nun, ganz einfach: es ist wahrscheinlicher, da&szlig; 
+am Client Excel installiert ist als am Server! Dies ist besonders bei Providern der Fall, und so 
+umgeht man das Problem ganz elegant mit einem clientseitigen Script, das dann auch noch die ganze 
+Arbeit &uuml;bernimmt und den Server selbst nicht belastet (mit Excel-Prozessen).
+</p>
+<p>
+Ich bin in meinem Beispiel davon ausgegangen, da&szlig; ich eine Adressenliste aus einer Datenbank in ein 
+Excelfile bringen will. Da ich jedoch die M&ouml;glichkeit ausschlie&szlig;e da&szlig; am Server dieser Task erledigt 
+werden kann, erzeuge ich einfach mit Response.Write dynamisch ein clientseitiges Script, das der User 
+mittels Downloadlink aktiviert. 
+</p>
+<p>
+Dieses Script ruft dann meine Excelvorlage vom Server ab, und schreibt mir die Felder aus der 
+Datenbankabfrage in die Vorlage hinein. Auf der Clientseite brauche ich die Arbeitsmappe nur mehr 
+abzuspeichern oder auszudrucken.
+</p>
+<p>
+Sinn und Zweck dieser &Uuml;bung ist es dem Client ein Excelfile zur Verf&uuml;gung zu stellen, das zum 
+Zeitpunkt des Abrufens aktuell ist. M&ouml;glich w&auml;ren zum Beispiel aktuelle Umsatzzahlen, oder die via 
+Site gesammelten Adressdaten so aufzubereiten, da&szlig; der Besitzer der Site (der ja nicht immer technisch 
+auf dem Stand des Siteprogrammieres ist) aus dieser Liste spielend ein Massenmail oder einen 
+Serienbrief gestalten kann. Nat&uuml;rlich ist die Liste der Anwendungsm&ouml;glichkeiten f&uuml;r das dynamische 
+Exceldateien-generieren weitaus l&auml;nger.
+</p>
+
+<h2>Das Script</h2>
+<p>
+Wie auch beim <a href="20020122.htm">Wordfiles richtig &ouml;ffnen!</a> Beispiel 
+betten wir das clientseitige Script in die Downloadseite ein. Dort kann man dann die Links dynamisch 
+generieren (zB wenn die Dokumente in der Datenbank verwaltet werden) oder einfach die klassische 
+Variante eines statischen Links einsetzen. 
+</p>
+<p>
+An dieser Stelle sei noch dazu gesagt, da&szlig; man aus der Programmlogik heraus einige Sachen anstellen 
+kann. Zum Beispiel kann man hier ganz einfach das aktuelle Datum in die Tabelle hineinschreiben, 
+oder die Formatierung der Zellen ergebnisgesteuert &auml;ndern. Denkbar w&auml;re da&szlig; man jede zweite Zeile 
+leicht grau f&auml;rbt - die Liste ist beliebig erweiterbar.
+</p>
+<p>
+Nochmals zur Erinnerung vom letzten Artikel: die Pfadangaben sollten unbedingt stimmen. Sonst 
+produziert man m&ouml;glicherweise sehr viele ungenutzte Excel-Prozesse im Speicher des Clients.
+</p>
+<p>
+Das folgende Codebeispiel (<b>ex3.asp</b>) stammt aus einem meiner Projekte:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Sub OpenDB (ByRef con, d)
+	DB = d &amp; ".mdb"
+	Dir = Request.ServerVariables("SCRIPT_NAME")
+	Dir = StrReverse(Dir)
+	Dir = Mid(Dir, InStr(1, Dir, "/"))
+	Dir = StrReverse(Dir)
+	Path = Server.MapPath(Dir) &amp; "\"
+	DSN = "DRIVER=Microsoft Access Driver (*.mdb);UID=admin;ReadOnly=0;" &amp;_
+          "UserCommitSync=Yes;Threads=3;SafeTransactions=0;PageTimeout=5;" &amp;_
+          "MaxScanRows=8;MaxBufferSize=512;ImplicitCommitSync=Yes;" &amp;_
+          "FIL=MS Access;DriverId=25" &amp; ";DefaultDir=" &amp; Path &amp; ";DBQ=" &amp;_
+          Path &amp; DB &amp; ";"
+	Set con = Server.CreateObject("ADODB.Connection")
+	con.Open DSN
+End Sub
+</pre>
+
+<p>
+Im Kopf der Datei habe ich eine Subroutine angelegt, die mir die Adressendatenbank (Access) 
+&ouml;ffnet. Diese Routine ist alleine schon sehr brauchbar. Die Datenbank liegt jedoch im gleichen 
+Pfad wie das Script, m&ouml;glicherweise mu&szlig; man die Datenbank aber je nach Provider in andere Verzeichnisse 
+ablegen, falls das Skriptverzeichnis schreibgesch&uuml;tzt ist.
+</p>
+
+<pre style="background='silver';">
+Pfad = "\\Sw1\www\softwing\excel\"
+xlt="meinFile.xlt"
+
+url1 = pfad &amp; xlt
+</pre>
+
+<p>
+Hier baue ich mir den Pfad zur Excel Vorlage zusammen: Die Variable <i>Pfad</i> h&auml;lt den gesamten Pfad der 
+Datei, exklusive Filenamen. Das s&auml;he also f&uuml;r einen Intranetserver so aus:
+</p>
+
+<pre style="background='silver';">
+\\Server\Freigabe\Pfad\
+</pre>
+
+<p>
+oder bei eingemappten Laufwerken so:
+</p>
+
+<pre style="background='silver';">
+H:\Pfad\PFAD\
+</pre>
+
+<p>
+Die Vorlage f&uuml;r unser Vorhaben ist in der Variable <i>xlt</i> gespeichert. 
+</p>
+
+<pre style="background='silver';">
+'oeffne die mdb
+OpenDB con, "exceltest"
+	
+SQL = "SELECT * FROM Adressen"
+Set rs = con.Execute(SQL)
+</pre>
+
+<p>
+Nun &ouml;ffne ich mittels der Subroutine <i>OpenDB</i> die Testdatenbank, und hole mir meine Testdaten. Nun 
+kommt etwas notwendige HTML-Kosmetik:
+</p>
+
+<pre style="background='silver';">
+%&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Excel&lt;/title&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"&gt;
+&lt;/head&gt;
+&lt;body bgcolor="#FFFFFF" text="#000000"&gt;
+</pre>
+
+<p>
+Ab nun schreiben wir das Script zum Client. Wenn man die Sicherheitseinstellungen nicht richtig gesetzt 
+hat, erscheint nur eine Fehlermeldung f&uuml;r dieses Skript. Wie man die notwendigen Einstellungen vornimmt, 
+lesen Sie im Artikel <a href="20020122.htm">Wordfiles richtig &ouml;ffnen!</a>. 
+</p>
+
+<pre style="background='silver';">
+&lt;script Language=VBScript&gt;
+&lt;!--
+function load_excel(pfad)
+Set objXL = CreateObject("Excel.Application")
+
+objXL.Visible = TRUE
+objXL.WorkBooks.Open(pfad)
+objXL.Cells(1, 3).font.bold = true
+objXL.Cells(1, 2).Value = "Vorname"
+objXL.Cells(1, 3).Value = "Nachname" 
+objXL.Cells(1, 4).Value = "Strasse"
+objXL.Cells(1, 5).Value = "Plz"
+objXL.Cells(1, 6).Value = "Ort"
+objXL.Cells(1, 7).Value = "Telefon"
+</pre>
+
+<p>
+Noch ist nichts mit dynamischem Skript, das ist alles vorgegeben. Hier schreiben wir die 
+Spalten&uuml;berschriften, und formatieren den Spaltenkopf von "Nachname" fett. Im Prinzip kann man 
+das je nach W&uuml;nschen des Kunden gestalten. Aber nun zum interessanteren Teil:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+i=3
+
+While Not rs.EOF
+  Reponse.Write " objXL.Cells(" &amp; i &amp; ", 3).font.bold = true" &amp; vbCrLF
+  Reponse.Write " objXL.Cells(" &amp; i &amp; ", 1).Value =" &amp; i &amp; vbCrLF
+</pre>
+
+<p>
+Wir formatieren den ersten Nachnamen fett, und schon folgt das erste Datenfeld. Wenn Sie sich jetzt 
+fragen wof&uuml;r denn das abschlie&szlig;ende vbCrLf gebraucht wird: Im Clientscript ist das vbCrLf das Ende 
+der Zeile und somit der "Trenner" der Befehle. 
+</p>
+
+<p>
+Der Befehl f&uuml;r das Bef&uuml;llen einer Excelzelle lautet (etwas verk&uuml;rzt):
+</p>
+
+<pre style="background='silver';">
+objXL.Cells(<i>offset der Zeile</i>, <i>offset der Spalte</i>).Value = "Inhalt"
+</pre>
+
+<p>
+Und das machen wir dann bis uns die Daten ausgehen:
+</p>
+
+<pre style="background='silver';">
+	Reponse.Write " objXL.Cells(" &amp; i &amp; ", 2).Value =""" &amp;_
+     Trim(rs("fldVorname")) &amp; """" &amp; vbCrLF
+	Reponse.Write " objXL.Cells(" &amp; i &amp; ", 3).Value =""" &amp;_
+     Trim(rs("fldNachname")) &amp; """" &amp; vbCrLF
+	Reponse.Write " objXL.Cells(" &amp; i &amp; ", 4).Value =""" &amp;_
+     Trim(rs("fldStrasse")) &amp; """" &amp; vbCrLF
+	Reponse.Write " objXL.Cells(" &amp; i &amp; ", 5).Value =""" &amp;_
+     Trim(rs("fldPlz")) &amp; """" &amp; vbCrLF
+	Reponse.Write " objXL.Cells(" &amp; i &amp; ", 6).Value =""" &amp;_
+     Trim(rs("fldOrt")) &amp; """" &amp; vbCrLF
+	Reponse.Write " objXL.Cells(" &amp; i &amp; ", 7).Value =""" &amp;_
+     Trim(rs("fldTelefon")) &amp; """" &amp; vbCrLF
+i=i+1
+rs.MoveNext
+Wend
+rs.Close	
+</pre>
+
+<p>
+Serverseitig wird die Datenbank geschlossen, und f&uuml;r das clientseitige Script schlie&szlig;en wir das 
+Excelobjekt:
+</p>
+
+<pre style="background='silver';">
+%&gt;
+Set objXL = Nothing
+end function
+--&gt;
+&lt;/script&gt;
+</pre>
+
+<p>
+Jetzt m&uuml;ssen wir noch das Script aufrufen:
+</p>
+
+<pre style="background='silver';">
+&lt;table width="100%" border="1" cellspacing="0" cellpadding="0"&gt;
+  &lt;tr&gt;
+    &lt;td width="10%"&gt;Excel Demo&lt;/td&gt;
+    &lt;td width="42%"&gt;1. Excel Vorlage (XLT): Arbeitsmappe generieren.&lt;/td&gt;
+    &lt;td width="48%"&gt;
+      &lt;input type=image 
+         onClick="load_excel '\\Sw1\www\softwing\excel\meinFile.xlt'" 
+         src="./disk.gif" name="image"&gt;
+    &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Im Ereignis <i>onClick</i> rufen wir das clientseitige Script auf. Excel l&auml;&szlig;t sich nun &ouml;ffnen und es werden 
+Dokumente als Arbeitsmappe mit der angegebenen Vorlage als "Mappe1" erstellt. Und damit ist unser 
+Problem gel&ouml;st.
+</p>
+<p>
+Zur Erinnerung: Nicht vergessen, es ist sehr klug wenn man serverseitig mittels FileSystemObject pr&uuml;ft, 
+ob es diese Excelvorlage auch wirklich gibt. 
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Das w&auml;re eine einfache Variante um kleinere Tabellen f&uuml;r den User auszulesen und in seiner MS-Office 
+Umgebung gleich weiterzuverarbeiten. Mit gr&ouml;&szlig;eren Listen werden Sie geh&ouml;rig auf die 
+Downloadgeschwindigkeit der User dr&uuml;cken. Da sollte man dann vorher zumindest einen Hinweis zeigen, 
+da&szlig; es etwas dauern k&ouml;nnte.
+</p>
+<p>
+Wer nun auf die Idee kommt das gezeigte auch mit Word-, Outlook-, Powerpoint-Dateien zu probieren wird 
+schnell merken, da&szlig; jedes Office Programm diesbez&uuml;glich seine eigenen Wege geht. Zu Word sind im 
+vorangegangenen Artikel Details nachzulesen.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020128.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20001128.htm">Datenbank zur Weiterbearbeitung in Excel bereitstellen</a><br>
+<a href="20001204.htm">Die SA Excel Writer Komponente</a><br>
+<a href="20010307.htm">Ein Excel-Diagramm am Server generieren und zum Client schicken</a><br>
+<a href="20010305.htm">Ein Excel-Sheet am Server generieren und zum Client schicken</a><br>
+<a href="20001110.htm">Excel Dateien ohne Excel anzeigen</a><br>
+<a href="20010309.htm">Excel Diagramme als GIF's serven</a><br>
+<a href="20010319.htm">Mit ASP ein Word Dokument am Server generieren</a><br>
+<a href="20001207.htm">SA ExcelWriter in Action</a><br>
+<a href="20020122.htm">Wordfiles richtig &ouml;ffnen!</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20020128" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Serverdaten clientseitig in Exceltemplates importieren"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20020128.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Herbert Hahn"><input type="hidden" name="AuthorEmail" value="herbert.hahn@softwing.com"><input type="hidden" name="Artikel" value="20020128"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20020128.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

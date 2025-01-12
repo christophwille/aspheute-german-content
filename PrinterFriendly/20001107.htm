@@ -1,0 +1,187 @@
+<HTML>
+<HEAD>
+<TITLE>Einf&uuml;gen eines Datensatzes mit dem INSERT Statement</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel zeigt wie man unter Verwendung des SQL INSERT Statements Datens&auml;tze in eine Datenbank einf&uuml;gt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Insert,SQL Insert,SQL,Connection.Execute,ADO,Datenbank,INSERT INTO,SQL Statment">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Einf&uuml;gen eines Datensatzes mit dem INSERT Statement</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001107"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>Um einen Datensatz in eine Datenbank einzuf&uuml;gen, hat man von ASP aus zwei 
+grunds&auml;tzlich verschiedene M&ouml;glichkeiten:
+</p>
+
+<p><ul>
+
+<li>Mit einem SQL INSERT Statement: Zuerst wird das SQL Insert Statement erstellt, das alle Daten des
+einzuf&uuml;genden Datensatzes enth&auml;lt. 
+Danach wird der Datensatz durch Ausf&uuml;hren des INSERT Statements mittels 
+<i>Connection.Execute</i> in die Datenbank &uuml;berspielt.</li>
+
+<li>Mittels <i>Recordset.AddNew</i> und <i>Recordset.Update</i> (bzw. <i>Recordset.UpdateBatch</i>):
+Ein Recordset wird ge&ouml;ffnet, danach mittels <i>Recordset.AddNew</i> ein neuer Datensatz angelegt,
+die Daten des Datensatzes den Feldern (<i>Fields</i>) des Recordsets zugewiesen, und danach der 
+Datensatz mittels Ausf&uuml;hren der <i>Recordset.Update</i> Methode in die Datenbank &uuml;bertragen.</li>
+
+</ul></p>
+
+<p>Hier m&ouml;chte ich zeigen, wie man das SQL INSERT Statement verwendet um einen Datensatz 
+mittels ADO in eine Datenbank zu &uuml;bertragen.</p>
+
+
+<h2>Erstellen des SQL INSERT Statements</h2>
+
+<p>
+Um zum Beispiel einen Datensatz mit 3 Werten in eine Datenbank zu speichern,
+benutzt man ein INSERT Statement mit dem folgenden Syntax:
+</p>
+
+<p><pre style="background='silver';">
+INSERT INTO <i>Tabelle</i> (<i>Feldname1</i>, <i>Feldname2</i>, <i>Feldname3</i>)
+     VALUES (<i>Wert1</i>, <i>Wert2</i>, <i>Wert3</i>)
+</pre></p>
+
+<p>
+Will man zum Beispiel eine Zahl und einen String in den Feldern <i>Name</i> und <i>Alter</i>
+der Tabelle <i>Leute</i> speichern, so kann man das folgende INSERT Statement benutzen:</p>
+
+<p><pre style="background='silver';">
+INSERT INTO Leute (Name, Alter)
+     VALUES ('Bugs Bunny', 7)
+</pre></p>
+
+
+<p>
+Textwerte werden mittels Hochkomma begrenzt, Zahlenwerte einfach als Zahl in das SQL Statement
+geschrieben. Will man in eine Access Datenbank ein Datum einf&uuml;gen, so benutzt man
+ein Datum der Form <i>#10/31/2000#</i>. Zum Deklarieren eines Datums zum Einf&uuml;gen 
+in eine SQL Server Datenbank benutzt man ein Datum der Form <i>'10/31/2000'</i>.
+</p>
+
+
+<p>
+Nat&uuml;rlich kann man das SQL Statement dynamisch zusammenbauen:
+</p>
+
+<p><pre style="background='silver';">
+strName = "Bugs Bunny"
+intAlter = 7
+
+strSQL = "INSERT INTO Leute (Name, Alter) " & _
+   "VALUES ('" & Replace(strName, "'","''") & "', " & intAlter & ") "
+</pre></p>
+
+<p>Der <i>Replace</i> Befehl dient dazu, ein einzelnes Hochkomma in einem String 
+durch ein doppeltes Hochkomma zu ersetzen. Dies ist notwendig, damit das Hochkomma
+nicht als Ende des String Wertes, sondern als Hochkomma interpretiert wird.</p>
+
+
+<h2>Ausf&uuml;hren des SQL INSERT Statements</h2>
+
+<p>
+Das SQL INSERT Statement f&uuml;hrt man, wie jedes andere SQL Statement,
+mit Hilfe der <i>Connection.Execute</i> Methode aus. Die Variable <i>conn</i>
+enth&auml;lt dabei die offene Connection (Verbindung zur Datenbank):
+</p>
+
+<p><pre style="background='silver';">
+conn.Execute strSQL
+</pre></p>
+
+
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>Das Einf&uuml;gen eines Datensatzes mittes SQL INSERT Statement ist denkbar einfach:
+Das INSERT Statement generieren und mittels <i>Connection.Execute</i> ausf&uuml;ren</p>
+
+<p>In kommenden Artikel m&ouml;chte ich zeigen, wie man einen Datensatz mittels 
+<i>Recordset.AddNew</i> in eine Datenbank einf&uuml;gt.</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000525.htm">Access Abfragen in ADO verwenden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000525.htm</span><br>
+<a href="../artikel/19990825.htm">ADO und ASP - Datenbanken einmal n&auml;her betrachtet</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990825.htm</span><br>
+<a href="../artikel/20001124.htm">Aktualisieren von Daten mit dem UPDATE Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001124.htm</span><br>
+<a href="../artikel/20020429.htm">Benutzerverwaltung leicht gemacht: Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020429.htm</span><br>
+<a href="../artikel/20001127.htm">Datens&auml;tze mit dem DELETE Statement l&ouml;schen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001127.htm</span><br>
+<a href="../artikel/20011015.htm">Der SQL UNION Operator</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011015.htm</span><br>
+<a href="../artikel/19990811.htm">Eigenschaften der Connection und Recordset Objekte</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990811.htm</span><br>
+<a href="../artikel/20010420.htm">Ein einfacher Query Analyzer</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010420.htm</span><br>
+<a href="../artikel/20000328.htm">Installation der neuesten ADO Version (ADO 2.5)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000328.htm</span><br>
+<a href="../artikel/19990826.htm">ODBC und ASP - Eine DSN zur Verwendung mit ASP definieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990826.htm</span><br>
+<a href="../artikel/20020903.htm">Stored Procedures einfach erstellt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020903.htm</span><br>
+<a href="../artikel/20011017.htm">T-SQL Clauses: GROUP BY und HAVING</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011017.htm</span><br>
+<a href="../artikel/20010213.htm">Update und UpdateBatch zum Einf&uuml;gen von Datens&auml;tzen in Datenbanken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010213.htm</span><br>
+<a href="../artikel/20010925.htm">Verwendung von XML-Schemas (XSD)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010925.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

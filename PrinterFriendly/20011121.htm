@@ -1,0 +1,320 @@
+<HTML>
+<HEAD>
+<TITLE>Active Directory Zugriff per .NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Active Directory ist das zentrale Element einer Windows 2000 Domain Infrastruktur. Mit dem .NET Framework ist Microsoft angetreten, uns den Zugriff auf Active Directory (AD) so leicht als m&ouml;glich zu machen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Active Directory,AD,System.DirectoryServices,DirectoryEntry,DirectorySearcher,SearchRoot,SearchScope,LDAP,ADSI,domain,common name">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Active Directory Zugriff per .NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20011121"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Active Directory ist das zentrale Element einer Windows 2000 Domain Infrastruktur. Es gibt viele
+Zugriffsmethoden (ADSI oder LDAP, um zwei sehr bekannte zu w&auml;hlen), die mehr oder minder komplex
+sind. Mit dem .NET Framework ist Microsoft angetreten, es leichter zu machen. Heute werden wir
+uns das anhand des Zugriffs als auch der Suche nach Elementen ansehen.
+</p>
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation des <i>Microsoft .NET Framework SDK's</i> auf
+einem Webserver. Weiters setze ich voraus, da&szlig; der Leser die Programmiersprache C# zu einem gewissen Grad beherrscht -
+es finden sich etliche Artikel auf diesem Server, um das notwendige Wissen zu erlernen.
+</p>
+<p>
+Sicherheitshinweis: die Beispielannahme ist, da&szlig; der ASP.NET Worker Prozess unter dem SYSTEM Konto l&auml;uft
+(standardm&auml;&szlig;ig l&auml;uft er unter dem ASPNET Account). Bitte &auml;ndern Sie <i>processModel</i> in <i>machine.config</i> entsprechend
+ab, oder geben nur Administratoren Zugriff auf die Dateien (Impersonation).
+</p>
+
+<h2>Beispieldaten anlegen</h2>
+<p>
+Es empfiehlt sich nicht, die ersten Gehversuche mit Echtdaten vorzunehmen. Eine Organizational
+Unit (OU) mit Testdaten ist da schon deutlich besser geeignet. Das Anlegen einer OU passiert
+in Active Directory User and Computers:
+</p>
+
+<IMG SRC="/artikel/Bilder/200111/20011121_2.png" width="345" height="306" alt="" border="0">
+
+<p>
+Da man ja nicht immer als Domain-Administrator eingeloggt ist (hoffentlich nicht!), kann man 
+sich ohne Ab-/Anmelden speziell f&uuml;r die jeweils gew&uuml;nschte Applikation als Domain-Administrator
+ausgeben: mit Run As. Dieses nette Kontextmen&uuml; erh&auml;lt man &uuml;brigens duch die Kombination Shift
+Taste und rechte Maustaste. Es &ouml;ffnet sich folgender Dialog:
+</p>
+
+<IMG SRC="/artikel/Bilder/200111/20011121_3.png" width="347" height="295" alt="" border="0">
+
+<p>
+Hier gibt man die entsprechenden Logindaten ein, und schon startet Active Directory User and Computers
+unter einem beliebigen User Account:
+</p>
+
+<IMG SRC="/artikel/Bilder/200111/20011121_1.png" width="592" height="304" alt="" border="0">
+
+<p>
+Hier habe ich bereits eine OU angelegt ("Demo"), sowie einen User Account f&uuml;r unsere Experimente
+("Max Mustermann"). Die Domain hei&szlig;t f&uuml;r die nachfolgenden Beispiele Dev.AlfaSierraPapa.com, der
+DC den wir ansprechen Strangelove.
+</p>
+
+<h2>Der Zugriff ins Active Directory</h2>
+<p>
+Die gesamte Funktionalit&auml;t f&uuml;r den Zugriff auf das Active Directory ist im <b>System.DirectoryServices</b>
+Namespace implementiert. Um mir den Import der Assembly in jeder ASP.NET Datei
+zu ersparen, habe ich das in der <b>web.config</b> vorgenommen:
+</p>
+
+<pre style="background='silver';">
+&lt;configuration&gt;
+   &lt;system.web&gt;
+      &lt;compilation debug="true"&gt;
+        &lt;assemblies&gt;
+            &lt;add assembly="System.DirectoryServices, Version=1.0.3300.0,...
+        &lt;/assemblies&gt;
+      &lt;/compilation&gt;
+   &lt;/system.web&gt;
+&lt;/configuration&gt;
+</pre>
+
+<p>
+Beginnen wir mit dem Zugriff auf einen einzelnen Active Directory Eintrag (<b>simplestart.aspx</b>):
+</p>
+
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.DirectoryServices" %&gt;
+&lt;%
+DirectoryEntry de = new DirectoryEntry("LDAP://strangelove/OU=Demo,DC=Dev,DC=AlfaSierraPapa,DC=COM",
+	"DEV\\Administrator", "foryoureyesonly");
+foreach(DirectoryEntry child in de.Children)
+{
+  Response.Write(child.Name);
+}
+%&gt;
+</pre>
+
+<p>
+Die Klasse zum Zugriff auf ein einzelnes Verzeichnisobjekt ist <i>DirectoryEntry</i>. Diesem &uuml;bergebe
+ich in obigen Beispiel den LDAP (Lightweight Directory Access Protocol) String, unter dem das Objekt
+zu finden ist, sowie separat Useraccountdaten. Warum der User Account separat? Nun, vertrauen in
+Impersonisierung ist gut, h&auml;ndisches sicherstellen ist deutlich angenehmer und spart Stunden der
+Fehlersuche.
+</p>
+
+<p>
+Der LDAP String sieht nur auf den ersten Blick f&uuml;rchterlich aus, er ist aber v&ouml;llig logisch aufgebaut,
+und wir werden heute noch einige Variationen sehen. Der String wird von rechts nach links immer spezifischer - 
+von der <b>COM</b> Domain hin zum gew&uuml;nschten OU Objekt. Der Servername mu&szlig; nicht angegeben werden, fehlt
+er, wird er automatisch mit Hilfe von Active Directory ermittelt.
+</p>
+
+<p>
+Nach dem Zugriff auf das Objekt liste ich die Kindelemente auf, das sieht f&uuml;r die Beispiel-OU
+dann so aus:
+</p>
+
+<pre style="background='silver';">
+CN=Max Mustermann
+</pre>
+
+<p>
+Der <b>Common Name</b> (CN) des einzigen Kindobjektes in dieser OU ist Max Mustermann.
+</p>
+
+<p>
+Erweitern wir das Beispiel ein wenig (<b>somemore.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.DirectoryServices" %&gt;
+&lt;%
+DirectoryEntry de = new DirectoryEntry("LDAP://strangelove/OU=Demo,DC=Dev,DC=AlfaSierraPapa,DC=COM",
+	"DEV\\Administrator", "youwontexpectthatone");
+
+DirectoryEntry parent = de.Parent;
+
+foreach(DirectoryEntry child in parent.Children)
+{
+  Response.Write(child.Name + "&lt;br&gt;");
+}
+
+DirectoryEntry dcOU = parent.Children.Find("OU=Domain Controllers");
+
+foreach(DirectoryEntry child in dcOU.Children)
+{
+  Response.Write(child.Name + "&lt;br&gt;");
+}
+%&gt;
+</pre>
+
+<p>
+Mit der <i>Parent</i> Eigenschaft kann man auf das im Baum dar&uuml;berliegende Objekt zugreifen,
+und dort ebenso die Objekte auflisten. Ebenfalls praktisch ist die <i>Find</i> Methode zum
+Suchen von Objekten, in diesem Falle suche ich nach der OU f&uuml;r Domain Controller. Der Output
+sieht dann so aus:
+</p>
+
+<pre style="background='silver';">
+CN=Builtin
+CN=Computers
+OU=Demo
+OU=Domain Controllers
+CN=ForeignSecurityPrincipals
+CN=Infrastructure
+CN=LostAndFound
+CN=System
+CN=Users
+CN=STRANGELOVE
+CN=WEBDEVSRV01
+</pre>
+
+<p>
+Die letzten beiden Eintr&auml;ge sind die Domain Controller, die in der Domain Controllers OU 
+abgelegt sind, der Rest sind die Top-Level Objekte der Domain.
+</p>
+
+<h2>Suchen im Active Directory</h2>
+<p>
+Die <i>Find</i> Methode haben wir schon kennengelernt, jetzt werden wir uns aber mit dem
+richtigen Tool anfreunden: der <i>DirectorySearcher</i> Klasse. Zur Einstimmung gleich ein
+Beispiel:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.DirectoryServices" %&gt;
+&lt;%
+DirectoryEntry de = new DirectoryEntry("LDAP://OU=Demo,DC=Dev,DC=AlfaSierraPapa,DC=COM",
+	"DEV\\Administrator", "itisyourguess");
+
+// Angabe Suchausdruck und zu holende properties (PropertiesToLoad)
+DirectorySearcher src = new DirectorySearcher("(objectClass=*)",
+	new string[]{"sn","givenName","title"});
+
+src.SearchRoot = de;
+src.SearchScope = SearchScope.OneLevel;
+
+foreach(SearchResult res in src.FindAll())
+{
+ Response.Write(res.Properties["sn"][0] + "&lt;br&gt;");
+}
+%&gt;
+</pre>
+
+<p>
+In diesem Beispiel verwende ich beim &ouml;ffnen des <i>DirectoryEntry</i> keine Serverangabe.
+Danach erstelle ich ein <i>DirectorySearcher</i> Objekt, dem ich den Suchausdruck und eine
+Liste der Eigenschaften mitgebe, die ich aus dem Active Directory zur&uuml;ckgeliefert bekommen
+m&ouml;chte (pro Objekt werden sehr viele Eigenschaften gespeichert, hier geht es also um Performance).
+</p>
+
+<p>
+Es fehlt noch die Angabe des SearchRoots, also wo die Suche beginnen soll, und wie im Baum
+gesucht werden soll - das SearchScope. Die folgende Grafik illustriert die drei verschiedenen
+SearchScopes mit einem ausgew&auml;hlten SearchRoot:
+</p>
+
+<IMG SRC="/artikel/Bilder/200111/20011121_4.png" width="570" height="374" alt="" border="0">
+
+<p>
+Ich hatte <i>OneLevel</i> gew&auml;hlt, also hat <i>DirectorySearcher</i> nur nach Elementen
+in der aktuellen OU gesucht. Die Suche beginnt allerdings erst, sobald man <i>FindAll</i>
+aufruft.
+</p>
+
+<p>
+Nat&uuml;rlich kann der Suchbegriff auch komplizierter werden, zB kann man nach allen Usern einer
+Domain suchen, wie im folgenden Beispiel gezeigt (<b>allusers.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.DirectoryServices" %&gt;
+&lt;%
+DirectoryEntry de = new DirectoryEntry("LDAP://DC=Dev,DC=AlfaSierraPapa,DC=COM",
+	"DEV\\Administrator", "noway");
+
+// Angabe Suchausdruck
+DirectorySearcher src = new DirectorySearcher("(&amp;(objectCategory=Person)(objectClass=user))");
+
+src.SearchRoot = de;
+src.SearchScope = SearchScope.Subtree;
+
+foreach(SearchResult res in src.FindAll())
+{
+ Response.Write(res.Properties["Name"][0] + "&lt;br&gt;");
+}
+%&gt;
+</pre>
+
+<p>
+Hier ist eine UND-Verkn&uuml;pfung eingesetzt (f&uuml;r eine genaue Diskussion der Abfragesprache mu&szlig;
+ich leider an die Dokumentation verweisen), und die Suche erstreckt sich auf den gesamten
+Unterbaum (<i>Subtree</i>), ausgehend vom Domain Root. Minimale Zeilenanzahl f&uuml;r 
+maximalen Erfolg.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Heute habe ich mir nur einen Unteraspekt der Active Directory Funktionen von .NET 
+herausgepickt. Es ist noch einiges weiteres vorhanden - so zB das Anlegen von Objekten,
+L&ouml;schen, Verschieben, etc. Aber das ist eine andere Geschichte.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20011121.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20011121.zip</span></p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

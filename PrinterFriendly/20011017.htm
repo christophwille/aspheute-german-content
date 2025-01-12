@@ -1,0 +1,240 @@
+<HTML>
+<HEAD>
+<TITLE>T-SQL Clauses: GROUP BY und HAVING</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Die beiden T-SQL Clauses GROUP BY und HAVING, ob in Kombination verwendet oder nicht, dienen allgemein zum Gruppieren von Datenspalten. Dies geschieht in Verbindung mit dem SELECT Statement.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,GROUP BY,HAVING,ROLLUP,WITH CUBE,Gruppierung,SUM,Aggregate,Aggregierung,Aggregates,Aggregate Function">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>T-SQL Clauses: GROUP BY und HAVING</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20011017"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Die beiden T-SQL Clauses GROUP BY und HAVING, ob in Kombination verwendet oder nicht, dienen allgemein zum Gruppieren von
+Datenspalten. Dies geschieht in Verbindung mit dem SELECT Statement. Diese Gruppierung ist vor allem bei 
+gr&ouml;&szlig;eren ("rohen") Datenmengen von Vorteil, da hierbei die Daten schnell und &uuml;bersichtlich in einzelne Gruppen gegliedert werden.
+Die dadurch durchgef&uuml;hrten &Auml;nderungen werden dabei nicht permanent in der Datenbank gespeichert.
+</p>
+
+<p>
+In diesem Artikel pr&auml;sentiere ich Ihnen einmal die Basics &uuml;ber die beiden Clauses und werde dabei mit kleinen Beispielen
+die Theorie veranschaulichen.
+</p>
+
+<h2>Die GROUP BY Clause</h2>
+
+<p>
+In Verbindung mit einer (optionalen) Aggregate Function fa&szlig;t die GROUP BY Clause die betroffenen Datenspalten im zur&uuml;ckgelieferten 
+Ergebnis der Query (Datenbankabfrage) in einzelne Gruppen zusammen. Mit Aggregate Function ist eine Funktion gemeint, die eine Berechung/Manipulation 
+(z.B. SUM, MAX, MIN) mit der angegebenen Spalte durchf&uuml;hrt. Hierbei ist aber zu beachten, da&szlig; die GROUP BY
+Clause zwar die betroffene(n) Datenspalte(n) in einzelne Gruppen teilt, aber keine Sortierung durchf&uuml;hrt. Daher sollte
+bei zus&auml;tzlicher Sortierungsanfordernis eine ORDER BY Clause verwendet werden.
+</p>
+
+<p>
+Weiters ist bei der Verwendung der Clause zu beachten, da&szlig; Spalten mit Datentyp ntext, text oder image nicht
+zum Gruppieren verwendet werden k&ouml;nnen. Der Gruppierungsarbeit sind aber auch Grenzen gesetzt. Die Gr&ouml;&szlig;e der 
+Datenspalten ist begrenzt, da max. 8060 Bytes im Zwischentabellenspeicher abgelegt werden k&ouml;nnen. 
+</p>
+<p>
+Prinzipiell sieht die 
+Clause in der Verwendenung so aus bzw. kann sie folgende (optionale) Argumente noch zus&auml;tzlich aufnehmen:
+</p>
+
+<pre style="background='silver';">
+GROUP BY <i>ALL</i> Ausdruck-Kommaliste (mit/ohne Aggregate Function) <i>WITH CUBE / ROLLUP</i>
+</pre>
+
+<p>
+Hierbei bedeutet - wobei Angaben in Kursivschrift als optional gelten:
+</p>
+
+<ul>
+<li><i>ALL:</i> liefert alle Gruppen, auch wenn sie nicht ver&auml;ndert wurden, weil sie die angegebenen Kriterien nicht
+erf&uuml;llt haben. Dadurch ist es nicht m&ouml;glich ALL mit CUBE oder ROLLUP zu verwenden (siehe sp&auml;ter). Leere Spalten werden mit null Werten 
+belegt. </li>
+<li>Ausdruck-Kommaliste: hier werden alle zu gruppierenden Spalten angegeben. Die Trennung der einzelnen Spalten erfolgt durch
+Kommas. Wichtig dabei ist, da&szlig; in dieser Liste keine Aliases (z.B. LN AS 'Last Name') verwendet werden. Zudem k&ouml;nnen maximal 10
+Ausdr&uuml;cke in einem Job verarbeitet werden. Ein Ausdruck, der nicht in Verbindung mit einer Aggregate Function steht mu&szlig;
+in der Ausdruck-Kommaliste enthalten sein. Die Clause beginnt mit Gruppierung in Richtung links nach rechts der angegebenen Spalten</li>
+<li>WITH: ist das Bindeverb f&uuml;r CUBE und ROLLUP. CUBE bietet die M&ouml;glichkeit eine Zusammenfassungsdatenreihe zwischen den 
+einzelenen Gruppen einzuf&uuml;gen. ROLLUP hingegen bietet zus&auml;tzlich zur CUBE Funktion eine hierarchische Ordnung 
+- Bottom To Top - der einzelnen Gruppen.
+</li>
+</ul>
+
+<p>
+Sehen wir uns zu der GROUP BY Clause ein paar einfache Beispiele an. Die Queries wurden gegen die Northwind SQL-Datenbank
+gefahren. Wie Sie vielleicht wissen bietet der MS SQL Server u.a. ein bequeme M&ouml;glichkeit den Sytanx von Queries zu &uuml;berpr&uuml;fen und
+zugleich diesen gegen die Datenbank zu fahren - n&auml;mlich im SQL Query Analyzer.
+</p>
+
+<p>
+Die erste Aufgabe besteht darin, aus der Products Tabelle der Northwind Datenbank alle Produkte aufzulisten und
+die Summe der im Lager vorhandenen Einheiten zu ermitteln. Es ist nach dem Produktnamen zu gruppieren. Eine m&ouml;gliche
+L&ouml;sung w&auml;re:
+</p>
+
+<pre style="background='silver';">
+SELECT ProductName, SUM(UnitsInStock) AS 'Units In Stock' FROM Products GROUP BY ProductName
+</pre>
+
+<p>
+Um das Ergebnis zu veranschaulichen, hier die Query und ein Auschnitt aus dem Ergebnis der Query:
+</p>
+
+<IMG SRC="/artikel/Bilder/200110/20011017_1.png" width="628" height="295" alt="" border="0">
+
+<p>
+Als n&auml;chstes sollen der Produktname und die SupplierId wieder aus der Products Tabelle aufgelistet werden. Jetzt soll aber
+nach der SupplierID gruppiert und WITH CUBE verwendet werden:
+</p>
+
+<pre style="background='silver';">
+SELECT ProductName,SupplierId FROM Products GROUP BY SupplierId, ProductName
+WITH CUBE
+</pre>
+
+<p>
+Dargestellt im SQL Query Analyzer sieht dies wieder so aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200110/20011017_2.png" width="740" height="293" alt="" border="0">
+
+<p>
+Weil wir schon bei CUBE sind, tauschen wir dies gegen ROLLUP und sehen uns das Ergebnis an:
+</p>
+
+<pre style="background='silver';">
+SELECT ProductName,SupplierId FROM Products GROUP BY SupplierId, ProductName
+WITH ROLLUP
+</pre>
+
+<IMG SRC="/artikel/Bilder/200110/20011017_3.png" width="695" height="341" alt="" border="0">
+
+<p>
+Auf den ersten Blick eigentlich hier kein Unterschied gegen&uuml;ber dem vorigen Screenshot. Sehen wir uns aber die 
+Rowcounts (im folgenden Screenshot roter Kringel) an und scrollen wir beim CUBE ans Ende der Rowliste -
+da sehen wir einen gewaltigen Unterschied:
+</p>
+
+<IMG SRC="/artikel/Bilder/200110/20011017_4.png" width="737" height="293" alt="" border="0">
+
+<p>
+CUBE hat die Datenreihen die keine SupplierId besitzen, mit null ausgewiesen - das ist ja ok! Aber ROLLUP hat durch die hierarchische
+Ordnung diese "leeren" Felder nochmals gruppiert und angeordnet.
+</p>
+
+<h2>Die HAVING Clause</h2>
+
+<p>
+Diese Clause wird &uuml;blicherweise mit der GROUP BY Clause kombiniert verwendet. Man verwendet sie quasi wie eine
+WHERE Clause in Verbindung mit der GROUP BY Clause - z.B. als ein Eingrenzungskriterum zur Gruppierung. Diese
+Annahme der &Auml;hnlichkeit zur WHERE Clause best&auml;tigt sich auch darin, da&szlig; sie ohne GROUP BY verwendet, sich auch wie diese 
+verh&auml;lt. Zu beachten ist, da&szlig; wie bei der ORDER BY Clause die Datentypen ntext, text oder image nicht zul&auml;ssig sind.
+</p>
+
+<p>
+Die HAVING Clause nimmt folgenden Syntax:
+</p>
+
+<pre style="background='silver';">
+HAVING Kriterumsausdruck
+</pre>
+
+<p>
+Wenn wir also unser erstes Beispiel recyclen und zus&auml;tzlich ein Eingrenzungskriterum anwenden, d.h. es sollen nur jene Produkte 
+angezeigt werden deren St&uuml;ckzahl unter 30 liegt, sieht das SQL Statement so aus:
+</p>
+
+<pre style="background='silver';">
+SELECT ProductName, SUM(UnitsInStock) AS 'Units In Stock' FROM Products 
+GROUP BY ProductName HAVING SUM(UnitsInStock) < 30
+</pre>
+
+<p>
+Im Query Analyzer stellt sich dann so dar:
+</p>
+
+<IMG SRC="/artikel/Bilder/200110/20011017_5.png" width="630" height="297" alt="" border="0">
+
+<p>
+Wie erwartet tritt unsere gew&uuml;nschte Einschr&auml;nkung ein.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Dieser Artikel sollte als Tutorial dienen um Ihnen anhand von einfachen Beispielen die beiden T-SQL Clauses
+GROUP BY und HAVING vorzustellen. Diese k&ouml;nnen sich bei der Gruppierung bzw. Auswertung von gr&ouml;&szlig;eren Datenmengen 
+als sehr n&uuml;tzlich erweisen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001124.htm">Aktualisieren von Daten mit dem UPDATE Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001124.htm</span><br>
+<a href="../artikel/20001023.htm">Das SQL Join Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001023.htm</span><br>
+<a href="../artikel/20011015.htm">Der SQL UNION Operator</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011015.htm</span><br>
+<a href="../artikel/20001201.htm">Die SQL ORDER BY Clause</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001201.htm</span><br>
+<a href="../artikel/20001107.htm">Einf&uuml;gen eines Datensatzes mit dem INSERT Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001107.htm</span><br>
+<a href="../artikel/20020903.htm">Stored Procedures einfach erstellt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020903.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

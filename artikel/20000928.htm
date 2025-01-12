@@ -1,0 +1,524 @@
+<HTML>
+<HEAD>
+<TITLE>Nachrichten an Newsserver (NNTP) mittels CDOSYS senden</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Die ben&ouml;tigte Funktionalit&auml;t um eine Nachricht an eine beliebige 
+Newsgroup zu senden, wird vollst&auml;ndig von der CDOSYS Komponente zur Verf&uuml;gung gestellt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,CDOSYS,Collaboration Data Objects,Configuration,NNTP,News,Protocol,News Protocol,Posting,Newsgruppe,Newsreader">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Nachrichten an Newsserver (NNTP) mittels CDOSYS senden</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000928"></SCRIPT>
+</p>
+<p>Wie bereits im Artikel 
+<a href="20000919.htm">Emails mittels CDOSYS versenden</a> erw&auml;hnt, kann man
+News (Nachrichten) von einem Windows 2000 Server an einen Newsgroup Server mittels 
+NNTP (Network News Transport Protocol) versenden. F&uuml;r diejenigen, die den vohergegangenen Artikel
+nicht gelesen haben: CDOSYS steht f&uuml;r 
+<i>Collaboration Data Objects for Windows 2000 Server</i>.</p>
+
+<p>Die ben&ouml;tigte Funktionalit&auml;t um eine Nachricht an eine beliebige 
+Newsgroup zu senden, wird vollst&auml;ndig von der CDOSYS Komponente zur Verf&uuml;gung gestellt. 
+Da CDOSYS Teil des Windows 2000 Server Betriebsystems ist, kann es von jeder ASP Seite aus, 
+die auf einem IIS 5.0 gehostet wird, aufgerufen und benutzt werden.</p>
+
+<p>Um in ASP eine NNTP Nachricht zu generieren, greift man auf das <i>CDO.Message</i> Objekt 
+der CDOSYS Komponente zur&uuml;ck. Man weist dann die Eigenschaften und den Inhalt der
+NNTP Nachricht den entsprechenden Eigenschaften des <i>CDO.Message</i> Objektes zu.
+Da CDOSYS sehr flexibel in der Art und Weise ist, wie und wohin eine Nachricht 
+gesendet werden kann, stellt man mittels <i>CDO.Configuration</i> ein, da&szlig; das 
+<i>Message</i> Objekt eine Newsgroup-Nachricht an einen externen Server sendet.
+Ausserdem gibt man den Namen der Newsgroup sowie dem Domain oder die IP Adresse und den Port 
+des Newsservers an.</p>
+
+   
+<p>Hier ein kurzer Abriss &uuml;ber die wichtigsten Eigenschaften des <i>CDO.Message</i> Objektes:</p>
+<p>
+<table>
+<tr>
+	<td><b>To</b></td>
+	<td>Gibt den Empf&auml;nger der Nachricht an.</td>
+</tr>
+<tr>
+	<td><b>From</b></td>
+	<td>Enth&auml;lt den Absender und f&uuml;r gew&ouml;hnlich auch 
+	die Email Adresse des Absenders.</td>
+</tr>
+<tr>
+	<td><b>Newsgroups</b></td>
+	<td>Gibt die Empf&auml;nger-Newsgroup(s) an.</td>
+</tr>
+<tr>
+	<td><b>Subject</b></td>
+	<td>Betreff der Nachricht</td>
+</tr>
+<tr>
+	<td><b>TextBody</b></td>
+	<td>Inhalt der Nachricht</td>
+</tr>
+</table>
+</p>
+
+<p>Die zum Versenden einer News ben&ouml;tigten Eigenschaften des <i>Message</i> Objektes
+sind einfach zu beschreiben. Hingegen sind die Konfigurationsm&ouml;glichkeiten 
+und dementsprechend die Anzahl der Felder des <i>Configuration</i> Objektes 
+bei weitem zu umfangreich um diese hier zu besprechen. 
+Bitte benutzen Sie die Windows 2000 Platform SDK Dokumentation (die auch in der
+<a href="http://msdn.microsoft.com" target="_blank">MSDN Dokumentation</a> enthalten ist)
+um die Felder und Werte des <i>Configuration</i> Objectes f&uuml;r den jeweiligen
+Einsatzzweck des <i>CDO.Message</i> Objektes nachzuschlagen.</p>
+
+<p>Anschaulicher als jede Theorie ist nat&uuml;rlich die Praxis. Daher m&ouml;chte ich
+hier eine ASP Datei pr&auml;sentieren, die eine einfache Nachricht an 
+einen externen Newsgroup Server sendet.</p>
+
+<p>Zum Senden einer Nachricht ben&ouml;tigt man im ASP Skript
+zwei CDOSYS Objekte: <i>Message</i> und <i>Configuration</i>.
+Die Nachricht an die Newsgroup wird vom <i>Message</i> Objekt repr&auml;sentiert.
+Daher setzt man mittels <i>Message</i> Eigenschaften die Eigenschaften und den Inhalt der
+Nachricht fest.</p>
+
+<p>Mittels <i>Configuration</i> Objekt legt man fest, wie und wohin die Nachricht 
+versendet werden soll. In unserem Fall kann die Nachricht an einen beliebigen externen Server
+verschickt werden. Das folgende Beispiel demonstriert anonymes Posting.</p>
+
+<p><pre style="background='silver';">
+&lt;% ' Typeinformationen und CDOSYS Konstanten 
+   ' ueber das CDOSYS und das ADO 2.5 Objekt zugaenglich machen: %&gt;
+&lt;!--METADATA TYPE="typelib" 
+UUID="CD000000-8B95-11D1-82DB-00C04FB1625D" 
+NAME="CDO for Windows 2000 Library" --&gt;
+&lt;!--METADATA TYPE="typelib" 
+UUID="00000205-0000-0010-8000-00AA006D2EA4" 
+NAME="ADODB Type Library" --&gt;
+
+&lt;html&gt;
+&lt;body&gt;
+
+&lt;%
+Dim strFrom, strTo, strSubject, strBody
+Dim objMessage, objConfig
+
+' Message und Configuration Objekte instanzieren
+Set objMessage = CreateObject("CDO.Message")
+Set objConfig = CreateObject("CDO.Configuration")
+
+' Nachrichten Eigenschaften festlegen
+With objMessage
+   .To         = "empfanger@aspheute.com"
+   .From       = "absender@internet.net"
+   .Newsgroups = "ASP.developer.CDOSYS"
+   .Subject    = "Betreff"
+   .TextBody   = "Nachricht"
+End With          
+
+' Konfigurieren:
+  ' Newsgroup Server: news.domain.com
+objConfig.Fields(cdoNNTPServer) = "news.domain.com"
+  ' News Port : 119 (Standard bei NNTP Server)
+objConfig.Fields(cdoNNTPServerPort) = 119
+  ' Authentifizierung am Newsgroup Server:  Keine
+objConfig.Fields(cdoNNTPAuthenticate) = cdoAnonymous
+  ' Nachricht an externen Newsgroup Server verschicken
+objConfig.Fields(cdoPostUsingMethod) = cdoPostUsingPort
+
+' Konfiguration updaten
+objConfig.Fields.Update
+
+' Konfiguration an Nachricht binden
+Set objMessage.Configuration = objConfig
+
+' Nachricht zu Newsgroups-Server senden:
+' Error Handling waehrend dem Versenden
+On Error Resume Next
+
+' CDO-Nachricht an Newsgroup Server senden
+objMessage.Post
+
+
+If Err.Number = 0 Then
+   Response.Write("Die Nachricht wurde versendet!")
+Else
+   Response.Write("Waehrend des Versendens ist " &amp; _
+   "ein Fehler aufgetreten.")
+   Err.Number = 0
+End If
+On Error Goto 0
+
+%&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></p>
+
+<p>Um das Skript lokal auf Ihrem IIS 5.0 Server testen zu k&ouml;nnen,
+m&uuml;&szlig;en Sie f&uuml;r die Internet Information Services die
+NNTP Server Unterst&uuml;tzung installiert haben. Diese ist Teil des IIS
+und daher auch Teil des Windows 2000 Server Betriebssystem.</p>
+
+
+<h2>Installation des NNTP Service auf Windows 2000 Server</h2>
+
+
+<p>Um festzustellen, ob Ihr IIS NNTP Sites unterst&uuml;tzt,
+&ouml;ffen Sie den Internet Services Manager, zu finden im
+Start Men&uuml; unter Programme, Administrations Tools. Klicken Sie
+mit der rechten Maustaste auf Ihren Server und stellen Sie fest,
+ob unter <i>Neu</i> der Punkt "<i>NNTP Virtual Server..</i>" existiert
+(siehe Bild 1).</p>
+
+
+<p><IMG SRC="Bilder/200009/20000928_CheckNNTP.png" width=458 height=315 alt="" border="0">
+<br>
+<i>Bild 1: Internet Services Manager</i></p>
+
+<p>Sollte der Punkt nicht vorhanden sein, so installieren Sie den NNTP Service.
+Gehen Sie dazu zum Control Panel und starten Sie "Add/Remove Programms".</p>
+
+<p>Im sich &ouml;ffnenden Fenster (Bild 2) w&auml;hlen Sie "Add/Remove Windows Component"
+und der Windows Component Wizard erscheint.</p>
+
+
+<p><IMG SRC="Bilder/200009/20000928_InstallProgamms.png" width=566 height=291 alt="" border="0">
+<br>
+<i>Bild 2: Add/Remove Programms</i></p>
+
+<p>W&auml;hlen Sie "Internet Information Services (IIS)" und klicken Sie auf 
+den Button "Details" (siehe Bild 3).</p>
+
+<p><IMG SRC="Bilder/200009/20000928_WCW.png" width=503 height=385 alt="" border="0">
+<br>
+<i>Bild 3: Windows Component Wizard</i></p>
+
+<p>Im erscheinenden Fenster k&ouml;nnen Sie nun den NNTP Service installieren
+(siehe Bild 4).</p>
+
+<p><IMG SRC="Bilder/200009/20000928_NNTP.png" width=449 height=344 alt="" border="0">
+<br>
+<i>Bild 4: Installation des NNTP Servers</i></p>
+
+<p>Nachdem der NNTP Service installiert ist, k&ouml;nnen Sie zu Testzwecken einen
+NNTP Virtual Server anlegen.</p>
+
+
+
+<h3>Erstellen eines NNTP Virtual Server</h3>
+
+<p>Zuerst m&uuml;ssen Sie zwei Verzeichnisse auf Ihrem Webserver anlegen.
+Eines wird ben&ouml;tigt um die internen Server Dateien des NNTP Servers
+zu speichern, das zweite Verzeichnis speichert alle Newsgroup Nachrichten.</p>
+
+
+<p>Nachdem die zwei Verzeichnisse angelegt sind installieren Sie einen neuen
+(virtuellen) NNTP Server im IIS.</p>
+
+<p>&Ouml;fnnen Sie dazu den Internet Services Manager und klicken Sie auf das Icon,
+das Ihren Webserver symbolisiert. Nun w&auml;hlen Sie im Men&uuml;
+(unter Action oder mit der rechten Maustaste) <i>New, NNTP Virtual Server</i>. 
+Darauf &ouml;ffnet sich der <i>New NNTP Virtual Server Wizard</i>. 
+Geben Sie eine Beschreibung des NNTP Servers ein, z.B. <i>NNTP Test</i>. 
+Danach weisen Sie dem NNTP Server eine IP Adresse Ihres Servers zu. 
+Der Port sollte &uuml;blicherweise auf den Standardwert <i>119</i> gesetzt werden 
+(siehe Bild 5).</p>
+
+<p><IMG SRC="Bilder/200009/20000928_NNVSW.png" width=441 height=324 alt="" border="0">
+<br>
+<i>Bild 5: New NNTP Virtual Server Wizard</i></p>
+
+
+<p>Geben Sie den Pfad zum Verzeichnis an, das die NNTP Dateien speichern soll.
+W&auml;hlen Sie File System als Speichermedium.</p>
+
+<p>W&auml;hlen Sie das Verzeichnis, das die Newsgroup Nachrichten beinhalten soll.
+Schon haben Sie einen neuen NNTP Server installiert.</p>
+
+<p>Um nun noch eine Newsgroup auf dem Server einzurichten, klicken Sie auf das
+Icon des Newsgroup Servers. Klicken Sie nun mit der rechten Maustaste auf "Newsgroups"
+und w&auml;hlen Sie <i>New, Newsgroup</i> (siehe Bild 6).</p>
+
+<p><IMG SRC="Bilder/200009/20000928_NN.png" width=556 height=218 alt="" border="0">
+<br>
+<i>Bild 6: Neue Newsgroup anlegen</i></p>
+
+<p>Der New Newsgroup Wizard &ouml;ffnet sich und Sie k&ouml;nnen den Namen 
+f&uuml;r die Newsgroup (zum Beispiel <i>NNTP.Test</i>) angeben.</p>
+
+<p>Nachdem die Newsgroup angelegt ist, ist diese unter der 
+Newsgroups Eigenschaft des NNTP Virtual Servers im Internet Service Manager
+sichtbar (Bild 7).</p>
+
+<p><IMG SRC="Bilder/200009/20000928_AngelNGs.png" width=530 height=232 alt="" border="0">
+<br>
+<i>Bild 7: Angelegte Newsgroups im Internet Service Manager</i></p>
+
+
+<p>Nun k&ouml;nnen Sie die angelegte Newsgroup zum Testen mit CDOSYS benutzen.
+Um Nachrichten aus der Newsgroup wieder auszulesen, um zum Bespiel sicherstellen
+zu k&ouml;nnen, da&szlig; eine Nachricht in der Newsgroup angekommen ist,
+benutzen Sie einen ganz gew&ouml;hnlichen Newsgroup Reader, wie er zum Beispiel
+im Netscape Communicator als Messenger bekannt ist (siehe Bild 8).</p>
+
+<p><IMG SRC="Bilder/200009/20000928_NCMessenger.png" width=550 height=206 alt="" border="0">
+<br>
+<i>Bild 8: Netscape Communicator Messenger mit Newsgroup</i></p>
+
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Mit CDOSYS hat man als Entwickler f&uuml;r ASP unter IIS 5.0 ein hervorragendes
+Werkzeug um aus ASP Seiten heraus nicht nur Emails sondern auch News an Newsgroups 
+schicken zu k&ouml;nnen.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000928.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20000919.htm">Emails mittels CDOSYS versenden</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2F">MSDN Dokumentation</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000928" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Nachrichten an Newsserver (NNTP) mittels CDOSYS senden"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000928.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Koller"><input type="hidden" name="AuthorEmail" value="christiank@aspexpert.com"><input type="hidden" name="Artikel" value="20000928"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000928.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

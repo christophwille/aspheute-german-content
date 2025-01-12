@@ -1,0 +1,354 @@
+<HTML>
+<HEAD>
+<TITLE>Ausgabe der Event Log Eintr&auml;ge a la ASP.NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor, wie man mit ASP.NET das Event Log auslesen kann, und die Ausgabe mit Hilfe der DataGrid Control professionell und schnell formatieren kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,EventLog,EventLogEntry,Entries,Event log,Ereignisanzeige,Protokoll,System.Diagnostics">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Ausgabe der Event Log Eintr&auml;ge a la ASP.NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000811"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Das Event Log unter Windows 2000 (oder NT) ist so ziemlich die wichtigste Informationsquelle
+f&uuml;r einen Administrator - weil dort s&auml;mtliche vorgefallenen Ereignisse vom Erfolg bis zum
+katastrophalen Mi&szlig;erfolg vermerkt sind. Und da es so wichtig ist, was liegt n&auml;her als diese
+Informationen &uuml;ber das Web anzeigbar zu machen?
+</p>
+<p>
+Der Event Viewer (Ereignisanzeige) sollte fast jedem gel&auml;ufig sein (siehe Bild). In diesem 
+Artikel werde ich zeigen, wie man mit ASP.NET und dem .NET Framework SDK die Liste der Eintr&auml;ge
+sehr elegant nachbauen kann. Die Zusatz&uuml;bung f&uuml;r den Leser ist dann, eine Seite f&uuml;r s&auml;mtliche 
+Details eines Eintrags zu basteln.
+</p>
+
+<IMG SRC="/artikel/Bilder/200008/20000811_1.png" width="590" height="319" border="0" alt="">
+
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation des <i>Microsoft .NET Framework SDK's</i> auf
+einem Webserver. Weiters setze ich voraus, da&szlig; der Leser die Programmiersprache C# zu einem gewissen Grad beherrscht -
+es finden sich etliche Artikel auf diesem Server, um das notwendige Wissen zu erlernen.
+</p>
+<p>
+Sicherheitshinweis: die Beispielannahme ist, da&szlig; der ASP.NET Worker Prozess unter dem SYSTEM Konto l&auml;uft
+(standardm&auml;&szlig;ig l&auml;uft er unter dem ASPNET Account). Bitte &auml;ndern Sie <i>processModel</i> in <i>machine.config</i> entsprechend
+ab, oder geben nur Administratoren Zugriff auf die Dateien (Impersonation).
+</p>
+
+<h2>Die Hau-Ruck Method</h2>
+<p>
+Wenn es schnell gehen mu&szlig;, kann man das Wissen aus ASP-Zeiten durchwegs dazu verwenden, um eine
+Liste von Ereignissen zu generieren (auch mit Tabelle, obwohl das Beispiel dies nicht tut). Der
+Name des Programms ist Programm: <b>simple.aspx</b>.
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Diagnostics&quot; %&gt;
+&lt;%
+EventLog aLog = new EventLog();
+aLog.Log = &quot;System&quot;;
+aLog.MachineName = &quot;.&quot;;  // Lokale Maschine
+string strImage = &quot;&quot;;  // Icon f&uuml;r das Event
+
+Response.Write(&quot;&lt;p&gt;Es sind  &quot; + aLog.Entries.Count + 
+         &quot; Eintr&auml;ge im System Event Log.&lt;/p&gt;&quot;);
+		   
+foreach (EventLogEntry entry in aLog.Entries) 
+{
+  switch (entry.EntryType)
+  {
+    case EventLogEntryType.Warning:
+      strImage = &quot;warning.png&quot;;
+      break;
+    case EventLogEntryType.Error:
+      strImage = &quot;error.png&quot;;
+      break;
+    default:
+      strImage = &quot;info.png&quot;;
+      break;
+  }
+  Response.Write(&quot;&lt;img src=\&quot;&quot; + strImage + &quot;\&quot;&gt;&amp;nbsp;|&amp;nbsp;&quot;);
+  Response.Write(entry.TimeGenerated.ToString() + &quot;&amp;nbsp;|&amp;nbsp;&quot;);
+  Response.Write(entry.Source + &quot;&amp;nbsp;|&amp;nbsp;&quot;);
+  Response.Write(entry.EventID.ToString() + &quot;&lt;br&gt;\r\n&quot;);
+}
+%&gt;
+</pre>
+
+<p>
+Die Klassen f&uuml;r das Event Log finden sich im Namespace <i>System.Diagnostics</i>, der am Anfang der
+Seite eingebunden wird. Das &Ouml;ffnen des Logs ist an sich sehr einfach: ein neues <i>EventLog</i> Objekt
+erzeugen, das <i>Log</i> angeben, und dann noch den <i>MachineName</i> ("." ist die lokale Maschine).
+Und schon kann man aus dem Event Log lesen.
+</p>
+<p>
+Dies geschieht mit einem <i>foreach</i> Loop. Damit das Listing nicht v&ouml;llig einfallslos wird, stelle ich
+noch die korrekten Icons vor jeden Eintrag. Apropos, das Listing der Eintr&auml;ge ist in umgekehrter Reihenfolge, als
+man es im Event Viewer gewohnt ist: hier sind die &auml;ltesten Eintr&auml;ge die ersten.
+</p>
+
+<h2>Eleganter mit dem DataGrid</h2>
+<p>
+ASP.NET bringt sehr viele Neuerungen gerade im Bereich der Anzeige von Daten, und das Sch&ouml;ne ist,
+da&szlig; diese Daten nicht immer aus der Datenbank kommen m&uuml;ssen. Dies ist auch f&uuml;r die <i>DataGrid
+Web Control</i> so, die, wie der Name sagt, eine Tabelle (Grid) aus den Daten erstellt. Die einzige
+Voraussetzung ist da&szlig; die Datenquelle das <i>ICollection</i> Interface unterst&uuml;tzt - und die <i>Entries</i>
+Collection der <i>EventLog</i> Klasse tut dies.
+</p>
+
+<p>
+Der folgende Sourcecode (<b>speccolsonly.aspx</b>) zeigt, wie einfach man das DataGrid einsetzen kann:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Diagnostics" %&gt;
+&lt;script language="C#" runat="server"&gt;
+void Page_Load(Object sender, EventArgs e) 
+{
+  EventLog aLog = new EventLog();
+  aLog.Log = "System";
+  aLog.MachineName = ".";
+  
+  LogGrid.DataSource = aLog.Entries;
+  LogGrid.DataBind();
+}
+&lt;/script&gt;
+</pre>
+
+<p>
+Die DataGrid Control (Sourcecode folgt!) beinhaltet nur Formatierungsanweisungen und sonst nichts. Gef&uuml;llt wird das Grid
+mittels des <i>Page_Load</i> Events, welches nur das Event Log &ouml;ffnet und dann die <i>Entries</i> auf die
+<i>DataSource</i> Eigenschaft des DataGrid zuweist. Mit dem Aufruf von <i>DataBind</i> werden die Daten dann
+in die Tabelle gef&uuml;llt - und zwar nur die Spalten, die in <i>Columns</i> angegeben wurden. Das sieht
+dann so aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200008/20000811_2.png" width="500" height="436" border="0" alt="">
+
+<p>
+Diese Einschr&auml;nkung nimmt man im DataGrid Tag selbst vor:
+</p>
+
+<pre style="background='silver';">
+&lt;form runat="server"&gt;
+&lt;asp:DataGrid id="LogGrid" runat="server"
+    BorderColor="black"
+    BorderWidth="1"
+    GridLines="Both"
+    CellPadding="3"
+    CellSpacing="0"
+    Font-Name="Verdana"
+    Font-Size="8pt"
+    HeaderStyle-BackColor="#aaaadd"
+    AutoGenerateColumns="false"&gt;
+    &lt;Columns&gt;
+      &lt;asp:BoundColumn HeaderText="TOF" DataField="EntryType" /&gt;
+      &lt;asp:BoundColumn HeaderText="Date/Time" DataField="TimeGenerated"/&gt;
+      &lt;asp:BoundColumn HeaderText="Source" DataField="Source"/&gt;
+      &lt;asp:BoundColumn HeaderText="Event ID" DataField="EventID"/&gt;
+    &lt;/Columns&gt;
+&lt;/asp:DataGrid&gt;
+&lt;/form&gt;
+</pre>
+
+<p>
+Der erste wichtige Schritt ist das <i>AutoGenerateColumns</i> Attribut auf false zu setzen. Damit
+verhindert man, da&szlig; automatisch alle Eigenschaften angezeigt werden. Nun kann man angeben, welche
+Spalten man haben m&ouml;chte.
+</p>
+<p>
+Ich verwende hier vier gebundene Spalten (an die Datenquelle gebunden). Der <i>HeaderText</i> wird in
+der Topzeile des Grids angezeigt, und in <i>DataField</i> steht, welche Eigenschaft ausgelesen werden
+soll, damit diese Spalte gef&uuml;llt wird.
+</p>
+<p>
+Ich habe dieses Beispiel mit den Spalten (Columns) bewu&szlig;t einfach gehalten. Es gibt noch viele
+andere Spaltentypen, und wenn man dann mit den Formatierungen auch noch zum Herumspielen 
+anf&auml;ngt, dann sind der Gestaltungs-"wut" keine Grenzen mehr gesetzt. Beispiele daf&uuml;r gibt
+es im QuickStart Tutorial genug.
+<p>
+
+<h2>Paging im DataGrid</h2>
+<p>
+Zum Abschlu&szlig; m&ouml;chte ich ein weiteres Feature des DataGrid's verwenden, das vielen vom
+Datenbankprogrammieren ein alter Bekannter ist - das Paging. Der Vorteil des DataGrid's ist
+der, da&szlig; das Paging (fast) ohne Code auskommt, und dann so aussehen k&ouml;nnte:
+</p>
+
+<IMG SRC="/artikel/Bilder/200008/20000811_3.png" width="506" height="462" border="0" alt="">
+
+<p>
+Diesmal habe ich wieder den gesamten Sourcecode der Seite <b>paging.aspx</b> zum 
+Durchlesen in den Artikel &uuml;bernommen:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Diagnostics" %&gt;
+&lt;script language="C#" runat="server"&gt;
+void Page_Load(Object sender, EventArgs e) 
+{
+  BindGrid();
+}
+
+void LogGrid_Change(Object sender, DataGridPageChangedEventArgs e) 
+{
+  // Set CurrentPageIndex to the page the user clicked.
+  LogGrid.CurrentPageIndex = e.NewPageIndex;
+
+  // Rebind the data. 
+  BindGrid();
+}
+ 
+void BindGrid() 
+{
+  EventLog aLog = new EventLog();
+  aLog.Log = "System";
+  aLog.MachineName = ".";
+  
+  LogGrid.DataSource = aLog.Entries;
+  LogGrid.DataBind();
+}
+&lt;/script&gt;
+&lt;body bgcolor="#ffffff"&gt;
+
+&lt;h3&gt;System Event Log&lt;/h3&gt;
+
+&lt;form runat="server"&gt;
+&lt;asp:DataGrid id="LogGrid" runat="server"
+    AllowPaging="True"
+    PageSize="10"
+    PagerStyle-Mode="NumericPages"
+    PagerStyle-HorizontalAlign="Right"
+    PagerStyle-NextPageText="Next"
+    PagerStyle-PrevPageText="Prev"
+    OnPageIndexChanged="LogGrid_Change"
+    BorderColor="black"
+    BorderWidth="1"
+    GridLines="Both"
+    CellPadding="3"
+    CellSpacing="0"
+    Font-Name="Verdana"
+    Font-Size="8pt"
+    HeaderStyle-BackColor="#aaaadd"
+    AutoGenerateColumns="false"&gt;
+    &lt;Columns&gt;
+      &lt;asp:BoundColumn HeaderText="TOF" DataField="EntryType" /&gt;
+      &lt;asp:BoundColumn HeaderText="Date/Time" DataField="TimeGenerated"/&gt;
+      &lt;asp:BoundColumn HeaderText="Source" DataField="Source"/&gt;
+      &lt;asp:BoundColumn HeaderText="Event ID" DataField="EventID"/&gt;
+    &lt;/Columns&gt;
+&lt;/asp:DataGrid&gt;
+&lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Die ersten &Auml;nderungen finden sich in der DataGrid Control:
+</p>
+
+<pre style="background='silver';">
+AllowPaging=&quot;True&quot;
+PageSize=&quot;10&quot;
+PagerStyle-Mode=&quot;NumericPages&quot;
+PagerStyle-HorizontalAlign=&quot;Right&quot;
+PagerStyle-NextPageText=&quot;Next&quot;
+PagerStyle-PrevPageText=&quot;Prev&quot;
+OnPageIndexChanged=&quot;LogGrid_Change&quot;
+</pre>
+
+<p>
+Die beiden wichtigsten Attribute sind das erste und das letzte: <i>AllowPaging</i> und <i>OnPageIndexChanged</i>.
+Ersteres macht das Paging m&ouml;glich, zweiteres ist die Event-Methode die ausgel&ouml;st wird, wenn sich die Seite &auml;ndert.
+Die restlichen Attribute sind kosmetischer Natur.
+</p>
+<p>
+Da wir in diesem Beispiel mit einer Collection arbeiten, und nicht Datenbankdaten, habe ich es mir
+beim Paging (fast zu) einfach gemacht: ich binde einfach die Daten noch einmal auf das Grid. F&uuml;r
+bessere Performance - speziell f&uuml;r Datenbanken - sollte man dann auch die Daten "h&auml;ppchenweise"
+nachladen.
+</p>
+
+<H2>Schlu&szlig;bemerkung</H2>
+<p>
+Der eigentliche Zweck des heutigen Artikels war weniger das Auslesen des Event Logs zu erlernen
+als zu zeigen, wie vielseitig anwendbar das DataGrid auch au&szlig;erhalb des eigentlichen Hauptanwendungsgebietes
+der Datenbankprogrammierung ist. Man kann sehr viel der Funktionalit&auml;t verwenden, auch wenn das
+Editieren von Event Log Eintr&auml;gen (read-only) nicht sinnvoll und somit nicht verwendbar ist.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000811.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000811.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000720.htm">Das foreach Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000720.htm</span><br>
+<a href="../artikel/20000809.htm">Performance Monitoring a la .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000809.htm</span><br>
+<a href="../artikel/20000925.htm">Services &uuml;ber das Web managen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000925.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Edotnetgerman%2Ecom%2Flisten%2FaspDEdotnet%2Easp">Die aspDEdotnet Diskussionsliste</a><br>
+<SPAN class="content">http://www.dotnetgerman.com/listen/aspDEdotnet.asp</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

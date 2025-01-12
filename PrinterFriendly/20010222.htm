@@ -1,0 +1,203 @@
+<HTML>
+<HEAD>
+<TITLE>Farbauswahl in HTML Formularen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Heute zeigt der Autor, wie man einen in DHTML programmierten Farbselektor in Formulare einbinden und an versteckte Formularfelder anbinden kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Farbselektor,DHTML,JavaScript,Formular,Formularprogrammierung,document.all">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Farbauswahl in HTML Formularen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010222"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Die Basism&ouml;glichkeiten von HTML Formularen - Eingabefelder, Listboxen, usw. - erm&ouml;glichen
+zwar nette Formulare, aber bei einigen Tasks wird das schnell unintuitiv. Ein Beispiel ist 
+die Auswahl von Farben: weder das Eintippen von Farbnamen oder Farbwerten, noch das Ausw&auml;hlen
+derselben in DropDown Boxen kann das "Point and Click" Erlebnis eines Farbselektors
+ersetzen.
+</p>
+<p>
+Die Grundlage des heute vorgestellten Codes stammt Vidar Peturrson, der ebenso wie ich als
+<a href="http://www.mvps.org/" target="_blank">MVP</a> (Most Valuable Professional) einiges an seiner Freizeit f&uuml;r die Gemeinschaft opfert.
+Von ihm habe ich den Basiscode f&uuml;r den Farbselektor, der allerdings nur auf Internet
+Explorer 5.0 oder h&ouml;her l&auml;uft.
+</p>
+<p>
+Ich habe seinen Code erweitert, da&szlig; man ihn auch mit einem Formular kombinieren kann. Beim
+folgenden Screenshot ist nur die Schaltfl&auml;che des Formulars sichtbar, die Formularfelder
+selbst sind versteckt.
+</p>
+
+<IMG SRC="/artikel/Bilder/200102/20010222.png" width="520" height="280" alt="" border="0">
+
+<p>
+Man kann sowohl Schriftfarbe als auch Hintergrundfarbe mit diesem Farbselektor ausw&auml;hlen -
+der wie aus gewohnten Grafikprogrammen funktioniert. Ist man mit der Auswahl fertig, 
+wird das Formular abgeschickt - in dem heute vorgestellten wieder auf die selbe Seite.
+Zum Beweis, da&szlig; es funktioniert, werden die neuen Standardfarben die zuletzt ausgew&auml;hlten.
+</p>
+
+<p>
+Wie funktioniert das alles? Die gesamte Formularfunktionalit&auml;t findet sich in der Datei
+<b>colorselector.asp</b>:
+</p>
+
+<pre style="background='silver';">
+&lt;HTML&gt;
+&lt;HEAD&gt;
+&lt;TITLE&gt;Farbauswahl&lt;/TITLE&gt;
+&lt;META content=&quot;text/html; charset=iso-8859-1&quot; http-equiv=Content-Type&gt;
+&lt;!-- #include file=&quot;colorselheadinclude.asp&quot;--&gt;
+&lt;/HEAD&gt;
+&lt;BODY BGCOLOR=&quot;#ffffff&quot;&gt;
+
+&lt;!-- #include file=&quot;colorselinclude.asp&quot;--&gt;
+&lt;%
+strFontColor = Trim(Request.QueryString(&quot;clrForeColor&quot;))
+strBkColor = Trim(Request.QueryString(&quot;clrBackColor&quot;))
+If (&quot;&quot; = strFontColor) Then strFontColor = &quot;black&quot;
+If (&quot;&quot; = strBkColor) Then strBkColor = &quot;white&quot;
+WriteColorTable strFontColor, strBkColor
+%&gt;
+
+&lt;form action=&quot;&lt;%=Request.ServerVariables(&quot;SCRIPT_NAME&quot;)%&gt;&quot; method=&quot;get&quot; 
+    onsubmit=&quot;return fillInForm();&quot; 
+    name=&quot;frmColorSubmitter&quot;&gt;
+&lt;input type=&quot;hidden&quot; name=&quot;clrForeColor&quot;&gt;
+&lt;input type=&quot;hidden&quot; name=&quot;clrBackColor&quot;&gt;
+&lt;input type=&quot;submit&quot; value=&quot;Abschicken!&quot;&gt;
+&lt;/form&gt;
+
+&lt;script language=&quot;JavaScript&quot;&gt;
+function fillInForm()
+{
+  document.forms.frmColorSubmitter.clrForeColor.value = 
+      document.all.foreCol.style.backgroundColor;
+  document.forms.frmColorSubmitter.clrBackColor.value = 
+      document.all.bckCol.style.backgroundColor;
+      
+  return true;
+}
+&lt;/script&gt;
+
+&lt;/BODY&gt;
+&lt;/HTML&gt;
+</pre>
+
+<p>
+
+</p>
+<p>
+Die tats&auml;chliche "Arbeit" - das Erstellen des Farbselektors und der notwendige Code
+ist in den Dateien <b>colorselheadinclude.asp</b> und <b>colorselinclude.asp</b>
+enthalten (im Download dabei). Erstere Datei ist f&uuml;r das Stylesheet und die client-seitigen JavaScripts
+gedacht, und zweitere enth&auml;lt die Funktion <i>WriteColorTable</i>, die den Farbselektor
+dann rendert. Diese Aufsplittung hat den Sinn, da&szlig; Sie - der Leser - den Code leichter
+in die eigenen Formulare einbauen k&ouml;nnen.
+</p>
+<p>
+Die Funktion <i>WriteColorTable</i> &uuml;bernimmt zwei Farbwerte: Schriftfarbe und Hintergrundfarbe.
+Mit dieser Information wird der Initial-Farbselektor gerendert. Diese eine Zeile w&uuml;rde reichen,
+um den Selektor anzuzeigen - wir aber wollen das ganze in einem Formular zur&uuml;ck zum Server
+schicken.
+</p>
+<p>
+Dazu habe ich ein extrem simples Formular eingef&uuml;gt, das eine Schaltfl&auml;che und zwei versteckte
+Formularfelder (f&uuml;r die Farbwerte) enth&auml;lt. Der eigentliche "Gag" an dem Formular ist die 
+JavaScript Funktion <i>fillInForm</i>:
+</p>
+
+<pre style="background='silver';">
+function fillInForm()
+{
+  document.forms.frmColorSubmitter.clrForeColor.value = 
+      document.all.foreCol.style.backgroundColor;
+  document.forms.frmColorSubmitter.clrBackColor.value = 
+      document.all.bckCol.style.backgroundColor;
+      
+  return true;
+}
+</pre>
+
+<p>
+Diese wird aufgerufen, bevor das Formular an den Server zur&uuml;ckgeschickt wird - und alles,
+was ich mache ist die Hintergrundfarbe der Farbfelder auszulesen, und den entsprechenden
+Formularfelder zuzuweisen! So einfach geht's.
+</p>
+
+<p>
+Eingangs habe ich bereits erw&auml;hnt, da&szlig; der Farbselektor nur mit Internet Explorer 5.0
+und h&ouml;her funktioniert. Die Funktionen in <b>colorselheadinclude.asp</b> sind in JavaScript
+geschrieben, also wird dieses auch vorausgesetzt. Daher - bevor eine Seite mit diesem
+Farbselektor angezeigt wird, unbedingt die Browsereigenschaften abfragen!
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Der heute pr&auml;sentierte Sourcecode hat in der Funktion <i>WriteColorTable</i> noch einen
+"Fehler" - die ID's der Farbelemente haben festgelegte Namen, das bedeutet, da&szlig; man nicht
+mehrere Farbselektoren auf einer Seite haben kann. Aber das ist die Flei&szlig;aufgabe f&uuml;r denjenigen
+Leser, der dieses Feature ben&ouml;tigt.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010222.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010222.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000410.htm">Browsereigenschaften mit BrowserHawk 2000 bestimmen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000410.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

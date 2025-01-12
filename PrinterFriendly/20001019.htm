@@ -1,0 +1,243 @@
+<HTML>
+<HEAD>
+<TITLE>Sichere Konvertierungen von Referenztypen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Ein Thema, das sich immer wieder als problematisch f&uuml;r Einsteiger herausstellt, ist das Konvertieren ("Casten") von Referenztypen (aka Objekten). In diesem Artikel stellt der Autor drei sichere Wege vor, die man anwenden sollte.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Cast,C#,CSharp,C Sharp,ASP+,ASP.NET,.NET,ASPPlus,Framework,class,is operator,as operator,exception handling,try,catch,InvalidCastException">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Sichere Konvertierungen von Referenztypen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001019"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Ein Thema, das sich immer wieder als problematisch f&uuml;r Einsteiger herausstellt, ist das
+Konvertieren ("Casten") von Referenztypen (aka Objekten). Unter C++ konnte man damit sehr
+viel Unheil anstellen, was einem zum Gl&uuml;ck mit C# nicht passieren kann. Trotz oder gerade
+wegen der Typsicherheit der Sprache sollte man sich mit den verschiedenen Techniken vertraut
+machen:
+<ul>
+<li>Casts
+<li>Der <i>is</i> Operator
+<li>Der <i>as</i> Operator
+</ul>
+</p>
+<p>
+Um das Ganze anschaulich zu pr&auml;sentieren, habe ich ein nettes Szenario gew&auml;hlt: wir versuchen
+&Auml;pfel in Orangen umzuwandeln - etwas, das C# nicht zulassen wird (also gut geeignet ist zu zeigen,
+wie man mit Konvertierungsfehlern umgehen mu&szlig;). Der Ausgangssourcecode aller Samples ist der folgende (<b>classes.aspx</b>):
+</p>
+<p>
+<pre style="background='silver';">
+&lt;script language=c# runat=server&gt;
+class apple
+{
+  public string Fruit() { return "Apple"; }
+}
+
+class orange
+{
+  public string Fruit() { return "Orange"; }
+}
+&lt;/script&gt;
+&lt;% @page language=c# %&gt;
+&lt;%
+ apple myApple = new apple();
+ orange myOrange = new orange();
+ Response.Write(myApple.Fruit()+"&lt;br&gt;");
+ Response.Write(myOrange.Fruit()+"&lt;br&gt;");
+%&gt;
+</pre>
+</p>
+
+<h2>Casten</h2>
+<p>
+Obwohl wir daran scheitern werden, versuchen wir es anfangs mal mit dem Kopf durch die Wand:
+<pre style="background='silver';">
+ apple myApple = new apple();
+ orange anotherOrange = (orange)myApple;
+</pre>
+</p>
+<p>
+An diesem Code hat bereits der Compiler etwas auszusetzen: er wei&szlig;, da&szlig; diese Konvertierung nicht
+g&uuml;ltig ist, und kompiliert den Code erst gar nicht. Der Grund ist klar, weil die apple Klasse
+mit orange Klasse nichts gemeinsam hat.
+</p>
+<p>
+Also w&auml;hlen wir einen anderen Weg, einen, den man im echten Leben oft sieht - zuerst wird ein Typ
+in eine generelle <i>object</i> Variable gepfercht (zB wenn man Elemente in Stacks, Queues oder 
+ArrayLists speichert), und sp&auml;ter zu Wiederverwendungszwecken in den
+(vermeintlich) richtigen Typ zur&uuml;ckkonvertiert:
+</p>
+<p>
+<pre style="background='silver';">
+ apple myApple = new apple();
+ // folgende Zeile steht f&uuml;r potentiell kompliziertere Operationen
+ object objGeneral = myApple;
+ orange anotherOrange = (orange)objGeneral;
+</pre>
+</p>
+<p>
+Wenn man so wie wir hier den falschen Typ w&auml;hlt, bekommt man bei C# einen auf die Finger - n&auml;mlich
+eine <i>InvalidCastException</i> zur Laufzeit. Um diesen Fehler korrekt abzufangen, ben&ouml;tigt man
+Exception Handling Code, zB:
+</p>
+<p>
+<pre style="background='silver';">
+ apple myApple = new apple();
+ object objGeneral = myApple;
+ try
+ {
+   orange anotherOrange = (orange)objGeneral;
+   // do whatever you want with the orange
+ }
+ catch(InvalidCastException e)
+ {
+   // either do nothing or tell the user
+ }
+</pre>
+</p>
+<p>
+Obwohl jetzt alle Fehler behandelt werden, finde ich &uuml;ber den Fehlschlag des Casts erst durch eine
+Exception heraus. Es w&auml;re doch deutlich besser und intelligenter, vorher fragen zu k&ouml;nnen, ob ein
+Cast gutgehen kann oder nicht. Und hier kommt der <i>is</i> Operator ins Spiel.
+</p>
+
+<h2>Der <i>is</i> Operator</h2>
+<p>
+Wie bereits angek&uuml;ndigt, der <i>is</i> Operator erlaubt es, abzufragen ob ein Cast gutgeht, oder eine
+Exception liefern wird. Das folgende Sourcecodesnippet zeigt, wie man den <i>is</i> Operator in einer
+Applikation einsetzen kann:
+</p>
+<p>
+<pre style="background='silver';">
+ apple myApple = new apple();
+ object objGeneral = myApple;
+ 
+ if (objGeneral is orange)
+ {
+   orange anotherOrange = (orange)objGeneral;
+   // do whatever you want with the orange
+ }
+ else
+ {
+   Response.Write("this is no orange");
+ }
+</pre>
+</p>
+<p>
+Ich m&ouml;chte nur noch einen Hinweis zwecks des <i>is</i> Operators loswerden - steht zur Compilezeit
+bereits fest, da&szlig; der Cast immer gutgehen bzw immer fehlschlagen w&uuml;rde, gibt es eine Compilerwarnung
+- die man in ASP.NET allerdings leider nicht zu Gesicht bekommt.
+</p>
+
+
+<h2>Der <i>as</i> Operator</h2>
+<p>
+Den <i>as</i> Operator k&ouml;nnte man als Exception-less Cast bezeichnen. Die Konvertierung wird still
+durchgef&uuml;hrt - geht die Konvertierung schief, hat die Zielvariable der Konvertierung den Wert 
+<i>null</i>. Alles, was man zu tun hat, ist diese Variable dann in einer if-Abfrage zu kontrollieren:
+</p>
+<p>
+<pre style="background='silver';">
+ apple myApple = new apple();
+ object objGeneral = myApple;
+ 
+ orange anotherOrange;
+ anotherOrange = objGeneral as orange;
+ if (null != anotherOrange)
+ {
+   // do whatever you want with the orange
+ }
+ else
+ {
+   Response.Write("this is no orange");
+ }
+</pre>
+</p>
+<p>
+F&uuml;r den <i>as</i> Operator gilt &uuml;brigens das Gleiche, wie f&uuml;r den <i>is</i> Operator - man bekommt
+eine Warnung, wenn der Cast immer gutgehen oder fehlschlagen w&uuml;rde, wie zB in diesem Code:
+<pre style="background='silver';">
+apple myApple = new apple;
+apple anotherApple = myApple as apple;
+</pre>
+</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Es f&uuml;hren immer viele Wege nach Rom, allerdings sind einige steiniger als andere. Mein pers&ouml;nlicher
+Favorit f&uuml;r Typkonvertierungen ist der <i>is</i> Operator.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001019.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20001019.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020318.htm">Das using Schl&uuml;sselwort</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020318.htm</span><br>
+<a href="../artikel/20001012.htm">Einf&uuml;hrung: C#-Klassen in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001012.htm</span><br>
+<a href="../artikel/20000724.htm">Exception Handling in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000724.htm</span><br>
+<a href="../artikel/20020705.htm">Formularbasierte Authentifizierung in f&uuml;nf Minuten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020705.htm</span><br>
+<a href="../artikel/20020207.htm">Unions in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020207.htm</span><br>
+<a href="../artikel/20020125.htm">Variable Parameterlisten in Funktionen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020125.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

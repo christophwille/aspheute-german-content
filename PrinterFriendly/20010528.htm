@@ -1,0 +1,215 @@
+<HTML>
+<HEAD>
+<TITLE>Aber bitte mit Rijndael</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="DES ist mittlerweile sehr in die Jahre gekommen. Daher wurde vom NIST eine Ausschreibung f&uuml;r den Nachfolger AES (Advanced Encryption Standard) gestartet, den der Algorithmus Rijndael gewann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,AES,Rijndael,Advanced Encryption Standard,encryption,cipher,cipher strength,DES,Triple DES,3DES">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Aber bitte mit Rijndael</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010528"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+DES ist mittlerweile sehr in die Jahre gekommen, und die j&auml;hrlichen Challenges beweisen, da&szlig; die
+(Verschl&uuml;sselungs-)St&auml;rke von DES den heutigen Anforderungen an Sicherheit nicht mehr gewachsen
+ist. Daher wurde vom NIST eine Ausschreibung f&uuml;r den Nachfolger AES (Advanced Encryption Standard) gestartet,
+den der Algorithmus Rijndael gewann.
+</p>
+
+<p>
+Rijndael ist wie auch DES ein Block-Cipher, der die Verschl&uuml;sselung immer auf einen Block von Daten
+ausf&uuml;hrt. Die Bl&ouml;ckgr&ouml;&szlig;e als auch die Schl&uuml;ssell&auml;nge sind bei Rijndael variabel (ein vielfaches
+von 32 Bit, &uuml;blicherweise 128, 192, oder 256), und es wurde darauf
+Wert gelegt, da&szlig; Rijndael sowohl in Hardware als auch Software effizient implementiert werden kann
+(historischer Hinweis: DES wurde eigentlich f&uuml;r Hardwareimplementierung konzipiert).
+</p>
+
+<p>
+Ich m&ouml;chte gar nicht tiefer in den Algorithmus einsteigen, da viele wahrscheinlich am mathematischen
+Hintergrund gar nicht interessiert sind. F&uuml;r diejenigen, die es doch sind, empfehle ich 
+<a href="http://www.esat.kuleuven.ac.be/~rijmen/rijndael/" target="_blank">The Rijndael Page</a> als
+Startpunkt zur jeweils genehmen Dokumentation oder sogar Implementation.
+</p>
+
+<p>
+F&uuml;r uns ist viel mehr von Interesse, wie wir diesen Algorithmus in ASP verwenden k&ouml;nnen. Klarerweise
+ben&ouml;tigen wir eine Komponente, um eine (Geschwindigkeits-)effiziente Implementierung in der Hand zu
+haben. Zwar gibt es auf <a href="http://www.esat.kuleuven.ac.be/~rijmen/rijndael/" target="_blank">The Rijndael Page</a>
+etliche Links zu Implementierungen in verschiedenen Sprachen, nur so recht gefallen hat mir dabei keine.
+</p>
+
+<p>
+Wer daraus schlie&szlig;t, ich h&auml;tte mir eine eigene programmiert, irrt. Denn es gibt eine &auml;u&szlig;erst leistungsf&auml;hige
+Cryptokomponente, die auf OpenSSL aufbaut, und als nette Zugabe sogar vollst&auml;ndig gratis zu haben ist:
+<a href="http://www.ebcrypt.com/components/ebCrypt/index.htm" target="_blank">ebCrypt</a>. Es gibt
+ein Windows Installer Programm zum Download, und wer seine Unterst&uuml;tzung f&uuml;r das Projekt ausdr&uuml;cken
+m&ouml;chte, sollte die paar Dollar f&uuml;r einen einj&auml;hrigen Support hinlegen (nicht verpflichtend, ist aber
+bei diesem Leistungsumfang sicher nicht zuviel).
+</p>
+
+<h2>ebCrypt &amp; Rijndael verwenden</h2>
+<p>
+Gut - die Komponente ist installiert. Was nun? Es liegt ein Windows Help File bei, in dem man sich
+&uuml;ber die Verwendung der Komponente informieren kann. Ich denke aber, ein Beispiel sagt mehr als
+tausend Worte (<b>encrypt.asp</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Const EB_CRYPT_CIPHER_ALGORITHM_RIJNDAEL_CBC_256  = 80
+Const cstrPassphrase = "passphrase"
+
+Set objLibrary = Server.CreateObject("EbCrypt.eb_c_Library")
+Set objCipher = Server.CreateObject("EbCrypt.eb_c_Cipher")
+
+vEncrypted = objLibrary.BLOBToHex( _
+                   objCipher.EncryptString(EB_CRYPT_CIPHER_ALGORITHM_RIJNDAEL_CBC_256, _
+                   cstrPassphrase, "", "Zu verschl&uuml;sselnder Text"))
+
+Response.Write vEncrypted &amp; vbCrLf
+
+Response.Write objCipher.DecryptBLOB(EB_CRYPT_CIPHER_ALGORITHM_RIJNDAEL_CBC_256, _
+                  cstrPassphrase, "", objLibrary.HexToBLOB(vEncrypted))
+%&gt;
+</pre>
+
+<p>
+Eigentlich dient diese Seite nicht nur der Verschl&uuml;sselung, sondern auch der Entschl&uuml;sselung. Auf
+diese Art kommt das <i>Library</i> Objekt nicht so zur Geltung, allerdings hat sein Einsatz folgenden
+Zweck: <i>EncryptString</i> liefert ein Byte-Array, und um dieses als String herumreichen zu k&ouml;nnen,
+ist eine Umwandlung in hexadezimal anzuraten (es w&auml;re auch Base64 m&ouml;glich).
+</p>
+
+<p>
+Das Konvertieren auf hexadezimal wird dann interessant, wenn man zB Werte in Cookies speichert, oder an
+QueryStrings anh&auml;ngt. Ohne Passphrase (auch als "shared secret" bekannt) ist eine Entschl&uuml;sselung nicht
+m&ouml;glich. Aber das ist ja der Sinn und Zweck eines symmetrischen Algorithmus.
+</p>
+
+<p>
+Nat&uuml;rlich kann man Rijndael auch auf Dateien anwenden. Dazu bedarf es nur des <i>Library</i>
+Objekts, wie der Code in <b>encryptfile.asp</b> zeigt:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Const EB_CRYPT_CIPHER_ALGORITHM_RIJNDAEL_CBC_256 = 80
+Const EB_CRYPT_HASH_ALGORITHM_NONE = 0
+Const cstrPassphrase = "passphrase"
+
+Set objLibrary = Server.CreateObject("EbCrypt.eb_c_Library")
+
+objLibrary.EncryptFile EB_CRYPT_CIPHER_ALGORITHM_RIJNDAEL_CBC_256, _
+                   EB_CRYPT_HASH_ALGORITHM_NONE, _
+                   cstrPassphrase, "", Server.MapPath("demo.txt"), _
+                   Server.MapPath("demo_encrypted.txt")
+
+
+objLibrary.DecryptFile EB_CRYPT_CIPHER_ALGORITHM_RIJNDAEL_CBC_256, _
+                   EB_CRYPT_HASH_ALGORITHM_NONE, _
+                   cstrPassphrase, "", Server.MapPath("demo_encrypted.txt"), _
+                   Server.MapPath("demo_decrypted.txt")
+%&gt;
+</pre>
+
+<p>
+Die beiden Funktionen <i>EncryptFile</i> und <i>DecryptFile</i> w&uuml;rden auch Hashes der jeweiligen
+Dateien rechnen k&ouml;nnen. Ich habe mittels <i>EB_CRYPT_HASH_ALGORITHM_NONE</i> darauf verzichtet.
+Es m&ouml;ge sich jeder von der Verschl&uuml;sselung in der Datei <b>demo_encrypted.txt</b> &uuml;berzeugen.
+</p>
+
+<p>
+Apropos - wer das Original der verschl&uuml;sselten Datei effektiv "entsorgen" m&ouml;chte, kann auf die Funktion
+<i>WipeFile</i> des <i>Library</i> Objektes zur&uuml;ckgreifen.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die ebCrypt Komponente zeigt, da&szlig; Verschl&uuml;sselung keineswegs schwierig, und schon gar nicht kostenintensiv
+sein mu&szlig;. Und bevor ich es vergesse: ebCrypt kann unter anderem auch SHA1, MD5, IDEA, CAST, BlowFish,
+DES, 3DES, Serpent und andere. OpenSSL l&auml;&szlig;t gr&uuml;&szlig;en!
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010528.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010528.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020115.htm">CAPICOM One</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020115.htm</span><br>
+<a href="../artikel/20010330.htm">Passw&ouml;rter mit SHA1 absichern</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010330.htm</span><br>
+<a href="../artikel/20040105.htm">Passw&ouml;rter speichern - aber richtig!</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040105.htm</span><br>
+<a href="../artikel/20000920.htm">PGP-Verschl&uuml;sselung bei Dateien</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000920.htm</span><br>
+<a href="../artikel/20010601.htm">Sicherheitsaspekte bei der Gestaltung von ASP Sites ohne Cookies</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010601.htm</span><br>
+<a href="../artikel/20010924.htm">Unknackbare Verschl&uuml;sselung mit Onetime Pads</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010924.htm</span><br>
+<a href="../artikel/20000921.htm">Ver- und entschl&uuml;sseln von Texten mit PGP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000921.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eebcrypt%2Ecom%2Fcomponents%2FebCrypt%2Findex%2Ehtm">ebCrypt Download</a><br>
+<SPAN class="content">http://www.ebcrypt.com/components/ebCrypt/index.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eopenssl%2Eorg">OpenSSL</a><br>
+<SPAN class="content">http://www.openssl.org</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eesat%2Ekuleuven%2Eac%2Ebe%2F%7Erijmen%2Frijndael%2F">The Rijndael Page</a><br>
+<SPAN class="content">http://www.esat.kuleuven.ac.be/~rijmen/rijndael/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

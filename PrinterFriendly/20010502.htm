@@ -1,0 +1,226 @@
+<HTML>
+<HEAD>
+<TITLE>Logfiles mit Access auswerten</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Das Auswerten von Logdateien ist eine wichtige Angelegenheit - man erf&auml;hrt nicht nur, woran die Kunden am meisten interessiert sind, sondern auch, wo sich Fehler in einer Website eingeschlichen haben.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Logfile,Logdatei,Statistik,Webserverstatistik,Statistikauswertung,Logfileauswertung,Logauswertung,Access">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Logfiles mit Access auswerten</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Server.htm">Server</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010502"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Das Auswerten von Logdateien ist eine wichtige Angelegenheit - man erf&auml;hrt nicht nur,
+woran die Kunden am meisten interessiert sind, sondern auch, wo sich Fehler in einer
+Website eingeschlichen haben als auch ob jemand versucht hat, die Website zu cracken.
+Es gibt sehr viel hervorragende Reportingsoftware (einige Links am Ende des Artikels),
+die aber die ad hoc Abfragem&ouml;glichkeit einer Datenbank vermissen lassen.
+</p>
+
+<p>
+Unter ad hoc verstehe ich, da&szlig; ich auf spezielle Bereiche "hineinzoomen" kann - und das
+mit der gesamten Power, die mir SQL an die Hand gibt. Klarerweise mu&szlig; ich die Logfiles
+in eine Datenbank importieren, um mit SQL darauf zugreifen zu k&ouml;nnen. Als Einstieg in
+das Auswerten per Datenbank kann man Access verwenden - wird die Menge der Eintr&auml;ge
+allerdings gro&szlig;, sollte man auf SQL Server umsatteln.
+</p>
+
+<p>
+Die Frage des Imports habe ich h&auml;ndisch gecodet, da Access gewisse "Schw&auml;chen" bei
+gro&szlig;en Import-Datenmengen mit potentiell fehlerhaften Zeilen hat. Allerdings - und das
+aus Faulheitsgr&uuml;nden - habe ich ein Log mit nur einer einzigen Zeile importiert, um automatisch die 
+Tabelle <b>Logs</b> anhand meiner Logfilefelder zu generieren, die da w&auml;ren: <i>
+date, 
+time, 
+c-ip, 
+cs-username, 
+s-sitename, 
+s-computername, 
+s-ip cs-method, 
+cs-uri-stem, 
+cs-uri-query, 
+sc-status, 
+sc-win32-status, 
+sc-bytes, 
+cs-bytes, 
+time-taken, 
+s-port, 
+cs-version, 
+cs(User-Agent),
+cs(Cookie),
+cs(Referer)
+</i>.
+</p>
+
+<p>
+Es ist durchaus sehr wahrscheinlich, da&szlig; Ihre Logfiles andere Felder beinhalten. Die Beispieldatenbank
+<b>blank.mdb</b> enth&auml;lt jedenfalls eine Tabelle, die dem obigen Logfileformat entspricht, sowie
+eine kleine VBA Methode, die uns den Import korrekt formatierter Logdateien erlaubt:
+</p>
+
+<pre style="background='silver';">
+Sub ImportLog(ByVal strLogfile As String)
+    Dim fs As Scripting.FileSystemObject, f As Scripting.TextStream
+    Dim strContent As String, arrStrings As Variant, i As Long
+    Dim db As DAO.Database, rs As DAO.Recordset
+    
+    Set fs = New Scripting.FileSystemObject
+    Set f = fs.OpenTextFile(strLogfile, ForReading, False)
+    
+    Set db = CurrentDb()
+    Set rs = db.OpenRecordset("Logs")
+    
+    Do While f.AtEndOfStream &lt;&gt; True
+        strContent = f.ReadLine()
+        arrStrings = Split(strContent, " ")
+        If UBound(arrStrings) = 19 Then
+            If IsDate(arrStrings(0)) Then
+              rs.AddNew
+                For i = 0 To UBound(arrStrings)
+                    rs.Fields(i + 1).Value = Left(arrStrings(i), 255)
+                Next
+              rs.Update
+            End If
+        Else
+            ' line does not fit our log file format
+        End If
+    Loop
+    
+    f.Close
+    Set f = Nothing
+    Set fs = Nothing
+End Sub
+</pre>
+
+<p>
+Der Aufruf ist einfach mit <i>ImportLog "logfile.txt"</i>, und kann in ein nettes
+Eingabeformular eingebaut werden - auf das ich verzichtet habe. Der Code selbst ist
+nur Auslesen einer Datei mit dem FileSystemObject und Eintragen der Daten in die 
+Datenbank via DAO 3.6. Ich habe einige wenige Datenintegrit&auml;tschecks eingebaut, wie zB
+da&szlig; ich eine gewisse Anzahl von Spalten im Logfile erwarte, sowie da&szlig; die erste Spalte
+ein Datum ist.
+</p>
+
+<p>
+Damit kann man nun alle Logfiles in die Datenbank importieren, und man hat - nichts. Gut,
+einen riesengro&szlig;en Datenfriedhof, der ohne weitere Analyse klarerweise v&ouml;llig umsonst angelegt
+wurde. Aber das wollen wir nun &auml;ndern.
+</p>
+
+<p>
+Ich m&ouml;chte mir exemplarisch einige Szenarien herausgreifen. Das erste? Ich will wissen,
+welche Aufrufe nicht erfolgreich waren, also 404er Fehler ausgel&ouml;st haben. Dazu &ouml;ffne
+ich den Query Designer, und baue mir folgende Abfrage:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010502_1.png" width="448" height="306" alt="" border="0">
+
+<p>
+Ich bekomme nun eine Liste aller Seiten, die einen 404er HTTP Status ausgel&ouml;st haben. Was ich
+noch nicht wei&szlig; ist, wie oft. Alles was ich tun mu&szlig; ist ein Count Feld hinzuzuf&uuml;gen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010502_3.png" width="456" height="305" alt="" border="0">
+
+<p>
+Jetzt wei&szlig; ich, wie oft eine bestimmte Seite nicht gefunden wurde - und kann mittels
+dem <i>cs(Referer)</i> Feld auf die Suche gehen, woher die Leute auf diese Seite gelangen - und
+somit die Site f&uuml;r die User verbessern.
+</p>
+
+<p>
+Ein weiterer Anwendungsfall w&auml;re es, sich die Aufrufsh&auml;ufigkeit bestimmter Seiten
+anzeigen zu lassen. Dies kann zwar auch jede Reportingsoftware, aber wir k&ouml;nnen hier
+und da etwas f&uuml;rs Auge tun:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010502_2.png" width="563" height="324" alt="" border="0">
+
+<p>
+Das waren jetzt zwei anhand von SQL gezeigte Beispiele - Anwendungsf&auml;lle gibt es viel
+mehr, rangierend vom Aufsp&uuml;ren von 500er Fehlern (ASP Engine) bis hin zum Tracken von
+Hackern basierend auf speziellen 404er Fehlern. SQL ist leistungsf&auml;hig, und die Logfiles
+ein "Quell" von wichtigen Informationen &uuml;ber Kunden, Hacker und Spider (gerade die!).
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Es waren heute nur Beispielauswertungen - man kann die Datenbank mit den Reportingf&auml;higkeiten
+von Access sogar zu einem tollen Website-Statistiktool ausbauen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010502.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010502.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010517.htm">Gratis Loganalyse mit Analog</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010517.htm</span><br>
+<a href="../artikel/20011204.htm">IIS, was machst du gerade?</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011204.htm</span><br>
+<a href="../artikel/20000530.htm">Lesen von Textdateien</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000530.htm</span><br>
+<a href="../artikel/20021030.htm">Logfiles auswerten mit Webalizer</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021030.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emediahouse%2Ecom%2Fstatisticsserver%2F">MediaHouse Statistics Server</a><br>
+<SPAN class="content">http://www.mediahouse.com/statisticsserver/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ewebtrends%2Ecom%2F">WebTrends</a><br>
+<SPAN class="content">http://www.webtrends.com/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

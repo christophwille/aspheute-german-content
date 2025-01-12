@@ -1,0 +1,303 @@
+<HTML>
+<HEAD>
+<TITLE>Stored Procedures 101 in ADO.NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Auf Stored Procedures mu&szlig; in ADO.NET nicht verzichtet werden. Bis auf die Anpassungen f&uuml;r den ADO.NET Code hat sich eigentlich nichts ver&auml;ndert - und das sehen wir uns heute an.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ADO.NET,SqlCommand,SqlConnection,Parameters,CommandType,stored procedure,sp,.NET,SDK,sample,database,Datenbank">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Stored Procedures 101 in ADO.NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ADOdotNET.htm">ADO.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010626"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Manche (in grauer Vorzeit implementierte) Sachen funktionieren so gut, da&szlig; man sie auch weiterhin verwendet.
+So auch Stored Procedures. Auf diese mu&szlig; n&auml;mlich in ADO.NET nicht verzichtet werden. Bis auf die 
+Anpassungen f&uuml;r den ADO.NET Code hat sich eigentlich nichts ver&auml;ndert. Und diese &Auml;nderungen stellen
+das heutige Artikelthema dar.
+</p>
+
+<p>
+So allm&auml;hlich wird ADO.NET ganz stabil und man braucht die Stabilit&auml;t nicht mehr mit einem Kartenhaus zu
+vergleichen. Aus diesem Grund ist es wieder mal Zeit einen ADO.NET Artikel zu schreiben, da
+(anscheinend) keine &Auml;nderungen im Aufbau (Namespaces, Klassen) von ADO.NET mehr zu erwarten sind. Der 
+heutige Artikel soll Ihnen den Umstieg zu ADO.NET etwas erleichtern, indem er L&ouml;sungen zu den wichtigsten
+Aufgaben zeigt. Also z.B. das Zur&uuml;ckgeben von Recordsets oder die Verwendung von <i>Input</i> Parametern.
+</p>
+
+<p>
+Es sei darauf hingewiesen, da&szlig; dieser Artikel nicht Grundlagen &uuml;ber Stored Procedures und Ihren 
+Verwendungszweck erl&auml;utert, sondern wie schon eingangs erw&auml;hnt, einen leichteren Umstieg zu ADO.NET erm&ouml;glichen soll.
+AspHeute bietet ausreichende Lekt&uuml;re &uuml;ber Stored Procedures, in der die Basics und die 
+Performanceissues erkl&auml;rt werden.
+</p>
+
+<p>
+Die Verwendung bzw. das Zugreifen auf Stored Procedures in ADO.NET ist eigentlich (relativ) einfach -  
+leichter als ich mir vorgestellt habe. Nach den vielen &Auml;nderungen war dies schwer vorherzusehen. Also habe ich zwei 
+Beispiele erstellt, die ich heute in diesem Artikel pr&auml;sentieren werde. 
+</p>
+
+<p>
+Wie Sie ja wissen, bringt die Nutzung von Stored Procedures einiges an Vorteilen mit sich. Nat&uuml;rlich auch
+im Hinblick auf die Performance von Datenbankoperationen, da diese bei Stored Procedures am Datenbankserver
+ablaufen. Warscheinlich eines der auschlaggebenden Argumente f&uuml;r die Weiterverwendung dieser.
+Mit Stored Procedures k&ouml;nnen Sie die Abfragestatements einfach kapseln, Sicherheitsvorkehrungen
+treffen und sie leichter optimieren.
+</p>
+
+<p>
+Auch die Einbindung in eine ASP bzw. ASP.NET Seite gestaltet sich wesentlich einfacher als die herk&ouml;mmliche
+Verwendung von SQL Statements im Code. Ihre
+(hoch) optimierten Abfragestatements und sonstiger eingebetteter Code wird einfach durch den Aufruf
+des Namens der Stored Procedures und &Uuml;bergabe gegebenenfalls vorhandener Parameter ausgef&uuml;hrt.
+</p>
+
+<p>
+Passend f&uuml;r ADO.NET m&uuml;ssen Sie sich hier nat&uuml;rlich auf die <i>Parameters</i> Collection des 
+ADO.NET SqlCommand Objektes beziehen. Mit dieser lassen sich Input-, Output-Parameter, etc.
+nat&uuml;rlich viel leichter angeben und andererseits noch mehr Performance aus Ihrem Code herausquetschen - 
+was einem halt immer so von den Anbietern einer neueren Version suggeriert wird.
+</p>
+
+<p>
+Im ersten Beispiel rufen wir eine bereits in der Northwind SQL-Datenbank vorhandene Stored 
+Procedure (<b>Ten Most Expensive Products</b>, was f&uuml;r ein Zufall) auf. Um dies zu erreichen legen 
+wir den <i>CommandType</i> des <i>SqlCommand</i> Objektes als <i>StoredProcedure</i> fest. Das nun folgende 
+Beispiel (<b>RetRS.aspx</b>) zeigt den einfachen Aufruf einer Stored Procedure und die nachfolgende
+Ausgabe der Ergebnisrecordsets:
+</p>
+
+<pre style="background='silver';">
+&lt;%@Page Language="C#" %&gt;
+&lt;%@Import Namespace="System.Data" %&gt;
+&lt;%@Import Namespace="System.Data.SqlClient" %&gt;
+&lt;%
+
+string strConn ="server=(local)\\NetSDK;database=northwind;Trusted_Connection=yes";
+SqlConnection MyNWConn = new SqlConnection(strConn);
+SqlCommand TenMostExpCmd = new SqlCommand("Ten Most Expensive Products",MyNWConn);
+TenMostExpCmd.CommandType = CommandType.StoredProcedure;
+
+MyNWConn.Open();
+
+SqlDataReader MySqlReader = TenMostExpCmd.ExecuteReader();
+</pre>
+
+<p>
+Wie bei allen ASP.NET Seiten sind zuerst immer die Directives anzugeben. Hier legen wir
+mit <i>@Page</i> die verwendete Sprache fest, und danach sind mit <i>@Import</i> die ben&ouml;tigten 
+Namespaces aus dem .NET Framework einzubinden.
+Hier ist die Namens&auml;nderung im Gegensatz zur Beta 1 des .NET Frameworks zu beachten.
+</p>
+
+<p>
+Nach der Festlegung des Connectionstrings und Erstellung einer neuen Verbindung zur Northwind
+SQL-Datenbank k&ouml;nnen wir dann den Namen der zu verwendenden Stored Procedure und das SqlConnection 
+Objekt dem SqlCommand Objekt &uuml;bergeben. Wie schon erw&auml;hnt, setzten wir den CommandType des SqlCommand Objektes 
+auf <i>StoredProcedure</i>. Danach wird die Verbindung ge&ouml;ffnet und ein neues Objekt f&uuml;r den SqlDataReader 
+instanziert.
+</p>
+
+<pre style="background='silver';">
+  Response.Write("&lt;table cellspacing=\"2\" cellpadding=\"2\" border=\"2\"&gt;");
+  Response.Write("&lt;th&gt;" + MySqlReader.GetName(0) + "&lt;/th&gt;&lt;th&gt;" _
+  		+ MySqlReader.GetName(1) + "&lt;/th&gt;");
+        
+  while (MySqlReader.Read())
+  {
+    Response.Write("&lt;tr&gt;");
+    Response.Write("&lt;td&gt;" + MySqlReader.GetString(0) + "&lt;/td&gt;");
+    Response.Write("&lt;td&gt;" + MySqlReader.GetDecimal(1) + "&lt;/td&gt;");
+    Response.Write("&lt;/tr&gt;");
+  }
+  Response.Write("&lt;/table&gt;");
+
+  MySqlReader.Close();
+  MyNWConn.Close();
+%&gt;
+</pre>
+
+<p>
+Der restliche Code ist eigentlich nur Formsache, d.h. er tr&auml;gt wesentlich dazu bei, wie die Daten 
+ausgegeben werden. Da ich einen SqlDataReader verwendet habe, ist die Sache wortw&ouml;rtlich
+straight forward. Das soll nicht nur simpel hei&szlig;en, sondern auch, da&szlig; der Output Stream auch nur 
+read only und forward ist. Ergo nix mit Datenmanipulation. Wenn dies jedoch erforderlich w&auml;re,
+w&uuml;rde ich auch meine Daten zuerst "binden" (<i>.Bind()</i>) und dann einem DataGrid zuweisen.
+</p>
+
+<p>
+Was trotz aller Schnelle noch zu erw&auml;hnen ist, ist die richtige Zuweisung der Datentypen bei der 
+Gewinnung der einzelnen Felder der Recordsets (Get<i>DatenTyp</i> Methode):
+</p>
+
+<pre style="background='silver';">
+    Response.Write("&lt;td&gt;" + <b>MySqlReader.GetString(0)</b> + "&lt;/td&gt;");
+    Response.Write("&lt;td&gt;" + <b>MySqlReader.GetDecimal(1)</b> + "&lt;/td&gt;");
+</pre>
+
+<p>
+Da es den Datentyp mit der Bezeichnung <i>Money</i> nur mehr in SQL gibt, tritt hier <i>Decimal</i> 
+in den Vordergrund.
+</p>
+
+<p>
+Da dies alles ist, was der Code imstande ist zu produzieren (au&szlig;er Exceptions vielleicht),
+k&ouml;nnen wir uns das Ergebnis nach der erfolgreichen Ausf&uuml;hrung der .aspx Seite in einem Webbrowser 
+ansehen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010626_1.png" width="332" height="461" alt="" border="0">
+
+<p>
+Ein bischen aufwendiger ist das n&auml;chste Beispiel (<b>InputParam.aspx</b>), das wie der Name schon sagt
+sich Input Parameters bedient. &Auml;hnlich wie bei Methoden bzw. Funktionen in der VB Welt k&ouml;nnen Sie hier
+Werte &uuml;bergeben, die das zur&uuml;ckgelieferte Resultat einer Stored Procedure beeinflu&szlig;en.
+Kurze Rede, langes Beispiel:
+</p>
+
+<pre style="background='silver';">
+&lt;%@Page Language="C#" %&gt;
+&lt;%@Import Namespace="System.Data" %&gt;
+&lt;%@Import Namespace="System.Data.SqlClient" %&gt;
+&lt;%
+string strConn ="server=(local)\\NetSDK;database=northwind;Trusted_Connection=yes";
+SqlConnection MyNWConn = new SqlConnection(strConn);
+SqlCommand SqlCmd = new SqlCommand("SalesByCategory",MyNWConn);
+SqlCmd.CommandType = CommandType.StoredProcedure;
+SqlParameter MyParam = SqlCmd.Parameters.Add("@CategoryName", SqlDbType.NVarChar, 15);
+MyParam.Value = "Seafood";
+
+MyNWConn.Open();
+SqlDataReader MySqlReader = SqlCmd.ExecuteReader();
+
+Response.Write("&lt;table cellspacing=\"2\" cellpadding=\"2\" border=\"2\"&gt;");
+Response.Write("&lt;th&gt;" + MySqlReader.GetName(0) + "&lt;/th&gt;&lt;th&gt;" + MySqlReader.GetName(1) + "&lt;/th&gt;");
+while (MySqlReader.Read())
+{
+    Response.Write("&lt;tr&gt;");
+    Response.Write("&lt;td&gt;" + MySqlReader.GetString(0) + "&lt;/td&gt;");
+    Response.Write("&lt;td&gt;" + MySqlReader.GetDecimal(1) + "&lt;/td&gt;");
+    Response.Write("&lt;/tr&gt;");
+}
+Response.Write("&lt;/table&gt;");
+
+MySqlReader.Close();
+MyNWConn.Close();
+%&gt;
+</pre>
+
+<p>
+Abgesehen von der Verwendung einer anderen Stored Procedure (<b>SalesByCategory</b>) und des &auml;hnlichen
+Codes zum vorigen Beispiel, sind hier folgende Zeilen interessant:
+</p>
+
+<pre style="background='silver';">
+SqlParameter MyParam = SqlCmd.Parameters.Add("@CategoryName", SqlDbType.NVarChar, 15);
+MyParam.Value = "Seafood";
+</pre>
+
+<p>
+Wie in diesem Beispiel gezeigt wird, k&ouml;nnen Sie nun durch die Setzung der CommandType Property auf
+<i>StoredProcedure</i> auf die zur Verf&uuml;gung gestellte <i>Parameters</i> Collection zugreifen.
+Hier f&uuml;gen wir einen neuen Parameter (<i>MyParameter</i>) dem SqlCommand Objekt hinzu. Dieser bezieht
+sich auf die Tabellenspalte <i>CategoryName</i> und ist vom Enumtyp <i>NVarChar</i>, sowie von der L&auml;nge 
+15. Was noch fehlt ist nat&uuml;rlich der Wert, den der Parameter haben soll. Dies erreichen wir indem wir
+die <i>Value</i> Property auf den gew&uuml;nschten Wert setzen (hier: <i>Seafood</i>).
+</p>
+
+<p>
+Der nun folgende Screenshot pr&auml;sentiert das Ergebnis der erfolgreichen Ausf&uuml;hrung der ASP.NET Seite:
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010626_2.png" width="328" height="527" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dieser Artikel sollte Ihnen einen schnellen &Uuml;berblick &uuml;ber die wichtigsten &Auml;nderungen f&uuml;r Stored Procedures
+gegen&uuml;ber dem old-fashioned ASP geben, damit Ihre geliebten Stored Procedures auch in Zukunft weiter existieren k&ouml;nnen.
+Da sich seit der Beta 2 des .NET Frameworks die Bezeichnungen gefestigt haben und sich bis zum Release
+der Erstversion (eigentlich) nichts mehr &auml;ndern sollte, macht es jetzt um so mehr Sinn sich mit dieser
+neuen und sehr umfangreichen Materie auseinanderzusetzen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010626.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010626.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001106.htm">Datenaufbereitung in ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001106.htm</span><br>
+<a href="../artikel/20001102.htm">Datenbankzugriff mittels ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001102.htm</span><br>
+<a href="../artikel/20020206.htm">Der ODBC .NET Data Provider</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020206.htm</span><br>
+<a href="../artikel/20011031.htm">Gegengifte f&uuml;r SQL Injection</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011031.htm</span><br>
+<a href="../artikel/20011206.htm">Performancemessungen in .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011206.htm</span><br>
+<a href="../artikel/20010326.htm">Records z&auml;hlen mit Stored Procedures</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010326.htm</span><br>
+<a href="../artikel/20011203.htm">Verhinderung von SQL Injection Marke .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011203.htm</span><br>
+<a href="../artikel/20001031.htm">Was ist neu in ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001031.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Edotnetgerman%2Ecom%2F">DotNetGerman Diskussionslisten</a><br>
+<SPAN class="content">http://www.dotnetgerman.com/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,207 @@
+<HTML>
+<HEAD>
+<TITLE>Serverseitige Redirects mit IIS5</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Mit IIS 5 unter Windows 2000 sind 2 neue Methoden f&uuml;r serverseitige Redirects eingebaut worden: Server.Transfer (funktioniert im Prinzip wie das altbekannte GoTo Statement), sowie Server.Execute (vergleichbar mit dem Aufruf einer Prozedur).">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Server,Server.Transfer,Server.Execute,Execute,Transfer,Response,Response.Redirect,Redirect">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Serverseitige Redirects mit IIS5</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000509"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Eine Methode des Response Objekts von IIS4 d&uuml;rfte vielen Programmierern Header-Schmerzen verschafft haben:
+<i>Response.Redirect</i>. Mit dieser Methode kann man einen Benutzer von Seite A nach Seite B umleiten, und zwar
+mit Hilfe des HTTP Status Codes 302, Object Moved. Hier als Beispiel die Hauptseite von www.aspgerman.com:
+<pre style="background=silver;">
+HTTP/1.1 302 Object moved
+Location: /aspgerman/
+</pre>
+Diese HTTP Header werden an den Browser geschickt, der dann die neue Seite aufruft. Im Flie&szlig;bild sieht das
+dann wie folgt aus:
+</p>
+<p><IMG SRC="/artikel/Bilder/200005/20000509_1.png" width="405" height="228" border="0" alt=""></p>
+<p>
+In Schritt 1 wird die Seite aufgerufen, die mitteilt, da&szlig; eine andere Seite angesprungen werden soll. Dies
+f&uuml;hrt der Browser automatisch in Schritt 3 durch. Das hat nat&uuml;rlich den Nachteil, da&szlig; der Benutzer eine 
+weitere Anfrage an den Web Server abwarten mu&szlig;.
+</p>
+<p>
+Mit IIS 5 unter Windows 2000 sind 2 neue Methoden f&uuml;r serverseitige Redirects eingebaut worden:
+<ul>
+<li><b>Server.Transfer</b> &uuml;bergibt die Kontrolle von Seite A an Seite B. Funktioniert im Prinzip wie das
+altbekannte GoTo Statement.
+<li><b>Server.Execute</b> f&uuml;hrt Seite B von Seite A aus aus, und Seite A beendet den Response. Vergleichbar mit
+dem Aufruf einer Prozedur in Visual Basic.
+</ul>
+</p>
+
+<h2>Server.Transfer - die GoTo Variante</h2>
+<p>
+Die erste Spielart der neuen Server-Redirects ist <i>Server.Transfer</i>. Bei dieser Technik bricht das aktuell
+ausgef&uuml;hrte ASP Skript in der Zeile ab, in der <i>Server.Transfer</i> steht. Von da an &uuml;bernimmt das aufgerufene
+Skript. Wichtig ist, da&szlig; der Client am Ende der Ausf&uuml;hrung nach wie vor die URL von der anf&auml;nglich aufgerufenen Seite
+sieht.
+</p>
+<P>
+Dieses Konzept verdeutlicht das folgende Flie&szlig;bild:
+</p>
+<p><IMG SRC="/artikel/Bilder/200005/20000509_2.png" width="405" height="228" border="0" alt=""></p>
+<p>
+Um es auch "angreifbar" zu machen, habe ich hier beispielhaft SeiteA.asp und SeiteB.asp programmiert, hier der
+Code f&uuml;r SeiteA.asp:
+<pre style="background=silver;">
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;Seite A&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+Das ist Seite A, erster Output&lt;br&gt;
+
+&lt;% Server.Transfer "SeiteB.asp" %&gt;
+
+Das sieht niemand jemals wieder!&lt;br&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+Und dies ist der Code in SeiteB.asp:
+<pre style="background=silver;">
+Und jetzt bin ich auf Seite B!<br>
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+Der Output ist erwartungsgem&auml;&szlig;
+<pre style="background=silver;">
+Das ist Seite A, erster Output
+Und jetzt bin ich auf Seite B!
+</pre>
+</p>
+<p>
+Wie gesagt, Seite A bricht mit der Abarbeitung zu dem Zeitpunkt ab, wo <i>Server.Transfer</i> ausgef&uuml;hrt wird.
+Deswegen habe ich in SeiteB.asp auch die HTML Endecodes eingebaut - weil die entsprechenden von SeiteA.asp
+ja nicht mehr aufgerufen w&uuml;rden.
+</p>
+<p>
+Ein Vorteil von <i>Server.Transfer</i> ist der, da&szlig; die gesamten ASP Objekte wie Request, Response, Session oder
+Application ihre Werte behalten, was auch bedeutet, da&szlig; ich auf Seite B auf den QueryString von Seite A zugreifen 
+kann. Und nat&uuml;rlich habe ich Zugriff auf alle Session und Application Variablen. Genauso selbstverst&auml;ndlich
+allerdings kann man auf in Seite A deklarierte normale Variablen (VBScript) nicht mehr zugreifen.
+</p>
+
+<h2>Server.Execute - die prozedurale Variante</h2>
+<p>
+Obwohl <i>Server.Execute</i> am ehesten mit einem Prozeduraufruf verglichen werden kann, teilt <i>.Execute</i> ansonsten
+die Funktionalit&auml;t von <i>.Transfer</i>: alle ASP Objekte sind unmodifiziert verf&uuml;gbar. Allerdings f&auml;hrt die
+Ausf&uuml;hrung der aufrufenden Seite nach <i>.Execute</i> weiter:
+</p>
+<p><IMG SRC="/artikel/Bilder/200005/20000509_3.png" width="405" height="228" border="0" alt=""></p>
+<p>
+Um das Konzept zu verdeutlichen, habe ich wieder beispielhaft SeiteA.asp und SeiteB.asp programmiert; zuerst
+nun der Code f&uuml;r SeiteA.asp:
+<pre style="background=silver;">
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;Seite A&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+Das ist Seite A, erster Output&lt;br&gt;
+
+&lt;% 
+Server.Execute("SeiteB.asp")
+%&gt;
+
+Das ist Seite A, zweiter Output&lt;br&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+Und dies ist der Code in SeiteB.asp, der in Seite A nach der Ausf&uuml;hrung eingebunden wird:
+<pre style="background=silver;">
+Seite B wird ausgef&uuml;hrt!&lt;br&gt;
+</pre>
+Der Output ist, wie erwartet
+<pre style="background=silver;">
+Das ist Seite A, erster Output
+Seite B wird ausgef&uuml;hrt!
+Das ist Seite A, zweiter Output
+</pre>
+</p>
+<p>
+Als typischter Anwendungsfall f&uuml;r <i>Server.Execute</i> d&uuml;rften sich wahrscheinlich dynamische Includes 
+herauskristallisieren. Man kann sowohl relative Pfade, als auch Absolutpfade f&uuml;r den Aufruf verwenden (gilt auch f&uuml;r <i>.Transfer</i>).
+F&uuml;r die Absolutpfadvariante gilt allerdings eine Einschr&auml;nkung: das aufgerufene ASP Skript mu&szlig; Teil
+der Web Applikation sein, der auch die aufrufende Seite angeh&ouml;rt.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+F&uuml;r das serverseitige Programmieren sind die beiden neuen Funktionen <i>Server.Execute</i> und <i>Server.Transfer</i>
+sicherlich ein Gewinn. Allerdings wird ein gewisses Anwendungsgebiet f&uuml;r <i>Response.Redirect</i> niemals 
+verschwinden - den Benutzer zu einer URL auf einem anderen Server zu schicken. Beide Server Methoden funktionieren
+n&auml;mlich nur f&uuml;r Skripts am lokalen Server.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000512.htm">ASP-Fehlerbehandlung unter IIS5</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000512.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsupport%2Emicrosoft%2Ecom%2Fsupport%2Fkb%2Farticles%2FQ247%2F4%2F20%2EASP">Using a Query String in the IIS Server.Execute Parameter Produces an Error</a><br>
+<SPAN class="content">http://support.microsoft.com/support/kb/articles/Q247/4/20.ASP</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,200 @@
+<HTML>
+<HEAD>
+<TITLE>Lesen von Textdateien</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel zeigt, wie man in ASP (Active Server Pages) mit Hilfe des FileSystemObject und des TextStream Objektes den Inhalt einer Textdatei lesen kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Textdatei, lesen, FileSystemObject, Textstream, virtueller Pfad, physikalischer Pfad, ASP, Dateiinhalt">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Lesen von Textdateien</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000530"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><P>Textdateien kann man in kleinen ASP-Applikationen vielf&auml;ltig 
+            einsetzen. Ob man sie als Speicherplatz f&uuml;r Daten benutzt, oder 
+            als Steuerungsdateien f&uuml;r bestimmte Anweisungen. </P>
+            <P>Um Zugriff auf Textdateien zu erlangen, benutzt man unter ASP das 
+            <I>FileSystemObject</I> Objekt. Dieses ist Teil der Scripting 
+            Library, die mit VBScript geliefert wird. </P>
+            <H2>Methoden zum Lesen von Textdateien</H2>
+            <P>Um eine Textdatei in einer ASP-Seite lesen zu k&ouml;nnen, ben&ouml;tigt 
+            man nur das <I>FileSystemObject</I> und die zugeh&ouml;rige 
+            <I>OpenTextFile</I> Methode. Das folgende Skript &ouml;ffnet 
+            beispielsweise die Datei <I>C:\Testdateien\MeineDatei.txt</I>, 
+            speichert den Inhalt in der Textvariable <I>strInhalt</I>, und gibt 
+            dann den Inhalt aus:</P><PRE style="BACKGROUND: silver">&lt;%
+' <I>+++ Konstanten und Variablen deklarieren</I>
+Const fsForReading = 1
+Dim strDateiname, strInhalt, strInhaltHTML
+Dim objFs           ' FileSystemObject Objekt
+Dim objTextStream   ' Textstream Objekt
+
+' <I>+++ Datei, deren Inhalt gelesen wird:</I>
+strDateiname = "C:\Testdateien\MeineDatei.txt"
+
+' <I>+++ FileSystemObject anlegen und in fs speichern:</I>
+<B>Set objFs = CreateObject("Scripting.FileSystemObject")</B>
+
+' <I>+++ Textstream oeffnen, erlaubt Zugriff auf den Inhalt der Datei</I>
+<B>Set objTextStream = objFs.OpenTextFile(strDateiname, fsForReading)</B>
+
+' <I>+++ Gesamten Datei-Inhalt lesen und in strInhalt speichern</I>
+<B>strInhalt = objTextStream.ReadAll</B>
+
+' <I>+++ Datei-Inhalt in HTML umwandeln</I>
+strInhaltHTML = Server.HTMLEncode(strInhalt)
+strInhaltHTML = Replace(strInhaltHTML,vbCrLf,"&lt;BR&gt;" &amp; vbCrLf)
+' <I>+++ Datei-Inhalt als HTML formatiert ausgeben</I>
+Response.Write strInhaltHTML
+
+' <I>+++ Textstream schliessen</I>
+objTextStream.Close
+' <I>+++ Resourcen freigeben</I>
+Set objTextStream = Nothing
+Set objFs = Nothing
+%&gt;</PRE>
+            <P>Analyse des Skripts: Die Konstante <I>fsForReading</I> erh&auml;lt den 
+            Wert 1 - Sie wird beim &Ouml;ffnen des <I>TextStreams</I> (Datei-Inhalt) 
+            ben&ouml;tigt. Der Variablen <I>strDateiname</I> wird der physikalische 
+            Pfad einer Textdatei zugeweisen.</P>
+            <P>Ein <I>FileSystemObject</I> Objekt wird erstellt und in 
+            <I>objFs</I> gespeichert. Durch das <I>FileSystemObject</I> bekommt 
+            man Zugriff auf Dateien und Ordner, deren Attribute und Inhalte.</P>
+            <P>Um auf den Datei-Inhalt der Textdatei zugreifen zu k&ouml;nnen, 
+            ben&ouml;tigt man ein <I>TextStream</I> Objekt. Dieses repr&auml;sentiert den 
+            Inhalt einer Datei und erlaubt Zugriff auf den Textinhalt der Datei 
+            (&auml;hnlich wie ein <I>Recordset</I> Objekt Zugriff auf den Inhalt 
+            einer Datenbank erlaubt).</P>
+            <P>Mittels der <I>ReadAll</I> Methode wird der gesamte Inhalt der 
+            Datei gelesen und in der Variable <I>strInhalt</I> gespeichert. Um 
+            den Inhalt aus <I>strInhalt</I> HTML-gerecht zu formatieren, 
+            verwendet das Skript die <I>Server.HTMLEncode</I> Funktion. Die 
+            <I>Replace</I> Funktion bewirkt, da&szlig; Zeilenumbr&uuml;che durch 
+            <I>&lt;BR&gt;</I> ersetzt werden.</P>
+            <P>Nachdem nun der HTML-formatierte Inhalt der Datei mittels 
+            <I>Response.Write</I> ausgegeben wurde, wird der <I>TextStream</I> 
+            durch Aufruf der <I>Close</I> Methode geschlossen. S&auml;mtliche vom 
+            <I>FileSystemObject</I> und dem <I>TextStream</I> Objekt noch 
+            belegten Resourcen werden durch <I>Set</I> Objekt <I>= Nothing</I> 
+            freigegeben.</P>
+            <P>Wenn man eine sehr gro&szlig;e Textdatei liest, so kann es zweckm&auml;ssig 
+            sein, nur eine Zeile, oder eine bestimmte Anzahl von Zeichen zu 
+            lesen. Dazu &ouml;ffnet man einen <I>TextStream</I> der Datei, und 
+            verwendet statt der <I>ReadAll</I> Methode die <I>Read</I> oder die 
+            <I>ReadLine</I> Methode.</P>
+            <P>Die <I>Read</I> Methode liest eine bestimmte Anzahl von Zeichen 
+            aus:</P><PRE style="BACKGROUND: silver"><I>strText</I> = <B>objTextStream.Read(</B><I>AnzahlBuchstaben</I><B>)</B></PRE>
+            <P>Um beispielsweise von einer Textdatei jeweils 17 Buchstaben zu 
+            lesen, bis der gesamte Inhalt gelesen wurde, geht man wie folgt 
+            vor:</P><PRE style="BACKGROUND: silver">...
+lngAnz= 17
+While Not TextStream.AtEndOfStream 
+   Response.Write TextStream.Read(lngAnz)
+Wend
+...</PRE>
+            <P>Die <I>While...Wend</I> Schleife wird solange durchlaufen, bis 
+            der gesamte Inhalt zum Browser geschrieben wurde. Die 
+            <I>objTextStream</I> Eigenschaft <I>AtEndOfStream</I> liefert 
+            <I>TRUE</I> (Wahr), wenn bereits der gesamte Inhalt gelesen 
+            wurde.</P>
+            <P>Die <i>ReadLine</i> Methode arbeitet &auml;hnlich wie die <I>Read</I> 
+            Methode. Sie liest eine ganze Zeile aus der Textdatei und &uuml;bergibt 
+            diese Zeile (ohne Zeilenschaltung) als Ergebnis:</P><PRE style="BACKGROUND: silver"><I>strTextZeile</I> = <B>objTextStream.ReadLine</B></PRE>
+            <P>Um nun also die gesamte Datei zeilenweise zu lesen, kann man eine 
+            Schleife wie folgt benutzen:</P><PRE style="BACKGROUND: silver">...
+While Not TextStream.AtEndOfStream 
+   Response.Write TextStream.ReadLine &amp; "&lt;BR&gt;"
+Wend
+...</PRE>
+            <H2>Umwandeln eines virtuellen in einen physikalischen 
+            Datei-Pfad</H2>
+            <P>Sehr oft kann man in einem ASP-Skript nur den virtuellen Pfad 
+            einer Datei angeben. Der virtuelle Pfad <I>/text/datei05.txt</I> 
+            verweist auf die Datei namens <I>datei05.txt</I>, die im 
+            Unterverzeichnis <I>text</I> der Webserver Root (Website 
+            Homedirectory) liegt. Der virtuelle Pfad <I>MeinText.txt</I> 
+            hingegen verweist auf die Datei <I>MeinText.txt</I>, die im selben 
+            Verzeichnis wie die ASP-Datei liegt.</P>
+            <P>Um einen virtuellen Pfad in den entsprechenden physikalischen 
+            Pfad umzuwandeln, verwendet man die <I>Server.MapPath</I> 
+            Funktion:</P><PRE style="BACKGROUND: silver"><I>strVirtPfad</I> = "/text/datei05.txt"
+<I>strPhysPfad</I> = <B>Server.MapPath(</B><I>strVirtPfad</I><B>)</B>
+</PRE>
+            <P>Spezialfall: Um den virtuellen Pfad der ASP-Datei selbst 
+            herauszufinden, benutzt man die folgende Funktion:</P><PRE style="BACKGROUND: silver"><I>strVirtPfadSelbst</I> = <B>Request.ServerVariables("SCRIPT_NAME")</B></PRE>
+            <P>Letztendlich sind auch ASP- und HTML-Dateien nichts anderes als 
+            Textdateien, die man aus einer ASP-Seite heraus lesen, &auml;ndern, oder 
+            neu schreiben kann.</P>
+            <H2>Schlu&szlig;bemerkung</H2>
+            <P>Man kann nicht nur Textdateien lesen, sondern aus ASP heraus auch 
+            den Inhalt von Dateien &uuml;berschreiben, neue Textdateien anlegen, oder 
+            Text an den Inhalt einer Datei anf&uuml;gen. Dies wird in einem weiterem 
+            Artikel ausf&uuml;hrlich behandelt werden.
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000523.htm">Dateiattribute unter ASP auslesen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000523.htm</span><br>
+<a href="../artikel/20010508.htm">Dateizugriff auf Netzlaufwerken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010508.htm</span><br>
+<a href="../artikel/20001129.htm">INI-Dateien als Konfigurationsdateien f&uuml;r ASP-Anwendungen verwenden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001129.htm</span><br>
+<a href="../artikel/20010502.htm">Logfiles mit Access auswerten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010502.htm</span><br>
+<a href="../artikel/20000725.htm">Schreiben einer Textdatei auf den Server</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000725.htm</span><br>
+<a href="../artikel/20000821.htm">Streams in NTFS Dateien</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000821.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

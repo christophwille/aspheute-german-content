@@ -1,0 +1,343 @@
+<HTML>
+<HEAD>
+<TITLE>Vorsicht Falle: Dateien, die keine sind</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Eigentlich d&uuml;rfte jedem das FileSystemObject zur Dateiverarbeitung ein Begriff sein. Allerdings ist kaum bekannt, was Windows (NT/2000) so alles unter Dateien versteht - n&auml;mlich keineswegs nur Dateien die auf der Festplatte liegen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,FileSystemObject,CreateFile,GetFileType,Dateityp,Sicherheit,Named Pipe,Device,Konsole,FileExists">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Vorsicht Falle: Dateien, die keine sind</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020131"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Eigentlich d&uuml;rfte jedem das <i>FileSystemObject</i> ein Begriff sein - mit diesem kann man Dateien
+auslesen und schreiben, sowie einige wichtige Operationen (l&ouml;schen zB) auf Dateien und Verzeichnissen
+ausf&uuml;hren. Allerdings ist kaum bekannt, was Windows (NT/2000) so alles unter Dateien versteht - n&auml;mlich
+keineswegs nur Dateien die auf der Festplatte liegen.
+</p>
+<p>
+Unter Windows werden neben Dateien die auf der Festplatte liegen auch Devices (COM oder LPT Ports),
+Konsolen (CON oder AUX) und auch Named Pipes (zB verwendet SQL Server solche) verstanden. Die Frage 
+stellt sich nun, wieso soll mich das ASP Programmierer interessieren? Nehmen wir folgendes harmlos
+aussehendes Beispiel (<b>readfile.asp</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;%
+   Const ForReading = 1, ForWriting = 2, ForAppending = 8
+   Set fso = Server.CreateObject("Scripting.FileSystemObject")
+   Set f = fso.OpenTextFile("c:\temp\COM1", ForReading, True)
+   strRetVal = f.ReadLine
+   f.Close
+   Response.Write strRetVal
+%&gt;
+</pre>
+
+<p>
+Das mit <i>c:\temp\COM1</i> ist kein schlechter Scherz von mir, das ist so perfekt g&uuml;ltig unter Windows,
+da man auf diese Art Devices von der Konsole aus ansprechen kann (das Verzeichnis oder Laufwerk ist &uuml;brigens
+frei w&auml;hlbar, um es mal so zu formulieren...). Nur was passiert? Sobald ich mich auf
+diese Device hinverbinde, bleibt der Thread auf dem die ASP Seite l&auml;uft h&auml;ngen, bis ein Timeout vom Port
+zur&uuml;ckkommt. Da ASP aus einem Threadpool bedient wird, kann ich damit elegant eine DoS (Denial of Service)
+Attacke gegen einen Server fahren - wenn er verwundbar ist.
+</p>
+<p>
+Und verwundbar ist man schnell - sicher f&auml;llt dem einen oder anderen aus dem Stand eine Website ein, bei
+der im QueryString Dateinamen mitgegeben werden, um ausgelesen in den Content eingebaut zu werden.
+</p>
+<p>
+<strong>Hinweis</strong> Das mit der Datei im QueryString ist gef&auml;hrlicherweise nicht un&uuml;blich, mir ist das schon des &ouml;fteren
+untergekommen. Nur gibt es weitere Angriffspunkte: Sites die beim Upload den User den Dateinamen w&auml;hlen lassen,
+Programme die aus Userinput Dateien (und deren Namen) generieren, und so einiges mehr. Die Gefahr ist nicht aus Luft gegriffen,
+schauen Sie sich einmal Ihren Code genauer an!
+</p>
+<p>
+Wer jetzt argumentiert da&szlig; er doch &uuml;berpr&uuml;ft ob die Datei existiert, soll sich folgendes Script
+(<b>fileexists.asp</b>) anschauen:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+   filespec = "c:\temp\COM1"
+   Set fso = Server.CreateObject("Scripting.FileSystemObject")
+   If (fso.FileExists(filespec)) Then
+      msg = filespec &amp; " exists."
+   Else
+      msg = filespec &amp; " doesn't exist."
+   End If
+   Response.Write msg
+%&gt;
+</pre>
+
+<p>
+Nur leider - da COM1 eine g&uuml;ltige Datei ist - wird hier f&uuml;r <i>FileExists</i> True zur&uuml;ckgeliefert. Und
+dann greift man im guten Glauben darauf zu, und schon steht der Webserver!
+</p>
+
+<h2>Reservierte W&ouml;rter f&uuml;r Devices</h2>
+<p>
+Nach diesem ersten Aufw&auml;rmen worum es hier geht, m&ouml;chte ich eine Liste von reservierten W&ouml;rtern f&uuml;r Devices
+nachschicken, mit denen man diesen Effekt hervorrufen kann:
+</p>
+
+<ul>
+<li>COM1-COM9
+<li>LPT1-LPT9
+<li>CON, PRN, AUX, CLOCK$, NUL
+</ul>
+
+<p>
+In jedem beliebigen Verzeichnis sind diese reservierten W&ouml;rter f&uuml;r "echte" Dateinamen ung&uuml;ltig, 
+allerdings per File API's von Windows k&ouml;nnen sie angesprochen werden. Und
+um der Sache das Sahneh&auml;ubchen aufzusetzen, das folgende geht auch noch:
+</p>
+
+<pre style="background='silver';">
+Response.Write fso.FileExists("c:\temp\NUL.txt") ' liefert True
+</pre>
+
+<p>
+Wobei die Dateierweiterung v&ouml;llig beliebig sein darf...
+</p>
+
+<h2>Wie verhindern wir den Crash?</h2>
+<p>
+Es gibt einige M&ouml;glichkeiten, den &uuml;bergebenen oder einfach nur zu verwendenden Dateinamen auf G&uuml;ltigkeit
+zu &uuml;berpr&uuml;fen:
+</p>
+
+<ul>
+<li>Enth&auml;lt der Dateiname zwischen einem / und einem Punkt (oder Ende des Strings) eines der angef&uuml;hrten reservierten W&ouml;rter, wird
+    die "Datei" nicht aufgemacht. Diesen Check kann man per normalen Stringoperationen oder per Regular
+    Expressions durchf&uuml;hren.
+<li>Wir checken den Typ der Datei, bevor wir sie angreifen.
+</ul>
+
+<p>
+Letztere Version hat einen gro&szlig;en Vorteil - sie sch&uuml;tzt uns vor Attacken gegen Named Pipes als auch neu
+hinzukommende reservierte W&ouml;rter (so dies passieren sollte). Aber den grunds&auml;tzlichen Check des Dateinamens
+sollte man auf alle F&auml;lle durchf&uuml;hren. Je genauer wir schauen, desto eher f&auml;llt uns nichts durch die
+Ritzen.
+</p>
+
+<h2>Checken des Dateityps</h2>
+<p>
+Da&szlig; <i>FileExists</i> vom FileSystemObject uns nicht hilft, wissen wir bereits. Und leider bietet uns das FileSystemObject
+keine Funktion an, den Dateityp herauszubekommen. Deshalb habe ich mich entschlossen, in C++ mittels ATL
+eine kleine Komponente zu schreiben (Sourcecode im Download des Artikels mit dabei), die den Dateityp
+herausbekommen kann.
+</p>
+<p>
+Bevor ich den Code der Komponente <i>SecurityEnhance.FileUtilities</i> zeige, denke ich mir, da&szlig; mehr
+Leser daran interessiert sind zu sehen, wie man mit dieser Komponente arbeitet. Deshalb habe ich ein
+nettes Testscript gezimmert, das viele verschiedene Dateien durchtestet (<b>filetypecheck.asp</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Option Explicit
+Const RET_FILE_TYPE_UNKNOWN	= 1
+Const RET_FILE_TYPE_DISK	= 2
+Const RET_FILE_TYPE_CHAR	= 3
+Const RET_FILE_TYPE_PIPE	= 4
+
+Sub FileCheck(ByVal strFile)
+  Dim objSecurityCheck, nFileType, nErrorCode, strError
+  Set objSecurityCheck = Server.CreateObject("SecurityEnhance.FileUtilities")
+
+  On Error Resume Next
+  nFileType = objSecurityCheck.GetFileType(strFile)
+  nErrorCode = Err.Number
+  strError = Err.Description
+  On Error GoTo 0  ' re-enabling error handling clear the Err object
+
+  If (0 = nErrorCode) Then
+    Response.Write strFile &amp; ": is of type " &amp; nFileType
+  Else
+    Response.Write strError
+  End If
+  Response.Write "&lt;br&gt;" &amp; vbCrLf
+End Sub
+
+FileCheck "c:\temp\thisfiledoesnotexist.txt"
+' above will return error 2, "The system cannot find the file specified. "
+FileCheck "c:\temp\COM1"
+' above will return type 3 (character file) typically an LPT device or a console.
+FileCheck "c:\boot.ini"
+' above returns error 5, "Access is denied." (hopefully)
+FileCheck "c:\view.txt"
+' above returns type 2, disk file (if file exists of course)
+FileCheck "c:\COM1.txt"
+' also returns type 3 - attention!
+FileCheck "c:\COM1somemoretext"
+' this does not work (2: file not found)
+FileCheck "c:\somefile.COM1"
+' as well as this (2: file not found)
+%&gt;
+</pre>
+<p>
+<strong>Hinweis</strong> Obwohl ich die wichtigeren Win32 Fehlernummern im Sourcecode kommentiert habe,
+k&ouml;nnte es sein, da&szlig; andere auftreten. Um von der Fehlernummer zum Beschreibungstext zu kommen, geben
+Sie auf der Kommandozeile einfach <b>net helpmsg nnnn</b> ein, wobei <i>nnnn</i> die Fehlernummer ist.
+</p>
+
+<p>
+Der Output - obwohl durch Kommentare im Script bereits vorweggenommen, sieht so aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200201/20020131.png" width="597" height="327" alt="" border="0">
+
+<p>
+Im Prinzip gilt f&uuml;r die Methode <b>GetFileType</b> folgendes: alles an Typ anders als 2 (<i>RET_FILE_TYPE_DISK</i>)
+wird nicht einmal mit spitzen Fingern angegriffen - solche "Dateien" sind aus Sicherheitsgr&uuml;nden als "off limits"
+zu betrachten. Wenn man das beherzigt, kann einem niemand ein "Datei" unterschieben, die den Server crasht.
+</p>
+<p>
+Bevor wir nun zum Code der Komponente kommen, und wie diese an den Dateityp kommt - die Komponente ist an sich nur
+auf Lesezugriff f&uuml;r Dateien ausgelegt (die Datei mu&szlig; existieren). Allerdings ist dies nicht weiter schlimm,
+weil Typen anders als 2 (<i>RET_FILE_TYPE_DISK</i>) sich f&uuml;r Lesen und Schreiben gleich verhalten: kommt der Typ
+ohne Fehler retour und ist ungleich 2, dann wird die Datei nicht geschrieben.
+</p>
+<p>
+Um es also noch einmal deutlich zu machen: egal ob wir in eine Datei schreiben oder von ihr lesen wollen,
+wenn der Typ von <i>GetFileType</i> ungleich 2 ist, passiert die Operation aus Sicherheitsgr&uuml;nden nicht.
+</p>
+
+<h3>Die Komponente</h3>
+<p>
+Als Abschlu&szlig; f&uuml;r sehr Interessierte (die anderen d&uuml;rfen zur Schlu&szlig;bemerkung verzweigen), nun der relevante
+Code der Komponente. Obwohl f&uuml;r viele C++ ungewohnt sein mag, so kann ich versichern, da&szlig; es keineswegs
+schwierig ist (aus <b>FileUtilities.cpp</b>):
+</p>
+
+<pre style="background='silver';">
+#define E_FILEERROR    MAKE_HRESULT(1,FACILITY_ITF,1)
+#define RET_FILE_TYPE_UNKNOWN 1
+#define RET_FILE_TYPE_DISK 2
+#define RET_FILE_TYPE_CHAR 3
+#define RET_FILE_TYPE_PIPE 4
+
+STDMETHODIMP CFileUtilities::GetFileType(BSTR FileName, long *FileType)
+{
+  USES_CONVERSION;
+  *FileType = -1;
+
+  // open the file for generic reading
+  HANDLE hFile = ::<font color="Red">CreateFile</font>(W2A(FileName), 
+            GENERIC_READ,
+            FILE_SHARE_READ | FILE_SHARE_WRITE, 
+            NULL, 
+            OPEN_EXISTING, 
+            0, 
+            NULL );
+
+  if (INVALID_HANDLE_VALUE == hFile)
+  {
+    TCHAR achErrFormatting[256];
+    wsprintf(achErrFormatting,
+          "The file %s could not be accessed. The Win32 error code is %ld.",
+          W2A(FileName), ::GetLastError());
+    Error(achErrFormatting, 0, NULL, IID_IFileUtilities, E_FILEERROR);
+    return E_FILEERROR;
+  }
+  else
+  {
+    DWORD dwFileType = ::<font color="Red">GetFileType</font>(hFile);
+    switch (dwFileType)
+    {
+    case FILE_TYPE_UNKNOWN: *FileType = RET_FILE_TYPE_UNKNOWN; break;
+    case FILE_TYPE_DISK: *FileType = RET_FILE_TYPE_DISK; break;
+    case FILE_TYPE_CHAR: *FileType = RET_FILE_TYPE_CHAR; break;
+    case FILE_TYPE_PIPE: *FileType = RET_FILE_TYPE_PIPE; break;
+    default: *FileType = -1;
+    }
+    ::CloseHandle(hFile);
+  }
+  return S_OK;
+}
+</pre>
+
+<p>
+Die zwei wichtigen Funktionen <i>CreateFile</i> und <i>GetFileType</i> habe ich herausgehoben. Diese
+beiden erledigen die Arbeit, der Rest ist nur Beiwerk da&szlig; die Fehlerf&auml;lle korrekt behandelt werden,
+und alles fein s&auml;uberlich aufger&auml;umt wird. Es w&auml;re nett gewesen, h&auml;tte Microsoft an eine solche Funktion
+beim <i>FileSystemObject</i> gedacht.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Der heutige Artikel beweist wieder einmal auf sehr eindr&uuml;ckliche Weise, da&szlig; aller Input den man in seinen
+Applikationen &uuml;bernimmt sehr gef&auml;hrlich sein kann ("All input is evil until proven otherwise", wie schon
+in der Artikelserie &uuml;ber <a href="../artikel/20011030.htm">SQL Injection</a> bemerkt). Auf alle F&auml;lle sollte man die einfache
+&Uuml;berpr&uuml;fung in seine Scripts einbauen, besser und sicherer ist allerdings die Verwendung der Komponente.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020131.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020131.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020201.htm">Dateityp-Ermittlung in Managed C++</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020201.htm</span><br>
+<a href="../artikel/20011031.htm">Gegengifte f&uuml;r SQL Injection</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011031.htm</span><br>
+<a href="../artikel/20020129.htm">Komponentenverwendung einschr&auml;nken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020129.htm</span><br>
+<a href="../artikel/20011030.htm">SQL Injection</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011030.htm</span><br>
+<a href="../artikel/20011203.htm">Verhinderung von SQL Injection Marke .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011203.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

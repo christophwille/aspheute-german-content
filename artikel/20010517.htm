@@ -1,0 +1,412 @@
+<HTML>
+<HEAD>
+<TITLE>Gratis Loganalyse mit Analog</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Das Auswerten von Logdateien erf&uuml;llt meist mehrerlei Zwecke. Es gibt viele Tools zur Auswertung, allerdings kosten die meisten davon viel (oder sehr viel). Heute werden wir uns die Grundlagen eines Tools erarbeiten, das gratis ist: Analog.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Logfile,Logdatei,Log Analyzer,Analog,Auswertung,Auswerten,Visualisieren,Loganalyse">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Gratis Loganalyse mit Analog</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Server.htm">Server</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010517"></SCRIPT>
+</p>
+<p>
+Das Auswerten von Logdateien erf&uuml;llt meist mehrerlei Zwecke: technisch, um die Site zu verbessern, 
+sicherheitstechnisch, um Hack-Attacken zu finden, oder beancounter-m&auml;&szlig;ig, um dem Management zu
+vermitteln, wer auf die Website zugreift - und was er sich dabei ansieht, und so weiter. Es gibt viele
+Tools, allerdings kosten die meisten davon viel (oder sehr viel). Heute werden wir uns die Grundlagen
+eines Tools erarbeiten, das gratis ist: Analog.
+</p>
+
+<p>
+Das Analysetool Analog kann von <a href="http://www.analog.cx" target="_blank">analog.cx</a> downgeloadet werden. Es gibt kompilierte Versionen f&uuml;r 
+Windows, Apple, Linux und mehr - und wer damit das Auslangen nicht findet, kann den Sourcecode downloaden, und
+auf die Plattform seiner W&uuml;nsche anpassen. F&uuml;r uns ist klarerweise die Windows-Version die interessanteste.
+</p>
+
+<p>
+Ein Vorteil von Analog ist der, da&szlig; es kein Setupprogramm braucht - einfach in ein Verzeichnis nach Wahl
+entzippen, und schon ist man "all set". F&uuml;r Windows-Aficionados kommt nun der Schock: Analog ist ein
+Kommandozeilenprogramm, und man mu&szlig; es mittels einer Konfigurationsdatei namens <b>analog.cfg</b> steuern.
+</p>
+
+<p>
+Alles nur halb so schlimm, wie der Artikel zeigen wird. Weitere Artikel werden sich dann mit Add-Ons f&uuml;r
+Analog besch&auml;ftigen, und darunter gibt es auch einige GUI's - nur die kosten extra. Deswegen erarbeiten
+wir uns heute die Grundlagen auf die "harte" Tour.
+</p>
+
+<h2>Eigene Logformate definieren</h2>
+<p>
+Ein Satz in der Hilfedatei hat mir sehr gut gefallen: "Most people don't need to do this because analog 
+can detect the format automatically -- try it first and see!". Klar hab' ich's ausprobiert, und ebenso
+klarerweise ging's mit meinen Logdateien daneben. Kismet.
+</p>
+<p>
+Also habe ich auf Plan B umgesattelt, und mir unverdrossen die Hilfe zum Thema "Definieren neuer Logfileformate"
+durchgelesen (ja, in besonders verzweifelten Situationen lese auch ich die Hilfe). Dazu mu&szlig;te ich mir
+meine Logdatei vor Augen halten (besser gesagt die Definitionszeile):
+</p>
+
+<pre style="background='silver';">
+date time c-ip cs-username s-sitename s-computername s-ip cs-method cs-uri-stem 
+  [cont.]cs-uri-query sc-status sc-win32-status sc-bytes cs-bytes time-taken s-port 
+  [cont.]cs-version cs(User-Agent) cs(Cookie) cs(Referer)
+</pre>
+
+<p>
+H&auml;tte ich mich nur an das gehalten, w&auml;re ich schon wieder auf die Nase gefallen. Weil - entgegen s&auml;mtlicher
+Beispiele von Analog mu&szlig; meine Logdatei (IIS) ein anderes Datumsformat als amerikanisch (yyyy/mm/dd) verwenden. Hier
+eine Beispielzeile des Logs zu Verdeutlichung:
+</p>
+
+<pre style="background='silver';">
+2001-04-13 00:04:38 211.22.119.114 - W3SVC181 www26 216.87.12.204 GET /english/20001009.asp
+  [cont.]- 200 0 14297 186 94 80
+  [cont.]HTTP/1.0 Mozilla/4.0+(compatible;+MSIE+5.5;+Windows+NT+5.0)+Fetch+API+Request - -
+</pre>
+
+<p>
+Ja, das mit den Bindestrichen im Datum findet sich bei Extended Logfiles von IIS. Unter Zuhilfename der
+Hilfe habe ich daraus mein Logformat gebastelt (die Parameter bitte ebendort nachlesen):
+</p>
+
+<pre style="background='silver';">
+LOGFORMAT (%Y-%m-%d %h:%n:%j %s %u W3SVC%j %v %j %j %r %q %c %j %b %j %T %j %j %A %j %f)
+</pre>
+
+<p>
+Das war die wichtigste (einzige) H&uuml;rde am Weg zum Erfolg mit Analog. Jedem, der Non-Standard Logs hat, wird es
+ebenso gehen. Denn der Rest von Analog ist kinderleicht zu konfigurieren.
+</p>
+
+<h2>Mehr Pepp im ersten Report</h2>
+<p>
+Ich habe mir erlaubt, gleich den ersten Report etwas aufzupeppen. Und wie nicht anders zu erwarten, 
+passieren alle notwendigen Einstellungen in <b>analog.cfg</b>. Was habe ich gemacht? 
+</p>
+
+<p>
+Ich lasse Reverse DNS Lookups durchf&uuml;hren, um eine per Domain/per Land Gliederung der Zugriffszahlen 
+zu erm&ouml;glichen. Achtung: das dauert, deshalb speichere ich Reverse Lookups in einer Datei namens
+<b>dnscache</b>. Hier gibt es viele Konfigurationsm&ouml;glichkeiten, ich empfehle f&uuml;r dieses Feature die
+Konsultation der Hilfe.
+</p>
+
+<p>
+Weitere Kleinigkeiten: ich habe festgelegt, da&szlig; mein Logfile case-insensitive ausgewertet werden soll, was
+auf Windows perfekt zul&auml;ssig ist. Au&szlig;erdem habe ich ein Verzeichnis von der Auswertung ausgeschlo&szlig;en - im
+Echteinsatz w&auml;ren das interne Wartungs-Verzeichnisse und dergleichen, die das Management nicht interessieren
+(oder zu haben).
+</p>
+
+<p>
+Gut - genug geredet. Hier der erste Part von <b>analog.cfg</b>:
+</p>
+
+<pre style="background='silver';">
+# DEBUG C
+LOGFORMAT (%Y-%m-%d %h:%n:%j %s %u W3SVC%j %v %j %j %r %q %c %j %b %j %T %j %j %A %j %f)
+LOGFILE ex010413.log
+
+OUTFILE Report.html
+
+CASE INSENSITIVE
+FILEEXCLUDE /service/*
+
+HOSTNAME "AspHeute.com"
+HOSTURL http://www.aspheute.com
+
+DNSFILE dnscache
+DNS WRITE
+# DNS LOOKUP
+</pre>
+
+<p>
+Der Switch <i>DEBUG C</i> ist auskommentiert, und diesen habe ich verwendet, um mein <i>LOGFORMAT</i>
+auf Fehler hin zu durchsuchen. Die Logdatei, die ich auswerten will, wird in einem <i>LOGFILE</i>
+Statement angegeben, und dieses kann man beliebig oft wiederholen. <i>OUTFILE</i> ist selbsterkl&auml;rend,
+und <i>CASE INSENSITIVE</i> ebenso.
+</p>
+
+<p>
+Etwas, das ich nicht vorweg geschickt habe sind die <i>HOSTNAME</i> und <i>HOSTURL</i> Parameter. Diese
+dienen der Versch&ouml;nerung des Reports - siehe auch folgender Screenshot. Der heutige Download beinhaltet 
+diesen Beispielreport in voller L&auml;nge, denn dies ist nur eine von vielen Auswertungen (die auch konfiguriert
+werden k&ouml;nnen).
+</p>
+
+<IMG SRC="Bilder/200105/20010517.png" width="580" height="518" alt="" border="0">
+
+<p>
+Ich habe etliche Zeilen von <b>analog.cfg</b> unterschlagen, aber auch diese Datei findet sich vollst&auml;ndig
+im heutigen Download. Diese stammen unmodifiziert aus dem Beispiel, das mit Analog kommt. 
+</p>
+
+<p>
+Das Konfigurieren von <b>analog.cfg</b> kann keine Dauerl&ouml;sung sein. Daher befassen sich weitere Artikel
+mit graphischen Add-Ons f&uuml;r Analog, sowie mit einem weiteren wichtigen Add-On: Report Magic, weil
+zugegebenerma&szlig;en die Standard-Tortengrafiken nicht "managementgerecht" sind. Unter dem Motto: traue keiner
+Statistik, die Du nicht selbst gef&auml;lscht hast!
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Im Artikel nicht erw&auml;hnt, so wenigstens in der Schlu&szlig;bemerkung: wenn man auf Reverse DNS Lookups verzichtet,
+dann ist Analog ein wirklich enorm schnelles Analysetool!
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010517.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20021030.htm">Logfiles auswerten mit Webalizer</a><br>
+<a href="20010502.htm">Logfiles mit Access auswerten</a><br>
+<a href="20010523.htm">ReportMagic f&uuml;r Analog</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eanalog%2Ecx">Analog</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fanalog%2Esourceforge%2Enet%2F">Analog bei Sourceforge</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20010517" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Gratis Loganalyse mit Analog"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20010517.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20010517"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20010517.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

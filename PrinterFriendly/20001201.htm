@@ -1,0 +1,298 @@
+<HTML>
+<HEAD>
+<TITLE>Die SQL ORDER BY Clause</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Anhand von einfachen Beispielen zeigt dieser Artikel die Verwendung der SQL ORDER BY Clause.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP,SQL,Clause,Datenbank,ODBC,Order, Order by,Sortierung,Sortieren,aufsteigend,absteigend">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Die SQL ORDER BY Clause</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001201"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+In manchen F&auml;llen ist es nicht nur wichtig die Daten einer Datenbank zu filtern, sondern auch
+nach bestimmten Kriterien zu sortieren. Bei Verwendung einer ASP Seite und ADO, geschieht
+dies am einfachsten und schnellsten mit der SQL ORDER BY Clause. Anhand von einfachen
+Beispielen zeigt dieser Artikel die programmatische Durchf&uuml;hrung.
+</p>
+
+<p>
+Wenn Sie den Beispiel-Sourcecode selbst ausprobieren m&ouml;chten, so ben&ouml;tigen
+Sie Microsoft SQL Server 7.0 (oder h&ouml;her). Die Beispiele verwenden die folgende 
+Zugangsberechtigung: <i>uid=sa; pwd=;</i>. Als Beispieldatenbank habe ich die <i>Northwind</i>
+Datenbank herangezogen. Diese ist standardm&auml;&szlig;ig in den Beispieldatenbanken des SQL Servers enthalten. Wenn
+die SQL Server Datenbank nicht auf dem lokalen Computer (dem Webserver) installiert ist, so m&uuml;ssen Sie zus&auml;tzlich
+den <i>Data Source</i> Parameter im <i>Connection-String</i> auf den Namen (oder die IP Adresse) des 
+Datenbankservers &auml;ndern.
+</p>
+
+<h2>Die Sortierung von Datens&auml;tzten</h2>
+<p>
+Da man bei einer Datenbankabfrage normalerweise ein SQL-Statement verwendet, bietet
+es sich an, den SQL String einfach zu erweitern. Um also Datens&auml;tze sortieren zu k&ouml;nnen, gibt es in
+SQL die sogenannte <i>ORDER BY</i> Clause, und das sieht generell wie folgt aus:
+</p>
+
+<p>
+<pre style="background='silver';">
+' SQL Statement(s) bzw. dazugeh&ouml;rige Clauses
+ORDER BY Feld1 Reihenfolge(,Feld2 Reihenfolge)(, ...)
+</pre>
+</p>
+
+Mit <i>Feld1</i>, <i>Feld2</i>, etc. geben Sie die Felder an, nach denen Sie sortieren m&ouml;chten.
+Bei den Feldern handelt es sich in einer Datenbank um die Datenspalten.
+</p>
+
+<p>
+Durch die optionale Angabe der <i>Reihenfolge</i> sortieren Sie die Datens&auml;tze entweder in <i>aufsteigender</i>
+oder <i>absteigender</i> Reihenfolge. <i>Aufsteigend</i> bedeudet, da&szlig; Buchstaben von A bis Z, und Zahlen 
+von 0 bis 9 sortiert werden. Die aufsteigende Reihenfolge wird <i>explizit</i> durch den Ausdruck <i>ASC</i> (ascending)
+angegeben. Da aber die standardm&auml;&szlig;ige Einstellung der Sortierreihenfolge auch <i>aufsteigend</i> ist, kann der
+Ausdruck auch weggelassen werden.
+</p>
+
+<p>
+Um die Datens&auml;tze <i>absteigend</i> - Buchstaben von Z bis A, und Zahlen von 9 bis 0 - zu sortieren
+geben Sie den Ausdruck <i>DESC</i> (descending) an.
+</p>
+
+<p>
+Wie zuvor erw&auml;hnt, f&uuml;gt man also das Statement einfach dem SQL-String hinzu. Das nun folgende 
+Beispiel soll dies nun demonstrieren.
+</p>
+
+<h2>Einfache Sortierung</h2>
+
+<p>
+F&uuml;r dieses Beispiel habe ich die <i>Products</i> Tabelle der Northwind Datenbank herangezogen.
+Mit der <i>ORDER BY</i> Clause lasse ich mir die angeforderten Datens&auml;tze <i>aufsteigend</i> alphabetisch
+sortieren. Die <i>WHERE</i> Clause des SQL-Strings dient nur dazu, um die Anzahl der zur&uuml;ckgelieferten
+Datens&auml;tze auf ein ertr&auml;gliches Ma&szlig; zu limiteren. Da dies ja nur ein Vorzeigebeispiel sein soll,
+reicht es, nur eine handvoll Daten auszulesen.
+</p>
+
+Hier nun der gesamte Sourcecode des Beispiels (<i>orderby_simple.asp</i>):
+<p>
+<pre style="background='silver';">
+&lt;% @LANGUAGE = VBScript %&gt;
+
+&lt;%
+  Option Explicit
+  Dim objConn, objRS
+  Dim strConn, strSQL
+
+  Set objConn = Server.CreateObject("ADODB.Connection")
+
+  strConn = "DSN=Northwind;UID=sa; PWD=;"
+  
+  objConn.Open strConn
+
+  Set objRS = Server.CreateObject("ADODB.Recordset")
+  Set objRS.ActiveConnection = objConn
+
+  strSQL ="SELECT Products.ProductName, Products.UnitPrice "
+  strSQL = strSQL &amp; "FROM Products "
+  strSQL = strSQL &amp; "WHERE Products.UnitPrice &lt;= $15 "
+  strSQL = strSQL &amp; "ORDER BY Products.ProductName ASC"
+
+  objRS.Open strSQL
+
+  Response.Write "&lt;table cellspacing=2 cellpadding=2 border=2&gt;"
+  Response.Write "&lt;th&gt;Produkt Name&lt;/th&gt;&lt;th&gt;Preis (USD)&lt;/th&gt;"
+
+  While Not objRS.EOF
+      Response.Write "&lt;tr&gt;"
+      Response.Write "&lt;td&gt;" &amp; objRS("ProductName") &amp; "&lt;/td&gt;&lt;td&gt; "
+      Response.Write objRS("UnitPrice") &amp; "&lt;/td&gt;"
+      Response.Write "&lt;/tr&gt;"      
+      objRS.MoveNext
+  Wend
+
+  Response.Write "&lt;/table&gt;"
+objRS.Close
+objConn.Close
+Set objRS = Nothing
+Set objConn = Nothing
+
+%&gt;
+</pre>
+</p>
+
+<p>
+Nach Angabe der verwendeten Skriptsprache folgt die Deklaration der ben&ouml;tigten
+Variablen. Die Deklaration der Variablen <i>strConn, strSQL</i> ist nat&uuml;rlich optional, da Sie 
+ja die jeweiligen Informationen direkt bei den Objekten angeben k&ouml;nnen. Wenn Sie jedoch 
+diese trotzdem deklarieren, wird der Sourcecode flexibler.
+</p>
+
+<p>
+Nun k&ouml;nnen wir mit Hilfe von <i>Server.CreateObject</i> das Connection Objekt erstellen. Dann
+defineren wir den Connection String (<i>strConn</i>), der die n&ouml;tigen Informationen f&uuml;r die
+Datenbankverbindung enth&auml;lt. Nicht zu vergessen ist dabei die vorherige Erstellung eines <i>DSNs</i>
+(Data Source Name) f&uuml;r die Northwind-Datenbank, falls man &uuml;ber ODBC aud die Datenbank zugreifen m&ouml;chte.
+</p>
+
+<p>
+Dies erledigen Sie am einfachsten im <i>ODBC (Open Database Connectivity) Data Source Administrator</i>,
+wo Sie einen <i>System DSN</i> erstellen.
+</p>
+
+<p>
+Um die Verbindung zur Datenbank zu &ouml;ffnen, verwenden wir die <i>Open</i> Methode des Objektes,
+und geben als Parameter den Connection String (<i>strConn</i>), welcher die Verbindungsinformationen
+enth&auml;lt, an.
+
+<p>
+Wir erstellen nun das <i>Recordset</i> Objekt und weisen es der aktiven Verbindung zur Datenbank zu
+(<i>Set objRS.ActiveConnection = objConn</i>). Jetzt erstellen wir die SQL Abfrage, welche 
+die <i>ORDER BY</i> Clause enth&auml;lt. Diese Abfrage weisen wir dem <i>strSQL</i> String zu.
+</p>
+
+<p>
+Um die SQL-Abfrage gegen die Datenbank auszuf&uuml;hren zu k&ouml;nnen, verwenden wir die <i>Open</i> Methode 
+des erstellten <i>Recordset</i> Objektes. Als Property geben wir den SQL-String an.
+</p>
+
+<p>
+Um das Resultat optisch etwas aufzubessern, schreibe ich die erhaltenen Datens&auml;tze in einen
+HTML Table. Da immer nur ein Recordset zur&uuml;ckgegeben wird, mu&szlig; der Vorgang mit einer <i>WHILE</i>
+Schleife bis zum letzten Datensatz wiederholt werden.
+</p>
+
+<p>
+Um den Datensatz-Cursor zum n&auml;chstfolgenden Datensatz weiter zu bewegen, verwenden wir die <i>MoveNext</i>
+Methode des Objektes.
+</p>
+
+<p>
+Abschlie&szlig;end geben wir die nicht mehr ben&ouml;tigten Serverresourcen wieder frei, indem wir
+die <i>Close</i> Methode der jeweiligen Objekte verwenden. Dann zerst&ouml;ren wir die beiden Objekte
+mit <i>Set ... = Nothing</i>.
+</p>
+
+<p>
+Das Resultat sieht dann im Browser folgenderma&szlig;en aus:
+</p>
+
+<p><IMG SRC="/artikel/Bilder/200012/20001201_orderby_simple.png" width="367" height="451" alt="" border="0"></p>
+
+<h2>Mehrfach Sortierungen</h2>
+
+<p>
+Damit die <i>ORDER BY</i> Clause auch komplexeren Anspr&uuml;chen gen&uuml;gt, kann man mehrere
+Felder zur Sortierung angeben. Im abschlie&szlig;enden Beispiel (<i>orderby_2Args.asp</i>) habe ich den St&uuml;ckpreis (UnitPrice)
+<i>absteigend</i> und den Produktnamen (ProductName) aufsteigend sortieren lassen.
+</p>
+
+<p>
+Da ich der Einfachheit halber den Sourcecode bis auf das SQL-Statement im Vergleich zum vorigen
+Beispiel unver&auml;ndert gelassen habe, f&uuml;hre ich hier nur das SQL-Statement an:
+</p>
+
+<p>
+<pre style="background='silver';">
+...
+strSQL ="SELECT Products.ProductID, Products.ProductName, Products.UnitPrice "
+strSQL = strSQL &amp; "FROM Products "
+strSQL = strSQL &amp; "WHERE Products.UnitPrice &lt;= $15 "
+strSQL = strSQL &amp; "ORDER BY Products.UnitPrice DESC, Products.ProductName"
+...
+</pre>
+</p>
+
+<p>
+Der Unterschied macht sich bemerkbar, wie der folgende Screenshot beweist:
+</p>
+
+<p><IMG SRC="/artikel/Bilder/200012/20001201_orderby_2Args.png" width="365" height="448" alt="" border="0"></p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Mit Hilfe der <i>ORDER BY</i> SQL-Clause kann man einfach und schnell Datens&auml;tze einer
+SQL-Abfrage sortieren. Zugegeben, die M&ouml;glichkeiten sind beschr&auml;nkt auf <i>auf-</i> bzw.
+<i>absteigend</i>, aber durch Angabe mehrerer Felder im Statement, lassen sich die M&ouml;glichkeiten der Anwendung erweitern.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001201.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20001201.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/19990825.htm">ADO und ASP - Datenbanken einmal n&auml;her betrachtet</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990825.htm</span><br>
+<a href="../artikel/20020429.htm">Benutzerverwaltung leicht gemacht: Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020429.htm</span><br>
+<a href="../artikel/20011015.htm">Der SQL UNION Operator</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011015.htm</span><br>
+<a href="../artikel/19990811.htm">Eigenschaften der Connection und Recordset Objekte</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990811.htm</span><br>
+<a href="../artikel/20010420.htm">Ein einfacher Query Analyzer</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010420.htm</span><br>
+<a href="../artikel/20020703.htm">Eine kleine Bilddatenbank, Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020703.htm</span><br>
+<a href="../artikel/20010620.htm">Intelligente Meta-Tags</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010620.htm</span><br>
+<a href="../artikel/19990826.htm">ODBC und ASP - Eine DSN zur Verwendung mit ASP definieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990826.htm</span><br>
+<a href="../artikel/20040901.htm">Optimiertes Erstellen von DropDowns</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040901.htm</span><br>
+<a href="../artikel/20020903.htm">Stored Procedures einfach erstellt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020903.htm</span><br>
+<a href="../artikel/20011017.htm">T-SQL Clauses: GROUP BY und HAVING</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011017.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

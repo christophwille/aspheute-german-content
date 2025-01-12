@@ -1,0 +1,239 @@
+<HTML>
+<HEAD>
+<TITLE>Erstellen eines HTTP Test Tools</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel stellt eine VB Applikation vor, mit deren Hilfe man alle Details einer Client-Web Server Verbindung selbst einstellen kann, um somit auch selten genutzte Codeteile ausf&uuml;hrlich testen zu k&ouml;nnen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,AspTear,VB,Visual Basic,HTTP,W3C,Cookie,cache-control,URL,Port,Test,Check">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Erstellen eines HTTP Test Tools</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Server.htm">Server</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000508"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Das Testen einer Website mit verschiedenen Browsern geh&ouml;rt zum Alltag eines Webentwicklers - zumindest dann, wenn
+man nicht an einem Intranetprojekt arbeitet, wo der Browser Firmenpolitik ist.
+</p>
+<p>Mit Browsertests kann man sowohl Layoutprobleme, als auch Client-side Scriptprobleme erkennen und ausmerzen. Allerdings ist damit nicht
+gew&auml;hrleistet, da&szlig; man alle Details der Verbindung Web Server und Client manipulieren kann, was f&uuml;r Sicherheits- und
+Stabilit&auml;tstests wichtig sein kann.
+</p>
+<p>
+Auf welche <i>Details</i> will ich hinaus? Zum Beispiel schickt der Browser automatisch seine Kennung, f&uuml;r Internet 
+Explorer auf Windows 2000 w&auml;re das zB:
+<pre style="background=silver;">Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)</pre>
+Netscape Navigator schickt eine &auml;hnliche Kennung, allerdings ohne den String <i>compatible</i>. Wenn man nicht gerade
+eine Komponente zur Erkennung der Browserf&auml;higkeiten verwendet, dann parst man den String selbst auf - und macht gelegentlich
+Fehler, so zum Beispiel indem man Punktversionen nicht ber&uuml;cksichtigt, oder nachfolgende Versionen ignoriert:
+<pre style="background=silver;">If Mid(strBrowser,31,1) = 5 Then</pre>
+Dieser Code w&uuml;rde nur f&uuml;r Internet Explorer Version 5.x funktionieren, bei einem Wechsel auf 6 oder mehr, m&uuml;&szlig;te man die
+Webseiten umprogrammieren. Und es soll vorgekommen sein, da&szlig; solche Fehler &uuml;berhaupt lange Zeit &uuml;bersehen wurden...
+</p>
+<p>
+Weitere Ansatzpunkte zum Testen au&szlig;erhalb eines Browsers: leichteres Austesten von GET und POST, die M&ouml;glichkeit die Header
+direkt einsehen zu k&ouml;nnen (f&uuml;r cache-control, Cookie, etc), Content Types manipulieren zu k&ouml;nnen, uvm.
+</p>
+<p>
+Im weiteren Verlauf des Artikels stelle ich nun vor, wie man sich eine interaktive Testapplikation erstellen kann. Diese
+kann nach Belieben an die Bed&uuml;rfnisse angepasst werden, oder sogar in ein automatisiertes Test-Tool f&uuml;r Websites
+umgebaut werden.
+</p>
+<h2>Programmierung</h2>
+<p>
+F&uuml;r die Programmierung habe ich 2 Tools verwendet: Visual Basic 6.0 (ASP Programmierer haben den Vorteil, nicht sehr
+viel dazulernen zu m&uuml;ssen), sowie die AspTear 1.2 Komponente von AlphaSierraPapa. Mit VB programmiere ich das Front End,
+und AspTear dient mir dazu, mich mit dem Webserver zu unterhalten - sprich die Seiten mit den entsprechenden <i>Details</i>
+abzufragen:
+<ul>
+<li>URL
+<li>Port
+<li>User Agent
+<li>Protokoll
+<li>Daten (GET oder POST)
+<li>Content Type
+</ul>
+Vom Server zur&uuml;ckgeliefert werden Headers und der Inhalt (das HTML Dokument) - sowie etwaige Fehlermeldungen.
+</p>
+<p>
+Das Programm <b>W3Test</b> ist als Standard EXE programmiert (Sourcecode und Executable im Download enthalten). Das 
+fertige User Interface sieht in der Visual Basic Entwicklungsumgebung wie folgt aus:
+</p>
+<p><IMG SRC="/artikel/Bilder/200005/20000508_3.png" width="540" height="394" border="0" alt=""></p>
+<p>
+Um nun den Code f&uuml;r die AspTear Komponente einzuf&uuml;gen, mu&szlig; nur noch die Typbibliothek referenziert werden. Dies
+geschieht &uuml;ber den Befehl <i>References</i> im <i>Project</i> Men&uuml;. Mit dem Befehl <i>Browse</i> sucht man dann asptear.tlb
+und bindet sie in das Projekt ein:
+</p>
+<p><IMG SRC="/artikel/Bilder/200005/20000508_1.png" width="449" height="357" border="0" alt=""></p>
+<p>
+Nun kann man den Code programmieren, um eine Seite vom Webserver abzuholen:
+<pre style="background=silver;">
+Private Sub cmdGo_Click()
+On Error GoTo Err_CmdGo
+    Dim strURL As String, nPort As Integer, strRetVal As String
+	Dim nAction As Integer
+    
+    ' I simply get the text here, you can add whatever check you want
+    strURL = Me.txtURL.Text
+    
+    ' get the port - simple check if it is numeric
+    nPort = 80
+    If IsNumeric(Me.txtPort) Then
+        nPort = Me.txtPort
+    Else
+        MsgBox "The port number you entered is non-numeric."
+        Exit Sub
+    End If
+    
+    Dim tearObj As New ASPtear.ASPtear
+    
+    tearObj.ContentType = Me.txtContentType
+    tearObj.FollowRedirects = Me.chkFollowRedirects.Value
+    tearObj.HttpVersion = Me.cbProtocol.Text
+    tearObj.Port = nPort
+    tearObj.UserAgent = Me.txtUserAgent
+    If Me.radioGET.Value = True Then 
+		nAction = ACTION_GET 
+	Else 
+		nAction = ACTION_POST
+	End If
+    strRetVal = tearObj.Retrieve(strURL, nAction, Me.txtData, "", "")
+
+    Me.txtResponse = Replace(strRetVal, vbLf, vbCrLf)
+    Me.txtHeader = tearObj.Headers
+    MsgBox "Retrieval finished!"
+    
+    Exit Sub
+Err_CmdGo:
+    MsgBox Err.Description & vbCrLf & "Error number: " & Err.Number
+    Exit Sub
+End Sub
+</pre>
+</p>
+<p>
+Ich habe mich mit der &Uuml;berpr&uuml;fung der Benutzereingaben sehr zur&uuml;ckgehalten, um den Sourcecode kurz zu halten - und
+auch scheinbar sinnlose Anfragen zuzulassen, wie zum Beispiel ein leerer User Agent String (damit kann man sehr viel
+Browser-Checking Code zu Fall bringen...).
+</p>
+
+<h2>Verwendung</h2>
+<p>
+Die Verwendung des Tools ist sehr einfach, und als Beispiel soll die Anfrageseite f&uuml;r Autoren bei AspHeute dienen:
+<pre style="background=silver;">
+http://www.aspheute.comREMOVED?
+	author=Christoph+Wille&amp;
+	AuthorEmail=christophw@alphasierrapapa.com&amp;
+	artikel=20000502
+</pre>
+Wenn man diese URL in der Adresszeile des Browsers eingibt, landet man bei der Kontaktseite f&uuml;r den 
+Artikel <a href="../artikel/20000502.htm">Monitoring von ASP</a>.
+</p>
+<p>
+Um nun diese URL von der W3Test Applikation aus aufzurufen, mu&szlig; man folgende Einstellungen eingeben (Resultat ebenfalls bereits
+in diesem Screenshot angezeigt):
+</p>
+<p><IMG SRC="/artikel/Bilder/200005/20000508_2.png" width="520" height="507" border="0" alt=""></p>
+<p>
+Jetzt kann man daran gehen, POST statt GET zu verwenden, den User Agent auszuprobieren, einige Parameter des
+Query Strings zu ver&auml;ndern - um den Code der Seite auf Schw&auml;chen abzuklopfen.
+</p>
+<p>
+Darauf hinweisen m&ouml;chte ich, da&szlig; f&uuml;r GET als auch POST das Format f&uuml;r die Parameter&uuml;bergabe gleich ist, also als
+Query String. Bin&auml;res POSTen (Dateiupload) ist nicht m&ouml;glich.
+</p>
+<p>
+Das W3Test Programm ist in der Lage <i>Response.Redirect</i> Anweisungen zu folgen, und zwar dann, wenn die
+Checkbox <i>Follow Redirects </i>angekreuzt ist; sonst bekommt man eine Fehlermeldung, da&szlig; der Server einen Redirect 
+verlangt hat.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Das hier vorgestellte W3Test Programm sch&ouml;pft nicht die gesamte Palette der Funktionalit&auml;t der AspTear Komponente aus. Diese
+kann auch noch Benutzervalidierung, SSL Client Zertifikate, sowie das Faken des Referers (von welcher Seite der Benutzer
+zu dieser Seite gekommen ist).
+</p>
+<p>
+Eine weitere Anwendungsm&ouml;glichkeit f&uuml;r die AspTear Komponente ist ein Skript, das jeden Tag die eigene Website besucht,
+und die Hauptseite mit einem Template vergleicht - um zu sehen, ob sich ein Hacker daran vergangen haben sollte. Nat&uuml;rlich
+kann die Komponente auch am Server selbst eingesetzt werden, um zum Beispiel Kreditkarten zu &uuml;berpr&uuml;fen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000508.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000508.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010521.htm">ASP-basierte Basic Authentication</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010521.htm</span><br>
+<a href="../artikel/20000519.htm">Laden von Dateien aus dem Web mit ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000519.htm</span><br>
+<a href="../artikel/20010803.htm">Meta Tags von fremden Seiten parsen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010803.htm</span><br>
+<a href="../artikel/20000824.htm">Scrapen von Webseiten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000824.htm</span><br>
+<a href="../artikel/20010419.htm">Site&uuml;berwachung mit Scheduled Tasks</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010419.htm</span><br>
+<a href="../artikel/20010328.htm">Webpage-Grabbing mit dem XML Parser</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010328.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2Fcomponentcenter%2Fasptear%2F">AspTear</a><br>
+<SPAN class="content">http://www.alphasierrapapa.com/componentcenter/asptear/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2FSupport%2FFAQ%2F00002%2Easp">Typbibliothek für AspTear</a><br>
+<SPAN class="content">http://www.alphasierrapapa.com/Support/FAQ/00002.asp</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

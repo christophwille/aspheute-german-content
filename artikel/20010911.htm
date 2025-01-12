@@ -1,0 +1,568 @@
+<HTML>
+<HEAD>
+<TITLE>Webseiten automatisiert scrapen, Teil 2</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im letzten Artikel haben wir die Webseite as is in die Datenbank geschrieben, heute parsen wir den Content einer Wetterberichtsseite auf, d.h. wir befreien den gescrapten Content der Webseite von den Html Tags.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,WebRequest,WebResponse,scrapen,SQL Server,regex,regular expression,library,Wetter,Wetterbericht,Adria,.NET,Csharp,C#">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Webseiten automatisiert scrapen, Teil 2</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010911"></SCRIPT>
+</p>
+<p>
+Im letzten Artikel haben wir die Webseite "as is" in die Datenbank geschrieben, heute
+parsen wir den Content einer Wetterberichtsseite auf, d.h. wir befreien den gescrapten
+Content der Webseite von den Html Tags und schreiben die Informationen sortiert nach Themengebieten wieder in eine
+SQL Datenbank. Die in C# geschriebene Konsolenanwendung l&auml;&szlig;t sich dann wiederum als Scheduled Task automatisch nach
+einer vordefinierten Zeit ausf&uuml;hren.
+</p>
+
+<p>
+Im <a href="20010910.htm">ersten Teil</a> dieser Artikelserie haben wir die Basics besprochen,
+also wie man automatisch den Content einer Wetterberichtsseite 
+(<a href="http://prognoza.hr/jadran_e.html" target="_blank">Wettervorhersage fuer die Adria</a>) mit Hilfe des
+Microsoft .NET Frameworks und Scheduled Tasks scrapt. Das besprochene C#-Beispiel scrapte den gesamten Content der Webseite
+und dumpte ihn in eine SQL Datenbank. Dies war nicht weiters schwer, jedoch war das Ergebnis nicht wirklich weiterverwendbar.
+Wie gesagt, der gesamte Content mit den Html Tags unstrukturiert in der Datenbank abgelegt.
+</p>
+
+<p>
+Die heutige Aufgabe besteht darin, den Content der Webseite von den Html Tags zu befreien und den Content sch&ouml;n gegliedert
+nach Themengebieten, in diesem Fall z.B. nach eventuellen Warnungen, der aktuellen Lage, etc. in der Datenbank abzulegen.
+Um dies zu erreichen, habe ich Regular Expressions und ein paar Methoden der .NET Framework String Klasse verwendet.
+</p>
+
+<p>
+Bevor wir mit dem Parsen anfangen, m&uuml;ssen wir zun&auml;chst die Struktur der Webseite kennen. Nach einer Beobachtung &uuml;ber einen
+l&auml;ngeren Zeitraum stellte sich heraus, da&szlig; sich (zum Gl&uuml;ck) bis auf den aktuellen Content der Webseite nichts an der 
+Struktur &auml;ndert. Diese Webseite sieht in einem Browser schlicht und einfach so aus:
+</p>
+
+<IMG SRC="Bilder/200109/20010911_1.png" width="590" height="473" alt="" border="0">
+
+<p>
+Sieht an sich nicht sonderlich kompliziert aus. Ein (kleiner) Blick hinter die Kulissen l&auml;&szlig;t einen aber erahnen, da&szlig; 
+wieder einiges an Parsingarbeit zu tun ist:
+</p>
+
+<pre style="background='silver';">
+&lt;HTML&gt;
+&lt;HEAD&gt;
+   &lt;TITLE&gt;Wettervorhersage fuer die Adria&lt;/TITLE&gt;
+&lt;/HEAD&gt;
+&lt;BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#2020DF" VLINK="#30307F"&gt;
+&lt;CENTER&gt;&lt;P&gt;
+&lt;B&gt;&lt;FONT COLOR="#000000"&gt;&lt;FONT SIZE=+1&gt;
+        DER SEEWETTERBERICHT DES SEEWETTERZENTRUMS SPLIT&lt;BR&gt;
+        VOM 10.09.2001.   UM 1300 UHR&lt;BR&gt;
+&lt;/FONT&gt;&lt;/FONT&gt;&lt;/B&gt;&lt;/P&gt;&lt;/CENTER&gt;
+&lt;P&gt;&lt;B&gt;&lt;FONT COLOR="#FF0000"&gt;&lt;FONT SIZE=+1&gt;
+        WARNUNG:
+&lt;/FONT&gt;&lt;/FONT&gt;&lt;/B&gt;&lt;/P&gt;
+&lt;FONT COLOR="#000000"&gt;
+        Erwarten sich Nordost-, auf dem offenen Meer Nordwestb&ouml;en, meistens am
+        Ended des Tages und in der Nacht.Anfangs auf der S&uuml;d- und im Teil der
+        Mitteladria S&uuml;dostb&ouml;en St&auml;rke 35 bis 50 kn, und das offene Meer in der
+        Nacht 4 bis 5. Stellenweise Gewitter.
+
+&lt;/FONT&gt;&lt;BR&gt;&lt;/P&gt;
+&lt;P&gt;&lt;B&gt;&lt;FONT COLOR="#000000"&gt;
+        DIE LAGE:
+&lt;BR&gt;&lt;BR&gt;&lt;/FONT&gt;&lt;/B&gt;
+
+        Die Zyklone und frontale St&ouml;rung versetzen sich &uuml;ber der Adria nach
+        Osten, und der Hochdruckkeil verst&auml;rkt sich langsam aus Westen.
+
+&lt;BR&gt;&lt;/P&gt;
+...
+</pre>
+
+<p>
+Haufenweises unstrukturiertes Html (zum Gl&uuml;ck ohne Crapplets) mit mehreren Leerzeichen als Einr&uuml;ckungen. 
+Diesen ungeordneten Haufen gilt es mit Hilfe von Regular Expressions und der String Klasse des .NET Frameworks
+zu ordnen. Da der Sourcecode dieses Artikelbeispiels auf dem des <a href="20010910.htm">ersten Teiles</a>
+aufbaut, beschr&auml;nke ich mich bei den Erkl&auml;rungen nur auf den neu hinzugef&uuml;gten Sourcecode.
+</p>
+
+<p>
+Da der Sourcecode, Dank der objektorientierten M&ouml;glichkeiten von C#, fein s&auml;uberlich in Klassen die jeweils die 
+Blueprints der einzelnen Arbeitsschritte beinhalten aufgeteilt ist, ist eine Erweiterung auch einfach zu erledigen.
+Die Erweiterung besteht haupts&auml;chlich darin, da&szlig; eine weitere Klasse, die das Parsing &uuml;bernimmt, hinzugef&uuml;gt wird.
+</p>
+
+<p>
+Diese Klasse namens <i>CleanseContent</i> beinhaltet eine Methode (<i>StripHtmlTags</i>), die wie der Name schon sagt, 
+den in der Stringvariable <i>strContent</i> gespeicherten &quot;Roh&quot;-Content von allen vorhandenen Html Tags
+befreit. Warum - nun, Html Tags haben in einer Datenbank normalerweise nichts verloren, wenn die gespeicherte Information
+andersweitig verarbeitet werden soll. Den &quot;Strip&quot;-Vorgang habe ich mit Hilfe einer Regular Expression gel&ouml;st. 
+Regular Expressions bestehen auf den ersten Blick aus einer Ansammlung unverst&auml;ndlicher Zeichenketten, dem 
+sogenannten RegEx Pattern. Dieser Pattern enth&auml;lt die Filter Anweisungen nach denen der String bearbeitet werden soll.
+</p>
+
+<p>
+Regular Expressions erfordern zwar einiges an Einlesearbeit, l&ouml;sen aber die meisten Probleme um einiges schneller
+als mit den konventionellen Stringoperationen. Um Regular Expressions innerhalb des Frameworks verwenden zu k&ouml;nnen
+mu&szlig; man auf den <i>System.Text.RegularExpressions</i> Namespace referenzieren. Sehen wir uns nun den ersten Abschnitt
+der <i>StripHtmlTags</i> Methode an, der Regular Expressions verwendet:
+</p>
+
+<pre style="background='silver';">
+public void StripHtmlTags(string strContent, out string strTitle, 
+    out string strHeading1, out string strHeading2, out string strHeading3, 
+    out string strHeading4, out DateTime dtForecastTimestamp)
+ 	{
+ 	string strRet,strNoWh;
+ 	string DateExtract,TimeExtract;
+ 	int nYear,nMonth,nDay,nHour,nMin;
+ 		
+ 	Regex rexStripHtml = new Regex("<([^!>]([^>]|\n)*)>", RegexOptions.IgnoreCase);
+ 	Regex rexStripWhSpace = new Regex(" * ");
+ 		
+ 	strRet = rexStripHtml.Replace(strContent, "");
+ 		
+ 	strNoWh = rexStripWhSpace.Replace(strRet, " ");
+    ...
+</pre>
+
+<p>
+Da ich die Webseite in die einzelen aus dem obigen Screenshot ersichtlichen Kategorien wie Titel, Warnung, Lage, etc.
+gliedern m&ouml;chte, mu&szlig; die Methode dementsprechend auch einige Parameter(werte) zur&uuml;ckliefern (<i>out ...</i>). 
+Die erste Regular Expression <i>rexStripHtml</i> s&auml;ubert den Content der der Methode &uuml;bergebenen
+Stringvariable <i>strContent</i> von Html Tags. Da es (allgemein) vorkommen kann, da&szlig; Html Tags einmal gro&szlig; einmal klein geschrieben
+werden, setze ich einfach die RegEx Option auf <i>IgnoreCase</i>.
+</p>
+
+<p>
+Dies ist nat&uuml;rlich nicht genug! Wir sind zwar die Html Tags los geworden, es sind aber noch unz&auml;hlige Leerzeichen
+vorhanden, die als Einr&uuml;ckungen verwendet wurden. Diese entfernen wir wiederum mit einer nun simpleren 
+Regular Expression <i>rexStripWhSpace</i>. Diese hat als Pattern jeweils am Anfang und am Ende ein Leerzeichen.
+Der Asterisk (*) in der Mitte dieser bedeutet, da&szlig; dazwischen beliebige viele Leerzeichen vorhanden sein k&ouml;nnen.
+</p>
+
+<p>
+Zuletzt verwenden wir die <i>Replace</i> Methode der <i>Regex</i> Klasse des .NET Frameworks um den Content
+String zu manipulieren und somit zuerst die Tags und sp&auml;ter dann die Leerzeichen los zu werden.
+Weiters ist es f&uuml;r die sp&auml;tere Weiterverwendung sinnvoll, den Content in die einzelnen Kategorien aufzuteilen. 
+Jede Kategorie wird dann in einer separaten Datenspalte der SQL Datenbank abgelegt.
+</p>
+
+<p>
+Da ich auch hier wieder nach einem Pattern (Kategorie&uuml;berschrift) suche, jedoch mehr als nur das Pattern
+zur&uuml;ckgeliefert haben will, sprich den dazugeh&ouml;rigen Text, verwende ich hier den einfacheren Weg &uuml;ber
+die Methoden der .NET String Klasse:
+</p>
+
+<pre style="background='silver';">
+ ...
+int idxHeading1 = strNoWh.IndexOf("WARNUNG:");
+int idxHeading2 = strNoWh.IndexOf("DIE LAGE:");
+int idxHeading3 = strNoWh.IndexOf("WETTERVORHERSAGE FUER DIE ADRIA FUER DIE NAECHSTEN 12 STUNDEN :");
+int idxHeading4 = strNoWh.IndexOf("WETTERAUSSICHT FUER DIE ADRIA FUER DIE WEITEREN 12 STUNDEN:");
+
+strTitle = strNoWh.Substring(1,idxHeading1-1);
+strTitle = strTitle.Trim();
+
+int idxDate = strTitle.IndexOf("VOM ");
+int idxTime = strTitle.IndexOf("UM ");
+DateExtract = strTitle.Substring(idxDate+4,10).Trim();
+TimeExtract = strTitle.Substring(idxTime+3,4).Trim();
+
+nYear = Convert.ToInt32(DateExtract.Substring(6,4));
+nMonth = Convert.ToInt32(DateExtract.Substring(3,2));
+nDay = Convert.ToInt32(DateExtract.Substring(0,2));
+nHour = Convert.ToInt32(TimeExtract.Substring(0,2));
+nMin = Convert.ToInt32(TimeExtract.Substring(2,2));
+
+dtForecastTimestamp = new DateTime(nYear,nMonth,nDay,nHour,nMin,00);
+
+strHeading1 = strNoWh.Substring(idxHeading1,idxHeading2-idxHeading1);
+strHeading1 = strHeading1.Trim();
+
+strHeading2 = strNoWh.Substring(idxHeading2,idxHeading3-idxHeading2);
+strHeading2 = strHeading2.Trim();
+
+strHeading3 = strNoWh.Substring(idxHeading3,idxHeading4-idxHeading3);
+strHeading3 = strHeading3.Trim();
+
+strHeading4 = strNoWh.Substring(idxHeading4,strNoWh.Length-idxHeading4);
+strHeading4 = strHeading4.Trim();		
+}
+...
+</pre>
+
+<p>
+Zuerst suche ich mir die ersten Characterpositionen der einzelnen Kategorie&uuml;berschriften mittels der
+<i>IndexOf</i> Methode, die bekanntlich die erste Position eines Characters oder in diesem Fall eines Strings
+aus einer vorgegeben Zeichenkette (Kategorie&uuml;bschrift) zur&uuml;ckliefert.
+</p>
+
+<p>
+Die <i>Substring</i> Methode liefert mir einen (Sub)String aus einer vorgegebenen Zeichenkette, anhand
+einer definierten Start- bzw. Indexposition. Die L&auml;nge des Substrings wird durch den zweiten Parameter bestimmt.
+Die jeweilige L&auml;nge kann ich leicht aus den einzelnen Indexpositionen der anderen &Uuml;berschriften ermitteln.
+</p>
+
+<p>
+Auf speziellen Wunsch hin extrahiere ich aus dem Titel-String (strTitle), Datum und Uhrzeit der aktuellen
+Wetterprognose. Da dieses Angabeformat im Titel-String nach l&auml;ngerer Beobachtungszeit gleich blieb, ist das Extrahieren auch in
+Zukunft ohne FormatException m&ouml;glich. Ich parse die einzelnen Teile (Jahr, Monat, Tag, Stunde, Minute) aus den Strings
+und wandle Sie anschlie&szlig;end in Integerwerte um. Dies ist notwendig, da der DateTime Constructor hier nur
+Integerwerte entgegennimmt.
+</p>
+
+<p>
+Diese einzelnen Werte werden wie gesagt dem DateTime Constructor in der Reihenfolge yyyymmddhhmmss &uuml;bergeben. Dadurch
+kann dann sp&auml;ter in der Datenbank explizit nach einem g&uuml;ltigen Datum und nicht m&uuml;hsamerweise nach einem String gesucht werden.
+</p>
+
+<p>
+Damit die <i>StripHtmlTags</i> Methode der <i>CleanseContent</i> Klasse auch bei der Ausf&uuml;hrung des Programms
+aufgerufen wird, ist folgender Eintrag in der Basisklasse <i>MainClass</i> zu erstellen:
+</p>
+
+<pre style="background='silver';">
+CleanseContent MyCleanseContent = new CleanseContent();
+MyCleanseContent.StripHtmlTags(strContent, out strTitle, out strHeading1, out strHeading2, 
+          out strHeading3, out strHeading4, out dtForecastTimestamp);
+</pre>
+
+<p>
+Da wir nun mehr Felder in der Datenbank bef&uuml;llen, m&uuml;ssen wir auch die <i>Write2DB</i> Klasse aus dem Beispiel des
+<a href="20010910.htm">ersten Teiles</a> anpassen. Dies ist nicht weiter tragisch, da die Datenbank
+nur zus&auml;tzliche Felder erhalten hat und wir keine Beziehungen ver&auml;ndern m&uuml;ssen, da es keine gibt:
+</p>
+
+<pre style="background='silver';">
+class Write2DB
+{
+    public void WriteIt(DateTime dtGrabTime, bool bSuccess, string strTitle, 
+        string strHeading1, string strHeading2, string strHeading3,string strHeading4, 
+        string strErrCode, DateTime dtForecastTimestamp)
+    {
+    string strConn = "server=(local)\\NetSDK;database=ScrapAppImproved;Trusted_Connection=yes";
+    string insertCmd = "insert into tContent (GrabTime, Success, Title, Heading1, Heading2, 
+        Heading3, Heading4, ErrCode, ForecastTimestamp) values (@GrabTime,@Success, @Title, 
+        @Heading1, @Heading2, @Heading3, @Heading4, @ErrCode,@ForecastTimestamp)";
+    
+    SqlConnection MySqlConnection = new SqlConnection(strConn);
+    SqlCommand MyCmd = new SqlCommand(insertCmd, MySqlConnection);
+
+    MyCmd.Parameters.Add(new SqlParameter("@GrabTime", SqlDbType.DateTime, 8));
+    MyCmd.Parameters["@GrabTime"].Value = dtGrabTime;
+    MyCmd.Parameters.Add(new SqlParameter("@Success", SqlDbType.Bit, 1));
+    MyCmd.Parameters["@Success"].Value = bSuccess;
+    MyCmd.Parameters.Add(new SqlParameter("@Title", SqlDbType.NVarChar,255));
+    MyCmd.Parameters["@Title"].Value = strTitle;
+    MyCmd.Parameters.Add(new SqlParameter("@Heading1", SqlDbType.NVarChar,1500));
+    MyCmd.Parameters["@Heading1"].Value = strHeading1;
+    MyCmd.Parameters.Add(new SqlParameter("@Heading2", SqlDbType.NVarChar,1500));
+    MyCmd.Parameters["@Heading2"].Value = strHeading2;
+    MyCmd.Parameters.Add(new SqlParameter("@Heading3", SqlDbType.NVarChar,1500));
+    MyCmd.Parameters["@Heading3"].Value = strHeading3;
+    MyCmd.Parameters.Add(new SqlParameter("@Heading4", SqlDbType.NVarChar,1500));
+    MyCmd.Parameters["@Heading4"].Value = strHeading4;
+    MyCmd.Parameters.Add(new SqlParameter("@ErrCode", SqlDbType.NVarChar, 255));
+    MyCmd.Parameters["@ErrCode"].Value = strErrCode;
+    MyCmd.Parameters.Add(new SqlParameter("@ForecastTimestamp", SqlDbType.DateTime, 8));
+    MyCmd.Parameters["@ForecastTimestamp"].Value = dtForecastTimestamp;
+    MyCmd.Connection.Open();
+    MyCmd.ExecuteNonQuery();
+    MyCmd.Connection.Close();
+    }	
+}
+</pre>
+
+<p>
+Nun k&ouml;nnen wir die Kommandozeilenapplikation erneut mit
+</p>
+
+<pre>csc /t:exe /out:ScrapAppImproved.exe main.cs</pre> 
+
+<p>
+beim Kommandoprompt kompilieren. Passend zu unserer Applikation die neue Struktur der <i>ScrapAppImproved</i>
+SQL Datenbank:
+</p>
+
+<IMG SRC="Bilder/200109/20010911_2.png" width="422" height="229" alt="" border="0">
+
+<p>
+Die einzelnen Kategorien werden jetzt s&auml;uberlich getrennt und ballastfrei in die einzelnen Spalten geschrieben.
+Anhand des Datumswertes <i>ForecastTimestamp</i> sieht man dann genau von welchem Tag und Uhrzeit die Prognose 
+stammt. Damit die Applikation auch automatisiert abl&auml;uft ist diese wieder, wie im 
+<a href="20010910.htm">ersten Teil</a> der Artikelserie beschrieben, in die Scheduled Task Liste
+einzutragen.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Da nun der gescrapte Content der Wetterprognoseseite aufbereitet wurde, steht einer Weiterverwendung nichts mehr
+im Wege. Ein Folgeartikel dieser Serie beschreibt die Versendung dieser Informationen 
+per SMS (Short Message Service) Nachricht. 
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010911.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20000803.htm">Die String Klasse in C#</a><br>
+<a href="20000724.htm">Exception Handling in C#</a><br>
+<a href="20011031.htm">Gegengifte f&uuml;r SQL Injection</a><br>
+<a href="20020411.htm">Kopieren verboten - Lizenzsicherung bei ASP Scripts</a><br>
+<a href="20000824.htm">Scrapen von Webseiten</a><br>
+<a href="20011113.htm">Sonderzeichen korrekt grabben mit XmlHttp</a><br>
+<a href="20010910.htm">Webseiten automatisiert scrapen</a><br>
+<a href="20010913.htm">Wetterbericht per SMS versenden</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fregexlib%2Ecom">Regular Expression Library</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fprognoza%2Ehr%2Fjadran%5Fe%2Ehtml">Seewetterbericht Adria</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20010911" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Webseiten automatisiert scrapen, Teil 2"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20010911.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Holm"><input type="hidden" name="AuthorEmail" value="office@holmcs.com"><input type="hidden" name="Artikel" value="20010911"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20010911.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

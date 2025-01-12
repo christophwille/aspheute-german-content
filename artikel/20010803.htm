@@ -1,0 +1,468 @@
+<HTML>
+<HEAD>
+<TITLE>Meta Tags von fremden Seiten parsen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Mit diesem Artikel greife ich eine Frage aus der aspDEcoffeehouse Liste von AspGerman auf - wie kann man, wenn man eine Seite einer fremden Website als String vor sich hat, die Meta Tags daraus extrahieren, und dann mit den Namen/Werten weiterarbeiten?">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,META,Tag,Meta Tags,Parsen,Parse,Parsing,AspTear,RegEx,regular expression,VBScript.JavaScript,DHTML">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Meta Tags von fremden Seiten parsen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010803"></SCRIPT>
+</p>
+<p>
+Mit diesem Artikel greife ich eine Frage aus der 
+<a href="http://www.aspgerman.com/aspgerman/listen/anmelden/aspDEcoffeehouse.asp" target="_blank">aspDEcoffeehouse Liste</a> von 
+<a href="http://www.aspgerman.com/aspgerman/" target="_blank">AspGerman</a> auf - wie kann man,
+wenn man eine Seite einer fremden Website als String vor sich hat, die Meta Tags daraus extrahieren, und 
+dann mit den Namen/Werten weiterarbeiten? Wie bei den 
+<a href="http://www.aspgerman.com/aspgerman/listen/" target="_blank">AspGerman Listen</a> so &uuml;blich, gab es eine L&ouml;sung.
+</p>
+<p>
+Diese hatte allerdings einen "Haken" - das vorgeschlagene Skript, stammend aus dem 
+<a href="http://faqchest.dynhost.com/msdn/IE-HTML/script-99/script-9911/script99112506_20925.html" target="_blank">IE-HTML Digest</a>
+war einerseits client-seitig, und andererseits in JavaScript geschrieben. Die Frage daher: wie bekomme ich
+das auf den Server, und wie verwende ich es wenn ich in VBScript programmiere?
+</p>
+
+<h2>Das client-seitige Ausgangsskript</h2>
+<p>
+Das Script, das im Download als <b>clientjstest.asp</b> verf&uuml;gbar ist, stammt aus dem
+<a href="http://faqchest.dynhost.com/msdn/IE-HTML/script-99/script-9911/script99112506_20925.html" target="_blank">IE-HTML Digest</a>,
+und ich habe es klarerweise zuallererst unver&auml;ndert getestet (die Variable <i>sHeadHtml</i> ist der Lesbarkeit
+halber gek&uuml;rzt):
+</p>
+
+<pre style="background='silver';">
+  &lt;SCRIPT LANGUAGE-"JScript"&gt;
+
+    var sHeadHtml = '&lt; META NAME = "AuthorName" CONTENT="  Geor  .....';
+
+    function ShowMetaTags()
+    {
+      var aMetaMatch = sHeadHtml.match(/&lt;\s*META[^&gt;]*&gt;/gi);
+      {
+        if (!aMetaMatch) return false;
+        var iNumMeta = aMetaMatch.length;
+        for (var i=0;i&lt;iNumMeta;i++)
+        {
+          var sMetaMatch = aMetaMatch[i];
+          var aAttMatch = sMetaMatch.match(/NAME\s*=\s*(["][^"]*["]|\S*)\s+
+              <i>[line continued]</i>CONTENT\s*=\s*(["][^"]*["]|\S*)\s*/i);
+          window.alert("Tag: " + sMetaMatch);
+          window.alert("Name: " + RegExp.$1);
+          window.alert("Content: " + RegExp.$2);
+        }
+      }
+    }
+
+  &lt;/SCRIPT&gt;
+
+  &lt;BUTTON ONCLICK="ShowMetaTags();"&gt;Show Meta Tags&lt;/BUTTON&gt;
+</pre>
+
+<p>
+Jawohl, das Skript erf&uuml;llt seinen Zweck - also werden wir es jetzt in ein serverseitiges Skript umbauen.
+</p>
+
+<h2>Konvertierung auf serverseitiges Skript</h2>
+<p>
+Hier g&auml;be es zwei Varianten - Variante 1 ist, das Skript von JavaScript auf VBScript umzuprogrammieren. Das
+ist mir aber zu viel Arbeit. Ich habe mich f&uuml;r Variante 2 entschieden: das JavaScript f&uuml;r serverseitige
+Ausf&uuml;hrung anpassen, und von VBScript aus aufrufen - und dabei das nette Feature von ASP ausnutzen, auf einer
+Seite mehrere Skriptsprachen mischen zu k&ouml;nnen.
+</p>
+
+<p>
+Ganz so einfach wollte ich es mir auch nicht machen - deshalb stecke ich die gefundenen Meta Tags in ein
+Dictionary - und da ich es nur auf derselben Seite verwende, handle ich mir auch keine Threadingprobleme
+ein. Der Parsing-Code ist in der JavaScript Funktion <i>ParseMetaTags</i> enthalten, der Aufruf geschieht von 
+VBScript aus (<b>ParseMetaTags.asp</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Language=VBScript %&gt;
+&lt;%
+Option Explicit
+Dim sHeadHtml, objDict, arrTags, arrTagValues, i
+
+sHeadHtml = "&lt; META NAME = ""AuthorName"" CONTENT=""  ....."
+Set objDict = Server.CreateObject("Scripting.Dictionary")
+Call ParseMetaTags(sHeadHtml, objDict)
+
+arrTags = objDict.Keys
+arrTagValues = objDict.Items
+For i = 0 To (objDict.Count -1)
+	Response.Write arrTags(i) &amp; " " &amp; arrTagValues(i) &amp; "&lt;br&gt;"
+Next
+
+Set objDict = Nothing
+%&gt;
+&lt;script language="jscript" runat="server"&gt;
+function ParseMetaTags(strText2Parse, objDictionary)
+{
+  var aMetaMatch = strText2Parse.match(/&lt;\s*META[^&gt;]*&gt;/gi);
+  {
+    if (!aMetaMatch) return false;
+    var iNumMeta = aMetaMatch.length;
+    for (var i=0;i&lt;iNumMeta;i++)
+    {
+      var sMetaMatch = aMetaMatch[i];
+      var aAttMatch = sMetaMatch.match(/NAME\s*=\s*(["][^"]*["]|\S*)\s+
+          <i>[line continued]</i>CONTENT\s*=\s*(["][^"]*["]|\S*)\s*/i);
+      objDictionary.Add(RegExp.$1, RegExp.$2);
+    }
+  }
+}
+&lt;/script&gt;
+</pre>
+
+<p>
+Die Idee mit dem Dictionary dient dazu, sp&auml;ter bequem nach bestimmten Meta Tags suchen zu k&ouml;nnen. Wenn man
+das nicht vorhat, w&uuml;rde ein simples Array ausreichen.
+</p>
+
+<h2>Wir parsen fremde Seiten</h2>
+<p>
+Punkt 1 beim Parsen von Seiten von fremden Servern ist der, sich die Seite erst einmal zu holen. Dies
+habe ich der Einfachheit halber ohne gro&szlig;e Fehlerbehandlung mittels AspTear realisiert (Links
+zu Download und detaillierteren Artikeln am Ende des heutigen). Der gesamte 
+Sourcecode ist in der Datei <b>ParseRemoteSite.asp</b> des heutigen Downloads enthalten.
+</p>
+<pre style="background='silver';">
+&lt;script language="vbscript" runat="server"&gt;
+Function RetrievePageGet(ByVal strWebDatei)
+    Dim objAspTear, strDateiInhalt
+    Set objAspTear = Server.CreateObject("SOFTWING.ASPtear")      
+    strDateiInhalt = objAspTear.Retrieve(strWebDatei, 2, "", "", "")
+    Set objAspTear = Nothing
+    RetrievePageGet = strDateiInhalt
+End Function
+&lt;/script&gt;
+</pre>
+
+<p>
+Diese Funktion liefert mir also das Dokument, das ich parsen will. Dieses &uuml;bergebe ich dann wieder
+der Funktion <i>ParseMetaTags</i>, die nun noch einen zus&auml;tzlichen Check enth&auml;lt, ob das Tag nicht
+schon im Dictionary enthalten ist:
+</p>
+
+<pre style="background='silver';">
+&lt;script language="jscript" runat="server"&gt;
+function ParseMetaTags(strText2Parse, objDictionary)
+{
+  var aMetaMatch = strText2Parse.match(/&lt;\s*META[^&gt;]*&gt;/gi);
+  {
+    if (!aMetaMatch) return false;
+    var iNumMeta = aMetaMatch.length;
+    for (var i=0;i&lt;iNumMeta;i++)
+    {
+      var sMetaMatch = aMetaMatch[i];
+      var aAttMatch = sMetaMatch.match(/NAME\s*=\s*(["][^"]*["]|\S*)\s+
+          <i>[line continued]</i>CONTENT\s*=\s*(["][^"]*["]|\S*)\s*/i);
+      if (!objDictionary.Exists(RegExp.$1))
+      {
+        objDictionary.Add(RegExp.$1, RegExp.$2);
+      }
+    }
+  }
+}
+&lt;/script&gt;
+</pre>
+
+<p>
+Damit h&auml;tten wir alle Grundfunktionalit&auml;ten abgedeckt. Der Aufruf der entsprechenden Funktionen
+ist nun wieder einfaches VBScript:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Language=VBScript %&gt;
+&lt;%
+Option Explicit
+Dim sHeadHtml, objDict, arrTags, arrTagValues, i
+
+sHeadHtml = RetrievePageGet("http://strangelove../default.htm")
+
+Set objDict = Server.CreateObject("Scripting.Dictionary")
+Call ParseMetaTags(sHeadHtml, objDict)
+
+arrTags = objDict.Keys
+arrTagValues = objDict.Items
+For i = 0 To (objDict.Count -1)
+	Response.Write arrTags(i) &amp; " " &amp; arrTagValues(i) &amp; "&lt;br&gt;"
+Next
+
+Set objDict = Nothing
+%&gt;
+</pre>
+
+<p>
+Damit erh&auml;lt man eine Liste von Meta Tags und ihren Werten. Durch die Suchfunktionen des Dictionary
+kann man allerdings "intelligentere" Verarbeitungswege einschlagen, als den hier gezeigten.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dieser Artikel sollte zeigen, da&szlig; nur weil ein Beispiel client-seitiger Code ist, noch dazu in einer
+Programmiersprache die man normalerweise nicht verwendet, dies noch lange kein Hinderungsgrund ist,
+sich die Funktionalit&auml;t dieses Codes in eigene server-seitige Scripts einzuverleiben.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010803.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="19990806.htm">Das Dictionary Objekt - Dein Feind und Helfer</a><br>
+<a href="20000508.htm">Erstellen eines HTTP Test Tools</a><br>
+<a href="20000519.htm">Laden von Dateien aus dem Web mit ASP</a><br>
+<a href="20000829.htm">Regul&auml;re Ausdr&uuml;cke / Regular Expressions</a><br>
+<a href="20011113.htm">Sonderzeichen korrekt grabben mit XmlHttp</a><br>
+<a href="20010328.htm">Webpage-Grabbing mit dem XML Parser</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpgerman%2Ecom%2Faspgerman%2F">AspGerman</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2Fcomponentcenter%2Fasptear%2F">AspTear</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Ffaqchest%2Edynhost%2Ecom%2Fmsdn%2FIE%2DHTML%2Fscript%2D99%2Fscript%2D9911%2Fscript99112506%5F20925%2Ehtml">IE-HTML Digest</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20010803" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Meta Tags von fremden Seiten parsen"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20010803.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20010803"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20010803.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

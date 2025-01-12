@@ -1,0 +1,180 @@
+<HTML>
+<HEAD>
+<TITLE>ODBC und ASP - Eine DSN zur Verwendung mit ASP definieren</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="So erstellen Sie Datasources (DSN) korrekt f&uuml;r Microsoft SQL Server Microsoft Access.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,DSN,ADO,ODBC,datasource,Access,SQL Server,Datenbank">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>ODBC und ASP - Eine DSN zur Verwendung mit ASP definieren</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=19990826"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Einer der einfachsten Wege um unter ASP eine Verbindung zu einer Datenbank herzustellen ist, die zugeh&ouml;rige 
+ODBC DSN zu definieren und einzusetzen. Nur kurz zur Erl&auml;uterung. ODBC steht f&uuml;r Open Database Connectivity 
+und ist ein Standard Protokoll, das Applikationen erlaubt zu einer Vielzahl von externen Datenquellen wie 
+Datenbanken oder Dateien eine Verbindung herzustellen. DSN hingegen steht f&uuml;r Data Source Name und enth&auml;lt 
+alle Informationen um zu einer Datenbank zu verbinden. Eine DSN wird vom ODBC Treiber Manager zum Herstellen 
+einer Datenbankverbindung benutzt.
+</p>
+<p>
+Bei einer ODBC DSN handelt es sich um eine einmal definierte und konfigurierte Datenbankverbindung die unter 
+Windows durch Angabe des Namens von den unterschiedlichsten Programmen und ASP Skripts verwendet werden kann.
+</p>
+<p>
+Wie richtet man nun eine ODBC DSN richtig ein, um sie unter ASP einsetzen zu k&ouml;nnen? Man sollte einige Grundkenntnisse 
+&uuml;ber den IIS und die Windows NT Security besitzen, oder sich an die in diesem Artikel beschriebenen 
+Kochrezepte halten.
+</p>
+<p>
+Nun zum Einrichten einer ODBC DSN f&uuml;r den Gebrauch mit ASP, beschrieben anhand der wohl am h&auml;ufigsten 
+vorkommenden F&auml;lle, der Verbindung zu einer <a href="19990826.htm#kochenaccess">Access</a>- oder <a href="19990826.htm#kochensql">SQL Server</a> Datenbank.
+</p>
+<p>
+<h3><a name="kochenaccess">Kochrezept zum Einrichten einer Access DSN unter Windows NT Server 4.0</a></h3>
+<ol>
+	<li>Klicken Sie auf Start, Einstellungen, Systemsteuerung
+	<li>&Ouml;ffnen Sie den ODBC-Datenquellen Administrator
+	<li>Um sicherzustellen, da&szlig; alle Programme, auch wenn sie unter einem beliebigen Benutzeraccount 
+		laufen, die DSN benutzen k&ouml;nnen m&uuml;ssen Sie eine System-DSN einrichten. Nur zur Auffrischung sei hier 
+		daran erinnert, da&szlig; der IIS und damit die laufenden ASP Skripts unter dem <i>IUSR_Computername</i> Account 
+		laufen um eine gewisse NT-Sicherheit zu gew&auml;hrleisten. Daher gehen Sie in den System-DSN Bereich.
+	<li>Der ODBC-Datenquellen Administrator sollte nun in etwa wie Bild 1 aussehen.<br>
+		<IMG SRC="/artikel/Bilder/199908/990826_1.gif" width=478 height=403 border=0 alt="ODBC Datenquellenadministrator">
+	<li>Klicken Sie auf <b>Hinzuf&uuml;gen</b> um eine neue System Datenquelle zu generieren
+	<li>W&auml;hlen Sie den <i>Microsoft Access Treiber (*.mdb)</i> aus und klicken Sie auf <b>Fertig stellen</b>
+	<li>Das ODBC Microsoft Access Setup Fenster erscheint<br>
+		<IMG SRC="/artikel/Bilder/199908/990826_2.gif" width=471 height=312 border=0 alt="ODBC Microsoft Access Setup">
+	<li>Geben Sie nun den Datenquellennamen an der zur Kennzeichnung der DSN benutzt werden soll. Dies ist 
+		der DSN, der beim &Ouml;ffnen einer Connection in ASP angegeben wird. 
+	<li>Wenn Sie wollen k&ouml;nnen Sie eine Kurzbeschreibung der DSN im Feld Beschreibung angeben.
+	<li>Klicken Sie auf <b>Ausw&auml;hlen</b> (Datenbank Frame).
+	<li>Das Datenbank Auswahl Fenster erscheint. W&auml;hlen Sie die Access Datenbank die auf die diese DSN 
+		gebunden werden soll und klicken Sie auf <b>OK</b>.<br>
+		<IMG SRC="/artikel/Bilder/199908/990826_3.gif" width=434 height=243 border=0 alt="Access Datenbank ausw&auml;hlen">
+	<li>Stellen Sie die DSN fertig indem Sie auf <b>OK</b> im ODBC Microsoft Access Setup Fenster klicken.
+	<li>Sie sehen nun, da&szlig; die neue System DSN im ODBC-Datenquellen Administrator angeben ist.
+	<li>Schlie&szlig;en Sie das Fenster indem Sie auf <b>OK</b> klicken.
+</ol>
+Nun haben Sie eine System Datenquelle mit der von ihnen angegebenen DSN erstellt.
+</p>
+<p>
+<h3><a name="kochensql">Kochrezept zum Einrichten einer SQL Server DSN unter Windows NT Server 4.0</a></h3>
+<ol>
+	<li>Klicken Sie auf Start, Einstellungen, Systemsteuerung
+	<li>&Ouml;ffnen Sie den ODBC-Datenquellen Administrator
+	<li>Um sicherzustellen, da&szlig; alle Programme, auch wenn sie unter einem beliebigen Benutzeraccount laufen, 
+		die DSN benutzen k&ouml;nnen, m&uuml;ssen Sie eine System-DSN einrichten. Dazu gehen Sie in den System-DSN Bereich.
+	<li>Klicken Sie auf <b>Hinzuf&uuml;gen</b> um eine neue System-DSN zu generieren.
+	<li>W&auml;hlen Sie den <i>SQL Server</i> Treiber aus und klicken Sie auf <b>Fertig stellen</b>
+	<li>Das SQL Server Datenquellen Fenster erscheint
+	<li>Geben Sie den gew&uuml;nschten Namen der DSN sowie eventuell ein Beschreibung ein.
+	<li>Geben Sie den Computernamen des SQL Datenbank Servers an auf dem die SQL Server Datenbank installiert ist. 
+		Wenn die Datenbank auf dem lokalen Rechner installiert ist, so k&ouml;nnen Sie auch "(local)" angeben. Das SQL 
+		Server Datenquellen Fenster sieht danach &auml;hnlich aus wie Bild 4.<br>
+		<IMG SRC="/artikel/Bilder/199908/990826_4.gif" width=575 height=323 border=0 alt="SQL Server Datenquellen Fenster">
+	<li>Klicken Sie auf <b>Weiter</b> um die DSN zu konfigurieren
+	<li>W&auml;hlen Sie die korrekte Authentizit&auml;ts &Uuml;berpr&uuml;fung, Clientkonfiguration, und setzen Sie <i>Zum SQL Server 
+		verbinden um ...</i>. Vergessen Sie dabei nicht eine g&uuml;ltige Login-ID und das zugeh&ouml;rige Kennwort anzugeben. 
+		F&uuml;r Details konsultieren Sie bitte die SQL Server Online-Dokumentation, siehe auch Bild 5.<br>
+		<IMG SRC="/artikel/Bilder/199908/990826_5.gif" width=575 height=323 border=0 alt="Authentizit&auml;ts &Uuml;berpr&uuml;fung, Zugang zur Clientkonfiguration">
+	<li>Klicken Sie auf <b>Weiter</b> um die Konfiguration fortzusetzen.
+	<li>Sollte ein Fehler auftreten dann lesen Sie die Fehlermeldung und l&ouml;sen Sie das Problem. Stellen Sie sicher, 
+		da&szlig; der Datenbank-Server l&auml;uft und mit Hilfe des Netzwerkprotokolls, das Sie in der Clientkonfiguration 
+		angegeben haben, eine Verbindung aufgebaut werden kann. Stellen Sie au&szlig;erdem sicher, da&szlig; die Login-ID und 
+		das Kennwort einen Datenbank-Server Zugriff erlauben.
+	<li>&Auml;ndern Sie die Standarddatenbank auf die Datenbank, auf den die DSN zugreifen soll und klicken Sie auf 
+		<b>Weiter</b> (Siehe Bild 6).<br>
+		<IMG SRC="/artikel/Bilder/199908/990826_6.gif" width=575 height=323 border=0 alt="Standarddatenbank einstellen">
+	<li>Je nach Ihren Bed&uuml;rfnissen k&ouml;nnen Sie noch &Auml;nderungen an den regionalen Einstellungen vornehmen. Danach klicken 
+		Sie auf <b>Fertig stellen</b>.<br>
+		<IMG SRC="/artikel/Bilder/199908/990826_7.gif" width=575 height=323 border=0 alt="Sprach- und Konvertierungseinstellungen">
+	<li>Die eingestellte Konfiguration wird im ODBC Microsoft SQL Server Setup Fenster dargestellt. Klicken Sie 
+		auf <b>Datenquelle testen</b> um sicherzustellen, da&szlig; in der eingestellten Konfiguration auf die Datenbank 
+		zugegriffen werden kann.
+	<li>Wenn der Verbindungstest fehlschl&auml;gt so begutachten und beheben Sie den Fehler analog zu Schritt 12.
+	<li>Beenden Sie den Setup Wizard durch einen Klick auf <b>OK</b>
+</ol>
+</p>
+<p>
+Einer der Hauptvorteile der Verwendung einer DSN in einem ASP Skript ist der, da&szlig; &uuml;ber eine DSN auf prinzipiell 
+jede ODBC kompatible Datenquelle mit denselben Mechanismen und meist auch denselben ASP und SQL Befehlen 
+zugegriffen werden kann. Nat&uuml;rlich steckt der Teufel auch hier wieder im Detail, so verh&auml;lt sich eine Textdatei 
+als ODBC Datenquelle ein wenig anders als eine SQL Server Datenbank, da jeder ODBC Treiber seine Eigenheiten hat 
+und m&ouml;glichst das Potential von Datenquellen aussch&ouml;pfen k&ouml;nnen sollte.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/19990825.htm">ADO und ASP - Datenbanken einmal n&auml;her betrachtet</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990825.htm</span><br>
+<a href="../artikel/20001023.htm">Das SQL Join Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001023.htm</span><br>
+<a href="../artikel/20001201.htm">Die SQL ORDER BY Clause</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001201.htm</span><br>
+<a href="../artikel/20010424.htm">Ein Baummen&uuml; mit XTree Server erstellen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010424.htm</span><br>
+<a href="../artikel/20010503.htm">Eine einfache Newsletter Applikation</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010503.htm</span><br>
+<a href="../artikel/20001107.htm">Einf&uuml;gen eines Datensatzes mit dem INSERT Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001107.htm</span><br>
+<a href="../artikel/20010201.htm">Einrichten des Snitz Forums</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010201.htm</span><br>
+<a href="../artikel/20010515.htm">Universal Data Links mit ASP verwenden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010515.htm</span><br>
+<a href="../artikel/20000606.htm">Zugriff auf autom. generierte ID beim Einf&uuml;gen eines Datensatzes</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000606.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,284 @@
+<HTML>
+<HEAD>
+<TITLE>Sortieren mit dem IComparer Interface</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Oft m&ouml;chte man zur Laufzeit eine Umsortierung einer Collection erzwingen, zB die Elemente aufsteigend statt absteigend sortieren. Anhand der Sort Methode der ArrayList Klasse zeige ich, da&szlig; dies nicht weiter schwierig ist.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ArrayList,Sort,Icomparer,Icomparable,SharpDevelop,class wizard,Compare,comparer">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Sortieren mit dem IComparer Interface</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020417"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+In vielen F&auml;llen sind die Elemente in einer Collection nicht so angeordnet, wie man sie gerne h&auml;tte. Oft m&ouml;chte man auch
+zur Laufzeit eine Umsortierung erzwingen, zB die Elemente aufsteigend statt absteigend sortieren. Anhand der <i>Sort</i> Methode
+der <i>ArrayList</i> Klasse zeige ich, da&szlig; dies nicht weiter schwierig ist.
+</p>
+<p>
+Die <i>Sort</i> Methode der <i>ArrayList</i> Klasse hat mehrere Overloads, und an einige kann ein <i>Comparer</i> &uuml;bergeben werden,
+der das <i>IComparer</i> Interface implementiert. Dieses Interface hat nur eine einzige Methode - <i>Compare</i>. Dieser werden
+zwei Objekte <i>x</i> und <i>y</i> &uuml;bergeben, und je nach dem wie die beiden Objekte vergleichen, sieht der R&uuml;ckgabewert wie
+folgt aus:
+</p>
+
+<ul>
+	<li>Kleiner 0: x ist kleiner als y.
+	<li>Gleich 0: x ist gleich y.
+	<li>Gr&ouml;&szlig;er 0: x ist gr&ouml;&szlig;er als y.
+</ul>
+
+<p>
+Ich m&ouml;chte das gleich an einem Beispiel verdeutlichen:
+</p>
+
+<pre style="background='silver';">
+/// &lt;summary&gt;Implements ascending sort algorithm&lt;/summary&gt;
+public class AscendingComparer : IComparer
+{
+  public int Compare(object objA, object objB)
+  {
+    return String.Compare(objA.ToString(), objB.ToString());
+  }
+}
+</pre>
+
+<p>
+Die Klasse <i>AscendingComparer</i> implementiert das <i>IComparer</i> Interface, und besitzt eine einzige Methode,
+n&auml;mlich <i>Compare</i>. Dieser Methode werden zwei Objekte &uuml;bergeben, und der Vergleich zwischen beiden wird mittels
+<i>String.Compare</i> durchgef&uuml;hrt (wir sortieren also Strings). Diese liefert - wie der Zufall es so will - die gleichen R&uuml;ckgabewerte wie die
+<i>Compare</i> Methode von <i>IComparer</i>. 
+</p>
+<p>
+Will man einen <i>DescendingComparer</i> implementieren, mu&szlig; man nur die Parameter an <i>String.Compare</i> in der
+umgekehrten Reihenfolge &uuml;bergeben:
+</p>
+
+<pre style="background='silver';">
+/// &lt;summary&gt;Implements descending sort algorithm&lt;/summary&gt;
+public class DescendingComparer : IComparer
+{
+  public int Compare(object objA, object objB)
+  {
+    return String.Compare(objB.ToString(), objA.ToString());
+  }
+}
+</pre>
+
+<p>
+Damit h&auml;tten wir zwei Comparer zum Experimentieren zur Verf&uuml;gung. Zur Demonstration wird eine <i>ArrayList</i> einmal unsortiert,
+aufsteigend und schlie&szlig;lich absteigend sortiert ausgegeben:
+</p>
+
+<pre style="background='silver';">
+  public static void Main(string[] args)
+  {
+    // fill a sample array list
+    ArrayList al = new ArrayList();
+    ComparerSampleMain.FillArrayList(ref al);
+
+    // print the unsorted list
+    Console.WriteLine("-- Unsorted --");
+    foreach(string strCurrent in al) {
+      Console.WriteLine(strCurrent);
+    }
+
+    // sort ascending, then print
+    al.Sort(new AscendingComparer());
+    Console.WriteLine("\r\n-- Sorted ascending --");
+    for (int i=0; i &lt; al.Count; i++) {
+      Console.WriteLine(al[i]); 
+    }
+
+    // finally, sort descending, then print
+    al.Sort(new DescendingComparer());
+    Console.WriteLine("\r\n-- Sorted descending --");
+    foreach(string strCurrent in al) {
+      Console.WriteLine(strCurrent);
+    }
+  }
+</pre>
+ 
+<p>
+Der <i>Sort</i> Methode wird jeweils eine Instanz des gew&uuml;nschten Comparers &uuml;bergeben:
+</p>
+
+<pre style="background='silver';">
+al.Sort(new AscendingComparer());
+</pre>
+
+<p>
+Und <i>Sort</i> verwendet dann diesen Comparer, um w&auml;hrend des Umsortierens die Vergleiche zwischen zwei Elementen vorzunehmen.
+Umsortieren ist also keine Hexerei unter .NET.
+</p>
+
+
+<h2>Automatische Klassengenerierung in SharpDevelop</h2>
+<p>
+Nat&uuml;rlich kann man bei so einem einfachen Interface wie <i>IComparer</i> leicht den notwendigen Infrastrukturcode
+selbst schreiben. Sobald ein Interface aber mehr als drei Methoden hat, wird diese Arbeit allerdings l&auml;stig, und kostet
+Zeit, die wir zum Schreiben der Implementierung besser verwenden k&ouml;nnten. Also Zeit, da&szlig; uns ein Tool die Aufgabe der
+Vorgenerierung des Klassengrundger&uuml;sts abnimmt.
+</p>
+<p>
+In <a href="http://www.icsharpcode.net/opensource/sd/" target="_blank">SharpDevelop</a> gibt es einen Class Wizard, der 
+genau das kann, und zwar sowohl f&uuml;r C# und auch VB.NET. Und zu demonstrieren, wie einfach das geht, f&uuml;gen wir dem aktuellen
+Projekt einfach eine neue Datei dazu:
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020417_1.png" width="495" height="469" alt="" border="0">
+
+<p>
+In der <i>New File</i> Dialogbox w&auml;hlen wir in der Gruppe C# den <i>New Class Wizard</i> aus.
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020417_2.png" width="520" height="352" alt="" border="0">
+
+<p>
+Unsere erste Entscheidung ist der Klassenname (hier <b>MySpecialComparer</b>). Die Klasse, die generiert wird, soll <b>public</b>
+sein, und wir leiten von keiner Basisklasse ab (keine Auswahl in Available Base Classes):
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020417_3.png" width="640" height="464" alt="" border="0">
+
+<p>
+Mit <i>Next</i> geht es weiter im Wizard. Jetzt folgt die Auswahl der Interfaces, die wir in der Klasse <b>MySpecialComparer</b>
+implementieren wollen. Hier ist <i>IComparer</i> aus dem <i>System.Collections</i> Namespace bereits ausgew&auml;hlt:
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020417_4.png" width="640" height="464" alt="" border="0">
+
+<p>
+Damit sind wir fast fertig. Auf der letzten Wizardseite k&ouml;nnen wir noch unseren bevorzugten Programmierstil ausw&auml;hlen,
+und auch diverse (Open Source) Lizenzen automatisiert einf&uuml;gen lassen. Der wichtigste Punkt aber sind die drei Checkboxen,
+die die ganze Coding-Arbeit f&uuml;r uns &uuml;bernehmen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020417_5.png" width="640" height="464" alt="" border="0">
+
+<p>
+Damit ist der Wizard auch schon fertig, und generiert uns folgenden Code (einige Kommentare sind zur Verk&uuml;rzung herausgenommen):
+</p>
+
+<pre style="background='silver';">
+namespace IComparerSample
+{
+  using System;
+  
+  /// &lt;summary&gt;
+  /// TODO - Add class summary
+  /// &lt;/summary&gt;
+  /// &lt;remarks&gt;
+  ///   created by - Administrator
+  ///   created on - 4/16/2002 1:13:33 PM
+  /// &lt;/remarks&gt;
+  public class MySpecialComparer : object, System.Collections.IComparer
+  {
+    
+    /// &lt;summary&gt;
+    /// Default constructor - initializes all fields to default values
+    /// &lt;/summary&gt;
+    public MySpecialComparer()
+    {
+    }
+    
+    /// &lt;summary&gt;
+    /// TODO - add method description
+    /// &lt;/summary&gt;
+    /// &lt;remarks&gt;
+    /// Interface method from IComparer
+    /// 
+    /// &lt;/remarks&gt;
+    /// &lt;param name='x'&gt;TODO - add parameter description&lt;/param&gt;
+    /// &lt;param name='y'&gt;TODO - add parameter description&lt;/param&gt;
+    public virtual int Compare(object x, object y)
+    {
+      throw new System.NotImplementedException();
+    }
+  }
+}
+</pre>
+
+<p>
+Neben einem vollst&auml;ndigen Klassengrundger&uuml;st bekommen wir auch gleich die entsprechende vorausgef&uuml;llte XML Dokumentation
+mitgeneriert. Durch die Verwendung dieses Wizards kann man bei der Implementierung von Klassen einiges an Zeit einsparen!
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die Implementierung des <i>IComparer</i> Interfaces ist schnell m&ouml;glich. Wer mehrere Interfaces (oder gr&ouml;&szlig;ere) implementieren
+m&ouml;chte, sollte sich SharpDevelop und den New Class Wizard genauer anschauen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020417.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020417.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020124.htm">Arrays mit Index und Schl&uuml;ssel</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020124.htm</span><br>
+<a href="../artikel/20000720.htm">Das foreach Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000720.htm</span><br>
+<a href="../artikel/20000717.htm">Schleifenbefehle in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000717.htm</span><br>
+<a href="../artikel/20000731.htm">Verwendung von Arrays in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000731.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eicsharpcode%2Enet%2Fopensource%2Fsd%2F">SharpDevelop</a><br>
+<SPAN class="content">http://www.icsharpcode.net/opensource/sd/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

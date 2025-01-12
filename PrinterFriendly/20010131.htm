@@ -1,0 +1,309 @@
+<HTML>
+<HEAD>
+<TITLE>Seiten weiterempfehlen leicht gemacht</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel zeigt, wie man das Weiterempfehlen von Seiten, im Englischen
+unter dem Begriff "Tell-a-friend" gef&uuml;hrt, in ASP leicht und dennoch wirksam implementieren kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Empfehlen,CDONTS,NewMail,Tell a friend,tell-a-friend,seite empfehlen,framework">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Seiten weiterempfehlen leicht gemacht</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010131"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Heute besch&auml;ftigen wir uns mit einem Website-Feature, das man vor allem auf
+Community Websites findet - das Weiterempfehlen von Seiten, im Englischen
+unter dem Begriff "Tell-a-friend" gef&uuml;hrt. Dieser Artikel zeigt, wie's in ASP
+leicht und dennoch wirksam implementiert werden kann.
+</p>
+
+<h2>Das Seitengrundger&uuml;st</h2>
+<p>
+Man k&ouml;nnte zwar ohne Modifikation der existierenden Seiten auskommen, allerdings h&auml;tte das
+einen gravierenden Nachteil: man k&ouml;nnte nur den URL der Seite weiterempfehlen, aber
+nicht deren Titel mitschicken. Gerade der Titel hat heute bei den meisten Websites mehr
+Aussagekraft als die URL - besonders wenn der Querystring grausam lang ist.
+</p>
+
+<p>
+Um den Titel in einer Tell-a-friend Seite auslesen zu k&ouml;nnen, mu&szlig; diese im Querystring
+&uuml;bergeben werden. Aber wie kommt der Titel in den Querystring? Indem man auf der zu 
+empfehlenden Seite eine Variable mit dem Seitentitel mitf&uuml;hrt.
+</p>
+
+<p>
+Dies sieht dann vereinfacht so aus:
+</p>
+
+<pre style="background='silver';">
+Const cstrPageTitle = "Der Seitentitel"
+</pre>
+
+<p>
+Dies mu&szlig; man in jeder Seite definieren, die ein Tell-a-friend Script aufrufen soll. Um das
+Ganze zu vereinfachen, habe ich auf <a href="http://www.myhaflinger.com" target="_blank">MyHaflinger.com</a>
+ein gesamtes Seiten"framework" gebastelt. Eine einfache Seite sieht dort wie folgt aus (<b>samplepage.asp</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @ Language="VBScript" EnableSessionState = False%&gt;
+&lt;%
+ Const cstrPagetitle = "Demoseite"
+%&gt;
+&lt;!--#include file="pagetop.asp"--&gt;
+
+&lt;H1&gt;&lt;%=cstrPagetitle %&gt;&lt;/H1&gt;
+&lt;p&gt;
+Dies ist nur eine Bare-Bones Demoseite.
+&lt;/p&gt;
+
+&lt;!--#include file="pageend.asp"--&gt;
+</pre>
+
+<p>
+Die Seite selbst besteht nur aus dem Kopfteil mit Variablendeklarationen und dem Contentteil. Der
+Rest des Seitenlayouts wird &uuml;ber die Dateien <b>pagetop.asp</b> und <b>pageend.asp</b> eingebunden. Da beide 
+auch in diesem Fall fast nur Layout beeinhalten, beschr&auml;nken wir uns auf einen imagin&auml;ren 
+Men&uuml;punkt in der Datei pagetop.asp - <i>Seite empfehlen</i>.
+</p>
+
+<h2>Der "Seite empfehlen" Link</h2>
+<p>
+Was alles mu&szlig; dieser Link beinhalten? Den Titel der Seite (wozu sonst die M&uuml;hen des Frameworks), sowie
+aus Einfachheitsgr&uuml;nden den URL der zu empfehlenden Seite. Der Code sieht dann wie folgt aus (<b>tellinclude.asp</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Const strSiteAddress = "http://www.myhaflinger.com"
+Const strURL2TellPage = "empfehlen.asp"
+
+strTellTitle = ""
+If (cstrPageTitle &lt;&gt; "") Then
+  strTellTitle = Server.UrlEncode(cstrPageTitle)
+End If
+strTellPage = strSiteAddress &amp; Request.ServerVariables("SCRIPT_NAME")
+strTellPage = Server.UrlEncode(strTellPage)
+strAHref = "&lt;a href=""" &amp; strURL2TellPage &amp; "?pagetitle=" &amp; strTellTitle &amp; _
+           "&amp;pageurl=" &amp; strTellPage &amp; """&gt;"
+Response.Write strAHref 
+Response.Write strAHref &amp; "Seite empfehlen!&lt;/a&gt;&lt;br&gt;" &amp; vbCrlf
+%&gt;
+</pre>
+
+<p>
+Viel Aufwand f&uuml;r einen einfachen Link, aber es zahlt sich aus.
+</p>
+
+<h2>Das "Seite empfehlen" Formular</h2>
+<p>
+Nun haben wir einen Link auf unser "Seite empfehlen" Formular gelegt. Nun m&uuml;ssen wir dieses
+designen und mit Funktionalit&auml;t versehen. So soll unser Formular aussehen:
+</p>
+<IMG SRC="/artikel/Bilder/200101/20010131_1.png" width="519" height="357" alt="" border="0">
+<p>
+Der Benutzer bekommt den Titel und den URL der Seite nochmals pr&auml;sentiert, und gibt dann die
+Adressdaten f&uuml;r den Versand der Empfehlung ein. Sogar ein Zusatztext kann eingegeben werden.
+</p>
+<p>
+All dies ist in der Seite <b>empfehlen.asp</b> implementiert. Speziell hinweisen m&ouml;chte ich
+auf die erste <i>If</i>-Abfrage: diese dient dazu, Empfehlungen f&uuml;r Sites anders als die eigene
+abzulehnen - das mu&szlig; f&uuml;r jede Site angepasst werden, oder aber kann ganz einfach ausgelassen werden.
+</p>
+
+<pre style="background='silver';">
+&lt;% @ Language="VBScript" EnableSessionState = False%&gt;
+&lt;%
+ Const cstrPagetitle = "Schicken Sie diese Seite einem Freund"
+%&gt;
+&lt;!--#include file="pagetop.asp"--&gt;
+
+&lt;H1&gt;&lt;%=cstrPagetitle %&gt;&lt;/H1&gt;
+&lt;%
+strPageUrl = Trim(Request.QueryString("pageurl"))
+strPageTitle = Trim(Request.QueryString("pagetitle"))
+
+' only allow us to use the script...
+If strPageUrl = "" Or 0 = InStr(strPageUrl,"www.myhaflinger.com") Then
+ Response.Redirect "/"
+End If
+%&gt;
+&lt;form action="sendURL.asp" method="POST"&gt;
+&lt;table border="0" cellspacing="0" cellpadding="5" bgcolor="#FFFFCC"&gt;
+&lt;tr&gt;&lt;td BGCOLOR="#003399" colspan="2"&gt;
+&lt;font color="white"&gt;
+&lt;%
+If strPageTitle &lt;&gt; "" Then
+	Response.Write "&lt;b&gt;" &amp; strPageTitle &amp; "&lt;/b&gt;&lt;br&gt;"
+End If
+Response.Write "&lt;i&gt;" &amp; strPageUrl &amp; "&lt;/i&gt;" &amp; vbCrlf
+%&gt;
+&lt;/font&gt;
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;b&gt;Emailen an:&lt;/b&gt;&lt;/td&gt;
+&lt;td&gt;&lt;input type="text" name="ToEmail" size=40&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td valign="top"&gt;Zus&amp;auml;tzlicher Kommentar:&lt;/td&gt;
+&lt;td&gt;
+&lt;textarea cols="35" rows="5" name="AddtlMessage"&gt;&lt;/textarea&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;b&gt;Ihre Emailadresse:&lt;/b&gt;&lt;/td&gt;
+&lt;td&gt;&lt;input type="text" name="FromEmail" size=40&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;nbsp;&lt;/td&gt;
+&lt;td valign="top"&gt;
+&lt;input type="hidden" name="Article2Send" value="&lt;%=strPageUrl%&gt;"&gt;
+&lt;input type="hidden" name="ArticleName2Send" value="&lt;%=strPageTitle%&gt;"&gt;
+&lt;input type="submit" value="Seite empfehlen!"&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/FORM&gt;
+
+&lt;!--#include file="pageend.asp"--&gt;
+</pre>
+
+<h2>Das Versenden der Empfehlung</h2>
+<p>
+Der Benutzer hat die notwendigen Daten eingegeben, jetzt m&uuml;ssen diese nur noch validiert, und eine
+Email mit der Empfehlung abgeschickt werden. F&uuml;r das Abschicken habe ich die CDONTS NewMail
+Komponente eingesetzt, was aber leicht gegen AspMail oder JMail getauscht werden kann.
+</p>
+
+<p>
+Die Seite <b>sendURL.asp</b> mu&szlig; am meisten an die eigenen Bed&uuml;rfnisse angepasst werden - schlie&szlig;lich
+geht es mit der Seitenempfehlung um den Kontakt mit einem potentiellen neuen Kunden. Im folgenden Listing 
+der Text, der auf <a href="http://www.myhaflinger.com" target="_blank">MyHaflinger.com</a> verwendet wird.
+</p>
+
+<pre style="background='silver';">
+&lt;% @ Language="VBScript" EnableSessionState = False%&gt;
+&lt;%
+ Const cstrPagetitle = "Tell-a-friend Statusseite"
+ Const cstrDefaultSender = "webmaster@sleeper.dev.alfasierrapapa.com"
+%&gt;
+&lt;!--#include file="pagetop.asp"--&gt;
+
+&lt;H1&gt;&lt;%=cstrPagetitle %&gt;&lt;/H1&gt;
+&lt;%
+strToEmail = Request.Form("ToEmail")
+strFromEmail = Request.Form("FromEmail")
+strAddtlMessage = Request.Form("AddtlMessage")
+strArticleTitle = Trim(Request.Form("ArticleName2Send"))
+strArticle = Request.Form("Article2Send")
+
+If (strToEmail &lt;&gt; "" And strFromEmail &lt;&gt; "" And strArticle &lt;&gt; "") Then
+  Set objMail = Server.CreateObject("CDONTS.NewMail")
+  objMail.From = cstrDefaultSender
+  objMail.To = strToEmail
+  objMail.Subject = "Seitenempfehlung: " &amp; strArticleTitle
+  
+  strBody = "Email von myHaflinger.com" &amp; vbCrLf &amp; vbCrLf
+  strBody = strBody &amp; strFromEmail &amp; " hat Ihnen folgende Seite empfohlen:" &amp; vbCrLf
+  strBody = strBody &amp; strArticle &amp; vbCrLf &amp; vbCrlf
+  
+  If (strAddtlMessage &lt;&gt; "") Then
+    strBody = strBody &amp; "Und m&ouml;chte Ihnen noch folgende Informationen mitteilen: " 
+    strBody = strBody &amp; vbCrLf &amp; """" &amp; strAddtlMessage &amp; """" &amp;_
+	          vbCrLf &amp; vbCrLf
+  End If
+  
+  strBody = strBody &amp; "Mit freundlichen Gr&uuml;&szlig;en von http://www.myhaflinger.com/"
+  
+  objMail.Body = strBody
+  objMail.Send
+  Set objMail = Nothing
+  
+  Response.Write "Die Seitenempfehlung wurde erfolgreich weitergeleitet!"
+  Response.Write " Vielen Dank, da&amp;szlig; Sie diesen Service "
+  Response.Write "in Anspruch genommen haben."
+Else
+  Response.Write "&lt;b&gt;Es wurden nicht alle ben&amp;ouml;tigten Informationen "
+  Response.Write "an dieses Skript &amp;uuml;bergeben!&lt;/b&gt;"
+End If
+%&gt; 
+
+&lt;!--#include file="pageend.asp"--&gt;
+</pre>
+
+<p>
+Diese Seite generiert eine Email an den Empfehlungsempf&auml;nger.
+Beim Empf&auml;nger sieht die Email mit Zusatztext dann beispielsweise so aus:
+</P>
+
+<IMG SRC="/artikel/Bilder/200101/20010131_2.png" width="515" height="422" alt="" border="0">
+
+<p>
+Die Zeile "Und m&ouml;chte Ihnen noch..." scheint nur dann auf, wenn der Benutzer auch wirklich einen
+Zusatztext eingegeben hat.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Seitenempfehlungen sind eine einfache Art und Weise, wie man Surfer dazu animieren kann,
+schnell und einfach einen Bekannten &uuml;ber Ihre interessante Resource zu informieren. Die
+heute vorgestellten ASP Pages kann man schnell und einfach in das eigene Seiteframework
+integrieren.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010131.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010131.zip</span></p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

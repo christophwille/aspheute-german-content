@@ -1,0 +1,227 @@
+<HTML>
+<HEAD>
+<TITLE>Unions in C#</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wer aus der C/C++ Welt kommt, kennt die Unions und ihr Funktionsprinzip bereits: diese erlauben es, an einer Speicheradresse unterschiedliche Datentypen zu speichern. Mit erstaunlich geringem Aufwand lassen sich Unions auch in C# nachbilden.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Union,FieldOffset,StructLayout,LayoutKind.Explicit,CLR,CLI,Datentypen,Garbage Collector,GC,Memory Layout">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Unions in C#</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020207"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wer aus der C/C++ Welt kommt, kennt die Unions und ihr Funktionsprinzip bereits: diese erlauben es,
+an einer Speicheradresse unterschiedliche Datentypen zu speichern. Mit erstaunlich geringem Aufwand
+lassen sich Unions auch in C# nachbilden, und zwar mit Hilfe der Attribute <i>StructLayout</i> und
+<i>FieldOffset</i>.
+</p>
+<p>
+Die beiden erw&auml;hnten Attribute dienen im Normalfall daf&uuml;r, da&szlig; das Speicherlayout einer gewissen
+Struktur vordefiniert wird, und nicht von der CLR nach ihrem Gutd&uuml;nken optimiert wird.
+Dieses automatische Layout mu&szlig; besonders bei Struct's verhindert werden, die per PInvoke an 
+Betriebssystemfunktionen &uuml;bergeben werden - und f&uuml;r diesen Zweck wurden die Attribute eingef&uuml;hrt.
+</p>
+<p>
+Dadurch, da&szlig; man das Speicherlayout genau definieren kann, er&ouml;ffnet sich aber auch die M&ouml;glichkeit,
+eine Variable &uuml;ber andere "dr&uuml;berzulegen". Damit das nicht zu theoretisch ist, hier eine Beispiel-Union:
+</p>
+
+<pre style="background='silver';">
+[StructLayout(LayoutKind.Explicit)] 
+public struct SampleUnion
+{
+  [FieldOffset(0)] public bool Flag1;
+  [FieldOffset(1)] public bool Flag2;
+  [FieldOffset(2)] public bool Flag3;
+  [FieldOffset(3)] public bool Flag4;
+  [FieldOffset(0)] public long Composite;
+}
+</pre>
+
+<p>
+Die Struct hat f&uuml;nf Members, vier davon sind boolsche Werte, der f&uuml;nfte ist vom Datentyp long. Unter
+normalen Umst&auml;nden w&uuml;rde die Struct gesamt 4 mal 1 Byte plus 1 mal 4 Byte also 8 Byte Speicher 
+verbrauchen - nur diese Struct ist anders. Die &Auml;nderung kommt durch die Verwendung von <i>FieldOffset</i>
+ins Spiel: damit kann ich sagen, an welcher Byteposition der jeweilige Member positioniert werden soll
+(<i>StructLayout</i> garantiert mein Layout). Und was habe ich gemacht? Nun, <i>Composite</i> beginnt
+am Anfang der Struct, und wird von allen vier boolschen Members &uuml;berlappt. Somit ist die Struct 4 Byte gro&szlig;.
+</p>
+<p>
+Das bedeutet nun in deutschen Worten folgendes: ver&auml;ndere ich einen der boolschen Members, &auml;ndert sich
+der Wert von <i>Composite</i>. &Auml;ndere ich hingegen <i>Composite</i>, &auml;ndern sich die boolschen Members,
+die bitm&auml;&szlig;ig im Bereich der &Auml;nderungen liegen (also nicht notwendigerweise immer alle). Ansehen kann
+man sich das Verhalten mit folgendem Sample:
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.Runtime.InteropServices;
+
+[StructLayout(LayoutKind.Explicit)] 
+public struct SampleUnion
+{
+  [FieldOffset(0)] public bool Flag1;
+  [FieldOffset(1)] public bool Flag2;
+  [FieldOffset(2)] public bool Flag3;
+  [FieldOffset(3)] public bool Flag4;
+  [FieldOffset(0)] public long Composite;
+}  
+
+class Sample
+{
+public static void Main()
+{
+  SampleUnion su = new SampleUnion();
+  su.Flag1 = false;
+  Console.WriteLine(su.Composite.ToString());
+  su.Flag2 = true;
+  Console.WriteLine(su.Composite.ToString());
+  su.Flag3 = false;
+  Console.WriteLine(su.Composite.ToString());
+  su.Flag4 = true;
+  Console.WriteLine(su.Composite.ToString());
+}
+</pre>
+
+<p>
+Am Anfang ist <i>Composite</i> noch 0, doch der Wert &auml;ndert sich, sobald eines der Flags auf true
+gesetzt wird.
+</p>
+<p>
+Jetzt haben wir zwar eine Union mit vier boolschen Flags, aber wozu kann man in dieser speziellen
+Struct den long-Wert einsetzen? Das folgende Beispiel (<b>union.cs</b>) zeigt - versteckt - eine
+M&ouml;glichkeit:
+</p>
+
+<pre style="background='silver';">
+// using und struct-Definition zur leichteren Lesbarkeit entfernt
+class Sample
+{
+public static void Main()
+{
+  SampleUnion su = new SampleUnion();
+  su.Flag1 = false;
+  su.Flag2 = true;
+  su.Flag3 = false;
+  su.Flag4 = true;
+  DumpUnion(su);
+  DumpUnion2(su.Composite);
+}
+
+public static void DumpUnion(SampleUnion su)
+{
+  Console.WriteLine("Flag1 " + su.Flag1.ToString());
+  Console.WriteLine("Flag2 " + su.Flag2.ToString());
+  Console.WriteLine("Flag3 " + su.Flag3.ToString());
+  Console.WriteLine("Flag4 " + su.Flag4.ToString());
+  Console.WriteLine("Composite " + su.Composite.ToString());
+}
+
+public static void DumpUnion2(long nUnionValue)
+{
+  SampleUnion su = new SampleUnion();
+  su.Composite = nUnionValue;
+  Console.WriteLine("Flag1 " + su.Flag1.ToString());
+  Console.WriteLine("Flag2 " + su.Flag2.ToString());
+  Console.WriteLine("Flag3 " + su.Flag3.ToString());
+  Console.WriteLine("Flag4 " + su.Flag4.ToString());
+  Console.WriteLine("Composite " + su.Composite.ToString());
+}
+}
+</pre>
+
+<p>
+Der Verwendungszweck wird in <i>DumpUnion2</i> ersichtlich - ich kann meine Union als
+ganz simple long-Variable an Funktionen &uuml;bergeben, allerdings jederzeit nach Belieben die originale
+Union wieder erstellen - es sind nur zwei Zeilen:
+</p>
+
+<pre style="background='silver';">
+  SampleUnion su = new SampleUnion();
+  su.Composite = nUnionValue;
+</pre>
+
+<p>
+Die M&ouml;glichkeit eine Union als andere Datentypen zu repr&auml;sentieren beginnt dann seine Vorteile
+zu entfalten, wenn man nur Teile einer Struct &uuml;bergeben m&ouml;chte, und nicht gleich alle Daten.
+Und mit der M&ouml;glichkeit andere Datentypen in ein und dieselbe Speicheradresse zu legen er&ouml;ffnet 
+sich eine ganze Reihe von interessanten Anwendungen. Ein Beispiel sei erw&auml;hnt: es ist einfacher
+und schneller einen long-Wert per SOAP zu marshalen als die Struct gesamt.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Der durchschnittliche Programmierer wird kaum mit Unions in Ber&uuml;hrung kommen, es ist aber doch
+sehr beruhigend wenn man wei&szlig;, da&szlig; man auch unter .NET's rigiden Regiment zumindest ein wenig
+mit dem Speicher spielen darf.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020207.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020207.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000726.htm">Datentypen in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000726.htm</span><br>
+<a href="../artikel/20010215.htm">Enums lesbar machen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010215.htm</span><br>
+<a href="../artikel/20001019.htm">Sichere Konvertierungen von Referenztypen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001019.htm</span><br>
+<a href="../artikel/20020125.htm">Variable Parameterlisten in Funktionen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020125.htm</span><br>
+<a href="../artikel/20010621.htm">Web Services 101 in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010621.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

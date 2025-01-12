@@ -1,0 +1,193 @@
+<HTML>
+<HEAD>
+<TITLE>Einf&uuml;hrung in Performance Monitoring</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel f&uuml;hrt Sie in die Serveroptimierung und Server&uuml;berwachung mit Hilfe des Performance Monitors ein. Lernen Sie die wichtigsten Performance Counter kennen, mit deren Hilfe man die Grenzen eines Servers ausloten kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Performance,Counter,Performance Monitor,Diskperf,Perfmon,performance counter">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Einf&uuml;hrung in Performance Monitoring</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Optimierung.htm">Optimierung</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000428"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Die eigenen ASP Seiten auf Geschwindigkeit zu optimieren, ist der erste Schritt zu einer
+Website, die viele gleichzeitige Benutzer bedienen kann. Allerdings kann auch noch so gut optimierter ASP
+Code den Server bis an seine Grenzen ausreizen. Die Grenzen, die zumeist zuallererst erreicht
+werden, sind:
+<ul>
+<li>Prozessor
+<li>RAM
+<li>Festplatte
+</ul>
+</p>
+
+<p>
+Grunds&auml;tzlich "merkt" man Performance Probleme erst dann, wenn der Server sehr deutlich langsamer wird - 
+allerdings kann man zu diesem Zeitpunkt nur raten, was denn nun die begrenzte Resource ist: ist es das RAM, 
+der Prozessor, oder gar die Netzwerkkarte? Um harte Fakten zu bekommen (beziehungsweise permanent zu &uuml;berwachen,
+bevor es zu Problemen kommt), sollte man sich des Performance Monitors bedienen:
+</p>
+<p>
+<IMG SRC="/artikel/Bilder/200004/20000428_1.png" width="513" height="421" border="0" alt="Performance Monitor">
+</p>
+
+<p>
+Dieses Tool ist bei jeder Standardinstallation von Windows NT/2000 mit dabei, und findet sich bei den Administrationstools.
+</p>
+
+<h2>Standardcounter</h2>
+<p>
+Damit gemeint sind einige Counter, die man bez&uuml;glich der Serverperformance immer im Auge behalten sollte - quasi
+unabh&auml;ngig davon, ob man SQL Server oder IIS installiert hat.
+</p>
+<h3>CPU</h3>
+<p>
+<ul>
+	<li><b>Processor: % Processor Time</b>: &Uuml;berwacht die Zeit, die der Prozessor nicht im Leerlauf verbringt (%).
+	Konstante Werte &uuml;ber 80 beziehungsweise 90% zeigen an, da&szlig; man einen schnelleren Prozessor brauchen w&uuml;rde.
+	<li><b>System: % Total Processor Time</b>: In einem Multiprozessorsystem gibt dieser Counter die Gesamtauslastung
+	aller Prozessoren an. Unter IIS4 konnte ASP nur gut bis 2 Prozessoren skalieren, ab IIS5/Windows 2000 auch
+	sehr gut auf 4 Prozessorsystemen.
+	<li><b>System: Processor Queue Length</b>: Zeigt die Anzahl der Threads, die auf Prozessorzeit warten. Wenn der
+	Wert konstant &uuml;ber 2 steigt, bedeutet dies, da&szlig; der Prozessor mehr Arbeit bekommt, als er bearbeiten kann.
+</ul>
+</p>
+
+<h3>RAM</h3>
+<p>
+<ul>
+	<li><b>Memory: Available Bytes</b>: &Uuml;berwacht den f&uuml;r Prozesse verf&uuml;gbaren Speicher. Wenn dieser Counter niedrig ist,
+	bedeutet das eine generelle Knappheit von RAM im Server.
+	<li><b>Memory: Pages/sec</b>: &Uuml;berwacht die Anzahl der Seiten die entweder auf die Festplatte geschrieben, oder von
+	dort gelesen werden.
+	<li><b>Memory: Page Faults/sec</b>: Zeigt die Anzahl der Page Faults (Seitenfehler) an. Im Zusammenspiel mit
+	Pages/sec kann man feststellen, ob exzessives Paging am Server stattfindet.
+	<li><b>Process: Page Faults/sec</b>: Damit kann man die Page Faults per Anwendung &uuml;berwachen.
+</ul>
+</p>
+
+<h3>Festplatte</h3>
+<p>
+Um die Festplattenaktivit&auml;t &uuml;berwachen zu k&ouml;nnen, m&uuml;ssen die entsprechenden Performance Counter zuerst
+aktiviert werden (aus Geschwindigkeitsgr&uuml;nden sind sie deaktiviert). Um die Counter zu aktivieren, f&uuml;hren Sie
+folgendes Kommando aus, und starten den Rechner neu:
+<pre>diskperf -y</pre>
+Wenn man diesen Schritt nicht ausf&uuml;hrt, darf man sich nicht wundern, wenn alle Counter 0 anzeigen! Apropos:
+Benutzer von RAID Controllern m&uuml;ssen folgenden Befehl ausf&uuml;hren:
+<pre>diskperf -ye</pre>
+Diskcounter werden mit
+<pre>diskperf -n</pre>
+wieder abgeschaltet. Aus Geschwindigkeitsgr&uuml;nden sehr zu empfehlen, wenn man mit der &Uuml;berwachung fertig ist. 
+</p>
+
+<p>
+Nun aber zu den Countern im Einzelnen:
+<ul>
+	<li><b>PhysicalDisk: Avg. Disk Queue Length</b>: Verr&auml;t die durchschnittliche Anzahl der Anfragen die auf
+	Festplattenzugriff warten. Werte gr&ouml;&szlig;er 2 sind bereits problematisch.
+	<li><b>PhysicalDisk: % Disk Time</b>: Prozentsatz der Zeit, bei der die Disk mit Schreibe- oder Leseoperationen
+	besch&auml;ftigt ist. Wenn der Wert 90% &uuml;berschreitet, sollte man den folgenden Counter mitber&uuml;cksichtigen:
+	<li><b>PhsicalDisk: Current Disk Queue Length</b>: Anzahl der im Moment auf Festplattenzugriff wartenden Anfragen.
+	<li><b>Memory: Page Faults/sec</b>: Ja, dieser RAM-Counter hat auch seine Auswirkung auf die Festplatten&uuml;berwachung!
+	Damit kann man herausfinden, ob exzessives Paging f&uuml;r die Festplattenaktivit&auml;t verantwortlich ist.
+</ul>
+</p>
+
+
+
+<h2>Arten des Monitorings</h2>
+<p>
+Bis jetzt habe ich nur die entsprechenden Performance Counter vorgestellt - wie kommt man nun aber an die 
+aktuellen Werte der jeweiligen Counter? Dazu gibt es drei verschiedene Wege:
+<ul>
+	<li><b>Chart</b> Das ist die Standardansicht, die auch der vorangegangene Screenshot zeigt. Hier kann die
+	aktuelle Aktivit&auml;t dargestellt werden. Counter werden &uuml;ber das Plus-Symbol (Add Counter) hinzugef&uuml;gt. Im nun
+	angezeigten Dialogfenster kann man den gew&uuml;nschten Counter selektieren und in das Chart einf&uuml;gen.
+	<p><IMG SRC="/artikel/Bilder/200004/20000428_2.png" width="398" height="313" border="0" alt=""></p>
+	Man sollte sich nur immer bewu&szlig;t sein, ob der jeweilige Counter in %, Millisekunden, Byte usw. anzeigt!
+	<li><b>Log</b> Mit dieser Option kann man Daten &uuml;ber einen l&auml;ngeren Zeitraum &uuml;berwachen lassen, und sp&auml;ter
+	dann auswerten (auch auf anderem Rechner). Der Vorteil: das Monitoring kann automatisch zB zu einer
+	bestimmten Uhrzeit angestossen werden, ohne da&szlig; man am Rechner sitzen m&uuml;&szlig;te. Der Zeitrahmen f&uuml;r die Auswertung
+	ist einfach w&auml;hlbar.
+	<li><b>Alerts</b> Mit Alerts kann man bestimmte Aktionen ausf&uuml;hren lassen, wenn ein bestimmter Performancecounter
+	(oder mehrere) bestimmte Grenzwerte &uuml;ber- oder unterschreiten. Man kann auch angeben, alle wieviel Sekunden
+	der Performancecounter abgefragt werden soll. Als Aktionen stehen dann zur Verf&uuml;gung:
+	<p><IMG SRC="/artikel/Bilder/200004/20000428_3.png" width="404" height="448" border="0" alt=""></p>
+	Man kann einfach ein Event im Applicationlog vermerken lassen, ein <i>net send</i> durchf&uuml;hren, eine Log
+	Operation starten (siehe vorheriger Punkt), oder aber ein beliebiges Programm starten - um sich zB anpagen
+	zu lassen.
+</ul>
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dieser Artikel kann nur als Start in das Servermonitoring und seine Techniken dienen, und es ist empfehlenswert,
+sich ein gutes Buch &uuml;ber NT Systemoptimierung zuzulegen, wenn man es wirklich ernst meint. Allerdings haben Sie 
+jetzt Informationen &uuml;ber die wichtigsten Counter, als auch eine Einf&uuml;hrung in die verschiedenen 
+&Uuml;berwachungsmethoden, die Ihnen mit Bordmitteln von NT zur Verf&uuml;gung stehen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000502.htm">Monitoring von ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000502.htm</span><br>
+<a href="../artikel/20000809.htm">Performance Monitoring a la .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000809.htm</span><br>
+<a href="../artikel/20020731.htm">Trafficreduzierung mit XCompress</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020731.htm</span><br>
+<a href="../artikel/20000814.htm">Webserver-Tuning mit XTune</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000814.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

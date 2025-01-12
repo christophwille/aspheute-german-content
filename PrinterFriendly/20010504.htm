@@ -1,0 +1,290 @@
+<HTML>
+<HEAD>
+<TITLE>Script-basierte IIS Administration</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Da&szlig; man den IIS mit dem Internet Services Manager administrieren kann, d&uuml;rfte jedem bekannt sein. Da&szlig; man allerdings die Administration auch mit Hilfe von ASP oder WSH Scripts bewerkstelligen kann, wissen nur wenige.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,IISAO,ADSI,ISM,Metabase,Metabase Editor,MetaEdit,GetObject,WSH,Security">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Script-basierte IIS Administration</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Server.htm">Server</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010504"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Da&szlig; man den IIS mit dem Internet Services Manager administrieren kann, d&uuml;rfte jedem bekannt
+sein. Da&szlig; man allerdings die Administration auch mit Hilfe von ASP oder WSH Scripts bewerkstelligen
+kann - ohne funktionale Abstriche machen zu m&uuml;ssen - das wissen nur wenige.
+</p>
+
+<p>
+Wie funktioniert der Skriptzugriff auf die IIS Administration? Nun, dazu hole ich etwas aus. Heute sollte jedem das Active Directory (AD)
+von Windows 2000 bereits ein Begriff sein - es dient der Verwaltung von Objekten (Benutzer, Drucker, etc) in
+einem Netzwerk. Um es einfach programmierbar zu machen, existiert das sogenannte Active Directory Services
+Interface, kurz ADSI. Im Falle des C++ Programmierers sieht das (f&uuml;r den VB Programmierer) grausam aus,
+allerdings gibt es "high-level" Schnittstellen, die f&uuml;r VB/VBScript Programmierer gedacht sind. Damit
+erh&auml;lt man Zutritt zur vollst&auml;ndigen Administration des AD's und der dort gespeicherten Objekte.
+</p>
+
+<p>
+Was hat dieser Ausflug in das Active Directory mit der Administration von IIS zu tun? Nun, die Besitzer
+des NT 4 Option Packs waren die "Beta Tester" f&uuml;r so ziemlich alles, was dann in Windows 2000 zur Reife
+gelangt ist: Transaction Server, Message Queue Server, Certificate Server und eben auch die ADSI
+Programmierschnittstelle - denn diese erlaubt nicht nur den Zugriff auf den AD Provider, sondern auch
+andere Provider die die ADSI Schnittstelle implementieren. Und man darf raten - IIS implementiert diese
+seit der Version 4.
+</p>
+
+<p>
+Alle Objekte f&uuml;r die Administration des IIS werden unter dem Begriff IISAO - IIS Administration Objects - 
+zusammengefasst. Diese bilden eine Hierarchie, und das folgende Flowchart zeigt die Hierarchie f&uuml;r eine
+Web Site plus eine FTP Site:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010504_7.png" width="665" height="484" alt="" border="0">
+
+<p>
+Der Text in den Boxen entspricht dem Namen der Objektinstanz, der Objekttyp steht jeweils rechts daneben.
+Angesprochen werden die jeweiligen Elemente mit einer dem HTTP Protokoll &auml;hnlichen Syntax:
+</p>
+
+<pre style="background='silver';">
+IIS://computername/W3SVC/1/Root
+</pre>
+
+<p>
+Diese "URL" liefert mir ein Objekt des Typs <i>IisWebVirtualDir</i>, und zwar das Rootverzeichnis meiner
+ersten Website (wie man zum Namen kommt, dazu sp&auml;ter). Ein einfaches und wirkungsvolles Tool, um sich
+diese Hierarchie ohne tolles User Interface anzusehen ist der Metabase Editor aus dem Windows 2000 Resource Kit:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010504_1.png" width="588" height="420" alt="" border="0">
+
+<p>
+Wo werden diese Informationen ausgelesen,
+beziehungsweise gespeichert? Erraten, daf&uuml;r ist die <b>Metabase</b> zust&auml;ndig - diese h&auml;lt s&auml;mtliche IIS-relevanten
+Konfigurationsinformationen. F&uuml;r den IIS 5 ist das Speicherformat bin&auml;r, das kann sich aber in zuk&uuml;nftigen
+Versionen durchwegs &auml;ndern.
+</p>
+
+<p>
+Hervorragend - wir h&auml;tten gekl&auml;rt wo die Konfiguration gespeichert wird (Metabase), mit welcher
+Programmierschnittstelle man diese angreift (ADSI), und wie man die Informationen adressiert (<i>IIS://</i> Syntax).
+</p>
+
+<p>
+Nun kommen wir aber zum ersten Hands-on Beispiel des heutigen Artikels: <b>listsites.asp</b>. Wie
+der Name schon impliziert, liefert mir der Code eine Liste aller Web Sites, die auf meinem Server
+laufen:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Set theService = GetObject("IIS://localhost/W3SVC")
+
+For Each theServer in theService
+  If (theServer.Class = "IIsWebServer") Then
+     Response.Write "&lt;i&gt;Server&lt;/i&gt;: &lt;a href=""dumpsite.asp?AdsPath="
+     Response.Write Server.UrlEncode(theServer.ADsPath) &amp; """&gt;"
+     Response.Write theServer.ServerComment &amp; "&lt;/a&gt;"
+     Response.Write "  &lt;i&gt;ADS Pfad&lt;/i&gt;: " &amp; theServer.ADsPath &amp; "&lt;BR&gt;"
+  End If
+Next
+%&gt;
+</pre>
+
+<p>
+Wer jetzt zu gierig war, und das sofort ausprobiert hat, ist wahrscheinlich in folgenden Fehler
+hineingelaufen:
+</p>
+
+<pre style="background='silver';">
+Microsoft VBScript runtime error '800a0046' 
+Permission denied: 'GetObject' 
+/aspheute/adsi/sonicht.asp, line 2 
+</pre>
+
+<p>
+Der Grund hierf&uuml;r ist, da&szlig; NT klarerweise die Sicherheitseinstellungen honoriert, und nur
+Siteadministratoren (&uuml;blicherweise das lokale Administratorenkonto) an diese Daten heranlassen m&ouml;chte.
+Daher m&uuml;ssen wir das Skript absichern, soda&szlig; nur noch die entsprechenden User darauf Zugriff haben:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010504_2.png" width="370" height="443" alt="" border="0">
+
+<p>
+Und jetzt funktioniert es auch so wie gew&uuml;nscht, und wir bekommen eine Liste aller konfigurierten
+Websites:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010504_3.png" width="533" height="272" alt="" border="0">
+
+<p>
+Ich habe mir erlaubt, einen kleinen Hyperlink zu legen - und zwar auf <b>dumpsite.asp</b>, welches mir
+alle Verzeichnisse der Website auflistet. Auch dieses verwendet wieder <i>GetObject</i> um an das ADS
+zu binden, und liest dann die Informationen aus den ben&ouml;tigten Serviceobjekten aus:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+strAdsPath = Request.QueryString("AdsPath")
+Set theServer = GetObject(strAdsPath)
+strSiteDescription = theServer.ServerComment
+%&gt;
+&lt;HTML&gt;
+&lt;HEAD&gt;
+&lt;TITLE&gt;IISAO hierarchy for &lt;%=strSiteDescription%&gt;&lt;/TITLE&gt;
+&lt;/HEAD&gt;
+&lt;BODY&gt;
+
+&lt;PRE&gt;
+&lt;%
+Level = 0      ' start level is zero
+
+PrintChildren(theServer)
+
+Sub PrintChildren(ParentObj)
+  For Each Child in ParentObj
+    Level = Level + 1
+    Response.Write Space(2*Level) &amp; Child.Name &amp; "&lt;BR&gt;"
+    PrintChildren(Child)
+  Next
+  Level = Level - 1
+End Sub
+%&gt;
+&lt;/PRE&gt;
+
+&lt;/BODY&gt;
+&lt;/HTML&gt;
+</pre>
+
+<p>
+Die Kindobjekte des Rootverzeichnisses werden rekursiv aufgelistet. Und da ich es mir (wie immer)
+einfach gemacht habe, mache ich die Einr&uuml;ckungen der Hierarchieebenen mit Hilfe von Leerzeichen. Das
+sieht dann so aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010504_5.png" width="359" height="400" alt="" border="0">
+
+<p>
+Wenn man sich den Internet Services Manager ansieht, dann fehlen uns hier eigentlich nur noch die bunten
+Icons:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010504_4.png" width="640" height="489" alt="" border="0">
+
+<p>
+Wer sich sp&auml;ter die Zeit nimmt, die 
+<a href="http://msdn.microsoft.com/library../default.htm?URL=/library/psdk/iisref/aore94th.htm" target="_blank">IISAO Dokumentation</a>
+ genauer zu lesen wird feststellen da&szlig; alle
+Einstellungen aus der ISM in IISAO zu finden sind - und das mit gutem Grund: die ISM verwendet ebenso
+ADS (die C++ Variante), um die Konfiguration durchzuf&uuml;hren. Die ISM bietet als "Zusatz" eine nette
+Oberfl&auml;che.
+</p>
+
+<p>
+Da ISM auch auf IISAO aufbaut ist es klar, da&szlig; man zB per Skript auch Verzeichnisse anlegen kann. Der
+Beweis ist das folgende <b>createvdir.asp</b>.
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Set root = GetObject("IIS://localhost/W3SVC/2/Root")
+Set newVDir = root.Create("IIsWebVirtualDir","ScriptCreatedDir")
+newVDir.Path = "f:\inetpub\adsi"
+newVDir.EnableDirBrowsing = True
+newVDir.AccessScript = True
+newVDir.AccessRead = False
+newVDir.SetInfo
+%&gt;
+</pre>
+
+<p>
+Obwohl alle Eigenschaften selbstbeschreibend sind, m&ouml;chte ich auf die Methode <i>SetInfo</i>
+eingehen. Wenn man diese nicht aufruft, werden s&auml;mtliche &Auml;nderungen nicht durchgef&uuml;hrt! Der Grund
+hierf&uuml;r ist eine Geschwindigkeitsoptimierung, um viele kleine Eigenschafts&auml;nderungen "auf einen
+Rutsch" in die Metabase zu committen - und genau das macht <i>SetInfo</i>.
+</p>
+
+<p>
+Zum Beweis, da&szlig; mein Script auch funktioniert hat, hier ein abschlie&szlig;ender Screenshot der ISM.
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010504_6.png" width="580" height="495" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Wir haben heute nur einen kleinen Ausschnitt aus den IISAO und seinen Eigenschaften und Methoden
+betrachtet. Gerade f&uuml;r ISPs mit sich wiederholenden Konfigurationsaufgaben ist die Scriptingf&auml;higkeit
+der Administration ein Geschenk aus Redmond.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010504.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010504.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020729.htm">Den Webserver umsiedeln (IIS 4 oder 5)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020729.htm</span><br>
+<a href="../artikel/20011204.htm">IIS, was machst du gerade?</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011204.htm</span><br>
+<a href="../artikel/20030911.htm">Virtuelle Verzeichnisse umbenennen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20030911.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3FURL%3D%2Flibrary%2Fpsdk%2Fiisref%2Faore94th%2Ehtm">IISAO Dokumentation</a><br>
+<SPAN class="content">http://msdn.microsoft.com/library../default.htm?URL=/library/psdk/iisref/aore94th.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

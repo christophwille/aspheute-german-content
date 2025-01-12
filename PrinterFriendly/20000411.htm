@@ -1,0 +1,259 @@
+<HTML>
+<HEAD>
+<TITLE>Flash Plug-In Erkennung</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel demonstriert mit Hilfe der BrowserHawk Komponente, wie man herausfinden kann, ob Macromedia Flash korrekt installiert ist.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,BrowserHawk,Flash,ASP,CyScape,Detection,JavaScript">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Flash Plug-In Erkennung</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/Komponenten.htm">Komponenten</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000411"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Die Verwendung der
+Macromedia Flash Player Technologie in Internetseiten ist aufgrund der 
+kompakten Dateigr&ouml;&szlig;e von Flash-Elementen und der &uuml;beraus
+vielf&auml;ltigen M&ouml;glichkeiten, die Flash bietet, weit verbreitet.
+</p>
+<p>
+Ob nun Macromedia Flash nur als multimediales Intro f&uuml;r eine Website gebraucht wird,
+oder als tragendes Element zum Beispiel als Navigationsleiste,
+immer stellt sich die bange Frage:
+&quot;Hat der User in seinem Browser auch das ben&ouml;tigte Flash Plug-In installiert?&quot;
+</p>
+<p>
+Da dies durchaus nicht immer der Fall ist, erhebt sich gleich darauf die
+n&auml;chste Frage:
+&quot;Wie kann ich pr&uuml;fen, ob der User das Flash Plug-In installiert hat?&quot;
+</p>
+<p>
+Um auf einer ASP Seite mit einfachen Mitteln zu pr&uuml;fen, ob in einem beliebigen Browser
+(<A HREF="http://www.microsoft.com/GERMANY/internet/ie/default.htm">Microsoft Internet Explorer</A>, 
+Netscape Navigator, 
+oder <A HREF="http://tucows.telekabel.at/web95.html">andere Browser</A>)
+ein Macromedia Flash Plug-In installiert ist, bedient man sich am besten der 
+<A HREF="http://www.CyScape.com/products/">BrowserHawk&nbsp;2000</A> Server-Komponente.
+</p>
+<p>
+Nachdem sie die BrowserHawk Komponente auf ihrem ASP Server installiert haben,
+k&ouml;nnen sie in ASP Seiten wie folgt pr&uuml;fen, ob ein Browser
+das Macromedia Flash Plug-in installiert hat
+(<a href="../artikel/20000411_code1.asp" target="_blank">ausf&uuml;hrbares Beispiel</a>):
+</p>
+<pre style="background='silver';">
+&lt;% 
+Set BrowserHawk = Server.CreateObject("cyScape.browserObj")
+BrowserHawk.GetExtProperties
+
+Dim FlashDetect
+FlashDetect = BrowserHawk.Plugin_Flash
+%&gt;
+
+&lt;HTML&gt;
+&lt;HEAD&gt;
+	&lt;TITLE&gt;Flash Erkennung&lt;/TITLE&gt;
+&lt;/HEAD&gt;
+&lt;BODY&gt;
+
+&lt;% 
+If FlashDetect = -1 Then
+	Response.Write "Flash Plug-In konnte nicht gepr&uuml;ft werden."
+ElseIf FlashDetect = 0 Then
+	Response.Write "Flash Plug-In nicht installiert."
+Else
+	Response.Write "Flash Plug-In Version " & FlashDetect & " installiert."
+End If
+%&gt;
+
+&lt;/BODY&gt;
+&lt;/HTML&gt;
+
+&lt;% 
+' Resourcen freisetzen
+Set BrowserHawk = Nothing
+%&gt;
+</pre>
+<p>
+Anstatt nur Informationen &uuml;ber das Flash Plug-In auszugeben, k&ouml;nnen sie nat&uuml;rlich 
+auch automatisch eine andere Seite laden. Das folgende ASP Skript leitet automtisch zu einer
+Flash 3 oder Flash 4 Seite um wenn das entsprechende Flash Plug-In installiert ist
+(<a href="../artikel/20000411_code2.asp" target="_blank">ausf&uuml;hrbares Beispiel</a>):
+</p>
+<pre style="background='silver';">
+&lt;% 
+Set BrowserHawk = Server.CreateObject("cyScape.browserObj")
+BrowserHawk.GetExtProperties
+
+Dim FlashDetect
+FlashDetect = BrowserHawk.Plugin_Flash
+
+If FlashDetect &lt;= 0 Then
+	' Flash Plug-In konnte nicht geprueft werden 
+	' oder Plug-In ist nicht installiert
+
+ElseIf FlashDetect = 3 Then
+	' Flash Version 3, Umleitung zu Flash3.asp
+	Response.Redirect("Flash3.asp")
+ElseIf FlashDetect &gt;= 4 Then
+	' Flash Version 4 oder hoeher, Umleitung zu Flash4.asp
+	Response.Redirect("Flash4.asp")
+End If
+%&gt;
+
+&lt;HTML&gt;
+&lt;HEAD&gt;
+	&lt;TITLE&gt;Flash Erkennung&lt;/TITLE&gt;
+&lt;/HEAD&gt;
+&lt;BODY&gt;
+
+&lt;% 
+If FlashDetect = -1 Then
+	Response.Write "Flash Plug-In konnte nicht gepr&uuml;ft werden.&lt;BR&gt;"
+	Response.Write "Klicken Sie hier f&uuml;r "
+	Response.Write "&lt;A HREF=""Flash3.asp""&gt;Flash Version 3&lt;/A&gt; oder "
+	Response.Write "&lt;A HREF=""Flash4.asp""&gt;Flash Version 4 und h&ouml;her&lt;/A&gt;."
+ElseIf FlashDetect = 0 Then
+	' Flash nicht installiert
+	Response.Write "Flash Plug-In nicht installiert."
+Else
+	Response.Write "Fehler bei Flash Plug-In Detektion."
+End If
+%&gt;
+
+&lt;/BODY&gt;
+&lt;/HTML&gt;
+
+&lt;% 
+' Resourcen freisetzen
+Set BrowserHawk = Nothing
+%&gt;
+</pre>
+<p>
+Beim Einsatz der BrowserHawk 2000 Komponente gilt es folgendes zu beachten:
+</p>
+<UL>
+
+<LI>
+Der Aufruf der <b>GetExtProperties</b> Methode ist immer dann notwendig, wenn eine der folgenden
+Browsereigenschaften ausgelesen werden soll:<BR>
+<I>JavaEnabled</I>, <I>JavaScriptEnabled</I>, <I>Plugin_Flash</I>, <I>Plugin_Director</I>,
+<I>Height</I>, <I>Width</I>, <I>HeightAvail</I>, oder <I>WidthAvail</I>.
+</LI>
+<LI>
+Alle Aktionen, die sie vor dem Aufruf der <I>GetExtProperties</I> Methode t&auml;tigen,
+werden bei einem Aufruf ihrer Seite zweimal ausgef&uuml;hrt. Der Grund ist, da&szlig; 
+die <I>GetExtProperties</I> Methode die ASP Seite im Browser selbst nocheinmal 
+aufruft um auf diese Weise die Eigenschaften des Flash Plug-Ins zu gewinnen.
+</LI>
+<LI>
+Wenn sie Daten aus einem mittels <I>POST</I>-Methode abgesendeten Formular abfragen 
+wollen, so sollten sie die <I>GetExtProperties</I> Methode des BrowserHawk Objektes
+nicht verwenden.<BR>
+Der Grund liegt darin, da&szlig; die Komponente intern beim Aufruf der <I>GetExtProperties</I> 
+Methode eine HTML Seite mit JavaScript Code an den Browser schickt und darauf wartet, 
+bis der Browser wieder antwortet. Die Antwort des Browsers kommmt als nochmaliger Aufruf 
+der Seite, wobei im QueryString der Parameter <I>bhjs</I> einen Wert bekommt.
+Durch diesen nochmaligen Aufruf gehen aber alle geposteten Werte des Formulars verloren.
+Es bieten sich folgende Auswege an:<BR><BR>
+	<OL START="1">
+	<LI>Wenn die Formulardaten eine Gr&ouml;&szlig;enordnung von 512 bis 2000 Zeichen
+	nicht &uuml;berschreiten, so k&ouml;nnen sie die <I>GET</I> Methode verwenden um 
+	das Formular abzuschicken. 
+	Auf der ASP Seite, die die Daten entgegen nimmt, m&uuml;ssen sie dann
+	statt der <I>Request.Form</I> Collection die <I>Request.QueryString</I> Collection 
+	benutzen.</LI>
+	<LI>Sie lesen UND verarbeiten die Werte vor dem Aufruf der <I>GetExtProperties</I> Methode.
+	Dies hat den Nachteil, da&szlig; sie Fomularwerte nur &uuml;ber sehr gro&szlig;e Umwege
+	in der weiteren ASP Seite verwenden k&ouml;nnen. Au&szlig;erdem m&uuml;ssen sie 
+	beim Aufruf der Seite pr&uuml;fen, ob gerade das abgesendete Formular bearbeitet 
+	wird oder nur der von der <I>GetExtProperties</I> Methode initiierte Reload der 
+	Seite im Gange ist. Hat die ASP Seite ein mittels <I>POST</I>-Methode 
+	abgesendetes Formular empfangen, so ist die folgende Bedingung erf&uuml;llt:<BR>
+	</LI>
+	</OL>
+</LI>
+</UL>
+	<pre style="background='silver';">
+	Request.ServerVariables("CONTENT_LENGTH") &lt;&gt; 0
+	</pre>
+<UL>
+<LI>Wenn am Browser JavaScript deaktiviert ist, oder er keine client-seitigen Scripts 
+ausf&uuml;hren kann, so liefert die <I>Flash</I> Eigenschaft des BrowserHawk Objektes 
+(nat&uuml;rlich nach vorherigem Aufruf der <I>GetExtProperties</I> Methode) den Wert 
+<B>-1</B>, was darauf hinweist, da&szlig; BrowserHawk nicht bestimmen konnte ob
+ein Flash Plug-In installiert ist.</LI>
+</UL>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000411.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000411.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000410.htm">Browsereigenschaften mit BrowserHawk 2000 bestimmen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000410.htm</span><br>
+<a href="../artikel/20020320.htm">Flash Detection ohne Komponente</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020320.htm</span><br>
+<a href="../artikel/20020321.htm">Flash Movies einbetten einfach gemacht</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020321.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2ECyScape%2Ecom%2Fproducts%2F">BrowserHawk 2000</a><br>
+<SPAN class="content">http://www.CyScape.com/products/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emacromedia%2Ecom%2Fde%2Fsoftware%2Fflash%2Fproductinfo%2F">Macromedia Flash</a><br>
+<SPAN class="content">http://www.macromedia.com/de/software/flash/productinfo/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

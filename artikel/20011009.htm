@@ -1,0 +1,460 @@
+<HTML>
+<HEAD>
+<TITLE>Page Fragment Caching 101</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Mit ASP.NET haben Sie nun die M&ouml;glichkeit einzelne Regionen einer Seite mit Hilfe von ASP.NET User Controls die Content Expiration individuell an den dynamisch generierten Content anzupassen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,User Control,Pagelet,OutputCache,fragment caching,content expiration,policy,Performance,Optimierung,Caching">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Page Fragment Caching 101</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20011009"></SCRIPT>
+</p>
+<p>
+Eine dynamische Seite zu cachen ist bei vielen gleichzeitigen Userzugriffen ganz praktisch und spart vor allem
+Web Server Resourcen. Bei komplexeren dynamischen Seiten kann es aber vorkommen, da&szlig; der dynamische Content
+unterschiedliche "Verfallsdaten" haben kann. Mit ASP.NET haben Sie nun die M&ouml;glichkeit einzelne Regionen einer Seite
+mit Hilfe von ASP.NET User Controls (vormals ASP+ Pagelets) die Content Expiration individuell an den dynamisch 
+generierten Content anzupassen. Dieser Artikel soll Ihnen einen &Uuml;berblick &uuml;ber die ASP.NET Fragment 
+Caching Funktionalit&auml;t bieten. 
+</p>
+
+<p>
+Im Artikel <a href="20011008.htm">Output Caching 101</a> haben Sie die Grundfunktionalit&auml;t des
+Output Cachings kennengelernt. Nun geht es einen Schritt weiter - dieser Artikel zeigt Ihnen anhand von Beispielen
+wie man nun einzelne Regionen einer ASP.NET Seite mit unterschiedlichen Duration-Attributwerten versehen kann, um
+den jeweiligen Content nach Ablauf einer unabh&auml;ngigen Zeitspanne erneut in den Cache abzulegen.
+</p>
+
+<p>
+Wie die Beispiele des <a href="20011008.htm">Output Caching 101</a> Artikels gezeigt haben, ist das Caching mit
+der OutputCache Directive zu aktivieren. &Auml;hnlich wie bei der <i>Page</i> Directive darf diese nur genau einmal in einer
+Web Site vorkommen. Daher mu&szlig; man sich mit ASP.NET User Controls (vormals ASP+ Pagelets) behelfen um so den Content
+verschiedene Expiration-Periods zuzuweisen.
+</p>
+
+<p>
+Als erstes Beispiel habe ich eine dynamische Bef&uuml;llung einer <i>DropDownList</i> Web Control gew&auml;hlt. Der Content der
+Control wird aus der Northwind SQL Datenbank geholt. Dabei l&auml;uft der Content der Control, welcher im Cache angelegt ist,
+in einer Minute ab. Innerhalb dieser Zeit k&ouml;nnen beliebig oft Postbacks durchgef&uuml;hrt werden, die Listeneintr&auml;ge der
+Control werden immer aus dem Cache geholt (die Cache-Location ist hier nicht n&auml;her definiert), und es wird nicht 
+andauernd auf die Datenbank zugegriffen. Dies spart einiges an Serverresourcen und da hier das Caching auch serverseitig
+m&ouml;glich ist, k&ouml;nnen somit auch mehrere User gleichzeitig aus dem Servercache-Repository bedient werden.
+</p>
+
+<p>
+Da wir User Controls verwenden, erstellen wir f&uuml;r das Beispiel zwei Dateien (aspx und ascx). Zuerst eine 
+.aspx Datei mit dem Namen <b>FragCachedUsrCtrl.aspx</b>. Diese enth&auml;lt die Referenz auf unsere sp&auml;tere User 
+Control und die Einbindung derer:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Register TagPrefix="DataUsrCtrl" TagName="MyDropDownListSuppliers" Src="MyDropDownListSuppliers.ascx" %&gt;
+
+&lt;html&gt;
+
+  &lt;script language="C#" runat="server"&gt;
+      void Page_Load(Object Src, EventArgs E ) 
+      {
+          TimeStamp.Text = DateTime.Now.ToString();
+      }
+  &lt;/script&gt;
+
+  &lt;body&gt;
+    &lt;form runat=server&gt;
+    &lt;h3&gt;Select Shippers&lt;/h3&gt;
+    &lt;DataUsrCtrl:MyDropDownListSuppliers runat="server"/&gt;
+    &lt;p&gt;
+        Page Generated at: &lt;asp:label id="TimeStamp" runat="server" /&gt;
+    &lt;/p&gt;
+    &lt;/form&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Zus&auml;tzlich zur eigentlichen DropDownList Control wird hier eine TimeStamp (ASP.NET Label Control <i>TimeStamp)</i> erstellt, die bei jedem Postback der
+Seite das Datum und Uhrzeit des Servers angibt. Damit k&ouml;nnen wir auf einfache Art und Weise das partielle 
+Caching der Seite &uuml;berpr&uuml;fen. Die eigentliche Arbeit (das dynamische Bef&uuml;llen der DropDown List Control) 
+wird, wie erw&auml;hnt von unserer gecachten User Control (<b>MyDropDownListSuppliers.ascx</b>) durchgef&uuml;hrt:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ OutputCache Duration="60" VaryByParam="none"%&gt;
+&lt;%@ Import Namespace="System.Data" %&gt;
+&lt;%@ Import Namespace="System.Data.SqlClient" %&gt;
+&lt;script language="C#" runat="server"&gt;
+    void Page_Load(Object sender, EventArgs e)
+    {
+        if(!Page.IsPostBack)
+        {
+            string strSqlQuery = "SELECT CompanyName, SupplierID FROM Suppliers";
+            SqlConnection MyConnection = new SqlConnection("server=BLUESCREEN;
+                database=northwind;Trusted_Connection=yes");
+            SqlDataAdapter MyCommand = new SqlDataAdapter(strSqlQuery, MyConnection);
+            
+            DataSet dsetShippers = new DataSet();
+            MyCommand.Fill(dsetShippers,"Shippers");
+            MyDropDownListSuppliers.DataSource = dsetShippers.Tables["Shippers"].DefaultView;
+            MyDropDownListSuppliers.DataTextField = "CompanyName";
+            MyDropDownListSuppliers.DataValueField = "SupplierID";
+
+            MyDropDownListSuppliers.DataBind();
+            TimeStamp.Text = DateTime.Now.ToString();
+         }
+     }
+&lt;/script&gt;
+&lt;p&gt;
+    &lt;asp:DropDownList id="MyDropDownListSuppliers" runat="server" /&gt;
+    Suppliers' Data Accessed at: &lt;asp:label id="TimeStamp" runat="server" /&gt;
+&lt;/p&gt;
+</pre>
+
+<p>
+Im folgenden Screenshot sehen Sie das Ergebnis des Http-Requests auf die <b>FragCachedUsrCtrl.aspx</b> Datei. Zus&auml;tzlich 
+auch das Ergebnis wenn von einem anderen Client aus zugegriffen wird:
+</p>
+
+<IMG SRC="Bilder/200110/20011009_1.png" width="638" height="484" alt="" border="0">
+
+<p>
+Wie Sie unschwer an den unterschiedlichen TimeStamps sehen k&ouml;nnen, werden die Daten aus dem Cache bezogen und nicht
+wiederholt aus der Datenbank. Das war ja nun einfach - Wie das Wort <i>Fragment</i> suggeriert k&ouml;nnen Sie damit auch 
+mehrere User Controls unabh&auml;ngig im Cache ablegen. Zun&auml;chst die aspx Datei <b>FragCachedUsrCtrMulti.aspx</b>:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Register TagPrefix="DataUsrCtrl" TagName="MyDropDownListSuppliers" Src="MyDropDownListSuppliers.ascx" %&gt;
+&lt;%@ Register TagPrefix="DataUsrCtrl" TagName="MyDropDownListProducts" Src="MyDropDownListProducts.ascx" %&gt;
+&lt;html&gt;
+  &lt;script language="C#" runat="server"&gt;
+      void Page_Load(Object Src, EventArgs E ) 
+      {
+          TimeStamp.Text = DateTime.Now.ToString();
+      }
+  &lt;/script&gt;
+
+  &lt;body&gt;
+    &lt;form runat=server&gt;
+    &lt;h3&gt;Select Suppliers&lt;/h3&gt;
+    &lt;DataUsrCtrl:MyDropDownListSuppliers runat="server"/&gt;
+    &lt;h3&gt;Select Products&lt;/h3&gt;
+    &lt;DataUsrCtrl:MyDropDownListProducts runat="server"/&gt;
+    
+    &lt;p&gt;
+    Page Generated at: &lt;asp:label id="TimeStamp" runat="server" /&gt;
+    &lt;/p&gt;
+    &lt;/form&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Es wurde lediglich eine Zeile f&uuml;r die Referenz auf die zus&auml;tzliche User Control <b>MyDropDownListProducts.ascx</b> 
+und eine Zeile f&uuml;r deren Aufruf hinzugef&uuml;gt. Die User Control unterscheidet sich in der Ausf&uuml;hrung von der
+vorig benutzten <b>MyDropDownListSuppliers.ascx</b> nur im Querystring, einer unterschiedlichen
+Contentexpriation (120 Sekunden statt 60) und die sonst noch n&ouml;tigen Anpassungen:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ OutputCache Duration="120" VaryByParam="none"%&gt;
+...
+string strSqlQuery = "SELECT ProductID, ProductName FROM Products";
+...
+&lt;p&gt;
+    &lt;asp:DropDownList id="MyDropDownListProducts" runat="server" /&gt;
+    Products' Data Accessed at: &lt;asp:label id="TimeStamp" runat="server" /&gt;
+&lt;/p&gt;
+</pre>
+
+<p>
+Im Browser sieht man die unterschiedlichen Contentexpirationzeiten anhand der jeweiligen TimeStamps:
+</p>
+
+<IMG SRC="Bilder/200110/20011009_2.png" width="652" height="352" alt="" border="0">
+
+<p>
+Da&szlig; dies nicht nur zuf&auml;llige Ergebnisse sind, sieht man am Pagerenderingvorgang, den man durch das <i>True</i>-setzen
+des <i>Trace</i> Attributs der Page Directive erh&auml;lt:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Page language="C#" Trace="true"%&gt;
+</pre>
+
+<p>
+Ergebnis des ersten Http Requests:
+</p>
+
+<IMG SRC="Bilder/200110/20011009_3.png" width="599" height="701" alt="" border="0">
+
+<p>
+Ein paar Sekunden sp&auml;ter sieht der Control Tree nur mehr so aus - das Rendern der Dropdownlisten fehlt hier, da ja diese
+im Cache vorhanden (noch g&uuml;ltig) sind:
+</p>
+
+<IMG SRC="Bilder/200110/20011009_4.png" width="610" height="304" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Dies war ein schneller und einfacher Einstieg in die neuen M&ouml;glichkeiten die das .NET Fragment Caching bietet.
+Der Programmieraufwand ist gering und der Effekt ist gro&szlig; - der Datenbankserver wird bei vielen gleichzeitigen Zugriffen
+deutlich entlastet. Zudem k&ouml;nnen bei komplexen dynamischen ASP.NET Seiten einzelne Regionen (in Form von 
+eingebundenen User Controls) unabh&auml;ngig generiert werden.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20011009.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20001114.htm">ASP.NET User Controls im Einsatz</a><br>
+<a href="20031010.htm">Einstieg in Visual Studio.NET - die erste Webanwendung mit Visual C#</a><br>
+<a href="20011008.htm">Output Caching 101</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20011009" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Page Fragment Caching 101"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20011009.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Holm"><input type="hidden" name="AuthorEmail" value="office@holmcs.com"><input type="hidden" name="Artikel" value="20011009"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20011009.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

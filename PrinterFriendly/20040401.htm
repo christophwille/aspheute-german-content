@@ -1,0 +1,326 @@
+<HTML>
+<HEAD>
+<TITLE>Neues in .NET Codename "Swinomish"</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Aprilscherz: Lange hat es gedauert und die Ger&uuml;chtek&uuml;che brodelt dementsprechend. Die n&auml;chste Version des .NET Framework steht vor der T&uuml;r...">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,April,1. April,Aprilscherz,April Fools Day,Avril,Scherz">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Neues in .NET Codename "Swinomish"</H1>
+<p>
+Geschrieben von: <a href="../autoren/bernhardspuida.htm">Bernhard Spuida</a><br>
+Kategorie: <a href="../kategorien/Aprilscherz.htm">Aprilscherz</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20040401"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Lange hat es gedauert und die Ger&uuml;chtek&uuml;che brodelt dementsprechend. Die
+n&auml;chste Version des .NET Framework steht vor der T&uuml;r, noch umfangreicher, das steht fest.
+Aber was bringt uns Microsoft danach? Von Generics in .NET "Whidbey" hat schon fast jeder geh&ouml;rt,
+aber was wird sich danach in diesen und anderen Bereichen tun? In diesem Artikel betrachten wir einige der
+innovativsten Features des kommenden .NET "Swinomish", das wie seine Vorg&auml;nger seinen Codenamen von einem Landmark aus der 
+Pudget Sound Area rund um Seattle erhalten hat.
+</p>
+
+<h2>Exception Handling</h2>
+<p>
+Die strukturierte Behandlung von Exceptions war schon immer eine der St&auml;rken
+des .NET Frameworks. Mit dem <i>try / catch</i> Block lassen sich Exceptions hervorragend
+behandeln. Bisher werden die <i>catch</i> Bl&ouml;cke ausgef&uuml;hrt wenn eine Exception
+auftritt. Mit einem <i>finally</i> kann ich Code spezifizieren der in jedem Fall
+ausgef&uuml;hrt werden soll, egal ob Exception oder nicht. Dieses Konstrukt wird
+nun um einen <i>miss</i> Block erweitert, der nur dann zur Ausf&uuml;hrung kommt
+wenn <b>keine</b> Exception aufgetreten ist. Wir sind also noch flexibler als bisher:
+</p>
+
+<pre style="background='silver';">
+try
+{
+   Seismic.OpenSEGYFile(file, traces, offset); // Seismic datasets can get *huge*
+}
+// catch  a possible OutOfMemoryException
+catch (OutOfMemoryException e)
+{
+   Seismic.WriteLog("Ran out of memory opening data set: {0}", e);
+}
+// handle other eventual exceptions gracefully
+catch (Exception e)
+{
+   Seismic.WriteLine("An exception occurred: {0}", e);
+}
+miss (Exception e) // no exception whatsoever, so we can proceed
+{
+   // now that we have obtained the data, let us prepare the workbench windows
+   Seismic.InitWorkbench(file, configstatefile);
+}
+finally
+{
+   // close the file, it will be open whether or not we loaded successfully
+   Seismic.CloseSEGYFile(file);
+}
+</pre>
+
+<p>
+Durch das neue <i>miss()</i> haben wir noch mehr Kontrolle &uuml;ber die strukturierte
+Behandlung von Exceptions als in bisherigen .NET-Versionen (Whidbey und Orcas eingeschlossen). Wichtig ist da&szlig; hier
+nur ein allgemeines <i>miss()</i> vorgezeigt wird, aber analog zu den <i>catch</i>
+Statements auch das Nichtauftreten einzelner Exceptiontypen behandelt werden kann.
+Eine einfache aber geniale Erweiterung des Frameworks. Wer jetzt noch instabile
+Fehlerbehandlung implementiert, dem ist nicht mehr zu helfen. 
+</p> 
+
+<h2>Generics</h2>
+<p>
+Eine wichtige Neuerung in .NET "Whidbey" ist (im Rahmen dieses Artikels w&auml;re es eigentlich
+angebracht davon bereits in Vergangenheitsform zu sprechen) die Einf&uuml;hrung von Generics bzw. Generika - 
+ein Thema das einerseits Sprachtheoretikern und echten Informatikern sehr am Herzen
+liegt, andererseits aber tats&auml;chlich von gro&szlig;em Nutzen f&uuml;r den
+praktizierenden Programmierer ist. Generika sind in Java schon seit einiger Zeit
+bekannt, werden aber jetzt endlich auch in .NET eingef&uuml;hrt. Einfach gesagt,
+erlaubt mir der Einsatz von Generika das Schreiben von allgemeinen Funktionen die
+erst zur Laufzeit Typen zugewiesen bekommen. Ich erspare mir also die mehrfache
+Implementation von nahezu identischem Code - ein gewaltiger Produktivit&auml;ssprung
+und ein weiterer Schritt zur Verminderung von Fehlerquellen.
+</p>
+<p>
+Das Konzept ist ein wenig gew&ouml;hnungsbed&uuml;rftig, aber letzlich klar.
+Ein primitives Beispiel eines Generikums w&auml;re:
+</p>
+
+<pre style="background='silver';">
+public class Thingie&lt;T&gt; {
+  T t;
+  public T Val{
+    get{
+         return t;
+       }
+    set{
+         t=value;
+       }
+  }
+}
+</pre>
+
+<p>
+Wichtig ist dabei das Paar spitze Klammern um den Typ <i>T</i> von <i>Thingie</i>.
+Dadurch wird <i>Thingie</i> als generisch deklariert. Wir k&ouml;nnen nun im Aufruf
+zur Laufzeit <i>Thingie</i> wie folgt mit unterschiedlichen Typen instanzieren:
+</p>
+
+<pre style="background='silver';">
+public class ThingiesMain {
+  public static void Main() {
+    // String-version unseres Generikums
+    Thingie&lt;string&gt; mystring = new Thingie&lt;string&gt;();
+    // Wert setzen
+    mystring.Val = "Hallo";   
+    // Ausgeben
+    System.Console.WriteLine(mystring.Val);
+    // Typ ausgeben
+    System.Console.WriteLine(mystring.Val.GetType());
+    
+    // Noch eine Instanz unseres Generikums, diesmal ein anderer Typ
+    Thingie&lt;int&gt; myint  = new Thingie&lt;int&gt;();
+    // Wert setzen
+    myint.Val = 42;
+    // Ausgeben
+    System.Console.WriteLine(myint.Val);
+    // Typ ausgeben
+    System.Console.WriteLine(myint.Val.GetType());   
+  }
+}
+</pre>
+
+<p>
+Simpel, nicht wahr? Die Ausgabe ist wie folgt: 
+</p>
+
+<pre style="background='silver';">
+Hallo
+System.String
+42
+System.Int32
+</pre>
+
+<p>
+Dies ist zwar ein gewaltiger Schritt nach vorne, von dem wir in "Whidbey" profitieren werden, allerdings geht
+Microsoft bei der Erweiterung des Frameworks "Swinomish" noch einen wichtigen Schritt weiter.
+</p>
+
+<h2>Specifics</h2>
+<p>
+Was, wenn eine bestimmte Variable auf keinen Fall, egal unter welchen Umst&auml;nden
+in einen anderen Typ gecastet werden darf? Unter Aspekten der Systemstabilit&auml;t
+und Codesicherheit w&auml;re dies h&auml;ufig w&uuml;nschenswert. Daher wird sozusagen
+das genaue Gegenst&uuml;ck zu den Generika eingef&uuml;hrt: Specifics bzw. Spezifika.
+Die Typdefinition ist in etwa analog zu den Generika:
+</p>
+
+<pre style="background='silver';">
+public class SpecificThingie&gt;T&lt; {
+  T t;
+  public T Val{
+    get{
+         return t;
+       }
+    set{
+         t=value;
+       }
+  }
+}
+</pre>
+
+<p>
+Der einzige Unterschied ist die Vertauschung der spitzen Klammern um <i>T</i>.
+Ansonsten gibt es keine Auff&auml;lligkeiten. Probieren wir nun aus was passiert
+wenn wir versuchen <i>LockedThingie</i> zu instanzieren und anschliessend
+auf einen anderen Typen zu casten:
+</p>
+
+<pre style="background='silver';">
+public class LockedThingiesMain {
+  public static void Main() {
+    // String-version unseres Generikums
+    LockedThingie&gt;int&lt; myint = new LockedThingie&gt;int&lt;();
+    // Wert setzen
+    myint.Val = "Hallo";   
+    // Ausgeben
+    System.Console.WriteLine(myint.Val);
+    // Typ ausgeben
+    System.Console.WriteLine(myint.Val.GetType());
+    
+    // Noch eine Instanz unseres Generikums, diesmal ein anderer Typ - geht nicht mehr.
+    // Compilerfehler
+    LockedThingie&gt;float&lt; myfloat  = new LockedThingie&gt;float&lt;();
+    // Wert setzen
+    myfloat.Val = 47.11;
+    // Ausgeben
+    System.Console.WriteLine(myfloat.Val);
+    // Typ ausgeben
+    System.Console.WriteLine(myfloat.Val.GetType());
+		
+    // Ein Castversuch, geht ebenfalls schief mit Compilerfehler
+    float myfloat2 = (float) LockedThingie.myint;
+    // Ausgeben
+    System.Console.WriteLine(myfloat2.Val);
+    // Typ ausgeben
+    System.Console.Writeline(myfloat2.Val.GetType());
+  }
+}
+</pre>
+
+<p>
+Besonders sch&ouml;n ist der Ansatz nach der ersten Zuweisung eines Spezifikums
+den Typ zu sperren, so da&szlig; weder neue Spezifika mit anderem Typ instanziert
+werden k&ouml;nnen (das w&auml;ren ja Generika), noch ein instanziertes Spezifikum
+in einen anderen Typ gecastet werden kann. Weitere Spezifika des erst zugewiesenen
+Typs k&ouml;nnen allerdings angelegt werden. Fehler durch Typzuweisungen geh&ouml;ren
+somit der Vergangenheit an. Ein gro&szlig;er Schritt in Richtung solider Code ohne
+Anstrengung.
+</p>
+
+<h2>Schleifen</h2>
+<p>
+Auch am Sprachumfang von C# werden behutsame Erweiterungen vorgenommen, speziell
+werden Kurzformen f&uuml;r existierende Schleifen mit negativen Laufbedingungen
+eingef&uuml;hrt. Aus <i>do {} while()</i> wird so <i>do {} unless()</i>. Diese Neuerung dient
+dazu die Formulierung der Laufbedingungen klarer und besser wartbar zu gestalten:
+</p>
+
+<pre style="background='silver';">
+class LoopDemo
+{
+   public static void Main()
+   {
+     int i = 10;
+
+    // We count down and print until we reach i = 5
+    do
+    {
+      Console.WriteLine("Counter: {0}",i);
+      i--;
+    } while (i != 5);
+
+    // Same thing with unless
+    int j = 10;
+    do
+    {
+      Console.WriteLine("Counter: {0}",j];
+      j--;
+    } unless (i = 5);
+   }
+}		 	
+</pre>
+
+<p>
+Der Code wird so nicht nur klarer, sondern der Verzicht auf die Verneinung
+erzeugt auch einen leichten Performancegewinn der sich zumindest bei gr&ouml;sseren
+Schleifenl&auml;ufen positiv bemerkbar macht. Analog zu <i>do {} unless()</i> gibt
+es weiters <i>forexcept() {}</i> als Erg&auml;nzng zu <i>foreach() {}</i>.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Das waren nur einige der augenf&auml;lligsten Neuerungen in .NET "Swinomish" (4.0?). Es ist mit
+Sicherheit anzunehmen da&szlig; sich noch einiges bis zur endg&uuml;ltigen Freigabe &auml;ndern
+wird. Vor allem ist anzunehmen da&szlig; Microsoft im Rahmen der Bem&uuml;hungen
+um sicheres Programmieren noch weiter auf absichernde Konzepte wie Spezifika setzen
+wird. Die Zukunft wird spannend.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020401.htm">Debugging in der Tiefe</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020401.htm</span><br>
+<a href="../artikel/20030401.htm">Hochleistungskompression mit .NET-Bordmitteln</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20030401.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

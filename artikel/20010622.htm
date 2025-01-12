@@ -1,0 +1,488 @@
+<HTML>
+<HEAD>
+<TITLE>Web Services in Anwendungen konsumieren</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Heute begeben wir uns auf die andere Seite der Web Services Front, n&auml;mlich auf die Kundenseite: wir wollen lernen, wie man einen Web Service anspricht und seine Funktionen aufruft - ihn konsumiert.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Web Service,WebService,C#,Csharp,C Sharp,VB,VB.NET,Consumer,WSDL,SOAP,Wsdl.exe,assembly,assemblies,bin">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Web Services in Anwendungen konsumieren</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Web%20Services.htm">Web Services</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010622"></SCRIPT>
+</p>
+<p>
+Im Artikel <a href="20010621.htm">Web Services 101 in ASP.NET</a> habe ich gezeigt, wie 
+einfach es ist, einen Web Service zu programmieren. Heute begeben wir uns auf die andere Seite der Front,
+n&auml;mlich auf die Kundenseite: wir wollen lernen, wie man einen Web Service anspricht und seine Funktionen
+aufruft - ihn "konsumiert".
+</p>
+<p>
+Ich m&ouml;chte speziell darauf hinweisen, da&szlig; obwohl wir heute exemplarisch einen in .NET geschriebenen Web
+Service konsumieren, die vorgestellte Vorgehensweise f&uuml;r alle zu SOAP und WSDL kompatiblen Web Service
+Implementierungen gilt: sei dieser in Perl auf Linux, Java auf Solaris oder welcher Kombination Sprache
+und Betriebssystem auch immer programmiert.
+</p>
+<p>
+Um den heute vorgestellten Code ausf&uuml;hren zu k&ouml;nnen, mu&szlig; ASP.NET am Server installiert sein. F&uuml;r das
+Erstellen von Assemblies ben&ouml;tigt man das vollst&auml;ndige .NET SDK (nicht notwendigerweise am Server,
+allerdings auf der Maschine, auf der die Assembly kompiliert werden soll).
+</p>
+
+<h2>Unser Web Service</h2>
+<p>
+Bevor man einen Web Service konsumieren kann, braucht man zuerst einen solchen. Damit wir ein nettes kleines Beispiel
+zum Probieren haben, wiederverwende ich die VB Implementierung unserer Services aus dem Artikel
+<a href="20010621.htm">Web Services 101 in ASP.NET</a>. Hier nochmals der Web Service
+(<b>SampleVBService.asmx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;%@ WebService Language="VB" Class="DemoVBService" %&gt;
+Imports System
+Imports System.Web.Services
+
+Public Class DemoVBService : Inherits WebService
+ &lt;WebMethod()&gt; Public Function SayHello(strName As System.String) As System.String
+  SayHello = "Hello " &amp; strName &amp; " from VB" 
+ End Function
+End Class
+</pre>
+
+<p>
+Legen Sie diese ASMX Datei auf Ihrem Web Server ab, und wir k&ouml;nnen beginnen.
+</p>
+
+<h2>Der Web Service Proxy</h2>
+<p>
+Wer COM mit C++ programmiert hat, kennt das Prinzip der <i>Proxies</i> und <i>Stubs</i>: ein Objekt "lebt" auf einer
+einzigen (Server-)Maschine, und um es auf anderen Maschinen gleich aufrufen zu k&ouml;nnen wie wenn es lokal installiert
+w&auml;re, gibt es Proxies und Stubs - und diese funktionieren wie folgt: auf der lokalen Maschine wird von COM ein
+Proxy erstellt, der f&uuml;r den Client wie das echte Objekt aussieht. Aber eben nur so aussieht. Hinter jeder Funktion steht
+COM, das den Aufruf an die Maschine marshalled (weiterleitet), auf der das echte Objekt lebt. Dort nimmt
+der von COM erstellte Stub die Daten an, und spricht mit dem Objekt wie wenn es der Client w&auml;re. Ist der Aufruf
+beendet, gehen die R&uuml;ckgabewerte den Weg Objekt-Stub-Proxy-Client zur&uuml;ck. Und der Client wu&szlig;te nie von seinem
+Gl&uuml;ck.
+</p>
+<p>
+Eine Frage dr&auml;ngt sich auf - woher wei&szlig; COM, welche Funktionen f&uuml;r das Objekt existieren, um die Dummyfunktionen
+des Proxy's und des Stub's zu erstellen? Nun, daf&uuml;r gibt es die Type Libraries. Diese enthalten Informationen &uuml;ber
+die Typen und Methoden der Objekte, und aus diesen Informationen kann COM die Proxies und Stubs automatisch erstellen.
+</p>
+<p>
+Wieso dieser Ausflug nach COM? Nun, bei .NET Web Services l&auml;uft die Sache n&auml;mlich sehr &auml;hnlich ab. Wie wir wissen,
+ist jeder Web Service &uuml;ber WSDL definiert - und dieses WSDL ist das Type Library-&Auml;quivalent von COM, mit dem
+.NET f&uuml;r uns einen Web Service Proxy am Client erstellt.
+</p>
+<p>
+Dieses Erstellen des Proxy's l&auml;uft allerdings (meist) vor dem Benutzen des Services ab, da im Gegensatz zur Type
+Library von COM das WSDL nicht am Client vorliegt - und extra daf&uuml;r erst aufs Web zu gehen ist ineffizient. Daher
+wird der Proxy vorgeneriert, und zwar mit Hilfe des <b>Wsdl.exe</b> Utility's (<b>CreateProxy.bat</b> als Beispiel):
+</p>
+
+<pre style="background='silver';">
+Wsdl /language:cs  /protocol:soap /namespace:AspHeuteProxy /out:AspHeuteProxy.cs 
+     http://192.168.1.203/ConsumeService/SampleVBService.asmx
+</pre>
+
+<p>
+Was ist nun beim Aufruf von <b>Wsdl.exe</b> zu beachten? Nun, der URL des Web Services ist das absolut wichtigste
+dabei, weil er in die Proxyklasse (in unserem Fall in C# erstellt, im Namespace <i>AspHeuteProxy</i>, Name ident
+zum Klassennamen des Web Services) aufgenommen wird. Was ich damit sagen will ist da&szlig; wenn sich der URL eines
+Web Services &auml;ndert, ich die Klasse regenerieren mu&szlig;. Das sollte man nie vergessen.
+</p>
+
+<p>
+Die Datei <b>AspHeuteProxy.cs</b> ist jeder eingeladen, sich durchzusehen. Ich hingegen werde mit der Implementierung
+der Clients anfangen.
+</p>
+
+<h2>Ein Kommandozeilen Client</h2>
+<p>
+Beginnen wir einfach - eine kleine Kommandozeilenapplikation in C# geschrieben, die den Service aufruft, und
+das Ergebnis an der Console ausgibt. Dazu habe ich wieder einmal <a href="http://www.icsharpcode.net/opensource/sd/" target="_blank">SharpDevelop</a>
+verwendet, das ein Template f&uuml;r Konsolenanwendungen hat. Man mu&szlig; nur die Datei <b>AspHeuteProxy.cs</b> zum
+Projekt hinzuf&uuml;gen:
+</p>
+
+<IMG SRC="Bilder/200106/20010622_2.png" width="701" height="499" alt="" border="0">
+
+<p>
+Dann gehe ich daran, die vorgenerierte <b>Main.cs</b> zu ver&auml;ndern (&Auml;nderungen kursiv):
+</p>
+
+<pre style="background='silver';">
+using System;
+<i>using AspHeuteProxy;</i>
+
+class MainClass
+{
+  public static void Main(string[] args)
+  {
+    <i>DemoVBService myService = new DemoVBService();</i>
+    <i>Console.WriteLine(myService.SayHello("Christoph"));</i>
+  }
+}
+</pre>
+
+<p>
+Nur drei Zeilen sind notwendig, um einen Web Service aufzurufen! Den Rest erledigt der Proxy von .NET
+im Hintergrund f&uuml;r uns, und f&uuml;r uns sieht es aus, als w&uuml;rden wir mit einer lokal installierten Komponente
+arbeiten. Und ja, f&uuml;r nicht .NET Web Services funktioniert das genau gleich.
+</p>
+
+<h2>Eine ASP.NET Seite als Client</h2>
+<p>
+Nun, eine Kommandozeilenapplikationen ist zwar nett und sch&ouml;n, aber wie w&auml;r's, wenn wir den Web Service
+in unseren ASP.NET Seiten einsetzen k&ouml;nnten? Aber sicher doch. Dazu mu&szlig; man aber den Verwendungsansatz
+des Proxy's leicht ver&auml;ndern - man mu&szlig; ihn in eine Assembly verpacken. Dies geht jedoch sehr, sehr einfach
+(<b>Compile.bat</b>)
+</p>
+
+<pre style="background='silver';">
+csc.exe /target:library AspHeuteProxy.cs
+</pre>
+
+<p>
+Die resultierende <b>AspHeuteProxy.dll</b> Assembly verfrachtet man dann in das <b>bin</b> Verzeichnis der
+gew&uuml;nschten Web Applikation, und schon kann man den Web Service aufrufen. Ich habe dazu ein minimales
+Formular mit einer Textbox, Schaltfl&auml;che und Label gebaut (der Label dient der Anzeige des R&uuml;ckgabeergebnisses
+des Web Services):
+</p>
+
+<IMG SRC="Bilder/200106/20010622_1.png" width="492" height="239" alt="" border="0">
+
+<p>
+Und hier nun der Code dazu (<b>CallService.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Import Namespace="AspHeuteProxy" %&gt;
+&lt;script language="C#" runat="server"&gt;
+void btnPress_Click(Object Sender, EventArgs E)
+{
+  DemoVBService myService = new DemoVBService();
+  lblHelloOut.Text = myService.SayHello(txtMessage.Text);
+}
+&lt;/script&gt;
+
+&lt;html&gt;
+&lt;body&gt;
+
+&lt;form runat="server"&gt;
+
+&lt;asp:textbox id="txtMessage" runat="server"/&gt;
+&lt;asp:Button id="btnPress" text="Say Hello!" onClick="btnPress_Click" runat="server" /&gt;
+
+&lt;p&gt;
+&lt;asp:Label id="lblHelloOut" text="" runat="server" /&gt;
+&lt;/p&gt;
+
+&lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Der Code ist der gleiche wie der der Kommandozeilenapplikation, nur befindet er sich in der Ereignisprozedur
+des Buttons des Formulars. Alles, was ich tun mu&szlig;te, war das <b>@Import</b> Statement f&uuml;r den Namespace
+des Proxy's einzuf&uuml;gen. &Uuml;blicherweise w&uuml;rde der Benutzer vom Aufruf eines Web Services nichts mitbekommen
+(zB Kreditkartenvalidierung in Echtzeit), aber heute begn&uuml;gen wir uns mal mit einer "interaktiven Spielwiese"
+f&uuml;r den Web Service.
+</p>
+
+<p>
+&Uuml;brigens - da der Proxy jetzt als Assembly vorliegt, kann ich die ASP.NET Seite klarerweise auch in VB.NET
+schreiben (<b>CallService_vbnet.aspx</b> - der Formularcode ist identisch):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Import Namespace="AspHeuteProxy" %&gt;
+&lt;script language="VB" runat="server"&gt;
+Sub btnPress_Click(Sender as Object, E as EventArgs)
+  Dim myService As DemoVBService 
+  myService = New DemoVBService
+  lblHelloOut.Text = myService.SayHello(txtMessage.Text)
+End sub
+&lt;/script&gt;
+</pre>
+
+<p>
+Der Web Service ist in VB.NET implementiert, der Proxy in C# erstellt, und die ASP.NET Seite l&auml;uft wieder
+in VB.NET. Ein netter Sprachenmix, der zeigt, wie "freundlich" .NET gegen&uuml;ber Teams mit unterschiedlichen
+Sprachpr&auml;ferenzen ist.
+</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Damit h&auml;tten wir den ersten Schritt zur Verwendung von Web Services getan. Uns fehlt etwas, das ein sp&auml;terer
+Artikel nachholen wird: Fehlerbehandlung f&uuml;r den Fall, da&szlig; der Server mit dem Web Service nicht erreichbar
+sein sollte.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010622.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20021029.htm">Amazon.com Web Services 2.0</a><br>
+<a href="20030429.htm">Authentifizierung in Web Services - Windows Integrated</a><br>
+<a href="20021107.htm">Index Server Abfragen per Web Service</a><br>
+<a href="20020415.htm">Programmieren mit den Google Web APIs Beta 2</a><br>
+<a href="20010627.htm">Session State in ASP.NET Web Services</a><br>
+<a href="20010208.htm">Web Projekte mit SharpDevelop erstellen</a><br>
+<a href="20010621.htm">Web Services 101 in ASP.NET</a><br>
+<a href="20010629.htm">Web Services mit dem SOAP Toolkit erstellen</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Edotnetgerman%2Ecom%2F">DotNetGerman Diskussionslisten</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eicsharpcode%2Enet%2Fopensource%2Fsd%2F">SharpDevelop</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20010622" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Web Services in Anwendungen konsumieren"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20010622.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20010622"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20010622.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

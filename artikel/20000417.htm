@@ -1,0 +1,469 @@
+<HTML>
+<HEAD>
+<TITLE>Auslesen von XML Dateien mit dem DOM</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="XML Dateien kann man mehr als nur einfach zum Kunden schicken. Man kann sie mit Hilfe des XML DOM am Server auslesen und als beliebig formatiertes HTML Dokument abschicken.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,XML,DOM,XMLDOM,XML DOM,Document Object Model,XMLDocument,Parser,XML Parser">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Auslesen von XML Dateien mit dem DOM</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/XML.htm">XML</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000417"></SCRIPT>
+</p>
+<p>
+Die erste Frage ist, wof&uuml;r steht das TLA (three letter acronym=Drei-Buchstaben Ak&uuml;) DOM? DOM ist die Kurzform
+f&uuml;r <b>Document Object Model</b>, und dieses definiert wie HTML oder XML Dokumente plattform&uuml;bergreifend mit einem
+Objektmodell bearbeitet werden k&ouml;nnen. Dieses DOM ist ein Standard des W3C Consortiums, und MS hat sich bei 
+der Implementierung an die Richtlinien gehalten - am Ende des Artikels findet sich der Link zum W3C als Beweis.
+</p>
+
+<p>
+Ich empfehle nicht, sich das DOM anhand der Spezifikation des W3C anzulernen - statt dessen mit Beispielen, die man
+auch sofort einsetzen kann. Um die nun folgenden Beispiele mit Leben zu erf&uuml;llen, existiert eine t&auml;glich aktuelle XML Datei auf AspHeute.com, n&auml;mlich 
+<i>currentarticles.xml</i>. Diese hat folgendes Format:
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;?xml version="1.0" encoding="Windows-1252"?&gt;
+&lt;articles&gt;
+&lt;article&gt;
+&lt;title&gt;&lt;![CDATA[Probleme beim Verarbeiten von Datumswerten]]&gt;&lt;/title&gt;
+&lt;author&gt;&lt;![CDATA[Christian Koller]]&gt;&lt;/author&gt;
+&lt;url&gt;&lt;![CDATA[http://www.aspheute.com/artikel/20000413.htm]]&gt;&lt;/url&gt;
+&lt;date&gt;&lt;![CDATA[13.4.2000]]&gt;&lt;/date&gt;
+&lt;description&gt;&lt;![CDATA[Als Entwickler ... liefert.]]&gt;&lt;/description&gt;
+&lt;/article&gt;
+....
+&lt;/articles&gt;
+</pre>
+</p>
+
+<p>
+Jeder Artikel wird mit f&uuml;nf Eigenschaften beschrieben: <b>Titel</b> (title), <b>Autor</b> (author), <b>URL</b> (url), <b>Datum</b> (date)
+und <b>Beschreibung</b> (description). Es handelt sich hierbei um eine "beinahe" standardm&auml;&szlig;ige XML Datei, allerdings
+denke ich mir, da&szlig; viele mit der CDATA Sektion noch nichts zu tun hatten:
+<pre style="background='silver';">
+&lt;![CDATA[ ...
+]]&gt;
+</pre>
+Eine CDATA Sektion schlie&szlig;t Code ein, der vom XML Parser mi&szlig;interpretiert werden k&ouml;nnte, so zum Beispiel HTML
+Tags - und das ist auch der Hauptgrund, warum in dieser XML Datei CDATA Sektionen vorhanden sind - damit jederzeit
+Markup Tags eingef&uuml;gt werden k&ouml;nnen, um die Beschreibung zu formatieren.
+</p>
+
+<p>
+Um zu beweisen, da&szlig; die Datei g&uuml;ltig ist, kann man sie im Internet Explorer aufmachen - dieser formatiert sie
+dann mit einem Standardstylesheet:
+</p>
+<p>
+<IMG SRC="Bilder/200004/20000417.png" width="526" height="406" border="0" alt="">
+</p>
+
+<p>
+Wenn meine Kunden mit einer XML Datei gl&uuml;cklich w&auml;ren, dann k&ouml;nnte man es ja so vom Webserver abschicken.
+Allerdings gibt es zwei Hindernisse - ich glaube kaum, da&szlig; jemand diesen XML-Output gerne liest, und zweitens
+kann ein Netscape (4.x) mit XML absolut rein gar nichts anfangen. Also gute Gr&uuml;nde, am Server mit ASP aus dieser
+XML Datei ein "anschaubares" Ergebnis zu zaubern.
+</p>
+
+<p>
+Die erste Variante w&auml;re, den Inhalt der XML Datei ganz einfach mit Hilfe des XML DOM's auszugeben 
+(<i>iteratexml.asp</i>; Erkl&auml;rung folgt):
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;% @LANGUAGE = VBScript %&gt;
+&lt;html&gt;
+&lt;head&gt;
+	&lt;title&gt;Rekursive Ausgabe einer XML Datei&lt;/title&gt;
+&lt;/head&gt;
+&lt;body bgcolor="#ffffff"&gt;
+&lt;%
+  Dim XMLDoc, rootNode, item
+  Set XMLDoc = Server.CreateObject("Microsoft.XMLDOM")
+  XMLDoc.async = False
+  bLoadSuccess = XMLDoc.load(Server.MapPath("currentarticles.xml"))
+  If Not bLoadSuccess Then
+  	Response.Write "Could not load the XML document!"
+  Else
+	Set rootNode = XMLDoc.documentElement
+	strOut = OutputNode(rootNode,1)
+	Response.Write "&lt;PRE&gt;" & vbCrlf
+	Response.Write strOut
+	Response.Write "&lt;/PRE&gt;" & vbCrlf
+  End If
+
+  Function OutputNode(ByVal node, ByVal nDepth)
+   strPadding = Space(nDepth)
+   strOutput = strOutput & strPadding & "&lt;" & node.nodeName & _
+		"&gt;" & vbCrLf
+   For Each item in node.childNodes
+    If item.hasChildNodes() Then
+      strOutPut = strOutput & OutputNode(item,nDepth+1)
+    Else
+      strOutput = strOutput & strPadding & "&lt;" & item.nodeName & "&gt;"
+      strOutput = strOutput & item.Text
+      strOutput = strOutput & "&lt;/" & item.nodename & "&gt;" & vbCrLf
+    End If
+   Next
+   strOutput = strOutput & strPadding & "&lt;/" & node.nodeName & _
+		"&gt;" & vbCrLf
+  OutputNode = strOutput
+  End Function
+%&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</p>
+
+<p>
+Das XML DOM stellt ein XML Dokument &uuml;ber ein Objekt mit der ProgId <i>"Microsoft.XMLDOM"</i> zur Verf&uuml;gung.
+Damit k&ouml;nnen XML Dateien geladen und gespeichert werden. Wenn der Ladevorgang erfolgreich war, kann man die
+Root Node - das erste XML Element - mit <i>.documentElement</i> abholen. In unserem Beispiel ist das erste Element
+<i>&lt;articles&gt;</i>.
+</p>
+
+<p>
+Da jede Node mehrere Kinder (&lt;articles&gt; enh&auml;lt mehrere &lt;article&gt; Elemente) enthalten kann, habe ich 
+die rekursive Funktion <i>OutputNode</i> programmiert. In dieser passiert folgendes: Der Name der aktuellen Node
+wird ausgelesen (<i>.nodeName</i>), ebenso der Wert (<i>.Text</i>). Damit wird ein Output generiert, der (beinahe) wieder so aussieht, wie das 
+originale XML Dokument.
+</p>
+
+<p>
+Die Rekursion beginnt dann, wenn das gerade zu bearbeitende Kind (in der <i>For...Next</i> Schleife werden die
+Kinder der aktuellen Node bearbeitet) weitere Kinder hat - dies wird mit der <i>hasChildNodes</i> Eigenschaft
+festgestellt - dann ruft OutputNode sich selbst mit dem Kind als Parameter auf. Diese Rekursion wird f&uuml;r jeden
+Ast des Baums durchgef&uuml;hrt.
+</p>
+
+<p>
+Eigentlich wolle ich ja eine ansprechende Ausgabe produzieren, und nicht wieder unlesbaren Pseudo-XML Code. Und au&szlig;erdem
+sollte der ASP Code auf den Anwendungsfall abgestimmt sein, also auf die Struktur des XML Dokuments, das verwendet wird. 
+Um diese Anforderungen zu erf&uuml;llen, habe ich <i>xmldomoutput.asp</i> erstellt:
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;%
+  Set XMLDoc = Server.CreateObject("Microsoft.XMLDOM")
+  XMLDoc.async = False
+  
+  strXMLLocation = Server.MapPath("currentarticles.xml")
+  
+  bSuccess = XMLDoc.load(strXMLLocation)
+  If Not bSuccess Then
+  	Response.Write "Loading the XML file &lt;b&gt;" & _
+		strXMLLocation & "&lt;/b&gt; failed!"
+	Response.End
+  End If
+  
+  Set rootNode = XMLDoc.documentElement
+  
+  If rootNode.hasChildNodes() Then
+  	Response.Write "&lt;table border=""0"" cellspacing=""5""&gt;"
+  	For Each article in rootNode.childNodes
+		strTitle =  article.childNodes(0).text      ' title
+		strAuthor = article.childNodes(1).text      ' author
+		strURL =  article.childNodes(2).text        ' url
+		strDate = article.childNodes(3).text        ' date
+		strDescription = article.childNodes(4).text ' description
+		
+		Response.Write "&lt;tr&gt;&lt;td&gt;"
+		Response.Write "&lt;font size=1&gt;&lt;b&gt;[" & strDate & _
+			"]&lt;/b&gt;&lt;/font&gt;&nbsp;"
+		Response.Write "&lt;a href=""" & strURL & """&gt;" & _
+			strTitle & "&lt;/a&gt;"
+		Response.Write "&lt;/td&gt;&lt;/tr&gt;" & vbCrlf
+	Next
+	Response.Write "&lt;/table&gt;"
+  Else
+  	Response.Write "Keine Artikel gefunden!"
+  End If
+%&gt;
+</pre>
+</p>
+
+<p>
+Dieser Code wei&szlig; bereits, wie die ausgelesene XML Datei aufgebaut ist. Und somit kann ich die jeweiligen 
+Elemente auslesen, und dann damit die von mir gew&uuml;nschte Formatierung/Ausgabe erreichen - in diesem Fall
+eine Ausgabe als Liste, ohne Beschreibung und Autor. Dies kann aber nach eigenen W&uuml;nschen ge&auml;ndert werden.
+</p>
+<p>
+<IMG SRC="Bilder/200004/20000417_1.png" width="414" height="134" border="0" alt="">
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+In der Datei <i>iteratexml.asp</i> habe ich mich &uuml;ber einen wichtigen Aspekt einer Node hinweggeschummelt - eine Node
+kann Attribute besitzen, so zum Beispiel:
+<pre style="background='silver';">
+&lt;article author="Christoph Wille" title="XML Games"/&gt;
+</pre>
+Ich w&uuml;rde es fast als Geschmacksfrage bezeichnen, ob man Einzelwerte als Nodes oder Attribute der Elternnode ausf&uuml;hrt.
+
+</p>
+<p>
+Bei dieser ersten Einf&uuml;hrung in die Verwendung des DOM f&uuml;r das Auslesen von Informationen habe ich Sortierungen und Einschr&auml;nkungen 
+der Elemente ausgelassen - das ist ein Thema eines weiteren Artikels.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000417.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20020416.htm">Arbeiten mit dem SQL Server XML View Mapper</a><br>
+<a href="20001117.htm">Einfaches XML-Auslesen in .NET</a><br>
+<a href="20000516.htm">Einsatz des Recordset Objektes als Multifunktionaler Datenspeicher</a><br>
+<a href="20011116.htm">Erstellen von XML-Dateien mit dem DOM</a><br>
+<a href="20010925.htm">Verwendung von XML-Schemas (XSD)</a><br>
+<a href="20020116.htm">XML-Daten verarbeiten mit XSLT</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpheute%2Ecom%2Fcurrentarticles%2Exml">Aktuelle AspHeute Artikel als XML</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ew3%2Eorg%2FTR%2F1998%2FREC%2DDOM%2DLevel%2D1%2D19981001%2F">W3C Document Object Model</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000417" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Auslesen von XML Dateien mit dem DOM"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000417.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20000417"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000417.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

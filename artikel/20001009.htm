@@ -1,0 +1,526 @@
+<HTML>
+<HEAD>
+<TITLE>Das Versenden von Emails selbst programmieren</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor, wie man mit Hilfe von ASP.NET, C# und dem .NET Framework eine Email verschicken kann. Im Laufe der Artikelserie wird eine Komponente programmiert.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Email,C#,CSharp,C Sharp,TcpClient,SMTP,Stream,GetStream,HELO,Component,Komponente,NetworkStream,NET,Framework,ASP.NET">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Das Versenden von Emails selbst programmieren</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001009"></SCRIPT>
+</p>
+<p>
+Emailkomponenten gibt es (beinahe) soviele wie Sand am Meer, und viele davon sind sogar gratis.
+Verwendet hat sie bestimmt schon (beinahe) jeder, sei es jetzt AspMail, CDONTS, SA-SmtpMail oder
+eine der vielen anderen. Etwas, das aber bestimmt (beinahe) keiner bis jetzt gemacht hat, ist
+sich eine Emailkomponente selbst zu programmieren.
+</p>
+<p>
+Im heutigen Artikel befassen wir uns mit den Grundlagen, und werden nur eine sehr einfache
+Email versenden. Sp&auml;tere Artikel werden auf dem heute vorgestellten Sourcecode aufbauen, und am Ende
+werden wir eine voll funktionst&uuml;chtige Komponente f&uuml;r HTML Emails und Attachments haben.
+</p>
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation des 
+Microsoft .NET Framework SDK's auf einem Webserver. Weiters setze ich voraus, da&szlig; der Leser die 
+Programmiersprache C# zu einem gewissen Grad beherrscht - es finden sich etliche Artikel auf 
+diesem Server, um das notwendige Wissen zu erlernen 
+</p>
+
+<h2>Eine minimale Email</h2>
+<p>
+Als erstes m&uuml;ssen wir abkl&auml;ren, wie das SMTP (Simple Mail Transport Protocol) Protokoll funktioniert -
+weil dieses die Grundlage f&uuml;r den Versand von Emails darstellt. Das sch&ouml;ne ist, da&szlig; alle Befehle und 
+Antworten vom SMTP Server in Klartext verschickt werden (was man allerdings wiederum auch als
+Sicherheitsproblem auslegen kann...).
+</p>
+<p>
+Das folgende "Script" zeigt die grunds&auml;tzliche Reihenfolge der SMTP Befehle um eine Mail zu verschicken:
+</p>
+
+<pre style="background='silver';">
+<font color="Red">HELO</font> local computername
+<font color="Red">MAIL FROM:</font> sender's address
+<font color="Red">RCPT TO:</font> recipient's address
+<font color="Red">DATA</font>
+mail header and body text
+<font color="Red">.</font>
+</pre>
+
+<p>
+Um nun tats&auml;chlich eine Email zu verschicken, verbindet man sich mittels Telnet mit Port 25
+(der SMTP Port, <b>telnet servername 25</b>) am 
+Emailserver und tippt eine Beispielemail ein:
+</p>
+
+<pre style="background='silver';">
+<font color="Red">HELO</font> SHAGPAD
+<font color="Red">MAIL FROM:</font> christophw@alphasierrapapa.com
+<font color="Red">RCPT TO:</font> christophw@dev.alfasierrapapa.com
+<font color="Red">DATA</font>
+Subject: Hi Chris
+
+This is a part of the body text
+<font color="Red">.</font>
+</pre>
+
+<p>
+Die Parameter HELO, MAIL FROM und RCPT TO sind unspektakul&auml;r und waren "vorhersehbar". Der DATA
+Parameter ist hingegen interessant: die Header (Subject) und der Body Text sind durch eine Leerzeile
+voneinander getrennt. Dieses Beispiel zeigt nur einen Header (Subject), folgende Beispiele werden die
+fehlenden Header einf&uuml;gen.
+</p>
+<p>
+Der Punkt schlie&szlig;t die Email ab, und der Server meldet den Status der Operation. Apropos Statusmeldungen:
+jedes der gezeigten Kommandos liefert eine Statusmeldung des Servers - diese k&ouml;nnen sehr n&uuml;tzlich sein!
+</p>
+
+<h2>Implementierung der minimalen Email in C#</h2>
+<p>
+Wir werden diesen Prozess jetzt 1:1 in C# umsetzen, und zwar mit Hilfe der Net Klassen des 
+.NET Frameworks. Grunds&auml;tzlich dreht sich alles um eine Instanz der <i>TcpClient</i> Klasse und dessen
+<i>Stream</i> - f&uuml;r die Verbindung zum SMTP Server, und zum Austausch von Befehlen und Statusmeldungen.
+</p>
+<p>
+Die Datei <b>email-simple.aspx</b> ist im Download des heutigen Artikels enthalten.
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.IO" %&gt;
+&lt;% @Import Namespace="System.Net" %&gt;
+&lt;% @Import Namespace="System.Net.Sockets" %&gt;
+&lt;% @Import Namespace="System.Text" %&gt;
+&lt;script language="C#" runat="server"&gt;
+bool WriteToStream(ref NetworkStream nwstream, string strLine)
+{
+  string strString2Send = strLine + "\r\n";
+  Byte[] arr2Send = Encoding.ASCII.GetBytes(strString2Send.ToCharArray());
+  try
+  {
+    nwstream.Write(arr2Send, 0, arr2Send.Length);
+  }
+  catch
+  {
+    return false;
+  }
+  return true;
+}
+
+bool ReadFromStream(ref NetworkStream nwstream, out string strMessage)
+{
+  byte[] readBuffer = new byte[255];
+  int nLength = nwstream.Read(readBuffer, 0, readBuffer.Length);
+  strMessage = Encoding.ASCII.GetString(readBuffer, 0, nLength);
+  return (3 &lt;= readBuffer[0]); // 2 success, 3 informational
+}
+&lt;/script&gt;
+&lt;%
+Response.Buffer = false;
+
+string strEmailServer = "fx2.dev.alfasierrapapa.com";
+string strSendTo = "christophw@fx2.dev.alfasierrapapa.com";
+string strMailFrom = "christophw@alphasierrapapa.com";
+string strSubject = "My Email Test";
+
+TcpClient tcpc = new TcpClient();
+try
+{
+  tcpc.Connect(strEmailServer, 25);
+}
+catch (SocketException socketEx)
+{
+  Response.Write("Connection Error: " + socketEx.ToString());
+  Response.End();
+}
+string strResponse;
+
+NetworkStream nwstream = tcpc.GetStream();
+ReadFromStream(ref nwstream, out strResponse);
+Response.Write(strResponse + "&lt;br&gt;");
+
+WriteToStream(ref nwstream, "HELO myhost");
+ReadFromStream(ref nwstream, out strResponse);
+Response.Write(strResponse + "&lt;br&gt;");
+
+WriteToStream(ref nwstream, "MAIL FROM: " + strMailFrom);
+ReadFromStream(ref nwstream, out strResponse);
+Response.Write(strResponse + "&lt;br&gt;");
+
+WriteToStream(ref nwstream, "RCPT TO: " + strSendTo);
+ReadFromStream(ref nwstream, out strResponse);
+Response.Write(strResponse + "&lt;br&gt;");
+
+WriteToStream(ref nwstream, "DATA");
+ReadFromStream(ref nwstream, out strResponse);
+Response.Write(strResponse + "&lt;br&gt;");
+
+WriteToStream(ref nwstream, "Subject: " + strSubject);
+
+WriteToStream(ref nwstream, ".");
+ReadFromStream(ref nwstream, out strResponse);
+Response.Write(strResponse + "&lt;br&gt;");
+%&gt;
+</pre>
+
+<p>
+Wenn wir uns nur auf den unteren Teil des Listings konzentrieren (die Dreier-Codebl&ouml;cke), dann 
+sieht dies wirklich nicht anders aus als wenn man h&auml;ndisch per Telnet eine Email erstellen w&uuml;rde.
+Die Funktionalit&auml;t f&uuml;r das Senden der Befehle und Abfragen der Statusmeldungen ist in den Funktionen
+<i>WriteToStream</i> bzw <i>ReadFromStream</i> versteckt.
+</p>
+<p>
+Die <i>WriteToStream</i> Methode ist f&uuml;r das Versenden der Befehle verantwortlich. Dies geschieht durch
+Anh&auml;ngen eines CR/LF Paares an den String, sowie dessen Konvertierung in ein Byte-Array und das darauffolgende
+Verschicken an den SMTP Server durch die <i>Write</i> Methode des <i>NetworkStream</i> Objektes. Der
+R&uuml;ckgabewert ist true/false, abh&auml;ngig davon ob der Befehl erfolgreich gesendet
+werden konnte:
+</p>
+
+<pre style="background='silver';">
+bool WriteToStream(ref NetworkStream nwstream, string strLine)
+{
+  string strString2Send = strLine + "\r\n";
+  Byte[] arr2Send = Encoding.ASCII.GetBytes(strString2Send.ToCharArray());
+  try
+  {
+    nwstream.Write(arr2Send, 0, arr2Send.Length);
+  }
+  catch
+  {
+    return false;
+  }
+  return true;
+}
+</pre>
+
+<p>
+Die <i>ReadFromStream</i> Methode funktioniert im Grunde sehr &auml;hnlich, nur da&szlig; sie ein Byte-Array ausliest,
+und dann als String an den Aufrufer zur&uuml;ckliefert. Da jede Statusmeldung des SMTP Servers mit einem
+dreistelligen Statuscode beginnt, verwende ich diesen, um true/false zu berechnen: 2xx sind
+Erfolgsmeldungen, 3xx sind Erfolge mit Zusatzinformation:
+</p>
+
+<pre style="background='silver';">
+bool ReadFromStream(ref NetworkStream nwstream, out string strMessage)
+{
+  byte[] readBuffer = new byte[255];
+  int nLength = nwstream.Read(readBuffer, 0, readBuffer.Length);
+  strMessage = Encoding.ASCII.GetString(readBuffer, 0, nLength);
+  return (3 &lt;= readBuffer[0]); // 2 success, 3 informational
+}
+</pre>
+
+<p>
+Obwohl beide Methoden boolsche Resultate liefern, ignoriere ich diese aus Einfachheitsgr&uuml;nden
+im heutigen Beispiel. Daf&uuml;r gebe ich die Statusmeldungen des SMTP Servers aus - etwas, das man
+in einer Produktionsumgebung nicht machen w&uuml;rde:
+</p>
+
+<IMG SRC="Bilder/200010/20001009_3.png" width="497" height="303" alt="" border="0">
+
+<p>
+Laut Statuscode war der Emailversand erfolgreich - auch Outlook Express ist dieser Meinung:
+</p>
+
+<IMG SRC="Bilder/200010/20001009_1.png" width="393" height="246" alt="" border="0">
+
+<p>
+Allerdings sieht das Ergebnis nicht ansprechend aus, weil Outlook spezielle Header f&uuml;r Absender
+und Empf&auml;nger erwartet - Eudora ist hier nicht so kleinlich, aber eben nicht so weit verbreitet. 
+Daher m&uuml;ssen wir noch eine Kleinigkeit hinzuprogrammieren, um die Outlookianer gewogen zu stimmen.
+</p>
+
+<h2>Optischer Aufputz f&uuml;r Outlook</h2>
+<p>
+Diese Kleinigkeit sind die Header <i>To</i> und <i>From</i>. Diese werden einfach im Headerteil
+mit angef&uuml;hrt (<b>email-better.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+WriteToStream(ref nwstream, &quot;DATA&quot;);
+ReadFromStream(ref nwstream, out strResponse);
+Response.Write(strResponse + &quot;&lt;br&gt;&quot;);
+
+WriteToStream(ref nwstream, &quot;From: &quot; + strMailFrom);
+WriteToStream(ref nwstream, &quot;Subject: &quot; + strSubject);
+WriteToStream(ref nwstream, &quot;To: &quot; + strSendTo);
+WriteToStream(ref nwstream, &quot;&quot;);
+
+WriteToStream(ref nwstream, &quot;Hello Christoph!&quot;);
+
+WriteToStream(ref nwstream, &quot;\r\n.&quot;);
+ReadFromStream(ref nwstream, out strResponse);
+Response.Write(strResponse + &quot;&lt;br&gt;&quot;);
+</pre>
+
+<p>
+Dieses Mal ist auch Outlook Express so "freundlich" und zeigt alle gew&uuml;nschten Informationen an:
+</p>
+
+<IMG SRC="Bilder/200010/20001009_2.png" width="490" height="269" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Heute haben wir nur eine simple Email verschickt, allerdings dabei alle wichtigen SMTP Kommandos
+kennengelernt. Was wir in den n&auml;chsten Artikeln einf&uuml;gen werden sind Kopie- und Blindkopieempf&auml;nger,
+Content-Type, zus&auml;tzliche Header, HTML Emails und Attachments. Stay tuned!
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001009.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20021028.htm">ACT MetaMailer - Mails verschicken leicht gemacht</a><br>
+<a href="19990809.htm">Email versenden mit AspMail</a><br>
+<a href="20000918.htm">Emails mit ASP.NET versenden</a><br>
+<a href="20000919.htm">Emails mittels CDOSYS versenden</a><br>
+<a href="20000515.htm">Emails senden mit CDONTS</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20001009" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Das Versenden von Emails selbst programmieren"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20001009.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20001009"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20001009.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

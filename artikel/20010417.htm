@@ -1,0 +1,875 @@
+<HTML>
+<HEAD>
+<TITLE>Eine Umfrage in ASP erstellen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Die m&ouml;glichen Einsatzgebiete f&uuml;r Umfragen sind vielf&auml;ltig. Wir wollen uns heute mit der Programmierung einer Umfrage besch&auml;ftigen, die uns die f&uuml;nf am h&auml;ufigsten besuchten Webseiten liefert.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Umfrage,Voting,Caching,Administration,Vote,Benutzer,Website,Community,Feature,Poll,Straw Poll">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Eine Umfrage in ASP erstellen</H1>
+<p>
+Geschrieben von: <a href="../autoren/alexanderzeitler.htm">Alexander Zeitler</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010417"></SCRIPT>
+</p>
+<p>
+Umfragen sind ein einfaches aber hilfreiches Tool, wenn es darum geht, etwas &uuml;ber die W&uuml;nsche und Verhaltensweisen von 
+Besuchern auf einer Webseite zu erfahren. Die m&ouml;glichen Einsatzgebiete sind vielf&auml;ltig. Wir wollen uns heute mit der 
+Programmierung einer Umfrage besch&auml;ftigen, die uns die f&uuml;nf am h&auml;ufigsten besuchten Webseiten liefert.
+</p>
+
+<p>
+Au&szlig;erdem erstellen wir uns eine Administrationsseite, auf der wir m&uuml;helos alle Parameter und Eintr&auml;ge steuern k&ouml;nnen.
+</p>
+
+<h2>Zielsetzung und Datenbank-Design</h2>
+
+<p>
+Betrachten wir zun&auml;chst ein m&ouml;gliches Ergebnis, wie unsere Umfrage zu Beginn aussehen k&ouml;nnte:
+</p>
+
+<IMG SRC="Bilder/200104/20010417_1.png" width="590" height="380" alt="" border="0">
+
+<p>
+Der Aufbau der Umfrage ist relativ einfach gestaltet. Au&szlig;er einer frei definierbaren Frage werden die in der 
+Datenbank befindlichen Webseiten sowie der Betreiber gelistet. Weiterhin sieht man ein Diagramm, das die bisherige 
+Stimmenvergabe prozentual darstellt, gefolgt von der absoluten Stimmenzahl je Webseite und deren Prozentsatz. 
+Was nat&uuml;rlich auch nicht fehlen darf  ist das Radio-Feld, das uns die Stimmabgabe &uuml;berhaupt erst erm&ouml;glicht.
+</p>
+
+<p>
+Unterhalb dieser Werte ist die Anzahl der bisher insgesamt abgegeben Stimmen (optional) sowie das End-Datum der 
+Umfrage angegeben.
+</p>
+
+<p>
+Die oben gew&auml;hlte Darstellungsweise ist zwar sehr auskunftsfreudig, hat allerdings zwei Nachteile. Zum einen wird f&uuml;r 
+diese Darstellung relativ viel Platz ben&ouml;tigt, zum anderen ist es f&uuml;r die Besucher wegen der dargestellten 
+Zwischenergebnisse m&ouml;glich, das Endergebnis zu beeinflussen. Deshalb sollte es also m&ouml;glich sein, die Umfrage den 
+individuellen Sicherheits- und Platzanforderungen anzupassen - und dies in allen drei Phasen (Umfrage vor der Wahl, 
+Benutzer hat gew&auml;hlt, Ende der Umfrage) der Umfrage.
+</p>
+
+<p>
+In der obigen Grafik nicht zu sehen, aber dennoch variabel konfigurierbar soll auch die Anzahl der dargestellten 
+Webseiten sein, die ab dem Ende der Umfrage angezeigt werden. In unserem Fall w&auml;ren das also 5.
+</p>
+
+<p>
+Aus unseren soeben gewonnenen Anforderungen ergibt sich somit, da&szlig; wir zwei Tabellen in der Datenbank ben&ouml;tigen: 
+<i>vote</i> und <i>vote_parameter</i>. Beide Tabellen sind in der MS Access Datenbank <b>vote.mdb</b> gespeichert, 
+die auch dem heutigen Download beiliegt.
+</p>
+
+<p>
+Die Struktur der Tabelle <i>vote</i>
+</p>
+
+<IMG SRC="Bilder/200104/20010417_2.png" width="537" height="114" alt="" border="0">
+
+<p>
+Die Struktur der Tabelle <i>vote_parameter</i>
+</p>
+
+<IMG SRC="Bilder/200104/20010417_3.png" width="578" height="340" alt="" border="0">
+
+
+<h2>Umsetzung</h2>
+
+<p>
+Kommen wir nun zur Umsetzung unserer Vorstellungen. Zun&auml;chst m&uuml;ssen wir &uuml;berpr&uuml;fen, ob sich in der Tabelle 
+<i>vote_parameter</i> &uuml;berhaupt Werte befinden. Ist diese Tabelle leer, w&uuml;rden wir die Umfrage anstelle einer 
+Frage mit einer f&uuml;r den Benutzer undefinierbaren Fehlermeldung beginnen. Wir ben&ouml;tigen diese Pr&uuml;fung - wie fast den 
+gesamten Code - f&uuml;r jeweils alle drei Zust&auml;nde der Umfrage, die ich hier noch einmal genau definieren m&ouml;chte:
+</p>
+
+<ul>
+<li>"standard": die Umfrage ist aktiv und der Benutzer hat noch nicht gew&auml;hlt</li>
+<li>"gewaehlt": die Umfrage ist aktiv und der Benutzer hat bereits gew&auml;hlt</li>
+<li>"ende": die Umfrage hat das Enddatum erreicht</li>
+</ul>
+
+<p>
+Aus dieser Tatsache heraus ergibt es sich, da&szlig; wir sinnvoller Weise einen Gro&szlig;teil des Codes in
+<a href="http://www.microsoft.com/germany/scripting/vbscript/doc/vsstmSub.htm " target="_blank">Prozeduren</a> und 
+<a href="http://www.microsoft.com/germany/scripting/vbscript/doc/vsstmFunction.htm " target="_blank">Funktionen</a> 
+auslagern und diese dann mit dem jeweiligen Zustand (Status) aufrufen.
+</p>
+
+<h2>Parameterpr&uuml;fung</h2>
+
+<p>
+Wenden wir uns nun der &Uuml;berpr&uuml;fung, ob &uuml;berhaupt Parameter vorhanden sind, zu. Um das Ergebnis der &Uuml;berpr&uuml;fung 
+abfragen zu k&ouml;nnen, erstellen wir diese als Funktion mit dem Namen <i>Check_Parameter</i>:
+</p>
+
+<pre style="background='silver';">
+Function Check_Parameter
+    strSQL = "SELECT * FROM Vote_Parameter"
+    Set rs = Conn.Execute(strSQL)
+    If rs.Eof Then 
+        Check_Parameter = False
+    Else
+        Check_Parameter = True
+    End If
+    rs.Close
+    Set rs = Nothing
+End Function
+</pre>
+
+<p>
+Die Funktionsweise ist schnell erkl&auml;rt. Wir erstellen ein RecordSet und &uuml;berpr&uuml;fen, ob dieses leer ist - ist dies 
+der Fall, liefert die Funktion das Ergebnis <i>False</i> zur&uuml;ck, sonst logischerweise <i>True</i>. Aufgerufen 
+wird diese Funktion mit einer If-Abfrage, worauf wir aber sp&auml;ter noch gezielt eingehen werden.
+</p>
+
+<h2>Feststellen, ob die Umfrage beendet ist</h2>
+
+<p>
+Es folgt nun eine weitere &Uuml;berpr&uuml;fung der Parameter: ist die Umfrage beendet? Hierzu verwenden wir wiederum 
+eine Funktion: <i>Check_Ende</i>, welche zu gegebener Zeit auch durch eine If-Abfrage aktiviert wird.
+</p>
+
+<pre style="background='silver';">
+Function Check_Ende
+    strSQL = "SELECT Ende FROM Vote_Parameter"
+    Set rs = Conn.Execute(strSQL)
+    If rs.Fields("Ende").Value &lt;= ServerNow() Then
+        Check_Ende = True
+    Else
+        Check_Ende = False
+    End If
+    rs.Close
+    Set rs = Nothing
+End Function
+</pre>
+
+<p>
+Nach einer Pr&uuml;fung des Enddatums in der Tabelle <i>vote_parameter</i> gegen das  Datum aus der Funktion <i>ServerNow</i> 
+werden der Funktion entsprechend die Werte <i>True</i> (Umfrage ist beendet) oder <i>False</i> (Umfrage l&auml;uft noch) 
+zugewiesen.
+</p>
+
+<p>
+Die Funktion <i>ServerNow</i> dient dazu, um eventuell vorhandene Zeitunterschiede bei amerikanischen 
+(oder allg. ausl&auml;ndischen) Servern auszugleichen. Hierzu ist anstelle der <i>0</i> der entsprechende Zeitunterschied 
+in Stunden einzutragen.
+</p>
+
+<pre style="background='silver';">
+Function ServerNow()
+    ServerNow = DateAdd("h", 0, Now())
+End Function
+</pre>
+
+<h2>Darstellen der Kopfzeile</h2>
+
+<p>
+Kommen wir jetzt zur Darstellung der Kopfzeile. Auch diese variiert in Abh&auml;ngigkeit vom Status, weswegen wir sie 
+als Prozedur <i>Zeige_Header</i> implementieren. Beim Aufruf dieser Prozedur wird der aktuelle Status &uuml;bergeben, welcher 
+sich in der Variable strStatus befindet.
+</p>
+
+<pre style="background='silver';">
+Sub Zeige_Header(strStatus)
+    rsHeader = strStatus &amp; "_Header"	
+    strSQL = "SELECT "
+    strSQL = strSQL &amp; rsHeader
+    strSQL = strSQL &amp; " FROM Vote_Parameter"
+    Set rs = Conn.Execute(strSQL)
+    Response.Write "&lt;td&gt;"
+    Response.Write rs(0)
+    Response.Write "&lt;/td&gt;" &amp; vbCrLf
+    rs.close
+    Set rs = Nothing
+End Sub
+</pre>
+
+<p>
+In das Recordset greife ich mit dem Index des Feldes, das ich auslesen will. Da nur eine Spalte durch die SELECT 
+Abfrage retourniert wird, ist das der Index 0. Der Vorteil ist, da&szlig; Zugriffe mittels Index schneller sind als mit 
+Name.
+</p>
+
+<h2>Darstellen der Eintr&auml;ge</h2>
+
+<p>
+Die in strStatus befindlichen Werte bzw. Strings sind bei n&auml;herer Betrachtung identisch mit den Pr&auml;fixen 
+(<i>standard</i> etc.) der Parameter in der Tabelle <i>Vote_Parameter</i> - der Grund hierf&uuml;r wird gleich ersichtlich, 
+wenn wir uns die Prozedur <i>Erzeuge_Eintraege</i> ansehen:
+</p>
+
+<pre style="background='silver';">
+Sub Erzeuge_Eintraege (strStatus)
+	rsDiagramm = strStatus &amp; "_Diagramm"
+	rsAnzahl = strStatus &amp; "_Anzahl"
+	rsProzent = strStatus &amp; "_Prozent"
+	rsVote = strStatus &amp; "_Vote"
+	strSQL = "SELECT " &amp; rsDiagramm &amp; "," &amp; rsAnzahl &amp; "," &amp; rsProzent &amp; "," 
+    strSQL = strSQL &amp; rsVote &amp; " FROM Vote_Parameter"
+	Set rs = Conn.Execute(strSQL)
+	brsDiagramm = rs(0)
+	brsAnzahl = rs(1)
+	brsProzent = rs(2)
+	brsVote = rs(3)
+	rs.Close
+	Set rs = Nothing
+	Zeige_Eintraege brsDiagramm, brsAnzahl, brsProzent, brsVote, strStatus
+End Sub
+</pre>
+
+<p>
+Der an die Prozedur &uuml;bergebene String <i>strStatus</i> wird  vor der Erzeugung eines Recordsets mit den jeweiligen 
+Suffixen ("_Diagramm" etc.) der Spaltennamen verkn&uuml;pft. Hieraus wird der den SQL-String erzeugt und ausgef&uuml;hrt. 
+Die Ergebnisse dieser Abfrage werden dann lokalen Variablen zugeordnet, soda&szlig; wir das Recordset bereits vor Aufruf 
+der Prozedur Zeige_Eintraege schlie&szlig;en k&ouml;nnen. Danach wird die Prozedur <i>Zeige_Eintraege</i> mit den jetzt lokalen 
+True- und False-Werten (aus der Tabelle <i>Vote_Parameter</i>) und dem aktuellen Status (<i>strStatus</i>) aufgerufen:
+</p>
+
+<pre style="background='silver';">
+Sub Zeige_Eintraege(bDiagramm, bAnzahl, bProzent, bVote,strStatus)
+    Response.Write "&lt;table border=""0"" width=""100%"" cellpadding=""0"" cellspacing=""0""&gt;" &amp; vbCrLf
+    Response.Write "&lt;form action=""vote.asp"" method=""post""&gt;" &amp; vbCrLf
+    Response.Write "&lt;tr&gt;" &amp; vbCrLf
+    Response.Write "&lt;td bgcolor=""#808080""&gt;Homepage&lt;/td&gt;" &amp; vbCrLf
+    Response.Write "&lt;td bgcolor=""#808080""&gt;&amp;nbsp;Betreiber&lt;/td&gt;" &amp; vbCrLf
+    If bDiagramm=True Then
+        Response.Write "&lt;td bgcolor=""#808080""&gt;&amp;nbsp;Diagramm&lt;/td&gt;" &amp; vbCrLf
+    End If
+    If bAnzahl = True Then
+        Response.Write "&lt;td bgcolor=""#808080""&gt;&amp;nbsp;Anzahl&lt;/td&gt;" &amp; vbCrLf
+    End If
+
+    If bProzent=True Then
+        Response.Write "&lt;td bgcolor=""#808080""&gt;&amp;nbsp;Prozent&lt;/td&gt;" &amp; vbCrLf
+    End If
+    If bVote=True Then
+        Response.Write "&lt;td bgcolor=""#808080""&gt;&amp;nbsp;Ihre Stimme&lt;/td&gt;" &amp; vbCrLf
+    End If
+    If strStatus &lt;&gt; "ende" Then
+        strSQL = "SELECT * FROM Vote ORDER BY Homepage"
+    Else
+        strSQLEnde = "SELECT * FROM Vote_Parameter"
+        Set rsende = Conn.Execute(strSQLEnde)
+        strSQL = "SELECT TOP "
+        strSQL = strSQL &amp; rsende("Ende_Eintraege")
+        strSQL = strSQL &amp; " * FROM Vote ORDER BY Anzahl DESC"
+    End If
+    Set rs = Conn.Execute(strSQL)
+    Do While Not rs.Eof
+        Response.Write "&lt;tr&gt;" &amp; vbCrLf
+        Response.Write "&lt;td&gt;" &amp; rs("Homepage") &amp; "&lt;/td&gt;" &amp; vbCrLf
+        Response.Write "&lt;td&gt;&amp;nbsp;" &amp; rs("Betreiber") &amp; "&lt;/td&gt;" &amp; vbCrLf
+        If bDiagramm=True Then
+            Response.Write "&lt;td&gt;&amp;nbsp;"
+            intProzente=Zeige_Prozent(rs("Anzahl"))
+            Zeige_Diagramm(intProzente)
+            Response.Write "&lt;/td&gt;" &amp; vbCrLf
+        End If
+        If bAnzahl=True Then
+            Response.Write "&lt;td align=""right""&gt;&amp;nbsp;" &amp; rs("Anzahl") &amp; "&lt;/td&gt;" &amp; vbCrLf
+        End If
+        If bProzent=True Then
+            Response.Write "&lt;td align=""right""&gt;&amp;nbsp;" &amp; Zeige_Prozent(rs("Anzahl")) 
+            Response.Write "%&lt;/td&gt;" &amp; vbCrLf
+        End If
+        If bVote=True Then
+            Response.Write "&lt;td align=""center""&gt;"
+            Response.Write "&lt;input type=""radio"" name=""id"" value=""" &amp; rs("Id") 
+            Response.Write """&gt;&lt;/td&gt;" &amp; vbCrLf
+        End If
+        Response.Write "&lt;/tr&gt;" &amp; vbCrLf
+        rs.MoveNext
+    Loop
+    Response.Write "&lt;/table&gt;" &amp; vbCrLf
+    rs.Close
+    Set rs = Nothing
+End Sub
+</pre>
+
+<p>
+Zun&auml;chst wird die Kopfzeile der Tabelle generiert. F&uuml;r die Felder <i>Homepage</i> und <i>Betreiber</i> gibt es 
+keine Einschr&auml;nkungen, sehr wohl aber f&uuml;r die restlichen Felder. Hier kommen die &uuml;bergebenen Booleschen Werte 
+<i>bDiagramm</i>, <i>bAnzahl</i>, <i>bProzent</i>, <i>bVote</i> zum tragen. Durch Auswertungen mit If-Abfragen 
+wird festgelegt, ob die Spalten angezeigt werden sollen oder nicht.
+</p>
+
+<p>
+Direkt im Anschlu&szlig; wird der String strStatus ausgewertet - enth&auml;lt dieser nicht den Eintrag <i>ende</i>, so wird der 
+SQL-String zur Anzeige aller Eintr&auml;ge sortiert nach der Homepage generiert. Ist der Eintrag jedoch <i>ende</i>, so 
+wird zun&auml;chst aus der Tabelle <i>Vote_Parameter</i> die Anzahl der anzuzeigenden Datens&auml;tze (<i>Ende_Eintraege</i>) ermittelt.
+Danach wird eine TOP-Abfrage mit eben dieser Anzahl erstellt. In der Folge werden alle der Abfrage entsprechenden 
+Datens&auml;tze angezeigt und nat&uuml;rlich werden auch hier nochmals die Booleschen Werte ausgewertet, um die anzuzeigenden 
+Spalten festzulegen.
+</p>
+
+<p>
+Bei den Abfragen f&uuml;r die Spalten <i>Diagramm</i> und <i>Prozent</i> werden wiederum Prozeduren bzw. Funktionen mit 
+Parametern aufgerufen, die die entsprechenden Arbeiten erledigen.
+</p>
+
+<p>
+Betrachten wir zuerst die Funktion <i>Zeige_Prozent</i>, da diese auch die Grundlage f&uuml;r die Prozedur <i>Zeige_Diagramm</i> 
+bildet:
+</p>
+
+<pre style="background='silver';">
+Function Zeige_Prozent(intAnzahl)
+	strSQL = "SELECT Sum(Anzahl) AS SumOfAnzahl FROM vote"
+	Set rs = Conn.Execute(strSQL)
+	intGesamt = rs("SumOfAnzahl")
+	intProzent = Round(intAnzahl/intGesamt*100,1)
+	Zeige_Prozent = intProzent
+	rs.close
+	Set rs = Nothing
+End Function
+</pre>
+
+<p>
+Zun&auml;chst wird die Anzahl aller bisher abgegebenen Stimmen ermittelt. Diese wird dann mit der &uuml;bergebenen 
+Stimmenzahl (intAnzahl) zu einem Prozentsatz verrechnet, der als Ergebnis der Funktion zur&uuml;ckgegeben wird.
+</p>
+
+<p>
+Wie bereits erw&auml;hnt,  wird aus den nun ermittelten Prozents&auml;tzen das Diagramm mit Hilfe der Funktion 
+<i>Zeige_Diagramm</i> erzeugt:
+</p>
+
+<pre style="background='silver';">
+Sub Zeige_Diagramm(intProzente)
+    Balken = Prozentsatz Pixel breit
+    sBalkenBreite = intProzente
+    wBalkenBreite = (100 - sBalkenBreite)
+    Response.Write "&lt;img src=""diagramm_s.gif"" width=""" &amp; sBalkenBreite 
+            &amp; """ height=""6"" border=""0"" alt=""" &amp; Round(intProzente,1) &amp; "%""&gt;"
+    Response.Write "&lt;img src=""diagramm_w.gif"" width=""" &amp; wBalkenBreite 
+            &amp; """ height=""6"" border=""0"" alt=""" &amp; Round(intProzente,1) &amp; "%""&gt;"
+End Sub
+</pre>
+
+<p>
+In einer Schleife von 1 bis 100 (f&uuml;r 100%) wird &uuml;berpr&uuml;ft, ob der &uuml;bergebene Prozentsatz (<i>intProzente</i>) kleiner oder 
+gleich dem aktuellen Z&auml;hlerwert ist. Ist dies der Fall, so wird ein schwarzer Strich dargestellt. Alle Werte 
+&uuml;ber dem Prozentsatz ergeben einen wei&szlig;en Strich, was im Gesamtergebnis zu unserem Balkendiagramm f&uuml;hrt.
+</p>
+
+<h2>Darstellung der Fu&szlig;zeile</h2>
+
+<p>
+Was uns jetzt noch fehlt, ist die zum Status passende Fu&szlig;zeile. Auch das &uuml;berlassen wir einer Prozedur, der wir den 
+Status &uuml;bergeben:
+</p>
+
+<pre style="background='silver';">
+Sub Zeige_Footer (strStatus)
+    strSQL = "SELECT * FROM Vote_Parameter"
+    Set rs = Conn.Execute(strSQL)
+    Record_Gesamt = strStatus &amp; "_Gesamt"
+    If rs(Record_Gesamt) = True Then
+        strSQL1 = "SELECT Sum(Anzahl) AS SumOfAnzahl FROM vote"
+        Set rs1 = Conn.Execute(strSQL1)
+        intGesamt = rs1("SumOfAnzahl")
+
+        rs1.Close
+        Set rs1 = Nothing
+        If strStatus &lt;&gt; "ende" Then
+            Response.Write "Bisher abgegebene Stimmen: " &amp; intGesamt &amp; "&lt;br&gt;"	
+            Response.Write "Die Umfrage endet am " &amp; rs("ende")
+        Else
+            Response.Write "Insgesamt abgegebene Stimmen: " &amp; intGesamt
+        End If
+    Else
+        Response.Write "Die Umfrage endet am " &amp; rs("Ende")
+    End If
+    rs.Close
+    Set rs = Nothing
+End Sub
+</pre>
+
+<p>
+Nachdem wir aus dem String strStatus und dem Suffix <i>_Gesamt</i> die korrekte Bezeichnung des Recordsets erhalten 
+haben, pr&uuml;fen wir diesen, ob die Gesamtzahl aller Stimmen angezeigt werden soll oder nicht. Ist die Pr&uuml;fung positiv, 
+so ermitteln wir wie schon bei den Prozents&auml;tzen die Gesamtzahl der abgegebenen Stimmen aus der Tabelle <i>vote</i>. 
+Danach wird gepr&uuml;ft, ob die Umfrage beendet ist. Ist dies der Fall, so wird der Text "Insgesamt abgegebene Stimmen" 
+ausgegeben, sonst erhalten wir "Bisher abegebene Stimmen" und den Hinweis auf das Enddatum der Umfrage. War die erste 
+Pr&uuml;fung negativ, so lassen wir nur das Enddatum der Umfrage ausgeben.
+</p>
+
+<h2>Starten der Umfrage</h2>
+
+<p>
+Was uns jetzt noch fehlt, ist der Programmteil, der die ganzen Funktionen und Prozeduren aufruft (<b>default.asp</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;!--#include file="strconn.asp"--&gt;
+&lt;%
+If Check_Parameter = False Then
+    Response.Write "&lt;tr&gt;" &amp; vbCrLf
+    Response.Write "&lt;td&gt;"
+    Response.Write "Keine Parameter vorhanden - &uuml;berpr&uuml;fen Sie Ihre Datenbank"
+    Response.Write "&lt;/td&gt;" &amp; vbCrLf
+    Response.Write "&lt;/tr&gt;" &amp; vbCrLf
+Else
+    If Check_Ende = True Then Session("status") = "ende"
+    strStatus = Session("status")
+    If strStatus = "" Then strStatus="standard"
+    Response.Write "&lt;tr&gt;"
+    Zeige_Header strStatus
+    Response.Write "&lt;/tr&gt;" &amp; vbCrLf
+    Response.Write "&lt;tr&gt;" &amp; vbCrLf
+    Response.Write "&lt;td&gt;"
+    Erzeuge_Eintraege strStatus
+    Response.Write "&lt;/td&gt;" &amp; vbCrLf
+    Response.Write "&lt;/tr&gt;" &amp; vbCrLf
+    Response.Write "&lt;tr&gt;" &amp; vbCrLf
+    Response.Write "&lt;td align=""right""&gt;"
+    If strStatus = "standard" Then
+        Response.Write "&lt;input type=""submit"" value=""w&auml;hlen!""&gt;"
+    Else
+        Response.Write "&amp;nbsp;"
+    End If
+    Response.Write "&lt;/td&gt;" &amp; vbCrLf
+    Response.Write "&lt;/form&gt;&lt;/tr&gt;" &amp; vbCrLf
+    Response.Write "&lt;tr&gt;" &amp; vbCrLf
+    Response.Write "&lt;td&gt;"
+    Zeige_Footer strStatus
+    Response.Write "&lt;/td&gt;" &amp; vbCrLf
+    Response.Write "&lt;/tr&gt;" &amp; vbCrLf
+End If
+Conn.Close
+Set Conn = Nothing
+%&gt;
+</pre>
+
+<p>
+Das <a href="19990808.htm">Caching</a> wird f&uuml;r diese - wie auch alle anderen Dateien - deaktiviert, 
+um immer aktuelle Werte zu erhalten:
+</p>
+
+<pre style="background='silver';">
+Response.Expires=0
+Response.AddHeader "Pragma","no-cache"
+Response.AddHeader "cache-control", "no-store"
+</pre>
+
+<p>
+Die Verbindung zur Datenbank ben&ouml;tigen wir in mehreren Dateien, weswegen sie in eigene Datei (<b>strconn.asp</b>) 
+ausgelagert wird. Das hat den Vorteil, da&szlig; eventuelle &Auml;nderungen nur einmal f&uuml;r alle ASP-Dateien ausgef&uuml;hrt 
+werden mu&szlig;. Der Inhalt der Datei <b>strconn.asp</b>:
+</p>
+
+<pre style="background='silver';">
+Set Conn = Server.CreateObject("ADODB.Connection")
+strConn = "Driver={Microsoft Access Driver (*.mdb)};DriverID=25;DBQ="
+strConn = strConn &amp; Server.MapPath("vote.mdb")
+strConn = strConn &amp; ";FIL=MS Access;MaxBufferSize=512;PageTimeout=5;"
+Conn.Open strConn
+</pre>
+
+<p>
+Kommen wir zur&uuml;ck zur Anzeige unserer Umfrage.
+</p>
+
+<p>
+Zun&auml;chst pr&uuml;fen wir durch den Aufruf der Funktion <i>Check_Parameter</i>, ob Parameter f&uuml;r die Umfrage in der Datenbank 
+vorhanden sind - ist dies nicht der Fall, brechen wir die Ausgabe mit einer Fehlermeldung ab. 
+Andernfalls fahren wir mit der Pr&uuml;fung <i>Check_Ende</i> fort und erzeugen entsprechend dem Ergebnis die Sessionvariable 
+status. Deren Inhalt wird dann zum korrekten Status strStatus weiterverarbeitet. Mit eben diesem lassen wir dann 
+die Eintr&auml;ge der Umfrage anzeigen (<i>Erzeuge_Eintraege</i>). Au&szlig;erdem stellen wir anhand des Status' fest, ob der 
+"w&auml;hlen"-Button angezeigt werden darf oder nicht. Zu guter letzt lassen wir noch die Fu&szlig;zeile generieren.
+</p>
+
+<p>
+Somit sind wir mit dem Anzeigen der Umfrage fertig und k&ouml;nnen uns dem zuwenden, was nach einem Klick auf die 
+Radio-Felder und den "w&auml;hlen"-Button passiert: dem Schreiben der Eintr&auml;ge...
+</p>
+
+<h2>Schreiben der Eintr&auml;ge in die Datenbank</h2>
+
+<p>
+Die vom Benutzer getroffene Auswahl wird an die Seite vote.asp &uuml;bergeben. Die Auswertung dieser Auswahl geschieht im folgenden:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Response.Expires=0
+Response.AddHeader "Pragma","no-cache"
+Response.AddHeader "cache-control", "no-store"
+Response.Buffer = True
+
+Id = Request.Form("id")
+If id = "" Then 
+	Response.Redirect("default.asp")
+	Response.End
+End If
+Session("status")="gewaehlt"
+
+%&gt;
+&lt;!-- Datenbank-Verbindung herstellen --&gt;
+&lt;!--#include file="strconn.asp"--&gt;
+&lt;%
+SQL = "UPDATE vote SET anzahl = anzahl + 1 WHERE id = " &amp; id &amp; ""
+Conn.Execute(SQL)
+
+Response.Redirect("default.asp")
+</pre>
+
+<p>
+Zun&auml;chst wird gepr&uuml;ft, ob &uuml;berhaupt eine Webseite angeklickt wurde. Falls nicht (Id ist leer) wird der Benutzer 
+umgehend auf die Umfrage-Seite zur&uuml;ckgeleitet. Enth&auml;lt "Id" jedoch einen Wert, so wird nach dem Abschalten des 
+Cachings die Verbindung zur Datenbank hergestellt und anschlie&szlig;end der Wert in der Spalte "Anzahl" der Tabelle 
+<i>Vote_Parameter</i> um den Wert 1 erh&ouml;ht. Au&szlig;erdem wird die Sessionvariable <i>status</i> auf den Inhalt "gewaehlt" 
+gestellt, was nach der Umleitung auf die Datei <b>default.asp</b> zu den entsprechenden Aktionen f&uuml;hrt.
+</p>
+
+<p>
+Somit ist auch dieser Teil der Umfrage erkl&auml;rt und die Umfrage bereits voll einsatzf&auml;hig. Allerdings ist es sehr 
+m&uuml;hselig und auch fehlertr&auml;chtig, die Parameter und Eintr&auml;ge in der Datenbank h&auml;ndisch zu erstellen. Was liegt also 
+n&auml;her, als eine Administrationsoberfl&auml;che zu programmieren, die diese Arbeiten erheblich erleicht?
+</p>
+
+<h2>Administration der Umfrage</h2>
+
+<p>
+Da wir bereits im <a href="20010209.htm">zweiten Teil</a> des Artikels 
+<b>Erstellung eines Newstickers in ASP</b> eine komfortable Administrationssseite erstellt haben, greifen wir auf 
+diese zur&uuml;ck und modifizieren sie entsprechend unseren neuen Anforderungen. Hier zun&auml;chst der obere Abschnitt der 
+Administration mit den Eintr&auml;gen:
+</p>
+
+<IMG SRC="Bilder/200104/20010417_4.png" width="536" height="459" alt="" border="0">
+
+<p>
+Im Vergleich zu der bestehenden Administration wurde der Anzeigeteil leicht modifiziert, so da&szlig; nur noch die 
+Datenfelder "Homepage" und "Betreiber" angezeigt werden. Der Code hierzu befindet sich in den Zeilen 116 - 144 der 
+Datei <a href="20010417_admin_umfrage_cc.htm" target="_blank">admin.asp</a>. Die genaue Beschreibung zur Technik finden Sie in dem besagten 
+Artikel. Der Test, ob ein Eintrag in der Liste gew&auml;hlt wurde - mittels JavaScript - bleibt bestehen.
+</p>
+
+<h2>Darstellung der Umfrage-Parameter</h2>
+
+<p>
+Zun&auml;chst wieder das Ergebnis der Anzeige:
+</p>
+
+<IMG SRC="Bilder/200104/20010417_5.png" width="535" height="948" alt="" border="0">
+
+<p>
+Die Administration der Umfrage-Parameter weicht (zumindest optisch) erheblich von der Administration der 
+Newsticker-Parameter ab. So wird jetzt eine Funktion zum Einstellen des Enddatums verwendet. Diese ist uns 
+allerdings bereits bekannt - sie befand sich bisher in der Datei 
+<a href="20010417_logik_umfrage_cc.htm" target="_blank">logik.asp</a> in den Zeilen 353 - 395 - 
+einzig der Code zur Anzeige der Stunden und Minuten wurde entfernt. Eine &Uuml;berpr&uuml;fung des Datums durch ein 
+JavaScript ist nicht notwendig, da die Verwendung der Dropdown-Felder immer ein Datum produziert.
+</p>
+
+<p>
+Die Anzahl der am Ende angezeigten Eintr&auml;ge ist technisch zu behandeln wie die Parameter des Newstickers. Auch die 
+&Uuml;berpr&uuml;fung mittels JavaScript gestaltet sich identisch.
+</p>
+
+<p>
+Absolut neu hingegen sind die Checkboxen. Diese sind jedoch leicht aus der Datenbank mittels If-Abfragen zu generieren. 
+Ein Beispiel, welches f&uuml;r alle anderen Checkboxen in allen Zust&auml;nden gilt, finden Sie in Zeile 229 der Datei 
+<a href="20010417_admin_umfrage_cc.htm" target="_blank">admin.asp</a>. Ist der Boolesche Wert in der Datenbank True, wird die Checkbox mit dem 
+Schl&uuml;sselwort <i>CHECKED</i> versehen. Falls nicht, bleibt die Checkbox unmarkiert. Eine JavaScript-Pr&uuml;fung entf&auml;llt, 
+da die Entscheidungsfreiheit &uuml;ber markiert oder nicht markiert bei Ihnen liegt.
+</p>
+
+<p>
+Ebenfalls neu sind die mehrzeiligen Eingabefelder (Textareas) zur Eingabe der Kopfzeilen. Doch auch deren 
+Umsetzung bereitet uns keine Kopfschmerzen. Wie einfach sich die technische Umsetzung gestaltet, sehen Sie zum 
+Beispiel in der Zeile 250. Auch die JavaScript-Pr&uuml;fung in den Zeilen 62 - 65 ist kein Hexenwerk mehr.
+</p>
+
+<p>
+Somit ist die Anzeige der Eintr&auml;ge sowie Parameter der Umfrage in der Administration bereits abgeschlossen und wir 
+k&ouml;nnen uns dem Erstellen, &Auml;ndern und L&ouml;schen der Eintr&auml;ge sowie der Parameter-&Auml;nderung widmen.
+</p>
+
+<h2>Anlegen, &auml;ndern und L&ouml;schen von Eintr&auml;gen</h2>
+
+<p>
+Das Formular f&uuml;r die Erfassung neuer Homepages f&uuml;r die Umfrage ist auf zwei Felder geschrumpft:
+</p>
+
+<IMG SRC="Bilder/200104/20010417_6.png" width="533" height="277" alt="" border="0">
+
+<p>
+Entsprechend einfach ist der Code geworden, der zur Speicherung der neuen Eintr&auml;ge notwendig ist (Zeilen 99 - 182 in 
+<a href="20010417_logik_umfrage_cc.htm" target="_blank">logik.asp</a>) und bei fehlerfreier Eingabe zu folgendem Ergebnis f&uuml;hrt:
+</p>
+
+<IMG SRC="Bilder/200104/20010417_7.png" width="531" height="267" alt="" border="0">
+
+<p>
+Ebenso wurden die Befehle f&uuml;r das &Auml;ndern und L&ouml;schen von Eintr&auml;gen angepasst. Sie befinden sich in den Zeilen 
+183 - 324 (&auml;ndern und &Auml;nderungen speichern) und in den Zeilen 326 - 346 (L&ouml;schen von Eintr&auml;gen).
+</p>
+
+<h2>&Auml;ndern der Parameter</h2>
+
+<p>
+Der Code (Zeilen 369 - 769) f&uuml;r das Speichern der ge&auml;nderten Parameter wurde durch die gr&ouml;&szlig;ere Anzahl an 
+Formularfelder etwas umfangreicher - keinesfalls aber schwieriger. Nach dem Einlesen aller Parameter in 
+den Zeilen 6 - 28, werden in den Zeilen 374 - 388 die Checkboxen ausgewertet. Danach werden s&auml;mtliche Parameter in 
+der Datenbank upgedatet. Der &uuml;brige Code ist nur noch f&uuml;r die Ausgabe der Best&auml;tigung, da&szlig; die Daten korrekt 
+gespeichert wurden, zust&auml;ndig.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Somit sind wir am Ende des Artikels angekommen. Nat&uuml;rlich ist die hier vorgestellte Umfrage beliebig erweiterbar. 
+So k&ouml;nnten Sie daraus zum Beispiel leicht ein Bewertungssystem f&uuml;r Ihre Homepage programmieren. Eine weitere 
+M&ouml;glichkeit w&auml;re auch, da&szlig; Sie die Umfrage dahingehend erweitern, da&szlig; nur eine Wahl je Benutzer getroffen werden kann, 
+sei es durch eine Benutzerverwaltung oder den Einsatz von Cookies.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010417.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="19990808.htm">Caching bei Browser und Proxy - Woher Seiten wirklich kommen</a><br>
+<a href="20001205.htm">Erstellung eines Newstickers in ASP</a><br>
+<a href="20010209.htm">Erstellung eines Newstickers in ASP - Teil 2</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20010417" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Eine Umfrage in ASP erstellen"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20010417.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Alexander Zeitler"><input type="hidden" name="AuthorEmail" value="azeitler@aspintranet.de"><input type="hidden" name="Artikel" value="20010417"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20010417.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

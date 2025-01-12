@@ -1,0 +1,503 @@
+<HTML>
+<HEAD>
+<TITLE>Ein Excel-Sheet am Server generieren und zum Client schicken</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im heutigen Artikel erfahren Sie, wie man ein Microsoft Excel SpreadSheet auf einem Server programmatisch generiert, und dann bequem  - ohne es im Browser &ouml;ffnen zu m&uuml;ssen - zum Client schickt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Excel,out of process,AspAllowOutOfProcComponents,FileCache,XLS,Spreadsheet,Tabelle,Dynamisch">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Ein Excel-Sheet am Server generieren und zum Client schicken</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010305"></SCRIPT>
+</p>
+<p>
+Im heutigen Artikel erfahren Sie, wie man ein Microsoft Excel SpreadSheet auf einem Server programmatisch
+generiert, und dann bequem  - ohne es im Browser &ouml;ffnen zu m&uuml;ssen - zum Client schickt. Um das Beispiel etwas praxisn&auml;her
+zu gestalten, werden die Daten die das SpreadSheet sp&auml;ter enthalten soll, mit einer Datenbankabfrage geholt.
+</p>
+
+
+<h2>Vorbereitungen</h2>
+
+<p>
+Um dieses Beispiel ausprobieren zu k&ouml;nnen ben&ouml;tigen Sie Windows NT oder Windows 2000, einen Web Server (IIS Version 4 
+oder Version 5) und Microsoft Excel f&uuml;r die Objekterstellung w&auml;hrend der Dateigenerierung.
+</p>
+
+<p>
+<b>Hinweis:</b> Diejenigen, die den IIS 4 verwenden, m&uuml;ssen zuerst noch den Webserver so konfigurieren, da&szlig; er 
+<i>Out-Of-Process</i> Komponenten bzw. Applikationen starten kann. Anderenfalls erhalten Sie w&auml;hrend dem Ablauf des
+Beispiel Scriptes in der Zeile, in der mit Hilfe von <i>Server.CreateObject</i> das Excel Application Objekt erstellt
+wird, eine Fehlermeldung. 
+</p>
+
+<p>
+Um dies zu vermeiden m&uuml;ssen Sie daher die IIS Metabase ver&auml;ndern. Eine Anleitung zur Durchf&uuml;hrung finden Sie
+<a href="http://support.microsoft.com/support/kb/articles/Q184/6/82.ASP" target="_blank">hier</a> auf der Microsoft 
+Online Support Seite.
+</p>
+
+<p>
+Im IIS 5 ist das Starten von EXE COM Komponenten standardm&auml;&szlig;ig erlaubt. Wie schon erw&auml;hnt ist es eine Voraussetzung,
+da&szlig; Microsoft Excel am Server installiert ist. Ansonsten schl&auml;gt die Erstellung des Objekts fehl, und man erh&auml;lt 
+folgende Fehlermeldung:
+</p>
+
+<p>
+<IMG SRC="Bilder/200103/20010305_2.png" width="522" height="325" alt="" border="0">
+</p>
+
+<p>
+Ein weiteres potentielles Problem: Da das Script die generierte Excel-Datei in einen Serverpfad schreibt, m&uuml;ssen die entsprechenden <i>Permissions</i>
+gesetzt werden. Andernfalls erhalten Sie einen solchen Fehler:
+</p>
+
+<p>
+<IMG SRC="Bilder/200103/20010305_3.png" width="569" height="341" alt="" border="0">
+</p>
+
+<p>
+Die <i>Schreibpermissions</i> setzen Sie im jeweiligen Verzeichnis wo sich das Script befindet oder in welches Verzeichnis
+die generierte Excel-Datei geschrieben werden soll. Nun, da die Grundvoraussetzungen hiermit erbracht wurden, k&ouml;nnen wir mit dem Beispielsourcecode
+anfangen.
+</p>
+
+<h2>Die Aufgabe und L&ouml;sung</h2>
+
+<p>
+Es soll ein Excel SpreadSheet am Server unter Verwendung von ASP genieriert werden. Ich habe hierf&uuml;r einfach
+eine fiktive &Uuml;bersicht aus den Gewinnen verschiedener Produkte genommen. Da es eine kleine Firma mit nur wenigen Produkten ist,
+sind die Gewinne der einzelnen Produkte auch in einer Microsoft Access Datenbank gespeichert. Der Einfachheit halber 
+besteht diese Datenbank nur aus einem Feld f&uuml;r Prim&auml;rschl&uuml;ssel (f&uuml;r dieses Beispiel unerheblich), eines f&uuml;r den 
+Produktnamen (<i>ProductName</i>) und eines f&uuml;r den Einzelgewinn (<i>ProductIncome</i>) des Produktes.
+</p>
+
+<p>
+Die Tabelle der Access Datenbank, welche die Daten enthalten soll sieht dabei so aus:
+</p>
+
+<p>
+<IMG SRC="Bilder/200103/20010305_4.png" width="558" height="342" alt="" border="0">
+</p>
+
+<p>
+Nach der Erstellung der Tabellenstruktur habe ich nun die Datentabelle mit fiktiven Werten bef&uuml;llt:
+</p>
+
+<p>
+<IMG SRC="Bilder/200103/20010305_5.png" width="352" height="213" alt="" border="0">
+</p>
+
+<p>
+Mit ASP werden wir diese Daten auslesen und in ein Excel SpreadSheet verfrachten. Um einen Web Browser daran zu hindern,
+da&szlig; nach der Fertigstellung der Excel-Datei Excel ge&ouml;ffnet wird, verwende ich die 
+<a href="http://www.alphasierrapapa.com/IisDev/Components/FileCache/">FileCache 2.1 Komponente</a> von 
+<a href="http://www.alphasierrapapa.com">AlphaSierraPapa.com</a> um die Datei zum Client zu schicken. Dieser kann
+sie dann bequem lokal abspeichert und weiterverwenden.
+</p>
+
+<p>
+Sehen wir uns nun den Sourcecode n&auml;her an (<b>GenXlsSample.asp</b>): 
+</P>
+
+<h3>Das SpreadSheet generieren</h3>
+
+<pre style="background='silver';">
+Set xlApp = Server.CreateObject("Excel.Application")
+Set xlBook = xlApp.Workbooks.Add
+Set xlSheet = xlBook.Worksheets(1)
+</pre>
+
+<p>
+Zuerst instanzieren wir das <i>Excel Application</i> Objekt. Danach erstellen wir darin ein &quot;Workbook&quot; (Arbeitsmappe)
+und f&uuml;gen dem Workbook ein SpreadSheet hinzu. Damit die Microsoft Excel Applikation dabei nicht sichtbar wird, setzen wir:
+</p>
+
+<pre style="background='silver';">
+xlApp.Application.Visible = False
+</pre>
+
+<p>
+Um ein paar optische Aufbesserungen durchzuf&uuml;hren, formatieren wir die &Uuml;berschrift des SpreadSheets:
+</p>
+
+<pre style="background='silver';">
+With xlApp.ActiveSheet.Cells(1,1)
+	.Value = "Overall Product Sales 2000"
+	.Font.Bold = True
+	.Font.Name = "Tahoma"
+	.Font.Size = 16
+End With
+</pre>
+
+<p>
+Zus&auml;tzlich formatiern wir auch noch die Spalten&uuml;berschriften:
+</p>
+
+<pre style="background='silver';">
+With xlApp.ActiveSheet.Cells(3,1)
+	.Value = "Product Name"
+	.Font.Italic = True
+	.Font.Name = "Tahoma"
+	.Font.Size = 13
+	.MergeCells = True
+End With
+
+With xlApp.ActiveSheet.Cells(3,2)
+	.Value = "Product Income"
+	.Font.Italic = True
+	.Font.Name = "Tahoma"
+	.Font.Size = 13
+	.MergeCells = True
+End With
+</pre>
+
+<h3>Die Access Datenbank Abfrage</h3>
+
+<p>
+Da wir die erforderlichen aus der Datenbank holen m&ouml;chten, ist wie immer der folgende Sourcecode notwendig:
+</p>
+
+<pre style="background='silver';">
+Set objConn = Server.CreateObject("ADODB.Connection")
+Set objRS = Server.CreateObject("ADODB.Recordset") 
+
+strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source="
+strConn = strConn &amp; Server.MapPath("Sales00.mdb") 
+strQuery = "SELECT ProductName,ProductIncome FROM ProductSales"
+</pre>
+
+<p>
+Nun k&ouml;nnen wir die ben&ouml;tigten Daten aus der Datenbank holen, indem wir mit Hilfe des <i>RecordSet</i> Objektes
+durch die einzelnen Datenreihen iterieren:
+</p>
+
+<pre style="background='silver';">
+While Not objRS.EOF
+  xlApp.ActiveSheet.Cells(iRow,1).Value = objRS("ProductName")
+  xlApp.ActiveSheet.Cells(iRow,2).Value = objRS("ProductIncome")
+  xlApp.ActiveSheet.Cells(iRow,2).NumberFormat = "$#,##0.00"
+  iRow = iRow + 1
+  objRS.MoveNext
+Wend
+</pre>
+
+<p>
+Da nun die Daten im Excel SpreadSheet abgelegt sind, k&ouml;nnen wir die Datei am Web Server speichern:
+</p>
+
+<pre style="background='silver';">
+xlSheet.SaveAs Server.MapPath(strFileName)
+</pre>
+
+<p>
+Jetzt ist es Zeit, Excel zu schlie&szlig;en und die ben&ouml;tigten Resourcen wieder freizugeben:
+</p>
+
+<pre style="background='silver';">
+xlApp.Application.Quit
+
+objRS.Close
+objConn.Close
+Set objRS = Nothing
+Set objConn = Nothing
+Set xlSheet = Nothing
+Set xlBook = Nothing
+Set xlApp = Nothing
+</pre>
+
+<h3>Senden der Datei zum Client</h3>
+
+<p>
+Das Excel SpreadSheet ist nun fertig. Was jetzt noch fehlt ist die Versendung zum Client. Wie eingangs erw&auml;hnt, habe ich um
+dies zu erledigen die <i>FileCache</i> Komponente verwendet. Diese ist einfach zu verwenden und der ben&ouml;tigte Sourcecode ist 
+schnell geschrieben:
+</p>
+
+<pre style="background='silver';">
+Set objFileCache = Server.CreateObject("Softwing.FileCache.1")
+bXlsFile = objFileCache.InitFromFile(strFileName, False)
+objFileCache.MimeType = "application/octet-stream"
+bXlsFile = objFileCache.Write()
+
+Response.End
+</pre>
+
+<p>
+Hier erh&auml;lt der Client nun einen <i>Speichern als</i> Dialog und kann die Datei lokal abspeichern. Wenn man nun die
+erstellte Excel Datei in Excel &ouml;ffnet, erh&auml;lt man das gew&uuml;nschte Resultat:
+</p>
+
+<p>
+<IMG SRC="Bilder/200103/20010305_1.png" width="357" height="355" alt="" border="0">
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Dies war ein einfaches Beispiel zur Generierung eines Excel SpreadSheets mit ASP unter zus&auml;tzlicher Verwendung einer
+Datenbankabfrage. Der pr&auml;sentierte Beispiel Sourcecode ist nat&uuml;rlich erweiterbar. Man k&ouml;nnte z.B. mit den 
+<i>Office Web Components</i> die gewonnenen Daten aus der Datenbank in einem Diagramm visualisiern - 
+aber das ist eine andere Geschichte.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010305.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20010223.htm">Dateien zum Client schicken</a><br>
+<a href="20001204.htm">Die SA Excel Writer Komponente</a><br>
+<a href="20010307.htm">Ein Excel-Diagramm am Server generieren und zum Client schicken</a><br>
+<a href="20001110.htm">Excel Dateien ohne Excel anzeigen</a><br>
+<a href="20010309.htm">Excel Diagramme als GIF's serven</a><br>
+<a href="20010319.htm">Mit ASP ein Word Dokument am Server generieren</a><br>
+<a href="20001207.htm">SA ExcelWriter in Action</a><br>
+<a href="20020128.htm">Serverdaten clientseitig in Exceltemplates importieren</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2F">AlphaSierraPapa</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2FIisDev%2FComponents%2FFileCache%2F">FileCache 2.1 Komponente</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsupport%2Emicrosoft%2Ecom%2Fsupport%2Fkb%2Farticles%2FQ184%2F6%2F82%2EASP">PRB: Cannot Launch Out of Process Component Under IIS 4</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20010305" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Ein Excel-Sheet am Server generieren und zum Client schicken"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20010305.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Holm"><input type="hidden" name="AuthorEmail" value="office@holmcs.com"><input type="hidden" name="Artikel" value="20010305"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20010305.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

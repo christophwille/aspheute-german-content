@@ -1,0 +1,545 @@
+<HTML>
+<HEAD>
+<TITLE>Dynamische Seiten indizierbar machen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel stellt der Autor den PortalPage Filter vor, der es erlaubt, dynamische Webseiten in die Suchmaschinen mittels Spider aufnehmen zu lassen - ohne Ihre ASP Seite umbauen zu m&uuml;ssen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,PortalPageFilter,Doorway,doorway pages,Spider,Suchmaschinen,Platzierung,Ranking,Platz,Top,Suche">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Dynamische Seiten indizierbar machen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010206"></SCRIPT>
+</p>
+<p>
+Heutzutage ist eine Firmenwebsite meist g&auml;nzlich dynamisch aufgebaut, und umfasst im umfangreichen Falle
+mehrere tausend Seiten. Obwohl solche Sites enormen Content anzubieten haben, und sicher in alle Suchmaschinen
+submitted wurden, ist die Trefferquote bei Suchen nicht gerade ber&uuml;hmt - warum?
+</p>
+<p>
+Der Grund ist, da&szlig; dynamische Sites meist ein Fragezeichen (&quot;?&quot;) im Seitenaufruf enthalten - f&uuml;r
+den Querystring - und das indizieren die Spider der Suchmaschinen nicht.
+Dieser Artikel stellt den <i>PortalPage Filter</i> von AlphaSierraPapa vor, der Ihre dynamischen Seiten f&uuml;r 
+Spider indizierbar und somit f&uuml;r Ihre potentiellen Kunden in den Suchmaschinen findbar macht - und dies 
+geschieht ohne da&szlig; Sie Ihre Website neu programmieren zu m&uuml;ssen.
+</p>
+
+<p>
+Bevor wir richtig loslegen, m&ouml;chte ich Ihnen kurz die wichtigsten Eckdaten der Software pr&auml;sentieren.
+Also, was sie mit Ihren dynamischen URLs macht, sowie die Vorteile die Sie durch ihre Verwendung erzielen.
+Danach folgt eine kurze Installationsanleitung und nat&uuml;rlich auch ein 
+Beispiel einer dynamisch generierten Mini-Website, mit der Sie dann auch selbst die Funktionalit&auml;t der Software
+testen k&ouml;nnen.
+</p>
+
+<h2>Was geschieht?</h2>
+
+<p>
+Bei dynamischen Webseiten lassen sich oft Querystrings nicht vermeiden - bei Redaktionssystemen zum Beispiel
+kommt der ganze Inhalt aus der Datenbank, aber die Seite zur Darstellung ist nur einmal programmiert - 
+ an die Seite wird eine ID &uuml;bergeben, anhand derer die Daten aus der Datenbank geholt und dargestellt werden.
+Das Problem aber ist, da&szlig; Spider Seiten mit angeh&auml;ngten Fragezeichen nicht indizieren, also der gesamte sch&ouml;ne
+dynamische Inhalt nicht suchbar ist. M&ouml;glicherweise ist sogar nur die Startseite Ihrer Webpr&auml;senz indiziert...
+</p>
+
+<p>
+Hier kommt nun der PortalPage Filter (PPF) zum 
+Einsatz. Dieser l&auml;&szlig;t, eingemappt als ISAPI Filter, Ihre dynamische Web Site von au&szlig;en her 
+komplett <i>statisch</i> aussehen - Ihre Site wird nun auch f&uuml;r Spider akzeptabel.
+Nun steht einem Eintag Ihrer Web Site samt relevanter Unterseiten in die Suchmaschinen nichts mehr im Wege.
+Das Beste ist, da&szlig; bei 
+Verwendung dieses Filters die Funktionalit&auml;t Ihrer ASP Querystrings nach innen vollst&auml;ndig erhalten bleibt.
+</p>
+
+<p>
+Sehen wir uns nun ein kleines Beispiel an, wie ein "normaler" URL mit Querystring aussieht - einer, der nicht
+von Suchmaschinen indiziert wird:
+</p>
+
+<pre style="background='silver';">
+http://www.IDontuseppf.com/item.asp?PicID=1
+</pre>
+
+<p>
+Hingegen wird der folgende URL sehr wohl von Suchmaschinen besucht werden:
+</p>
+
+<pre style="background='silver';">
+http://www.Iuseppf.com/picturedb/PPF/PicID/1/item.asp
+</pre>
+
+<p>
+Hier hat der PortalPage Filter seine Finger im Spiel.
+Diese Interpretation des Querystrings zu einer Art &quot;Pseudo-Pfadstruktur&quot; ver&auml;ndert nat&uuml;rlich
+keinesfalls die ASP Funktionalit&auml;t Ihrer Site. Die Querystrings bleiben <i>nur</i> nach au&szlig;en hin 
+verborgen, intern &auml;ndert sich gar nichts.
+</p>
+
+<p>
+Wie immer gibt es mehrere M&ouml;glichkeiten um ans gew&uuml;nschte Ziel zu gelangen. Um die Vorteile der
+PPF Komponete zu verdeutlichen, besprechen wir diese an einem konkreten Problem-Beispiel einer
+Web Site gr&ouml;&szlig;eren Umfangs.
+</p>
+
+<h2>Vorteile in der Verwendung</h2>
+
+<p>
+Nehmen wir an, wir h&auml;tten eine Web Site mit einer Datenbankanbindung, einen
+Produktkatalog und zus&auml;tzlich einen Web Shop. Alle Seiten werden dynamisch mit ASP generiert und
+die einzelnen Produkte werden &uuml;ber eine getroffene Auswahl, einem Query String, erreicht.
+</p>
+
+<p>
+Auf der Hauptseite findet der Kunde daher nur eine &Uuml;bersicht &uuml;ber die vertriebenen Hauptproduktgruppen.
+Da Interessierte meistens in den Suchmaschinen nach den Produkten selbst suchen und eher selten
+nach dem Oberbegriff, stellt sich schon das eigentliche Problem dar. Da Ihre Hauptseite ja keine
+Query Strings enth&auml;lt, ist sie in der Suchmaschine auffindbar. Jedoch die eigentlichen Produkte nicht,
+da diese Unterseiten mittels Query Strings angesteuert werden.
+</p>
+
+<p>
+Da Suchmaschinen generell tausende Suchergebnisse zur&uuml;ckliefern, w&auml;re es doch vorteilhaft dem Kunden
+sofort auf sein gew&uuml;nschtes Produkt auf Ihrer Web Site hinzuleiten, anstatt ihn auf Ihrer Hauptseite
+erneut zu einer genaueren Suche aufzufordern.
+</p>
+
+<p>
+Um dieses Problem zu l&ouml;sen gibt es mehrere; eine kostspielige und aufwendige w&auml;re, da&szlig; Sie zus&auml;tzliche Domains erstellen, 
+die die einzelnen Inhalte als statische Seiten enthalten. Diese M&ouml;glichkeit ist, wie gesagt 
+schon bei einem umfangreichen Online-Angebot kostspielig um den gesamten Inhalt zu indizieren und zu warten.
+</p>
+ 
+<p>
+Als g&uuml;nstige und einfach anzuwendende Alternative bietet sich die 
+<a href="http://www.alphasierrapapa.com/Products/PortalPageFilter/" target="_blank">PortalPage Filter Komponente</a> von 
+AlphaSierraPapa an. Durch die Interpretation der Querystrings enthaltenden URLs wird der dynamische
+Inhalt Ihrer Web Site, welcher z.B. aus einer Datenbank generiert wird, von au&szlig;en her <i>statisch</i>.
+Nun werden auch die Unterseiten, die die tats&auml;chlichen Produkte enthalten f&uuml;r Spider akzeptabel. Und
+Ihre zuk&uuml;nfigen Kunden finden nach einer Websuche sofort und unkompliziert <i>genau</i> das, was sie
+gesucht haben. Schon allein diese Erleichterung erh&ouml;ht die Anzahl der Hits auf Ihre Web Site.
+</p>
+
+<p>
+Sie erhalten diese Funktionalit&auml;t f&uuml;r Ihre Web Site ohne gro&szlig;en Installations- und Administrationsaufwand.
+Um sich &uuml;ber diese Vorteile selbst ein Bild zu machen, k&ouml;nnen Sie kostenlos eine 
+<a href="http://www.alphasierrapapa.com/componentcenter/Download../default.htm?program=6">Testversion</a>
+und zus&auml;tzlich eine kleine 
+<a href="http://www.alphasierrapapa.com/componentcenter/Download../default.htm?program=7">Test-Web Site</a>
+downloaden.
+</p>
+
+<p>
+F&uuml;r den Fall des Falles steht Ihnen als zus&auml;tzliche Hilfestellung eine 
+<a href="http://www.alphasierrapapa.com/Support/FAQ/" target="_blank">Frequently Asked Questions Liste</a> 
+sowie eine umfassende <a href="http://www.alphasierrapapa.com/Products/PortalPageFilter/" target="_blank">Dokumentation</a>
+online zur Verf&uuml;gung.
+</p>
+
+<h2>Lizenzmodelle</h2>
+<p>
+Die PortalPageFilter Komponente wird in zwei Lizenz-Versionen angeboten: einmal per Website, das 
+andere per Webserver (unlimitierte Anzahl von Sites). Beides wird als <i>Electronic Software Download (ESD)</i> 
+angeboten, d.h. Sie erhalten die Software sofort nach dem Kauf.
+</p>
+
+<h2>Die Installation</h2>
+
+<p>
+Die Installation der Komponete ist je nach Lizenz - entweder nur f&uuml;r eine Web Site oder f&uuml;r einen Server - 
+unterschiedlich, jedoch denkbar einfach. Folgend die Erkl&auml;rungen zur Installation der Websitelizenz, da dies
+auch der gleiche Vorgang f&uuml;r die Testversion ist:
+</p>
+
+<p>
+&Ouml;ffnen Sie den <i>Internet Services Manager</i> und klicken Sie mit der rechten Maustaste auf die
+gew&uuml;nschte Web Site, um das Kontextmen&uuml; 
+zu erhalten. Klicken Sie nun auf <i>Properties</i> (Eigenschaften)
+und wechseln Sie zu <i>ISAPI Filters</i>. Mit <i>Add</i> (Hinzuf&uuml;gen) erhalten Sie das
+<i>Filter Properties</i> Fenster, in dem Sie die n&ouml;tigen Informationen zum Filter eingeben m&uuml;ssen (siehe
+Screenshot):
+</p>
+
+<IMG SRC="Bilder/200102/20010206_1.png" width="332" height="163" alt="" border="0">
+
+<p>
+Die Eintr&auml;ge nur noch mit <i>OK</i> best&auml;tigen. Der Filter ist sofort nach Best&auml;tigung mit <i>OK</i> oder
+durch Klicken auf <i>Apply</i> (Anwenden) verf&uuml;gbar. Damit w&auml;re der erste Teil abgeschlossen. 
+</p>
+
+<h2>Konvertierung der URLs</h2>
+
+<p>
+Interessierte unter Ihnen werden sicher nun fragen, wie der PPF grunds&auml;tzlich die statischen
+URLs f&uuml;r die verlinkten Seiten genieriert, um sie f&uuml;r Spider vertr&auml;glich zu machen. 
+Dieser Abschnitt soll kurz diese Punkte beschreiben.
+</p>
+
+<p>
+Die ASP Function Library des PortalPage Filter ist in der Datei <i>ppfhelpers.asp</i> enthalten, die der Kaufversion
+und der Demoversion beiliegt. Diese Library konvertiert Links mit Query Strings wie 
+</p>
+
+<pre style="background='silver';">
+http://www.IDontuseppf.com/item.asp?PicID=1
+</pre>
+
+<p>in statische wie</p> 
+
+<pre style="background='silver';">
+http://www.Iuseppf.com/picturedb/PPF/PicID/1/item.asp
+</pre>
+
+<p>
+Die Library bietet hierf&uuml;r die folgenden Funktionen
+</p>
+
+<pre style="background='silver';">
+Function GenerateURLFromArray(ByVal strURI, ByRef arrParameters, ByRef arrValues)
+
+Function GenerateURL_OneParam(ByVal strURI, ByRef strParamName, ByRef strParamValue)
+
+Function GenerateThis_OneParam(ByRef strParamName, ByRef strParamValue)
+
+Function GenerateThis_FromArray(ByRef arrParameters, ByRef arrValues)
+</pre>
+
+<p>
+Dabei haben die oben angef&uuml;hrten Funktionen folgende unterschiedlichen Modi:
+</p>
+
+<p>
+<b>GenerateURLFromArray:</b> Sie &uuml;bergeben den URL, ein Array, also ein (Daten)Feld und ein Array
+von Parameterwerten. Die durch die PPF Komponente generierten Links werden basierend auf die von Ihnen
+angegeben Parameter interpretiert.
+</p>
+
+<p>
+<b>GenerateURL_OneParam:</b> Hier &uuml;bergeben Sie wieder den URL, den Namen eines Parameters und einen
+Parameterwert. Aus diesen angegebenen Informationen werden die Links durch die PPF Komponente interpretiert.
+</p>
+
+<p>
+<b>GenerateThis_OneParam:</b> In diesem Modus wird nur der Name eines Parameters und ein dazugeh&ouml;riger Wert
+&uuml;bergeben. Die Links werden basierend auf der SCRIPT_NAME Server-Variable und des angegebenen Parameters
+generiert.
+</p>
+
+<p>
+<b>GenerateThis_FromArray:</b> Sie &uuml;bergeben ein Array von Parameternamen, sowie ein Array von Parameterwerten.
+Die PPF Komponente erstellt die Links basierden auf der SCRIPT_NAME Server-Variable und der angegebenen Arrays
+generiert.
+</p>
+
+<p>
+Sie k&ouml;nnten nun fragen, warum bei ausgehenden Seiten nicht automatisch eine Linkkorrektur durchgef&uuml;hrt wird - dies
+hat zwei Gr&uuml;nde: erstens soll man selbst entscheiden k&ouml;nnen, welche Seiten durch Spider erreichbar werden. Zweitens
+ist es eine Entscheidung zu Gunsten der h&ouml;heren Geschwindigkeit, wie man in der 
+<a href="http://www.alphasierrapapa.com/Support/FAQ/" target="_blank">FAQ</a> nachlesen kann.
+</p>
+
+<h2>Produkt-Demo</h2>
+
+<p>
+Diese kleine Produkt-Demo soll die Konzepte, die Anwendung der ASP Funktionen, sowie die Generierung von Doorway
+Seiten zeigen. Diese Produkt-Demo k&ouml;nnen Sie nat&uuml;rlich auch separat
+<a href="http://www.alphasierrapapa.com/componentcenter/Download../default.htm?program=7">downloaden</a>.
+Das Download-Paket enth&auml;lt alle ben&ouml;tigten ASP Dateien, sowie eine MS Access Datenbank und ein paar 
+nette Bilder.
+</p>
+
+<p>
+In der Hauptseite, z.B. <i>default.asp</i>, m&uuml;ssen Sie nur die ASP Function Library <i>ppfhelpers.asp</i> 
+mittels <i>&lt;!-- include ... &gt;</i> referenzieren.
+</p>
+
+<pre style="background='silver';">
+...
+&lt;!--#include file=&quot;../ppfhelpers.asp&quot;--&gt;
+...
+</pre>
+
+<p>
+Nach der Angabe des Connection-Strings, des SQL-Strings f&uuml;r die Abfrage und der Erstellung des Recordset
+Objektes lassen wir uns nun die Links, z.B. mit Hilfe der Funktion <i>GenerateURL_OneParam</i>, erstellen:
+</p>
+
+<pre style="background='silver';">
+...
+Response.Write GenerateURL_OneParam(&quot;item.asp&quot;,&quot;PicID&quot;,rs(0))
+...
+</pre>
+
+<p>
+<i>item.asp</i> ist hier der erforderliche URL, <i>PicID</i> der Parametername und <i>rs(0)</i> der
+(Anfangs)Wert des angegebenen Parameters.
+</p>
+<p>
+Bei Ausf&uuml;hrung dieser ASP Datei erhalten Sie folgendes Resultat, welches eine Doorway Seite darstellt:
+</p>
+
+<IMG SRC="Bilder/200102/20010206_3.png" width="452" height="211" alt="" border="0">
+
+<p>
+Wenn Sie dann auf den durch die PPF Komponente generierten Link klicken, sehen Sie eine Detailseite eines
+Produkts (Screenshot).
+</p>
+
+<IMG SRC="Bilder/200102/20010206_4.png" width="563" height="477" alt="" border="0">
+
+<p>
+Die Beispielanwendung kann mittels einer Variable von Querystring auf statische PortalPage Filter Links
+umgestellt werden, um zu demonstrieren, da&szlig; die ASP Funktionalit&auml;t der Zielseiten nicht ver&auml;ndert werden mu&szlig;.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Sie sollten zwei Dinge aus diesem Artikel mitnehmen: PortalPage Filter erlaubt Ihnen, Ihre Site vollst&auml;ndig
+suchbar zu machen, ohne da&szlig; Sie Ihre QueryString-basierten Seiten umprogrammieren m&uuml;&szlig;ten - nur die Seite,
+die Sie an die Suchmaschine abschicken. Ein einfacher Weg, um im Netz der Netze h&auml;ufiger gefunden zu werden.
+</p><h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2Fcomponentcenter%2FDownload%2Fdefault%2Easp%3Fprogram%3D7">Demowebsite für PortalPageFilter</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2FSupport%2FFAQ%2F">FAQ zu PortalPageFilter</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2FProducts%2FPortalPageFilter%2F">PortalPageFilter Infopage</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2Fcomponentcenter%2FDownload%2Fdefault%2Easp%3Fprogram%3D6">Testversion PortalPageFilter</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20010206" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Dynamische Seiten indizierbar machen"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20010206.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Holm"><input type="hidden" name="AuthorEmail" value="office@holmcs.com"><input type="hidden" name="Artikel" value="20010206"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20010206.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

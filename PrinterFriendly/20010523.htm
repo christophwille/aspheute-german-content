@@ -1,0 +1,178 @@
+<HTML>
+<HEAD>
+<TITLE>ReportMagic f&uuml;r Analog</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Ich habe bereits im letzten Artikel gezeigt, da&szlig; Analog ein hervorragendes Tool zum Auswerten von Logfiles ist. Aber bei der visuellen Aufbereitung hapert es etwas. Dem kann aber abgeholfen werden - mit ReportMagic f&uuml;r Analog.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Logfile,Analyse,Analog,ReportMagic,Aufbereitung,Reports,Diagramme,Auswertung,Logdatei">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>ReportMagic f&uuml;r Analog</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Server.htm">Server</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010523"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Ich habe bereits im letzten Artikel gezeigt, da&szlig; Analog ein hervorragendes Tool 
+zum Auswerten von Logfiles ist. Aber bei der visuellen Aufbereitung hapert es etwas. Dem kann
+aber abgeholfen werden - mit ReportMagic f&uuml;r Analog.
+</p>
+<p>
+Wie Analog, ist auch ReportMagic gratis <a href="http://www.reportmagic.com/" target="_blank">downzuloaden</a>.
+Und ebenso wie Analog ist auch ReportMagic ein Kommandozeilentool, das mittels Konfigurationsdateien
+gesteuert werden will. Zum Gl&uuml;ck bleibt es einem aber erspart, Perl zu installieren: die ausf&uuml;hrbare Datei
+von ReportMagic ist ein kompiliertes Perlprogramm.
+</p>
+
+<h2>Dateien f&uuml;r ReportMagic aufbereiten</h2>
+<p>
+Im Artikel <a href="../artikel/20010517.htm">Gratis Loganalyse mit Analog</a> habe ich gezeigt, wie
+man HTML Reports direkt in Analog erstellen kann. Zwar kann ReportMagic nichts mit dem HTML Report an sich
+anfangen, aber wir sind beinahe am Ziel - denn wir m&uuml;ssen in unserer Konfigurationsdatei von Analog nur
+2 Zeilen &auml;ndern.
+</p>
+<p>
+Diese zwei Zeilen dienen dazu, das Ausgabeformat und den Namen der Ausgabedatei zu &auml;ndern:
+</p>
+
+<pre style="background='silver';">
+OUTPUT COMPUTER
+OUTFILE Report.dat
+</pre>
+
+<p>
+Damit erh&auml;lt man eine Reportdatei, die von ReportMagic gelesen und verarbeitet werden kann.
+</p>
+
+<h2>Reportaufbereitung in ReportMagic</h2>
+<p>
+Ebenso wie Analog kommt ReportMagic mit etlichen Beispielen, wie eine Konfigurationsdatei aussehen k&ouml;nnte.
+Im Zusammenspiel mit der (sehr guten) Hilfe ist es einfach, schnell sch&ouml;ne Berichte zu zaubern - mit denen
+man das Management beeindrucken kann.
+</p>
+<p>
+Ich habe mich daf&uuml;r entschieden, einen WebTrends-&auml;hnlichen Report mit einem Framedokument, Navigation
+links, und einem einzigen Reportdokument im rechten Frame zu erstellen. Die entsprechende <b>report.ini</b>
+sieht dann wie folgt aus:
+</p>
+
+<pre style="background='silver';">
+[statistics]
+File_In = report.dat
+Frame_File_Out = index.html
+Active_Column=R
+Summary_Rows= m, d, h, c
+
+[reports]
+File_Out = onefile\report.html
+Font = Verdana, Arial, Helvetica, sans-serif
+Title_BG_Color = #000000
+Title_Font_Color = #FFFFFF
+Title_Font = Comic Sans MS, Brush Script, Helvetica, sans-serif
+Data_Color_1 = #F0F0F0
+Data_Color_2 = #FFFFFF
+Data_Total_Color = #FFCCCC
+Data_Header_Color = #CCCCFF
+Data_Font = Verdana, Arial, Helvetica, sans-serif
+
+[navigation]
+File_Out = navfile.html
+Page_Font = Verdana, Arial
+
+[website]
+Title = AspHeute - Der t&auml;gliche Artikel zu ASP
+Webmaster = webmaster@aspheute.com
+Base_URL = http://www.aspheute.com
+</pre>
+
+<p>
+Ich habe auf die Angabe von Pfaden verzichtet, und die Datei <b>report.dat</b> der Einfachheit halber
+in das ReportMagic Verzeichnis kopiert. Ein einfacher Aufruf von
+</p>
+
+<pre style="background='silver';">
+rmagic report.ini
+</pre>
+
+<p>
+erstellt den Report f&uuml;r uns. Ein kleiner Ausschnitt davon ist im folgenden Screenshot gezeigt:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010523_1.png" width="581" height="432" alt="" border="0">
+
+<p>
+Ich habe mich zugegebenerma&szlig;en &uuml;ber die zahlreichen Optionen zur Erstellung verschiedenster
+Diagrammtypen hinweggeschwindelt - nur, dabei w&uuml;rde ich die Dokumentation duplizieren, die f&uuml;r
+eine Gratissoftware wirklich hervorragend Auskunft gibt.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Auch heute habe ich nur die Oberfl&auml;che der Funktionalit&auml;t eines Gratis-Loganalysetools angekratzt.
+Aber ich hoffe vermittelt zu haben, da&szlig; man nicht immer teure Software kaufen mu&szlig; um tolle Resultate
+zu erreichen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010517.htm">Gratis Loganalyse mit Analog</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010517.htm</span><br>
+<a href="../artikel/20021030.htm">Logfiles auswerten mit Webalizer</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021030.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ereportmagic%2Ecom%2F">ReportMagic Homepage</a><br>
+<SPAN class="content">http://www.reportmagic.com/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

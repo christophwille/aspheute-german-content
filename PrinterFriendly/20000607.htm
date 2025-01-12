@@ -1,0 +1,200 @@
+<HTML>
+<HEAD>
+<TITLE>IIS Konfiguration f&uuml;r WAP</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel erkl&auml;re ich Ihnen die Konfiguration des Web-Servers (Internet Information Services, IIS) f&uuml;r WML-Seiten, in denen Sie auch ASP Scripts laufen lassen k&ouml;nnen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,WAP,IIS,W@P,MIME,Mapping,ASP Engine,Konfiguration,File Type,HEAD,GET,POST,TRACE,Dateiendung,wml,wsc,wbmp">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>IIS Konfiguration f&uuml;r WAP</H1>
+<p>
+Geschrieben von: <a href="../autoren/stefangruendhammer.htm">Stefan Gründhammer</a><br>
+Kategorie: <a href="../kategorien/WAP.htm">WAP</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000607"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><P>
+In diesem Artikel erkl&auml;re ich Ihnen die Konfiguration des Web-Servers (Internet Information Services, IIS) 
+f&uuml;r WML-Seiten, in denen Sie auch ASP Scripts laufen lassen k&ouml;nnen. 
+</p>
+<p>
+Zuerst stelle ich Ihnen die verschiedenen MIME-Types vor, welche f&uuml;r eine fehlerfreie Darstellung von Daten 
+und Graphiken am Handydisplay sorgen, und dann gehen wir Schritt f&uuml;r Schritt die Konfiguration im IIS durch. 
+Ich gehe davon aus, da&szlig; Sie bereits im IIS eine Site konfiguriert haben, die Sie jetzt f&uuml;r WML-Seiten tauglich 
+machen wollen. Die Konfiguration von IIS4 l&auml;uft &uuml;brigens gleich wie in IIS5 ab.  
+</p>
+<p>
+Sie k&ouml;nnten es sich ja ganz einfach machen und einfach Ihrem Provider diese Aufgabe &uuml;berlassen, aber das ist 
+ja nicht Sinn der Sache.
+</p>
+
+<h2>MIME Types</h2>
+<p>
+Die MIME Konfiguration ist notwendig, denn WML ist extra f&uuml;r die Darstellung von Daten und Bildern auf dem 
+Handydisplay entwickelt worden, und hat daf&uuml;r einige neue MIME Types eingef&uuml;hrt. 
+</p>
+<p>
+MIME ist die Abk&uuml;rzung f&uuml;r "Multipurpose Internet Mail Extensions". MIME bezeichnet ein Verfahren zum 
+Bezeichnen von Inhalten (urspr&uuml;nglich f&uuml;r Email), das auch auf Webservern zur Anwendung kommt. Der Client 
+wei&szlig; dadurch, um welche Art des Inhalts es sich handelt, noch bevor die gesamte Datei geladen ist (und er 
+dann das Dateiformat raten m&uuml;&szlig;te).
+</p>
+<p>
+Damit Ihr Server WML Dateien mit dem richtigen MIME Type wegschickt (und somit der Gateway oder Browser das 
+Format erkennt), m&uuml;ssen Sie folgende Mime-Types auf Ihrem Server eintragen:
+</p>
+<p>
+<table>
+<tr><th>Type</th><th>Dateiendung</th><th>MIME Type</th></tr>
+<tr><td>WML Source</td><td>.wml</td><td>text/vnd.wap.wml</td></tr>
+<tr><td>Wireless Bitmap</td><td>.wbmp</td><td>image/vnd.wap.wbmp</td></tr>
+<tr><td>WML Script Source</td><td>.wmls</td><td>text/vnd.wap.wmls</td></tr>
+<tr><td>Kompiliertes WML</td><td>.wmlc</td><td>application/vnd.wap.wmlc</td></tr>
+<tr><td>Komipiliertes WML Script</td><td>.wmlsc</td><td>application/vnd.wap.wmlscriptc</td></tr>
+<tr><td>WML Script</td><td>.wsc</td><td>text/vnd.wap.wmlscript</td></tr>
+<tr><td>WML Script</td><td>.wmlscript</td><td>text/vnd.wap.wmlscript</td></tr>
+</table>
+</p>
+<p>
+Sie sollten zumindestens die Dateierweiterungen "wml" und "wbmp" eintragen, um die Mindestvoraussetzungen zu 
+erf&uuml;llen. 
+</p>
+<p>
+Falls Sie dynamische WML-Seiten generieren wollen, z.B. durch das Aufrufen von ASP-Scripts mu&szlig; der MIME-Type 
+"h&auml;ndisch" zur&uuml;ckgegeben werden. Das sieht dann wie folgt aus: 
+<pre style="background=silver;">
+Response.ContentType = "text/vnd.wap.wml"
+</pre>
+</p>
+<p>
+Wenn Sie Ihre WAP-Seite von einem Provider hosten lassen, und daher nicht die M&ouml;glichkeit und das Gl&uuml;ck haben 
+die MIME-Types selbst einzutragen, erkundigen Sie sich ob Ihr Provider diese Einstellungen bereits durchgef&uuml;hrt 
+hat - wenn nicht dann weisen Sie ihn darauf hin.
+</p>
+
+<h2>Schritt f&uuml;r Schritt Konfiguration des IIS f&uuml;r WAP</h2>
+<p>
+<ol>
+<li>&Ouml;ffnen Sie den Internet Services Manager (ISM). 
+<li>Expandieren Sie Ihren Server (bei mir hier ist das mephisto)
+<li>Klicken Sie mit der rechten Maustaste auf jene Site die Sie WAP-f&auml;hig machen wollen    
+    und w&auml;hlen Sie Eigenschaften (Properties)
+<IMG SRC="/artikel/Bilder/200006/20000607_1.png" width=450 height=568 border=0 alt="">
+<li>Selektieren Sie die Karteikarte mit dem Namen HTTP Headers
+<li>Klicken Sie auf File Types im Abschnitt Mime Map um die Mime Mappings zu konfigurieren.
+<IMG SRC="/artikel/Bilder/200006/20000607_2.png" width=460 height=451 border=0 alt="">
+<li>Gehen Sie auf New Type in der File Types Dialogbox
+<IMG SRC="/artikel/Bilder/200006/20000607_3.png" width=462 height=452 border=0 alt="">
+<li>Tragen Sie die MIME-Types so wie gezeigt ein. Die Dateierweiterung z.B. wml, wird in das obere Eingabefeld eingetragen. In das untere Feld der Type. Best&auml;tigen Sie mit OK, und wiederholen Sie die Schritte 6 und 7 f&uuml;r die restlichen in der Tabelle angef&uuml;hrten Mime Types 
+<IMG SRC="/artikel/Bilder/200006/20000607_4.png" width=462 height=453 border=0 alt="">
+<li>Schlie&szlig;en Sie alle offenen Fenster mit OK um Ihre Einstellungen zu speichern.
+<IMG SRC="/artikel/Bilder/200006/20000607_5.png" width=461 height=453 border=0 alt="">
+</ol>
+</p>
+<p>
+Diese Einstellungen stellen die verschiedenen Dateitypen dar, die der Web-Service dem Browser zur&uuml;ckgibt. Die 
+registrierten Dateitypen welche standardm&auml;&szlig;ig von Windows NT und Windows 2000 installiert werden, sind in der 
+"File Types"-Dialogbox des Web Servers aufgelistet (dort k&ouml;nnte man die Einstellung f&uuml;r den 
+gesamten Server &auml;ndern).
+</p>
+
+<h2>Mappen der neuen Dateiendungen auf die ASP Engine</h2>
+<p>
+Sinn  dieser Aktion ist es, ASP Scripts in einer .wml Datei ablaufen lassen zu k&ouml;nnen. Diese Idee ist speziell 
+dann sinnvoll, wenn man zuerst nur statischen Inhalt anbieten will, sp&auml;ter aber ohne Links zu brechen auf 
+dynamische ASP Inhalte umstellen m&ouml;chte. Dazu mu&szlig; man den jeweiligen Dateityp auf die ASP Engine mappen 
+(ginge zB auch f&uuml;r die .html Dateiendung). Dadurch versteckt man auch, da&szlig; man ASP verwendet - was ja hin 
+und wieder auch nicht schlecht ist.
+</p>
+<p>
+Wer jetzt bef&uuml;rchtet, da&szlig; dieses Mapping eine Geschwindigkeitseinbu&szlig;e bringt, den kann ich beruhigen: solange 
+kein ASP Code in der jeweiligen Datei ist, behandelt IIS die Seite wie ein normales statisches Dokument. Mit 
+dem ersten ASP Skript allerdings wird es dann von der ASP Engine abgearbeitet. Dieses Konzept der "scriptless 
+ASP pages" gibt es allerdings erst auf IIS5 - unter IIS4 ist ein leichter Geschwindigkeitsverlust durch dieses 
+Mapping zu erwarten (daher sollte man bei IIS4 warten, bis man die dynamische Funktionalit&auml;t wirklich braucht).
+</p>
+<p>
+<ol>
+<li>&Ouml;ffnen Sie den Internet Services Manager (ISM). 
+<li>Expandieren Sie Ihren Server (bei mir hier ist das mephisto)
+<li>Klicken Sie mit der rechten Maustaste auf jene Site, in der Sie bereits die MIME Types definiert haben und w&auml;hlen Sie Eigenschaften (Properties)
+<li>Selektieren Sie die Karteikarte mit dem Namen Home Directory
+<li>Klicken Sie auf Configuration
+<IMG SRC="/artikel/Bilder/200006/20000607_6.png" width=461 height=455 border=0 alt="">
+<li>In der Karteikarte App Mappings w&auml;hlen Sie Add
+<IMG SRC="/artikel/Bilder/200006/20000607_7.png" width=403 height=445 border=0 alt="">
+<li>In das Executable Feld geben Sie <i>Laufwerksbuchstabe:\WINNT\System32\inetsrv\asp.dll</i> ein (der physikalische Pfad zur ASP Engine) 
+<li>Tragen Sie ".wml" in das Extension Feld ein.
+<li><p>Bei Verbs klicken Sie den Radiobutton Limit to an und tragen dort "GET,HEAD,POST,TRACE" ein. Best&auml;tigen Sie Ihre Eintragungen mit OK.</p>
+<IMG SRC="/artikel/Bilder/200006/20000607_8.png" width=429 height=242 border=0 alt="">
+<p>Unter IIS 4.0 hingegen mu&szlig; man angeben, welche Verbs man verbietet: "PUT,DELETE" m&uuml;ssen 
+exkludiert werden.</p>
+<li>Wiederholen Sie Schritte 7 bis 9 f&uuml;r die Dateierweiterungen <i>wmls</i>, <i>wsc</i>, <i>wmlsc</i> und <i>wmlscript</i>
+<li>Schlie&szlig;en Sie alle offenen Fenster mit OK um Ihre Einstellungen zu speichern.
+</ol>
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Zuerst haben Sie die f&uuml;r WAP-Applikationen relevanten MIME-Types kennengelernt.
+Mit Hilfe der Schritt f&uuml;r Schritt Anleitungen d&uuml;rfte es keine Probleme bei der  Konfiguration des IIS f&uuml;r 
+Ihre WAP-Anwendung geben. Nun sollten Sie in der Lage sein Ihren Webinhalt f&uuml;r mobile Endger&auml;te 
+(Handys und PDAs) zug&auml;ngig zu machen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000707.htm">Die Einbindung von WBMP-Graphiken in WML</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000707.htm</span><br>
+<a href="../artikel/20000609.htm">Erste Schritte mit WML (Wireless Markup Language)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000609.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

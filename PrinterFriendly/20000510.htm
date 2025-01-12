@@ -1,0 +1,191 @@
+<HTML>
+<HEAD>
+<TITLE>ASP Scripts verschl&uuml;sseln</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Mit dem MS Script Encoder kann man seine ASP Dateien in eine semi-verschl&uuml;sselte Form bringen, die die meisten Personen davon abh&auml;lt, Ihren Sourcecode ohne Zustimmung zu modifizieren oder weiterzuverwenden.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Script Encoder,encryption,encode,Verschlüsselung,Urheberrecht,Geistiges Eigentum,Komponenten,Sicherheit">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>ASP Scripts verschl&uuml;sseln</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000510"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Der Schutz geistigen Eigentums (Urheberrecht) ist besonders am Internet ein sehr hei&szlig;es Thema. Und wir 
+als ASP Programmierer sind mitbetroffen - unsere Scripts sind f&uuml;r jedermann lesbar, der Zugriff auf
+die lokale Festplatte hat. Dies ist umsomehr problematisch, als wir meistens nur Nutzungsrechte an 
+von uns erstellten Programmen verkaufen.
+</p>
+<p>
+Wie kann ich mein geistiges Eigentum - den Sourcecode des ASP Scripts - vor dem Zugriff Dritter sch&uuml;tzen?
+Daf&uuml;r gibt es verschiedene Varianten, und zwei sehr beliebte sind:
+<ul>
+	<li>Das Script verschl&uuml;sseln
+	<li>Teile des Scripts in eine Komponente umwandeln
+</ul>
+In diesem Artikel besch&auml;ftigen wir uns ausf&uuml;hrlich mit der ersten Variante, n&auml;mlich das fertige Script zu 
+verschl&uuml;sseln. 
+</p>
+<p>
+Zum Verschl&uuml;sseln von Scripts (ASP, WSH, HTML) gibt es ein Gratis-Tool von Microsoft, und zwar den Script Encoder 
+(siehe Downloadlinks). Dieser verschl&uuml;sselt alle Codeteile eines Scripts, zB wird aus
+<pre style="background=silver;">
+&lt;%
+Response.Write "Testscript, &copy; AspHeute.com"
+%&gt;
+</pre>
+nach dem Aufruf des Script Encoders
+<pre style="background=silver;">
+&lt;%@ LANGUAGE = VBScript.Encode %&gt;
+&lt;%#@~^OAAAAA==@#@&amp;InkwKx/Rq.kD+~J:+dOkmDb2YBP[
+	1G2XpPz/2Cn;D+ mKhJ@#@&amp;YxEAAA==^#~@%&gt;
+</pre>
+Der Befehl, der diese Verschl&uuml;sselung bewirkt hat, ist relativ simpel:
+<pre style="background=silver;">
+screnc non-enc.asp enc.asp
+</pre>
+Bevor ich nun die Details der Verschl&uuml;sselung bespreche, ein kurzer Ausflug zur Installation des Script Encoders
+sowie zum Deployment der verschl&uuml;sselten Scripts bei Kunden.
+</p>
+
+<h2>Installation</h2>
+<p>
+Der Scriptencoder ist nicht Teil der Scripting Engines, die mit IIS4 oder IE5 installiert werden. Allerdings
+enthalten alle MS Script Engines Versionen 5.x und h&ouml;her bereits die Funktionalit&auml;t, die mit dem Script
+Encoder verschl&uuml;sselten Scripts laufen lassen zu k&ouml;nnen. Man mu&szlig; beim Kunden also nur sicherstellen, da&szlig;
+VBScript oder JScript Version 5 oder h&ouml;her installiert ist.
+</p>
+<p>
+Auf der Maschine, auf der man die Scripts verschl&uuml;sseln will, mu&szlig; man zuerst den Script Encoder installieren.
+Dies ist auch sehr einfach, allerdings gibt es eine Fu&szlig;angel: die Datei <b>screnc.exe</b> ist nicht im Pfad, das hei&szlig;t,
+man mu&szlig; sie aus <i>\Program Files\Windows Script Encoder\</i> in das Windows 2000 Verzeichnis kopieren, um sie
+von &uuml;berall aus verwenden zu k&ouml;nnen.
+</p>
+
+<h2>Verschl&uuml;sseln</h2>
+<p>
+Wir haben ja bereits ein Script verschl&uuml;sselt:
+<pre style="background=silver;">
+&lt;%@ LANGUAGE = VBScript.Encode %&gt;
+&lt;%#@~^OAAAAA==@#@&amp;InkwKx/Rq.kD+~J:+dOkmDb2YBP[
+	1G2XpPz/2Cn;D+ mKhJ@#@&amp;YxEAAA==^#~@%&gt;
+</pre>
+Wie man sehen kann, hat der Scriptencoder eine <b>@LANGUAGE</b> Anweisung eingebaut. Diese weist ASP an, zur Laufzeit
+diejenige Script Engine auszuw&auml;hlen, die das verschl&uuml;sselte Script ablaufen lassen kann.
+</p>
+<p>
+F&uuml;r <i>.asp</i> Dateien nimmt <i>srcenc.exe</i> standardm&auml;&szlig;ig an, da&szlig; die verwendete Default Scriptsprache 
+VBscript war. W&auml;re es JScript gewesen, w&uuml;rde der Befehl zum Verschl&uuml;sseln so aussehen:
+<pre style="background=silver;">
+screnc.exe /l JScript non-enc.asp enc.asp
+</pre>
+</p>
+<p>
+Bei &lt;SCRIPT&gt; Bl&ouml;cken verh&auml;lt sich der Scriptencoder analog. Wenn ich folgenden Block verschl&uuml;ssele
+<pre style="background=silver;">
+&lt;SCRIPT LANGUAGE="VBScript" RUNAT="SERVER"&gt;
+Function DoSomething()
+  nVal = 100
+  nVal = nVal + 1
+End Function
+&lt;/SCRIPT&gt;
+</pre>
+dann erhalte ich 
+<pre style="background=silver;">
+&lt;%@ LANGUAGE = VBScript.Encode %&gt;
+&lt;SCRIPT LANGUAGE="VBScript.Encode" RUNAT="SERVER"&gt;
+#@~^VwAAAA==@#@&amp;@#@&amp;wE	mYbW	~fK?G:Y4r	o`*@#@&amp;,
+	PxjCsP{P8!T@#@&amp;~,x#l^~'
+	,x#C^P_~q@#@&amp;3x9~wEU1YbWx@#@&amp;eRQAAA==^#~@
+&lt;/SCRIPT&gt;
+</pre>
+Ein sehr nettes Zusatzfeature bietet der Scriptencoder dann, wenn man bestimmte Teile nicht verschl&uuml;sseln m&ouml;chte:
+<pre style="background=silver;">
+' &copy; Some Organization
+'**Start Encode**
+myVar = "foo"
+</pre>
+Mit der Kommentarzeile <b>'**Start Encode**</b> teilt man dem Scriptencoder mit, ab welcher Zeile der Sourcecode
+verschl&uuml;sselt werden soll:
+<pre style="background=silver;">
+&lt;%@ LANGUAGE = VBScript.Encode %&gt;
+&lt;%
+' &copy; Some Organization
+'**Start Encode**#@~^FQAAAA==@#@&amp;:zjlMP',J6GWr@#@&amp;QgQAAA==^#~@%&gt;
+</pre>
+Wichtig ist, da&szlig; ab dieser Zeile s&auml;mtlicher Code verschl&uuml;sselt wird - inklusive der, der in &lt;SCRIPT&gt; Bl&ouml;cken
+eingeschlossen ist.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Eine 100%ige Sicherheit f&uuml;r seinen Sourcecode bekommt man mit dem Scriptencoder definitiv nicht, allerdings
+d&uuml;rfte er den Gro&szlig;teil der Personen abhalten, sich an Ihrem geistigen Eigentum zu vergreifen.  Will man mehr,
+dann bleibt einem der Weg zur Komponentenprogrammierung nicht erspart.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020411.htm">Kopieren verboten - Lizenzsicherung bei ASP Scripts</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020411.htm</span><br>
+<a href="../artikel/20011123.htm">MS Script Encoder dekodiert</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011123.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Fscripting%2Fdefault%2Ehtm%3F%2Fscripting%2Fvbscript%2Fdownload%2Fvbsdown%2Ehtm">MS Script Encoder</a><br>
+<SPAN class="content">http://msdn.microsoft.com/scripting/default.htm?/scripting/vbscript/download/vbsdown.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

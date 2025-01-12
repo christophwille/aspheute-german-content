@@ -1,0 +1,600 @@
+<HTML>
+<HEAD>
+<TITLE>Cachen von Dynamischen Includes</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im letzten Artikel haben wir uns mit dynamischen Includes im Generellen besch&auml;ftigt - diesmal werden wir die Ausf&uuml;hrung duch Caching deutlich beschleunigen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Include,Caching,Dynamisch">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Cachen von Dynamischen Includes</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000710"></SCRIPT>
+</p>
+<p>Wie bereits im Artikel <a href="20000706.htm">Dynamische Includes in ASP</a> beschrieben, kann unter ASP
+ab der VBScript Version 5.0 die <i>Execute</i> Methode benutzt werden, um w&auml;hrend der Laufzeit 
+(also "dynamisch") Dateien in ASP Seiten zu inkludieren und auszuf&uuml;hren.</p>
+
+<p>Man hat die M&ouml;glichkeit, bei jedem Aufruf der ASP Seite die inkludierte Datei von der Festplatte zu lesen.
+Dies erfordert, da&szlig; das <i>FileSystemObject</i> Objekt jedesmal, wenn eine ASP Seite abgearbeitet wird,
+einen <i>FileStream</i> zur inkludierten Datei &ouml;ffnet und den Dateiinhalt liest. 
+Der h&auml;ufige Zugriff auf die Festplatte ist, wie jeder Computeruser aus leidvoller Erfahrung wei&szlig;,
+oftmals der Flaschenhals des Systems. Der Zugriff auf das Netzwerk oder den Speicher erfolgt oft um
+Zehnerpotenzen schneller.</p>
+
+<p>Daher ist es naheliegend, dynamische Include-Dateien nicht bei jedem Aufruf einer ASP-Seite
+neu von der Festplatte zu lesen, sondern den Inhalt im Speicher zu behalten, 
+um ihn von dort jederzeit schnell lesen zu k&ouml;nnen.</p>
+
+<p>Zur Auffrischung noch kurz die Grundlagen dar&uuml;ber,
+wie ASP Seiten auf einen gemeinsamen Speicher mittels <i>Application</i> Objekt zugreifen
+k&ouml;nnen.</p>
+
+<h2>Globaler Speicherzugriff unter ASP</h2>
+
+<p>ASP bietet zum Verwalten von Speicherinhalten das <i>Application</i> Objekt an.
+Auf das <i>Application</i> Objekt k&ouml;nnen alle ASP Dateien der Website zugreifen, 
+sowohl um Werte in Application Variablen zu speichern, als auch um Werte aus Application Variablen auszulesen.
+Um zu verdeutlichen, wie man das <i>Application</i> Objekt benutzt sehen Sie die folgenden Beispiele.</p>
+
+<p>Um einen Wert in einer Application Variablen zu speichern, benutzt man den folgenden Syntax:</p>
+
+<pre style="background='silver';">
+Application("<i>Variablenname</i>") = <i>Variablenwert</i>
+</pre>
+
+<p>Um zu verhindern, da&szlig; eine weitere ASP Seite im selben Moment ebenfalls einen Wert in die
+Application Variable schreibt, kann man die <i>Lock</i> und <i>UnLock</i> Methoden des 
+Application Objektes benutzen:</p>
+
+<pre style="background='silver';">
+<b>Application.Lock</b>
+Application("<i>Variablenname</i>") = <i>Variablenwert</i>
+<b>Application.UnLock</b>
+</pre>
+
+<p>Das Auslesen eines Application Variablenwertes erfolgt analog:</p>
+
+<pre style="background='silver';">
+<i>Variablenwert</i> = Application("<i>Variablenname</i>")
+</pre>
+
+<h2>Mechanismus des Datei-Cachings</h2>
+
+<p>Die Grundanforderungen an das Cachen von dynamisch inkludierten Dateien sind:</p>
+
+<ul>
+ <li>Laden des Datei Inhaltes in den Speicher
+ <li>Effizienter Zugriff auf die im Speicher befindlichen Dateien
+ <li>Bereitstellen der aktuellsten Version der inkludierten Datei 
+</ul>
+
+<h3>Laden des Datei Inhaltes</h3>
+
+<p>Das Laden des Datei Inhaltes in den Speicher erfolgt durch das Lesen
+des Datei Inhaltes mittels FileSystemObject Objekt und dem Speichern
+in einer Application Variablen. Um sicherzustellen, da&szlig; jede
+Datei in einer eindeutigen Application Variablen gespeichert wird,
+benutzt man am besten den vollst&auml;ndigen physikalischen Pfad
+der Datei als Teil des Variablen Namens.</p>
+
+<p>Um den Inhalt einer beliebige Datei in einer Application Variablen abzuspeichern,
+benutzt man eine Sub wie die folgende:</p>
+
+<pre style="background='silver';">
+Sub LoadFileInApplication(strDateiName)
+   ' strDateiname in der Form "C:\Testdateien\MeineDatei.txt"
+   Dim strDateiInhalt
+   strDateiInhalt = ReadFile(strDateiName)
+   Application("CachedFile_" &amp; strDateiName) = strDateiInhalt
+End Sub
+</pre>
+
+<p>Die Funktion ReadFile liest dabei einfach den Inhalt einer Datei aus, ihr 
+<A HREF="20000710_source.htm">Sourcecode</A> ist 
+im Artikel <a href="20000706.htm">Dynamische Includes in ASP</a> beschrieben.</p>
+
+
+<h3>Effizenter Zugriff auf Dateien im Cache</h3>
+
+<p>Da man den Inhalt einer gecachten Datei einfach aus der zugeh&ouml;rigen Application
+Variable (und damit dem ihr von Webserver zugeordneten Speicherbereich) lesen kann,
+ist die Schnelligkeit des Zugriffs gew&auml;hrleistet. Das Auslesen erfolgt
+durch Zugriff auf die jeweilige Application Variable:</p>
+
+<pre style="background='silver';">
+Function ReadCachedFile(strDateiName)
+   ' strDateiName in der Form D:\Webs\aspexpert\www\calc.asp
+   ReadCachedFile = Application("CachedFile_" &amp; strDateiName)
+End Function
+</pre>
+
+
+<h3>Aktuellste Version der inkludierten Datei bereitstellen</h3>
+
+<p>Um zu gew&auml;hrleisten, da&szlig; immer die aktuelleste Version der inkludierten 
+Datei bereitgestellt wird, speichert man das Datum der letzen Modifikation
+der Datei in einer weiteren Application Variablen, und vergleicht bei
+einem Zugriff auf die gecachete Datei das Datum der letzten Modifikation der 
+in der Application Variablen gespeicherten Datei mit dem Datum
+der auf der Festplatte gespeicherten Datei.</p>
+
+<p>Dies erfordert nat&uuml;rlich, da&szlig; beim Laden der Datei das dementprechende Datum
+in einer Application Variablen gespeichert wird.</p>
+
+<p>Genau dieses bewirken die folgenden Funktionen:</p>
+
+<pre style="background='silver';">
+Sub LoadFileInApplication(strDateiName)
+   ' strDateiname in der Form "C:\Testdateien\MeineDatei.txt"
+   Dim strDateiInhalt
+   strDateiInhalt = ReadFile(strDateiName)
+   Application.Lock
+   Application("CachedFile_" &amp; strDateiName) = strDateiInhalt
+   ' Datum der letzten Dateiaenderung speichern:
+   ' LMD = LastModifiedDate
+   Application("CachedFileLMD_" &amp; strDateiName) = DateLastModified(strDateiName)
+   Application.UnLock
+End Sub
+
+Function DateLastModified(strDateiName)
+   Dim objFS, objFile
+   DateLastModified = Date()
+   Set objFS = CreateObject("Scripting.FileSystemObject")
+   On Error Resume Next
+   Set objFile = objFS.GetFile(strDateiName)
+   DateLastModified = objFile.DateLastModified
+   Set objFile = Nothing
+   On Error Goto 0
+   Set objFS = Nothing
+End Function
+</pre>
+   
+<p>Um zu sehen, ob die gecachete Datei noch aktuell ist, vergleicht man
+das "Last Modified Date" der Datei auf der Festplatte mit dem 
+in der Application Variablen gespeichertem Datum, wie im folgenden Script gezeigt:</p>
+
+
+<pre style="background='silver';">
+' Funktion die das "Last Modified Date" der 
+' gecachten Datei zurueckgibt:
+Function LMDCachedFile(strDateiName)
+   ' strDateiName in der Form D:\Webs\aspexpert\www\calc.asp
+   LMDCachedFile = Application("CachedFileLMD_" &amp; strDateiName)
+End Function
+
+If DateLastModified(strDateiName) &gt; LMDCachedFile(strDateiName) Then
+   ' Gecachte Datei ist nicht mehr aktuell
+   ... 
+End If
+</pre>
+
+<p>Man kann nun die Funktion <i>ReadCachedFile</i> (die zum Auslesen
+der gecachten Datei aus der Application Variablen dient) so modifizieren,
+da&szlig; Sie pr&uuml;ft, ob die gecachte Version der Datei noch aktuell ist. 
+Ist die Datei auf der Festplatte aktueller als die gecachte, dann
+wird die Datei von der Festplatte gelesen und gecachte (in der Application
+Variablen gespeichert). Das neuerliche Lesen und Cachen geschieht durch den
+Aufruf der Funktion <i>LoadFileInApplication</i>:</p>
+
+<pre style="background='silver';">
+Function ReadCachedFile(strDateiName)
+   Dim intI, strDateiInhalt
+   ' strDateiName in der Form D:\Webs\aspexpert\www\calc.asp
+   intI = 0
+   While (DateLastModified(strDateiName) &gt; _
+         LMDCachedFile(strDateiName)) And (intI &lt; 3)
+      ' Gecachte Datei aktualisieren
+      LoadFileInApplication(strDateiName)
+      intI = intI + 1
+   Wend
+   ReadCachedFile = Application("CachedFile_" &amp; strDateiName)
+End Function
+</pre>
+
+
+<p>Um auch noch den Festplatten Zugriff f&uuml;r das Lesen des "Letzen &Auml;nderungsdatums"
+der Datei zu minimieren kann man auf eine Technik zur&uuml;ckgreifen, die 
+bei HTML und ASP Seiten schon seit langem bekannt ist: Das Benutzen eines
+"G&uuml;tligkeitsdatums" (Expiration Date) oder einer "G&uuml;ltigkeitszeitdauer"
+(Expiration). Dazu spezifiziert man ein Zeitintervall, nachdem fr&uuml;hestens wieder
+gepr&uuml;ft wird, ob die gecachte Datei noch aktuell ist. Dieses Zeitintervall 
+orientiert sich daran, wie oft eine Datei ge&auml;ndert wird, und wie
+schnell eine Datei&auml;nderung in den Cache &uuml;bernommen werden soll.</p>
+
+
+<p>Wir erweitern also die Funktionen <i>LoadFileInApplication</i> und <i>ReadCachedFile</i>,
+soda&szlig; ein "G&uuml;ltigkeitszeitraum" angegeben werden kann, w&auml;hrend dem
+nicht gepr&uuml;ft wird, ob die Datei auf der Festplatte ge&auml;ndert wurde.
+Neben der Application Variable, die den "G&uuml;ltigkeitszeitraum" speichert,
+mu&szlig; zus&auml;tzlich eine weitere Variable mitgef&uuml;hrt werden, die den Zeitpunkt
+des letzen Auslesen des "Last Modifed Date" der Datei auf der Festplatte 
+festh&auml;lt.</p>
+
+<pre style="background='silver';">
+Sub LoadFileInApplication(strDateiName,ExpireInMinutes)
+   ' strDateiname in der Form "C:\Testdateien\MeineDatei.txt"
+   ' ExpireInMinutes gibt die Gueltigkeitszeitdauer in Minuten an
+   '   nur ganze Zahlen groesser gleich 1 erlaubt
+   Dim strDateiInhalt
+   strDateiInhalt = ReadFile(strDateiName)
+   Application.Lock
+   Application("CachedFile_" &amp; strDateiName) = strDateiInhalt
+   ' Datum der letzten Dateiaenderung speichern:
+   ' LMD = Last Modified Date
+   Application("CachedFileLMD_" &amp; strDateiName) = DateLastModified(strDateiName)
+
+   ' Gueltigkeitszeitraum speichern
+   ' EXPIM = EXPire In Minutes
+   If ExpireInMinutes &lt; 1 Then 
+      ExpireInMinutes = 1
+   End If
+   <b>Application("CachedFileEXPIM_" &amp; strDateiName) = ExpireInMinutes</b>
+   ' Zeitpunkt des letzen Auslesens des "Last Modified Date"
+   ' der Datei von der Festplatte speichern
+   ' LRL = Last Read Last modified date
+   <b>Application("CachedFileLRL_" &amp; strDateiName) = Now</b>
+   
+   Application.UnLock
+End Sub
+
+Function ReadCachedFile(strDateiName,ExpireInMinutes)
+   Dim intI, strDateiInhalt
+   Dim LRL, EXPIM
+   ' strDateiName in der Form D:\Webs\aspexpert\www\calc.asp
+   <b>LRL = Application("CachedFileLRL_" &amp; strDateiName)
+   EXPIM = Application("CachedFileEXPIM_" &amp; strDateiName)</b>
+   ' "n" steht fuer Minuten ("m" fuer Monate)
+   <b>If DateAdd("n", EXPIM, LRL) &lt; Now Then
+      ' Ueberpruefen, ob Datei noch aktuell</b>
+      If (DateLastModified(strDateiName) &gt; _
+            LMDCachedFile(strDateiName)) Then
+         intI = 0
+         Do 
+            ' Gecachte Datei aktualisieren
+            LoadFileInApplication strDateiName, <b>EXPIM</b>
+            intI = intI + 1
+         Loop While((DateLastModified(strDateiName) &gt; _
+            LMDCachedFile(strDateiName)) And (intI &lt; 3))
+      End If 
+      <b>Application("CachedFileLRL_" &amp; strDateiName) = Now</b>
+   <b>End If</b>
+   ReadCachedFile = Application("CachedFile_" &amp; strDateiName)
+End Function
+
+' Last Read Last modified date
+<b>Function LRLCachedFile(strDateiName)
+   LRLCachedFile = Application("CachedFileLRL_" &amp; strDateiName)
+End Function</b>
+ 
+' EXPiration In Minutes
+<b>Function EXPIMCachedFile(strDateiName)
+   Application("CachedFileEXPIM_" &amp; strDateiName)
+End Function</b>
+
+Function DateLastModified(strDateiName)
+   Dim objFS, objFile
+   DateLastModified = Date()
+   Set objFS = CreateObject("Scripting.FileSystemObject")
+   On Error Resume Next
+   Set objFile = objFS.GetFile(strDateiName)
+   DateLastModified = objFile.DateLastModified
+   Set objFile = Nothing
+   On Error Goto 0
+   Set objFS = Nothing
+End Function
+
+' Last Modified Date
+Function LMDCachedFile(strDateiName)
+   ' strDateiName in der Form D:\Webs\aspexpert\www\calc.asp
+   LMDCachedFile = Application("CachedFileLMD_" &amp; strDateiName)
+End Function
+
+Function ReadFile(strDateiname)
+   ' strDateiname in der Form "C:\Testdateien\MeineDatei.txt"
+   Const fsForReading = 1
+   Dim strInhalt, strInhaltHTML
+   Dim objFs           ' FileSystemObject Objekt
+   Dim objTextStream   ' Textstream Objekt
+   
+   Set objFs = CreateObject("Scripting.FileSystemObject")
+   
+   On Error Resume Next
+   Set objTextStream = objFs.OpenTextFile(strDateiname, fsForReading)
+   If Err.Number &lt;&gt; 0 Then
+      ' Fehler aufgetreten
+      strInhalt = ""
+   Else
+      strInhalt = objTextStream.ReadAll
+   End If
+   objTextStream.Close
+   On Error Goto 0
+   Set objTextStream = Nothing
+   Set objFs = Nothing
+   ReadFile = strInhalt
+End Function
+</pre>
+
+
+<p>Um dieses Script nun zu benutzen mu&szlig; man nur die Funktion
+<i>ReadCachedFile(strDateiName, ExpireInMinutes)</i> aufrufen.
+Der Parameter <i>strDateiName</i> gibt den physikalischen Pfad zur Datei
+an, z.B: <i>C:\Webroot\www\Inlcudes\Add.asp</i>. Der Parameter <i>ExpireInMinutes</i>
+gibt die Anzahl der Minuten an, nach der wieder gepr&uuml;ft werden soll,
+ob sich auf der Festplatte eine aktuellere Version als im Cache befindet.</p>
+
+<p>Will man einen physikalischen Pfad (<i>C:\Webroot\www\Inlcudes\Add.asp</i>) in
+einen virtuellen Pfad umwandeln, so kann man sich der <i>Server.MapPath</i> Methode 
+bedienen:</p>
+
+<pre style="background='silver';">
+<i>VirtuellerPfad</i> = Server.MapPath(<i>PhysikalischerPfad</i>)
+</pre>
+
+<h2>Ausf&uuml;hren von gecachten dynamischen Includes</h2>
+
+<p>Um nun schlu&szlig;endlich die gecachten Includes auszuf&uuml;hren,
+mu&szlig; man den Inhalt der gecachten Datei nur mittels der <i>Execute</i> Methode ausf&uuml;hren:<p>
+
+<pre style="background='silver';">
+...
+strDateiname = Server.MapPath("<i>/Includes/Add.asp</i>")
+ExpireInMinutes = <i>15</i>
+strDateiInhalt = ReadCachedFile(strDateiName,ExpireInMinutes)
+<b>Execute strDateiInhalt</b>
+...
+</pre>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>Will man dynmische Includes auf oftmals aufgerufenen ASP-Seiten
+verwenden, so empfiehlt sich das Cachen von dynmischen Include Dateien
+wie in diesem Artikel beschrieben. Die hier gezeigten Listings dienen nur
+als Illustration und sind durchaus noch ausbauf&auml;hig.<p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000710.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20000706.htm">Dynamische Includes in ASP</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000710" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Cachen von Dynamischen Includes"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000710.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Koller"><input type="hidden" name="AuthorEmail" value="christiank@aspexpert.com"><input type="hidden" name="Artikel" value="20000710"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000710.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

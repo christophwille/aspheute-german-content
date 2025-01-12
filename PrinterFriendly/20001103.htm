@@ -1,0 +1,318 @@
+<HTML>
+<HEAD>
+<TITLE>Generieren von Zeichnungen in PDF-Dokumenten</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel m&ouml;chte der Autor Ihnen zeigen, wie man in einer ASP Seite ein 
+PDF-Dokument mit Grafiken erzeugt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,PDF,Acrobat,ASP,Portable Document Format,activePDF,generieren,Dokument,Webserver">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Generieren von Zeichnungen in PDF-Dokumenten</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001103"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>In diesem Artikel m&ouml;chte ich Ihnen zeigen, wie man in einer ASP Seite ein 
+PDF-Dokument mit Grafiken erzeugt. 
+Im Artikel "<a href="../artikel/20001017.htm">Generieren von PDF-Dokumenten</a>"
+k&ouml;nnen Sie sich &uuml;ber die Grundlagen von PDF-Dokumenten und &uuml;ber die 
+in diesem Artikel verwendeten ActiveX Komponenten der Firma 
+<a href="http://www.activepdf.com">activePDF, Inc.</a> informieren.</p>
+
+<p>Das nachfolgende PDF Dokument wurde mit ActivePDF (<i>activePDF Server</i> und <i>activePDF Printer</i>)
+in einer ASP Seite generiert:</p>
+
+<p><IMG SRC="/artikel/Bilder/200011/20001103_Zeichnung.png" width=495 height=377 alt="" border="0">
+<br>
+<i>Bild 1: Zeichnungen in einem PDF Dokument</i></p>
+
+<p>Wie kann man nun Zeichnungen mit Hilfe der activePDF <i>Server</i> und <i>Printer</i>
+Objekte erstellen?</p>
+
+<p>Unter der Voraussetzung, da&szlig; ActivePDF am Webserver installiert ist, instanzieren Sie
+in einer ASP Seite die Objekte <i>APServer.Object</i> und <i>APPrinter.Object</i> mittels
+<i>Server.CreateObject</i> Befehl:</p>
+
+<p><pre style="background='silver';">
+... 
+<i>' Die Datei wird in das Root Verzeichnis geschrieben:</i>
+OutputDirectory = "/"
+physOutputDirectory = Server.MapPath(OutputDirectory)
+
+<i>' Instanziere activePDF Server Objekt</i>
+Set APServer = Server.CreateObject("APServer.Object")
+
+<i>' Instanziere activePDF Printer Objekt</i>
+Set APPrinter = Server.CreateObject("APPrinter.Object")
+
+<i>' Ausgabe Verzeichnis zum Schreiben des PDF Dokumentes</i>
+APServer.OutputDirectory = physOutputDirectory
+...
+</pre></p>
+
+<p>Danach starten Sie den Erstellungsvorgang des PDF Dokumentes, setzen die 
+"Papiergr&ouml;&szlig;e" des Dokumentes auf DIN A4. Au&szlig;erdem ist es angebracht,
+das Dokument im "Farbmodus" zu erstellen (<i>ColorMode = 2</i>):</p>
+
+<p><pre style="background='silver';">
+...
+<i>' Erstellungsvorgang des PDF Dokumentes am Server starten</i>
+lRet = APServer.StartPrinting() 
+If (lRet &lt;&gt; 0) Then
+   Response.Write  "Fehler bei StartPrinting aufgetreten!"
+   Response.End
+End If
+
+<i>' Seitengroesse auf DIN A4 setzen (210 x 297 mm)</i>
+APPrinter.PaperSize = 9	<i>' Siehe APPrinter Dokumentation</i>
+
+<i>' PDF als Farbdokument erstellen</i>
+APPrinter.ColorMode = 2
+...
+</pre></p>
+
+<p>Machen Sie das PDF Dokument mittles <i>APPrinter.StartDoc</i> Methode bereit zum Schreiben,
+und legen Sie noch fest, da&szlig; Text mittles der "AntiAliasing Technik" ausgegeben wird:</p>
+
+<p><pre style="background='silver';">
+... 
+<i>' Erstellen des Dokumentes beginnen:
+' APServer.NewPrinterName liefert den Namen
+' fuer die temporaere Spooling Datei</i>
+APPrinter.StartDoc APServer.NewPrinterName
+
+<i>' Antialias fuer Text festlegen</i>
+APPrinter.AntiAliasText = True
+...
+</pre></p>
+
+
+<h3>Einen dunkelblauen Kreis zeichnen</h3>
+
+<p>Nun k&ouml;nnen Sie Text in das PDF-Dokument schreiben, oder auch, wie in diesem Beispiel,
+einen Kreis zeichnen, der von einer dunkelblauen, strichpunktierten Linie begrenzt wird.
+Setzen Sie die Strichs&auml;rke (<i>APPrinter.DrawWidth</i>) und die Linienart des Kreises 
+(<i>APPrinter.DrawStyle</i>) fest. 
+Achten Sie darauf, da&szlig; Sie eine Strichst&auml;rke von <i>1</i> w&auml;hlen wenn Sie
+keine durchgehende Linie haben m&ouml;chten!</p>
+
+
+<p><pre style="background='silver';">
+..
+<i>' ### Zeichnen eines Kreises der Farbe Blau ###
+' Festlegen der Strichstaerke in Pixel</i>
+APPrinter.DrawWidth = 1
+' Festlegen der Linienart, (3 = Strichpunktierte Linie)
+APPrinter.DrawStyle = 3
+
+<i>' Syntax: APPrinter.PrintCircle Step%, X!, Y!, Radius!, CircleColor</i>
+Color = RGB(&amp;H32, &amp;H0E, &amp;HFE) ' Blau
+APPrinter.PrintCircle 0, 1500, 1000, 700, Color
+...
+</pre></p>
+
+<p>Der Syntax der <i>PrintCircle</i> Methode verlangt nach einer Farbe f&uuml;r den Kreis.
+Diese wird durch einen Integerwert repr&auml;sentiert, den man mittels 
+der VBScript Funktion <i>RGB(Rot, Blau, Gr&uuml;n)</i> ermitteln kann.</p>
+
+<p>Der <i>Step%</i> Parameter der <i>PrintCircle</i> Methode legt fest, ob die Koordinaten
+als absolute (<i>Step% = 0</i>) oder relative Koordinaten (<i>Step% = 1</i>) interpretiert werden.</p>
+
+<p>Die  <i>X!</i>, <i>Y!</i> und  <i>Radius!</i> Parameter werden in der 
+Einheit TWIPS angegeben. Ein "TWIP" ist eine L&auml;ngeneinheit, die 1/20 eines 
+"Print-Punktes" entspricht. 567 Twips ergeben einen Zentimeter, und 1440 Twips ergeben ein Inch (2.54 cm).</p>
+
+<p>Zur Umrechnung von Zentimeter in TWIPS kann man die Funktion <i>CMToTwips</i> benutzen:<br>
+<i>TWIPS = APPrinter.CMToTwips(AnzahlCM)</i></p>
+
+
+<h3>Eine rote Ellipse erstellen</h3>
+
+<p>Um eine Ellipse zu zeichnen, bedient man sich der <i>APPrinter.PrintEllipse</i> Funktion.
+die folgenden Befehle zeichnen eine rote Ellipse mit durchgehender Linie der St&auml;rke 20 Twips:</p>
+
+<p><pre style="background='silver';">
+...
+<i>' ### Zeichnen einer Ellipse der Farbe Rot ###</i>
+APPrinter.DrawWidth = 20
+APPrinter.DrawStyle = 0 ' Durchgehende Linie
+
+<i>' Syntax: APPrinter.PrintEllipse Step%, X!, Y!, XRadius!, YRadius!,CircleColor</i>
+Color = RGB(&amp;HFF, &amp;H00, &amp;H00) ' Rot
+APPrinter.PrintEllipse 0, 2500, 1500, 1200, 700, Color
+...
+</pre></p>
+
+<p>Die Parameter der <i>PrintEllipse</i> Methode sind analog der Parameter der <i>PrintCircle</i>
+zu benutzen.</p>
+
+
+
+<h3>Eine schwarze Linie ziehen</h3>
+
+<p>Zum Zeichen einer Linie dient die Funktion <i>APPrinter.PrintLine</i>:</p>
+
+<p><pre style="background='silver';">
+...
+<i>' ### Zeichnen einer Linie in Schwarz ###</i>
+APPrinter.DrawWidth = 15
+<i>' Syntax: APPrinter.PrintLine Step1%, X1!, Y1!, Step2%, X2!, Y2!, LineColor , FillOptions$</i>
+Color = RGB(&amp;H00, &amp;H00, &amp;H00) ' Schwarz
+APPrinter.PrintLine 0, 1000, 2000, 0, 4000, 800, Color, 0
+...
+</pre></p>
+
+<p>Der Parameter <i>FillOptions</i> wird erst beim Erstellen einer Box (waagrechtes Rechteck)
+ben&ouml;tigt, wie im n&auml;chsten Absatz erkl&auml;rt.</p>
+
+
+<h3>Eine gef&uuml;llte Box zeichnen</h3>
+
+<p>Eine Box erstellt man durch Gebrauch der <i>PrintLine</i> Methode, 
+wobei man als  <i>FillOptions</i> Parameter die Zeichenkette <i>"B"</i> angibt.
+F&uuml;llfarbe und F&uuml;llart legt man durch Setzen der 
+<i>DrawWidth</i> und <i>FillStyle</i> Eigenschaften des <i>APPrinter</i> Objektes fest.</p>
+
+<p><pre style="background='silver';">
+...
+<i>' ### Zeichnen eines gefuellten Rechteckes ###</i>
+APPrinter.DrawWidth = 8
+<i>' Fuellart festlegen: Waagrechte Linien</i>
+APPrinter.FillStyle = 2
+<i>' Fuellfarbe festlegen: Silber</i>
+APPrinter.FillColor = RGB(&amp;HC0, &amp;HC0, &amp;HC0) ' Silber
+<i>' Syntax: APPrinter.PrintLine Step1%, X1!, Y1!, Step2%, X2!, Y2!, LineColor , "B"
+' Zeichenfarbe: Schwarz</i>
+Color = RGB(&amp;H00, &amp;H00, &amp;H00) ' Schwarz
+APPrinter.PrintLine 0, 4000, 1700, 0, 6000, 3000, Color, "BF"
+...
+</pre></p>
+
+
+<p>Zum Abschlu&szlig; wird noch eine Zeichenkette ein wenig "schr&auml;g" in das
+PDF-Dokument geschrieben.</p>
+
+
+<h3>Text schr&auml;ggestellt schreiben</h3>
+
+<p>Die <i>APPrinter.PrintRotatedText</i> dient dazu, um Text um einem 
+bestimmten Winkel gedreht in das PDF-Dokument zu schreiben. 
+In unserem Beispiel wird der Text "<i>Rotation...</i>" (Arial, 24 pt), 
+um 250 Grad im Uhrzeigersinn gedreht, in das Dokument geschrieben:</p>
+
+<p><pre style="background='silver';">
+...
+<i>' ### Zeichnen eines gedrehten Textes ###
+' Font und Schriftgroesse festlegen</i>
+APPrinter.FontName = "Arial"
+APPrinter.FontSize = 24
+<i>' Festlegen der Position des Textes</i>
+APPrinter.CurrentX = 7000
+APPrinter.CurrentY = 2500 
+<i>' Syntax: APPrinter.PrintRotatedText Str$, CWDegrees</i>
+APPrinter.PrintRotatedText "Rotation...", 250
+...
+</pre></p>
+
+<p>Wenn das Dokument fertig ist, wird es durch das Aufrufen der Befehle
+<i>APPrinter.EndDoc</i> und <i>APServer.StopPrinting</i> erstellt und 
+am Webserver auf die Festplatte geschrieben. Von dort kann der User das
+PDF downloaden.</p>
+
+<p><pre style="background='silver';">
+...
+<i>' Erstellen des Dokumentes ist beendet </i>
+APPrinter.EndDoc
+
+<i>' Warten bis der PDF Job beendet ist. </i>
+lRet = APServer.Wait(3)  <i>' Maximale Wartezeit: 3 Sekunden</i>
+If (lRet <> 0) then
+APServer.StopPrinting
+   Response.Write  "Es ist ein Fehler aufgetreten!"
+   Set APPrinter = Nothing
+   Set APServer = Nothing
+   Response.End
+End If
+
+<i>' Erstellungsvorgang des PDF Dokumentes am Server ist fertig</i>
+APServer.StopPrinting
+...
+</pre></p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>Es ist keine gro&szlig;e Schwierigkeit in PDF-Dokumenten Zeichnungen 
+direkt in ASP zu erstellen. Die <i>activePDF Printer</i> Komponente bietet dazu
+gen&uuml;gend Funktionen, die Linien, Kreise, Ellipsen, Kreisb&ouml;gen, Punkte
+oder Boxen zeichen. Die Linienfarbe, F&uuml;llfarbe, Linienst&auml;rke und vieles
+mehr kann man in einer ASP Seite spezifizieren um die gew&uuml;nschten Zeichnungen
+in einem PDF File zu erstellen.</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001103.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20001103.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001017.htm">Generieren von PDF-Dokumenten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001017.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eactivepdf%2Ecom">activePDF, Inc.</a><br>
+<SPAN class="content">http://www.activepdf.com</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eadobe%2Ede%2Fproducts%2Facrobat%2Fadobepdf%2Ehtml">Adobe PDF</a><br>
+<SPAN class="content">http://www.adobe.de/products/acrobat/adobepdf.html</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

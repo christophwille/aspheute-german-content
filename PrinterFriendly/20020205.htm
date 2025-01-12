@@ -1,0 +1,182 @@
+<HTML>
+<HEAD>
+<TITLE>Der Object Construct String</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im Artikel In VB Komponenten auf ASP Objekte zugreifen (Variante 2) habe ich gezeigt, wie man mit Hilfe der COM+ Services sehr einfach an die ASP-internen Objekte herankommt. Heute stelle ich den Object Construct String vor.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,IObjectConstruct,construct string,COM+ Services,Application,enable object construction,connection string,security,Sicherheit">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Der Object Construct String</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Komponenten.htm">Komponenten</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020205"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Im Artikel <a href="../artikel/20010322.htm">In VB Komponenten auf ASP Objekte zugreifen (Variante 2)</a>
+habe ich gezeigt, wie man mit Hilfe der COM+ Services sehr einfach an die ASP-internen Objekte wie zB Response
+oder Request herankommen kann. Heute stelle ich ein weiteres sehr n&uuml;tzliches Feature f&uuml;r Komponenten vor, die
+COM+ Services verwenden: den Object Construct String.
+</p>
+<p>
+Wie w&auml;re es, wenn man einer Komponente bei der Installation einen Initialisierungsstring definieren k&ouml;nnte? Zum
+Beispiel denke ich hier an einen Connection String f&uuml;r eine Datenbankkomponente, oder anderweitige Informationen,
+die f&uuml;r alle Aufrufe gleichbleibend sind. Egal f&uuml;r was man den Construct String konkret verwendet, er hat auf alle F&auml;lle ein
+gewichtiges Sicherheitsargument auf der Haben-Seite: ich mu&szlig; diese Daten nicht in einer ASP Datei speichern (und jedes
+Mal an die Komponente &uuml;bergeben), die auf alle F&auml;lle leichter angreifbar ist als die COM+ Services Datenbank.
+</p>
+
+<h2>Den Construct String abfragen</h2>
+<p>
+Die Frage ist, warum z&auml;ume ich das Pferd von hinten auf, warum definiere ich nicht zuerst den Construct
+String den ich auslesen m&ouml;chte? Nun, der Construct String mu&szlig; einer Komponente zugewiesen werden, und noch
+habe ich keine! 
+</p>
+<p>
+Details welche Einstellungen man f&uuml;r eine COM+ Komponente in Visual Basic 6 machen mu&szlig;, entnehmen Sie bitte dem
+Artikel <a href="../artikel/20010322.htm">In VB Komponenten auf ASP Objekte zugreifen (Variante 2)</a>. Ich
+stelle heute nur den Sourcecode vor, der notwendig ist, um mit dem Construct String zu arbeiten. Die wichtigen
+Zeilen Code aus <b>ConstructString.cls</b> sind folgende:
+</p>
+
+<pre style="background='silver';">
+Implements IObjectConstruct
+
+Private Sub IObjectConstruct_Construct(ByVal pCtorObj As Object)
+    Dim strConstructString as String
+    strConstructString = pCtorObj.ConstructString
+End Sub
+</pre>
+
+<p>
+Was passiert hier: die Klasse implementiert ein Interface namens <i>IObjectConstruct</i>. Dieses wird von COM+
+bei einer als COM+ Applikation registrierten Komponente abgefragt, und wenn vorhanden, wird automatisch die Methode
+<i>Construct</i> aufgerufen. Dieser wird ein Constructor-Objekt &uuml;bergeben, aus dem wir per <i>ConstructString</i>
+Eigenschaft den Construct String auslesen k&ouml;nnen. That's it. Der obenstehende Code kann in jedes Projekt
+&uuml;bernommen werden, er &auml;ndert sich nicht (nat&uuml;rlich speichert man den Construct String in einer Klassenvariable, nicht
+in einer Methodenvariable).
+</p>
+<p>
+Um den Construct String "in action" zeigen zu k&ouml;nnen, habe ich noch eine Methode <i>GetConstructString</i> in das Objekt
+eingebaut. Das Projekt sieht (visuell) jetzt so aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200202/20020205_1.png" width="699" height="437" alt="" border="0">
+
+<p>
+Kompilieren, und fertig ist die Komponente. Jetzt m&uuml;ssen wir sie registrieren und den Construct String
+mitgeben.
+</p>
+
+<h2>Den Construct String definieren</h2>
+<p>
+Die detaillierten Schritte zur Erstellung einer COM+ Applikation und dem Registrieren einer Komponente lesen
+Sie bitte im Artikel <a href="../artikel/20010322.htm">In VB Komponenten auf ASP Objekte zugreifen (Variante 2)</a>
+nach. Wir &uuml;berspringen diese Schritte, und konfigurieren die Komponente <i>AspHeute.ConstructStringSample</i>:
+</p>
+
+<IMG SRC="/artikel/Bilder/200202/20020205_2.png" width="591" height="486" alt="" border="0">
+
+<p>
+Mit rechter Maustaste/Eigenschaften kann man die Komponenteneigenschaften einsehen. Wir interessieren uns
+f&uuml;r die Aktivierung der Komponente:
+</p>
+
+<IMG SRC="/artikel/Bilder/200202/20020205_3.png" width="402" height="454" alt="" border="0">
+
+<p>
+Hier sieht man bereits die fertig konfigurierte Komponente - <i>Enable object construction</i> mu&szlig; selektiert
+werden, dann kann man den <i>Constructor String</i> eingeben. Wie gesagt, Anwendungsf&auml;lle sind Connection Strings oder
+anderweitige Konfigurationsdaten, die man gerne sicherer verwaltet hat als in ASP Dateien.
+</p>
+
+<p>
+Was bin ich noch schuldig? Ach ja, den Beweis, da&szlig; es so funktioniert wie ich gesagt habe. Dazu habe ich eine
+simple ASP Datei geschrieben (<b>constructtest.asp</b>): 
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Set xObj = Server.CreateObject("AspHeute.ConstructStringSample")
+Response.Write xObj.GetConstructString()
+%&gt;
+</pre>
+
+<p>
+Nach Ausf&uuml;hrung der Datei erh&auml;lt man den Construct String einfach per <i>Response.Write</i> ausgegeben:
+</p>
+
+<IMG SRC="/artikel/Bilder/200202/20020205_4.png" width="558" height="196" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die heute vorgestellte Komponente dient vornehmlich einem Zweck: als Copy &amp; Paste Vorlage f&uuml;r eigene
+Komponenten, die Construct Strings einsetzen werden.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020205.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020205.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010322.htm">In VB Komponenten auf ASP Objekte zugreifen (Variante 2)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010322.htm</span><br>
+<a href="../artikel/20020408.htm">Klassenauflistungen mit dem Dictionary-Objekt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020408.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsupport%2Emicrosoft%2Ecom%2Fdefault%2Easpx%3Fscid%3Dkb%3BEN%2DUS%3Bq271284">HOWTO: Access the COM+ Object Constructor String in a Visual Basic Component (Q271284)</a><br>
+<SPAN class="content">http://support.microsoft.com../default.htmx?scid=kb;EN-US;q271284</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

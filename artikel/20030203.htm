@@ -1,0 +1,393 @@
+<HTML>
+<HEAD>
+<TITLE>Web Folders mit IIS</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Bei der Verwendung eines Intranets kam mir ein interessantes Feature unter - durch einen Klick auf einen Hyperlink auf einer Seite &ouml;ffnete sich der Windows Explorer, und ich konnte wie vom Explorer gewohnt am Web Server arbeiten.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Web Folder,WebDAV,Authoring,Versioning,Distributed,Network Places,IE Behavior,Behavior,httpFolder,anchorClick,IIS,link">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Web Folders mit IIS</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Server.htm">Server</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20030203"></SCRIPT>
+</p>
+<p>
+Bei der Verwendung eines Intranets kam mir ein interessantes Feature unter - durch einen Klick auf einen Hyperlink auf einer Seite
+&ouml;ffnete sich der Windows Explorer, und ich konnte wie vom Explorer gewohnt, Dateien auf den Webserver kopieren oder auf lokale
+Datentr&auml;ger schreiben. Mein Interesse war geweckt, und ich wollte wissen, wie denn das funktioniert.
+</p>
+
+<p>
+Die Technik im Hintergrund, mit der wir uns heute besch&auml;ftigen, nennt sich WebDAV (distributed authoring and versioning). Dieses WebDAV
+findet sich in IIS seit der Version 5, und ebenso in Internet Explorer der Version 5 (und nat&uuml;rlich in vielen anderen Server bzw Clientprodukten
+anderer Hersteller, da es sich um einen offenen Standard handelt). Wie der Name bereits andeutet, dient es dazu, Dokumente am Webserver
+editieren und versionieren zu k&ouml;nnen. Mit dem "Authoring" Teil werden wir uns heute besch&auml;ftigen, beginnend auf der Serverseite.
+</p>
+
+<h2>Web Folder einrichten</h2>
+<p>
+Ohne Konfiguration des Server geht nichts, aber zumindest ist diese sehr leicht erledigt mit Hilfe des Internet Services Manager.
+</p>
+
+<IMG SRC="Bilder/200302/20030203_1.png" width="589" height="328" alt="" border="0">
+
+<p>
+<b>Tip</b> Ein Web Folder Verzeichnis sollte immer nur als solches dienen, nicht auch "normale" Webinhalte serven. Wenn man ein solches
+physikalisch eingerichtet hat, w&auml;hlt man <i>Eigenschaften</i> aus dem Kontextmen&uuml;:
+</p>
+
+<IMG SRC="Bilder/200302/20030203_2.png" width="461" height="435" alt="" border="0">
+
+<p>
+Standardm&auml;&szlig;ig ist Lesezugriff erlaubt, das wird in den meisten aller F&auml;lle nicht ausreichen. Deshalb ist zus&auml;tzlich Schreibzugriff und
+Verzeichnisauflistung erlaubt (auch schon, um anderen Browser-Clients als Internet Explorer zumindest gewissen Zugriff zu erlauben).
+</p>
+<p>
+<b>Tip</b> Vernachl&auml;ssigen Sie niemals die Sicherheit Ihrer Web Folder. Gehen Sie dazu auf den Directory Security Tab:
+</p>
+
+<IMG SRC="Bilder/200302/20030203_3.png" width="461" height="435" alt="" border="0">
+
+<p>
+F&uuml;r Transportsicherheit der Daten empfiehlt sich SSL, was manches Mal durchwegs erw&uuml;nscht sein kann. Wichtiger ist aber die Zugriffskontrolle.
+Das, was Sie hier einstellen wirkt sich darauf aus, wer mit welchem WebDAV Client zugreifen kann. Wenn nur NTLM aktiviert ist, kann auch
+nur der Windows Explorer zugreifen:
+</p>
+
+<IMG SRC="Bilder/200302/20030203_4.png" width="371" height="334" alt="" border="0">
+
+<p>
+Damit ist unser Server fertigkonfiguriert - f&uuml;r das Testen. Im Echtbetrieb vergessen Sie bitte nicht, auf das Verzeichnis entsprechende
+NTFS Rechte zu vergeben!
+</p>
+
+<h2>Manuelle Verbindung zu einem Web Folder</h2>
+<p>
+Wenn man die Adresse eines Web Folders kennt, kann man diesen mittels "My Network Places" in Windows einrichten:
+</p>
+
+<IMG SRC="Bilder/200302/20030203_5.png" width="499" height="347" alt="" border="0">
+
+<p>
+Einfach "Add Network Place" doppelklicken, und in dem sich &ouml;ffnenden Wizard die Adresse eintippen:
+</p>
+
+<IMG SRC="Bilder/200302/20030203_6.png" width="447" height="322" alt="" border="0">
+
+<p>
+Zuletzt wird noch ein Name f&uuml;r den Network Place f&auml;llig - suchen Sie sich einen Namen aus, der leicht wiedererkennbar ist!
+</p>
+
+<IMG SRC="Bilder/200302/20030203_7.png" width="447" height="322" alt="" border="0">
+
+<p>
+Damit ist man fertig, und kann Dateien via Windows Explorer up- und downloaden:
+</p>
+
+<IMG SRC="Bilder/200302/20030203_8.png" width="696" height="505" alt="" border="0">
+
+
+<h2>Web Folders in Webseiten einbetten</h2>
+<p>
+Die interessante Frage ist jetzt, wie man diesen manuellen Vorgang ausschalten kann - wie also ein Benutzer einer (Intranet)Website
+direkt zu einem Web Folder Verzeichnis gef&uuml;hrt werden kann, von dem er bis dato nichts gewu&szlig;t hat (oder f&uuml;r User, die ohne Anleitung
+dazu technisch nicht in der Lage w&auml;ren).
+</p>
+<p>
+Vorweg: der gezeigte Ansatz funktioniert nur mit Internet Explorer, denn nur dieser bietet sogenannte Behaviors an. Im speziellen kann man mit zwei
+Behaviors arbeiten: <b>anchorClick</b> und <b>httpFolder</b>. Das <b>anchorClick</b> Behavior eignet sich f&uuml;r statische Links, wohingegen
+<b>httpFolder</b> bei JavaScript-L&ouml;sungen zum Einsatz kommen wird.
+</p>
+<p>
+Der folgende Code zeigt den Einsatz des <b>anchorClick</b> Behaviors f&uuml;r den schon bekannten Web Folder:
+</p>
+
+<pre style="background='silver';">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Web Folder Sample Site&lt;/title&gt;
+&lt;STYLE&gt;
+A {behavior: url(#default#AnchorClick);}
+&lt;/STYLE&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;a href="http://www.aspheute.com/"&gt;AspHeute&lt;/a&gt; (normaler Link) &lt;br&gt;
+&lt;a href="" FOLDER="http://localhost/Christoph/"&gt;Christoph's Verzeichnis&lt;/a&gt; (Web Folder Link)
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Man ben&ouml;tigt einen Eintrag im Stylesheet, und jeder Web Folder Link mu&szlig; mit einem <i>FOLDER</i> Attribut versehen werden. Von "au&szlig;en"
+ist der Unterschied nicht ersichtlich:
+</p>
+
+<IMG SRC="Bilder/200302/20030203_9.png" width="477" height="217" alt="" border="0">
+
+<p>
+Ein Klick auf den Web Folder Link aber verwandelt den Internet Explorer in einen Windows Explorer der uns den Web Folder anzeigt:
+</p>
+
+<IMG SRC="Bilder/200302/20030203_10.png" width="495" height="347" alt="" border="0">
+
+<p>
+Auf das <b>httpFolder</b> Behavior werde ich nicht eingehen, dieses ist im MSDN Artikel
+<a href="http://msdn.microsoft.com/library../default.htm?url=/workshop/author/behaviors/overview/WebFolder.asp" target="_blank">About Web Folder Behaviors</a> 
+ausf&uuml;hrlich mit Beispiel beschrieben.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+F&uuml;r eine Intranetanwendung sind Web Folders eine praktische M&ouml;glichkeit, den Dateiupload einmal anders zu l&ouml;sen. Vor allem Enduser
+werden damit leichter umgehen k&ouml;nnen, da ihnen der Windows Explorer bereits bekannt ist.
+</p><h2>Verwandte Artikel</h2>
+<p>
+<a href="20030911.htm">Virtuelle Verzeichnisse umbenennen</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3Furl%3D%2Fworkshop%2Fauthor%2Fbehaviors%2Foverview%2FWebFolder%2Easp">About Web Folder Behaviors</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20030203" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Web Folders mit IIS"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20030203.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20030203"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20030203.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

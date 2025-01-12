@@ -1,0 +1,369 @@
+<HTML>
+<HEAD>
+<TITLE>Site&uuml;berwachung mit Scheduled Tasks</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Eine Website, die auch nur f&uuml;r kurze Zeit offline ist, kann in der heutigen Zeit
+zu einem der gr&ouml;&szlig;ten Probleme f&uuml;r eine Firma werden. Deshalb sollte man seine Site &uuml;berwachen, und zwar m&ouml;glichst automatisch.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Scheduled Task,Überwachung,Monitoring,Sitemonitoring,Site monitoring,Eventlog,Script,WSH,Windows Scripting Host">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Site&uuml;berwachung mit Scheduled Tasks</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Server.htm">Server</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010419"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Eine Website, die auch nur f&uuml;r kurze Zeit offline ist, kann in der heutigen Zeit
+zu einem der gr&ouml;&szlig;ten Probleme f&uuml;r eine Firma werden. Deshalb sollte man seine Site
+&uuml;berwachen, und zwar m&ouml;glichst automatisch. Es gibt zwar viele Dienste, die 
+Site&uuml;berwachung anbieten - aber warum nicht selber machen, wenn man es dann gratis
+in der Hand hat?
+</p>
+<p>
+Um eine effiziente Site&uuml;berwachung zu machen, reicht es einfach nicht, nur den Webserver
+zu pingen. Damit es wirklich Sinn macht, mu&szlig; man sich am Server Testscripts ablegen, die dann
+remote von anderen Maschinen aus durch &Uuml;berwachungsscripts aufgerufen, und auf Fehlerbedingungen
+ausgewertet werden. Diese &Uuml;berwachungsscripts sollten in bestimmten Zeitintervallen laufen,
+und den Administrator automatisch verst&auml;ndigen (und vielleicht sogar noch anderweitig aktiv
+werden).
+</p>
+<p>
+Genau diese Anforderungen werden wir heute mit je einem Testscript und einem &Uuml;berwachungsscript
+erf&uuml;llen. Am Ende des Artikels zeige ich dann, wie man mit Windows Bordmitteln auch noch
+die Intervall-gesteuerte &Uuml;berwachung implementiert: mit Scheduled Tasks.
+</p>
+
+<h2>Erstellen eines Testscripts</h2>
+<p>
+Nat&uuml;rlich ist die erste Frage, was ich am Server testen will. Nat&uuml;rlich kann ich die
+Datenbankintegrit&auml;t checken, Verbindungen zu Kreditkartenservern und so weiter. F&uuml;r 
+den heutigen Artikel beschr&auml;nke ich mich aber auf etwas einfaches: die &Uuml;berwachung, ob man sich zur
+Datenquelle verbinden kann. Die Implementierung findet sich in der Datei
+<b>ServerTestScript.asp</b> (die klarerweise am zu testenden Server abgelegt sein mu&szlig;).
+</p>
+
+<pre style="background='silver';">
+&lt;%
+On Error Resume Next
+strConnStr = "Provider=SQLOLEDB;Data Source=strangelove;Initial Cat..."
+Set conn = Server.CreateObject("ADODB.Connection")
+conn.Open strConnStr
+
+' ein eigenes Fehlerformat schadet nicht! Hier simpel...
+If Err.Number &lt;&gt; 0 Then
+  Response.Write Err.Description
+Else
+  Response.Write "Success-Status"
+End If
+
+' das unbedingt hier hinten!
+conn.Close
+Set conn = Nothing
+
+Response.End
+%&gt;
+</pre>
+
+<p>
+Es findet sich keinerlei Rocket Science, aber: man sollte wirklich versuchen, so viel an
+brauchbarer Fehlerinformation zur&uuml;ckliefern, wie nur m&ouml;glich - denn sonst erschwert man sich
+die Fehlersuche nur unn&ouml;tig.
+</p>
+
+<h2>Das &Uuml;berwachungsscript</h2>
+<p>
+Jetzt haben wir das Script, das wir am Server aufrufen wollen. Uns fehlt sozusagen "nur noch"
+das WSH (Windows Scripting Host) Script, mit dem wir das Script am Server aufrufen, und eine entsprechende Nachricht
+ins Eventlog schreiben, und vielleicht auch noch dem Administrator eine Email schicken.
+Um Features erweitern kann man diese Liste sicherlich &lt;g /&gt;.
+</p>
+
+<p>
+Klingt nach viel Arbeit, ist es aber nicht. Denn wir verwenden Komponenten, die uns die meiste
+Arbeit abnehmen, und noch dazu gratis sind: <b>AspTear</b> (f&uuml;r den Zugriff auf das Testscript), <b>AspEventLog</b> (zum
+Mitloggen der Events) und <b>CDONTS</b>. Letzteres ist Teil einer Windows 2000 Server Installation,
+die anderen kann man downloaden - die Links dazu finden sich am Ende des Artikels.
+</p>
+<p>
+Wenden wir uns nun dem Code in <b>ScheduledTask.vbs</b> zu. Der Hauptprogrammteil sieht wie
+folgt aus:
+</p>
+
+<pre style="background='silver';">
+Const EVENTLOG_SUCCESS = 0
+Const EVENTLOG_ERROR_TYPE = 1
+Const EVENTLOG_WARNING_TYPE = 2
+Const EVENTLOG_INFORMATION_TYPE = 4
+
+Const Request_POST = 1
+Const Request_GET = 2
+
+Const cstrDefaultSender = "automated@dev.alfasierrapapa.com"
+Const cstrDefaultSubject = "SiteWatcher Script Alert"
+
+Const cPage2Test = "http://localhost/aspheute/sitecheck/servertestscript.asp"
+Const cSuccessMessage = "Success-Status"
+
+' main functionality
+strGetResponse = RetrievePage(cPage2Test)
+If (0 &lt;&gt; StrComp(strGetResponse, cSuccessMessage)) Then
+  strError = "SiteCheck failed at " &amp; Now() &amp; " with error message: " &amp; strGetResponse
+  LogEvent EVENTLOG_WARNING_TYPE, strError
+  ' SendMailToAdmin "christophw@dev.alfasierrapapa.com", strError
+Else
+  LogEvent EVENTLOG_SUCCESS, ("SiteCheck Script succeeded at " &amp; Now())
+End If
+</pre>
+
+<p>
+Etliche Konstanten (die meisten f&uuml;r die Komponenten), und ein relativ kurzer Teil von acht
+Zeilen, die das &Uuml;berwachen durchf&uuml;hren. <i>RetrievePage</i> ruft unser Datenbanktestscript
+auf, wird ein Fehler geliefert, wird dieser mittels <i>LogEvent</i> gemeldet, und w&auml;re
+<i>SendMailToAdmin</i> nicht auskommentiert, bek&auml;me ich auch noch eine Email mit der Fehlermeldung
+geschickt.
+</p>
+<p>
+Also spielt sich alles in Hilfsfunktionen ab, die sich am Ende des Scripts finden:
+</p>
+
+<pre style="background='silver';">
+Function RetrievePage(ByVal strUrl)
+ Set xobj = CreateObject("SOFTWING.ASPtear")
+    
+ On Error Resume Next
+ ' URL, action, payload, username, password
+ strRetval = xobj.Retrieve(strUrl, Request_GET, "", "", "")
+ Set xObj = Nothing
+
+ If Err.Number &lt;&gt; 0 Then
+    If Err.Number &gt;= 400 Then
+        strErrMsg = "Server returned error: " &amp; Err.Number
+    Else
+        strErrMsg = "Component/WinInet error: " &amp; Err.Description
+    End If
+    strRetVal = strErrMsg &amp; vbCrlf &amp; "Raw Response:" &amp; vbCrlf &amp; strRetVal
+ End If
+ RetrievePage = strRetVal
+End Function
+
+Sub LogEvent(ByVal nType, ByVal strInfo)
+ ' nach dem Testen der Komponente die folgende Zeile aktivieren
+ ' On Error Resume Next
+ Dim xObj, bResult
+ Set xObj = CreateObject("SOFTWING.ASPEventlog")
+
+ bResult = xObj.Open()
+ bResult = xObj.ReportEvent(nType, strInfo)
+ bResult = xObj.Close()
+ Set xObj = Nothing
+End Sub
+
+Sub SendMailToAdmin(ByVal strEmailAddress, ByVal strMessageText)
+ ' nach dem Testen der Komponente die folgende Zeile aktivieren
+ ' On Error Resume Next
+ Set objMail = CreateObject("CDONTS.NewMail")
+ objMail.From = cstrDefaultSender
+ objMail.To = strEmailAddress
+ objMail.Subject = cstrDefaultSubject
+ objMail.Body = strMessageText
+ objMail.Send
+ Set objMail = Nothing
+End Sub
+</pre>
+
+<p>
+Mit diesen hat man ein tolles &Uuml;berwachungsscript f&uuml;r einen Scheduled Task - allerdings sollte
+man das Script vorher auf der Kommandozeile ausf&uuml;hrlich testen, weil in einem Scheduled
+Task ist das nicht sonderlich ideal.
+</p>
+
+<h2>Testen des &Uuml;berwachungsscripts</h2>
+<p>
+Anstatt jetzt und sofort den Scheduled Task anzulegen, werden wir das Script direkt an der
+Kommandozeile testen, und zwar mittels <b>cscript.exe</b>:
+</p>
+
+<pre style="background='silver';">
+cscript.exe ScheduledTask.vbs
+</pre>
+
+<p>
+Wenn alles OK l&auml;uft (am Server), dann bekommt man folgenden Eintrag im Eventlog:
+</p>
+
+<IMG SRC="/artikel/Bilder/200104/20010419_2.png" width="404" height="448" alt="" border="0">
+
+<p>
+Liefert der Server einen Fehler, k&ouml;nnte dies im Eventlog so vermerkt werden:
+</p>
+
+<IMG SRC="/artikel/Bilder/200104/20010419_1.png" width="404" height="448" alt="" border="0">
+
+<p>
+Diese beiden Eintragstypen erh&auml;lt man auch, wenn man das Script nun als Scheduled
+Task laufen l&auml;&szlig;t.
+</p>
+
+<h2>Einrichten des Scheduled Tasks</h2>
+<p>
+Das Einrichten eines Scheduled Tasks geschieht &uuml;ber das Scheduled Tasks Applet in der
+Systemsteuerung:
+</p>
+
+<IMG SRC="/artikel/Bilder/200104/20010419_0.png" width="543" height="302" alt="" border="0">
+
+<p>
+Dort w&auml;hlt man (klarerweise) <i>Add Scheduled Task</i> aus - dies startet einen netten
+kleinen Wizard, der uns bei der Erstellung des Tasks zur Seite steht. Die Infoseite
+kann man getrost vergessen. Interessant wird es auf der zweiten Seite, auf der man das
+Programm aussuchen kann, das man starten m&ouml;chte. Standardm&auml;&szlig;ig bekommt man eine Liste
+von installierten Applikationen.
+</p>
+
+<IMG SRC="/artikel/Bilder/200104/20010419_3.png" width="441" height="318" alt="" border="0">
+
+<p>
+Das interessiert uns aber wenig - wir m&uuml;ssen nach unserem Script <i>Browse</i>n. Wenn man
+das Script ausgew&auml;hlt hat, bekommt man den Scheduling-Schritt "vorgesetzt":
+</p>
+
+<IMG SRC="/artikel/Bilder/200104/20010419_4.png" width="441" height="318" alt="" border="0">
+
+<p>
+Den Namen kann man w&auml;hlen, wie man m&ouml;chte. Allerdings d&uuml;rften einige nun ob der eingeschr&auml;nkten
+Scheduling-M&ouml;glichkeiten entt&auml;uscht sein - nur im Wizard ist es so d&uuml;rftig, die Korrektur von
+t&auml;glich auf wiederkehrenden Zeitrahmen kann man sp&auml;ter machen.
+</p>
+
+<p>
+Weiter geht es mit den Einstellungen f&uuml;r den t&auml;glichen Task. Die einzige &Auml;nderung, die ich
+durchgef&uuml;hrt habe, ist, da&szlig; ich den Task wiederholend eingestellt habe.
+</p>
+
+<IMG SRC="/artikel/Bilder/200104/20010419_5.png" width="441" height="318" alt="" border="0">
+
+<p>
+Ein wichtiger Schritt ist die Festlegung des Accounts, mit dessen Privilegien das Script 
+abgearbeitet wird. Normalerweise sollte man <b>nicht</b> das Administratorenkonto verwenden,
+sondern f&uuml;r Scheduled Tasks ein eigenes anlegen.
+</p>
+
+<IMG SRC="/artikel/Bilder/200104/20010419_6.png" width="441" height="318" alt="" border="0">
+
+<p>
+Eigentlich sind wir nun mit der Konfiguration fertig, allerdings gibt uns der Wizard
+im letzten Schritt (siehe Screenshot) die M&ouml;glichkeit, die erweiterten Konfigurationsm&ouml;glichkeiten
+sofort einzusehen.
+</p>
+
+<IMG SRC="/artikel/Bilder/200104/20010419_7.png" width="441" height="318" alt="" border="0">
+
+<p>
+Nun k&ouml;nnen wir von t&auml;glich auf beliebige Zeitr&auml;ume umstellen, indem wir auf den Scheduling-Tab
+wechseln:
+</p>
+
+<IMG SRC="/artikel/Bilder/200104/20010419_8.png" width="406" height="448" alt="" border="0">
+
+<p>
+Noch ist zwar anscheinend nichts gewonnen, aber: die richtig interessanten Informationen
+finden sich hinter dem <i>Advanced</i> Button versteckt:
+</p>
+
+<IMG SRC="/artikel/Bilder/200104/20010419_9.png" width="368" height="293" alt="" border="0">
+
+<p>
+<i>Repeat Task</i> ist genau das, was wir gesucht haben. Die Checkbox markieren, und den
+gew&uuml;nschten Testzeitraum (alle x Minuten) eintragen.
+Damit haben wir den Scheduled Task fertigkonfiguriert - und dessen Ablaufergebnisse finden
+wir ab sofort in der Ereignisanzeige (aber die kennen Sie ja bereits vom Test unseres Scripts).
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Nun haben Sie ein Grundger&uuml;st f&uuml;r die &Uuml;berwachung Ihrer Websites. Sie k&ouml;nnen beliebige Aktionen
+sowohl zum Testscript als auch zum &Uuml;berwachungsscript hinzuf&uuml;gen - bis hin zum automatisierten
+Serverneustart!
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010419.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010419.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020729.htm">Den Webserver umsiedeln (IIS 4 oder 5)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020729.htm</span><br>
+<a href="../artikel/20000508.htm">Erstellen eines HTTP Test Tools</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000508.htm</span><br>
+<a href="../artikel/20040517.htm">Filesystem-Watcher leicht gemacht</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040517.htm</span><br>
+<a href="../artikel/20011204.htm">IIS, was machst du gerade?</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011204.htm</span><br>
+<a href="../artikel/20010516.htm">Kommandozeilen-Programme aufrufen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010516.htm</span><br>
+<a href="../artikel/20010928.htm">Schlu&szlig; mit lustig Teil 3 - das Hfnetchk Tool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010928.htm</span><br>
+<a href="../artikel/20030911.htm">Virtuelle Verzeichnisse umbenennen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20030911.htm</span><br>
+<a href="../artikel/20010910.htm">Webseiten automatisiert scrapen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010910.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2FIisDev%2FComponents%2FAspEventLog%2F">AspEventLog Komponente</a><br>
+<SPAN class="content">http://www.alphasierrapapa.com/IisDev/Components/AspEventLog/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2FIisDev%2FComponents%2FAspTear%2F">AspTear Komponente</a><br>
+<SPAN class="content">http://www.alphasierrapapa.com/IisDev/Components/AspTear/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

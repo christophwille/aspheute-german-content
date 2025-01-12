@@ -1,0 +1,207 @@
+<HTML>
+<HEAD>
+<TITLE>Arbeiten mit dem SQL Server XML View Mapper</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Kennen Sie schon den SQL Server XML View Mapper von Microsoft? Wenn Sie sich mit XML besch&auml;ftigen, dann sollten Sie dieses Tool auf alle F&auml;lle kennenlernen!">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SQL Server XML View Mapper,View,map,SQL Server,XML,Xpath,query,Abfrage,Mapping,XDR,Schema">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Arbeiten mit dem SQL Server XML View Mapper</H1>
+<p>
+Geschrieben von: <a href="../autoren/uwehess.htm">Uwe Hess</a><br>
+Kategorie: <a href="../kategorien/XML.htm">XML</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020416"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Kennen Sie schon den SQL Server XML View Mapper von Microsoft? Wenn Sie sich mit XML besch&auml;ftigen, dann sollten Sie dieses 
+Tool auf alle F&auml;lle kennenlernen! Der SQL Server XML View Mapper erm&ouml;glicht unter anderem das Erstellen von XPath-Abfragen 
+gegen eine SQL Server Datenbank, sowie projektbezogenes Arbeiten, und stellt dem Benutzer eine visuelle Arbeitsoberfl&auml;che 
+zur Verf&uuml;gung. So einfach war das Arbeiten mit XML und XDR gegen SQL Server Datenbanken noch nie.
+</p>
+<p>
+Mit dem <a href="http://msdn.microsoft.com/downloads../default.htm?ShowPane=false&URL=/code/sample.asp?url=/msdn-files/027/001/443/msdncompositedoc.xml" target="_blank">SQL Server XML View Mapper</a>
+k&ouml;nnen Sie unter anderem folgende Aufgaben erledigen:
+</p>
+
+<ul>
+	<li>Extrahieren von Daten als XML aus einer SQL Server Datenbank
+	<li>Ausf&uuml;hren von XPath- Abfragen
+	<li>Aktualisieren von Daten
+	<li>XML-Daten als relationale Daten in eine SQL- Server Datenbank laden
+	<li>Erstellen und Bearbeiten eines XDR-Schemas f&uuml;r den Entwurf von XPath- Abfragen
+</ul>
+
+<h2>Projektbasiertes Arbeiten</h2>
+<p>
+In diesem Artikel werden wir uns mit der Vorgehensweise zum Erstellen eines Projektes und der Ausf&uuml;hrung von XPath-Abfragen 
+im SQL Server XML View Mapper besch&auml;ftigen. Sie k&ouml;nnen ein neues Projekt entweder mit einem bereits vorhandenen XDR-Schema 
+anlegen, oder in einem neuen Projekt ein XDR-Schema erstellen lassen. Nachfolgend sehen Sie das Listing f&uuml;r ein XDR-Schema 
+auf dessen Grundlage eine Abfrage gegen die Tabelle <i>Products</i> der Beispieldatenbank <i>Northwind</i> ausgef&uuml;hrt werden soll.
+</p>
+
+<pre style="background='silver';">
+&lt;!-- mySchema.xml --&gt;
+&lt;Schema xmlns="urn:schemas-microsoft-com:xml-data"
+   xmlns:dt="urn:schemas-microsoft-com:datatypes"
+   xmlns:sql="urn:schemas-microsoft-com:xml-sql"&gt;
+
+   &lt;ElementType name="Products" &gt;
+     &lt;AttributeType name="ProductID" /&gt;
+     &lt;AttributeType name="ProductName" /&gt;
+     &lt;AttributeType name="UnitPrice" /&gt;
+
+     &lt;attribute type="ProductID" /&gt;
+     &lt;attribute type="ProductName" /&gt;
+     &lt;attribute type="UnitPrice" /&gt;
+   &lt;/ElementType&gt;
+&lt;/Schema&gt;
+</pre>
+
+<p>
+Nach dem Starten der Anwendung pr&auml;sentiert sich diese dem Anwender mit drei Arbeitsfenstern und einem, auf der rechten Seite 
+befindlichen, Projekt- Explorer. Um das neue Projekt anzulegen, w&auml;hlen Sie im SQL Server View Mapper den Men&uuml;punkt 
+<i>File</i> / <i>New Project</i>. Zum Definieren einer Verbindung zu SQL Server klicken Sie auf das linke Arbeitsfenster 
+(SQL- Fenster) und geben in dem erscheinenden Dialogfeld die Verbindungeinstellungen zur Datenbank an. Dieses Dialogfeld 
+ist in der folgenden Abbildung zu sehen.
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020416_1.png" width="823" height="602" alt="" border="0">
+
+<p>
+Nach dem &Uuml;bernehmen der getroffenen Einstellungen erscheint ein Dialogfeld, in dem die abzufragenden Tabellen oder 
+Views ausgew&auml;hlt werden:
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020416_2.png" width="426" height="397" alt="" border="0">
+
+<p>
+Mit dem Beenden dieses Dialogfeldes erfolgt automatisch die Anzeige der getroffenen Auswahl im linken Arbeitsfenster. Um 
+ein XDR-Schema zu importieren f&uuml;hren Sie einen einfachen Mausklick auf das noch leere rechte Arbeitsfenster (XDR-Fenster) 
+aus und w&auml;hlen in dem dann erscheinenden Dateibrowser die gew&uuml;nschte Schemadatei.
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020416_3.png" width="763" height="536" alt="" border="0">
+
+<p>
+Um nun eine auf diesem Schema basierende Abfrage auszuf&uuml;hren, bet&auml;tigen Sie die Schaltfl&auml;che Run und geben in dem erscheinenden 
+Dialogfeld die auszuf&uuml;hrende XPath- Abfrage ein:
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020416_4.png" width="589" height="492" alt="" border="0">
+
+<p>
+In dem hier gezeigten Beispiel erfolgt die Ausf&uuml;hrung folgender Abfrage: <i>/Products[@UnitPrice&lt;31]</i>. Damit werden alle 
+Datens&auml;tze der Tabelle <i>Products</i> angezeigt, deren Feld <i>UnitPrice</i> einen Eintrag mit einen Wert kleiner als 31 enth&auml;lt.
+</p>
+
+<p>
+Nach dem Ausf&uuml;hren der Abfrage (Schaltfl&auml;che <i>Execute</i>) erfolgt die Anzeige des damit erzeugten XML- Dokumentes in einer neuen 
+Instanz des Internet Explorer:
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020416_5.png" width="584" height="450" alt="" border="0">
+
+<p>
+Wenn Sie noch &uuml;ber kein XDR-Schema verf&uuml;gen, dann k&ouml;nnen Sie mit dem SQL Server View Mapper auf einfache Weise ein solches 
+erstellen. Dazu legen Sie ein neues Projekt an, stellen wie bereits beschrieben eine Verbindung zu SQL Server her und w&auml;hlen 
+die abzufragenden Tabellen oder Views aus. Anschlie&szlig;end markieren Sie im Projekt-Explorer mit der rechten Maustaste den 
+Datenbankeintrag unter Knoten <i>SQL-Modules</i> und w&auml;hlen in dem damit erscheinenden Kontextmen&uuml; den Eintrag <i>Generate XDR-Module</i>. 
+Damit erfolgt automatisch die Erzeugung eines, auf dem ausgew&auml;hlten Datenbankinhalten beruhendes, XDR-Schemas.
+</p>
+
+<p>
+Wie Sie in der vorletzten Abbildung ersehen k&ouml;nnen, erfolgt die Visualisierung des Mappings zwischen den Feldern der 
+abgefragten Tabelle und dem XDR-Schema mit Hilfe von unterbrochenen Linien. Zum Bearbeiten dieses automatisch vorgenommenen 
+Mappings markieren Sie einen der Eintr&auml;ge des linken oder des rechten Arbeitsfensters und ziehen diesen bei bet&auml;tigter 
+Maustaste zu dem gew&uuml;nschten Feld in den jeweils gegen&uuml;berliegenden Bereich. 
+</p>
+
+<p>
+Um eine der Linien zu l&ouml;schen klicken Sie mit der rechten Maustaste einen der Eintr&auml;ge im XDR- Fenster an, und w&auml;hlen im 
+erscheinenden Kontextmen&uuml; den Eintrag <i>Properties</i>. Damit erfolgt die Anzeige eines Eigenschaftendialoges in dem Sie unter <i>SQL</i> 
+das K&auml;stchen <i>Do not map</i> aktivieren. Damit wird dieses Feld von dem Mapping mit der Datenquelle ausgeschlossen, was mit der 
+automatisch vorgenommen Markierung des Eintrages mit Hilfe eines Kreuzicons erkennbar ist. Zum Abschlu&szlig; der Arbeit mit dem 
+SQL Server XML View Mapper k&ouml;nnen Sie mit <i>File</i> / <i>Save Project</i> das jeweilige Projekt speichern und auf die hier getroffenen 
+Einstellungen in einer weiteren Sitzung zur&uuml;ckgreifen.
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020416_6.png" width="593" height="433" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Mit dem SQL Server View Mapper sind Sie in der Lage auf professionelle Weise XDR-Schemas zu testen und zu optimieren. Au&szlig;erdem 
+eignet sich das Tool besonders zum Erlernen des Umgangs mit XPath-Abfragen. 
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020416.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020416.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000417.htm">Auslesen von XML Dateien mit dem DOM</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000417.htm</span><br>
+<a href="../artikel/20001117.htm">Einfaches XML-Auslesen in .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001117.htm</span><br>
+<a href="../artikel/20010925.htm">Verwendung von XML-Schemas (XSD)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010925.htm</span><br>
+<a href="../artikel/20010514.htm">Was sind XML Schemas?</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010514.htm</span><br>
+<a href="../artikel/20020116.htm">XML-Daten verarbeiten mit XSLT</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020116.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Fdownloads%2Fdefault%2Easp%3FShowPane%3Dfalse%26URL%3D%2Fcode%2Fsample%2Easp%3Furl%3D%2Fmsdn%2Dfiles%2F027%2F001%2F443%2Fmsdncompositedoc%2Exml">SQL Server XML View Mapper 1.0</a><br>
+<SPAN class="content">http://msdn.microsoft.com/downloads../default.htm?ShowPane=false&URL=/code/sample.asp?url=/msdn-files/027/001/443/msdncompositedoc.xml</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

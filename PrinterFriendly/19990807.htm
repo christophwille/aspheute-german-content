@@ -1,0 +1,132 @@
+<HTML>
+<HEAD>
+<TITLE>Dynamische Arrays - Fluch und Segen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wenn man gleichartige, jedoch in der Anzahl nicht bekannte Werte speichern m&ouml;chte, dann sollte man zu dynamischen Arrays greifen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Array,dynamisch,IIS,ASP,VBScript,Redim,Dim">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Dynamische Arrays - Fluch und Segen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=19990807"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Was ist ein dynamisches Array, und wodurch erh&auml;lt es seine Daseinsberechtigung,
+wie setze ich es ein, worauf mu&szlig; ich achten? All dies sind Fragen die sich einem
+(guten) ASP Programmierer fr&uuml;her oder sp&auml;ter stellen.
+</p>
+<p>
+Ein dynamisches Array kommt sinnvollerweise immer dann zum Einsatz, wenn man eine im vornherein 
+unbekannte Anzahl gleichartiger Werte speichern m&ouml;chte. 
+Sehen wir uns einmal ein Beispiel an, das ein dynamisches Array benutzt.
+<Pre>
+ReDim arrA(0)
+</pre>
+Diese Zeile initialisiert das dynamische Array mit Namen <i>arrA</i> &auml;hnlich wie dies der Befehl Dim bei Variablen tut.
+<pre>
+ReDim arrA(2)
+arrA(0) = 47
+arrA(1) = 11
+arrA(2) = 0
+</pre>
+Hier wird nun das Array auf insgesamt 3 Elemente vergr&ouml;&szlig;ert (der Index ist 0-basierend) und den 3 Elementen Werte zugewiesen.
+<pre>
+ReDim Preserve arrA(3)
+arrA(3) = 88
+</pre>
+Der <b>Preserve</b> Zusatz in der Redim Anweisung bewirkt, da&szlig; bereits zugewiesene Werte des 
+Arrays erhalten bleiben. Ansonsten w&uuml;rde das Array beim Redimensionieren gel&ouml;scht werden.
+Schlie&szlig;lich wird dem 4. Element (Index ist 3) der Wert 88 zugewiesen.
+Nat&uuml;rlich k&ouml;nnen Sie auch Strings oder Objekte als Werte f&uuml;r Arrays benutzen.
+Auf einen Wert des dynamischen Arrays wird genauso zugegriffen wie bei einem gew&ouml;hnlichen 
+Array durch Angabe des Arraynames und des Index.
+</p>
+<p>
+Wie kann ich nun alle Elemente eines Arrays auslesen? Die Indizes des Arrays laufen immer von 0 bis Ubound(ArrayName).
+<pre>
+For intI = 0 to Ubound(arrA)
+	Response.Write intI &amp; ". Wert: " &amp; arrA(intI) &amp; "&lt;BR&gt;"
+Next
+</pre>
+</p>
+<p>
+Wo nun sind dynamische Arrays in Verwendung?
+<ul>
+	<li>Beim Speichern von Usereingaben wie zum Beispiel in sogenannten "Shoppingbags", die die Eink&auml;ufe 
+		von Kunden bis zur Bezahlung mitprotokollieren. Die Anzahl der vom Kunden gew&auml;hlten Produkte kann beliebig sein.
+	<li>Zum Speichern einer beliebigen Anzahl von Datens&auml;tzen aus einer Datenbank.
+</ul>
+</p>
+<p>
+Worauf mu&szlig; man bei dynamischen Arrays achten?
+<ul>
+	<li>Wenn man ein Array verkleinert gehen automatisch die Werte verloren, die nicht mehr im 
+		verkleinerten Array Platz haben.
+	<li>Will man beim Ver&auml;ndern der Gr&ouml;&szlig;e des Arrays die gespeicherten Werte erhalten, so mu&szlig; 
+		man <i>ReDim Preserve</i> benutzen.
+	<li>Man kann auch mehrdimensionale dynamische Arrays benutzen, aber bei <i>Redim Preserve</i> kann 
+		man nur die letzte Dimension in der Gr&ouml;&szlig;e ver&auml;ndern.
+</ul>
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001002.htm">Arrayfunktionen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001002.htm</span><br>
+<a href="../artikel/20000927.htm">Das Array, unendliche Weiten?</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000927.htm</span><br>
+<a href="../artikel/20000906.htm">Sortieren von Arrays in VBScript</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000906.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

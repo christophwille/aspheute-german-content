@@ -1,0 +1,290 @@
+<HTML>
+<HEAD>
+<TITLE>Regex'en zu Assemblies kompilieren</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Mit .NET kann man regul&auml;re Ausdr&uuml;cke (Regex) in eine Assembly vorkompilieren, was einen Geschwindigkeitsvorteil zur Ausf&uuml;hrungszeit mit sich bringt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Assembly,CompileToAssembly,Regex,regular expression,Ausdruck,Emailvalidierung,Check,Überprüfung">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Regex'en zu Assemblies kompilieren</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020902"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Mit .NET kann man regul&auml;re Ausdr&uuml;cke (Regex) in eine Assembly vorkompilieren, was einen
+Geschwindigkeitsvorteil zur Ausf&uuml;hrungszeit mit sich bringt. Heute werden wir uns die notwendigen
+Schritte daf&uuml;r anhand eines sehr praktischen Szenarios ansehen - wir werden eine Emailvalidierungs-Regex
+vorkompilieren, die man dann in allen Programmiersprachen und quer &uuml;ber Windows Forms oder ASP.NET Web
+Forms einsetzen kann.
+</p>
+
+<h2>Regex'en kompilieren</h2>
+<p>
+Der erste Schritt ist, sich einen regul&auml;ren Ausdruck f&uuml;r die Emailvalidierung zu schreiben. Da ich f&uuml;r solche
+Denksportaufgaben keine Zeit aufwenden m&ouml;chte, wende ich die Copy/Paste Programmiermethode an - gewu&szlig;t wo suchen,
+und dann &uuml;bernehmen. In diesem Fall habe ich die Emailvalidierungs-Regex'en von der
+<a href="http://regexlib.com/" target="_blank">Regular Expression Library</a> &uuml;bernommen.
+</p>
+<p>
+Unser Code f&uuml;r die Kompilierung einer Regex sieht so aus (
+<a href="http://www.icsharpcode.net/opensource/sd/" target="_blank">#develop</a> Projekt <b>CompileRegEx</b>):
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.IO;
+
+using System.Reflection;
+using System.Text.RegularExpressions;
+
+class MainClass
+{
+  public static void Main(string[] args)
+  {
+    // http://regexlib.com/REDetails.aspx?regexp_id=26
+    string strRegex = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\. ...
+    
+    // http://regexlib.com/REDetails.aspx?regexp_id=72
+    // string strRegex = @"^(([^&lt;&gt;;()[\]\\.,;:@""]+(\.[^&lt;&gt;()  ...
+                                                                                            
+    // zwar unnotwendig, aber man sollte checken, ob die RegEx &uuml;berhaupt 
+    // funktioniert bevor man kompiliert
+    try
+    {
+      Regex re = new Regex(strRegex);
+    }
+    catch (ArgumentException ae)
+    {
+      Console.WriteLine("Regex creation error, reason: " + ae.Message);
+      return;
+    }
+    
+    RegexCompilationInfo  rci = new RegexCompilationInfo(strRegex,
+      RegexOptions.Compiled, 
+      "EmailValidationRegEx",  // Class name
+      "DotNetHeute",           // Namespace
+      true);                   // is public
+    
+    AssemblyName asmName = new AssemblyName();
+    asmName.Name = "emailregex";
+
+    RegexCompilationInfo[] rciArray = new RegexCompilationInfo[] { rci };
+    
+    try
+    {
+      Regex.CompileToAssembly(rciArray, asmName);
+    }
+    catch (ArgumentException ae)
+    {
+      Console.WriteLine("Error in compilation: " + ae.Message);
+      return;
+    }
+    
+    Console.WriteLine("emailregex.dll erfolgreich erzeugt");
+  }
+}
+</pre>
+
+<p>
+Zuerst wird gepr&uuml;ft, ob die Regex &uuml;berhaupt korrekt ist (vorausgedacht f&uuml;r den Fall, da&szlig; man sp&auml;ter
+Kommandozeilenparameter f&uuml;r diese Applikation einf&uuml;hrt). Danach wird ein <i>RegexCompilationInfo</i>
+Objekt erzeugt:
+</p>
+
+<pre style="background='silver';">
+    RegexCompilationInfo  rci = new RegexCompilationInfo(strRegex,
+      RegexOptions.Compiled, 
+      "EmailValidationRegEx",
+      "DotNetHeute",
+      true);
+</pre>
+
+<p>
+Der erste Parameter ist die Regex selbst, gefolgt von der Anweisung, da&szlig; wir sie kompilieren wollen. Danach kommt
+der Klassenname unter dem wir das Objekt sp&auml;ter aufrufen wollen, sowie dessen Namespacezugeh&ouml;rigkeit. Der letzte
+Parameter gibt an, ob die Klasse public sein soll (ja, weil sonst k&ouml;nnen wir sie nicht verwenden).
+</p>
+<p>
+Weiters m&uuml;ssen wir der Klasse eine Assembly zuteil werden lassen:
+</p>
+
+<pre style="background='silver';">
+    AssemblyName asmName = new AssemblyName();
+    asmName.Name = "emailregex";
+</pre>
+
+<p>
+Die Zeile
+</p>
+
+<pre style="background='silver';">
+    RegexCompilationInfo[] rciArray = new RegexCompilationInfo[] { rci };
+</pre>
+
+<p>
+gibt den Hinweis, da&szlig; wir mehr als eine Regex pro Assembly kompilieren k&ouml;nnten. Hier erstellen wir allerdings eine
+Assembly mit nur einer Regex.
+</p>
+
+<pre style="background='silver';">
+    Regex.CompileToAssembly(rciArray, asmName);
+</pre>
+
+<p>
+Mit diesem Befehl wird die Regex-Assembly <b>emailregex.dll</b> erstellt. Diese kann nun sofort in einer Applikation
+- Web oder Windows - eingesetzt werden.
+</p>
+
+<h2>Die kompilierte Regex einsetzen</h2>
+<p>
+Um die Verwendung zu verdeutlichen, habe ich eine Kommandozeilenapplikation geschrieben, die einige Emailadressen
+auf Plausibilit&auml;t pr&uuml;ft - und zwar mit Hilfe unserer vorkompilierten Regex (
+<a href="http://www.icsharpcode.net/opensource/sd/" target="_blank">#develop</a> Projekt <b>TestRegEx</b>):
+</p>
+
+<pre style="background='silver';">
+using System;
+using DotNetHeute;
+
+using System.Collections.Specialized;
+using System.Text.RegularExpressions;
+
+class MainClass
+{
+  public static void Main(string[] args)
+  {
+    EmailValidationRegEx re = new EmailValidationRegEx();
+    
+    StringCollection email2Validate = new StringCollection();
+    email2Validate.Add("christophw@alphasierrapapa.com");
+    email2Validate.Add("christophw@192.168.1.100");
+    email2Validate.Add("christophw@com");
+    email2Validate.Add("christophw@com.info");
+    
+    foreach(string strAddress2Validate in email2Validate) 
+    {
+      if (re.IsMatch(strAddress2Validate)) 
+      {
+        Console.WriteLine(strAddress2Validate + " *OK*");
+      }
+      else
+      {
+        Console.WriteLine(strAddress2Validate + " no email address");
+      }
+    }
+    
+  }
+}
+</pre>
+
+<p>
+Der Namespace <i>DotNetHeute</i> wird referenziert, und danach kann die <i>EmailValidationRegEx</i> Klasse eingesetzt 
+werden. Die Assembly wird in der IDE referenziert:
+</p>
+
+<IMG SRC="/artikel/Bilder/200209/20020902.png" width="660" height="488" alt="" border="0">
+
+<p>
+Mittels <i>IsMatch</i> wird gecheckt, ob eine Adresse entspricht. Wenig &uuml;berraschend hier der Output:
+</p>
+
+<pre style="background='silver';">
+christophw@alphasierrapapa.com *OK*
+christophw@192.168.1.100 *OK*
+christophw@com no email address
+christophw@com.info *OK*
+</pre>
+
+<p>
+Nat&uuml;rlich kann die Regex-Klasse auch in ASP.NET zum Einsatz kommen, nur mu&szlig; man entsprechend die Assembly ins <b>bin</b>
+Verzeichnis kopieren und auf den Seiten registrieren.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Mit kompilierten Regex'en erspart man sich, die Regex an allen Orten definieren zu m&uuml;ssen, und bekommt noch dazu eine 
+bessere Performance. F&uuml;r oft wiederverwendete Regex'en sicherlich die bevorzugte Art der Verwendung.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020902.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020902.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000720.htm">Das foreach Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000720.htm</span><br>
+<a href="../artikel/20000724.htm">Exception Handling in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000724.htm</span><br>
+<a href="../artikel/20001024.htm">Exception Handling in Visual Basic.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001024.htm</span><br>
+<a href="../artikel/20000822.htm">Mailadressen-&uuml;berpr&uuml;fen f&uuml;r Fortgeschrittene</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000822.htm</span><br>
+<a href="../artikel/20000829.htm">Regul&auml;re Ausdr&uuml;cke / Regular Expressions</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000829.htm</span><br>
+<a href="../artikel/20011010.htm">Sprachenintegration in .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011010.htm</span><br>
+<a href="../artikel/20011203.htm">Verhinderung von SQL Injection Marke .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011203.htm</span><br>
+<a href="../artikel/20010208.htm">Web Projekte mit SharpDevelop erstellen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010208.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fregexlib%2Ecom%2F">Regular Expression Library</a><br>
+<SPAN class="content">http://regexlib.com/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eicsharpcode%2Enet%2Fopensource%2Fsd%2F">SharpDevelop (#develop)</a><br>
+<SPAN class="content">http://www.icsharpcode.net/opensource/sd/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

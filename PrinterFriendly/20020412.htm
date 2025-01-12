@@ -1,0 +1,210 @@
+<HTML>
+<HEAD>
+<TITLE>Der Microsoft Baseline Security Analyzer (MBSA) 1.0</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Die Hotfixes f&uuml;r Windows, SQL Server und IIS werden in ihrer Anzahl nahezu t&auml;glich mehr. Auch Security Guidelines zur korrekten sicheren Konfiguration des Betriebssystems und seiner Services sind weit verstreut.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Hotfix,Patch,Security,Sicherheit,MBSA,Microsoft Baseline Security Analyzer,Vulnerability,Sicherheitsloch,Scanner,Check,Analyse,Best Practice">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Der Microsoft Baseline Security Analyzer (MBSA) 1.0</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020412"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Die Hotfixes f&uuml;r Windows, SQL Server und IIS werden in ihrer Anzahl nahezu t&auml;glich mehr. Auch Security Guidelines
+zur korrekten sicheren Konfiguration des Betriebssystems und seiner Services sind &uuml;ber viele Best Practices Dokumente
+verstreut. Und wenn man alles beisammen hat, mu&szlig; man darauf achten, auch wirklich alle Maschinen entsprechend upzudaten
+und zu sichern.
+</p>
+
+<p>
+Als Netzwerkadministrator wird das sehr schnell zu einer "Lebensaufgabe", immer am neuesten Stand der Security Patches
+und Guidelines zu bleiben. Auch wenn man eine Firewall hat, und sich vor W&uuml;rmern wie Code Red sicher f&uuml;hlt - irgendein
+Mitarbeiter nimmt einen infizierten Notebook mit und schon hat man sein vermeintlich gesch&uuml;tztes Netzwerk auch verseucht -
+h&auml;tte man doch die Security Patches eingespielt!
+</p>
+
+<p>
+Nat&uuml;rlich ist es auf Dauer nicht einzusehen, st&auml;ndig von Rechner zu Rechner laufen zu m&uuml;ssen, um nachzusehen, welche
+Patches und Security Guidelines tats&auml;chlich angewendet wurden. Auch wenn man es dokumentiert haben sollte: bestimmte
+Dinge lassen sich nur durch &Uuml;berpr&uuml;fung herausfinden, und das automatisiert der 
+<a href="http://www.microsoft.com/technet/security/tools/Tools/MBSAhome.asp" target="_blank">Microsoft Baseline Security Analyzer</a> (MBSA).
+</p>
+
+<p>
+Folgende Checks f&uuml;hrt der MBSA durch:
+</p>
+
+<ul>
+	<li>Windows OS Checks 
+	<li>Internet Information Server Checks 
+	<li>SQL Server Checks 
+	<li>Hotfix Installation 
+	<li>Passwort &Uuml;berpr&uuml;fungen
+	<li>Desktopanwendungs-Check (Office 2000 bzw. XP sowie Internet Explorer)
+</ul>
+
+<p>
+Diese &Uuml;berpr&uuml;fungen kann der MBSA nicht nur gegen die lokale Maschine ausf&uuml;hren, sondern auch gegen andere Maschinen im Netzwerk.
+Folgende Betriebssysteme werden zur &Uuml;berpr&uuml;fung via Netzwerk unterst&uuml;tzt:
+</p>
+
+<ul>
+	<li>Windows NT 4.0 SP4 und h&ouml;her
+	<li>Windows 2000
+	<li>Windows XP 
+</ul>
+
+<p>
+Installiert werden kann das Tool allerdings nur auf Windows 2000 oder XP Maschinen, Windows NT 4 reicht nicht. Au&szlig;erdem werden
+aktuelle Versionen von Internet Explorer, dem XML Parser sowie - falls man IIS Maschinen remote scannen m&ouml;chte - die IIS
+Common Files vorausgesetzt. Beachtet man dies, ist die Installation als absolut ereignisfrei zu betrachten.
+</p>
+
+<h2>Checks durchf&uuml;hren</h2>
+<p>
+Im Vergleich zu Tools wie HFNetChk handelt es sich bei MBSA um ein "streichelweiches" GUI Tool, das niemanden vor
+Bedienprobleme stellen wird. Beginnen wir beim Programmstart:
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020412_1.png" width="651" height="419" alt="" border="0">
+
+<p>
+Die einfachste Variante ist den lokalen Computer nach oben angef&uuml;hrten Problemen zu durchsuchen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020412_2.png" width="487" height="322" alt="" border="0">
+
+<p>
+Man kann sich die Scan-Optionen aussuchen, in diesem Fall habe ich den Passwortcheck und den SQL Check nicht eingeschaltet.
+Speziell bei Domaincontrollern kann der Passwortcheck einige Zeit in Anspruch nehmen (Tip: lesen Sie sich die Dokumente in
+der Linksektion durch, speziell das Whitepaper hat Details dar&uuml;ber, was wie gecheckt wird).
+</p>
+
+<p>
+Mit <i>Start Scan</i> beginnt das Tool dann mit seiner Arbeit, und je nach gew&auml;hlten Optionen wird es schnell fertig sein (oder
+etwas l&auml;nger nachdenken). Auf alle F&auml;lle erh&auml;lt man dann einen Scan Report:
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020412_3.png" width="537" height="578" alt="" border="0">
+
+<p>
+Hier sieht man zB den Report &uuml;ber den Windows OS Scan. Diese Maschine h&auml;lt sich an sehr viele Best Practices, allerdings
+bem&auml;kelt das Tool, da&szlig; unter Umst&auml;nden drei Hotfixes fehlen. Klickt man auf <i>Result details</i>, sieht man welche
+Hotfixes das waren:
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020412_4.png" width="726" height="450" alt="" border="0">
+
+<p>
+Der mit <i>MS</i> beginnende Link f&uuml;hrt &uuml;brigens direkt zur Seite bei Microsoft, die den Hotfix beschreibt. Wer sich fragt,
+woher das Tool immer mit aktuellen Hotfixdaten versorgt wird: es beinhaltet eine modifizierte Version von HFNetChk und holt
+damit aktualisierte Hotfixinformationen vom Microsoft Server.
+</p>
+
+<p>
+Nat&uuml;rlich kann man sich auch die anderen gescannten Bereiche ansehen; hier ein Ausschnitt aus dem Scan von IIS:
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020412_5.png" width="498" height="470" alt="" border="0">
+
+<p>
+Hier steigt meine lokale Maschine nicht gut aus, weil es eine Entwicklerworkstation ist, die keine besondere Absicherung
+erhalten hat. Bei einem Live Server am Internet m&uuml;&szlig;ten bei diesem Scanergebnis alle Alarmglocken l&auml;uten. Um die Probleme
+abzustellen, kann man den Link <i>How to correct this</i> anklicken. Man wird richtig an der Hand genommen, um seinen
+Rechner sicherer zu machen. Praktisch.
+</p>
+
+<p>
+Die Verwendung zum Scannen mit Remote Rechnern ist genauso einfach zu handhaben wie der lokale Scan. Eines sollte man aber
+dennoch beachten: man mu&szlig; lokale Administratorenrechte auf den zu scannenden Maschinen besitzen (auf der lokalen zwar auch,
+aber diese Rechte hat man salopp formuliert "schneller" als auf anderen Maschinen im Netzwerk).
+</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Der Microsoft Baseline Security Analyzer (MBSA) ist ein Tool, mit dem auch "Gelegenheitsadministratoren" ihre Rechner
+einfach absichern k&ouml;nnen, denn man bekommt gute Vorschl&auml;ge und auch Anleitungen, bestimmte Sicherheitsprobleme zu beheben.
+Sicherheit mu&szlig; einfach erreichbar sein - und MBSA ist ein guter Schritt in diese Richtung.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20011204.htm">IIS, was machst du gerade?</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011204.htm</span><br>
+<a href="../artikel/20020129.htm">Komponentenverwendung einschr&auml;nken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020129.htm</span><br>
+<a href="../artikel/20010926.htm">Schlu&szlig; mit lustig - das IIS Lockdown Tool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010926.htm</span><br>
+<a href="../artikel/20010927.htm">Schlu&szlig; mit lustig Teil 2 - das URLScan Tool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010927.htm</span><br>
+<a href="../artikel/20010928.htm">Schlu&szlig; mit lustig Teil 3 - das Hfnetchk Tool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010928.htm</span><br>
+<a href="../artikel/20011030.htm">SQL Injection</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011030.htm</span><br>
+<a href="../artikel/20001109.htm">Verzeichnissicherheit mit NTFS und IIS Authentifizierung</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001109.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2Ftechnet%2Fsecurity%2Ftools%2FTools%2FMBSAWP%2Easp">Baseline Security Analyzer White Paper</a><br>
+<SPAN class="content">http://www.microsoft.com/technet/security/tools/Tools/MBSAWP.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2Ftechnet%2Fsecurity%2Ftools%2FTools%2FMBSAhome%2Easp">Microsoft Baseline Security Analyzer</a><br>
+<SPAN class="content">http://www.microsoft.com/technet/security/tools/Tools/MBSAhome.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsupport%2Emicrosoft%2Ecom%2Fdefault%2Easpx%3Fscid%3Dkb%3Ben%2Dus%3Bq320454">Microsoft Baseline Security Analyzer (MBSA) Version 1.0 Is Available (Q320454)</a><br>
+<SPAN class="content">http://support.microsoft.com../default.htmx?scid=kb;en-us;q320454</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

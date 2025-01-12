@@ -1,0 +1,222 @@
+<HTML>
+<HEAD>
+<TITLE>Crystal Reports mit DataSets bef&uuml;llen - Teil 2</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Nicht immer ist es optimal, einen Report direkt aus einer Datenbank zu bef&uuml;llen. Man w&uuml;nscht sich, Daten kurz vor dem Anzeigen noch zu manipulieren. Diese Artikelserie zeigt wie.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Crystal Reports,Report,Erstellung,Design,Programmierung,DataSet,disconnected,Anpassung,anpassen">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Crystal Reports mit DataSets bef&uuml;llen - Teil 2</H1>
+<p>
+Geschrieben von: <a href="../autoren/rudolfball.htm">Rudolf Ball</a><br>
+Kategorie: <a href="../kategorien/ADOdotNET.htm">ADO.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20030403"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+DataSets bieten sich als Quelle f&uuml;r den Inhalt eines Reports an, da sie von der Datenbank disconnected sind. Doch es ist 
+ein wenig knifflig, dieses DataSet hinter den Report zu schieben. Wie man einen solchen Report erstellen kann, lernen Sie heute
+im zweiten Teil dieser Artikelserie.
+</p>
+<p>
+F&uuml;r einen System&uuml;berblick lesen Sie bitte den <a href="../artikel/20030402.htm">ersten Teil</a> dieser Artikelserie.
+</p>
+
+<h2>Der Report - Teil 1</h2>
+<p>
+Die Erstellung des Reports geschieht &uuml;ber einen Wizard. Wenn wir einen neuen Report hinzuf&uuml;gen ("Add new Item" -&gt; "Crystal 
+Report") m&uuml;ssen wir uns zuerst entscheiden, ob wir den Report Expert oder eine leeren Report erzeugen wollen. Der Einfachheit 
+halber entscheiden wir uns f&uuml;r den Expert.
+</p>
+
+<IMG SRC="/artikel/Bilder/200304/20030403_1.png" width="365" height="438" alt="" border="0">
+
+<p>
+Nun, da wir in weiterer Folge keine Datenbank zu Grunde liegen haben, sondern ein DataSet, m&uuml;ssen wir dem Report dessen 
+Struktur mitteilen. Da wir dem Report aber nicht sagen k&ouml;nnen "Nimm DataSet XY!" (da wir dieses noch nicht einmal erzeugt 
+haben - dies geschieht erst zur Laufzeit), m&uuml;ssen wir uns eines Abbildes der Struktur des DataSets bedienen: einem XML Schema. 
+XML Schemas (Extension .xsd) beschreiben die Struktur von XML Files und somit auch von DataSets. 
+</p>
+<p>
+Da wir dieses XML Schema File nur genau einmal zur Definition der Datenstruktur unseres DataSets im Report ben&ouml;tigen bieten 
+sich zwei M&ouml;glichkeiten an, das File zu erzeugen. Einerseits zur Laufzeit mittels einer "File.Exists" Abfrage, welche nur beim 
+ersten Mal feuert. Wir ben&ouml;tigen das XML Schema jedoch zur Designzeit. Daher ist es n&uuml;tzlich, eine kleine und schnelle 
+Applikation zu schreiben, welche uns vom gew&uuml;nschten DataSet ein XML Schema erzeuget, und wir nach Erzeugung dessen ungest&ouml;rt 
+mit dem Design fortfahren k&ouml;nnten. Der Code f&uuml;r diese Konsolenapplikation folgt.
+</p>
+
+<h3>Konsolenapplikation zur Erzeugung eines DataSets - DataSet2XSD.cs</h3>
+<p>
+In die Konsolenapplikation DataSet2XSD m&uuml;ssen wir die Datenklasse DataSet4Report kopieren, um das gleiche DataSet zu erhalten. Die 
+Main Methode sieht wie folgt aus.
+</p>
+
+<pre style="background='silver';">
+static void Main(string[] args)
+{
+   try
+   {
+      DataSet4Report myDS4R = new DataSet4Report();
+      DataSet myDS = myDS4R.Kochrezept(1);
+      myDS.WriteXmlSchema("C:/inetpub/wwwroot/DataSet4Report/Kochrezept.xsd");
+   }
+   catch (Exception ex)
+   {
+      Console.WriteLine(ex.Message);
+      Console.ReadLine();
+   }
+}
+</pre>
+
+<p>
+Als erstes erzeugen wir eine Instanz unserer Klasse DataSet4Report und f&uuml;llen ein DataSet mit Hilfe der Methode Kochrezept. Der 
+Export als XML Schema ist trivial und erfolgt &uuml;ber die Methode WriteXmlSchema. Der Eingabeparameter ist in diesem Fall unser 
+lokaler Pfad am Webserver. Nun k&ouml;nnen wir mit dem Design unseres Reports fortsetzen.
+</p>
+
+<h2>Der Report - Teil 2</h2>
+<p>
+&Uuml;ber "More Data Sources" gelangen wir in den Men&uuml;punkt "ADO.NET (XML)".
+</p>
+
+<IMG SRC="/artikel/Bilder/200304/20030403_2.png" width="581" height="447" alt="" border="0">
+
+<p>
+Hier hilft uns ein Dateidialog, das soeben erzeugte XML Schema zu finden.
+</p>
+
+<IMG SRC="/artikel/Bilder/200304/20030403_3.png" width="450" height="405" alt="" border="0">
+
+<p>
+Nach Auswahl der Datei <b>Kochrezept.xsd</b> werden uns die Tabellen des DataSets pr&auml;sentiert.
+</p>
+
+<IMG SRC="/artikel/Bilder/200304/20030403_4.png" width="581" height="447" alt="" border="0">
+
+<p>
+Hier m&uuml;ssen wir die Tabellen "Rezept" und "Zutaten" markieren und mittels "Insert Table" hinzuf&uuml;gen. Nach dem Klick auf 
+"Next" gelangen wir auf folgende Seite.
+</p>
+
+<IMG SRC="/artikel/Bilder/200304/20030403_5.png" width="581" height="447" alt="" border="0">
+
+<p>
+Hier wird uns die Struktur der Tabellen und vor allem deren Relationen angezeigt. Sollten wir noch kein Relationsobjekt 
+erstellt haben h&auml;tten wir hier die M&ouml;glichkeit, dies manuell nachzuholen.
+</p>
+
+<IMG SRC="/artikel/Bilder/200304/20030403_6.png" width="581" height="447" alt="" border="0">
+
+<p>
+Im n&auml;chsten Schritt m&uuml;ssen wir die Felder definieren, die wir am Report anzeigen wollen. Mittels "Add" w&auml;hlen wir aus der 
+Tabelle Rezept "Rezeptname" und "Zubereitungszeit" und aus der Tabelle Zutaten "Zutat" und "Kosten". Somit haben wir alles 
+Wichtige angegeben und k&ouml;nnen uns auf das Design des Reports konzentrieren. Hierzu m&uuml;ssen wir einen "Detail" Bereich einf&uuml;gen 
+und Zutat und Kosten in selbigen einf&uuml;gen. Dies geht entweder durch Verschieben oder durch "Drag and Drop" vom Field Explorer 
+auf der linken Seite. Sollten Sie links keine Field Explorer sehen, verzweifeln Sie nicht: Sie k&ouml;nnen ihn &uuml;ber View -&gt; 
+Other Windows -&gt; Document Outline bzw. Ctr + Alt + T aktivieren. Eine L&ouml;sung hierf&uuml;r w&uuml;rde wie folgt aussehen.
+</p>
+
+<IMG SRC="/artikel/Bilder/200304/20030403_7.png" width="638" height="321" alt="" border="0">
+
+<p>
+Somit haben wir alle Schritte ausgef&uuml;hrt, welche zum Erreichen des Ergebnisses von N&ouml;ten sind. Mit dieser Formatierung w&uuml;rde 
+der Report wie der folgende Beispielreport aussehen.
+</p>
+
+<IMG SRC="/artikel/Bilder/200304/20030403_8.png" width="533" height="515" alt="" border="0">
+
+<p>
+Sie k&ouml;nnen das Rezept nat&uuml;rlich nachkochen, daf&uuml;r &uuml;bernehme ich jedoch keine Verantwortung...
+</p>
+
+<h2>Vorschl&auml;ge und Einschr&auml;nkungen</h2>
+<p>
+Nat&uuml;rlich bietet es sich nicht in jedem Fall an, ein DataSet als Quelle f&uuml;r den Report zu verwenden. Vielmehr ist bei der 
+Anzeige von nicht hierarchischen Daten eine direkte Anzeige der Datenbanktabelle bzw. Query einfacher. Auch ist die Anzeige 
+in Crystal Reports nicht immer die optimale L&ouml;sung, Konkurrenzprodukte sind meist m&auml;chtiger und besser handzuhaben. Nat&uuml;rlich 
+ist der Export von Crystal Reports ins Word- oder PDF Format eine gelungene Alternative.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Ein DataSet hinter Crystal Reports zu schieben ist eine gute Alternative zur Direktverbindung mit der Datenbank. Es ist zwar 
+ein wenig aufwendiger, aber es lohnt sich vor allem dann, wenn Sie mehrere Reports anzeigen wollen oder hierarchische Daten 
+einfach und sicher angezeigt bekommen m&ouml;chten. Auch die Manipulation der Daten vor dem Anzeigen ist ein Punkt, der Ihnen 
+wom&ouml;glich schon Kopfzerbrechen bereitet hat. 
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20030403.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20030403.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20030402.htm">Crystal Reports mit DataSets bef&uuml;llen - Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20030402.htm</span><br>
+<a href="../artikel/20001102.htm">Datenbankzugriff mittels ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001102.htm</span><br>
+<a href="../artikel/20010514.htm">Was sind XML Schemas?</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010514.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpalliance%2Ecom%2Farticles%2Fcr1%2Easpx">Creating Professional Reports using Crystal Report for Visual Studio.NET</a><br>
+<SPAN class="content">http://www.aspalliance.com/articles/cr1.aspx</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ecrystaldecisions%2Ecom%2Fproducts%2Fcrystalreports%2Fnet%2F">Crystal Report 9 – The Visual Studio .NET Reporting Standard</a><br>
+<SPAN class="content">http://www.crystaldecisions.com/products/crystalreports/net/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpfree%2Ecom%2Fauthors%2Fjitajay%2Fcrystalreport%2Easpx">Crystal Report for Visual Studio .NET</a><br>
+<SPAN class="content">http://www.aspfree.com/authors/jitajay/crystalreport.aspx</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Edotnetjunkies%2Ecom%2Ftutorials%2Easpx%3Ftutorialid%3D465">Loading a DataSet with Data from Multiple Tables</a><br>
+<SPAN class="content">http://www.dotnetjunkies.com/tutorials.aspx?tutorialid=465</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Efawcette%2Ecom%2Fxmlmag%2F2002%5F04%2Fonline%2Fonline%5Feprods%2Fxml%5Fdwahlin04%5F22%2Fdefault%2Easp">XML Schemas vs. DTDs</a><br>
+<SPAN class="content">http://www.fawcette.com/xmlmag/2002_04/online/online_eprods/xml_dwahlin04_22../default.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

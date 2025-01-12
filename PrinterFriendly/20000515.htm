@@ -1,0 +1,256 @@
+<HTML>
+<HEAD>
+<TITLE>Emails senden mit CDONTS</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Das CDONTS Objekt eignet sich um Emails unter ASP zu versenden ohne den Webserver zu belasten oder einen User unnötig warten zu lassen. Daher ist es prädestiniert für Newsletter, Listserver oder Massenmails.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP,Active Server Pages, IIS, SMTP Server, Emails versenden, Email, Newsletter, Massenmail, CDO, Collaboration Data Object, CDONTS.NewMail, Performance, Attachement, Webserver">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Emails senden mit CDONTS</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000515"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>CDO (Collaboration Data Object) ist ein vom IIS 4.0 zur Verf&uuml;gung gestelltes 
+Interface, das es erlaubt, Emails &uuml;ber einen SMTP- oder Exchange Server zu versenden.</p>
+
+<p>Ein SMTP Server zum Versenden von Emails wird mit IIS 4.0 mitgeliefert, wobei CDO 
+die Schnittstelle zwischen Webapplikationen (ASP-Seiten) des IIS 4.0 auf der einen Seite,
+und dem SMTP Server auf der anderen Seite bildet.</p>
+
+<p>Die CDO Library stellt das <i>CDONTS.NewMail</i> Objekt zur Verf&uuml;gung, 
+das eine einfache Handhabung und hohe Performance vereint. <i>CDONTS</i> steht dabei
+f&uuml;r "<i>Collaboration Data Object for NT Server</i>".
+Das <i>CDONTS.NewMail</i> Objekt l&auml;sst sich leicht einsetzen 
+um eine Email aus einer ASP Seite heraus zu verschicken, 
+wie das folgende VBScript Beispiel zeigt:</p>
+
+<pre style="background='silver';">
+Const cstCdoMailFormatMime = 1
+Const cstCdoMailFormatText = 0
+
+Const cstCdoBodyFormatHTML = 0
+Const cstCdoBodyFormatText  = 1
+
+strBetreff = "Textnachricht"
+strNachricht = "Dies ist eine Textnachricht," & VbCrLf
+strNachricht = strNachricht & "generiert vom NewMail Objekt."
+strEmpaenger = "christiank@aspexpert.com"
+strAbsender = "office@aspheute.com"
+
+' Email abschicken:
+Set objNewMail = CreateObject("CDONTS.NewMail")
+objNewMail.MailFormat = cstCdoMailFormatText
+objNewMail.BodyFormat = cstCdoBodyFormatText
+objNewMail.From = strAbsender
+objNewMail.To = strEmpaenger
+objNewMail.Subject = strBetreff
+objNewMail.Body = strNachricht
+objNewMail.Send
+Set objNewMail = Nothing</pre>
+
+<p>Nachdem die Email mit der Methode <i>Send</i> abgeschickt wurde, liegt
+die Email in der Queue des SMTP Servers und wird sobald als m&ouml;glich abgeschickt.
+Diese Vorgangsweise begr&uuml;ndet eine sehr hohe Performance f&uuml;r die ASP-Seite, 
+da die Email einfach nur an den SMTP Server &uuml;bergeben wird und die ASP-Seite
+somit nicht warten muss, bis die Email tats&auml;chlich gesendet wurde.</p>
+
+<p>Aus diesem Grund ist CDO auch die bevorzugte Methode um Emails in 
+Newsletter-, Listserver- oder anderen Massenmail-Applikationen zu versenden.</p>
+
+<p>Das <i>CDONTS.NewMail</i> Objekt ist bereits f&uuml;r schnellstes Erstellen und Versenden
+von Emails konzipiert. Daher stellt es auch keines der sonst &uuml;blichen CDO Interfaces
+zur Verf&uuml;gung. Weiters kann ein einmal erstelltes Objekt nur zum Versenden einer
+Email verwendet werden. Es ist notwendig, f&uuml;r jede Email ein eigenes Objekt
+(mittels <i>CreateObject</i>) zu erstellen, und nach Versenden der Email die Resourcen des
+Objektes wieder freizugeben (<i>Set objNewMail = Nothing</i>).</p>
+
+<p>Die Verwendung des <i>CDONTS.NewMail</i> Objektes aus Performance-Gr&uuml;nden
+einer ASP-Komponente (wie ASPMail) vorzuziehen. Um das Objekt einzusetzen
+muss jedoch am IIS der SMTP Server laufen. Ein weiterer Grund, der gegen
+die Verwendung des <i>NewMail</i> Objektes sprechen k&ouml;nnte, ist der
+f&uuml;r spezielle Anwendungen eingeschr&auml;nkte Funktionsumfang. Ausserdem
+kann CDONTS nur unter IIS (Windows NT/2000) aber nicht unter PWS (Windows 9x)
+eingesetzt werden.</p>
+
+<p>Welchen <u>Funktionsumfang</u> bietet nun das <i>CDONTS.NewMail</i> Objekt?</p> 
+
+<ul>
+   <li>Man kann "Plain-Text"-Nachrichten, aber auch "HTML"-Nachrichten versenden.</li>
+   <li>Mehrere Empf&auml;nger, CC und BCC pro Email sind m&ouml;glich.</li>
+   <li>Dateien k&ouml;nnen als Attachements an Emails angeh&auml;ngt werden.</li>
+   <li>Die Dringlichkeit der Email ist einstellbar.</li>
+   <li>Zus&auml;tzliche Header (wie Reply-To) k&ouml;nen &uuml;ber die Value Eigenschaft
+   generiert werden.</li>
+</ul>
+
+<p>Die <b>Dringlichkeit einer Nachricht</b> stellt man &uuml;ber die
+<i>Importance</i> Eigenschaft ein:</p>
+
+<pre style="background='silver';">
+Const cstCdoLow    = 0   ' Low importance  
+Const cstCdoNormal = 1   ' Normal importance (default)  
+Const cstCdoHigh   = 2   ' High importance  
+
+' Hohe Dringlichkeit:
+objNewMail.Importance = cstCdoHigh</pre>
+
+<p>Ein <b>Attachment</b> kann man mit Hilfe der <i>AttachFile</i> Methode an das Mail 
+anh&auml;ngen (siehe auch <i>AttachURL</i> Methode der IIS Dokumentation):</p>
+
+<pre style="background='silver';">
+' Datei an Email anf&uuml;gen:
+objNewMail.AttachFile "C:\attachements\datei.txt","datei.txt"</pre>
+
+<p>Um eine HTML-Email zu generieren verwendet man Standard HTML im
+Nachrichten Body und setzt die <i>BodyFormat</i> Eigenschaft auf <i>CdoBodyFormatHTML</i>:</p>
+
+<pre style="background='silver';">
+Const cstCdoBodyFormatHTML = 0
+Const cstCdoBodyFormatText  = 1
+Const cstCdoLow    = 0   ' Low importance  
+Const cstCdoNormal = 1   ' Normal importance (default)  
+Const cstCdoHigh   = 2   ' High importance  
+
+strBetreff = "HTML-Nachricht"
+strNachricht = "Dies ist eine &lt;u&gt;Textnachricht&lt;u&gt;,&lt;br&gt;" & VbCrLf
+strNachricht = strNachricht & "generiert vom &lt;i&gt;NewMail Objekt&lt;/i&gt;.&lt;br&gt;"
+strEmpaenger = "christiank@aspexpert.com"
+strAbsender = "office@aspheute.com"
+
+' Email mit hoher Dringlichkeit:
+Set objNewMail = CreateObject("CDONTS.NewMail")
+objNewMail.BodyFormat = cstCdoBodyFormatHTML
+objNewMail.Importance = cstCdoHigh
+objNewMail.From = strAbsender
+objNewMail.To = strEmpaenger
+objNewMail.Subject = strBetreff
+objNewMail.Body = strNachricht
+objNewMail.Send
+Set objNewMail = Nothing</pre>
+
+<p>Wie bereits erw&auml;hnt, muss beim Gebrauch des <i>CDONTS.NewMail</i> Objektes f&uuml;r 
+jedes Mail ein eigenes Objekt generiert werden. Eine Wiederverwendung des Objektes ist
+nicht m&ouml;glich. Um also zwei Emails zu versenden, geht man wie folgt vor:</p>
+
+<pre style="background='silver';">
+strBetreff = "Email"
+strNachricht = "Dies ist eine Email!"
+strAbsender = "office@aspheute.com"
+
+' Erste Email:
+strEmpaenger = "christiank@aspexpert.com"
+
+Set objNewMail = CreateObject("CDONTS.NewMail")
+objNewMail.From = strAbsender
+objNewMail.To = strEmpaenger
+objNewMail.Subject = strBetreff
+objNewMail.Body = strNachricht
+objNewMail.Send
+Set objNewMail = Nothing
+
+' Zweite Email:
+strEmpaenger = "office@aspexpert.com"
+
+Set objNewMail = CreateObject("CDONTS.NewMail")
+objNewMail.From = strAbsender
+objNewMail.To = strEmpaenger
+objNewMail.Subject = strBetreff
+objNewMail.Body = strNachricht
+objNewMail.Send
+Set objNewMail = Nothing</pre>
+
+<p>Ein Script, das ein Massenmailing aus einer Datenbank generiert, 
+k&ouml;nnte also wie folgt aussehen:</p>
+
+<pre style="background='silver';">
+...
+' Eine Email an alle Empf&auml;nger des Recordsets Rs schicken:
+While not Rs.EOF
+    Set objNewMail = CreateObject("CDONTS.NewMail")
+objNewMail.From = "office@aspheute.com"
+	objNewMail.To = rs("EmpfaengerEmail")
+	objNewMail.Subject = "Wichtige Informationen!"
+	strNachricht = "Sehr geehrter Herr" & rs("Name") & "!" & VbCrLf
+	strNachricht = strNachricht & "Aktuelles aus unserem Programm ..."
+	objNewMail.Body = strNachricht
+	objNewMail.Send
+	Set objNewMail = Nothing
+	Rs.MoveNext
+Wend
+...</pre>
+
+<p>Wenn man eine ASP-Applikation erstellt, bei der t&auml;glich einige hundert bis
+tausend Emails geschickt werden sollen, so ist der Einsatz des <i>CDONTS.NewMail</i> 
+Objektes eine &Uuml;berlegung wert.</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20021028.htm">ACT MetaMailer - Mails verschicken leicht gemacht</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021028.htm</span><br>
+<a href="../artikel/20001009.htm">Das Versenden von Emails selbst programmieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001009.htm</span><br>
+<a href="../artikel/20000330.htm">Downloads per Email verschicken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000330.htm</span><br>
+<a href="../artikel/20010503.htm">Eine einfache Newsletter Applikation</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010503.htm</span><br>
+<a href="../artikel/19990809.htm">Email versenden mit AspMail</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990809.htm</span><br>
+<a href="../artikel/20010219.htm">Emails versenden mit ASPEmail</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010219.htm</span><br>
+<a href="../artikel/20010625.htm">Html Emails mit Dundas Mailer verschicken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010625.htm</span><br>
+<a href="../artikel/20000912.htm">Mit PGP verschl&uuml;sselte e-Mails senden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000912.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,171 @@
+<HTML>
+<HEAD>
+<TITLE>GET oder POST, das ist hier die Frage</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Es ist zwar keine Gem&uuml;tsfrage, aber sehr wohl eine Frage des korrekten Programmierens, vor allem in Zeiten von Proxyservern. Heute widme ich mich den Unterschieden zwischen GET und POST.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,GET,POST,CONTENT_LENGTH,QUERY_STRING,HTTP_METHOD,QueryString,Request.Form">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>GET oder POST, das ist hier die Frage</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010205"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Es ist zwar keine Gem&uuml;tsfrage, aber sehr wohl eine Frage des korrekten Programmierens, vor 
+allem in Zeiten von Proxyservern. Heute widme ich mich den Unterschieden zwischen GET und
+POST, wann welche Spielart des HTTP Transfers zum Einsatz kommen sollte, und wie man zwischen
+diesen beiden unterscheiden kann.
+</p>
+
+<h2>Das HTTP GET Kommando</h2>
+<p>
+GET ist das am h&auml;ufigsten verwendete Kommando des Hypertext Transfer Protocols (HTTP) - 
+deshalb, weil jede Nicht-Formularseite von Browsern immer so aufgerufen wird - einfaches
+eintippen in der Adresszeile, Eingabetaste dr&uuml;cken, und schon wird ein GET Request nach
+dieser Seite abgesetzt.
+</p>
+<p>
+Teil des GET Requests sind die Querystrings, die in ASP &uuml;ber die <i>Request.QueryString</i> Collection
+auslesbar sind. Herausfinden, ob ein Querystring geschickt wurde, kann man am schnellsten
+folgenderma&szlig;en:
+</p>
+
+<pre style="background='silver';">
+If (Len(Request.ServerVariables("QUERY_STRING")) > 0) Then
+  ...
+End If
+</pre>
+
+<p>
+Dadurch wird die QueryString Collection nicht initialisiert, man spart also potentiell 
+einiges an Zeit (das Parsing wird bis zum ersten Aufruf der Collection unterbunden).
+</p>
+
+<p>
+Was sind die Vorteile oder Nachteile von GET Requests? Nun, GET Requests d&uuml;rfen von Proxyservern
+gecacht werden - was sowohl zum Vorteil (geringe Serverlast), als auch zum Nachteil (alte Daten am Client)
+gereichen kann. Wenn man gar kein Caching haben m&ouml;chte, mu&szlig; man es so unterbinden:
+</p>
+
+<pre style="background='silver';">
+Response.Expires = 0
+Response.AddHeader "Pragma","no-cache"
+Response.AddHeader "cache-control", "no-store"
+</pre>
+
+<p>
+Abschlie&szlig;end gilt auch, da&szlig; man GET als FORM METHOD <strong>nicht</strong>
+verwenden soll - ab HTML 4.0 ist GET als METHOD "deprecated", also nicht mehr empfohlen.
+</p>
+
+<h2>Formulare mit POST</h2>
+<p>
+Bei Formularen kommt das POST Kommando am &ouml;ftesten zum Tragen. Eine entsprechendes
+FORM Tag sieht wie folgt aus:
+</p>
+
+<pre style="background='silver';">
+&lt;FORM METHOD="POST" ACTION="myFormHandler.asp"&gt;
+...
+&lt;/FORM&gt;
+</pre>
+
+<p>
+GePOSTete Formulare und solche Zielseiten werden von Proxyservern nicht mehr gecacht. Dies 
+spiegelt sich auch in ASP.NET's <i>OutputCache</i> Direktive wider, die standardm&auml;&szlig;ig
+nur GET Seiten cacht.
+</p>
+
+<p>
+Wie merke ich also, ob eine Seite gepostet wurde? Das folgende Codesnippet zeigt's:
+</p>
+
+<pre style="background='silver';">
+If (UCase(Request.ServerVariables("HTTP_METHOD")) = "POST") Then
+   ...
+End If
+</pre>
+
+<p>
+Das war die sichere Methode, um das Kommando ganz genau zu wissen. Wenn man nur interessiert ist,
+ob Parameter gepostet wurden, macht man es so:
+</p>
+
+<pre style="background='silver';">
+If (Request.ServerVariables("CONTENT_LENGTH") > 0) Then
+  ...
+End If
+</pre>
+
+<p>
+Wichtig ist nur, da&szlig; CONTENT_LENGTH ohne &uuml;bergebene Parameter auch leer ist, man also irrt&uuml;mlich
+glauben k&ouml;nnte, es war kein POST Request. Das Auslesen der Parameter sollte man dann
+nat&uuml;rlich bequemerweise &uuml;ber die <i>Request.Form</i> Collection abwickeln.
+</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die Quintessenz des heutigen Artikels ist, da&szlig; Formulare immer mit POST abgeschickt werden sollten,
+au&szlig;er man m&ouml;chte unter Umst&auml;nden ein Cachingverhalten via GET erhalten.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010306.htm">Dynamische Stylesheets</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010306.htm</span><br>
+<a href="../artikel/20020305.htm">Mitlauschen bei der Browser-Webserver Kommunikation</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020305.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

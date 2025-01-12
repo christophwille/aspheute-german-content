@@ -1,0 +1,1085 @@
+<HTML>
+<HEAD>
+<TITLE>Webserver-Tuning mit XTune</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor, wie man mit Hilfe des Xtune Tools die verschiedensten Parameter eines Webservers bzw einer Website ver&auml;ndern kann, um ein bessere Performance f&uuml;r seine ASP Applikationen zu erreichen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Performance,Tuning,Xtune,Metabase,Metaedit,RTE,Homer,adsutil,thread,pool size,ASP,ASP tuning">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Webserver-Tuning mit XTune</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/Optimierung.htm">Optimierung</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000814"></SCRIPT>
+</p>
+<p>Um die verschiedenen Einstellungsm&ouml;glichkeiten eines 
+Internet Information Servers (IIS 4.0 und IIS 5.0) zum Tuning 
+wirklich n&uuml;tzen zu k&ouml;nnen
+bedarf es normalerweise eines sehr fundierten Wissens &uuml;ber den 
+Aufbau des IIS. Die Tuningm&ouml;glichkeiten sind vielf&auml;ltig.
+Um nur einige Parameter zu nennen, die die Performance eines 
+Windows NT / 2000 Webservers stark beinflussen k&ouml;nnen:</p>
+
+<p>
+<UL>
+<LI>Anzahl der ASP-Dateien im Webservercache</LI>
+<LI>Anzahl der gecachten ASP-Engines</LI>
+<LI>Maximum an End Point Connections</LI>
+<LI>ASP Session State</LI>
+<LI>Automatisches Buffern von ASP Seiten</LI>
+<LI>Anzahl der Threads pro IIS Prozess</LI>
+</ul>
+</P>
+
+<p>
+Ein Teil dieser Parameter l&auml;sst sich in der 
+Microsoft Management Console (MMC) des IIS beeinflussen. 
+F&uuml;r andere Einstellungen mu&szlig; man direkt Werte in der
+Registry des Betriebssystems &auml;ndern.
+</P>
+
+<p>Das Tool <b>XTune</b> der Firma 
+<a href="http://www.postpointsoft.com/" target="_blank">Post Point Software</a>
+erleichert das Einstellen von Performance-relevanten Parametern des Webserver und einzelner
+Websites erheblich. XTune ist gratis und l&auml;uft
+sowohl auf IIS 4.0 als auch auf IIS 5.0 (Downloadlink am Ende des Artikels).
+</p>
+
+
+<H2>Installation von XTune</h2>
+
+<p>Die Installation von XTune auf dem Webserver ist einfach: das downgeloadete File entpacken 
+(zum Beispiel mit WinZip) und <i>Setup.exe</i> starten. Wie immer bei einer Installation sollte
+man Administratorrechte haben.
+</p>
+
+<p>Nachdem das Setup abgeschlossen ist, befindet sich in Start/Programme 
+ein neuer Eintrag namens <i>XTune</i>, 
+der die XTune Dokumentation und den XTune Manager (auf MMC Basis) 
+enth&auml;lt.</p>
+
+
+<H2>Benutzung von XTune</h2>
+
+<p>Um den Webserver mit Hilfe von XTune einzustellen, 
+&ouml;ffnen Sie den XTune Manager aus der XTune Programmgruppe.
+Der XTune Manager (siehe Bild 1) entspricht dem IIS Manager unter 
+Windows NT 4.0 Server oder dem Internet Services Manager 
+unter Windows 2000.</p>
+
+<p><IMG SRC="Bilder/200008/20000814_01.png" width=449 height=287 alt="" border="0">
+<br>
+<i>Bild 1: XTune Manager</i></p>
+
+<p>Je nach dem, ob Sie nur eine Website oder den ganzen Webserver
+tunen wollen, haben Sie zwei M&ouml;glichkeiten:</p>
+
+
+<p>
+<UL>
+<li><a href="20000814.htm#Webserver">XTune zum Optimieren der Webserver Leistung</a></li>
+<li><a href="20000814.htm#Website">XTune zum Tunen einer Website</a></li>
+</ul>
+</p>
+
+
+<a name="Webserver"></a>
+<h2>Optimieren der Webserver Leistung</h2>
+
+<p>Klicken Sie mit der rechten Maustaste im XTune Manager auf 
+ein Webserver Symbol und w&auml;hlen Sie <i>Eigenschaften</i> 
+(<i>Properties</i>) im Kontextmen&uuml;. Das Eigenschaftsfenster 
+f&uuml;r den Webserver &ouml;ffnet sich. 
+Klicken Sie in diesem Fenster auf den XTune Tab.
+Schon k&ouml;nnen Sie die Webserver Parameter
+einstellen um die Performance zu optimieren (siehe Bild 2).</p>
+
+<p><IMG SRC="Bilder/200008/20000814_02.png" width=404 height=468 alt="" border="0">
+<br>Bild 2: XTune Tab im Webserver Eigenschaftsfenster</p>
+
+
+<p>Was eine Ver&auml;nderung der einzelnen Parameter im XTune Tab
+bewirkt, und was hinter den Begriffen steht wird in den
+folgenden Abs&auml;tzen erkl&auml;rt:</p>
+
+<p>
+<ul>
+<table>
+  <tr>
+    <td><li>PoolThreadLimit</li></td>
+    <td><li>RequestQueueMax</li></td>
+  </tr>
+  <tr>
+    <td><li>ListenBackLog</li></td>
+    <td><li>MaxPoolThreads</li></td>
+  </tr>
+  <tr>
+    <td><li>ObjectCacheTTL</li></td>
+    <td><li>OpenFileInCache</li></td>
+  </tr>
+  <tr>
+    <td><li>MemoryCacheSize</li></td>
+    <td><li>MaxFreeTcbs</li></td>
+  </tr>
+  <tr>
+    <td><li>TcpTimedWaitDelay</li></td>
+    <td><li>MaxHashTableSize</li></td>
+  </tr>
+  <tr>
+    <td><li>TCPWindowSize</li></td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
+</ul>
+</p>
+
+
+<a name="PoolThreadLimit"></a>
+<h3>PoolThreadLimit</h3>
+
+<p>Der <i>PoolThreadLimit</i> Parameter gibt den maximalen Wert des
+<i>MaxPoolThreads</i> Parameters an, der f&uuml;r einzelne Websites oder 
+IIS Prozesse gesetzt werden kann.</p>
+
+<p>Wenn zum Beispiel <i>PoolThreadLimit</i> einen Wert von 50, und
+der Parameter <i>MaxPoolThreads</i> f&uuml;r eine Website den Wert 70 hat,
+so bekommt die Website trotzdem nur maximal 50 Threads im 
+Thread Pool zur Verf&uuml;gung gestellt.</p>
+
+<p>Anmerkung: In der XTune Dokumentation ist dieser Parameter
+falsch erkl&auml;rt (Stand XTune Version 1.0.4324.3).</p>
+
+<p>Bei gleichm&auml;&szlig;igen Zugriffen ("static workload)" auf den 
+Webserver wird empfohlen, den Parameter <i>PoolThreadLimit</i>
+auf die Anzahl der Prozessoren und den Parameter 
+<a href="20000814.htm#MaxPoolThreads"><i>MaxPoolThreads</i></a> auf 1 zu setzen
+(siehe Microsoft Web Workshop Artikel 
+<a href="http://msdn.microsoft.com/workshop/server/feature/tune.asp" target="_blank">
+IIS 4.0 Tuning Parameters for High-Volume Sites</a>). 
+Der Default Wert ist etwa doppelt so gro&szlig; wie die MB des 
+Computerspeichers (256 MB Ram resultieren in einem Standardwert von 510 
+f&uuml;r den <i>PoolThreadLimit</i> Parameter).</p>
+
+<p>Die <i>PoolThreadLimit</i> Einstellung wird in der Registry 
+unter 
+<i>HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\InetInfo\Parameters\</i> 
+gespeichert.</p>
+
+
+<a name="RequestQueueMax"></a>
+<h3>RequestQueueMax</h3>
+
+<p>Wenn der Webserver Anfragen nicht sofort bearbeiten kann, so
+werden diese in der sogenannten <i>Request Queue</i> abgelegt.
+Bekommt der Webserver eine gewisse Zeit lang (mehr als 30 Sekunden) mehr 
+Anfragen als er verarbeiten kann, so wird die Anzahl der Anfragen in der 
+<i>Request Queue</i> immer gr&ouml;&szlig;er. Erreicht diese Anzahl nun den
+Wert des Parameters <i>RequestQueueMax</i>, so gibt der Webserver auf jede
+weitere eintreffende Anfrage eine <i>Server too busy</i> Meldung aus und 
+verwirft die Anfrage.</p>
+
+<p>Eine empfohlene Einstellung ist ein Wert von 200 f&uuml;r den 
+<i>RequestQueueMax</i> Parameter. Der Standardwert ist 500. </p>
+
+
+<a name="ListenBackLog"></a>
+<h3>ListenBackLog</h3>
+
+<p>Die Webserverleistung (Anfragen pro Sekunden an einen bestimmten IIS 
+Service: Web, FTP, ...) kann man effektiv erh&ouml;hen, indem man den
+Wert des Parameters von standardm&auml;&szlig;ig 15 auf etwa 200 
+erh&ouml;ht.</p>
+
+<p>Connection Requests (Anfrage nach einer HTTP Verbindung) an den 
+Webserver werden in der sogenannten Connection Queue gehalten bis sie 
+vom Web Service bearbeitet werden k&ouml;nnen. F&uuml;r jeden IIS Service 
+existiert eine separate Request Queue, aber f&uuml;r die L&auml;nge aller 
+Queues  gilt das selbe Limit, das mit dem Parameter ListenBackLog 
+festgelegt wird.</p>
+
+<p>Wenn die Queue eines Webservices voll ist (die maximale Anzahl an 
+Connections erreicht hat), so werden alle neuen Connection Requests 
+(Anfragen f&uuml;r HTTP Verbindungen) zur&uuml;ckgewiesen.</p>
+
+<p>Der standardm&auml;&szlig;ige Wert von 15 gen&uuml;gt f&uuml;r die 
+meisten Serverdienste. Wenn jedoch ein Server bei kurzen 
+Spitzenauslastungen zu viele Verbindungsanfragen 
+ablehnt, weil ein Service gerade eine hohe Auslastung besitzt, so kann
+eine Erh&ouml;hung des ListenBackLog Parameter Wertes in einer deutlichen 
+Verminderung der Zahl der abgelehnten Verbindungsanfragen resultieren.</p>
+
+<p>Es wird weiters empfohlen, bei einer Ver&auml;nderung der maximalen
+Queue L&auml;nge die folgenden Server Parameter im Auge zu behalten um 
+Flaschenh&auml;lse im System aufzusp&uuml;ren und zu vermeiden: Server 
+Prozessor Auslastung, Memory Auslastung, Connection Counter.</p>
+
+
+<a name="MaxPoolThreads"></a>
+<h3>MaxPoolThreads</h3>	
+
+<p>Der MaxPoolThreads Parameter gibt die Anzahl von Threads im Thread Pool 
+an. Sein Wert wird in Threads-pro-Prozessor Einheiten angegeben.</p>
+
+<p>Jeder Thread im Pool wartet auf eine Netzwerk Anfrage an den Webserver 
+und bearbeitet diesen.</p>
+
+<p>Es wird empfohlen den Parameter auf einen Wert von 20 zu setzen. 
+Standardeinstellung ist 10 Threads pro Prozessor.</p>
+
+
+<a name="ObjectCacheTTL"></a>
+<h3>ObjectCacheTTL</h3>
+
+<p>Jeder IIS Prozess hat einen eigenen Objekt Cache, in dem zum Beispiel 
+ADO Connections, andere ActiveX Objekte, aber auch ASP-Dateien 
+auf Ihre Wiederverwendung warten. Wenn ein Objekt nach einer bestimmten
+Zeitspanne (TTL = Time To Live in Sekunden) nicht wiederverwendet wurde,
+so wird das Objekt aus dem Cache entfernt.</p>
+
+<p>Wenn der Hauptspeicher des Webservers begrenzt ist, so verhindert eine 
+k&uuml;rzere TTL, da&szlig; die Speicherverwaltung von Windows NT oder 
+Windows 2000 Festplattenspeicher verwenden mu&szlig; um die Objekte zu 
+speichern.
+Festplattenzugriffe sind im Vergleich zu reinen Speicherzugriffen
+sehr langsam und vermindern somit die Performance des Webservers.</p>
+
+<p>Ist hingegen gen&uuml;gend Hauptspeicher im Webserver vorhanden, 
+so kann man eine h&ouml;here TTL (in Sekunden) einstellen. 
+Dadurch werden mehr Objekte gespeichert und die Wiederverwendungsrate 
+steigt. Dadurch er&uuml;brigt sich die resourcenintensive Neuerstellung
+von diversen Objekten oder das Auslesen von ASP-Dateien von der 
+Festplatte und die Neukompilierung.</p>
+
+<p>Somit kann man den ObjectCacheTTL Parameter bei Webservern mit
+gen&uuml;gend Hauptspeicher und gleichm&auml;ssigen Zugriffsraten &uuml;ber
+alle Web- und ASP-Seiten getrost auf "unendlich" stellen.
+Dies geschieht durch das Setzen des Wertes 4294967295.
+</p>
+
+
+<a name="OpenFileInCache"></a>
+<h3>OpenFileInCache</h3>
+
+<p>Bei gro&szlig;en Websites ist es oft n&ouml;tig 
+eine gro&szlig;e Anzahl von verschiedenen Dateien 
+bereit zu halten. Wenn die Website haupts&auml;chlich 
+statische HTML Seiten (oder anderen statischen "Content") enth&auml;lt,
+so kann die Performance des Servers stark verbessert werden, wenn man
+die Anzahl der Dateien, die aus dem RAM anstatt direkt von der Festplatte 
+ausgelesen werden, erh&ouml;ht.</p>
+
+<p>Dies wird &uuml;ber den OpenFileInCache Parameter gesteuert.
+Empfohlen wird ein Wert von 1000 pro 32 MB Hauptspeicher.</p>
+
+
+<a name="MemoryCacheSize"></a>
+<h3>MemoryCacheSize</h3>
+
+<p>Der IIS h&auml;lt "System Handles", Directory Listen und verschiedene
+BLOBS (Binary Large Objects), die h&auml;ufig verwendet werden, 
+im Cache. Der MemoryCacheSize Parameter spezifiziert, wieviel 
+Hauptspeicher (in Bytes) f&uuml;r diesen Cache zu reservieren sind.</p>
+
+<p>Ein Wert von 0 (Null) bedeutet, da&szlig; nichts gecacht wird.
+Eine Erh&ouml;hung des MemoryCacheSize Wertes bringt bei Sites 
+mit einer hohen Zahl an Requests eine sp&uuml;rbare 
+Verbesserung der Performance wenn der Hauptspeicher 
+gen&uuml;gend RAM enth&auml;lt.</p>
+
+<p>Anmerkung: Damit eine &Auml;nderung dieses Wertes G&uuml;ltigkeit 
+erlangt, mu&szlig; man die Services (Dienste) des IIS stoppen und neu 
+hochfahren.</p>
+
+<p>Empfohlen ist eine Einstellung von 4194304 Bytes anstatt
+der standardm&auml;&szlig;igen 3072000 Bytes.</p>
+
+
+<a name="MaxFreeTcbs"></a>
+<h3>MaxFreeTcbs</h3>
+
+<p>Ab dem MaxFreeTcbs Schwellenwert f&uuml;r die Anzahl 
+der aktiven TCP Verbindungen werden TCP Control Bl&ouml;cke
+im TIME-WAIT Status wiederverwendet. Eine Wiederverwendung von 
+TCP Control Bl&ouml;cken ist in der HTTP RFC nicht vorgesehen
+und sollte daher vermieden werden.</p>
+
+<p>Der empfohlene Wert f&uuml;r MaxFreeTcbs ist 72000.
+Standarm&auml;&szlig;ige Einstellung ist, je nach Betriebssystem
+und Hauptspeichergr&ouml;&szlig;e zwischen 250 und 2000.</p>
+
+
+<a name="TCPTimeWaitDelay"></a>
+<h3>TCPTimeWaitDelay</h3>
+
+<p>Durch diesen Parameter wird die Zeitdauer festgelegt, die
+eine TCP-Connection (Webserververbindung) im TIME-WAIT Status 
+verweilen kann bis sie geschlossen wird. Solange sich eine Verbindung 
+im TIME-WAIT Status befindet k&ouml;nnen die Socket Paare der 
+Verbindung nicht wiederverwendet werden.</p>
+
+<p>Die empfohlene Einstellung f&uuml;r den Parameter ist 
+60 Sekunden, der Standardwert ist 240 Sekunden.</p>
+
+
+<a name="MaxHashTableSize"></a>
+<h3>MaxHashTableSize</h3>
+
+<p>Der MaxHashTableSize Wert bestimmt wie schnell das System einen
+TCP Control Block auffinden kann. Der Wert mu&szlig; immer als Potenz
+von 2 angegeben werden (512,1024,2048 usw).</p>
+
+<p>Hier sollte der Default Wert von 512 nicht unterschritten werden.
+Die XTune Entwickler empfehlen eine Einstellung auf den Wert 65536.</p>
+
+
+<a name="TCPWindowSize"></a>
+<h3>TCPWindowSize</h3>
+
+<p>Die maximale TCP Empfangsfenstergr&ouml;&szlig;e wird mit
+diesem Parameter festgesetzt. Das Empfangsfenster umfasst die
+Anzahl von Bytes die ein Client zum Webserver senden kann ohne
+daf&uuml;r eine Empfangsbest&auml;tigung zu bekommen.</p>
+
+<p>Im Allgemeinen wird ein gr&ouml;&szlig;eres Empfangsfenster
+immer mit h&ouml;herer Performance in langsamen Netzwerken mit
+h&ouml;her &Uuml;bertragungsbreite (wie dem Internet) einhergehen.
+F&uuml;r beste Resultate sollte das Empfangsfenster genau ein 
+Vielfaches der TCP Maximum Segment Gr&ouml;&szlig;e (MSS) sein.</p>
+
+<p>Empfohlen wird ein Wert von 17520 anstatt dem Standardwert
+von 8760 f&uuml;r Ethernet Netzwerke.</p>
+
+<p>Au&szlig;er Anpassungen des Webservers erlaubt XTune
+auch das Anpassen von Website Parametern an die Anforderungen
+um so eine bestm&ouml;gliche Performance einzelner Websites
+zu erzielen. Dies wird in den nun folgenden Abs&auml;tzen
+beschrieben.</p>
+
+
+<a name="Website"></a>
+<h2>Tunen einer Website oder einer IIS Application mit XTune</h2>
+
+<p>Expandieren Sie zuerst die Websites (siehe Bild 1) im XTune Manager Fenster. 
+Danach klicken Sie mit der rechten Maustaste auf die
+gew&uuml;nschte Website und w&auml;hlen <i>Properties</i>
+oder <i>Eigenschaften</i>, wodurch sich ein Fenster 
+&ouml;ffnet (siehe Bild 3).</p>
+
+<p><IMG SRC="Bilder/200008/20000814_03.png" width=463 height=499 alt="" border="0">
+<br>
+<i>Bild 3: Eigenschaftenfenster der Website</i></p>
+
+<p>Klicken Sie in diesem Fenster auf den <i>XTune</i> Tab
+(siehe Bild 4). Nun k&ouml;nnen Sie bequem die wichtigsten
+tuningrelevanten Parameter der Website &auml;ndern.</p>
+
+<p><IMG SRC="Bilder/200008/20000814_04.png" width=463 height=499 alt="" border="0">
+<br>
+<I>Bild 4: XTune Tab</i></p>
+
+
+<H2>Einstellm&ouml;glichkeiten f&uuml;r Websites</h2>
+
+<p>Wie im Bild 4 zu sehen ist, kann man auf dem XTune Tab folgende 
+Parameter einstellen:</p>
+
+<p>
+<ul>
+<table>
+  <tr>
+    <td><li><a href="20000814.htm#ASPQueueTimeout">ASPQueueTimeout</a></li></td>
+    <td><li><a href="20000814.htm#AspScriptTimeout">AspScriptTimeout</a></li></td>
+  </tr>
+  <tr>
+    <td><li><a href="20000814.htm#ConnectionTimeout">ConnectionTimeout</a></li></td>
+    <td><li><a href="20000814.htm#AspScriptFileCacheSize">AspScriptFileCacheSize</a></li></td>
+  </tr>
+  <tr>
+    <td><li><a href="20000814.htm#AspScriptEngineCacheMax">AspScriptEngineCacheMax</a></li></td>
+    <td><li><a href="20000814.htm#ServerListenBacklog">ServerListenBacklog</a></li></td>
+  </tr>
+  <tr>
+    <td><li><a href="20000814.htm#MaxEndPointConnections">MaxEndPointConnections</a></li></td>
+    <td><li><a href="20000814.htm#ServerSize">ServerSize</a></li></td>
+  </tr>
+  <tr>
+    <td><li><a href="20000814.htm#AspLogErrorRequests">AspLogErrorRequests</a></li></td>
+    <td><li><a href="20000814.htm#AuthNTLM">AuthNTLM</a></li></td>
+  </tr>
+  <tr>
+    <td><li><a href="20000814.htm#AspAllowSessionState">AspAllowSessionState</a></li></td>
+    <td><li><a href="20000814.htm#AspBuffering">AspBuffering</a></li></td>
+  </tr>
+  <tr>
+    <td><li><a href="20000814.htm#AspProcessorThreadMax">AspProcessorThreadMax</a></li></td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
+</ul>
+</p>
+
+
+<a name="ASPQueueTimeout"></a>
+<h3>ASPQueueTimeout</h3>
+
+<p>Die ASPQueueTimeout Eigenschaft gibt die Zeit in Sekunden an, 
+die ein ASP Skript in der Queue bis zum Abarbeiten maximal verstreichen l&auml;sst. Wenn ein ASP 
+Skript erst nach der spezifizierten Zeit zur Verarbeitung angenommen wird, so terminiert der Webserver 
+die Ausf&uuml;hrung des ASP Skripts und gibt eine "Server too busy" Meldung an den Client aus.</p>
+
+<p>Eine vern&uuml;nftige Einstellung f&uuml;r diesen Parameter 
+sind 30 Sekunden. Der Default Wert ist <i>unendlich</i>.</p>
+
+<p>Anmerkung: Dieser Parameter k&ouml;nnte anstatt mit XTune
+auch mit Hilfe des 
+<a href="20000814.htm#adsutil">
+IIS Administration Script Utility Tools (adsutil.vbs)</a>
+gesetzt werden.</p>
+
+
+<a name="AspScriptTimeout"></a>
+<h3>AspScriptTimeout</h3>
+
+<p>Die Eigenschaft AspScriptTimeout spezifiziert die maximale Zeitdauer 
+in Sekunden, die ein ASP Skript laufen darf, bevor es vom Webserver 
+terminiert wird.</p>
+
+<p>Empfohlen werden 30 Sekunden f&uuml;r diesen Parameter, der Default Wert sind 90 Sekunden. Der kleinste Wert ist eine Sekunde.</p>
+
+<p>Anmerkung: Der im AspScriptTimeout Parameter gesetzte Wert 
+kann f&uuml;r bestimmte ASP Seiten durch Zuweisen eines Wertes zur 
+<i>Server.ScriptTimeout</i> Eigenschaft im ASP Skript ver&auml;ndert 
+werden.</p>
+
+
+<a name="ConnectionTimeout"></a>
+<h3>ConnectionTimeout</h3>
+
+<p>Wenn eine ASP Seite mittels <a href="19990825.htm">ADO</a>
+(ActiveX Data Objects) auf eine Datenbank zugreift, 
+so bestimmt der ConnectionTimeout Parameter die Zeitdauer in Sekunden, 
+nach der eine inaktive Datenbankverbindung automatisch geschlossen wird.</p>
+
+<p>Je nach Datenbankgeschwindigkeit und Komplexit&auml;t der
+Datenbankabfrage werden Werte zwischen 5 und 30 Sekunden empfohlen.</p>
+
+
+<a name="AspScriptFileCacheSize"></a>
+<h3>AspScriptFileCacheSize</h3>
+
+<p>Der Webserver beh&auml;lt die im AspScriptFileCacheSize Parameter
+angegebene Anzahl an vorkompilierten ASP Skript Dateien im Cache.
+Die Performance beim Abrufen einer gecachten ASP-Datei vom Webserver 
+ist wesentlich h&ouml;her als bei einer nicht gecachten Datei, da ein 
+Festplatten-Zugriff und das Vorcompilieren entfallen. Auf der anderen 
+Seite ben&ouml;tigt jede gecachte Datei Speicherplatz.</p>
+
+<p>Wird der Wert f&uuml;r AspScriptFileCacheSize auf 0 (Null) gesetzt, so werden keine 
+ASP-Dateien gecacht. Ein Wert von -1 bedeutet,
+da&szlig; alle Skript Dateien gecacht werden.</p>
+
+<p>Ein empfohlener Wert, je nach Speichergr&ouml;&szlig;e und 
+Aufruf von ASP-Dateien, ist 256 bis 2000.</p>
+
+<a name="AspScriptEngineCacheMax"></a>
+<h3>AspScriptEngineCacheMax</h3>
+
+<p>Mit Hilfe dieser Einstellung bestimmen Sie die maximale Anzahl der 
+gecachten Script Engines, die ASP im Speicher h&auml;lt. Da jede Script 
+Engine eine ASP-Seite abarbeitet, bedeutet eine Erh&ouml;hung des 
+AspScriptEngineCacheMax Wertes, da&szlig; mehrere ASP-Seiten 
+gleichzeitig abgearbeitet werden k&ouml;nnen. 
+Dies ist insbesondere bei ASP Applikationen wichtig, die 
+"langsame Operationen" wie Datenbankzugriffe, Festplattenzugriffe,
+Datei-Upload auf den Server, Einsatz von ActiveX-Komponenten und 
+&auml;hnliches beinhalten.</p>
+
+<p>Empfohlen werden 100 bis 300 als Wert f&uuml;r den Parameter. 
+Der Default Wert ist 50.</p>
+
+
+<a name="ServerListenBacklog"></a>
+<h3>ServerListenBacklog</h3>
+
+<p>Diese Eigenschaft gibt die Anzahl der "outstanding" Sockets an, die 
+vom Webserver abgefragt werden k&ouml;nnen. Der optimal zu setzende Wert 
+basiert auf der Konfiguration des Betriebssystems und dem 
+<a href="20000814.htm#ServerSize">ServerSize Parameter</a>.</p>
+
+<p>
+Durch Ver&auml;ndern des Parameters und Testen der Site mit einem
+sogenannten 
+<a href="http://webtool.rte.microsoft.com" target="_blank"><i>
+Web Application Stress Tool</i></a>
+(siehe auch Absatz 
+<a href="20000814.htm#PerformanceTesten">Testen der Webserver Performance</a>)
+kann man die beste Einstellung herausfinden
+(siehe auch MSDN Artikel 
+<a href="http://support.microsoft.com/support/kb/articles/Q229/8/14.ASP" target="_blank">
+<i>Configuring IIS to Handle Heavy Usage</i></a>, ID Q229814). Der Standardwert ist 40.</p>
+
+<p>Anmerkung: Ohne XTune k&ouml;nnte man diese Eigenschaft mit Hilfe
+des <a href="20000814.htm#Adsutil"><i>IIS Administration Script Utility</i></a>
+Tools setzen.</p>
+
+
+<a name="MaxEndPointConnections"></a>
+<h3>MaxEndPointConnections</h3>
+
+<p>Mit dem Parameter MaxEndPointConnections kann man die maximale 
+Anzahl der "empfangsbereiten" Sockets setzen, die an einen Netzwerk 
+Endpunkt gebunden sind. Ein Wert von 25 bedeutet, da&szlig; 
+maximal 25 Netzwerk-Connections gleichzeitig auf einen bestimmten
+Netzwerk-Port der Website erlaubt sind.</p>
+
+<p>Ein guter Wert f&uuml;r Websites mit hohen Zugriffsraten ist 500 bis 
+1000. 
+Ein Wert von -1 (&amp;HFFFFFFFF) wird als "unendlich" interpretiert. 
+Default Wert hat, je nach Konfiguration, einen der folgenden Werte:
+-1, 200, 255.</p>
+
+<p>Auch auf den MaxEndPointConnections Parameter wird im MSDN Artikel
+<i>
+<a href="http://support.microsoft.com/support/kb/articles/Q229/8/14.ASP" target="_blank">
+Configuring IIS to Handle Heavy Usage</a></i> (ID Q229814)
+bezug genommen.</p>
+
+
+<a name="ServerSize"></a>
+<h3>ServerSize</h3>
+
+<p>Der Parameter ServerSize spiegelt die Anzahl der erwarteten
+Client-Requests pro Tag wieder. Der Wert dieser Eigenschaft wird benutzt, um unter anderem auch Einflu&szlig; auf den Wert des
+<a href="20000814.htm#ServerListenBacklog">ServerListenBacklog</a> 
+Parameters zu haben.</p>
+
+<p>Die Werte f&uuml;r den ServerSize Parameter, und wof&uuml;r sie stehen:</p>
+
+<p>
+  <ul>
+    <li><b>0</b>: Kennzeichnet eine kleine Website mit
+weniger als 10.000 Requests pro Tag.</li>
+    <li><b>1</b>: Steht f&uuml;r eine mittelgro&szlig;e Website mit
+etwa 10.000 bis 100.000 Zugriffen pro Tag</li>
+    <li><b>2</b>: F&uuml;r eine Website mit mehr als 100.000 Zugriffen pro Tag</li>
+  </ul>
+</p>
+
+<p>Der Default Wert ist 1. Empfohlen wird ein Wert von 2 
+f&uuml;r gr&ouml;&szlig;e Zugriffszahlen.</p>
+
+
+<a name="AspLogErrorRequests"></a>
+<h3>AspLogErrorRequests</h3>
+
+<p>Dieser Parameter legt fest, ob der Webserver fehlgeschlagene Anfragen 
+aus dem Internet in das Windows Event Log schreibt oder nicht.</p>
+
+<p>Wenn AspLogErrorRequests gew&auml;hlt ist, so werden Standard ASP
+Fehler mitgeloggt.</p>
+
+<p>Es wird empfohlen das mitloggen von Standard ASP Fehlern auszuschalten,
+da dies weitere Resourcen spart. Standardm&auml;&szlig;ig ist das 
+mittloggen von Standard ASP Fehlern eingeschalten.</p>
+
+<p>Anmerkung: Um das Mitloggen aller ASP Fehler zu unterbinden, mu&szlig; 
+das Logging ganz ausgeschalten werden. Dies wird durch 
+Setzen der <i>DontLog</i> und <i>LogType</i> Parameter auf 
+<i>FALSE</i> in der IIS Metabase mittels 
+<a href="20000814.htm#MetaEdit"><i>Metabase Editor</i></a>
+oder
+<a href="20000814.htm#Adsutil"><i>IIS Administration Script Utility</i></a>
+erreicht.</p>
+
+
+<a name="AuthNTLM"></a>
+<h3>AuthNTLM</h3>
+
+<p>NTLM bezeichnet die in das Betriebssystem (Windows NT 4.0 oder
+Windows 2000) integrierte Authentifizierung, auch bekannt unter dem
+Namen <i>Secure Challenge/Response Authentication</i>.</p>
+
+<p>Wenn die NTLM Authentifizierung ausgeschalten wird, so kann sich
+ein Client (zum Beispiel durch den Webbrowser) nicht mehr als
+Benutzer unter einem Windows Benutzerprofil (Benutzernamen und 
+Pa&szlig;wort) anmelden.</p>
+
+<p>Ein Unterbinden dieser Authetifizierungsmethode spart wiederum
+Webserverresourcen. Standardm&auml;ssig ist NTLM Authentifizierung 
+erlaubt.</p>
+
+<p>Ein Artikel zu 
+<a href="http://www.microsoft.com/TechNet/win2000/authenti.asp" target="_blank">
+Authentication and Resource Protection in Windows 2000</a>,
+der  auch auf NTLM eingeht, ist bei ist bei Microsoft TechNet online. </p>
+
+
+<a name="AspAllowSessionState"></a>
+<h3>AspAllowSessionState</h3>
+
+<p>Eine Website, die keinerlei Session State ben&ouml;tigt, 
+da keine Daten in Session Variablen gespeichert werden, kann man 
+dadurch beschleunigen, da&szlig; man den Session State f&uuml;r die
+gesamte Website ausschaltet. Dies bedeutet, da&szlig; der Webserver
+keine Sessions mehr managen mu&szlig; und keine neuen <i>Session</i> 
+Objekte mehr generiert  werden, wenn ein Besucher die Website aufruft.
+Auch der Aufwand zum Senden und Verwalten der Sessioncookies f&auml;llt 
+damit f&uuml;r den Webserver weg.</p>
+
+<p>Achtung: Durch Ausschalten des Session States werden die
+Funktionen <i>Session_OnStart</i> und <i>Session_OnEnd</i> der 
+<i>global.asa</i> nicht mehr ausgef&uuml;hrt. Au&szlig;erdem 
+tritt beim Versuch, Daten in einer Session Variablen zu speichern, 
+ein Laufzeit-Fehler auf.</p>
+
+<p>Wenn Sie auf Sessions nicht verzichten k&ouml;nnen, so ist es 
+m&ouml;glich, die Ausf&uuml;hrung von ASP-Skripts die nicht auf das 
+<i>Session</i> Objekt zugreifen
+mittels <i>&lt;% @ EnableSessionState = False %&gt;</i> Direktive 
+zu beschleunigen (siehe auch Artikel <a href="20000405.htm">@-Direktiven 
+auf ASP Seiten</a> und <a href="20000505.htm">Session Variablen - 
+Verwendung und Stolpersteine</a>).</p>
+
+<p>Empfohlene Einstellung: Ausschalten des Session States, daher
+AspAllowSessionState Parameter im XTune Tab nicht w&auml;hlen. 
+Standardm&auml;ssig ist der Session State eingeschalten.</p>
+
+<a name="AspBufferingOn"></a>
+<h3>AspBufferingOn</h3>
+
+<p>Das Buffern des Outputs einer ASP Seite ist ein wirkungsvoller Weg
+um die Abarbeitung von ASP-Skripts zu beschleunigen.
+Die Wirkung beruht darauf, da&szlig; der Webserver den Output nicht
+St&uuml;ck f&uuml;r St&uuml;ck zum Browser schickt, sondern auf einmal.
+Dadurch entf&auml;llt f&uuml;r den Webserver das Warten 
+darauf, da&szlig; der Browser den Empfang der Output-Teile 
+best&auml;tigt.</p>
+
+<p>Um jeden ASP-Output zu cachen, setzen Sie im XTune Tab
+den AspBufferingOn Parameter auf <i>Ein</i>.</p>
+
+<p>Standardm&auml;ssig ist am IIS 4.0 das Buffern ausgeschalten,
+am IIS 5.0 hingegen eingeschalten.</p>
+
+<p>Achtung: Obwohl die Abarbeitung der ASP-Seite insgesamt schneller
+abl&auml;uft, so dauert es doch l&auml;nger, bis der Browser
+einen Teil der Seite anzeigt. Vor allem bei Scripts, bei denen
+bestimmte Teile (wie Datenbank-, Festplattenzugriff oder Kreditkartenvalidierung) merklich lange brauchen, ist
+es empfehlenswert, Meldungen und einen ersten Teil der Seite
+mittels <i>Response.Flush</i> zum Browser zu schicken
+(siehe auch Artikel <a href="20000517.htm"><i>Zwischenspeichern von ASP 
+Seiten</i></a>).</p>
+
+
+<a name="AspProcessorThreadMax"></a>
+<h3>AspProcessorThreadMax</h3>
+
+<p>Dieser Parameter bestimmt, wieviele "Working Threads" pro
+Prozessor und pro IIS Prozess parallel abgearbeitet werden k&ouml;nnen.</p>
+
+<p>Die IIS 5.0 Metabase Eigenschaft <i>AspProcessorThreadMax</i> 
+hatte unter IIS 4.0 noch den Namen <i>ProcessorThreadMax</i>
+und wurde in der Betriebssystem Registry des IIS 4.0 gespeichert.</p>
+
+<p>Empfohlene Einstellung f&uuml;r den Parameter ist der Wert 30.
+Standardm&auml;&szlig;ig ist unter IIS 5.0 der Wert auf 25, 
+und unter IIS 4.0 der Wert auf 10 gesetzt.</p>
+
+<p>Im Allgemeinen kann man den Wert unver&auml;ndert lassen, 
+au&szlig;er Teile von ASP-Seiten greifen exzessiv auf externe Objekte
+(wie ADO oder das FileSystemObject Object) oder
+andere langlaufende ActiveX-Komponenten (wie Kreditkartenabbuchungssysteme) 
+zu. Dann kann ein Hinaufsetzen des AspProcessorThreadMax Wertes
+einen drastischen Performence-Gewinn bedeuten.</p>
+
+<p>Der MSDN Artikel 
+<a href="http://support.microsoft.com/support/kb/articles/Q238/5/83.ASP" target="_blank">
+How to Tune the ASPProcessorThreadMax</a> (ID Q238583) 
+behandelt ausf&uuml;hrlich die Einstellungen und Auswirkungen
+dieses Parameters auf die Webserver Performance.</p>
+
+<p>Ein Wert von 25 f&uuml;r den Parameter AspProcessorThreadMax 
+auf einem Dual-Prozessor System bedeutet, da&szlig; jeder IIS-
+Proze&szlig; bis zu 50 "Working Threads" beinhalten kann.</p>
+
+<p>Wenn die <i>Application Protection</i> unter IIS 5.0 auf <i>High 
+(Isolated)</i> gesetzt ist, so hat jede isolierte IIS Applikation ihren
+unabh&auml;ngigen Satz von "Working Threads".
+Die Einstellung f&uuml;r die <i>Application Protection</i> finden
+Sie bei den Website Eigenschaften (Properties) auf dem 
+<i>Home Directory</i> Tab (siehe Bild 5).</p>
+
+<IMG SRC="Bilder/200008/20000814_07.png" width=463 height=499 alt="" border="0">
+<br>
+<i>Bild 5: Application Protection auf dem Home Directory Tab</i>
+
+<p>Der Parameter kann nur unter Windows 2000 gesetzt werden. Unter
+Windows NT 4.0 m&uuml;&szlig;en Sie den Registry-Eintrag 
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\W3SVC\ASP\
+mit einem Tool wie Regedt32 &auml;ndern. Unter IIS 4.0
+kann auch eine Erniedrigung des Wertes eine Performance-
+Steigerung bringen.
+</p>
+
+
+<a name="PerformanceTesten"></a>
+<h2>Testen der Performance</h2>
+
+<p>Das Einstellen und Tunen eines Webservers nach Gef&uuml;hl,
+oder das Begutachten der Resultate ohne echte Zugriffslast
+auf den Webserver ist nicht zielf&uuml;hrend.</p>
+
+<p>Das 
+<a href="http://webtool.rte.microsoft.com" target="_blank">
+<i>Microsoft Web Application Stress Tool</i></a> erlaubt es Ihnen, 
+hohe Zugriffszahlen auf einen Webserver zu simulieren und ihn
+damit in einer bestimmten Konfiguration bis an seine Grenzen auszutesten.
+Erst dadurch ist es m&ouml;glich, die Auswirkungen von Webserver Tuning, 
+ASP-Code und Datenbank-Optimierung direkt in einem wirklichkeitsnahen 
+Belastungsszenario testen.
+Siehe auch den TechNet Artikel
+<a href="http://www.microsoft.com/TechNet/iis/technote/knowcpt.asp" target"_blank">
+Know Your Limit: The Capacity-Planning Tool Nobody Knows</a>.</p>
+
+
+<h2>Erg&auml;nzungen</h2>
+
+
+<a name="adsutil"></a>
+<h3>IIS Administration Script Utility (Adsutil)</h3>
+
+<p>Das Tool <i>Adsutil.vbs</i> ist ein Komandozeilentool, geschrieben
+in VBScript, das mittels <i>CScript.exe</i> Kommando ausgef&uuml;hrt werden kann. Das Tool ist im Option Pack 4.0 und im IIS 5.0 enthalten.</p>
+
+<p>Mit Hilfe dieses Tools lassen sich Werte und Eintr&auml;ge in der 
+Metabase des IIS direkt auslesen und setzen (siehe
+MSDN Artikel
+<a href=" http://support.microsoft.com/support/kb/articles/Q240/2/25.ASP" target="_blank">
+Description of Adsutil and MetaEdit Utilities Used to Modify the 
+Metabase</a>, ID: Q240225).
+</p>
+
+<p>Das Tool <i>Adsutil.vbs</i> befindet sich im 
+<i>\Inetpub\AdminScripts</i> Ordner (Windows 2000) bzw. im
+<i>%SystemRoot%\system32\inetsrv\adminsamples</i> Order 
+(Windows NT 4.0). Die Dokumentation zum Tool k&ouml;nnen Sie
+am IIS unter der Adresse 
+<i><a href="http://www.aspgerman.com/iishelp/iis/htm/adminsamples/adsutil.htm" target="_blank">http://localhost/iishelp/iis/htm/adminsamples/adsutil.htm</a></i>
+aufrufen. Eine Beschreibung der anderen Administrationsskripts 
+f&uuml;r IIS finden Sie unter 
+<i><a href="http://www.aspgerman.com/iishelp/iis/htm/adminsamples/default.htm" target="_blank">http://localhost/iishelp/iis/htm/adminsamples/default.htm</a></i>.</p>
+
+
+<a name="MetaEdit"></a>
+<h3>Metabase Editor (MetaEdit)</h3>
+
+<p>Der Metabase Editor erlaubt das Auslesen und Ver&auml;ndern von
+IIS Metabase Werten in einem Windows-basierenden Tool
+das &auml;hnlich wie das Regedt32 Tool f&uuml;r die Registry
+arbeitet (siehe Bild 6).</p>
+
+<p><IMG SRC="Bilder/200008/20000814_08.png" width=523 height=287 alt="" border="0">
+<br>
+<i>Bild 6: Metabase Editor (MetaEdit)</i></p>
+
+<p>Eine Beschreibung zur Verwendung des Metbase Editor Tools 
+findet sich im MSDN Artikel
+<a href="http://support.microsoft.com/support/kb/articles/Q240/2/25.ASP" target="_blank">
+Description of Adsutil and MetaEdit Utilities Used to Modify the 
+Metabase</a>, ID: Q240225).</p>
+
+<p>Das Metabase Editor Tool ist frei &uuml;ber 
+den Download des Site Server Commerce Edition Resource Kit erh&auml;ltlich (Downloadlink am
+Ende des Artikels).
+Nach dem Download und Entpacken rufen Sie die Datei <i>Setup2.exe</i> 
+auf. Diese installiert das Metabase Editor Tool.
+Gegebenenfalls m&uuml;&szlig;en Sie das Tool manuell in der 
+Registry registrieren. Dies geschieht durch einen Doppelklick
+auf die Datei <i>RegisterMetaEdit.reg</i>. 
+
+<p>Au&szlig;erdem findet sich das MetaEdit Tool noch im 
+<a href="http://www.microsoft.com/windows2000/library/resources/reskit../default.htm" target="_blank">
+Windows 2000 Server Resource Kit</a> 
+und im 
+<a href="http://mspress.microsoft.com/prod/books/1398.htm" target="_blank">
+IIS 4.0 Resource Kit</a>.</p>
+
+
+<H2>Zusammenfassung</h2>
+
+<p>Webservertuning ist eine Wissenschaft f&uuml;r sich,
+jede Website hat ein anderes Anforderungsprofil, eine
+andere Sitestruktur und andere Daten, die vom Server zum Client 
+geschickt werden.</p>
+
+<p>Das Werkzeug XTune erlaubt es dem interessierten Webadministrator, 
+die Parameter eines IIS Webservers, die f&uuml;r die Performance
+des Servers und von Websites verantwortlich sind, 
+in einem einfach zu bedienenden, grafischen Tool auf MMC Basis
+einzustellen.</p><h2>Verwandte Artikel</h2>
+<p>
+<a href="20000419.htm">Auswirkung des Providers auf die Datenbank Performance</a><br>
+<a href="20000428.htm">Einf&uuml;hrung in Performance Monitoring</a><br>
+<a href="19990919.htm">Geschwindigkeitsmessungen in ASP</a><br>
+<a href="20001115.htm">HTTP Komprimierung in IIS5</a><br>
+<a href="20000502.htm">Monitoring von ASP</a><br>
+<a href="20000809.htm">Performance Monitoring a la .NET</a><br>
+<a href="20000817.htm">Serverseitiges Caching mit XCache</a><br>
+<a href="20030911.htm">Virtuelle Verzeichnisse umbenennen</a><br>
+<a href="20011002.htm">XTune Revisited</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsupport%2Emicrosoft%2Ecom%2Fsupport%2Fkb%2Farticles%2FQ229%2F8%2F14%2EASP">Configuring IIS to Handle Heavy Usage</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsupport%2Emicrosoft%2Ecom%2Fsupport%2Fkb%2Farticles%2FQ240%2F2%2F25%2EASP">Description of Adsutil and MetaEdit Utilities Used to Modify the Metabase</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsupport%2Emicrosoft%2Ecom%2Fsupport%2Fkb%2Farticles%2FQ235%2F4%2F61%2EASP">Enhancing Performance in Internet Information Server 4.0</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsupport%2Emicrosoft%2Ecom%2Fsupport%2Fkb%2Farticles%2FQ238%2F5%2F83%2EASP">How to Tune the ASPProcessorThreadMax</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Fworkshop%2Fserver%2Ffeature%2Ftune%2Easp">IIS 4.0 Tuning Parameters for High-Volume Sites</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2FTechNet%2Fiis%2Ftechnote%2Fknowcpt%2Easp">Know Your Limit: The Capacity-Planning Tool Nobody Knows</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwebtool%2Erte%2Emicrosoft%2Ecom">Microsoft Web Application Stress Tool</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fwinresource%2Fssreskit%2Frk%5Flistall%5Freskittools%2Ehtm">Site Server Commerce Edition Resource Kit</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2Fwindows2000%2Flibrary%2Foperations%2Fweb%2Ftuning%2Easp">The Art and Science of Web Server Tuning with IIS 5.0</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2Fbackstage%2Fwhitepaper%2Ehtm">Web Server Performance Optimization white paper</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2Fwindows2000%2Flibrary%2Fresources%2Freskit%2Fdefault%2Easp">Windows 2000 Server Resource Kit</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Epostpointsoft%2Ecom%2Fhome%2Fxtune%5Fwhat%5Fis%5Fxtune%2Ehtm">Xtune</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000814" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Webserver-Tuning mit XTune"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000814.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Koller"><input type="hidden" name="AuthorEmail" value="christiank@aspexpert.com"><input type="hidden" name="Artikel" value="20000814"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000814.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

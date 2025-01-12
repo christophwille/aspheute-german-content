@@ -1,0 +1,349 @@
+<HTML>
+<HEAD>
+<TITLE>Dateiupload mit ASP und WSC</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel zeigt Ihnen die Verwendung einer Dateiupload Windows Script Component (WSC), mit der Sie ohne die Komponente am Web Server registieren zu m&uuml;ssen Dateien auf den Web Server kopieren k&ouml;nnen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,WSC,Windows Script,Components,Upload,ASP,VBScript,Script,Datei Upload">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Dateiupload mit ASP und WSC</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010202"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Sie m&ouml;chten eine Dateiupload Komponente auf Ihrer Web Site bzw. in ein Web Form einbinden, 
+wollen diese aber im Zusammenhang mit ASP verwenden. Zus&auml;tzlich lassen Sie Ihre Web Site bei 
+einer anderen Firma hosten, und k&ouml;nnen daher keine Komponenten am Web Server selbst registrieren 
+bzw. die Hostingfirma l&auml;&szlig;t die Registrierung von Komponenten nicht zu. Dieser Artikel zeigt 
+Ihnen die Verwendung einer Windows Script Component (WSC), mit der Sie ohne die Komponente am 
+Web Server registieren zu m&uuml;ssen Dateien auf den Web Server kopieren k&ouml;nnen.
+</p>
+
+<p>
+In diesem Artikel erkl&auml;re ich Ihnen lediglich den Einsatz der Windows Script Component (WSC), welche Sie
+im Download finden. Damit meine ich, da&szlig; wir nicht die WSC in Ihre Bestandteile zerlegen 
+und besprechen werden. 
+</p>
+
+<p>
+Wenn Sie Hintergrundinfos &uuml;ber die Programmierung der Komponente beziehen m&ouml;chten, dann lesen Sie bitte die beiden 
+Artikel <a href="http://www.4guysfromrolla.com/webtech/012401-1.shtml" target="_blank"><i>A File-Uploading Windows Script Component</i></a>
+von Andy Smith und <a href="http://www.asptoday.com/articles/20000316.htm" target="_blank"><i>Uploading with ASP and VBScript</i></a> 
+von Philippe Collignon. Beide Artikel sind in Englisch geschrieben.
+</p>
+
+<p>
+Aus lizenzrechtlichen Gr&uuml;nden ist die <i>Meta Builders FileUp WSC Komponente</i> <b>nicht</b> im Download dieses Artikels
+enthalten. Nichtsdestotrotz k&ouml;nnen Sie diese Komponente aber unter 
+<a href="http://www.4guysfromrolla.com/webtech/code/FileUpload.WSC.zip" target="_blank">Meta Builders FileUp WSC Komponente</a>
+downloaden.
+</p>
+
+<p>
+Ich pr&auml;sentiere Ihnen zwei einfache Anwendungsbeispiele, die die wichtigsten Eigenschaften einer
+Upload Komponente repr&auml;sentieren. Dadurch, da&szlig; es eine WSC ist m&uuml;ssen Sie die Komponente nicht
+auf dem Web Server registieren um sie verwenden zu k&ouml;nnen. Sie m&uuml;ssen nur die <i>MetaBuilders.FileUp.wsc</i> 
+Datei einfach in ein Unterverzeichnis am Web Server kopieren und Sie k&ouml;nnen schon mithilfe einer ASP Datei auf die
+Komponente zugreifen.
+</p>
+
+<p>
+Wichtig bei der Verwendung der WSC Datei ist, da&szlig; diese im <b>selben Unterverzeichnis</b> am 
+Web Server liegt wie die ASP Dateien, die die Komponente verwenden.
+</p>
+
+<p>
+Dies wollen wir nun auch tun. Wie schon erw&auml;hnt, habe ich zwei sehr einfache Beispiele
+vorbereitet. Beide verwenden Windows Forms als User-Interface und kommen mit ein paar 
+Codezeilen aus. Sehen wir uns nun einmal die erste Variante an (<b>Save.asp</b>):
+</p>
+
+<pre style="background='silver';">
+...
+Dim MBRequest
+Dim strPath, txtSvrPath , txtFileName
+strPath = &quot;script:&quot; &amp; Server.MapPath(&quot;MetaBuilders.FileUp.wsc&quot; )
+
+set MBRequest = GetObject( strPath )
+
+If MBRequest(&quot;submit&quot;) = &quot;Upload&quot; Then
+	Response.Write &quot;&lt;i&gt;Datei:&lt;/i&gt; &quot; &amp; MBRequest(&quot;File&quot;).Path &amp; _
+        MBRequest(&quot;File&quot;).FileName &amp; &quot;&lt;br&gt;&quot;
+	Response.Write &quot;&lt;i&gt;Dateierweiterung:&lt;/i&gt; &quot; &amp; _
+        MBRequest(&quot;File&quot;).Extension &amp; &quot;&lt;br&gt;&quot;
+	Response.Write &quot;&lt;i&gt;Der MIME/ContentType ist:&lt;/i&gt; &quot; &amp; _ 
+        MBRequest(&quot;File&quot;).ContentType &amp; &quot;&lt;br&gt;&quot;
+    Response.Write &quot;&lt;i&gt;Speicherpfad:&lt;/i&gt; &lt;b&gt;&quot; &amp;
+        MBRequest(&quot;txtSvrPath&quot;).Value &amp; &quot;&lt;/b&gt;&quot;
+   
+'Speichern der Datei
+  
+    MBRequest(&quot;File&quot;).SavePath = MBRequest(&quot;txtSvrPath&quot;).Value
+    
+    MBRequest(&quot;File&quot;).Save
+
+Else
+	%&gt;
+...
+</pre>
+
+<p>
+Nach der Deklaration der Variablen und dem Einbinden der Komponente, verwenden wir eine
+<i>If-Verzweigung</i> um die zwei m&ouml;glichen Zust&auml;nde zu trennen. Der von der If-Verzweigung
+zu evaluierende Austruck stellt fest ob der &quot;Upload&quot;-Button schon angeklickt wurde.
+</p>
+
+<p>
+Wird <i>True</i> zur&uuml;ckgegeben, wird der obige Abschnitt ausgef&uuml;hrt, der hier die Informationen &uuml;ber
+die kopierte Datei, sowie den Pfad des Zielortes angibt. Danach erfolgt der eigentliche
+Speichervorgang. Zuerst wird aus der HTML Control <i>txtSvrPath</i> der Speicherpfad ermittelt und 
+danach mit
+</p>
+
+<pre style="background='silver';">
+MBRequest(&quot;File&quot;).Save
+</pre>
+
+<p>
+die Datei am Server gespeichert. Der nachfolgende Sourcecode-Abschnitt zeigt das Form Objekt
+mit den HTML Control Eingabefeldern.
+</p>
+
+<pre style="background='silver';">
+...
+&lt;form method=&quot;post&quot; action=&quot;&lt;%=Request.ServerVariables(&quot;url&quot;)%&gt;&quot; 
+  enctype=&quot;multipart/form-data&quot; &gt;
+    &lt;table border=&quot;0&quot; cellpadding=&quot;2&quot; cellspacing=&quot;2&quot;&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Datei:&lt;/td&gt;
+            &lt;td&gt;&lt;input type=&quot;file&quot; name=&quot;File&quot;&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Server Pfad: &lt;/td&gt;
+            &lt;td&gt;&lt;input type=&quot;text&quot; name=&quot;txtSvrPath&quot;&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td colspan=&quot;2&quot; align=&quot;right&quot;&gt;
+            &lt;input type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;Upload&quot;&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/table&gt;
+&lt;/form&gt;
+...
+</pre>
+
+<p>
+Das &quot;Form&quot; Element (<i>&lt;form ... &gt;</i>) wird dazu gebraucht eine Dateneingabe zu erm&ouml;glichen.
+Der Eintrag <i>enctype=&quot;multipart/form-data&quot;</i> bestimmt die dabei verwendete Medienart.
+Um die einzelnen Controls leichter strukturieren zu k&ouml;nnen, habe ich sie in einen HTML-Table eingefa&szlig;t.
+Dieser Teil des Sourcecodes ist der <i>Alternativteil</i> der If-Verzweigung. Dieser wird ausgef&uuml;hrt,
+wenn der zu evaluierende Ausdruck der Verzweigung <i>False</i> zur&uuml;ck gibt. Dies ist hier dann der Fall, wenn
+der <i>Upload</i>-Button noch nicht bet&auml;tigt wurde.
+</p>
+
+<p>
+Abschlie&szlig;end (siehe folgenden Sourcecode-Abschnitt) schlie&szlig;en wir die If-Verzweigung und 
+zerst&ouml;ren das <i>MBRequest</i> Objekt indem wir es mit dem Keyword <i>Nothing</i> gleichsetzen.
+Damit geben wir nicht mehr ben&ouml;tigten Speicher wieder frei.
+</p>
+
+<pre style="background='silver';">
+...
+&lt;%
+End If
+set MBRequest = Nothing
+%&gt;
+</pre>
+
+<p>
+Wenn wir nun die ASP-Datei in einem Browser &ouml;ffen, sieht dies so wie im folgenden Screenshot aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200102/20010202_1.png" width="378" height="246" alt="" border="0">
+
+<p>
+Zuerst geben wir die Datei an, die auf den Web Server kopiert werden soll. Dies geschieht, wenn 
+wir auf <i>Browse</i> klicken, wie gewohnt eine Datei durch Anklicken ausw&auml;hlen und mit 
+<i>Open</i> bzw. <i>&Ouml;ffnen</i> die Auswahl best&auml;tigen. Aus Sicherheitsgr&uuml;nden haben wir keinen direkten Zugriff
+auf die ausgew&auml;hlte Datei und k&ouml;nnen auch nur eine ausw&auml;hlen.
+</p>
+
+<p>
+Um die Datei auf den Web Server zu kopieren, klicken wir auf den <i>Upload</i>-Button.
+Nach dem Kopiervorgang erhalten wir dann folgende Informationen &uuml;ber die kopierte Datei und 
+den Speicherpfad:
+</p>
+
+<IMG SRC="/artikel/Bilder/200102/20010202_2.png" width="381" height="248" alt="" border="0">
+
+<p>
+Im zweiten Beispiel bereichern wir die Funktionalit&auml;t der Komponente um die M&ouml;glichkeit
+der zu kopierenden Datei am Web Server einen neuen Namen zu geben. Die dazu ben&ouml;tigten Codezeilen
+sind schnell hinzugef&uuml;gt (<b>SaveAsWithNewName.asp</b>):
+</p>
+
+<pre style="background='silver';">
+...
+'Speichern der Datei
+
+MBRequest(&quot;File&quot;).SavePath = MBRequest(&quot;txtSvrPath&quot;).Value
+ 
+MBRequest(&quot;File&quot;).SaveAs( MBRequest(&quot;txtFileName&quot;).Value &amp; &quot;.&quot; &amp; _ 
+   MBRequest(&quot;File&quot;).Extension )
+...
+</pre>
+
+<p>
+Wie das Kommentar schon sagt, wird zuerst wieder aus der HTML Control mit dem Namen
+<i>txtSvrPath</i> der vom Client eingegebene Pfad am Server ausgelesen. Danach wollen wir nun die Datei unter einem
+anderen Namen speichern. Dies geschieht mit der <i>SaveAs</i>-Methode. Wir &uuml;bergeben der 
+Methode den neuen Dateinamen aus der HTML Control <i>txtFileName</i>. Da es in den meisten F&auml;llen
+nicht besonders sinnvoll ist die Dateierweiterung zu ver&auml;ndern, &uuml;bernehmen wir diese von der
+urspr&uuml;nglichen Datei. 
+</p>
+
+<p>
+Schlie&szlig;lich m&uuml;ssen wir noch den Dateinamen von der Erweiterung wie gewohnt durch einen Punkt trennen. Dies
+geschieht indem wir einfach in dem String zwischen Dateinamen und Erweiterung den Eintrag
+(siehe Kursivdruck)</p>
+
+<pre style="background='silver';">
+... 
+MBRequest(&quot;File&quot;).SaveAs( MBRequest(&quot;txtFileName&quot;).Value &amp; <i>&quot;.&quot; &amp;</i> _ 
+   MBRequest(&quot;File&quot;).Extension )
+...
+</pre>
+
+<p>
+einf&uuml;gen. Der restliche Sourcecode wird einfach durch die ben&ouml;tigten HTML Controls erweitert.
+Dieser Sourcecodeabschnitt sieht wie folgt aus:
+</p>
+
+<pre style="background='silver';">
+...
+&lt;form method=&quot;post&quot; action=&quot;&lt;%=Request.ServerVariables(&quot;url&quot;)%&gt;&quot;
+        enctype=&quot;multipart/form-data&quot; &gt;
+    &lt;table border=&quot;0&quot; cellpadding=&quot;2&quot; cellspacing=&quot;2&quot;&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Datei:&lt;/td&gt;
+            &lt;td&gt;&lt;input type=&quot;file&quot; name=&quot;File&quot;&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Server Pfad: &lt;/td&gt;
+            &lt;td&gt;&lt;input type=&quot;text&quot; name=&quot;txtSvrPath&quot;&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td>Neuer Name: &lt;/td&gt;
+            &lt;td&gt;&lt;input type=&quot;text&quot; name=&quot;txtFileName&quot;&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td colspan=&quot;2&quot; align=&quot;right&quot;&gt;
+            &lt;input type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;Upload&quot;&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+&lt;/table&gt;
+&lt;/form&gt;
+...
+</pre>
+
+<p>
+Bei der Ausf&uuml;hrung in einem Browser erh&auml;lt man wieder folgende Screenshots. Zuerst die Eingabe 
+der ben&ouml;tigten Daten:
+</p>
+
+<IMG SRC="/artikel/Bilder/200102/20010202_3.png" width="385" height="267" alt="" border="0">
+
+<p>
+Nach dem Klicken auf den <i>Upload</i>-Button erh&auml;lt man wiederum die Informationen &uuml;ber die kopierte 
+Datei und den Pfad am Web Server, in welchen die Datei hineinkopiert wurde:
+</p>
+
+<IMG SRC="/artikel/Bilder/200102/20010202_4.png" width="389" height="271" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Die beiden gezeigten Beispiele erf&uuml;llen nat&uuml;rlich nur die Grundfunktionen. In der vorliegenden
+Ausf&uuml;hrung lassen sich aber schon die Vorteile der Verwendung von Windows Script Components erkennen: Man mu&szlig; den 
+Web Server bei der Installation der Komponente nicht stoppen, da es sich ja nur um einen 
+einfachen Kopiervorgang handelt. Somit ist nat&uuml;rlich auch keine Registration der Komponente 
+am Web Server erforderlich. Weiters ist der Programmieraufwand um eine WS-Komponente in 
+einer ASP-Datei einzubinden gering.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010202.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010202.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010510.htm">Beliebige Anzahl von Dateien uploaden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010510.htm</span><br>
+<a href="../artikel/20000802.htm">Dateiupload mit ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000802.htm</span><br>
+<a href="../artikel/20010124.htm">Dateiupload mit ASP.NET und VB.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010124.htm</span><br>
+<a href="../artikel/20010507.htm">Web-basiertes Dateimanagement mit dem ASP FileMan</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010507.htm</span><br>
+<a href="../artikel/19990828.htm">Windows Script Components</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990828.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2E4guysfromrolla%2Ecom%2Fwebtech%2F012401%2D1%2Eshtml">A File-Uploading Windows Script Component</a><br>
+<SPAN class="content">http://www.4guysfromrolla.com/webtech/012401-1.shtml</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2E4guysfromrolla%2Ecom%2Fwebtech%2Fcode%2FFileUpload%2EWSC%2Ezip">Meta Builders FileUp WSC Komponente</a><br>
+<SPAN class="content">http://www.4guysfromrolla.com/webtech/code/FileUpload.WSC.zip</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easptoday%2Ecom%2Farticles%2F20000316%2Ehtm">Uploading with ASP and VBScript</a><br>
+<SPAN class="content">http://www.asptoday.com/articles/20000316.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

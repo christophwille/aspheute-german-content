@@ -1,0 +1,374 @@
+<HTML>
+<HEAD>
+<TITLE>Ein G&auml;stebuch in ASP erstellen - Teil 3</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Programmierung der Administrationsseiten f&uuml;r ein G&auml;stebuch. Mit Benutzermanagement, &Auml;ndern, sowie L&ouml;schen von Eintr&auml;gen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ADO,ASP,Gästebuch,Guestbook,Sourcecode,Datenbank,AspGerman">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Ein G&auml;stebuch in ASP erstellen - Teil 3</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000404"></SCRIPT>
+</p>
+<p>
+In den bisherigen beiden Teilen der G&auml;stebuchserie haben wir uns mit dem Frontend f&uuml;r den Endbenutzer
+besch&auml;ftigt - einen eigenen Eintrag eingeben, sowie die Liste der existierenden Eintr&auml;ge durchbl&auml;ttern. Heute,
+im letzten Teil der Serie, besch&auml;ftigen wir uns mit dem administrativen Frontend - um Eintr&auml;ge l&ouml;schen
+und editieren zu k&ouml;nnen.
+</p>
+<p>
+Worauf mu&szlig; man bei einem administrativen Frontend besonders aufpassen? Richtig, da&szlig; nur berechtigte
+Personen darauf Zugriff bekommen. Um dies ohne Zutun des Providers zu erreichen (zB via NTFS Zugriffsrechten),
+habe ich eine neue Tabelle namens AdminLogins in die Datenbank eingebaut:
+</p>
+<p>
+<IMG SRC="Bilder/200004/20000404_5.png" width="272" height="128" border="0" alt="AdminLogins">
+</p>
+<p>
+Dazugeh&ouml;rig ist die ASP Datei <b>logon.asp</b>, die ein Frontend f&uuml;r die Eingabe des Benutzernamens und 
+Passworts darstellt, das auch den Code zur &Uuml;berpr&uuml;fung dieser Daten beeinhaltet.
+</p>
+<p>
+<IMG SRC="Bilder/200004/20000404_4.png" width="527" height="438" border="0" alt="Logon">
+</p>
+<p>
+An dieser Stelle m&ouml;chte ich mich auch gleich daf&uuml;r entschuldigen, da&szlig; die Administrationsseiten in Englisch
+gehalten sind - dies ist Standard in unserer Firma, und da das pr&auml;sentierte G&auml;stebuch auf auch AspGerman.com
+seinen Dienst tut, entsprechen diese Seiten auch den Vorgaben.
+</p>
+<p>
+Was passiert nun nach einem erfolgreichen Logon? Man wird auf die Hauptseite weitergeleitet:
+</p>
+<p>
+<IMG SRC="Bilder/200004/20000404_1.png" width="363" height="211" border="0" alt="Hauptseite">
+</p>
+<p>
+Die Datei <b>adminnav.asp</b> beeinhaltet einige DHTML "Spielereien", und ist nicht weiter interessant. 
+Im Gegensatz dazu allerdings gibt die Datei <b>instructions.asp</b> trotz ihrer Kleinheit einen Einblick in den
+Aufbau der ganzen Administrationssite:
+<pre style="background='silver';">
+&lt;% @ Language=VBScript %&gt;
+&lt;!--#include file=&quot;security.asp&quot;--&gt;
+&lt;%
+ Const cstrPagetitle = &quot;Instructions&quot;
+%&gt;
+&lt;!--#include file=&quot;includes.asp&quot;--&gt;
+&lt;!--#include file=&quot;pageheader.asp&quot;--&gt;
+&lt;!--#include file=&quot;pagebegin.asp&quot;--&gt;
+&lt;H1&gt;&lt;%=cstrPagetitle%&gt;&lt;/H1&gt;
+
+&lt;p&gt;
+Instructions on how to administer the guestbook is going to be shown here!
+&lt;/p&gt;
+
+&lt;!--#include file=&quot;pageend.asp&quot;--&gt;
+</pre>
+</p>
+<p>
+Auf den ersten Blick ist diese Seite eine Ansammlung von Includes, allerdings erf&uuml;llen alle ihren Zweck:
+<ul>
+<li><b>security.asp</b> f&uuml;hrt die &Uuml;berpr&uuml;fung durch, ob der Administrator eingeloggt ist. Wenn nicht,
+	wird er auf logon.asp weitergeleitet.
+<li><b>includes.asp</b> Inkludiert die Datenbankverbindung und Parameter f&uuml;r alle Seiten.
+<li><b>pageheader.asp</b> Der erste Teil des HTML Headers.
+<li><b>pagebegin.asp</b> Schlie&szlig;t den HTML Header und definiert den Seitenbeginn. 
+<li><b>pageend.asp</b> Schlie&szlig;t die Seite korrekt.
+</ul>
+</p>
+<p>
+Es gibt 2 Aufgaben, die die Administrationsseiten zulassen: die Benutzer zu administrieren (<b>usermanagement.asp</b>),
+und die G&auml;stebucheintr&auml;ge zu warten (<b>gbentries.asp</b>). Das Benutzermanagement ist straight-forward, und 
+bedarf keiner gro&szlig;en Erkl&auml;rungen. Der wirklich interessante Teil ist die Eintr&auml;gewartung.
+</p>
+<p>
+Die Datei <b>gbentries.asp</b> ist vom Prinzip her v&ouml;llig gleich wie <b>entries.asp</b> aufgebaut, mit dem Unterschied,
+da&szlig; es Links f&uuml;r das L&ouml;schen und Editieren des Eintrags gibt. Das Paging funktioniert v&ouml;llig ident wie beim
+Frontend f&uuml;r den Benutzer.
+</p>
+<p>
+<IMG SRC="Bilder/200004/20000404_6.png" width="518" height="226" border="0" alt="gbentries.asp">
+</p>
+<p>
+Wie habe ich das &Auml;ndern eines Eintrags implementiert? Das folgende Flowchart zeigt den Ablauf:
+</p>
+<p>
+<IMG SRC="Bilder/200004/20000404_2.png" width="368" height="321" border="0" alt="Eintrag &auml;ndern">
+</p>
+<p>
+Von gbentries.asp wird auf <b>change.asp</b> gelinkt, das ein Formular f&uuml;r den Administrator zur Verf&uuml;gung stellt - mit
+den alten Werten aus der Datenbank. Klickt der Administrator auf &Auml;nderungen speichern (Save changes), wird das
+Skript <b>persistchanges.asp</b> aufgerufen, und die gew&uuml;nschten &Auml;nderungen in die Datenbank geschrieben.
+</p>
+<p>
+Das L&ouml;schen von Eintr&auml;gen geht leichter von statten - es ist nur eine Datei notwendig, n&auml;mlich <b>delete.asp</b>:
+</p>
+<p>
+<IMG SRC="Bilder/200004/20000404_3.png" width="368" height="321" border="0" alt="Eintrag l&ouml;schen">
+</p>
+<p>
+Aus Sicherheitsgr&uuml;nden frage ich den Administrator, ob er die L&ouml;schung wirklich durchf&uuml;hren m&ouml;chte.
+</p>
+<p>
+In der Administrationssite gibt es dann nur noch eine einzige Datei, die ich noch nicht erw&auml;hnt habe: 
+<b>logout.asp</b>. Sie macht ihrem Namen auch alle Ehre, indem sie den Benutzer wirklich definitiv hinauswirft
+(alle Session Variablen werden gel&ouml;scht, und dann auch noch die Session selbst beendet). Somit hat man
+die Administrationssite verlassen.
+</p>
+<p>
+Damit bin ich am Ende der Serie &uuml;ber die Erstellung eines G&auml;stebuches mit ASP und ADO. Der gesamte
+Sourcecode des Projekts (Teile 1-3) befindet sich im Download. Ich hoffe, Ihnen damit den Start Ihres 
+eigenen G&auml;stebuchprojekts etwas erleichtert zu haben.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000404.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20000331.htm">Ein G&auml;stebuch in ASP erstellen - Teil 1</a><br>
+<a href="20000403.htm">Ein G&auml;stebuch in ASP erstellen - Teil 2</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpgerman%2Ecom%2Faspgerman%2Fguestbook%2F">AspGerman G&auml;stebuch</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000404" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Ein G&auml;stebuch in ASP erstellen - Teil 3"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000404.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20000404"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000404.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,407 @@
+<HTML>
+<HEAD>
+<TITLE>Das DataTable Objekt in ADO.NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel soll Ihnen eine kurze Einf&uuml;hrung &uuml;ber das DataTable Objekt in ADO.NET geben.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP.NET,.NET,SDK,C#,C Sharp,Csharp,ASCX,ASPX,ADO.NET,DataSet,DataTable,DataBind,DataSource,Column,Row,Reihe,Spalte">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Das DataTable Objekt in ADO.NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ADOdotNET.htm">ADO.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001116"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Dieser Artikel soll Ihnen eine kurze Einf&uuml;hrung &uuml;ber das DataTable Objekt in ADO.NET geben.
+Zuerst werden Sie die Eigenschaften dieses Objektes kennenlernen, und danach an Hand von Beispielen
+das notwendige Grundr&uuml;stzeug in komprimierter Form f&uuml;r die Instanzierung des Objektes bzw. das Arbeiten
+mit dem Objekt erhalten.
+</p>
+
+<p>
+Dieser Artikel beschr&auml;nkt sich auf dessen Kernthema; da jedoch f&uuml;r den sinnvollen Einsatz von DataTables
+auch anderer Code bzw. Syntax verwendet werden mu&szlig;, m&ouml;chte ich hier die wichtigsten verwandten Artikel bzw.
+Kenntnisse anf&uuml;hren:
+</p>
+
+<ul>
+<li>Um Daten im Webbrowser darstellen zu k&ouml;nnen, kann man f&uuml;r diese Aufgabe u.a. die <i>DataGrid</i>
+ASP.NET Web Control verwenden. Diese setzt auch die Kenntnis des Einsatzes von <i>DataSource</i> und
+<i>DataBind</i> voraus. F&uuml;r den Fall, daß dies Neuland f&uuml;r Sie ist, bietet der Artikel
+<a href="../artikel/20001106.htm">Datenaufbereitung in ADO.NET</a> eine kurze, aber wichtige Einf&uuml;hrung.</li>
+
+<li>Da der Sourcecode der Beispiele ausschlie&szlig;lich in <a href="../kategorien/Csharp.htm">C#</a> geschrieben ist, 
+sollten Sie grundlegende Kenntnisse &uuml;ber diese Programmiersprache haben - es finden sich dazu nat&uuml;rlich etliche Artikel bei 
+AspHeute, die Ihnen das notwendige Wissen vermitteln.
+</li>
+
+
+<li>Weiters ist zu beachten, da&szlig; wie immer bei unseren ASP.NET Artikeln, Sie nur dann vom downloadbaren 
+Sourcecode profitieren k&ouml;nnen, wenn Sie das Microsoft .NET Framework SDK auf einem Webserver installiert haben. Damit werden auf diesem Webserver ASP.NET Seiten ( .aspx ) ausf&uuml;hrbar.
+</li>
+</ul>
+
+<h2>DataTable Objekt?</h2>
+
+<p>
+Das <i>DataTable</i> Objekt stellt den im Speicher abgelegten Inhalt einer Tabelle dar. Das Objekt
+beinhaltet wie bei Tabellen &uuml;blich, eine Collection von Datenspalten (<i>ColumnsCollection</i> Klasse).
+Diese Collection ist f&uuml;r die Grundstruktur der Tabelle verantwortlich. Die eigentlichen Daten werden in
+Datenreihen (<i>RowsCollection</i> Klasse) gespeichert.
+</p>
+
+<p>
+Um die Manipulation des DataTables zu vereinfachen werden der urspr&uuml;ngliche State des Objektes bzw. der
+aktuelle State zusammen gespeichert. Das hat den Vorteil, da&szlig; Ver&auml;nderungen leicht nachvollziehbar sind,
+und falls notwendig, programmatisch leicht wieder r&uuml;ckg&auml;ngigmachbar sind.
+</p>
+
+<p>
+Hierarchisch betrachtet, ist das <i>DataTable</i> Objekt dem <i>DataSet</i> Objekt untergeordnet
+(siehe Artikel <a href="../artikel/20001031.htm">Was ist neu in ADO.NET</a>). Daher k&ouml;nnen mehrere
+DataTables in einer <i>TablesCollection</i> zusammengefa&szlig;t werden, und mit der <i>Add</i> Methode dem 
+<i>DataSet</i> hinzugef&uuml;gt werden.
+</p>
+
+<p>
+In den nun folgenden Abschnitten m&ouml;chte ich an Hand von einfachen, aber aussagekr&auml;ftigen Beispielen Ihnen
+die ersten Schritte in der Programmierung von <i>DataTables</i> pr&auml;sentieren.
+</p>
+
+<h2>Erstellen einer Tabelle</h2>
+
+<p>
+Im ersten Beispiel werden wir eine Instanz des <i>DataTable</i> Objektes erstellen und dessen Struktur
+programmatisch aufbauen. Damit ist gemeint, da&szlig; wir zun&auml;chst das Schema der Tabelle mit Hilfe von 
+<i>Columns</i> (Datenspalten) programmieren.
+</p>
+
+<p>
+Als Aufgabenstellung habe ich eine kleine Produkttabelle gew&auml;hlt. Sie enth&auml;lt die Spalten <i>ProductName</i> und
+<i>Description</i> vom Datentyp "String" sowie die Spalten <i>NetUnitPrice</i> und <i>StreetPrice</i> vom 
+Datentyp "Double". Damit dieses Beispielchen ein bischen interessanter wird, lassen wir uns den <i>StreetPrice</i>
+der Produkte aus dem <i>NetUnitPrice</i> und dem Mehrwertsteuersatz von 20% ausrechen. Also ben&ouml;tigen
+wir hier eine kleine Expression in Form einer Multiplikation. Da mathematische Berechnungen in C# ausschlie&szlig;lich 
+dem Datentyp <i>Double</i> vorbehalten sind, ist die anf&auml;ngliche Wahl des Datentyps der beiden Spalten, die
+die Preise enthalten, einleuchtend.
+</p>
+
+<p>
+Dieses Beispiel finden Sie im Download unter <i>DTable.aspx</i>. Beginnen wir mit dem ersten Teil des Sourcecodes:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Data" %&gt;
+&lt;%
+
+  DataColumn MyDColumn = null;
+  DataRow MyRow = null;
+  DataTable MyDTable = new DataTable("Products");
+  MyDTable.CaseSensitive = false;
+
+  MyDColumn = MyDTable.Columns.Add("ProductName", _ 
+            System.Type.GetType("System.String") );
+  MyDColumn = MyDTable.Columns.Add("Description", _
+            System.Type.GetType("System.String") );
+  MyDColumn = MyDTable.Columns.Add("NetUnitPrice", _
+            System.Type.GetType("System.Double") );
+  MyDColumn = MyDTable.Columns.Add("StreetPrice", _
+            System.Type.GetType("System.Double"), _
+            "NetUnitPrice * 1.2");
+...
+</pre>
+
+<p>
+Bevor wir das <i>DataTable</i> Objekt instanzieren, deklarieren wir die beiden Variablen "MyDColumn"
+vom Typ <i>DataColumn</i> und "MyRow" vom Typ <i>DataRow</i>. Mit diesen beiden Variablen k&ouml;nnen wir dann
+jeweils die <i>Add</i> Methode verwenden um Spalten bzw. Reihen hinzuzufügen. Die Variablen werden vorerst mit 
+"null" initialisiert.
+</p>
+
+<p>
+Danach instanzieren wir das <i>DataTable</i> Objekt und geben dem Objekt den Namen "MyDTable". Die Tabelle
+selbst taufen wir "Products". Da wir nun das Objekt erfolgreich instanziert haben, k&ouml;nnen wir die ersten 
+Datenspalten hinzuf&uuml;gen. Dies geschieht wie schon erw&auml;hnt mit der <i>Add</i> Methode. Um eine Spalte
+eindeutig definieren zu k&ouml;nnen, m&uuml;ssen wir ihren Namen und ihren Datentyp angeben. Da die ersten beiden Spalten
+(<i>ProductName</i> und <i>Description</i>) haupts&auml;chlich Text enthalten werden, erhalten sie den Datentyp
+"String". In ADO.NET haben die Datenspalten jene Datentypen, die vom .NET Framework zur Verf&uuml;gung gestellt
+werden und keine OLE DB spezifischen.
+</p>
+
+<p>
+Daher m&uuml;ssen wir den Datentyp mit Hilfe der "System Function" <i>System.Type.GetType("SystemDataType")</i>
+zuweisen. Um unsere kleine Berechnung durchf&uuml;hren zu k&ouml;nnen, geben wir nach Definition des Spaltennamens
+und des Datentyps einfach die Multiplikation <i>"NetUnitPrice * 1.2"</i> unter Anf&uuml;hrungszeichen und getrennt
+durch einen Beistrich an. 
+</p>
+
+<p>
+Jetzt sind wir soweit, um die Tabelle mit Daten zubef&uuml;llen:
+</p>
+
+
+<pre style="background='silver';">
+...
+MyRow = MyDTable.NewRow();
+  MyRow["ProductName"] = "Brand XY Type Z";
+  MyRow["Description"] = "High performance Graphics Adapter";
+  MyRow["NetUnitPrice"] = "166.62";
+  MyDTable.Rows.Add(MyRow);
+...  
+</pre>
+
+<p>
+Zuerst erstellen wir eine neue und leere Datenreihe; danach weisen wir den einzelnen Datenspalten
+die gew&uuml;nschten Werte zu. Nun k&ouml;nnen wir mit der <i>Add</i>-Methode diese auch dem <i>DataTable</i>
+Objekt hinzuf&uuml;gen. Diese Prozedur ist f&uuml;r jede Datenreihe zu wiederholen.
+</p>
+
+<p>
+Schlie&szlig;lich wollen wir die Datens&auml;tze auch am Browser darstellen. Dies werden wir mit Hilfe der 
+Web Control <i>DataGrid</i> durchf&uuml;hren. Um die Datens&auml;tze an die Web Control zu &uuml;bergeben, weisen
+wir diese mit "DataSource" und "DataBind" zu:
+</p>
+
+
+<pre style="background='silver';">
+...
+  MyDGrid.DataSource = MyDTable.DefaultView;
+  MyDGrid.DataBind();
+%&gt;
+...
+</pre>
+
+<p>
+Da wir f&uuml;r die Visualisierung auch einen DataView brauchen, erledigen wir das gleich indem wir
+vom DataTable einen <i>DefaultView</i> erstellen.
+</p>
+
+<p>
+Beibt nur noch das Aufrufen der <i>DataGrid</i> WebControl und eine optionale Formatierung:
+</p>
+
+<pre style="background='silver';">
+&lt;h2&gt;CompuShack's Hot Stuff&lt;/h2&gt;
+...
+&lt;asp:DataGrid id="MyDGrid" runat="server"
+     Width="550"
+     BorderColor="black"
+     CellPadding="2" 
+     CellSpacing="2"
+     HeaderStyle-BackColor="#f8d07a"
+     AutoGenerateColumns="True" /&gt;
+</pre>
+
+<p>
+Im einfachsten Fall zeigt man die Datens&auml;tze mit dem Attribut <i>AutoGenerateColumns</i> der Web Control 
+(eines der Attribute, die nicht nur dokumentiert sondern auch implementiert sind) und 
+dessen Setzung auf "True" an. Im Browser sieht das Ergebnis mit den verwendeten Formatoptionen dann so aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200011/20001116_1.png" width="595" height="302" alt="" border="0">
+
+<p>
+Wie Sie sicherlich feststellen werden, sind die Spalten&uuml;berschriften zwar beim Programmierung praktisch,
+aber nicht besonders ansehnlich in der Ausgabe im Browser. Dies l&auml;&szlig;t sich
+einfach mit der "HeaderText" Property des <i>BoundColumn</i> ASP.NET Tags bewerkstelligen.  
+Au&szlig;erdem sind bei machen Preisen durch die Multiplikation unn&ouml;tige viele Nachkommastellen entstanden.
+Deshalb werden wir die Preisspalten mit Hilfe der "DataFormatString" Property des <i>BoundColumn</i> 
+Tags ordnungsgem&auml;&szlig; als W&auml;hrung darstellen:
+</p>
+
+<pre style="background='silver';">
+...
+ &lt;Columns&gt;
+    &lt;asp:BoundColumn HeaderText="Product" 
+       DataField="ProductName" /&gt;
+   
+    &lt;asp:BoundColumn HeaderText="Product Description" 
+       DataField="Description" /&gt;
+
+    &lt;asp:BoundColumn HeaderText="Price excl. VAT" 
+       DataField="NetUnitPrice" DataFormatString={0:C} /&gt;
+   
+    &lt;asp:BoundColumn HeaderText="Street Price" DataField="StreetPrice" 
+       DataFormatString={0:C} /&gt;
+   &lt;/Columns&gt;
+
+&lt;/asp:DataGrid&gt;
+...
+</pre>
+
+<p>
+Mit der <i>DataFormatString</i> Property k&ouml;nnen Sie Zahlen einfachst formatieren. Dieser Formatstring
+setzt sich aus zwei Teilen zusammen, die durch einen Doppelpunkt getrennt sind. Der erste Teil 
+(<b>{0:</b>) bestimmt einen Parameter aus einer nullbasierenden Parameterliste. In diesem Fall kann der
+Parameter des ersten Teiles nur "0" sein, da es in jeder Zelle nur einen Wert gibt. Der zweite Teil
+(<b>Cxx</b>) bestimmt die Art der Formatierung (z.B. "C" f&uuml;r Currency, "F" f&uuml;r Fixed, etc.). 
+Die "xx" geben die Anzahl der signifikanten Stellen oder der Nachkommastellen an.
+</p>
+
+<p>
+Die &Auml;nderungen sehen dann folgenderma&szlig;en im Browser aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200011/20001116_2.png" width="639" height="299" alt="" border="0">
+
+<p>
+Zum Abschlu&szlig; m&ouml;chte ich Ihnen noch eine wichtige Eigenschaft des DataTable Objektes vorstellen - 
+den Prim&auml;rschl&uuml;ssel:
+</p>
+
+<h2>PrimaryKey Property</h2>
+
+<p>
+Wenn Sie mit Datenbanken schon zu tun hatten ist f&uuml;r Sie dieses Synonym nichts neues, ja sogar
+was allt&auml;gliches. Denn jede Datenbank egal welcher Gr&ouml;&szlig;e sollte die M&ouml;glichkeit besitzten,
+eine Datenreihe eindeutig identifizieren zu k&ouml;nnen. Die Verwendung von Schl&uuml;sseln in einer Datenbank
+ist u. a. die Grundvoraussetzung f&uuml;r Relationships (Beziehungen).
+</p>
+
+<p>
+Damit wir unserer kleinen Tabelle einen Primarykey hinzuf&uuml;gen k&ouml;nnen, erstellen wir erstmal eine 
+zus&auml;tzliche Datenspalte namens "Prod_ID" vom Datentyp <i>Integer</i> (Int32):
+</p>
+
+<pre style="background='silver';">
+...
+ MyDColumn = MyDTable.Columns.Add("Prod_ID", _
+    System.Type.GetType("System.Int32") );
+...
+</pre>
+
+<p>
+Damit dieser Primarykey auch seinem Namen gerecht wird, m&uuml;ssen wir der "Prod_ID" Spalte noch
+einige Eigenschaften hinzuf&uuml;gen:
+
+<pre style="background='silver';">
+...
+  MyDColumn.AllowDBNull = false; // keine "null" Werte erlaubt
+
+  MyDColumn.Unique = true; // Eindeutigkeit
+
+  MyDColumn.AutoIncrement = true; //Schl&uuml;ssel ID beim 
+                                  //Hinzf&uuml;gen einer Reihe 
+                                  //automatisch erh&ouml;ht
+
+  MyDColumn.AutoIncrementSeed=1; //Startwert
+
+  MyDColumn.AutoIncrementStep=1; //Inkrement
+...
+</pre>
+
+<p>
+Da nun die Prim&auml;rschl&uuml;ssel Datenspalte alle Voraussetzungen erf&uuml;llt, k&ouml;nnen wir sie mit Hilfe der 
+<i>PrimaryKey</i> Property dem <i>DataTable</i> Objekt zuweisen. Aufgrund dessen, da&szlig; der Primarykey
+ein <b>Array</b> ist, ist wie folgt vorzugehen:
+</p>
+
+<pre style="background='silver';">
+...
+MyDTable.PrimaryKey = new DataColumn[] {MyDTable.Columns["Prod_ID"]};
+...
+</pre>
+
+<p>
+Diese Ver&auml;nderung (siehe n&auml;chsten Screenshot) zeigt sich &auml;u&szlig;erlich als nicht besonders
+aufregend, hat aber f&uuml;r Relationships eine gro&szlig;e Bedeutung.
+</p>
+
+<IMG SRC="/artikel/Bilder/200011/20001116_3.png" width="595" height="349" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Mit diesem Artikel haben Sie eine kurze Einf&uuml;hrung in das <i>DataTable</i> Objekt erhalten.
+Sie sind nun in der Lage das Objekt zu instanzieren, sowie Datenspalten und Datenreihen mit Hilfe 
+der <i>Add</i>-Methode hinzuzuf&uuml;gen. 
+</p>
+
+<p>
+Im Falle des Vorhandenseins von numerischen Datenwerten k&ouml;nnen Sie nun diese mit der
+<i>DataFormatString</i> Property im gew&uuml;nschten Anzeigeformat darstellen. Zus&auml;tzlich
+k&ouml;nnen Sie auch die Spaltenbezeichnungen in der DataGrid Web Control sinnvoll anzeigen.
+</p>
+
+<p>
+Abschlie&szlig;end habe ich Ihnen noch die <i>PrimaryKey</i> Property des <i>DataTable</i> Objektes
+vorgestellt um Datenreihen eindeutig identifizieren zu k&ouml;nnen und die Grundlage f&uuml;r
+Relationships zu gew&auml;hrleisten.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001116.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20001116.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20040123.htm">DataViews als DataTable persistieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040123.htm</span><br>
+<a href="../artikel/20001106.htm">Datenaufbereitung in ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001106.htm</span><br>
+<a href="../artikel/20040622.htm">Einf&uuml;hrung in Typed DataSets</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040622.htm</span><br>
+<a href="../artikel/20040317.htm">Eintr&auml;ge numerieren im DataGrid</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040317.htm</span><br>
+<a href="../artikel/20021107.htm">Index Server Abfragen per Web Service</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021107.htm</span><br>
+<a href="../artikel/20001031.htm">Was ist neu in ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001031.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Edotnetgerman%2Ecom%2Flinks%2Fdl%5Fdotnetsdk%2Easp">.NET 1.0 SDK Download</a><br>
+<SPAN class="content">http://www.dotnetgerman.com/links/dl_dotnetsdk.asp</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

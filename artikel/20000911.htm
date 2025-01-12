@@ -1,0 +1,633 @@
+<HTML>
+<HEAD>
+<TITLE>Einf&uuml;hrung in ASP.NET Validation Controls (Teil 1)</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor die grundlegende Verwendung der ASP.NET Validation Controls - vom RequiredFieldValidator bis hin zum CustomValidator.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP.NET,C Sharp,CSharp,Validation,CompareValidator,RangeValidator,RegExValidator,RequiredFieldValidator">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Einf&uuml;hrung in ASP.NET Validation Controls (Teil 1)</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000911"></SCRIPT>
+</p>
+<p>
+Es gibt heutzutage kaum mehr Webseiten, die auf Pr&uuml;fung der Benutzereingaben verzichten
+k&ouml;nnen. Beginnend bei den einfachsten Szenarien, wie die &Uuml;berpr&uuml;fung einer e-Mail Adresse bei einem
+Kontaktformular, Datums&uuml;berpr&uuml;fung bei Kreditkarten in einem Web Shop bis zur &Uuml;berpr&uuml;fung der Logininformationen
+oder der Notwendigkeit einer eigenen Verifizierungslogik - alles das ist m&ouml;glich mit den ASP.NET Validation Controls.
+Dieser erste Teil der Artikelserie gibt Ihnen eine Einf&uuml;hrung in die Validation Controls in ASP.NET.
+</p>
+<p>
+Sie denken jetzt vielleicht: "na gut, aber wie l&auml;&szlig;t sich dies durchf&uuml;hren, wie gro&szlig; ist der Aufwand und wie z.B.
+integriere ich die ASP.NET Validation Controls in eine vorhandene Website?" - Diese Aspekte m&ouml;chte ich in diesem
+Artikel, anhand von allt&auml;glichen Beispielen, besprechen.
+</p>
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation des Microsoft .NET 
+Framework SDK's auf einem Webserver. Weiters ist es von Vorteil, da&szlig; der Leser schon Grundkenntnisse bzw. 
+Erfahrung in Programmiertechniken besitzt - es finden sich etliche Artikel auf diesem Server, um das notwendige 
+Wissen von Grund auf zu erlernen. 
+</p>
+<p>
+Weiters verwendet dieser Artikel bereits ASP.NET Web Form Controls (TextBox, RadioButtonList). F&uuml;r den Fall, da&szlig;
+Sie noch nicht sattelfest auf diesem Gebiet sind, bietet der Artikel 
+<a href="20000808.htm">Einf&uuml;hrung in ASP.NET Web Forms</a>
+das n&ouml;tige Grundwissen hierf&uuml;r.
+</p>
+
+<h2>Ein &Uuml;berblick &uuml;ber die Validation Contols</h2>
+<p>
+Fehlerbehandlung ist ein leidiges Thema im Leben eines Programmierers - der Validierungssourcecode ist oft
+l&auml;nger als das eigentliche Kernprogramm. Schlie&szlig;lich soll der Benutzer vern&uuml;nftig mit dem Programm bzw. der 
+Webapplikation oder -site arbeiten k&ouml;nnen, ohne da&szlig; er frustriert aufgibt und zur Konkurrenz "&uuml;berl&auml;uft".
+</p>
+<p>
+Bei Webapplikationen hatten Sie bisher u.a. die M&ouml;glichkeit professionelle Validierungen mittels Script-Sprachen
+(VBScript, JavaScript) durchzuf&uuml;hren. Dieser Weg hatte aber einige Stolpersteine, z.B. unterst&uuml;tzt der 
+Client-Browser die Scriptsprache &uuml;berhaupt? Es war zu verhindern, da&szlig; die Seite erst gepostet wird, wenn deren
+Inhalt g&uuml;ltig war - und im Falle einer fehlerhaften Eingabe sollte der Client umgehend Feedback erhalten.
+Dies resultierte in codelastigen Webseiten und zudem kommt noch dazu "wo viel Code, da auch leider viele
+Bugs" - denn nicht nur Anwender Ihrer Webseiten machen Fehler.
+</p>
+<p>
+Um diesen Unanehmlichkeiten entgegenzuwirken, bieten die Validation Controls in ASP.NET ein flexibles, erweiterbares API,
+sowie umfangreiche "built-in" Verifizerungsm&ouml;glichkeiten (die sich automatisch downgraden, um auch auf jeden &auml;lteren
+Browser ihren Dienst verrichten zu k&ouml;nnen). Ebenso sind sie  leicht in bestehende Webprojekte integrierbar - 
+mit nur wenigen Codezeilen.
+</p>
+<p>
+Weitere Vorteile der Validation Controls sind:
+<ul>
+<li>Die Validierung wird server-seitig durchgef&uuml;hrt - spezielles Client-Script unn&ouml;tig (kann aber verwendet werden)
+<li>Fehlermeldungen k&ouml;nnen sofort bei Fehlern ausgegeben werden bzw. erl&ouml;schen nach g&uuml;ltiger Eingabe
+<li>Ein Postback zum Server kann beim Auftreten von Eingabefehlern verhindert werden, um die Serverbelastung
+gering zu halten
+<li>Die Client Validierungslogik ist in der JScript-Bibliothek enthalten - deshalb sind weder ActiveX Komponenten
+noch Java Applets n&ouml;tig
+<li>Die G&uuml;ltigkeitsbestimmungen lassen sich mit Hilfe von VBScript an Ihre speziellen W&uuml;nsche anpassen
+</ul>
+</p>
+
+<h2>Was ist ein Validator und welche gibt es?</h2>
+<p>
+Im Allgemeinen ist so ein Validator eine Control die einen speziellen G&uuml;ltigkeitsausdruck enth&auml;lt und diesen
+mit dem Inhalt einer Benutzereingabe einer anderen Control vergleicht. Der Validator bleibt vor dem Benutzer
+solange verborgen, bis dieser eine fehlerhafte Eingabe (z.B eine ung&uuml;ltige e-Mail Adresse) macht. Dann wird
+n&auml;mlich eine fehlerspezifische Meldung ausgegeben. Statt einer Fehlermeldung k&ouml;nnen Sie bei den Validation 
+Controls auch ein Bild (z.B "Stop"-Zeichen) verwenden. 
+</p>
+<p>Zum Zwecke der &Uuml;bersicht der im Artikel enthaltenen Validators sind hier die Controls enthalten, welche
+das Microsoft .NET Framework (bis jetzt) unterst&uuml;tzt. Es kann nat&uuml;rlich der Fall eintreten, da&szlig; bis zum 
+endg&uuml;ltigen Release des Frameworks aufgrund der Popularit&auml;t und Einfachheit der Controls
+Features zu den jetzigen hinzukommen oder neue eigenst&auml;ndige Controls hinzugef&uuml;gt werden. Aber schon mit
+den vorhandenen l&auml;&szlig;t sich vern&uuml;nftig arbeiten.
+</p>
+<p>
+Nat&uuml;rlich werden die einzelen Validators sp&auml;ter ausf&uuml;hrlich mit Beispielen erkl&auml;rt:
+<ul>
+<i>
+<li>RequiredFieldValidator / Eingabeforderungs-Validator 
+<li>CompareValidator / Vergleichs-Validator
+<li>RegularExpressionValidator / Regul&auml;rerausdrucks-Validator
+<li>RangeValidator / Bereichs-Validator
+<li>CustomValidator / benutzerdefinierter Validator
+</i>
+</ul>
+</p>
+
+<p>
+In weiteren Artikeln werden wir noch behandeln:
+<ul>
+<i>
+<li>Mehrfach-&Uuml;berpr&uuml;fungen
+<li>Die ValidationSummary Control und die IsValid Eigenschaft
+</i>
+</ul>
+</p>
+
+<p>
+<b>Beachte:</b> Alle verwendeten Beispiele, obwohl lauff&auml;hig, erf&uuml;llen nur dem Zwecke des im Artikel 
+besprochenen Kernthemas. In diesem Fall werden hier nur die Benutzereingaben &uuml;berpr&uuml;ft und <i>keine</i>
+anderen serverseitigen Events getriggert.
+</p>
+<p>
+Besprechen wir nun die einzelnen Validators im Detail.
+</p>
+<h2>RequiredFieldValidator</h2>
+<p>
+Der RequiredFieldValidator &uuml;berpr&uuml;ft, ob die zugewiesene Control vom Client entweder ausgef&uuml;llt oder 
+ob der Client eine Auswahl aus vorgegebenen Controls getroffen hat. Bei Verwendung mit einer
+ASP.NET Textbox Control wir aber nicht die Sinnhaftigkeit der Benutzereingabe &uuml;berpr&uuml;ft, sondern eben wie der 
+Name schon verr&auml;t wird nur &uuml;berpr&uuml;ft, ob sie &uuml;berhaupt vom Client ausgef&uuml;llt wurde. Wie Sie sp&auml;ter 
+lesen werden, lassen sich komplexe Aufgaben durch Kombinationen von Controls
+bewerkstelligen.
+</p>
+<p>
+In dem nun folgenden Beispiel demonstriere ich Ihnen die ersten Grundlagen f&uuml;r ein Bestellformular.
+Es wird hier &uuml;berpr&uuml;ft, ob das Namensfeld (asp:TextBox) ausgef&uuml;llt wurde, und zus&auml;tzlich mu&szlig; der Benutzer 
+angeben, wie er bezahlen m&ouml;chte (asp:RadioButtonList).
+Da dieses Beispiel etwas umfangreicher ist habe ich es aufgeteilt und nur die relevanten Aspekte herausgegriffen.
+Um das Beispiel selbst auszuprobieren, f&uuml;hren Sie die ASP.NET Datei <b>ReqFieldValidator.aspx</b> aus dem Download des Artikels aus.
+</p>
+<p>
+Zun&auml;chst einmal das visuelle Ergebnis:
+</p>
+
+<IMG SRC="Bilder/200009/20000911_ReqFieldVal.png" width="428" height="452" alt="" border="0">
+
+<p>
+Und nun zum Sourcecode, aufgeteilt in 2 Abschnitte.
+</p>
+<h4>Der Name des K&auml;ufers</h4>
+<p>
+<pre style="background='silver';">
+ ...
+ &lt;tr&gt;
+      &lt;td align=left>Name:&lt;/td&gt;
+      &lt;td&gt;
+        &lt;asp:TextBox id=txtName runat="server" /&gt;
+      &lt;/td&gt;
+      &lt;td&gt;
+        &lt;asp:RequiredFieldValidator id="ReqFName" runat="server"
+            ControlToValidate="txtName" 
+            ErrorMessage="Bitte Name eingeben!"&gt;
+        &lt;/asp:RequiredFieldValidator&gt;
+      &lt;/td&gt;
+ &lt;/tr&gt;
+ ...
+</pre>
+</p>
+<p>
+Um die Positionierung der Texte und Eingabefelder zu erleichtern, habe ich die ASP.NET Contols in einen gemeinsamen
+HTML-Table eingebettet. In dem obigen Codeblock wird &uuml;berpr&uuml;ft, ob der User (s)einen Namen in die
+Textbox mit der <i>ID</i> "txtName" eingegeben hat. Dies geschieht mittels dem RequiredFieldValidator
+mit der <i>ID</i> "ReqFName". Das Attribut <i>ControlToValidate</i> referenziert die Textbox Control,
+also jene Control, die &uuml;berpr&uuml;ft werden soll. <i>ErrorMessage</i> bezeichnet die Fehlermeldung die ausgegeben werden
+soll. 
+</p>
+
+<h4>Die Wahl der Zahlungsart</h4>
+<p>
+<pre style="background='silver';">
+ ...
+  &lt;tr&gt;
+      &lt;td align=left>Zahlungsart:&lt;/td&gt;
+      &lt;td&gt;
+        &lt;ASP:RadioButtonList id=RadioButtonList1 RepeatLayout="Flow" 
+		    runat="server"&gt;
+            &lt;asp:ListItem&gt;Kreditkarte&lt;/asp:ListItem&gt;
+            &lt;asp:ListItem&gt;Nachnahme&lt;/asp:ListItem&gt;
+        &lt;/ASP:RadioButtonList&gt;
+      &lt;/td&gt;
+      &lt;td align=middle rowspan=1&gt;
+        &lt;asp:RequiredFieldValidator id="RequiredFieldValidator1" 
+		    runat="server"
+            ControlToValidate="RadioButtonList1" 
+            ErrorMessage="Zahlungsart ausw&auml;hlen"&gt;
+        &lt;/asp:RequiredFieldValidator&gt;
+      &lt;/td&gt;
+    &lt;/tr&gt;
+ ...
+</pre>
+</p>
+<p>
+Die Auswahlm&ouml;glichkeit der Zahlungsart habe ich mit Hilfe einer RadioButtonList bewerkstelligt.
+Da bei der RadioButtonList Control ohnehin nur ein Wert im Listeneintrag 
+(<i>&lt;asp:ListItem&gt; ... &lt;/asp:ListItem&gt;</i>) g&uuml;ltig ist, brauche ich mit dem RequiredFieldValidator
+nur mehr &uuml;berpr&uuml;fen, ob &uuml;berhaupt eine Auswahl getroffen wurde.
+</p>
+<p>
+F&uuml;r den Fall, da&szlig; Sie einen fixen Wert mit einer Benutzereingabe vergleichen m&uuml;ssen, dann bietet sich die
+CompareValidator Control an.
+</p>
+
+<h2>CompareValidator</h2>
+<p>
+Als Beispiel sollen  zwei Textbox Controls dienen, deren Inhalt miteinander verglichen wird.
+Um das Beispiel auf Ihrem Webserver auszuprobieren, greifen Sie mit Hilfe eines Browsers auf die Datei
+<b>CompareValidator.aspx</b> zu.
+</p>
+<p>
+<pre style="background='silver';">
+&lt;form runat=&quot;server&quot;&gt;
+&lt;table cellpadding=10 border=&quot;2&quot;&gt;
+    &lt;tr valign=&quot;top&quot;&gt;
+      &lt;td align=left&gt;Box 1:&lt;/td&gt;
+      &lt;td&gt;
+        &lt;asp:TextBox id=&quot;txtBox1&quot; runat=&quot;server&quot; /&gt;
+      &lt;/td&gt;
+    &lt;/tr&gt;
+    
+    &lt;tr&gt; 
+    &lt;td align=&quot;left&quot;&gt;Box 2:&lt;/td&gt;
+      &lt;td&gt;
+        &lt;asp:TextBox id=&quot;txtBox2&quot; runat=&quot;server&quot; /&gt;
+      &lt;/td&gt;
+    &lt;/tr&gt;
+    
+    &lt;tr&gt;
+      &lt;td colspan=2&gt;
+      &lt;asp:CompareValidator id=&quot;Compare&quot; 
+              operator=&quot;Equal&quot;
+	      ControlToValidate=&quot;txtBox1&quot; 
+              ErrorMessage=&quot;Inhalte sind nicht gleich!&quot;
+              ControlToCompare =&quot;txtBox2&quot; 
+              type=&quot;String&quot;
+	          display=&quot;static&quot;
+              runat=&quot;server&quot;&gt;
+      &lt;/asp:CompareValidator&gt;
+      &lt;/td&gt;
+	 &lt;/tr&gt;
+     
+      &lt;tr&gt;
+      &lt;td colspan=2&gt;
+        &lt;asp:Button id=Button1 text=&quot;Testen&quot; runat=&quot;server&quot; /&gt;
+      &lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+&lt;/form&gt;
+</pre>
+</p>
+<p>
+Bei diesm Beispiel wir der Inhalt der TextBox <i>txtBox1</i> mit dem Inhalt der TextBox <i>txtBox2</i> verglichen.
+Trifft der Fall ein, da&szlig; die beiden String ungleich sind wird die Fehlermeldung die im Attribut <i>ErrorMessage</i>
+(hier: Inhalte sind nicht gleich!) ausgegeben. Das Attribut <i>type</i> gibt dem Validator an, welcher Datentyp verwendet
+wird. Durch Verwendung des Attributs <i>display=&quot;static&quot;</i> wird gew&auml;hrleistet, da&szlig; es zu keiner Verschiebung des
+Layouts kommt, wenn keine Fehlermeldung ausgegeben wird.
+</p>
+<p>
+Als N&auml;chstes wollen wir nicht nur einfache, vorgegebene Vergleiche, sondern bestimmte 
+Gesetzm&auml;&szlig;igkeiten &uuml;berpr&uuml;fen.
+</p>
+
+<h2>RegularExpressionValidator</h2>
+<p>
+Dieser Validator vergleicht die Benutzereingabe mit einem vorgegebenen regul&auml;ren Ausdruck. Verwendung
+findet dieser z.B f&uuml;r die G&uuml;ltigkeits&uuml;berpr&uuml;fung von Telefonnummern oder Postleitzahlen.
+Als Beispiel soll hier ein String &uuml;berpr&uuml;ft werden, der nur Gro&szlig;buchstaben enthalten darf und 
+sechs Zeichen lang ist.
+</p>
+<p>
+<pre style="background='silver';">
+&lt;asp:RegularExpressionValidator id="RegExVal" runat="server"
+            ControlToValidate="txtBox1"
+            ValidationExpression="[A-Z]{6}"
+            Display="Static"
+            ErrorMessage="String ist ung&uuml;ltig"&gt;
+        &lt;/asp:RegularExpressionValidator&gt;
+</pre>
+</p>
+<p>
+Das Attribut ValidationExpression gibt den regul&auml;ren Ausdruck an. Dieser enth&auml;lt die Bedingungen f&uuml;r
+Gro&szlig;buchstaben (<i>[A-Z]</i>) und f&uuml;r eine Stringl&auml;nge von 6 Zeichen (<i>{6}</i>)
+</p>
+
+<h2>RangeValidator</h2>
+<p>
+Wenn Sie sicherstellen wollen, da&szlig; ein Wert in einen speziellen Wertebereich f&auml;llt, so kommt der RangeValidator zum 
+Einsatz.
+</p>
+<p>
+<pre style="background='silver';">
+&lt;asp:RangeValidator id="RangeVal1" runat="server"
+  controlToValidate="txtRange"
+  type="Integer"
+  minimumValue="1"
+  maximumValue="10"
+  ErrorMessage="Zahl ist au&szlig;erhalb des Bereiches"&gt;
+&lt;asp:RangeValidator/&gt;
+</pre>
+</p>
+<p>
+Hier wird &uuml;berpr&uuml;ft, ob der eingegebene Wert der Textbox <i>txtRange</i> zwischen 1 und 10 liegt. Die Grenzen
+werden definiert durch den minimalen Wert (<i>minimumValue</i>) und den maximalen Wert (<i>maximumValue</i>).
+</p>
+<p>
+Es kann nat&uuml;rlich auch vorkommen, da&szlig; Sie Funktionen ben&ouml;tigen die Ihren eigenen Anspr&uuml;chen gerecht werden m&uuml;ssen.
+Hierf&uuml;r verwenden Sie den CustomValidator.
+</p>
+<h2>CustomValidator</h2>
+<p>
+Mit dem CustomValidator k&ouml;nnen Sie z.B. Textboxen auf G&uuml;ltigkeit Ihrer selbst gew&auml;hlten Kriterien &uuml;berpr&uuml;fen. 
+Das folgende Beispiel &uuml;berpr&uuml;ft, ob der User eine gerade (g&uuml;ltige Eingabe) oder ungerade Zahl (ung&uuml;ltige Eingabe) eingegeben hat.
+In der CustomValidator Control wird die Funktion <i>IsNumberEven</i> aufgerufen, die die eingegebene Zahl &uuml;berpr&uuml;ft.
+</p>
+<p>
+<pre style="background='silver';">
+&lt;form method=&quot;post&quot; runat=&quot;server&quot;&gt;
+
+   Enter a number to check whether it's even or not:&lt;br&gt;&lt;br&gt;
+   &lt;asp:TextBox id=&quot;txtBox&quot; runat=&quot;server&quot;/&gt;
+   &lt;asp:Button text=&quot;Check&quot; runat=&quot;server&quot;/&gt;
+        
+    &lt;asp:CustomValidator id=&quot;CustomValidator1&quot; runat=&quot;server&quot;
+        ControlToValidate=&quot;txtBox&quot;
+        OnServerValidationFunction=&quot;IsNumberEven&quot;
+        Display=&quot;Static&quot;
+	ErrorMessage=&quot;Zahl ist ungerade!&quot;&gt;
+    &lt;/asp:CustomValidator&gt;
+  
+&lt;/form&gt;
+</pre>
+</p>
+<h3>Die Funktion IsNumberEven</h3>
+<p>
+<pre style="background='silver';">
+&lt;script language=&quot;C#&quot; runat=&quot;server&quot;&gt;
+void IsNumberEven(object source, ServerValidateEventArgs value)
+{
+   int nChkNum = Int32.Parse(value.Value);
+            
+   if (nChkNum%2 == 0)
+   {
+      value.IsValid = true;
+   }        
+   else
+   {
+      value.IsValid = false;
+   }
+}
+&lt;/script&gt;
+</pre>
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+In diesem Artikel wurden Ihnen die Grundtypen der Validation Controls vorgestellt, die ASP.NET zur Verf&uuml;gung stellt, um 
+Benutzereingaben zu &uuml;berpr&uuml;fen. In Teil 2 der Serie werden wir folgende Themen behandeln:
+</p>
+<p>
+<strong>Mehrfach &Uuml;berpr&uuml;fungen</strong><br>
+Oft tritt auch der Fall ein, da&szlig; Benutzereingaben mehreren G&uuml;ltigkeitsbestimmungen unterliegen m&uuml;ssen, wie
+z.B. eine online-Softwareregistrierung. Abgesehen vom Algorithmus der das Produkt eindeutig identifizert,
+k&ouml;nnten Sie eine "Vorvalidierung" einrichten, bevor Sie dem Benutzer aufgrund eines Tippfehlers die
+BSA wegen Softwarepriaterie auf den Hals hetzen. Diese &uuml;berpr&uuml;ft die Eingabe auf m&ouml;gliche Tippfehler oder
+das Vorhandensein spezieller Buchstaben. Es soll ja vorkommen, da&szlig; Benutzer eine g&uuml;ltige Lizenz besitzen
+sich aber einfach nur vertippen.
+</p>
+
+<p>
+<strong>Die ValidationSummary Control und die IsValid Eigenschaft</strong><br>
+Bei umfangreichen Eingabeformularen, z.B. bei Produktregistrierungen oder Versandinformationen, gibt es
+die M&ouml;glichkeit der Verwendungen der sogenannten ValidationSummary Control, welche erst nach erfolgter 
+Dateneingabe des Clients und dessen Best&auml;tigung (z.B. durch Klicken des "Abschicken"-Buttons), alle Felder
+validiert und dann Fehler auflistet. In Kombination mit der IsValid Eigenschaft
+des Page-Objekts k&ouml;nnen dann zus&auml;tzliche Events (z.B. Daten&uuml;bergabe in eine Datenbank) getriggert werden.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000911.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20000913.htm">Einf&uuml;hrung in ASP.NET Validation Controls (Teil 2)</a><br>
+<a href="20000808.htm">Einf&uuml;hrung in ASP.NET Web Forms</a><br>
+<a href="20031010.htm">Einstieg in Visual Studio.NET - die erste Webanwendung mit Visual C#</a><br>
+<a href="20000922.htm">Eventbehandlung bei ASP.NET WebForms</a><br>
+<a href="20020705.htm">Formularbasierte Authentifizierung in f&uuml;nf Minuten</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000911" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Einf&uuml;hrung in ASP.NET Validation Controls (Teil 1)"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000911.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Holm"><input type="hidden" name="AuthorEmail" value="office@holmcs.com"><input type="hidden" name="Artikel" value="20000911"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000911.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

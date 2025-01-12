@@ -1,0 +1,541 @@
+<HTML>
+<HEAD>
+<TITLE>Mit PGP verschl&uuml;sselte e-Mails senden</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel erklärt wie man mit Hilfe von ASP PGP (Pretty Good Privacy) verschlüsselte e-Mails versendet.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP, PGP, Pretty Good Privacy, email, E-Mail, e-Mail, verschlüsseln, Public Key, Key, Private Key">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Mit PGP verschl&uuml;sselte e-Mails senden</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000912"></SCRIPT>
+</p>
+<p>Um von ASP aus eine PGP (Pretty Good Privacy) verschl&uuml;sselte e-Mail versenden zu k&ouml;nnen,
+ben&ouml;tigen Sie auf Ihrem Webserver 2 Dinge:</p>
+
+<p><ul>
+<li>Eine e-Mail Komponente, die mit PGP zusammenarbeitet</li>
+<li>Die PGP Software, die f&uuml;r die Verschl&uuml;sselung sorgt</li>
+</ul></p>
+
+<p>Kenner der computergest&uuml;tzten Kryptographie wissen, was PGP ist und wie man damit arbeitet.
+Nichtsdestotrotz gebe ich hier einen kleinen Einf&uuml;hrungskurs:</p>
+
+<p>PGP steht f&uuml;r Pretty Good Privacy, was auf Deutsch soviel wie &quot;ziemlich gute Geheimhaltung&quot; hei&szlig;t.
+Worauf baut nun PGP auf, und wie benutzt man es?</p>
+
+<p>PGP ist prim&auml;r eine Software, die Verschl&uuml;sselung auf Basis des &quot;public Key&quot;
+Prinzips erlaubt. Ohne auf den dahinterstehenden Algorithmus, der auf der Multiplikation
+sehr gro&szlig;er Primzahlen basiert eingehen zu wollen, gibt es f&uuml;r eine 
+Verschl&uuml;sselung mittels PGP immer 2 &quot;Keys&quot; oder Schl&uuml;ssel.</p>
+
+<p>Sie generieren mit der PGP Software ein Schl&uuml;sselpaar,
+wobei sie den &quot;&ouml;ffentlichen Schl&uuml;ssel&quot; &uuml;ber allgemein
+zug&auml;ngliche PGP Server jedermann zur Verf&uuml;gung stellen k&ouml;nnen.
+Den &quot;privaten Schl&uuml;ssel&quot; halten Sie geheim.</p>
+
+<p>Jeder der Ihnen verschl&uuml;sselte Daten (oder e-Mails) senden will, benutzt
+nun Ihren &quot;&ouml;ffentlichen Schl&uuml;ssel&quot; um die Daten zu verschl&uuml;sseln.
+Diese verschl&uuml;sselten Daten lassen sich nun nur mehr mit Hilfe der PGP
+Software und dem &quot;privaten Schl&uuml;ssel&quot; (oder der Rechenleisung vom Pentagon
+oder der NSA) wieder entschl&uuml;sseln.</p>
+
+<p>Eine gute FAQ (Frequently Asked Questions) in deutscher Sprache zum Thema PGP
+gibt es auf der Website von PGPi.com unter der Adresse 
+<a href=http://www.pgpi.org/doc/faq/pgpi/de/>http://www.pgpi.org/doc/faq/pgpi/de/</a>.</p>
+
+<p>Noch ein rechtlicher Hinweis (mu&szlig; leider sein): Wenn Sie PGP oder die internationale Version PGPi
+f&uuml;r gewerbliche Zwecke nutzen wollen, so müssen Sie eine kommerzielle Userlizenz von 
+Network Associates Inc. oder seinen bevollmächtigten Vertretern erwerben. 
+Wenn Sie in den den USA oder Kanada leben so gehen Sie zu 
+<a href=http://www.nai.com/>http://www.nai.com/</a>. 
+Leben Sie au&szlig;erhalb der USA oder Kanada, so gehen Sie zu
+<a href=http://www.pgpinternational.com/>http://www.pgpinternational.com/</a> um sich zu informieren.</p>
+
+<p>Genug der Theorie, nun zur Verwendung von PGP auf einem Webserver.</p>
+
+<h2>Installation von PGP auf einem Webserver</h2>
+
+<p>Zu Testzwecken k&ouml;nnen Sie die Freeware PGPi Version f&uuml;r Windows NT/2000 
+unter der Adresse <a href=http://www.pgpi.org/products/pgp/versions/freeware/>http://www.pgpi.org/products/pgp/versions/freeware/</a>
+downloaden.</p>
+
+<p>Installieren Sie die Software auf dem Webserver 
+(auf eigene Gefahr, nur da&szlig; nachher niemand sagt, ich bin verantwortlich wenn
+wieder etwas nicht funktioniert). Schlie&szlig;en Sie dazu alle Anwendungen auf dem Webserver
+(vor allem Mailprogramme) und f&uuml;hren Sie die <i>Setup.exe</i> Datei aus. Vorher sollten
+Sie das downgeloadete ZIP File aber noch entzippen, mit <a href="http://www.winzip.de/">WinZip</a> 
+zum Beispiel. Sie m&uuml;ssen nur das PGP Key Management installieren.
+</p>
+
+<p>Nachdem das PGPi Setup erfolgreich ausgef&uuml;hrt wurde, finden Sie die neue
+Programm Gruppe <i>PGP</i> im Start Men&uuml; vor.</p>
+
+<p><IMG SRC="Bilder/200009/20000912_PGP.png" width=422 height=86 alt="" border="0"><br>
+<i>Bild 1: PGP Programm Gruppe</i></p>
+
+<p>Um ein neues Schl&uuml;sselpaar zu generieren, starten Sie das Programm <i>PGPkeys</i>
+aus der PGP Programm Gruppe. Geben Sie im Key Generation Wizard Ihren Namen und Ihre e-Mail Adresse
+ein. W&auml;hlen Sie im n&auml;chsten Fenster &quot;<i>Diffie-Hellman/DSS</i>&quot;, benutzen Sie eine
+Schl&uuml;ssell&auml;nge von 2048 bits, w&auml;hlen Sie &quot;Key pair never expires&quot; (Schl&uuml;sselpaar
+wird niemals ung&uuml;ltig). Im nachfolgenden Fenster m&uuml;ssen Sie nun die 
+&quot;Verschl&uuml;sselungsphrase&quot; (Passphrase) eingeben, mit der Sie Zugang zu Ihrem privaten
+Schl&uuml;ssel erlangen.</p>
+
+<p><IMG SRC="Bilder/200009/20000912_KGWizard.png" width=510 height=385 alt="" border="0">
+<br>
+<i>Bild 2: Fenster der Key Generation Wizard</i></p>
+
+<p>Benutzen Sie zur Demonstration die Passphrase &quot;<i>Dies ist nur ein Test!</i>&quot; (ohne Anf&uuml;hrungszeichen).
+Danach generiert Ihnen der Key Generation Wizard Ihr PGP Schl&uuml;sselpaar. 
+Da dies nur eine Demo ist, m&uuml;ssen Sie den Schl&uuml;ssel nicht zum &quot;Rootserver&quot; schicken.
+Der Rootserver dient zur Verwaltung aller &ouml;ffentlichen PGP Schl&uuml;ssel, die
+man allgemein zug&auml;nglich gemacht hat.</p>
+
+<p>Nachdem der Wizard beendet ist &ouml;ffnet sich das PGP Keys Fenster (siehe Bild 3).</p>
+
+<p><IMG SRC="Bilder/200009/20000912_PGPKeys.png" width=520 height=300 alt="" border="0">
+<br>
+<i>Bild 3: PGPKeys</i></p>
+
+<p>Sie k&ouml;nnen das PGP Keys Fenster jederzeit wieder &uuml;ber das Programm
+PGPKeys in der Programmgruppe PGP &ouml;ffnen.</p>
+
+<p>Nachdem Sie nun Ihr ganz pers&ouml;nliches Schl&uuml;sselpaar generiert (und sich die 
+Verschl&uuml;sselungsphrase gut gemerkt, aber nicht mittels Zettel zum Bildschirm geh&auml;ngt haben),
+k&ouml;nnen wir nun daran gehen, die Schl&uuml;ssel zum Verschl&uuml;sseln unserer Mails zu benutzen.</p>
+
+
+
+<h2>PGP-Verschl&uuml;sselung mittels e-Mail Komponente unter ASP</h2>
+
+<p>Ich habe hier als e-Mail Komponente zur Benutzung unter ASP die 
+<a href="http://tech.dimac.net/">w3 JMail Komponente</a> der Firma 
+<a href="http://www.dimac.net/">Dimac</a> nicht ohne Grund gew&auml;hlt.
+Sie bietet nicht nur die Funktionalit&auml;t um e-Mails sowohl zu senden als auch
+von jedem beliebigen POP3 Account auszulesen, sie unterst&uuml;tzt auch PGP!</p>
+
+<p>Die <a href="http://tech.dimac.net/">w3 JMail Komponente</a> ist in der Personal Version
+gratis als Download verf&uuml;gbar. Die hier vorgestellte Verschl&uuml;sselungsfunktionalit&auml;t
+ist aber nur in der Professional Version enthalten, die mit USD 49,- aber auch f&uuml;r jede
+Firma leistbar ist.</p>
+
+<h3>Installation der JMail Professional 4.0 Mail Komponente</h3>
+
+<p>F&uuml;r die Installation der JMail Komponente auf dem Webserver m&uuml;ssen Sie
+nur das Setup Programm ausf&uuml;hren. W&auml;hrend des Setups sollten Sie sich f&uuml;r
+die "Custom Installation" entscheiden, denn nur so k&ouml;nnen Sie auch die 
+JMail Dokumentation als PDF Dokument installieren (siehe Bild 4).</p>
+
+
+<p><IMG SRC="Bilder/200009/20000912_Custom.png" width=504 height=379 alt="" border="0">
+<br>
+<i>Bild 4: Installation von JMail</i></p>
+
+<p>Nachdem die Komponente auf dem Server installiert ist, m&uuml;&szlig;en Sie
+noch f&uuml;r den IUSR_<i>ComputerName</i> Account (unter dem ASP Dateien ausgef&uuml;hrt werden)
+des Webservers die Lese- und Schreibrechte f&uuml;r die PGP-relevanten Verzeichnisse
+und Dateien setzen. Ausserdem m&uuml;&szlig;en Sie noch Installationsdateien, 
+die auf die Verzeichnisse der PGP-Schl&uuml;ssel verweisen, f&uuml;r 
+den IUSR_<i>ComputerName</i> Account zug&auml;nglich machen (Diese Prozeduren
+sind auch in der JMail Dokumentation <i>w3jmail4.pdf</i> nachzulesen, die standardm&auml;&szlig;ig 
+im Verzeichnis C:\Program Files\Dimac\w3JMail4 installiert ist).</p>
+
+
+<h3>Setzen der Schreib-/Leserechte f&uuml;r den IUSR_Machine Account</h3>
+
+<p>Kopieren Sie zuerst auf einem Windows 2000 Server die Dateien aus dem Verzeichnis
+<i>C:\Documents and Settings\Administrator\Application Data\PGP\</i> ins Verzeichnis
+<i>C:\Documents and Settings\Default User\Application Data\PGP</i>.
+Wenn Sie unter Windows NT 4.0 arbeiten, so kopieren Sie die Dateien aus dem Verzeichnis
+<i>C:\Winnt\Profiles\Administrator\Application Data\PGP\</i> ins Verzeichnis 
+<i>C:\Winnt\Profiles\Administrator\Default User\Application Data\PGP\</i>.</p>
+
+<p>Danach sollten Sie f&uuml;r folgende Verzeichnisse und alle darin liegenden Dateien
+und Verzeichnisse Schreib- und Leserechte (Read-, Write-Permission) 
+f&uuml;r alle Benutzer (<i>Everyone</i>) und den 
+IUSR_<i>MachineName</i> Account einrichten:</p>
+
+<p><ul>
+	<li>Installationsverzeichnis der PGP Software (<i>C:\Program&nbsp;Files\Network&nbsp;Associates\PGPNT\</i>)</li>
+	<li>PGP Verzeichnis f&uuml;r den Administrator Account 
+	(<i>C:\Documents&nbsp;and&nbsp;Settings\Administrator\Application&nbsp;Data\PGP</i>)</li>
+	<li>PGP Verzeichnis f&uuml;r alle Benutzer (Default User) unter 
+	<i>C:\Documents&nbsp;and&nbsp;Settings\Default&nbsp;User\Application Data\PGP</i>
+	</li>
+</ul></p>
+
+
+<h3>Einsatz von JMail mit PGP unter ASP</h3>
+
+<p>Um also ins kalte Wasser zu tauchen, hier gleich ein ASP Beispiel, wie man
+von einer ASP Seite aus eine PGP verschl&uuml;sselte e-Mail generiert und verschickt.
+Die Erkl&auml;rung des Skripts finden Sie im Anschlu&szlig; an den Sourcecode.</p>
+
+<p><pre style="background='silver';">
+&lt;% @LANGUAGE="VBScript" %&gt;
+&lt;HTML&gt;
+&lt;BODY&gt;
+&lt;%
+' Message Objekt generieren
+Set msg = Server.CreateObject( "JMail.Message" )
+
+' Nachrichten Eigenschaften festlegen
+msg.From = "redaktion@aspheute.com"     ' Absender
+msg.Subject = "Nur fuer Ihre Augen"     ' Betreff
+msg.Body = "Streng geheime Nachricht!"  ' Nachricht
+
+' Weitere Parameter um die Fehlerbehandlung zu erleichtern
+msg.Logging = True
+' msg.Silent = True  ' Komponente faengt intern Fehler ab
+
+' PGP Verschluesselung aktivieren fuer Nachricht
+msg.PGPEncrypt = True
+
+' Empfaenger fuer die Nachricht angeben,
+' dritter Parameter enthaelt den die PGP-Key ID 
+' oder die Email Adresse des PGP-Keys
+msg.AddRecipient "redaktion@aspheute.com", "Redaktion", "redaktion@aspheute.com"
+
+If Not msg.Send("mail.domain.com") Then
+    Response.write "&lt;pre&gt;" &amp; msg.log &amp; "&lt;/pre&gt;"
+Else
+    Response.write "Nachricht wurde erfolgreich verschluesselt und versendet!"
+End if
+%&gt;
+&lt;/BODY&gt;
+&lt;/HTML&gt;
+</pre></p>
+
+<p>Das <i>Message</i> Objekt der w3 JMail Komponente wird mittles <i>CreateObject</i> erstellt.
+Das <i>Message</i> Objekt stellt eine e-Mail Nachricht dar, die an verschiedene Empf&auml;nger 
+verschickt wird.</p>
+
+<p><pre style="background='silver';">
+Set msg = Server.CreateObject(&quot;JMail.Message&quot;)
+</pre></p>
+
+<p>Ganz gew&ouml;hnliche e-Mail Daten, wie Absender, Betreff oder Nachricht werden 
+mittels <i>From</i>, <i>Subject</i> und <i>Body</i> Eigenschaften gesetzt:</p>
+
+<p><pre style="background='silver';">
+msg.From = &quot;redaktion@aspheute.com&quot;
+msg.Subject = &quot;Nur fuer Ihre Augen&quot;
+msg.Body = &quot;Streng geheime Nachricht!&quot;
+</pre></p>
+
+<p>Um anzugeben, da&szlig; die Nachricht mittels PGP verschl&uuml;sselt werden soll,
+mu&szlig; man die <i>PGPEncrypt</i> Eigenschaft des <i>Message</i> Objektes auf <i>True</i> setzen:</p>
+
+<p><pre style="background='silver';">
+msg.PGPEncrypt = true
+</pre></p>
+
+<p>Der oder die Empf&auml;nger werden dabei mittels <i>AddRecipient</i> Methode zur Nachricht
+(dem <i>Message</i> Objekt) hinzugef&uuml;gt. Die <i>AddRecipient</i> Methode hat 3 Parameter:</p>
+
+<p><pre style="background='silver';">
+msg.AddRecipient <i>emailAdresse</i>, <i>Empf&auml;ngername</i>, <i>PGPSchl&uuml;ssel</i>
+</pre></p>
+
+<p>Der PGPSchl&uuml;ssel Parameter ist dabei eine Zeichenkette, die entweder 
+die hexadezimale Schl&uuml;ssel-ID des PGP-Schl&uuml;ssels oder
+die zugeordnete Emailadresse des Schl&uuml;ssels enth&auml;lt. Der "&ouml;ffentliche Schl&uuml;ssel"
+wird dann verwendet um die Email zu verschl&uuml;sseln bevor sie an den Empf&auml;nger verschickt 
+wird.</p>
+
+<p>Um im PGP Keys Programm die Schl&uuml;ssel ID (Key ID) f&uuml;r die Schl&uuml;ssel
+anzeigen zu lassen, w&auml;hlen Sie im Men&uuml; <i>View, KeyID</i>. Die Key ID f&uuml;r 
+<i>Christian Koller</i> in meinem generierten Schl&uuml;ssel ist zum Beispiel 
+<i>0x90EB3CA5</i> (siehe Bild 5).</p>
+
+<p><IMG SRC="Bilder/200009/20000912_KeyCK.png" width=576 height=300 alt="" border="0">
+<br>
+<i>Bild 5: Schl&uuml;ssel ID f&uuml;r Christian Koller (Redaktion@AspHeute.com).</i></p>
+
+
+<p>Wenn Sie nun die <i>Send</i> Methode des <i>Message</i> Objektes ausf&uuml;hren, 
+benutzt die w3 JMail Komponente die PGP-Keys, die am Webserver installiert sind,
+um die abgehenden Nachrichten zu verschl&uuml;sseln.</p>
+
+<p>Die <i>Send</i> Methode hat als Eingangsparameter die Domain des Mailservers,
+&uuml;ber den die e-Mail geschickt werden soll.<p>
+
+</p>Zur Erinnerung: Um abgehende Nachrichten zu verschl&uuml;sseln ben&ouml;tigen Sie nur 
+den sogenannten &quot;Public Key&quot;, also den &ouml;ffentlichen Schl&uuml;ssel des 
+Empf&auml;ngers. Dieser mu&szlig; vom Empf&auml;nger erstellt und Ihnen &uuml;bermittelt werden.</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>Um e-Mails verschl&uuml;sselt und damit halbwegs sicher zum Empf&auml;nger zu schicken, 
+ist eine Verwendung von PGP zusammen mit einer PGP-f&auml;higen e-Mail Komponente
+m&ouml;glich. Die in diesem Artikel vorgestellte w3 JMail Komponente enth&auml;lt bereits eine
+eingebaute PGP Funktionalit&auml;t zu einem leistbaren Preis.</p>
+
+<p>Um nun eine &uuml;berschaubare Menge von e-Mails verschl&uuml;sselt zu versenden,
+so ist eine kombinierte ASP-PGP L&ouml;sung vor allem f&uuml;r kleine und mittlere
+Firmen interessant.</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000912.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20021028.htm">ACT MetaMailer - Mails verschicken leicht gemacht</a><br>
+<a href="20000602.htm">Allgemeine MailParser-Klasse mit ASPMail</a><br>
+<a href="20000810.htm">Auslesen von Emails aus einem POP3 Account</a><br>
+<a href="20000330.htm">Downloads per Email verschicken</a><br>
+<a href="19990809.htm">Email versenden mit AspMail</a><br>
+<a href="20000515.htm">Emails senden mit CDONTS</a><br>
+<a href="20010625.htm">Html Emails mit Dundas Mailer verschicken</a><br>
+<a href="20000920.htm">PGP-Verschl&uuml;sselung bei Dateien</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Epgpi%2Eorg%2Fdoc%2Ffaq%2Fpgpi%2Fde%2F">FAQ zu PGP</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Epgpinternational%2Ecom">PGP Security</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Epgpi%2Eorg">The International PGP Home Page</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Epgp%2Ecom">US PGP Website</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Ftech%2Edimac%2Enet">w3 JMail Komponente</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000912" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Mit PGP verschl&uuml;sselte e-Mails senden"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000912.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Koller"><input type="hidden" name="AuthorEmail" value="christiank@aspexpert.com"><input type="hidden" name="Artikel" value="20000912"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000912.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

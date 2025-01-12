@@ -1,0 +1,229 @@
+<HTML>
+<HEAD>
+<TITLE>Verhinderung von SQL Injection Marke .NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Was SQL Injection ist, hat der erste Artikel dieser Serie ausf&uuml;hrlich erkl&auml;rt und auch demonstriert. Heute wechseln wir von ASP nach ASP.NET, und von ADO zu ADO.NET - und sehen uns die dortigen Abwehrmethoden an.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SQL Injection,Bastion,last line of defense,ASP.NET,SqlCommand,SqlConnection,ADO.NET">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Verhinderung von SQL Injection Marke .NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20011203"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Was <a href="../artikel/20011030.htm">SQL Injection</a> ist, hat der erste Artikel dieser Serie ausf&uuml;hrlich erkl&auml;rt und auch demonstriert.
+In Folge 2, <a href="../artikel/20011031.htm">Gegengifte f&uuml;r SQL Injection</a>, ging es dann
+um Wege mittels Inputvalidierung SQL Injection zu verhindern, und auch mittels ADO eine Art letzte
+Bastion zu errichten. Heute wechseln wir von ASP nach ASP.NET, und von ADO zu ADO.NET - und sehen
+uns die dortigen Abwehrmethoden an.
+</p>
+<p>
+Ich m&ouml;chte auch heute wieder den Spruch Michael Howard's wiederholen: <b>All input is evil, until proven otherwise!</b>
+</p>
+<p>
+Wie man Input validieren kann, haben wir im Artikel <a href="../artikel/20011031.htm">Gegengifte f&uuml;r SQL Injection</a>
+bereits besprochen. Als wichtigste Waffe zur Validierung des Inputs stehen unter .NET (&Uuml;berraschung!)
+Regular Expressions zur Verf&uuml;gung - wer also in ASP RegEx gelernt hat, kann dieses Wissen unter .NET
+wieder einsetzen. Wer's noch nicht gemerkt hat: ich halte RegEx f&uuml;r eine der wichtigsten Techniken
+die ein Programmierer beherrschen sollte.
+</p>
+
+<p>
+Mit Inputvalidierung werden wir uns heute au&szlig;er im obigen Absatz nicht weiter besch&auml;ftigen - statt
+dessen m&ouml;chte ich Codebeispiele zeigen: zuallererst eines, das man sich als schlechtes Beispiel unbedingt
+immer vor Augen halten sollte, sowie ein weiteres, das man sich aus anderen Gr&uuml;nden merken sollte: weil
+man in Zukunft nur noch so programmieren sollte!
+</p>
+
+<h2>So in Zukunft nicht mehr</h2>
+<p>
+Ich habe ein Beispiel nach alter Verfahrensweise geschrieben - der SQL String wird dynamisch
+zusammengebaut, was bei unzureichender &Uuml;berpr&uuml;fung der &uuml;bergebenen Daten zur SQL Injection
+f&uuml;hrt (<b>jessas.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;%@Page Language="C#" %&gt;
+&lt;%@Import Namespace="System.Data" %&gt;
+&lt;%@Import Namespace="System.Data.SqlClient" %&gt;
+&lt;%
+string strImagineAsQuerystring = "HANAR";
+
+string strConn = "user id=restricted;password=uX98x00;initial catalog=northwind;" + 
+                     "data source=WEBDEVSRV01;Connect Timeout=30";
+SqlConnection scNWind = new SqlConnection(strConn);
+scNWind.Open();
+
+SqlCommand cmd = new SqlCommand();
+cmd.CommandText = "select sum(freight) from Orders " + 
+        " where CustomerId = '" + strImagineAsQuerystring + "'";
+cmd.Connection = scNWind;
+
+object RetVal = cmd.ExecuteScalar();
+Response.Write(RetVal.ToString());
+
+cmd.Dispose();
+scNWind.Close();
+%&gt;
+</pre>
+
+<p>
+Ist die Variable <i>strImagineAsQuerystring</i> nicht gen&uuml;gend &uuml;berpr&uuml;ft, so kann ein Hacker wie im
+Artikel <a href="../artikel/20011030.htm">SQL Injection</a> beschrieben, ein beliebiges SQL
+Kommando gegen die Datenbank absetzen. Die &Uuml;berpr&uuml;fung (Inputvalidierung) sollte man also auf F&auml;lle durchf&uuml;hren -
+und zwar am besten mit Regular Expressions, siehe dazu auch die Hinweise/Links im Artikel
+<a href="../artikel/20011031.htm">Gegengifte f&uuml;r SQL Injection</a>.
+</p>
+<p>
+Aber ADO.NET hat noch ein zus&auml;tzliches "Zuckerl" f&uuml;r uns, das den Hahn f&uuml;r immer zudreht - und um
+einiges bequemer funktioniert als in ADO.
+</p>
+
+<h2>Parametrisierte Abfragen</h2>
+<p>
+Vorhang auf f&uuml;r parametrisierte Abfragen, den "kleinen Bruder" (oder Schwester, falls man 
+politisch korrekt sein m&ouml;chte) von Stored Procedures. Wer keine Stored
+Procedures verwenden will oder kann, findet in parametrisierten Abfragen sicherlich eine
+probate "last line of defense" gegen SQL Injection.
+</p>
+<p>
+Somit ohne weitere Umschweife zu einem Beispiel (<b>mitgenuss.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;%@Page Language="C#" Debug="True" %&gt;
+&lt;%@Import Namespace="System.Data" %&gt;
+&lt;%@Import Namespace="System.Data.SqlClient" %&gt;
+&lt;%
+string strImagineAsQuerystring = "HANAR";
+// uncomment line below to try SQL Injection (will fail)
+// strImagineAsQuerystring = "' DELETE Orders --";
+
+string strConn = "user id=sa;password=;initial catalog=northwind;" + 
+                 "data source=WEBDEVSRV01;Connect Timeout=30";
+SqlConnection scNWind = new SqlConnection(strConn);
+scNWind.Open();
+
+SqlCommand cmd = new SqlCommand();
+cmd.CommandText = "select OrderId from Orders where CustomerId = @ParameterCustomerId";
+SqlParameter param = cmd.Parameters.Add("@ParameterCustomerId", strImagineAsQuerystring);
+cmd.Connection = scNWind;
+
+SqlDataReader MySqlReader = cmd.ExecuteReader();
+while (MySqlReader.Read())
+{
+    Response.Write(MySqlReader.GetInt32(0) + "&lt;br&gt;\r\n");
+}
+MySqlReader.Close();
+
+cmd.Dispose();
+scNWind.Close();
+%&gt;
+</pre>
+
+<p>
+Der richtig interessante Part ist der <i>CommandText</i>, also unser SQL Statement:
+</p>
+
+<pre style="background='silver';">
+cmd.CommandText = "select OrderId from Orders where CustomerId = @ParameterCustomerId";
+</pre>
+
+<p>
+Hier steht ab sofort ein Platzhalter, nicht einmal mehr Apostrophe, obwohl es sich um ein Textfeld
+handelt. Klarerweise mu&szlig; man den Wert dieses Parameters vor der Ausf&uuml;hrung bekanntgeben, dies geschieht
+so:
+</p>
+
+<pre style="background='silver';">
+SqlParameter param = cmd.Parameters.Add("@ParameterCustomerId", strImagineAsQuerystring);
+</pre>
+
+<p>
+Im Prinzip funktioniert alles genau gleich wie bei Stored Procedures, und mehr zu Stored Procedures
+in ADO.NET bietet der Artikel <a href="../artikel/20010626.htm">Stored Procedures 101 in ADO.NET</a>.
+Apropos Stored Procedures - es w&auml;re an der Zeit, sich neben Regular Expressions auch mit diesen etwas
+n&auml;her auseinanderzusetzen.
+</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+SQL Injection verschwindet auch unter .NET nicht einfach magisch. Man mu&szlig; nachhelfen, aber wenn man seine
+Applikation von vorne herein mit Blickpunkt Sicherheit plant und programmiert, ist es kein Problem.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20011203.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20011203.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020705.htm">Formularbasierte Authentifizierung in f&uuml;nf Minuten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020705.htm</span><br>
+<a href="../artikel/20011031.htm">Gegengifte f&uuml;r SQL Injection</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011031.htm</span><br>
+<a href="../artikel/20011206.htm">Performancemessungen in .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011206.htm</span><br>
+<a href="../artikel/20020902.htm">Regex'en zu Assemblies kompilieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020902.htm</span><br>
+<a href="../artikel/20000829.htm">Regul&auml;re Ausdr&uuml;cke / Regular Expressions</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000829.htm</span><br>
+<a href="../artikel/20011030.htm">SQL Injection</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011030.htm</span><br>
+<a href="../artikel/20010626.htm">Stored Procedures 101 in ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010626.htm</span><br>
+<a href="../artikel/20020131.htm">Vorsicht Falle: Dateien, die keine sind</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020131.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

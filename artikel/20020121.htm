@@ -1,0 +1,888 @@
+<HTML>
+<HEAD>
+<TITLE>Besucherverfolgung f&uuml;r Fortgeschrittene</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In meinem heutigen Artikel m&ouml;chte ich eine Anleitung geben, wie auf Basis des vorangegangenen (Benutzerverfolgung in ASP) die Besuche noch besser verfolgt werden k&ouml;nnen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Besucherverfolgung,Logging,Auswertung,Statistik,Benutzerverhalten,Tracking,Path">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Besucherverfolgung f&uuml;r Fortgeschrittene</H1>
+<p>
+Geschrieben von: <a href="../autoren/stefanmayer.htm">Stefan Mayer</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020121"></SCRIPT>
+</p>
+<p>
+In meinem Artikel <a href="20001206.htm">Benutzerverfolgung in ASP</a> habe ich eine recht einfache Methode 
+beschrieben, wie man ein aussagekr&auml;ftiges Logfile erstellen kann. In meinem heutigen Artikel m&ouml;chte ich eine 
+Anleitung geben, wie auf Basis des vorangegangenen die Besuche noch besser verfolgt werden k&ouml;nnen. 
+</p>
+
+<p>
+Vorweg m&ouml;chte ich wieder betonen, da&szlig; es hier nicht darum gehen soll, die Besucher der WebSite auszuspionieren, sondern 
+darum, um R&uuml;ckschl&uuml;&szlig;e auf Interessen der Besucher ziehen zu k&ouml;nnen, um das Online-Angebot optimieren zu k&ouml;nnen. Ich selbst 
+setze dieses hilfreiche Tool in einer Community ein, um die Mitglieder optimal informieren zu k&ouml;nnen.
+</p>
+
+<h2>Funktionale Unterschiede zur "alten" Version</h2>
+
+<p>
+In der ersten Version (<a href="20001206.htm">Benutzerverfolgung in ASP</a>) werden Seitenaufrufe in eine 
+Datenbank eingetragen, und zwar jedes Mal, wenn dies gew&uuml;nscht wurde - sei es auf der Startseite, sei es auf 
+bestimmten Seiten. Dadurch ist es nicht immer m&ouml;glich, nachzuvollziehen, welche Informationen sich ein Besucher 
+angesehen hat und welche nicht; oft war es auch nicht m&ouml;glich, genau zu sagen, wieviele Besucher nun wieviele Seiten 
+angesehen haben.
+</p>
+
+<p>
+In dieser zweiten Version enth&auml;lt die Datenbank zwei Tabellen - die erste Tabelle enth&auml;lt die Session-ID und speichert 
+die "Herkunft" des Besuchers, die zweite Tabelle enth&auml;lt nur die Informationen, was sich der Besucher ansieht.
+</p>
+
+<p>
+Damit das auch funktioniert, sind Anpassungen an der Global.asa notwendig - und nat&uuml;rlich auch, da&szlig; diese vom Server 
+verarbeitet werden kann - das Web mu&szlig; also eine eigenst&auml;ndige Applikation sein.
+</p>
+
+<p>
+Nicht viel ge&auml;ndert hat sich an der Include-Datei, die die Seitenzugriffe protokolliert. Neu hingegen ist die 
+Funktionalit&auml;t da&szlig; die "Verweildauer" ausgerechnet wird - nat&uuml;rlich nur soweit das m&ouml;glich ist. Version 2 setzt voraus, 
+da&szlig; der Browser des Besuchers Cookies annimmt, da die Identifizierung &uuml;ber eine Session-Variable erfolgt.
+</p>
+
+<h2>Die Datenbank</h2>
+
+<p>
+Die Datenbank "elog.mdb" enth&auml;lt zwei Tabellen - diese k&ouml;nnen problemlos in eine andere Datenbank kopiert werden oder auf 
+einen SQL-Server. Es mu&szlig; lediglich der Connection-String adaptiert werden.
+</p>
+
+<h3>Die Tabelle log_Session</h3>
+
+<p>
+Diese Tabelle enth&auml;lt die Daten, die wir &uuml;ber unseren Besucher wissen wollen. Das ist in erster Linie die ID 
+(die &uuml;brigens auch als Zugriffsz&auml;hler ausgewertet werden kann), aber auch IP-Adresse und Host - sowie die Infos, &uuml;ber 
+welche Seite der Besucher eingestiegen ist und woher der Verweis kam.
+</p>
+
+<pre style="background='silver';">
+ID              Nummer der Session (Autowert)
+Start           Enth&auml;lt das Datum &amp; Zeit des Zugriffs
+Ende            Enth&auml;lt das Datum &amp; Zeit des Verlassens
+UID             Enth&auml;lt optional eine User-ID
+IP              IP des Besuchers
+HOST            Hostname (aufgel&ouml;st) des Besuchers
+StartPage       Name der Einstiegsseite
+BrowserTXT      Browser-Identifikation
+Referrer        Zugriffsverweis (gekommen von)
+BTyp            Browser-Name
+BVer            Browser-Versionsnummer
+Dauer           Verweildauer in s auf der WebSite
+</pre>
+
+<p>
+Ebenfalls neu in der Tabelle ist die User-ID. &Uuml;ber dieses Feld k&ouml;nnte zu einem sp&auml;teren Zeitpunkt die ID eines 
+angemeldeten Besuchers, der in einer anderen Tabelle verwaltet wird, verkn&uuml;pft werden. So l&auml;&szlig;t sich dann eindeutig 
+zuordnen, WER der Besucher war und was er genau gesehen hat - um beispielsweise beim n&auml;chsten Besuch ungesehene 
+Information vorzureihen - oder um eigene Zugriffe aus der Statistik ausblenden zu k&ouml;nnen. Die Ausgabe der Daten, wie 
+sie weiter unter beschrieben ist, verwendet diese Information jedoch nicht.
+</p>
+
+<p>
+Mit Daten bef&uuml;llt wird diese Tabelle in der Global.asa - eine Beschreibung dieses Vorgangs folgt etwas weiter unten.
+</p>
+
+<h3>Die Tabelle log_Action</h3>
+
+<p>
+Diese Tabelle enth&auml;lt Daten dar&uuml;ber, was unser Besucher genau gemacht hat - und wann.
+</p>
+
+<pre style="background='silver';">
+AID             Prim&auml;rschl&uuml;ssel/Autowert
+SID             Session-Nummer
+Start           Datum &amp; Zeit des Eintrages
+Art             Art des Ereignisses 
+Txt             Protokollierter Text
+Zahl            Protokollierte Zahl
+Dauer           Zeit bis zur n&auml;chsten Aktion in s
+</pre>
+
+<p>
+Neu hier ist die "Art" der Aktion. Hier k&ouml;nnen beliebig viele Aktionsarten (z.b. Aufruf einer Seite, Verwendung eines 
+Formulars, Klicken auf einen Link, etc.) verwendet werden. Zus&auml;tzlich kann ein Text (z.b. Inhalt eines Suchformulars 
+oder eines Titels) oder eine Zahl (Zugriff auf Information Nummer x) eingetragen werden.
+</p>
+
+<p>
+Diese Tabelle wird &uuml;ber eine Funktion ("makelog") mit Daten bef&uuml;llt.
+</p>
+
+<h2>Die Global.asa</h2>
+
+<p>
+Die Global.asa ist ein Script, das Prozeduren enth&auml;lt, die vom Server - f&uuml;r den Besucher unsichtbar - bei bestimmten 
+Ereignissen ausgef&uuml;hrt werden. Wir ben&ouml;tigen die Prozeduren, die bei Beginn und bei Ende einer Session ausgef&uuml;hrt 
+werden - und zuvor definieren wir den Connection-String als Applikations-Variable, was auch den Vorteil hat, da&szlig; bei 
+&Auml;nderungen von Name oder Speicherort der Datenbank nicht jedes Script durchsucht und gegebenenfalls ge&auml;ndert werden mu&szlig;.
+</p>
+
+<pre style="background='silver';">
+Sub Application_OnStart
+   Application("strConn") = "Driver={Microsoft Access Driver (*.mdb)};DriverID=25;DBQ=" 
+    &amp; Server.MapPath("elog.mdb") &amp; ";FIL=MS Access;MaxBufferSize=512;PageTimeout=5;"
+END Sub
+
+Sub Session_OnStart
+   on error resume next
+</pre>
+
+<p>
+Es ist zwar nie gut, Fehler zu &uuml;bergehen, aber ein Fehler an dieser Stelle verhindert, da&szlig; irgendetwas von der Website 
+angezeigt wird. M&ouml;gliche Fehlerursachen sind in der Regel schreibgesch&uuml;tzte Datenbanken oder volle Datentr&auml;ger.
+</p>
+
+<pre style="background='silver';">
+REM Hier wird der verwendete Browser ermittelt
+   Set BC = Server.CreateObject("MSWC.BrowserType")
+   txtBro = bc.browser
+   if txtBro = "" Then txtBro = "-"
+   txtVer = bc.Version
+   if txtVer = "" Then txtVer = "-"
+   Set BC = Nothing
+</pre>
+
+<p>
+Hier wird der verwendete Browser ermittelt... 
+</p>
+
+<pre style="background='silver';">
+REM Daten ermitteln: IP-Adresse und Host-Name 
+   txtIP = Request.ServerVariables("REMOTE_ADDR")
+
+REM Hier wird unter Verwendung der Komponente "ASPDNS" der zugh&ouml;rige Name des Hosts ermittelt
+REM verwendet man eine andere Komponente, so mu&szlig; der Aufruf entsprechend ge&auml;ndert werden
+REM will (oder kann) man keine DNS-Aufl&ouml;sung machen, mu&szlig; man einfach txtHost = "-" eintragen
+
+   Set DNS = Server.CreateObject("AspDNS.Lookup") 
+   txtHost = DNS.ReverseDNSLookup(Request.ServerVariables("REMOTE_ADDR"))
+   Set DNS = Nothing
+</pre>
+
+<p>
+… Und hier die IP-Adresse und auf Wunsch der dazugeh&ouml;rige Host-Name.
+</p>
+
+<pre style="background='silver';">
+REM andere Daten ermitteln   
+   txtAgent = Request.ServerVariables("HTTP_USER_AGENT")
+   if txtAgent = "" Then txtAgent = "-"
+   txtRefer = Request.ServerVariables("HTTP_REFERER")
+   if txtRefer = "" Then txtRefer = "-"
+   txtScript = Request.Servervariables("SCRIPT_NAME")
+   if txtScript = "" Then txtScript = "-"
+</pre>
+
+<p>
+Auch hier mu&szlig; wohl nicht viel dazugesagt werden - es gibt auch kaum &Auml;nderungen zur ersten Version.
+</p>
+
+<pre style="background='silver';">
+REM Datenbank &ouml;ffnen
+   Set Conn = Server.CreateObject("ADODB.Connection")
+   Conn.Open Application("strConn")
+</pre>
+
+<p>
+Hier sollte der Datenbankpfad ge&auml;ndert werden - oder der Name. Ideal ist nat&uuml;rlich ein eigener Datenbankordner.
+</p>
+
+<pre style="background='silver';">
+   Set RS = Server.CreateObject("ADODB.Recordset")
+   RS.Cursortype = 1
+   RS.LockType = 3
+   RS.Open "SELECT * FROM log_Session WHERE 1=0", Conn
+
+   RS.AddNew
+   RS.Fields("Start").Value = Now
+   RS.Fields("IP").Value = txtIP
+   RS.Fields("Host").Value = txtHost
+   RS.Fields("StartPage").Value = txtScript
+   RS.Fields("Referrer").Value = txtRefer
+   RS.Fields("BrowserTxt").Value = txtAgent
+   RS.Fields("BTyp").Value = txtBro
+   RS.Fields("BVer").Value = txtVer
+   RS.Update
+</pre>
+
+<p>
+Die Daten werden in die Tabelle geschrieben.
+</p>
+
+<pre style="background='silver';">
+Session("ID") = RS.Fields("ID").Value
+</pre>
+
+<p>
+Das hier ist neu - hier wird nach dem Schreiben der Daten die von Access erzeugte Besucher-ID in die Session-Variable namens 
+"ID" eingetragen. Diese ist der Schl&uuml;ssel f&uuml;r die Protokollierung der Ereignisse - und gleichzeitig ein Zugriffsz&auml;hler.
+</p>
+
+<pre style="background='silver';">
+   RS.Close
+   Set RS = nothing
+   Conn.Close
+   Set Conn = Nothing
+End Sub
+</pre>
+
+<p>
+Die Datenbank wird noch geschlossen, und wir r&auml;umen brav hinter uns auf.
+</p>
+
+<p>
+Als n&auml;chstes folgt die Protokollierung des Verlassens der Site:
+</p>
+
+<pre style="background='silver';">
+Sub Session_OnEnd
+  If Session("ID") > 0 Then
+   Set Conn = Server.CreateObject("ADODB.Connection")
+   Conn.Open Application("strConn")
+   Set RS = Server.CreateObject("ADODB.Recordset")
+   RS.Cursortype = 1
+   RS.LockType = 3
+   RS.Open "SELECT * FROM log_Session WHERE ID="&Session("ID"), Conn
+</pre>
+
+<p>
+Die Datenbank wird ge&ouml;ffnet und der Datensatz mit zugeh&ouml;riger Session-Nummer ausgew&auml;hlt.
+</p>
+
+<pre style="background='silver';">
+   if not rs.eof then
+     SAlt = RS.Fields("Start").Value
+     Rs.Fields("Dauer").Value = DATEDIFF("s", SAlt, now)
+     RS.Fields("Ende").Value = Now
+     RS.Update
+</pre>
+
+<p>
+Existiert ein entsprechender Datensatz, so wird die Endzeit eingetragen sowie die Differenz zwischen Start und Ende 
+in Sekunden. Es folgen dann nur noch die bekannten Aufr&auml;umarbeiten:
+</p>
+
+<pre style="background='silver';">
+   RS.Close
+   Set RS = nothing
+   Conn.Close
+   Set Conn = Nothing
+ End If
+End Sub
+</pre>
+
+<h2>Makelog.asp</h2>
+
+<p>
+Makelog.asp ist eine Include-Datei, die die Aktionen des Besuchers protokolliert.
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Function MakeLog(Art,Txt,Zahl)
+   Set Conn = Server.CreateObject("ADODB.Connection")
+   Conn.Open Application("strConn")
+   Set RS = Server.CreateObject("ADODB.Recordset")
+RS.Cursortype = 1
+RS.LockType = 3
+RS.Open "SELECT Top 1 * FROM log_Action WHERE SID=" &amp; Session("ID") &amp;" ORDER BY START Desc", Conn
+</pre>
+
+<p>
+Zuerst wird die Datenbank ge&ouml;ffnet und der j&uuml;ngste Eintrag ausgew&auml;hlt
+</p>
+
+<pre style="background='silver';">
+if not rs.eof then
+   SAlt = RS.Fields("Start").value
+  Rs.fields("Dauer1").value = DATEDIFF("s", SAlt, now)
+   rs.update
+</pre>
+
+<p>
+Existiert bereits ein Eintrag, so wird die seitdem vergangene Zeitspanne berechnet und eingetragen.
+</p>
+
+<pre style="background='silver';">
+end if
+RS.AddNew
+   RS.Fields("Start").value = Now
+   RS.Fields("SID").value = Session("ID")
+If Art = "" Then Art = "-"
+   RS.Fields("Art").value = Art
+If Txt = "" Then Txt = "-"
+   RS.Fields("Txt").value = Txt
+RS.Fields("Zahl").value = Zahl
+</pre>
+
+<p>
+Anschlie&szlig;end wird ein neuer Datensatz angelegt...
+</P>
+
+<pre style="background='silver';">
+RS.Update
+RS.Close
+Conn.Close
+Set Conn=Nothing
+Set RS = Nothing
+</pre>
+
+<p>
+... und die Datenbank wieder geschlossen.
+</p>
+
+<pre style="background='silver';">
+MakeLog = 1
+End Function
+%&gt;
+</pre>
+
+<h2>Verwendung der Include-Datei</h2>
+
+<p>
+In diesem Beispiel wird der Aufruf des Impressums protokolliert
+</p>
+
+<pre style="background='silver';">
+&lt;!-- #INCLUDE FILE="makelog.asp" --&gt;
+&lt;% Dummy = MakeStat("Info", "Impressum", 0) %&gt;
+</pre>
+
+<p>
+Und hier der Aufruf eines Links
+</p>
+
+<pre style="background='silver';">
+&lt;!-- #INCLUDE FILE="makelog.asp" --&gt;
+lt;% Dummy = MakeStat("Link", "http://www.aspheute.com/", 0)
+response.redirect "http://www.aspheute.com/" %gt;
+</pre>
+
+<p>
+Sinnvollerweise sollte man die Links ebenfalls in einer Datenbank ablegen und hier nur deren Schl&uuml;ssel eintragen - 
+um's verst&auml;ndlicher zu machen, habe ich das hier im Klartext eingetragen.
+</p>
+
+<h2>Auswertung, die Erste - die Top 10</h2>
+
+<p>
+Mit einfachen SQL-Abfragen l&auml;sst sich nun eine Statistik erstellen, die auf einen Blick sagt, was die Besucher 
+interessiert und woher sie kommen.
+</p>
+
+<IMG SRC="Bilder/200201/20020121_1.png" width="556" height="634" alt="" border="0">
+
+<p>
+Die dem Archiv beigef&uuml;gte Auswertung ermittelt, woher die meisten Besucher kommen, &uuml;ber welchen Zugang sie ins 
+Internet einsteigen, welches die erste aufgerufene Seite war und welche Seiten die Besucher am meisten interessieren.
+</p>
+
+<p>
+Und so funktioniert es (Codeausz&uuml;ge):
+</p>
+
+<pre style="background='silver';">
+strSQL = "SELECT top 10 Referrer, COUNT(*) AS C FROM log_session GROUP BY Referrer ORDER BY Count(*) desc"
+   Set rs = Server.CreateObject("ADODB.Recordset")
+   rs.open strSQL, Application("strConn")%&gt;
+</pre>
+
+<p>
+Hier wird die erste Abfrage durchgef&uuml;hrt: Alle Eintr&auml;ge der Tabelle, wo die Sessions protokolliert werden, 
+werden nach dem http-Referrer gruppiert und nach der Anzahl sortiert. Es werden die ersten 10 Datens&auml;tze genommen - 
+ganz leicht l&auml;&szlig;t sich die Zahl auf jeden anderen Wert &auml;ndern.
+</p>
+
+<pre style="background='silver';">
+   &lt;% Count = 0
+      while not rs.eof
+        count = count + 1
+        response.write "&lt;tr&gt;&lt;td&gt;"
+        response.write count
+        response.write "&lt;/td&gt;&lt;td&gt;"
+        response.write RS.Fields("C").Value
+        response.write "&lt;/td&gt;&lt;td&gt;"
+        response.write RS.Fields("Referrer").Value
+        response.write "&lt;/td&gt;&lt;/tr&gt;"
+       rs.movenext
+     wend
+     rs.close
+     set rs=Nothing %&gt;
+</pre>
+
+<p>
+Danach werden in 3 Spalten die Daten ausgegeben.
+</p>
+
+<pre style="background='silver';">
+&lt;% strSQL = "SELECT top 10 StartPage, COUNT(*) AS C FROM log_session GROUP BY StartPage " &amp; _
+        "ORDER BY Count(*) desc"
+   Set rs = Server.CreateObject("ADODB.Recordset")
+   rs.open strSQL, Application("strConn")%&gt;
+</pre>
+
+<p>
+Als n&auml;chstes folgt das Gleiche mit den Startseiten
+</p>
+
+<pre style="background='silver';">
+&lt;% strSQL = "SELECT top 10 IP, Host, COUNT(*) AS C FROM log_session GROUP BY IP, Host " &amp; _
+        "ORDER BY Count(*) desc"
+   Set rs = Server.CreateObject("ADODB.Recordset")
+   rs.open strSQL, Application("strConn")%&gt;
+</pre>
+
+<p>
+Etwas "komplizierter" ist die Sache bei IP-Adresse &amp; Host, denn hier mu&szlig; die Gruppierung auch nach dem 
+Hostnamen erfolgen:
+</p>
+
+<pre style="background='silver';">
+&lt;% strSQL = "SELECT top 10 Item, COUNT(*) AS C FROM q_log_action GROUP BY Item " &amp; _
+          "ORDER BY Count(*) desc"
+   Set rs = Server.CreateObject("ADODB.Recordset")
+   rs.open strSQL, Application("strConn")%&gt;
+</pre>
+
+<p>
+Zum Schlu&szlig; wird eine Abfrage - q_log_action - verwendet. In dieser Abfrage werden Art, Zahl &amp; Text zu einem String 
+zusammengefa&szlig;t. In der Abfrage kann beispielsweise die Zahl oder der Text weggelassen werden, um den Output den 
+pers&ouml;nlichen Bed&uuml;rfnissen anzupassen.
+</P>
+
+<h2>Auswertung, die Zweite - Listendarstellung</h2>
+
+<p>
+Im Gegensatz zur ersten Version der Besucherverfolgung hat die Listenausgabe dieser Version ein Such- und 
+Sortierformular dazubekommen.
+</p>
+
+<IMG SRC="Bilder/200201/20020121_2.png" width="758" height="653" alt="" border="0">
+
+<p>
+In einem Frameset sind 2 Scripts eingebettet. Das Suchformular selbst m&ouml;chte ich nicht n&auml;her erkl&auml;ren - es ist ein 
+simples Formular, das die eingegebene Werte wieder als Default eintr&auml;gt.
+</p>
+
+<p>
+Die Frameseite (d.asp) sieht so aus:
+</p>
+
+<pre style="background='silver';">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Statistik&lt;/title&gt;
+&lt;/head&gt;
+&lt;% Such = Replace(Replace(Request("Such"),"%","*"),"'","''")
+STyp = Request("STyp")
+Top = Request("TOP")
+if top = "" Then TOP ="10"
+If STyp = "" Then STyp = "IP"
+ParamStr = "Such=" &amp; Such &amp; "&amp;STyp=" &amp; STyp &amp; "&amp;OrderBy="&amp;Request
+    ("OrderBy")&amp; "&amp;top="&amp; Top%&gt;
+</pre>
+
+<p>
+Hier wird einfach ein Parameterstring zusammengebaut. Dabei wird das Jokerzeichen "*" durch "%" ersetzt - und einfache 
+Hochkommata ersetzt. 
+</p>
+
+<pre style="background='silver';">
+&lt;frameset cols="*,165" framespacing="0" border="0" frameborder="0"&gt;
+  &lt;frame name="TextOut" marginwidth="0" marginheight="0" scrolling="auto" 
+        noresize src="liste.asp?&lt;%=ParamStr%&gt;"&gt;
+  &lt;frame name="Suchform" marginwidth="0" marginheight="0" scrolling="yes" 
+        noresize src="suchform.asp?&lt;%=ParamStr%&gt;"&gt;
+  &lt;noframes&gt;
+  &lt;body&gt;
+  &lt;p&gt;Diese Seite verwendet Frames. Frames werden von Ihrem Browser aber nicht unterst&uuml;tzt.&lt;/p&gt;
+  &lt;/body&gt;
+  &lt;/noframes&gt;
+&lt;/frameset&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Und jetzt kommt das Interessante - die Listenausgabe (liste.asp):
+</p>
+
+<pre style="background='silver';">
+&lt;% 
+   Such = Request("Such")
+   STyp = Request("STyp") 
+
+   strSQL = "SELECT top "&amp;Request("top")&amp;" * FROM log_Session WHERE " &amp; Request("STyp") &amp; _ 
+            " like '%"&amp;Request("Such")&amp;"%' ORDER BY Start DESC"
+   if request("OderBy") &lt;&gt; "" Then strSQL = Replace(strSQL,"Start DESC",Request("OrderBy"))
+   Set rs = Server.CreateObject("ADODB.Recordset")
+   rs.open strSQL, Application("strConn")
+   %&gt;
+</pre>
+
+<p>
+Der SQL-String wird zusammengebaut und die Datenbank zum Lesen ge&ouml;ffnet.
+</p>
+
+<pre style="background='silver';">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Logfile&lt;/title&gt;
+&lt;%=Application("CSS")%&gt;
+
+&lt;base target="_blank"&gt;
+
+&lt;/head&gt;
+&lt;body topmargin="0" leftmargin="0" bgcolor="#D5FFD5"&gt;
+&lt;table border="0" cellpadding="2" cellspacing="10"&gt;&lt;tr&gt;&lt;td&gt;
+</pre>
+
+<p>
+es folgt eine Tabelle
+</p>
+
+<pre style="background='silver';">
+&lt;% Count = 0
+    while not rs.eof
+      response.write ("&lt;tr&gt;&lt;td&gt;" &amp; count &amp; " - &lt;b&gt;" &amp; RS.Fields("ID").Value &amp;"&lt;/b&gt;&lt;/td&gt;")
+      response.write ("&lt;td&gt;" &amp; RS.Fields("Start").Value &amp; "&lt;/td&gt;")
+      response.write ("&lt;td&gt;" &amp; RS.Fields("Host").Value &amp; " (" &amp; RS.Fields("IP").Value &amp;")&lt;/td&gt;")
+      txtRef = RS.Fields("Referrer").Value
+      If txtRef &lt;&gt; "-" Then
+        response.write ("&lt;td&gt;&lt;a href=" &amp; CHR(34) &amp; txtRef &amp; CHR(34) &amp;"&gt;" &amp; txtRef &amp; "&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;")
+      end If
+</pre>
+
+<p>
+Zuerst werden die Session-Daten ausgegeben
+</p>
+
+<pre style="background='silver';">
+      response.write ("&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td colspan=""2""&gt;")
+      response.write replace(replace(RS("BrowserTxt"),"Mozilla/4.0 (compatible; ",""),")","")
+      response.write ("&lt;/td&gt;")
+      response.write ("&lt;td&gt;" &amp; RS.Fields("StartPage").Value &amp; "&lt;/td&gt;&lt;/tr&gt;")
+      response.write ("&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td colspan=""3""&gt;&lt;table&gt;")
+    &lt;%   strSQL = "SELECT * FROM log_Action WHERE SID="&amp;RS("ID")&amp;" ORDER BY Start"
+   Set rs1 = Server.CreateObject("ADODB.Recordset")
+   rs1.open strSQL, Application("strSQL")
+</pre>
+
+<p>
+Danach wird Tabelle Nummer zwei ge&ouml;ffnet und alle Datens&auml;tze, die die gleiche Session-ID haben, werden ausgegeben:
+</p>
+
+<pre style="background='silver';">
+      while not rs1.eof
+        response.write("&lt;tr&gt;&lt;td&gt;")
+        s = RS1.Fields("Start").Value)
+        p = instr(s," ")
+        response.write mid(s,p+1)
+        response.write ("&lt;/td&gt;&lt;td&gt;")
+        response.write (RS1.Fields("Art").Value &amp; " - " &amp; RS1.Fields("Txt").Value &amp;" - " &amp; _
+                        RS1.Fields("Zahl").Value &amp; "&lt;/td&gt;")
+        d = RS1.Fields("Dauer1").Value
+        response.write  ("&lt;td&gt;")
+        if d &gt; 0 then response.write (d &amp; " Sekunden")
+        response.write ("&lt;/td&gt;")
+        rs1.movenext
+        response.write("&lt;/tr&gt;")
+      wend
+  rs1.close
+  response.write ("&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan=""4"" bgcolor=""#000000"" height=""1""&gt;&lt;/td&gt;&lt;/tr&gt;")
+  count = count + 1
+  rs.movenext
+wend
+
+rs.close
+set rs=Nothing %&gt;
+&lt;/table&gt;
+&lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Und das war's auch schon wieder!
+</p>
+
+<h2>Notwendige Anpassungen</h2>
+
+<p>
+Auf jeden Fall sollte der Pfad der Datenbank ge&auml;ndert werden - die &Auml;nderungen sind in allen Scripts incl. der 
+global.asa durchzuf&uuml;hren. Die global.asa mu&szlig; im Root-Verzeichnis der Webapplikation gespeichert werden. Es ist darauf 
+zu achten, da&szlig; eine bestehende Datei dabei nicht &uuml;berschrieben wird. Gegebenenfalls sind die Inhalte der Prozeduren 
+mit den in der bestehenden global.asa zusammenzuf&uuml;hren.
+</p>
+
+<p>
+Es empfiehlt sich weiters, die Dateien umzubenennen. Oder zumindest in einen Bereich zu legen, in dem normale 
+Besucherkeine Zugriffsrechte besitzen.
+</p>
+
+<p>
+In der Datei global.asa wird der Host-Name mittels Komponente abgefragt  - hier mu&szlig; die Syntax auf die verwendete 
+Komponente angepasst werden. Hat man keine, so kann man entweder &uuml;ber <a href="http://www.aspin.com" target="_blank">www.aspin.com</a> eine 
+herunterladen und installieren - oder man verzichtet auf die Hostauswertung (was auch schneller ist).
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Die vorgestellten Scripts sind voll lauff&auml;hig, es sind nur geringf&uuml;gige Anpassungen n&ouml;tig. Auf jeden Fall gilt: 
+Abfragen und die Daten d&uuml;rfen nicht in falsche H&auml;nde geraten. 
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020121.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20001206.htm">Benutzerverfolgung in ASP</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20020121" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Besucherverfolgung f&uuml;r Fortgeschrittene"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20020121.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Stefan Mayer"><input type="hidden" name="AuthorEmail" value="Stefan@x-press.at"><input type="hidden" name="Artikel" value="20020121"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20020121.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

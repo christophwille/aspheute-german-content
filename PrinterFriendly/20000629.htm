@@ -1,0 +1,201 @@
+<HTML>
+<HEAD>
+<TITLE>Automatisation mit SQL Server</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Der SQL Server Agent kommt mit SQL Server 7.0 oder h&ouml;her, und erlaubt, Jobs zu managen - und das sowohl flexibel als auch programmiertechnisch leistungsstark.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SQL Server Agent,Job,Step,Schedule,ActiveX,Transact SQL,Scheduling,Scheduler">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Automatisation mit SQL Server</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Server.htm">Server</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000629"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+In vorangegangenen Artikeln haben wir bereits gesehen, wie man mit Hilfe verschiedener Werkzeuge
+ASP Seiten automatisch ablaufen lassen kann. Dabei haben wir bis jetzt eine sehr m&auml;chtige Job-Engine
+nicht betrachtet - den SQL Server Agent.
+</p>
+<p>
+Der SQL Server Agent kommt mit SQL Server 7.0 oder h&ouml;her, und erlaubt, Jobs zu managen - und das sowohl
+flexibel als auch programmiertechnisch leistungsstark. Man kann einen Job aus mehreren Schritten zusammensetzen,
+und jeder Schritt kann verschiedene Programmiertechniken beeinhalten (nur ein Auszug):
+<ul>
+<li>CmdExec: ein Kommandozeilenprogramm ausf&uuml;hren.
+<li>ActiveX Script: ein VBScript oder JScript Script ausf&uuml;hren.
+<li>Transact SQL: eine Folge von SQL Befehlen auf einer bestimmten Datenbank ausf&uuml;hren.
+<li>Replikation: eine Datenbankreplikation starten.
+</ul>
+</p>
+<p>
+Diese Schritte k&ouml;nnen miteinander verbunden werden - so zum Beispiel kann man bestimmen, da&szlig; Schritt C nur
+dann ausgef&uuml;hrt wird, wenn Schritt B fehlgeschlagen ist.
+</p>
+<p>
+Das Scheduling ist das, was mir an den SQL Server Agent Jobs eigentlich am besten gef&auml;llt: ich kann mehrere
+Zeitpl&auml;ne festlegen, und dies sehr bequem und leistungsstark. Man kann Jobs unter folgenden Bedingungen
+starten:
+<ul>
+<li>Wenn der SQL Server Agent Service startet
+<li>Wenn die CPU "unterbesch&auml;ftigt" ist
+<li>Einmalig
+<li>Wiederholend - t&auml;glich, w&ouml;chentlich, monatlich.
+</ul>
+</p>
+<p>
+Das folgende Beispiel erkl&auml;rt Schritt f&uuml;r Schritt, wie man einen einfachen Job deklariert. Ich m&ouml;chte Sie
+dazu auffordern, mit den Optionen herumzuspielen, um ein Gef&uuml;hl f&uuml;r die Leistung des SQL Server Agent zu 
+bekommen, da eine eingehende Diskussion aller Optionen nicht m&ouml;glich ist.
+</p>
+
+<h2>Anlegen eines neuen Jobs</h2>
+<p>
+Die folgende Anleitung beschreibt, wie Sie einen neuen SQL Server Job anlegen k&ouml;nnen, der nach einem
+bestimmten Zeitplan eine Aktion ausf&uuml;hrt. In unserem Falle ist es ein einfaches ActiveX Script, das uns
+t&auml;glich um 20:00 eine Abfrage als XML mailt. Ein Anwendungsfall w&auml;re, sich eine &Uuml;bersicht der Bestellungen
+des aktuellen Tages mailen zu lassen - und es mu&szlig; ja nicht XML sein, es kann auch eine aufwendig formatierte
+HTML Email sein.
+</p>
+<p>
+<b>Schritt 1</b> Starten Sie den SQL Server Enterprise Manager, w&auml;hlen Ihren Server aus und &ouml;ffnen den <i>Management</i> Folder.
+Klicken Sie mit der rechten Maustaste, und w&auml;hlen <i>New Job</i> aus dem Kontextmen&uuml; (siehe Abbildung).
+</p>
+<p><IMG SRC="/artikel/Bilder/200006/20000629_1.png" width="522" height="433" border="0" alt=""></p>
+<p>
+<b>Schritt 2</b> Die <i>New Job Properties</i> Dialogbox &ouml;ffnet sich (siehe Abbildung). Geben Sie hier den Namen des Jobs ein -
+<b>OrdersEmail</b>. F&uuml;r den Anfang kann man die restlichen Optionen auf diesem Tab beruhigt auf den Standardwerten belassen.
+</p>
+<p><IMG SRC="/artikel/Bilder/200006/20000629_2.png" width="599" height="326" border="0" alt=""></p>
+<p>
+<b>Schritt 3</b> Wechseln Sie zum Tab <i>Steps</i>. Klicken Sie auf die <i>New</i> Schaltfl&auml;che um die Dialogbox <i>New Job Step</i>
+aufzurufen. Benennen Sie den Schritt <b>Send my mail</b>, und w&auml;hlen Sie <b>ActiveX Script</b> als Typ aus. Diese
+Wahl erlaubt Ihnen, VBScript einzutippen - und das kennen Sie ja bereits von ASP her. Hier ist der entsprechende
+Sourcecode zum Testen (tauschen Sie aber bitte die Emailadresse!):
+<pre style="background='silver';">
+Set Mailer = CreateObject(&quot;SoftArtisans.SMTPMail&quot;)
+Mailer.FromName = &quot;SQL Server Automated Mail&quot;
+Mailer.FromAddress = &quot;webmaster@alphasierrapapa.com&quot;
+Mailer.RemoteHost = &quot;email.aon.at&quot;
+Mailer.AddRecipient &quot;Administrator&quot;, &quot;christophw@alphasierrapapa.com&quot;
+Mailer.Subject = &quot;Automatisierte Benachrichtigung&quot;
+Mailer.BodyText = &quot;Datum: &quot; &amp; Now
+
+Set rs = CreateObject(&quot;ADODB.Recordset&quot;)
+strSQL = "SELECT * FROM ORDERS" 
+strConnStr = "provider=sqloledb.1;user id=sa;password=;" &amp; _
+  &quot;initial catalog=Northwind;data source=crimsontide&quot;
+
+rs.Open strSQL, strConnStr
+Const adPersistXML = 1
+rs.Save &quot;c:\temp\test.xml&quot;, adPersistXML
+rs.Close
+Set rs = Nothing
+	
+Mailer.AddAttachment &quot;c:\temp\test.xml&quot;
+Mailer.SendMail
+Set Mailer = Nothing
+</pre>
+</p>
+<p>Die Dialogbox sollte nun wie die folgende Abbildung aussehen:</p>
+<p><IMG SRC="/artikel/Bilder/200006/20000629_3.png" width="488" height="352" border="0" alt=""></p>
+<p>
+<b>Schritt 4</b> Klicken Sie auf OK, um den Schritt zu &uuml;bernehmen. Der Steps Tab sieht nun wie folgende Abbildung
+aus:</p>
+<p><IMG SRC="/artikel/Bilder/200006/20000629_4.png" width="599" height="326" border="0" alt=""></p>
+<p>
+Sie k&ouml;nnten jetzt weitere Schritte einf&uuml;gen, so zum Beispiel eine Replizierung starten, oder ein beliebiges
+Transact SQL Statement auszuf&uuml;hren. Meine Empfehlung - spielen Sie ein bischen mit den M&ouml;glichkeiten herum,
+bevor Sie weitermachen.
+</p>
+<p>
+<b>Schritt 5</b> Wechseln Sie zum Tab <i>Schedules</i>. Wie die Mehrzahl bereits impliziert, k&ouml;nnen Sie hier mehrere
+Zeitpl&auml;ne eintragen - f&uuml;r uns reicht ein einziger vollst&auml;ndig aus. Daf&uuml;r klicken Sie auf <i>New Schedule</i>. Die
+<i>New Schedule</i> Dialogbox wird ge&ouml;ffnet. Geben Sie einen Namen ein (<b>Mein Zeitplan</b>) und klicken Sie auf die
+<i>Change</i> Schaltfl&auml;che:
+</p>
+<p><IMG SRC="/artikel/Bilder/200006/20000629_5.png" width="480" height="293" border="0" alt=""></p>
+<p>
+Die nun folgende Dialogbox ist f&uuml;r die erste Betrachtung etwas &uuml;bervoll. Allerdings wollen wir den Plan
+ja nur auf <b>Daily</b> umstellen, und die Uhrzeit auf 8 Uhr abends (siehe Abbildung). Wenn alle &Auml;nderung durchgef&uuml;hrt sind, 
+klicken Sie auf OK - so oft, bis auch die letzte Dialogbox geschlossen ist. Der Job ist nun angelegt.
+</p>
+<p><IMG SRC="/artikel/Bilder/200006/20000629_6.png" width="473" height="371" border="0" alt=""></p>
+
+<h2>Den Task sofort starten</h2>
+<p>
+Der Job ist jetzt fertig angelegt und wartet darauf, vom <i>SQL Server Agent</i> gestartet zu werden (daher mu&szlig; dieser
+SQL Server Service auch laufen!). Allerdings bin ich eine Spur zu ungeduldig, und m&ouml;chte es gleich 
+ausprobieren. Dazu klicke ich mit der rechten Maustaste auf den Job, und w&auml;hle <i>Start Job</i> vom Kontextmen&uuml;.
+</p>
+<p>
+Nach einer kleineren Wartezeit kann ich dann die Email abholen:
+</p>
+<p><IMG SRC="/artikel/Bilder/200006/20000629_7.png" width="590" height="221" border="0" alt=""></p>
+<p>
+Ich kann die XML Datei jetzt einfach mit Internet Explorer ansehen, oder mit Hilfe eines Scripts in meine
+lokale Datenbank &uuml;bertragen. Die Grenzen sind hier nur die Vorstellungskraft.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die M&ouml;glichkeit, Scripts in VBScript zu einem SQL Server Job hinzuzuf&uuml;gen erlaubt es, sehr leistungsstarke
+Scripts zu erzeugen, die am Datenbankserver automatisch ablaufen k&ouml;nnen. Man kann sich damit sogar eine
+Staging L&ouml;sung basteln - allerdings sollte dann der Web Server auf der gleichen Maschine laufen. 
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000511.htm">Automation - WSH versus Wget</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000511.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

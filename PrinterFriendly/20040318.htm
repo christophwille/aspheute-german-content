@@ -1,0 +1,280 @@
+<HTML>
+<HEAD>
+<TITLE>Pager- und Footerzeilen des DataGrid erweitern</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Der Pager des DataGrids bietet standardm&auml;&szlig;ig nur zwei Arten der Formatierung: Seitenzahlen und Symbole zum Bl&auml;ttern ohne Angabe der Seitenzahlen. &Auml;hnlich langweilig gestaltet sich der Footer...">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,DataGrid,Pager,Paging,Footer,Fußzeile,Fusszeile,Kopfzeile,Anpassen,Formatieren,Summieren,Summe,Seitenangabe">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Pager- und Footerzeilen des DataGrid erweitern</H1>
+<p>
+Geschrieben von: <a href="../autoren/alexanderzeitler.htm">Alexander Zeitler</a><br>
+Kategorie: <a href="../kategorien/dotNET%20Fu.htm">.NET Fu</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20040318"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Der Pager des DataGrids bietet standardm&auml;&szlig;ig nur zwei Arten der Formatierung: Seitenzahlen und "Symbole" zum Bl&auml;ttern ohne 
+Angabe der Seitenzahlen. &Auml;hnlich langweilig gestaltet sich der Footer - im Normalfall ist er n&auml;mlich leer, obwohl er sich 
+gerade bei DataGrids f&uuml;r zB Summierung einzelner Spalten eignet.
+</p>
+<p>
+Die in diesem .NET Fu vorgestellte L&ouml;sung wird so aussehen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200403/20040318.png" width="510" height="471" alt="" border="0">
+
+<h2>Die L&ouml;sung: Pager </h2>
+<p>
+Anwenderfreundlicher w&auml;re ein Pager schon alleine durch die Tatsache, da&szlig; vor den Seitenzahlen das Wort "Seite" erscheint, 
+damit der User &uuml;berhaupt wei&szlig;, da&szlig; es sich um einen Pager mit mehreren Ergebnisseiten handelt.
+</p>
+<p>
+Die Umsetzung ist relativ einfach. Ausgehend von der Tatsache, da&szlig; das Paging im DataGrid mittels AllowPaging bereits aktiviert 
+ist, brauchen wir nur eine M&ouml;glichkeit, HTML-Elemente bzw. Text in den erzeugten DataGrid-HTML-Output einzubauen. Hierzu bietet 
+sich das Event OnItemCreated unseres DataGrids an - idealerweise m&uuml;ssen wir uns hierbei nicht einmal durch HTML-Code w&uuml;hlen, 
+sondern bekommen eine einfach zu bearbeitende Control-Collection. Die Umsetzung ist jetzt fast nur noch Formsache:
+</p>
+
+<pre style="background='silver';">
+private void ItemCreated(object sender, DataGridItemEventArgs e)
+{
+  if(e.Item.ItemType==ListItemType.Pager)
+  {
+    Label lblPager = new Label();
+    lblPager.Text = "Seite&amp;nbsp;" + lblPager.Text;
+    e.Item.Controls[0].Controls.AddAt(0,lblPager);
+  }
+}
+</pre>
+
+<p>
+Nach einer Pr&uuml;fung, ob das aktuelle Item der Pager ist, setzen wir einfach einen neuen Label an den Anfang der Controls-Collection 
+des Pagers, welcher den Text "Seite:&amp;nbsp" beinhaltet. Direkt im Anschlu&szlig; an diesen folgen die Label- und LinkButton-Controls, 
+welche die Seitenzahlen ausgeben.
+</p>
+
+<h2>Die L&ouml;sung: Footer</h2>
+<p>
+Wie eingangs bereits erw&auml;hnt, ist der Footer standardm&auml;&szlig;ig zum einen leer und zum anderen auch deaktiviert. Letzteres &auml;ndern 
+wir sofort durch ein
+</p>
+
+<pre style="background='silver';">
+this.DataGrid1.ShowFooter = true;
+</pre>
+
+<p>
+Den jetzt gewonnen freien Platz nutzen wir, um die Abfrage "Product Sales for 1995" aus der bekannten "Northwind"-Datenbank im 
+DataGrid &uuml;ber mehrere Seiten verteilt darzustellen und an jedem Seitenende - eben in jenem Footer - den &Uuml;bertrag der jeweiligen 
+Ums&auml;tze f&uuml;r diese Seite darzustellen. Au&szlig;erdem erweitern wir die L&ouml;sung noch dahingehend, da&szlig; wir auf der letzten Seite die 
+Gesamtsumme pr&auml;sentieren.
+</p>
+<p>
+Die Herangehensweise ist &auml;hnlich wie beim Pager, allerdings nutzen wir hier das Event OnItemDataBound.
+</p>
+<p>
+Der erste Schritt ist die Generierung der Zwischensummen der einzelnen Seiten. Hierzu ist es notwendig, die Werte der einzelnen 
+DataGridItems zu addieren. Zun&auml;chst ist also zu pr&uuml;fen, ob das aktuelle Item ein Item bzw. AlternatingItem darstellt. Ist dies 
+der Fall, werden die Werte aus der Datenquelle anhand des DataSetIndex' des aktuellen Items gelesen:
+</p>
+
+<pre style="background='silver';">
+private void ItemDataBound(object sender, DataGridItemEventArgs e)
+{
+ if((e.Item.ItemType==ListItemType.Item)||(e.Item.ItemType==ListItemType.AlternatingItem))
+ {
+   lumpSum += 
+      Double.Parse((this.ReadDataFromDB().Tables[0].Rows[e.Item.DataSetIndex][2].ToString()));
+ }
+}
+</pre>
+
+<p>
+"lumpSum" ist als &ouml;ffentliche Variable vom Typ double innerhalb der Page-Klasse zu deklarieren:
+</p>
+
+<pre style="background='silver';">
+public double lumpSum;
+</pre>
+
+<p>
+Der Weg &uuml;ber die Datenquelle erscheint zun&auml;chst umst&auml;ndlicher als z.B. die aktuellen Zellinhalte des DataGrids mittels 
+Replace zu bearbeiten (in diesem Falle, um das W&auml;hrungssymbol zu eliminieren) und zu addieren. Doch wie wir alle wissen, 
+finden sich selten zwei Server mit absolut identischen Konfigurationen - die n&auml;chste Exception wegen fehlerhafter Inputstrings 
+bei Double.Parse ist somit vorprogrammiert.
+</p>
+<p>
+Nachdem wir nun die Summe ermittelt haben, m&uuml;ssen wir diese noch in die entsprechende Footerzelle des DataGrids schreiben. 
+Diese Zellen lassen sich &uuml;ber einen nullbasierenten Index ansprechen. In unserem Fall handelt es sich um die dritte Spalte, 
+somit w&auml;re der gesuchte Index "2". Zu beachten ist hierbei, da&szlig; evtl. ausgeblendete Spalten (Visible=false) ebenfalls zu 
+z&auml;hlen sind. Die Zelle des Footers steht direkt als Objekt zur Verf&uuml;gung und kann &uuml;ber die .Text-Eigenschaft den ermittelten 
+und als W&auml;hrung formatierten Wert von "lumpSum" aufnehmen (das Ganze findet nach wie vor in ItemDataBound statt).
+</p>
+
+<pre style="background='silver';">
+if(e.Item.ItemType==ListItemType.Footer)
+{
+  e.Item.Cells[2].HorizontalAlign = HorizontalAlign.Right;
+  e.Item.Cells[2].Text = "&Uuml;bertrag:&amp;nbsp;" + string.Format("{0:c}",lumpSum);
+}
+</pre>
+
+<p>
+Schlie&szlig;lich fehlt uns nur noch die Ausgabe der Endsumme auf der letzten Seite. Hierzu m&uuml;ssen wir zun&auml;chst herausfinden, ob wir 
+uns auf der letzten Seite befinden. Dies geschieht, indem wir die Anzahl der Datens&auml;tze in der Datenquelle durch die Seitengr&ouml;&szlig;e 
+dividieren. Der Ganzzahlanteil stellt den Index der letzten Seite dar. Tritt der Sonderfall ein, da&szlig; der letzte Datensatz die 
+letzte Seite genau ausf&uuml;llt, ist der Index um 1 zu minimieren, da sonst der Index eine Seite zuviel "produzieren" w&uuml;rde. Die 
+wiederum w&uuml;rde dazu f&uuml;hren, da&szlig; auf unserer letzten Seite keine Endsumme erscheint.
+</p>
+<p>
+Entspricht der ermittelte Index der letzten Seite "lastPageIndex" dem Index der aktuellen Seite, sind wir auf der letzten Seite 
+gelandet. Jetzt m&uuml;ssen wir nur noch die Werte der Datenquelle aufsummieren und &auml;hnlich wie beim &Uuml;bertrag an unseren Footer anf&uuml;gen:
+</p>
+
+<pre style="background='silver';">
+DataSet dsSales = this.ReadDataFromDB();
+int lastPageIndex = dsSales.Tables[0].Rows.Count/DataGrid1.PageSize;
+if(dsSales.Tables[0].Rows.Count%DataGrid1.PageSize==0)
+	lastPageIndex--;
+if(lastPageIndex==DataGrid1.CurrentPageIndex)
+{
+	double totalLumpSum = 0;
+	foreach(DataRow dr in this.ReadDataFromDB().Tables[0].Rows)
+	{
+		totalLumpSum += double.Parse(dr["ProductSales"].ToString());
+	}
+	e.Item.Cells[2].Text += 
+		"&lt;br&gt;Endsumme:&amp;nbsp;" + string.Format("{0:c}",totalLumpSum);
+}
+</pre>
+
+<p>
+Somit ergibt sich f&uuml;r die hier vorgestellten Implementierungen im Gesamten also folgender Code (f&uuml;r den leichteren &Uuml;berblick):
+</p>
+
+<pre style="background='silver';">
+public double lumpSum;
+private void ItemCreated(object sender, DataGridItemEventArgs e)
+{
+  if(e.Item.ItemType==ListItemType.Pager)
+  {
+    Label lblPager = new Label();
+    lblPager.Text = "Seite&amp;nbsp;" + lblPager.Text;
+    e.Item.Controls[0].Controls.AddAt(0,lblPager);
+  }
+}
+
+private void ItemDataBound(object sender, DataGridItemEventArgs e)
+{
+  if((e.Item.ItemType==ListItemType.Item)||(e.Item.ItemType==ListItemType.AlternatingItem))
+  {
+    lumpSum = lumpSum + 
+     Double.Parse((this.ReadDataFromDB().Tables[0].Rows[e.Item.DataSetIndex][2].ToString()));
+  }
+
+  if(e.Item.ItemType==ListItemType.Footer)
+  {
+    e.Item.Cells[2].HorizontalAlign = HorizontalAlign.Right;
+    e.Item.Cells[2].Text = "&Uuml;bertrag:&amp;nbsp;" + string.Format("{0:c}",lumpSum);
+    DataSet dsSales = this.ReadDataFromDB();
+    int lastPageIndex = dsSales.Tables[0].Rows.Count/DataGrid1.PageSize;
+    if(dsSales.Tables[0].Rows.Count%DataGrid1.PageSize==0)
+      lastPageIndex-- ;
+    if(lastPageIndex==DataGrid1.CurrentPageIndex)
+    {
+      double totalLumpSum = 0;
+      foreach(DataRow dr in this.ReadDataFromDB().Tables[0].Rows)
+      {
+        totalLumpSum += double.Parse(dr["ProductSales"].ToString());
+      }
+      e.Item.Cells[2].Text += 
+        "&lt;br&gt;Endsumme:&amp;nbsp;" + string.Format("{0:c}",totalLumpSum);
+    }
+  }
+}
+</pre>
+
+<p>
+Ein funktionsf&auml;higes Beispiel dieser Implementierung finden Sie 
+<a href="http://alexonasp.net/dotnetfu/datagridpager" target="_blank">hier</a>.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dieser Artikel hat gezeigt, wie leicht sich die scheinbar "statischen" Daten im DataGrid auch nachtr&auml;glich modifizieren lassen. 
+Nat&uuml;rlich bietet diese Implementierung Potential f&uuml;r weitere Verbesserungen - so werden Sie sicherlich die Daten aus 
+Performancegr&uuml;nden nicht bei jedem Durchlauf von ItemDataBound aus der Datenbank lesen. 
+</p>
+<p>
+Eine weitere interessante Aufgabe, die auf dieser L&ouml;sung basiert, w&auml;re beispielsweise den &Uuml;bertrag der vorhergehenden Seiten 
+mit dem &Uuml;bertrag der aktuellen Seite zu kumulieren.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20040318.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20040318.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20030909.htm">Das ASP.NET DataGrid selbst erweitern</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20030909.htm</span><br>
+<a href="../artikel/20040929.htm">DataGrid - Daten bearbeiten leicht gemacht</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040929.htm</span><br>
+<a href="../artikel/20040317.htm">Eintr&auml;ge numerieren im DataGrid</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040317.htm</span><br>
+<a href="../artikel/20040628.htm">MouseOver-Effekte beim DataGrid</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040628.htm</span><br>
+<a href="../artikel/20040303.htm">Vergleich von DataGrid, DataList und Repeater-Control - was verwende ich wann?</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040303.htm</span><br>
+<a href="../artikel/20020704.htm">Zahl, Datum und W&auml;hrung korrekt formatiert ausgeben</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020704.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

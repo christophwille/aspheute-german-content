@@ -1,0 +1,320 @@
+<HTML>
+<HEAD>
+<TITLE>Universal Data Links mit ASP verwenden</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel gibt Ihnen einen Walkthrough durch die Erstellung von Universal Data Link Dateien (Erweiterung *.udl) und erl&auml;utert auch die Vorteile die sich durch ihre Verwendung ergeben.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,UDL,Universal Data Link,Universal Data Access,ADO,ActiveX Data Objects,Access,SQL Server">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Universal Data Links mit ASP verwenden</H1>
+<p>
+Geschrieben von: <a href="../autoren/thomasrueger.htm">Thomas Rüger</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010515"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Mit ASP gibt es viele M&ouml;glichkeiten um auf eine Datenbank zuzugreifen.
+Neben ODBC und direkter Codierung gibt es auch noch die Verwendung von Universal Data Links (UDL). Dieser Artikel 
+gibt Ihnen einen Walkthrough durch die Erstellung von Universal Data Link Dateien (Erweiterung *.udl) und erl&auml;utert auch 
+die Vorteile die sich durch ihre Verwendung ergeben. 
+</p>
+
+<p>
+Zuerst werde ich ihnen die Erstellung von UDL Dateien f&uuml;r den Zugriff auf MS Access und SQL Server Datenbanken vorstellen, 
+und dadurch gleichzeitig ihren Gebrauch auch au&szlig;erhalb von ASP aufzeigen. Abschlie&szlig;end zeige ich Ihnen ein einfaches 
+ASP Beispiel, das eine UDL Datei verwendet, um Daten aus einer MS Access Datenbank zu gewinnen.
+</p>
+
+<h2>Voraussetzungen f&uuml;r die Verwendung von UDLs</h2>
+
+<p>
+Um UDLs verwenden zu k&ouml;nnen ben&ouml;tigen Sie eine neuere Version der Microsoft Data Access Components (MDAC). 
+Die MDAC werden derzeit zu fast jeder Microsoft Anwendung mitgeliefert und auch standardm&auml;&szlig;ig installiert. 
+Solche Anwendungen w&auml;ren z.B. der SQL-Server, Internet Explorer oder Office 2000. Um immer am neuesten Stand zu 
+bleiben, sollten Sie aber die aktuelle Version von der 
+<a href="http://www.microsoft.com/data/" target="_blank">Microsoft Universal Data Access Homepage</a> downloaden. 
+F&uuml;r den Fall, da&szlig; Sie mit Windows 9x arbeiten, ben&ouml;tigen Sie zus&auml;tzlich noch DCOM 95/98.
+</p>
+
+<p>
+Beginnen wir mit dem Kochrezept f&uuml;r die Erstellung einer UDL Datei f&uuml;r eine Verbindung zu einer MS Access Datenbank.
+</p>
+
+<h2>UDL's f&uuml;r MS Access Datenbanken</h2>
+
+<p>
+Nach Installation der MDAC &ouml;ffnen Sie den Explorer und navigieren in das Verzeichnis, in dem die UDL Datei erstellt 
+werden soll (z.B. \Inetpub\wwwroot\WebSite\UDLFiles). Nat&uuml;rlich kann die Datei auch au&szlig;erhalb des 
+Webverzeichnisses liegen (aus Sicherheitsgr&uuml;nden sogar vielleicht besser).
+</p>
+
+<p>
+Im Verzeichnis erstellen Sie mit Hilfe des Kontextmen&uuml;s eine neue Textdatei. Diese benennen Sie z.B. 
+<b>UDL_Acc.udl</b>. Wichtig dabei ist, da&szlig; die Datei die Erweiterung "udl" erh&auml;lt.
+</p>
+
+<p>
+Danach klicken Sie mit der rechten Maustaste auf die eben erstellte Datei und &ouml;ffnen deren Eigenschaften:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010515_01.png" width="332" height="368" alt="" border="0">
+
+<p>
+Sie erhalten nun neben den allgemeinen Dateieigenschaften die UDL-spezifischen Konfigurationsm&ouml;glichkeiten f&uuml;r 
+eine Verbindung. Da unsere neu erstellte Datei noch keine Verbindungsinformationen enth&auml;lt, beginnen wir mit dem 
+<i>Provider</i>-Tab und w&auml;hlen den Microsoft Jet OLEDB Provider:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010515_02.png" width="367" height="476" alt="" border="0">
+
+<p>
+Die angezeigten Treiber h&auml;ngen von der jeweiligen Version der MDAC ab. Zus&auml;tzliche Treiber, insbesondere von Fremdanbietern, k&ouml;nnen nat&uuml;rlich auch enthalten sein.
+</p>
+
+<p>
+Nun klicken Sie auf <i>Next</i> und im <i>Connections</i> Tab geben wir die Verbindungseigenschaften an:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010515_03.png" width="367" height="476" alt="" border="0">
+
+<p>
+Wie Sie aus den Verbindungsinformationen entnehmen k&ouml;nnen, ist die Angabe eines Pa&szlig;wortes m&ouml;glich. Dieses Pa&szlig;wort 
+wird nur von der UDL verwendet, kann also vom Benutzer des IIS differieren. Aber dieses Pa&szlig;wort wird immer im 
+Klartext in der UDL abgespeichert. F&uuml;r ASP bietet dies den Vorteil, da&szlig; ein Pa&szlig;wort nicht in die ASP-Datei eingetragen 
+werden mu&szlig;. Andererseits liegt das Pa&szlig;wort f&uuml;r jeden Zugriffsberechtigten auf der Festplatte frei lesbar "herum".
+</p>
+
+<p>
+Wie Sie in dem obigen Bild sehen, k&ouml;nnten Sie schon die Verbindung testen, da Sie ja schon die wichtigsten 
+Verbindungsinformationen angegeben haben. Jedoch sollten Sie
+vorher noch die Einstellungen im <i>Advanced</i>-Tab bzw. im <i>All</i>-Tab &uuml;berpr&uuml;fen.
+</p>
+
+<p>
+Im <i>Advanced</i>-Tab k&ouml;nnen Sie netzwerkspezifische Einstellungen treffen und die Zugriffsrichtlinien angeben:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010515_04.png" width="366" height="474" alt="" border="0">
+
+<p>
+Diese Erweiterungen h&auml;ngen jedoch wesentlich von der Wahl des Providers ab.
+</p>
+
+<p>
+Im <i>All</i>-Tab sind nochmals alle Verbindungsinformationen enthalten. Hier k&ouml;nnen Sie alle  getroffenen 
+Einstellungen &uuml;berpr&uuml;fen bzw. &auml;ndern:
+</p>
+
+
+<IMG SRC="/artikel/Bilder/200105/20010515_05.png" width="367" height="476" alt="" border="0">
+
+
+<p>
+Eine Korrektur ist jederzeit &uuml;ber die Schaltfl&auml;che <i>Edit Value</i> (Wert bearbeiten) oder durch Doppelklick auf 
+einen Eintrag m&ouml;glich:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010515_06.png" width="397" height="176" alt="" border="0">
+
+<p>
+Nachdem alle Eingaben get&auml;tigt wurden, k&ouml;nnen Sie nun die Verbindung testen indem Sie im <i>Connection</i>-Tab auf den 
+Button <i>Test Connection</i> klicken. Wenn alle Parameter richtig angegeben wurden, wird der Test erfolgreich beendet.
+</p>
+
+<p>
+Dies ist ein Vorteil gegen&uuml;ber der "Do-It-Yourself" Verbindungseintragung im ASP-Code. Ein Testlauf auf dem Webserver 
+ist hier zum Testen der Verbindung nicht notwendig. Eventuelle Fehlerquelleninformation &uuml;ber ASP-Code oder Webserver 
+sind hier definitiv nicht zu erwarten, da die Dialogbox der Meldung nur anzeigt, ob der Vorgang erfolgreich war 
+oder nicht.
+</p>
+
+<p>
+Nachdem Sie nun alle erforderlichen Angaben get&auml;tigt haben und die Verbindung getestet wurde, ist ein Blick in die 
+eben generierte UDL Datei interessant:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010515_07.png" width="467" height="124" alt="" border="0">
+
+<p>
+Wie Sie sehen, ist dies nichts anderes als die DSN Eintr&auml;ge f&uuml;r eine Connection. Jedoch lassen 
+sich hiermit eventuelle Fl&uuml;chtigkeitsfehler vermeiden.
+</p>
+
+<h2>UDL's f&uuml;r SQL Server</h2>
+
+<p>
+Da f&uuml;r einen gr&ouml;&szlig;eren Datenbestand SQL Datenbanken eingesetzt werden und der SQL Server gegen&uuml;ber Access um einiges 
+leistungsf&auml;higer ist, hier noch die Erstellung einer UDL Datei f&uuml;r eine SQL Datenbank. Im Prinzip ist es derselbe 
+Vorgang, nur ergeben sich hierbei nat&uuml;rlich SQL Server spezifische Einstellungen.
+</p>
+
+<p>
+Wir w&auml;hlen nun den SQL Provider:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010515_08.png" width="368" height="476" alt="" border="0">
+
+<p>
+Wir gelangen wieder zum <i>Connections</i>-Tab, wenn wir auf den <i>Next</i>-Button klicken:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010515_09.png" width="368" height="475" alt="" border="0">
+
+<p>
+Zuerst w&auml;hlen wir den gew&uuml;nschten Datenbank Server aus, und w&auml;hlen dann die Authentifizierungsart aus. Was noch fehlt 
+ist die Auswahl der Datenbank - in diesem Fall wieder einmal die Northwind SQL Datenbank.
+</p>
+
+<p>
+Im <i>Advanced</i>-Tab haben Sie wiederum die M&ouml;glichkeit netzwerkspezifische Einstellungen zu treffen und einen <i>Timeout</i> 
+f&uuml;r die Verbindung bei Fehlschlag anzugeben. Da die Zugriffsberechtigungen bei Verwendung eines SQL Servers im 
+SQL Enterprise Manager angegeben werden, ist die <i>Access Permissions</i> Auswahlliste inaktiv.
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010515_10.png" width="368" height="475" alt="" border="0">
+
+<p>
+Im <i>All</i>-Tab sind wie im vorig besprochenen Beispiel f&uuml;r Access Datenbanken alle Eigenschaften aufgelistet und 
+editierbar. Sehen wir uns - bevor ich Ihnen ein kurzes ASP Beispiel f&uuml;r die Verwendung der UDL Dateien pr&auml;sentiere - 
+den generierten Code der UDL Datei (<i>UDL_SQL.udl</i>) an:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010515_11.png" width="467" height="125" alt="" border="0">
+
+<h2>Und jetzt: UDL in ASP verwenden</h2>
+
+<p>
+Jetzt haben wir die Hintergr&uuml;nde zu UDL, den Aufbau und die Erzeugung fertig durchbesprochen - und nun kommen wir 
+zur Verwendung von UDL in ASP Dateien.
+</p>
+
+<p>
+Das Beispiel enth&auml;lt eine ASP Datei (<b>testUDL.asp</b>) welche mittels der UDL Datei <b>UDL_Acc.udl</b> auf eine 
+Access Datenbank zugreift (<b>udl_2k.mdb</b>). Zum Zwecke der Demonstration ist die Datenbank nicht 
+passwortgesch&uuml;tzt und enth&auml;lt auch nur eine Tabelle namens <i>TUDL</i>:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010515_12.png" width="547" height="93" alt="" border="0">
+
+<p>
+Der Sourcecode der ASP Datei sieht wie folgt aus:
+</p>
+
+<pre style="background='silver';">
+&lt;%@language="VbScript"%&gt;
+&lt;%
+Response.Buffer = True
+Response.Expires = 0
+Dim objConn
+Dim strSQL
+Dim objRS
+Dim strPath
+
+'Hier noch ihre Pfadangaben erg&auml;nzen:
+strPath = Server.MapPath("/UDL/UDLFiles/UDL_Acc.udl")
+
+Set objConn = Server.CreateObject("ADODB.Connection")
+objConn.Open "file name=" &amp; strPath
+strSQL = "SELECT * FROM Tudl"
+Set objRS= objConn.Execute(strSQL)
+While Not objRS.EOF  
+  Response.Write objRS("TudlText").Value &amp; "&lt;br&gt;" 
+  objRS.MoveNext
+Wend
+%&gt;
+</pre>
+
+<p>
+Die interessante Zeile ist die mit der &Ouml;ffnung der Connection &uuml;ber den Aufruf der <b>UDL_Acc.udl</b> Datei. Bei 
+Verwendung von UDL Dateien mu&szlig; diese nicht mehr im Webserververzeichnis liegen. Die UDL Datei habe ich hier in einem 
+separaten Unterverzeichnis abgelegt, um unerlaubten Zugriff zu erschweren. Der Benutzer mit Zugriff auf Ihre 
+Site ben&ouml;tigt ebenfalls keine Schreibberechtigung. Diese k&ouml;nnen Sie einem Benutzer &uuml;bergeben, welcher nur in der 
+UDL steht.
+</p>
+
+<p>
+Weitere Zugangsdaten werden in der ASP Datei nicht ben&ouml;tigt, d.h. k&ouml;nnen auch von au&szlig;en nicht eingesehen werden.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dieser Artikel gab Ihnen eine einfache Anleitung f&uuml;r die Erstellung von UDL Dateien, welche entweder eine 
+Verbindung zu MS Access oder MS SQL Server Datenbanken herstellen. Die Verwendung von UDL Dateien bietet eine 
+men&uuml;gest&uuml;tzte und somit auch eine fehlerfreie Verbindungserstellung zu Datenbanken. 
+</p>
+<p>
+Weitere Vorteile sind die Trennung zwischen ASP-Code und Verbindungsinformationen - die Verbindungsinformationen 
+k&ouml;nnen au&szlig;erhalb des IIS Contextes liegen - und Sie k&ouml;nnen nun getrost auf die Erstellung von User bzw. System DSNs 
+verzichten.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010515.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010515.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000329.htm">ADO Component Checker Tool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000329.htm</span><br>
+<a href="../artikel/19990825.htm">ADO und ASP - Datenbanken einmal n&auml;her betrachtet</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990825.htm</span><br>
+<a href="../artikel/20000327.htm">ADO und MDAC Versionen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000327.htm</span><br>
+<a href="../artikel/19990826.htm">ODBC und ASP - Eine DSN zur Verwendung mit ASP definieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990826.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2Fdata%2F">Microsoft Universal Data Access Homepage</a><br>
+<SPAN class="content">http://www.microsoft.com/data/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

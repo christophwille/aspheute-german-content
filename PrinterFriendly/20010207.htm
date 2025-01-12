@@ -1,0 +1,328 @@
+<HTML>
+<HEAD>
+<TITLE>ASPForums 2.1 installieren und anpassen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor, wie man das Gratisforum ASPForums installiert und richtig konfiguriert - mit allen Tips und Tricks, die es gibt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Forum,ASPForums,Konfiguration,Installation,Jscript,OLEDB,SQL Server,Email">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>ASPForums 2.1 installieren und anpassen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010207"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Die besten Dinge im Leben sind gratis - das stimmt zwar nicht, aber zumindest einige
+gute Software ist tats&auml;chlich gratis. So zum Beispiel ASPForums, das eine einfache,
+extrem konfigurierbare (Stichwort "Extremkonfiguriering") Forensoftware auf Basis von
+ASP darstellt.
+</p>
+<p>
+Nur leider hat gratis auch einen Haken - und wie sooft ist dieser Haken, da&szlig; das Forum
+US-amerikanisch ist, was Sprache als auch Formatierung betrifft. Aber - und das ist das
+Gute an ASPForums - es l&auml;&szlig;t sich leicht lokalisieren, und das &uuml;ber Versionsgrenzen
+hinweg!
+</p>
+<p>
+Vorweg noch ein kleiner Abri&szlig; &uuml;ber die Features, damit man wei&szlig;, wozu man sich die Arbeit
+angefangen hat:
+</p>
+<ul>
+    <li>Diskussionsthreads mit automatischer Archivierung
+    <li>Das UI kann vollst&auml;ndig angepasst werden
+    <li>Die Nachrichten k&ouml;nnen WYSIWYG editiert werden
+    <li>Datenbankneutral
+    <li>Darstellung und Code sind vollst&auml;ndig voneinander getrennt - wird die
+        dahinterliegende Engine upgedatet, beinflu&szlig;t das den eigenen UI Code
+        &uuml;berhaupt nicht.
+</ul>
+
+<h2>Die Basisinstallation</h2>
+<p>
+Wenn man die Software downgeloadet hat, mu&szlig; man im Prinzip nur eines machen - sie in das
+Verzeichnis seiner Wahl zu entpacken. Bis auf die Konfiguration des Connection Strings
+war das alles, was man f&uuml;r das Setup des Forums mit einer Access Datenbank ben&ouml;tigt.
+</p>
+
+<p>
+In der HowTo Sektion auf ASPForums gibt es eine gute Anleitung, wie man ASPForums
+in einer SQL Server Datenbank aufsetzen kann: 
+<a href="http://www.aspforums.com/ASPForums/howto/sqlserver.asp" target="_blank">Changing the backend ASP Forums database to SQL Server</a>.
+Meine Empfehlung geht klarerweise an SQL Server - schneller, stabiler, einfach gut.
+</p>
+
+<h2>Die Konfigurationsdatei aspforums.asp</h2>
+<p>
+Das &auml;u&szlig;erst lobenswerte an ASPForums ist, da&szlig; sich die ganze Konfiguration in einer
+einzigen Datei abspielt, n&auml;mlich <strong>aspforums.asp</strong>. Mitgeliefert wird eine
+sehr sp&auml;rliche Version:
+</p>
+
+<pre style="background='silver';">
+&lt;!-- #INCLUDE file=&quot;discussionengine/adoconsts.asp&quot; --&gt;
+&lt;!-- #INCLUDE file=&quot;discussionengine/discussionengine.asp&quot; --&gt;
+&lt;SCRIPT LANGUAGE=&quot;JavaScript&quot; RUNAT=&quot;Server&quot;&gt;
+currentUsername_disc = &quot;Unset&quot;;
+currentUserFullName_disc = &quot;Name Unset&quot;;
+currentUserEmailAddress_disc = &quot;unset@unset.com&quot;;
+
+isAdministrator_disc = false;
+config.emailAdminAddress = &quot;&quot;;
+
+// config.ADMINSETTING_DatabaseDSN = &quot;Provider=Microsoft.Jet.OLEDB.4.0; Data Source=&quot; + 
+                  Server.MapPath (config.ADMINSETTING_DatabaseFilename)
+&lt;/SCRIPT&gt;
+</pre>
+
+<p>
+Das ge&uuml;bte Auge erkennt, da&szlig; das JScript ist, und zwar serverseitiges. Wer jetzt in Panik
+ausbricht, dazu gibt es keinen Grund - wir werden Schritt f&uuml;r Schritt alles einbauen,
+was man braucht - und dann mu&szlig; man JScript nie wieder angreifen.
+</p>
+
+<p>
+Ich habe einige Dinge mit der Datei aspforums.asp angestellt - beinahe alle
+HowTo's implementiert, das Forum zwecks intimeren Kennenlernens selbst &uuml;bersetzt, und
+das Design angepasst, weil das Standarddesign sehr m&uuml;hsam ist. Alles in allem ein
+Grundstock, den man dann mit Suchen und Ersetzen an die eigenen Bed&uuml;rfnisse anpassen
+kann.
+</p>
+
+<pre style="background='silver';">
+&lt;!-- #INCLUDE file=&quot;discussionengine/adoconsts.asp&quot; --&gt;
+&lt;!-- #INCLUDE file=&quot;discussionengine/discussionengine.asp&quot; --&gt;
+&lt;SCRIPT LANGUAGE=&quot;JavaScript&quot; RUNAT=&quot;Server&quot;&gt;
+currentUsername_disc = &quot;&quot;;
+currentUserFullName_disc = &quot;&quot;;
+currentUserEmailAddress_disc = &quot;&quot;;
+
+// das sollte man gegen &quot;richtige&quot; Loginformulare eintauschen
+isAdministrator_disc = false;
+config.emailAdminAddress = &quot;&quot;;
+
+config.ADMINSETTING_ForumName = &quot;Diskussionsforum f&uuml;r Haflingerfreunde&quot;;
+config.ADMINSWITCH_AllowEmailResponses = true;
+config.ADMINSETTING_EmailAlertSignature = &quot;--\nDiese Nachricht wurde...&quot;;
+
+// Jede gepostete Nachricht wird an diese Adresse geschickt
+config.ADMINSETTING_EmailAdminAddress = &quot;forumadmin@myhaflinger.com&quot;;
+config.ADMINSETTING_EmailAlertFromName = &quot;Haflingerfreunde Forum&quot;;
+config.ADMINSETTING_EmailAlertFromAddress = &quot;forum@myhaflinger.com&quot;;
+
+config.ADMINSETTING_EmailAlertSignature = &quot;--\nDiese Nachricht ...&quot;;
+config.ADMINSETTING_EmailAlertSignatureHTML = &quot;&lt;FONT FACE=\&quot;Tahoma,Arial,...&quot;;
+
+config.ADMINSETTING_DaysMessagesActive = 90;
+config.ADMINSETTING_ExpandFirstNThreads = 5;
+config.ADMINSETTING_DefaultEmbeddedLinkTarget = &quot;_new&quot;;
+
+config.ADMINSWITCH_ShowEmailAddresses = true;
+config.ADMINSWITCH_ViewPostsAscending = false;
+
+config.ADMINSETTING_ExpandImagePathname = &quot;/forum/plus.gif&quot;;
+config.ADMINSETTING_ExpandImageWidth = &quot;9&quot;;
+config.ADMINSETTING_ExpandImageHeight = &quot;9&quot;;
+config.ADMINSETTING_CollapseImagePathname = &quot;/forum/minus.gif&quot;;
+config.ADMINSETTING_CollapseImageWidth = &quot;9&quot;;
+config.ADMINSETTING_CollapseImageHeight = &quot;9&quot;;
+config.ADMINSETTING_NoExpandImagePathname = &quot;/forum/blank.gif&quot;;
+config.ADMINSETTING_NoExpandImageWidth = &quot;9&quot;;
+config.ADMINSETTING_NoExpandImageHeight = &quot;9&quot;;
+
+config.ADMINSETTING_DatabaseDSN = &quot;provider=sqloledb.1;initial catalog=myhaflinger;
+[continued]     data source=strangelove;UID=sa;PWD=&quot;;
+&lt;/SCRIPT&gt;
+&lt;!--#include file=&quot;customrenderes.asp&quot;--&gt;
+&lt;!--#include file=&quot;languagepack.asp&quot;--&gt;
+&lt;!--#include file=&quot;customdates.asp&quot;--&gt;
+</pre>
+
+<p>
+Fangen wir von unten nach oben an - es sind drei Includes dazugekommen (im Download des heutigen Artikels enthalten). Die letzten
+zwei sind dann interessant, wenn man die Meldungstexte des Forums anpassen m&ouml;chte. 
+Das erste definiert das Aussehen der meisten Formulare von ASPForums, und ich habe
+hier hemmungslos aus den HowTos "geborgt" - man erh&auml;lt viel Beispielcode, wie die
+einzelnen Formulare umgebaut werden k&ouml;nnen. So zum Beispiel sieht eine "cool" formatierte
+Nachricht aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200102/20010207_2.png" width="536" height="363" alt="" border="0">
+
+<p>
+Die restlichen "paar" Konfigurationseinstellungen habe ich so gut es geht nach Zusammengeh&ouml;rigkeit
+gruppiert. Nach dem Connectionstring f&uuml;r SQL Server folgt ein Block mit Definitionen f&uuml;r
+kleine Symbolbilder (blank, plus, minus) - diese werden in der Baumansicht des Forums verwendet:
+</p>
+
+<IMG SRC="/artikel/Bilder/200102/20010207_1.png" width="618" height="232" alt="" border="0">
+
+<p>
+Der Block
+</p>
+
+<pre style="background='silver';">
+config.ADMINSETTING_DaysMessagesActive = 90;
+config.ADMINSETTING_ExpandFirstNThreads = 5;
+config.ADMINSETTING_DefaultEmbeddedLinkTarget = &quot;_new&quot;;
+</pre>
+
+<p>
+definiert die Anzahl der zu expandierenden Threads, als auch wann eine Nachricht in das
+Archiv verschoben wird. Und - da Links in Nachrichten erlaubt sind - auch das Linktarget
+ist definierbar.
+</p>
+
+<p>
+Die beiden Zeilen
+</p>
+
+<pre style="background='silver';">
+config.ADMINSETTING_EmailAlertSignature = &quot;--\nDiese Nachricht ...&quot;;
+config.ADMINSETTING_EmailAlertSignatureHTML = &quot;&lt;FONT FACE=\&quot;Tahoma,Arial,...&quot;;
+</pre>
+
+<p>
+habe ich zwar etwas verk&uuml;rzt, aber der Sinn ist folgender: immer wenn das Forum eine Nachricht
+per Email schickt, soll je nach Text oder HTML Emaileinstellung eine Fu&szlig;zeile mitgeschickt werden.
+</p>
+
+<p>
+Ebenso zum Konfigurieren der Nachrichten dienen folgende Zeilen:
+</p>
+
+<pre style="background='silver';">
+config.ADMINSETTING_EmailAdminAddress = &quot;forumadmin@myhaflinger.com&quot;;
+config.ADMINSETTING_EmailAlertFromName = &quot;Haflingerfreunde Forum&quot;;
+config.ADMINSETTING_EmailAlertFromAddress = &quot;forum@myhaflinger.com&quot;;
+</pre>
+
+<p>
+Die erste Zeile definiert da&szlig; f&uuml;r jede gepostete Nachricht eine Kopie davon per Email
+an diese Adresse - oder durch Strichpunkte getrennte Adressen - geschickt werden soll, damit
+der Listmaster automatisch &uuml;ber neue Nachrichten informiert wird.
+Der Name des Senders als auch die Emailadresse des Senders werden in den nachfolgenden
+zwei Zeilen definiert.
+</p>
+
+<p>
+Bleibt noch
+</p>
+
+<pre style="background='silver';">
+config.ADMINSETTING_ForumName = &quot;Diskussionsforum f&uuml;r Haflingerfreunde&quot;;
+config.ADMINSWITCH_AllowEmailResponses = true;
+</pre>
+
+<p>
+Unverkennbar ist Zeile eins - der Name des Forums, der auf jeder Seite aufscheint.
+Die darauffolgende Zeile definiert, ob man sich Antworten auf das eigene Posting per Email
+zuschicken lassen kann. Dies zeigt sich dann als Checkbox auf der Seite der 
+Nachrichtenerstellung:
+</p>
+
+<IMG SRC="/artikel/Bilder/200102/20010207_3.png" width="546" height="509" alt="" border="0">
+
+<p>
+In diesem Screenshot sieht man, warum ich von tollen Editierfunktionen f&uuml;r Nachrichten
+gesprochen habe!
+</p>
+
+<p>
+Last but not least die ersten drei Zeilen:
+</p>
+
+<pre style="background='silver';">
+currentUsername_disc = &quot;&quot;;
+currentUserFullName_disc = &quot;&quot;;
+currentUserEmailAddress_disc = &quot;&quot;;
+</pre>
+
+<p>
+Warum setze ich die auf leere Strings? Da ich beim Forum kein Login habe, m&ouml;chte ich,
+da&szlig; der User alle diese Daten eintippen mu&szlig; - allerdings habe ich aus Username den
+Nickname gemacht (ersichtlich im vorangehenden Screenshot).
+</p>
+
+<p>
+Das waren die wichtigsten &Auml;nderungen in aspforums.asp - &Auml;nderungen in den eigentlichen
+ASP Dateien des Forums sind nicht notwendig. Das trifft auch f&uuml;r das 
+<a href="http://www.myhaflinger.com/forum/" target="_blank">Forum der Haflingerfreunde</a> zu, von
+dem der heute vorgestellte Sourcecode stammt.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+ASPForums ist ein hervorragendes Beispiel, was mit man JScript am Server so alles
+"anstellen" kann. Ich kann nur jedem empfehlen, sich den Sourcecode mal im Ruhe
+zu Gem&uuml;te zu f&uuml;hren - von diesen Tricks kann man nur lernen!
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010207.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010207.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010201.htm">Einrichten des Snitz Forums</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010201.htm</span><br>
+<a href="../artikel/20020502.htm">Yet Another Forums Software</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020502.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpforums%2Ecom%2FASPForums%2F">ASPForums</a><br>
+<SPAN class="content">http://www.aspforums.com/ASPForums/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpforums%2Ecom%2FASPForums%2Fhowto%2Fsqlserver%2Easp">Changing the backend ASP Forums database to SQL Server</a><br>
+<SPAN class="content">http://www.aspforums.com/ASPForums/howto/sqlserver.asp</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

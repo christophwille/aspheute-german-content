@@ -1,0 +1,406 @@
+<HTML>
+<HEAD>
+<TITLE>Einf&uuml;hrung in ASP.NET Validation Controls (Teil 2)</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch¸tzt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor die grundlegende Durchf&uuml;hrung von mehrfach Validierungen in ASP.NET, der ValidationSummary Control bzw. der Page IsValid Eigenschaft. Zus&auml;tzlich erkl&auml;rt er die Verwendung von ASP.NET User Controls.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP.NET,C Sharp,CSharp,Validation,ValidatonSummary, IsValid,RegExValidator,RequiredFieldValidator,Pagelets">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Einf&uuml;hrung in ASP.NET Validation Controls (Teil 2)</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000913"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Im 2. Teil der Artikelserie ASP.NET Validation Controls m&ouml;chte ich einige sehr interessante 
+Aspekte aufgreifen. Zun&auml;chst wie versprochen, besprechen wir die M&ouml;glichkeiten der 
+<i>Mehrfach-Validierung</i> und 
+die Verwendung der <i>ValidationSummary Control</i> bzw. der <i>Page IsValid Eigenschaft</i> - wie immer praxisnah 
+anhand von n&uuml;tzlichen, aber dennoch einfachen Beispielen.
+</p>
+<p>
+In diesem Artikel m&ouml;chte ich auch die oft gestellten Fragen beantworten, die sich mit der Wiederverwertbarkeit von
+ASP.NET Code und der Integration von ASP.NET in vorhandene Webseiten besch&auml;ftigen.
+</p>
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation des Microsoft .NET 
+Framework SDK's auf einem Webserver. Weiters ist es von Vorteil, daﬂ der Leser schon Grundkenntnisse bzw. 
+Erfahrung in Programmiertechniken besitzt - es finden sich etliche Artikel auf AspHeute, um das notwendige 
+Wissen von Grund auf zu erlernen. 
+</p>
+<p>
+Weiters verwendet dieser Artikel bereits ASP.NET Web Form Controls (TextBox, Label). F&uuml;r den Fall, daﬂ
+Sie noch nicht sattelfest auf diesem Gebiet sind, bietet der Artikel 
+<a href="../artikel/20000808.htm">Einf&uuml;hrung in ASP.NET Web Forms</a>
+das n&ouml;tige Grundwissen daf&uuml;r.
+</p>
+
+<h2>Mehrfach &Uuml;berpr&uuml;fungen</h2>
+<p>
+Wie in <a href="../artikel/20000911.htm">Teil 1</a> dieser Artikelserie erw&auml;hnt kann der Fall eintreffen, daﬂ Benutzereingaben mehreren G&uuml;ltigkeitsbestimmungen
+gen&uuml;gen m&uuml;ssen (z.B. die &Uuml;berpr&uuml;fung einer email Adresse f&uuml;r eine Newslisteintragung oder f&uuml;r Kundensupport
+bei einer Online-Softwareregistrierung). Im Falle der Softwareregistrierung w&auml;re auch eine &Uuml;berpr&uuml;fung des
+Lizenzschl&uuml;ssels oder der Seriennummer interessant. Abgesehen vom Algorithmus der das Produkt eindeutig identifizert,
+k&ouml;nnten Sie eben eine solche "Vorvalidierung" mit Hilfe von ASP.NET einrichten, bevor Sie dem Benutzer aufgrund
+eines Tippfehlers die BSA wegen Softwarepriaterie auf den Hals hetzten. Diese &uuml;berpr&uuml;ft die Eingabe des Clients
+nur auf m&ouml;gliche Tippfehler oder das Vorhandensein spezieller Buchstaben (abh&auml;ngig von Ihren W&uuml;nschen als Entwickler
+oder von der verwendeten Software). Es soll ja vorkommen, daﬂ Benutzer eine g&uuml;ltige Lizenznummer besitzen
+sich aber einfach nur "vertippen".
+<p>
+Besprechen wir zuerst aber das einfachere Beispiel der Email-Adressen&uuml;berpr&uuml;fung (siehe Datei <i>MultiVal_eMail.aspx</i>
+im Download zum Artikel am Ende dieses Dokuments). Sehen wir uns also den ersten 
+Code-Block genauer an. Dieser enth&auml;lt die Eingabeaufforderung des Namens.
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;%@ Page Language="C#" ClientTarget=DownLevel %&gt;
+&lt;html&gt;
+&lt;body&gt;
+&lt;h2&gt;Online Registrierung&lt;/h2&gt;
+&lt;h4&gt;Beispiel zur Mehrfach Validierung&lt;/h4&gt;
+&lt;p&gt;
+Bitte f&uuml;llen Sie das Formular aus und best&auml;tigen Sie mit &quot;Abschicken&quot;.
+&lt;/p&gt;
+&lt;form method=post runat="server"&gt;
+  &lt;table cellpadding=10&gt;
+   &lt;tr&gt;
+      &lt;td align=left&gt;Vollst&auml;ndiger Name:&lt;/td&gt;
+      &lt;td&gt;
+         &lt;asp:TextBox id=txtName runat="server" /&gt;
+      &lt;/td&gt;   
+      &lt;td&gt;
+        &lt;asp:RequiredFieldValidator id="ReqFName" runat="server"
+            ControlToValidate="txtName" 
+            ErrorMessage="Bitte Name eingeben!"
+            Display="Dynamic"&gt;
+        &lt;/asp:RequiredFieldValidator&gt;
+      &lt;/td&gt;
+   &lt;/tr&gt;
+</pre>
+</p>
+
+<p>
+Die Page-Directive <i>ClientTarget=DownLevel</i> gew&auml;hrleistet, daﬂ der Sourcecode auch auf &auml;lteren
+Browsern funktioniert und dadurch, daﬂ dann die Validierung serverseitig abl&auml;uft wird auch garantiert, daﬂ
+diese auch ordungsgem&auml;ﬂ durchgef&uuml;hrt wird. Die ASP.NET Web Form Control <i>TextBox</i> mit der ID 
+<i>txtName</i> dient hier als Eingabefeld f&uuml;r den Namen des Clients. Dieses Eingabefeld hat, sinnvollerweise
+nur einen RequiredField Validator. Im n&auml;chsten Abschnitt der Datei <i>MultiVal_eMail.aspx</i> sind wir nun beim Kernthema:
+</p>
+<p>
+<pre style="background='silver';">
+&lt;tr&gt;
+     &lt;td align=left&gt;e-Mail:&lt;/td&gt;
+      &lt;td&gt;
+         &lt;asp:TextBox id=txteMail runat=&quot;server&quot; /&gt;
+      &lt;/td&gt;  
+      &lt;td&gt;
+        &lt;asp:RequiredFieldValidator id=&quot;ReqFSN&quot; runat=&quot;server&quot;
+            ControlToValidate=&quot;txteMail&quot; 
+            ErrorMessage=&quot;Bitte e-Mail Adresse eingeben!&quot;
+            Display=&quot;Dynamic&quot;&gt;
+        &lt;/asp:RequiredFieldValidator&gt;
+
+        &lt;asp:RegularExpressionValidator id=&quot;RegExSNDash&quot; runat=&quot;server&quot;
+            ControlToValidate=&quot;txteMail&quot;
+            ValidationExpression=&quot;.*@.*\.(com|net|org|edu|mil|at?|de?|ch?|uk?)$&quot;
+            ErrorMessage=&quot;Keine g&uuml;ltige e-Mail Adresse&lt;br&gt;&quot;
+            Display=&quot;Static&quot;&gt;
+        &lt;/asp:RegularExpressionValidator&gt;
+      &lt;/td&gt;
+   &lt;/tr&gt;
+</pre>
+</p>
+<p>
+Die TextBox mit der ID <i>txteMail</i> wird einerseits durch einen RequiredField Validator auf eine
+erfolgte Eingabe &uuml;berpr&uuml;ft und andererseits wird die EMail-Adresse durch einen RegularExpression Validator
+auf Ihre G&uuml;ltigkeit &uuml;berpr&uuml;ft. Der Einfachheit halber checkt der Validator nur das Vorhandensein des 
+@-Symbols und ob vor der Domainendung ein Punkt (hier symbolisiert durch &quot;\.&quot;)eingeben wurde.
+Da es ja bekanntlich viele Domainendungen gibt habe ich momentan nur eine kleine Auswahl getroffen.
+Das Dollarsymbol im regul&auml;ren Ausdruck gew&auml;hrleistet, daﬂ die Domainendung auch am Ende stehen muﬂ.
+Der Postback erfolgt wenn Sie dann den &quot;Abschicken&quot;-Button dr&uuml;cken (siehe Beispiel
+<i>MultiVal_eMail.aspx</i>, welches Sie nach dem Codedownload auf Ihrem Webserver ablaufen lassen k&ouml;nnen).
+Je nach Fehler (Fehlen der Adresse oder keine g&uuml;ltige Adressform) wird jeweils die im <i>ErrorMessage</i>
+Attribut stehende Fehlermeldung ausgegeben.
+</p>
+
+<p>
+Das n&auml;chste Beispiel (Datei <i>MultiVal_SWReg.aspx</i>) ist &auml;hnlich, aber mit dem Unterschied, 
+daﬂ der RegularExpression Validator einen anderen, aber erw&auml;hnenswerten Ausdruck besitzt. 
+Dieser sieht wie folgt aus:
+</p>
+<p>
+<pre style="background='silver';">
+ &lt;asp:RegularExpressionValidator id=&quot;RegExSN&quot; runat=&quot;server&quot;
+            ControlToValidate=&quot;txtSN&quot;
+            ValidationExpression=&quot;^[A-Z][A-Z]-[A-Z][0-9]-[0-9][0-9]&quot;
+            Display=&quot;Static&quot;
+            ErrorMessage=&quot;Die Formatfehler! Richtiges Format XX-X1-23&lt;br&gt;&quot;&gt;
+ &lt;/asp:RegularExpressionValidator&gt;
+</pre>
+</p>
+<p>
+Das Attribut <i>ValidationExpression</i> enth&auml;lt folgenden Ausdruck &quot;^[A-Z][A-Z]-[A-Z][0-9]-[0-9][0-9]&quot;.
+Das bedeutet, daﬂ in unserem Fall nur eine Seriennummer der Art &quot;XX-X1-23&quot; g&uuml;ltig ist. Damit also
+nur Groﬂbuchstaben von <i>A</i> bis <i>Z</i> akzeptiert werden, habe ich &quot;[A-Z]&quot; verwendet. Das 
+<i>^</i>-Symbol erzwingt, daﬂ der Code zwingend mit einem (Groﬂ)buchstaben anfangen muﬂ. Analog ist die Erfordernis der
+Zahlen <i>0</i> bis <i>9</i> durch &quot;[0-9]&quot;. Die Bindestriche gew&auml;hrleisten, daﬂ eben nur diese
+an deren Position im String erlaubt sind.
+</p>
+<p>
+Wie Sie in den Beispielen gesehen haben, ist die Mehrfach-&Uuml;berpr&uuml;fung sehr einfach. Nur mehrere Validators
+auf die ID einer Control verweisen - that's it! Deshalb ist die Verwendung von Control-IDs auch so wichtig, da
+sie ja auch eine Menge Erleichterungen mit sich bringen und den Codeaufwand gering halten. Daraus folgt auch, 
+daﬂ die IDs zwingend eindeutig sein m&uuml;ssen - falls einmal durch ein &quot;STRG+C&quot;
+die ID im Sourcecode doppelt ist - die Engine kommt drauf, auch wenn der Code lang ist.
+</p>
+<p>
+Manchmal sind viele zu &uuml;berpr&uuml;fende Controls n&ouml;tig, damit der Client nicht nur &quot;Rot&quot; sieht k&ouml;nnen Sie
+ihm in einer vertr&auml;glichen Form klar machen &quot;bei aller Freundschaft, aber so NICHT&quot;.
+</p>
+
+<h2>ValidationSummary Control</h2>
+<p>
+Die <i>ValidationSummary Control</i> bietet eine Zusammenfassung der gesammelten Fehler auf einer Seite und 
+stellt diese &uuml;bersichtlich dar - ganz nach Ihrem Geschmack. Das Attribut &quot;DisplayMode&quot; erm&ouml;glicht die
+Fehlerdarstellung als fortlaufende Zeile (<i>SingleParagraph</i>), Aufz&auml;hlung mit Bullets, d.h. Zeilenhervorhebung
+mittels Punkten (<i>BulletList</i>) oder als einfache Liste (<i>List</i>).
+</p>
+<p>
+Sehen wir uns mal an wie so etwas aussieht:
+</p>
+<p><IMG SRC="/artikel/Bilder/200009/20000913_ValiSumErr.png" width="492" height="411" alt="" border="0"></p>
+<p>
+Der Aufwand ist fast nicht erw&auml;hnenswert (siehe Datei <i>MultiVal_ValidationSum.aspx</i>):
+</p>
+<p>
+<pre style="background='silver';">
+&lt;tr&gt;
+      &lt;td colspan=&quot;2&quot;&gt;   
+         &lt;asp:ValidationSummary ID=&quot;ValidSum&quot; runat=&quot;server&quot; 
+              HeaderText=&quot;Folgende Fehler sind aufgetreten:&quot;
+              DisplayMode=&quot;BulletList&quot;/&gt;
+      &lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+</p>
+<p>
+Wegen der besseren &Uuml;bersicht und weil die Anzahl der m&ouml;glichen Fehler auch nicht allzu groﬂ ist habe ich die
+Aufz&auml;hlung mit Bullets gew&auml;hlt (<i>DisplayMode=&quot;BulletList&quot;</i>).
+</p>
+<p>
+Um sicher zu gehen, daﬂ ein Postback auf den Server durchgef&uuml;hrt wird und die ausgef&uuml;llte Seite auch korrekt
+ausgef&uuml;llt wurde, k&ouml;nnen Sie sich die ASP.NET <i>Page IsValid</i> Eigenschaft zunutze machen.
+</p>
+
+<h2>Die Page IsValid Eigenschaft</h2>
+<p>
+Diese Eigenschaft gibt einen speziellen, von Ihnen definierten Wert zur&uuml;ck, mit denen Sie weitere Events 
+wie z.B. Datensatzspeicherungen triggern k&ouml;nnen. Da ja Serverresourcen auch heute noch quasi ein 
+unsch&auml;tzbares <i>Gut</i> sind, die man keinesfalls verschwenden m&ouml;chte, nimmt man auch jede M&ouml;glickeit wahr,
+um dies einzuhalten. Hierf&uuml;r ist u. a. die <i>IsValid</i> Eigenschaft dienlich. Der Connection Event wird erst getriggert,
+wenn die Seite g&uuml;ltig ist, d.h. in unserem Fall die Client-Informationen korrekt eingeben sind.
+Damit Sie noch vor Datenbankzugriffen in ASP.NET bzw. ADO+ verschont bleiben, gebe ich in dem nun folgenden Beispiel
+nur eine Statusmeldung zur&uuml;ck (Beispiel <i>Page_IsValid.aspx</i>).
+</p>
+<p>
+Dies sieht beim Seitenaufruf am Clientbrowser so aus:
+</p>
+<p><IMG SRC="/artikel/Bilder/200009/20000913_IsValidS.png" width="364" height="340" alt="" border="0"></p>
+<p>
+Wenn alles korrekt eingegeben ist bekommt der Client die Statusmeldung:
+</p>
+<p><IMG SRC="/artikel/Bilder/200009/20000913_IsValidOK.png" width="390" height="61" alt="" border="0"></p>
+<p>
+Falls Fehler aufgetreten sind, bekommt der Client die Statusmeldung:
+</p>
+<p><IMG SRC="/artikel/Bilder/200009/20000913_IsValidERR.png" width="388" height="53" alt="" border="0"></p>
+<p>
+Sehen wir uns nun den Scriptblock des Sourcecodes an.
+</p>
+<p>
+<pre style="background='silver';">
+&lt;script language="C#" runat=server&gt;
+
+        void btnSub_Click(Object Sender, EventArgs E) {
+
+           if (Page.IsValid == true) {
+              lblIsValid.Text = "Alles OK!";
+           }
+           else {
+              lblIsValid.Text = "Es sind Fehler aufgetreten!";
+           }
+        }
+
+&lt;/script&gt;
+</pre>
+</p>
+
+<p>
+Dieser Code enth&auml;lt simpelstes C# - ein if-Statement. Die Bedingung hierbei lautet, wenn die Seite keine 
+Fehler mehr enth&auml;lt, dann wird einer ASP.NET Label Control (ID=lblIsValid), welche innerhalb der <i>&lt;form&gt;</i>
+zu finden ist, die Message &quot;Alles OK!&quot; &uuml;bergeben. Der Postback wird dadurch ausgef&uuml;hrt indem der 
+&quot;Abschicken&quot;-Button bet&auml;tigt wird. Damit die Button Control auch weiﬂ, das sie den Postback durchf&uuml;hren muﬂ,
+enth&auml;lt die ASP.NET Button Control das Attribut <i>OnClick="btnSub_Click"</i>.
+</p>
+<p>
+
+<h2>ASP.NET Code recyclen - ASP.NET User Controls</h2>
+<p>
+Warum das Rad immer wieder neu erfinden? Das folgende Beispiel wird eine der wichtigsten Fragen zu ASP.NET beanworten -
+die Wiederverwendung von ASP.NET Code.
+Dies erm&ouml;glichen die sogenannten <i>ASP.NET User Controls</i>. Durch deren Einsatz k&ouml;nnen Sie nicht nur h&auml;ufig gebrauchten
+Code, wie z.B. EMail-Formulare, Datenbankoperationen oder Eingabevalidierungen, schnell in eine neue Webseite
+einbauen, sondern auch einfach in eine vorhandene Webseite portieren. Sie brauchen nur in der &quot;Stammseite&quot;
+die User Control, welche die Dateiendung <i>*.ascx</i> haben, zu registrieren und dann dort aufrufen wo Sie sie 
+haben m&ouml;chten. Das n&auml;chste Beispiel soll dies verdeutlichen.
+</p>
+<p>
+Die &quot;Stammseite&quot; (Datei: <b>ValUserControl.aspx</b>)
+</p>
+<p>
+<pre style="background='silver';">
+&lt;%@ Page Language=&quot;C#&quot; ClientTarget=DownLevel %&gt;
+&lt;%@ Register TagPrefix=&quot;Name&quot; TagName=&quot;TextBox&quot; src=&quot;name.ascx&quot;%&gt;
+&lt;%@ Register TagPrefix=&quot;SN&quot; TagName=&quot;TextBox&quot; src=&quot;sn.ascx&quot;%&gt;
+&lt;%@ Register TagPrefix=&quot;eMail&quot; TagName=&quot;TextBox&quot; src=&quot;email.ascx&quot;%&gt;
+&lt;%@ Register TagPrefix=&quot;btnSub&quot; TagName=&quot;Button&quot; src=&quot;btnsub.ascx&quot;%&gt;
+
+&lt;html&gt;
+&lt;body&gt;
+&lt;h2&gt;Online Registrierung&lt;/h2&gt;
+&lt;h4&gt;Verwendung von ASP.NET User Controls&lt;/h4&gt;
+&lt;p&gt;
+Bitte f&uuml;llen Sie das Formular aus und best&auml;tigen Sie mit &quot;Abschicken&quot;.
+&lt;/p&gt;
+&lt;form runat=&quot;server&quot;&gt;
+   &lt;table cellpadding=&quot;10&quot;&gt;
+      &lt;Name:TextBox id=&quot;txtName&quot; runat=&quot;server&quot; /&gt;
+      &lt;SN:TextBox id=&quot;txtSN&quot; runat=&quot;server&quot; /&gt;
+      &lt;eMail:TextBox id=&quot;txteMail&quot; runat=&quot;server&quot; /&gt;
+      &lt;btnSub:Button id=&quot;Button1&quot; runat=&quot;server&quot; /&gt;
+   &lt;/table&gt;
+&lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</p>
+<p>
+Zuerst wird mit Hilfe der <i>Register</i> Directive jedes einzelne Pagelet initialisiert. <i>TagPrefix</i>
+wird als Alias f&uuml;r den Namespace verwendet. <i>TagName</i> ist assoziert mit der verwendeten Klasse im Pagelet,
+(in diesem Beispiel eine ASP.NET Webform Control), und <i>src</i> gibt den Pfad an, wo sich das Pagelet befindet. 
+Sie werden jetzt sicher verwundert sein, wo all die TableRows, TableData, etc. des HTML Tables sind. Nun die 
+befinden sich alle in den User Control-Dateien. Da ich ja schon erw&auml;hnt habe, daﬂ der HTML-Table zur einfacheren
+Positionierung der Controls dient, warum sollte ich mir das nicht auch hier zu nutze machen. Der Table in
+der Stammdatei bleibt unbesch&auml;digt wenn ich User Control austausche und somit bleibt auch die Positionierung erhalten.
+Der Inhalt dieses HTML-Tables enth&auml;lt also den Aufruf der einzelnen User Control die ich zuvor registiert habe.
+</p>
+<p>
+Eines von den insgesamt vier User Control (<i>name.ascx</i>) sieht sourcecodem&auml;ﬂig so aus:
+</p>
+<p>
+<pre style="background='silver';">
+&lt;tr&gt;
+  &lt;td align=left&gt;Name:&lt;/td&gt;
+  &lt;td&gt;
+      &lt;asp:TextBox id=txtName runat=&quot;server&quot; /&gt;
+  &lt;/td&gt;
+  &lt;td&gt;
+      &lt;asp:RequiredFieldValidator id=&quot;ReqFName&quot; runat=&quot;server&quot;
+           ControlToValidate=&quot;txtName&quot; 
+           ErrorMessage=&quot;Bitte Name eingeben!&quot;&gt;
+      &lt;/asp:RequiredFieldValidator&gt;
+  &lt;/td&gt;
+&lt;/tr&gt;  
+</pre>
+</p>
+<p>
+Diese User Control  fordert zur Eingabe des Client-Namens auf und der angef&uuml;gte RequiredFieldValidator checkt ob
+dies auch gemacht wurde. Diese User Control ist alleine unvollst&auml;ndig, da u. a. HTML und ASP.NET Code fehlt.
+Eingef&uuml;gt und registiert in eine ASP.NET-Datei erf&uuml;llt es wieder seinen Zweck. Somit ist es m&ouml;glich nach dem
+Anlegen einer User Control Bibliothek wie mit Setzkasten Webseiten zu erstellen, die erstens komplex aber
+&uuml;bersichtlich sind, eine hohe Geschwindigkeit durch Verwendung von ASP.NET bieten, zudem noch abw&auml;rtskompatibel
+zu &auml;lteren Browsern sind und sich schnell an die Gegebenheiten der Zukunft anpassen. Das ist 
+<i>Rapid Development</i>!
+</p>
+
+<h2>Schluﬂbemerkung</h2>
+<p>
+In diesem Artikel wurden einige interessante ASP.NET Techniken besprochen. Angefangen bei den M&ouml;glichkeiten 
+komplexer Validierung durch einfaches Aneinanderreihen der ASP.NET Control Validators bis zur Anzeige f&uuml;r den User,
+daﬂ er Fehler gemacht hat.
+Damit dem Server durch fehlerhafte Eingaben die &quot;Luft&quot; ausgeht, haben wir die M&ouml;glichkeit der 
+<i>IsValid</i> Eigenschaft besprochen. Und um Ihnen schlieﬂlich Arbeit zu ersparen, und damit Sie in Zukunft
+komplexe, aber &uuml;bersichtliche Webseiten erstellen k&ouml;nnen, habe ich Ihnen einen kurzen Abriﬂ &uuml;ber die 
+<i>ASP.NET User Controls</i> gegeben.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000913.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000913.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001114.htm">ASP.NET User Controls im Einsatz</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001114.htm</span><br>
+<a href="../artikel/20000911.htm">Einf&uuml;hrung in ASP.NET Validation Controls (Teil 1)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000911.htm</span><br>
+<a href="../artikel/20000808.htm">Einf&uuml;hrung in ASP.NET Web Forms</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000808.htm</span><br>
+<a href="../artikel/20031010.htm">Einstieg in Visual Studio.NET - die erste Webanwendung mit Visual C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20031010.htm</span><br>
+<a href="../artikel/20000922.htm">Eventbehandlung bei ASP.NET WebForms</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000922.htm</span><br>
+<a href="../artikel/20020705.htm">Formularbasierte Authentifizierung in f&uuml;nf Minuten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020705.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,302 @@
+<HTML>
+<HEAD>
+<TITLE>Ein Excel-Diagramm am Server generieren und zum Client schicken</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Diesmal wollen wir nicht nur ein MS-Excel Sheet am Server generieren, sondern einen Schritt weiter gehen und die Daten auch noch visualisieren - und das alles am Web Server.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Diagramm,dynamisches Diagramm,erstellen,XLS,Excel,Daten,Visualisierung">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Ein Excel-Diagramm am Server generieren und zum Client schicken</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010307"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Diesmal wollen wir nicht nur ein MS-Excel Sheet am Server generieren, sondern einen Schritt weiter gehen und
+die Daten auch noch visualisieren - und das alles am Web Server. Der Client erh&auml;lt dann die Excel-Datei mit den
+aus der Datenbank geholten Datens&auml;tze samt dem erstellten Diagramm.
+</p>
+
+<p>
+Um das in diesem Artikel verwendete Beispiel selbst ausprobieren zu k&ouml;nnen, m&uuml;ssen allerdings einige Vorbereitungen
+getroffen werden. So mu&szlig; am Webserver, auf dem die Datei generiert wird, Microsoft Excel installiert sein. Da der heutige
+Sourcecode auf dem Artikel 
+<a href="../artikel/20010305.htm">Ein Excel-Sheet am Server generieren und zum Client schicken</a> basiert, gelten 
+auch die gleichen Voraussetzungen hierf&uuml;r.
+</p>
+
+<p>
+Damit der Artikel nicht nur etwas erweitert wurde, habe ich auch ein paar kleine Verbesserungen am Sourcecode vorgenommen.
+Man darf also gespannt sein!
+</p>
+
+<h2>Das Einlesen der Daten</h2>
+
+<p>
+Im Gegensatz zum Sourcecode des <a href="../artikel/20010305.htm">Vorg&auml;ngerartikels</a> &uuml;berlappen sich die Instanzen der
+Datenbankverbindung mit dem des Excel Objektes <b>nicht</b> mehr. Das hat den Vorteil, da&szlig; wenn Probleme bei der Datenakquirierung auftreten
+(z.B. Serverbreakdown) nicht mehr zwei Objekte gleichzeitig offen sind - was vor allem bei out-of-process
+Komponenten wie Excel ein enormer Vorteil ist.
+</p>
+
+<p>
+Die Daten aus der Access-Datenbank werden daher jetzt vorerst in einem Array gespeichert. Das hei&szlig;t, ich kann nun ruhig die
+Verbindung zur Datenbank nach Beendigung des Transfers schlie&szlig;en und erstelle erst jetzt die Instantz des Excel Objektes.
+</p>
+
+<p>
+Sehen wir uns nun die neue Variante an (<b>GenXlsChart.asp</b>):
+</p>
+
+<pre style="background='silver';">
+...
+strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source="
+strConn = strConn &amp; Server.MapPath("Sales00.mdb") 
+strQuery = "SELECT ProductName,ProductIncome FROM ProductSales"
+
+objConn.Open strConn
+
+objRS.Open strQuery, objConn
+
+If Not objRS.EOF and Not objRS.BOF Then
+  arrData = objRS.GetRows()
+Else
+  bNoRecords = True
+End If
+...
+</pre>
+
+<p>
+Mit der <i>GetRows</i> Methode werden die Datens&auml;tze gewonnen und im Array <i>arrData</i> gespeichert.
+Wenn dieser Vorgang abgeschlossen ist, kann man also die Verbindung zur Datenbank schlie&szlig;en und die f&uuml;r die Verbindung
+ben&ouml;tigten Objekte wieder sicher zerst&ouml;ren.
+</p>
+
+<p>
+Nun kann man wieder auf die im Vorg&auml;ngerartikel gezeigten Methoden zur&uuml;ckgreifen um z.B. &Uuml;berschriften, Beschreibungstext,
+etc. in das Tabellenblatt einzuf&uuml;gen. Da dies ja Thema des vorigen Artikels war, m&ouml;chte ich dies hier nicht noch einmal 
+erl&auml;utern.
+</p>
+
+<p>
+Da die Datens&auml;tze in einem Array gespeichert wurden, mu&szlig; man nat&uuml;rlich das Zuweisen in die entsprechenden Zellen ein wenig
+ab&auml;ndern. Dies habe ich einfach mit einer <i>For ... Next</i> Schleife erledigt:
+</p>
+
+<pre style="background='silver';">
+For i = 0 To Ubound(arrData,2)
+    xlBook.Sheets("Data").Cells(iRow+i,1).Value = arrData(0,i)
+    xlBook.Sheets("Data").Cells(iRow+i,2).Value = arrData(1,i)
+    xlBook.Sheets("Data").Cells(iRow+i,2).NumberFormat = "$#,##0.00"
+Next
+</pre>
+
+<p>
+Beachten Sie, da&szlig; das Array in der umgekehrten Reihenfolge bef&uuml;llt wurde. Daher stehen die auszulesenden Indizes in der
+zweiten Spalte der Klammern des Arrays:
+</p>
+
+<pre style="background='silver';">
+...
+xlBook.Sheets("Data").Cells(iRow+i,1).Value = arrData(0,<b>i</b>)
+...
+</pre>
+
+<h2>Die Diagramm-Generierung</h2>
+
+<p>
+Nun sind wir endlich soweit, da&szlig; wir die Daten visualisieren k&ouml;nnen. Ich habe mir f&uuml;r diesen Artikel zwei unterschiedliche Typen
+ausgesucht. Ein <i>3D Pie Chart</i> - Kuchen-Diagramm - in Explosionsdarstellung (<i>xl3DPieExploded</i>) und ein
+<i>3D Column Chart</i> - S&auml;ulen Diagramm - (<i>xl3DColumnClustered</i>).
+</p>
+
+<p>
+Beim Codieren ist auf die Syntaxunterschiede zu achten. Denn m&uuml;hsamerweise verwenden VBA und VBScript unterschiedliche 
+Syntaxe im Bezug auf das Excel Objekt. Was sich also auf den ersten Blick als logisch erweist, da es ja zwei unterschiedliche
+Sprachformen sind, wird dann beim Codieren zur Qual. Also Makro aufzeichen lassen und in ASP Wrapper einf&uuml;gen ist 
+nicht - und auch wenn es so sch&ouml;n einfach w&auml;re.
+</p>
+
+<p>
+Erstellen wir nun den allgemeinen Chart-Teil:
+</p>
+
+<pre style="background='silver';">
+xlBook.Charts.Add
+xlBook.ActiveChart.Name = "BarGraph"
+xlBook.Charts("BarGraph").SetSourceData (xlBook.Sheets("Data").Range("A4:B9"))
+</pre>
+
+<p>
+Hier wird ein neues Diagramm (Chart) innerhalb des <i>xlBook</i> Objektes erstellt und danach wird dem Chart der
+Name "BarGraph" zugewiesen. F&uuml;r die Erstellung eines neuen Diagramms wird deshalb <i>Charts</i> (in der Mehrzahl)
+verwendet, da es eine Collection signalisieren soll.
+</p>
+
+<h3>Die Festlegung des Diagrammtyps</h3>
+
+<p>
+Diagrammtypen gibt es in Excel nun viele. Um sie auch au&szlig;erhalb von VBA verwenden zu k&ouml;nnen, ben&ouml;tigen Sie die zum Diagramm
+zugeh&ouml;rige <i>numerische</i> Konstante. Der Einfachheit halber habe ich, wie schon erw&auml;hnt, nur zwei aus den vielen 
+M&ouml;glichkeiten die Excel bietet ausgew&auml;hlt.
+</p>
+
+<p>
+F&uuml;r das <i>3D Pie Chart</i> m&uuml;ssen Sie folgenderma&szlig;en vorgehen:
+</p>
+
+<pre style="background='silver';">
+'--- 3DPieExploded
+xlBook.Charts("BarGraph").ChartType = 70
+xlBook.Charts("BarGraph").PlotBy = 2
+</pre>
+
+<p>
+Dieses 3D Pie Chart (es gibt auch andere Kuchen-Diagramm Typen) hat als Konstante den Wert 70. Damit das Diagramm auch richtig
+angezeigt wird, m&uuml;ssen wir noch die Plot-Order setzen. Hier soll n&auml;mlich das Diagramm gem&auml;&szlig; den Spalten (Columns) gezeichnet
+werden. Die hierf&uuml;r verwendete Excel Konstante <i>xlColumns</i> hat den numerischen Wert von <b>2</b>.
+</p>
+
+<p>
+Nach dem Ausf&uuml;hren des ASP Scripts auf einem Web Server - der den obig genannten Anforderungen entspricht - und lokaler Abspeicherung
+der Excel Datei sieht das Kuchen-Diagramm dann so aus:
+</p>
+
+<p>
+<IMG SRC="/artikel/Bilder/200103/20010307_1.png" width="427" height="467" alt="" border="0">
+</p>
+
+<p>
+Im anderen Fall, der Darstellung als 3D S&auml;ulen Diagramm erh&auml;lt man folgendes Ergebnis:
+</p>
+
+<p>
+<IMG SRC="/artikel/Bilder/200103/20010307_2.png" width="424" height="465" alt="" border="0">
+</p>
+
+<p>
+Um die S&auml;ulendarstellung zu erstellen ist folgender Code notwendig:
+</p>
+
+<pre style="background='silver';">
+'--- 3DColumns
+xlBook.Charts("BarGraph").ChartType = 54
+xlBook.Charts("BarGraph").PlotBy = 1
+xlBook.Charts("BarGraph").HasAxis(1) = 0
+</pre>
+
+<p>
+F&uuml;r diesen Diagrammtyp und die vorliegenden Daten ist die <i>reihenm&auml;&szlig;ige</i> Anordnung zu w&auml;hlen (<i>xlRows = 1</i>).
+Da wir bei dieser Darstellung eigentlich keine Kategorienachsenbeschriftung (<i>xlCategory</i> = 1) ben&ouml;tigen, setzen 
+wir sie auf 0 (entspricht <i>False</i>).
+</p>
+
+<p>
+Damit w&auml;ren wir schon fast fertig. Damit es bei der Generierung der Excel Dateien am Server nicht zu Problemen
+kommt, l&ouml;sche ich eine eventuell vorhandene Datei bevor ich die neue, generierte Datei am Web Server speichere.
+Dies ist einfach mit dem <i>FileSystemObject</i> gel&ouml;st:
+</p>
+
+<pre style="background='silver';">
+Set fso = CreateObject("Scripting.FileSystemObject")
+If (fso.FileExists(Server.MapPath(strFileName))) Then
+   Set MyFile = fso.GetFile(Server.MapPath(strFileName))
+   MyFile.Delete
+End If
+
+xlSheet.SaveAs Server.MapPath(strFileName)
+</pre>
+
+<p>
+Zuerst wird mit der <i>FileExists</i> Methode &uuml;berpr&uuml;ft ob es eine Datei gleichen Namens gibt und f&uuml;r den Fall,
+da&szlig; die Expression der If-Verzweigung <i>True</i> zur&uuml;ck gibt, wird sie mit der <i>Delete</i> Methode des 
+FileSystemObjects gel&ouml;scht.
+</p>
+
+<p>
+Abschlie&szlig;end, gleich wie im vorigen Artikel, wird die Excel-Datei mit der 
+<a href="http://www.alphasierrapapa.com/IisDev/Components/FileCache/">FileCache 2.1 Komponente</a> von 
+<a href="http://www.alphasierrapapa.com">AlphaSierraPapa.com</a> zum Client geschickt.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Nun sind wir schon ein gr&ouml;&szlig;eres St&uuml;ck weiter - die Daten werden nicht nur &uuml;bersichtlich in einer Tabelle 
+gespeichert und textuell formatiert, sondern auch mit Hilfe der <i>Charts</i> Collection des Excel Objektes
+in Form eines ausw&auml;hlbaren, passenden Diagrammtyps dargestellt.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010307.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010307.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010305.htm">Ein Excel-Sheet am Server generieren und zum Client schicken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010305.htm</span><br>
+<a href="../artikel/20001110.htm">Excel Dateien ohne Excel anzeigen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001110.htm</span><br>
+<a href="../artikel/20010309.htm">Excel Diagramme als GIF's serven</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010309.htm</span><br>
+<a href="../artikel/20001207.htm">SA ExcelWriter in Action</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001207.htm</span><br>
+<a href="../artikel/20020128.htm">Serverdaten clientseitig in Exceltemplates importieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020128.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2FIisDev%2FComponents%2FFileCache%2F">FileCache 2.1 Komponente</a><br>
+<SPAN class="content">http://www.alphasierrapapa.com/IisDev/Components/FileCache/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

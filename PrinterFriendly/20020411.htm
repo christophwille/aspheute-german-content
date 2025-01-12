@@ -1,0 +1,556 @@
+<HTML>
+<HEAD>
+<TITLE>Kopieren verboten - Lizenzsicherung bei ASP Scripts</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Textdateien im allgemeinen und ASP Skripte im speziellen lassen sich nicht wie konventionelle Software sichern. Dieser Artikel soll einen Weg aufzeigen, wie man, wenn auch nicht das eigentliche Kopieren verhindern, so doch...">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Kopierschutz,Lizenzsicherung,Seriennummer,Verschlüsselung,Skript,Software">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Kopieren verboten - Lizenzsicherung bei ASP Scripts</H1>
+<p>
+Geschrieben von: <a href="../autoren/claudiusceteras.htm">Claudius Ceteras</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020411"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Textdateien im allgemeinen und ASP Skripte im speziellen lassen sich nicht wie konventionelle Software sichern. Dieser 
+Artikel soll einen Weg aufzeigen, wie man, wenn auch nicht das eigentliche Kopieren verhindern, so doch Lizenzverst&ouml;&szlig;e 
+nachvollziehen kann.
+</p>
+<p>
+Die Beispiels-Anwendung, die f&uuml;r diesen Artikel  implementiert wurde, nutzt <a href="http://www.infomentum.com/activefile/" target="_blank">ActiveFile</a> von 
+<a href="http://www.infomentum.com/" target="_blank">Infomentum</a> um ZIP-Archive zu erzeugen, sowie f&uuml;r den Datei-Download. 
+Die Installation sowie grunds&auml;tzliche Verwendung dieser Komponente ist aber nicht prim&auml;res Thema dieses Artikels und kann im 
+Artikel <a href="../artikel/20001005.htm">Zippen und entzippen von Dateien</a> nachgelesen werden.
+</p>
+
+<h2>Problemstellung</h2>
+<p>
+Eine beliebte M&ouml;glichkeit ASP Skripts zu sch&uuml;tzen ist es, diese in COM Komponenten zu kapseln, wobei man dann die M&ouml;glichkeit
+hat Funktionalit&auml;ten z.B. erst durch Eingabe eines Lizenzcodes freizuschalten. Diese Lizenzcodes sind meist aus dem Namen 
+des K&auml;ufers berechnet und nur damit verwendbar, was effektiv das Weitergeben der Software inklusive Freischaltcode 
+verhindert - jedenfalls solange der Berechnungs-Algorithmus nicht geknackt wird. Solche M&ouml;glichkeiten hat man mit Skripten 
+nicht, denn jeglicher Schutzmechanismus w&auml;re ohne Probleme aus dem unkompilierten Code zu entfernen.
+</p>
+<p>
+Warum dann &uuml;berhaupt ASP-Funktionalit&auml;t in Form von Skript anbieten und nicht immer als Komponente? Ein m&ouml;glicher Grund ist 
+z.B. die gr&ouml;&szlig;ere K&auml;ufergruppe, die man mit Skripten erreicht, denn nicht jeder hat die M&ouml;glichkeit Komponenten auf den 
+verwendeten Servern zu registrieren.
+</p>
+<p>
+Also, wie sch&uuml;tze ich dann meine Software, die ich in Form von Skripten verkaufen m&ouml;chte?
+</p>
+
+<h2>L&ouml;sungsansatz</h2>
+<p>
+Die verkaufte Kopie einer Software mu&szlig; wiedererkennbar werden. Dazu wird eine Seriennummer in die ASP Skripte eingebaut. 
+Diese Seriennummer sollte folgende Eigenschaften haben:
+</p>
+
+<ol>
+	<li>Von au&szlig;en - also als Surfer - lesbar sein, damit man leicht Lizenzverst&ouml;&szlig;e nachweisen kann.
+	<li>Eindeutig und nicht zu erraten sein, damit nicht beim Weitergeben die Nummer eines anderen Kunden eingetragen 
+		werden kann.
+	<li>Nicht als Seriennummer erkennbar sein, damit sie nicht entfernt wird.
+</ol>
+
+<p>
+Die erste Eigenschaft ist dadurch zu erreichen, da&szlig; man die Nummer nicht als VBS-Kommentar innerhalb des ASP-Codes, sondern 
+z.B. als HTML-Kommentar, als Kommentar in clientseitigem Skript-Code oder in CSS-Dateien eintr&auml;gt.
+</p>
+<p>
+Die zweite Eigenschaft erreicht man dadurch, da&szlig; die Seriennummer lang genug ist und auf keinen Fall fortlaufend sein darf. Man 
+sollte hier also eher zB eine GUID w&auml;hlen.
+</p>
+<p>
+F&uuml;r die letzte Eigenschaft mu&szlig; man die Seriennummer verstecken und tarnen. Dazu kann man die Seriennummer auch 
+auseinanderschneiden und auf mehrere Stellen innerhalb einer Datei oder sogar auf mehrere Dateien verteilen. 
+Tarnm&ouml;glichkeiten gibt es viele, z.B. als Versionsnummer:
+</p>
+
+<pre style="background='silver';">
+&lt;!-- My ASP Application - Version 2.73.1254 --&gt;
+</pre>
+
+<p>
+Oder als Farben in ungenutzten Klassen innerhalb von CSS-Dateien:
+</p>
+
+<pre style="background='silver';">
+td.data1 { color: #12aabb; background-color: #3a5cd8}
+</pre>
+
+<p>
+Nat&uuml;rlich gibt es hier noch viel mehr M&ouml;glichkeiten, und man kann sich selbst ein geeignetes Versteck f&uuml;r die 
+Seriennummer ausdenken.
+</p>
+
+<h2>Implementierung</h2>
+<p>
+Basierend auf obiger Spezifikation soll ein Prototyp eines Systems entstehen, mit dem man registrierten Kunden per 
+Seriennummer personalisierte Software-Pakete zum Download anbieten kann. F&uuml;r das on-the-fly zippen und den Download wird 
+<a href="http://www.infomentum.com/activefile/" target="_blank">ActiveFile</a> von <a href="http://www.infomentum.com/" target="_blank">Infomentum</a> 
+verwendet, wobei man nat&uuml;rlich beliebig andere ZIP- bzw. Download-Komponenten nutzen kann. Die Seriennummer-Funktionalit&auml;t 
+wird in einer VBS-Klasse gekapselt, um sie auch au&szlig;erhalb dieses Prototyps wiederverwenden zu k&ouml;nnen.
+</p>
+
+<h2>SoftwarePackagePersonalizer</h2>
+<p>
+Die zu erzeugende Klasse soll aus einem Quell-Verzeichnis einige Dateien (CopyFiles-Array) nur in ein Ziel-Verzeichnis 
+kopieren und andere (ParseFiles-Array) Dateien beim Kopieren nach bestimmte Formulierungen suchen und diese durch 
+Seriennummern ersetzen. Dies f&uuml;hrt zu folgendem Klassen-Design:
+</p>
+
+<pre style="background='silver';">
+class SoftwarePackagePersonalizer
+    property let/get SourceDirectory
+    property let/get DestinationDirectory
+    property let/get CopyFiles
+    property let/get ParseFiles
+    function Go()
+end class
+</pre>
+
+<p>
+Die Function Go() f&uuml;hrt den Kopierprozess durch und gibt dann die komplette Seriennummer zur&uuml;ck. Beim Parsen der Dateien 
+soll nach folgendenden Formulierungen gesucht werden, welche dann durch Seriennummernfragmenten ersetzt werden:
+</p>
+
+<pre style="background='silver';">
+@@number:type:length@@
+</pre>
+
+<p>
+<b>number</b> gibt die Position des Seriennummernfragments innerhalb der Seriennummer an, <b>type</b> bestimmt den Typ des zu 
+erzeugenden Fragments, wobei hier folgende Typen implementiert sind:
+</p>
+
+<table border=1>
+<tr>
+	<th>Typ</th>
+	<th>Bedeutung</th>
+</tr>
+<tr>
+	<td>n</td>
+	<td>Numerisch: Dieser Typ erzeugt Fragmente aus den Zeichen 0-9</td>
+</tr>
+<tr>
+	<td>a</td>
+	<td>Alpha: Dieser Typ erzeugt Fragmente aus den Zeichen a-z</td>
+</tr>
+<tr>
+	<td>an</td>
+	<td>Alphanumerisch: Dieser Typ erzeugt Fragmente aus den Zeichen 0-9 und a-z</td>
+</tr>
+<tr>
+	<td>h</td>
+	<td>Hex: Dieser Typ erzeugt Fragmente aus den Zeichen 0-9 und a-f</td>
+</tr>
+</table>
+
+<p>
+Auch andere Typen sind denkbar, z.B. welche, die ein Zufallsdatum erzeugen etc.
+<b>length</b> letztendlich  bestimmt die L&auml;nge des zu erzeugenden Fragments.
+</p>
+<p>
+Zum leichteren Verst&auml;ndnis hier einige Beispiele:
+</p>
+
+<table border=1>
+<tr>
+	<th>Code</th>
+	<th>Erzeugtes Beispiels-Fragment</th>
+	<th>Beschreibung</th>
+</tr>
+<tr>
+	<td>@@1:h:6@@</td>
+	<td>12a4f6</td>
+	<td>Gut um Seriennummern als Farbe in CSS-Dateien zu tarnen</td>
+</tr>
+<tr>
+	<td>@@2:n:4@@</td>
+	<td>3968</td>
+	<td>M&ouml;glicher Einsatz: Erzeugung von Versionsnummern</td>
+</tr>
+</table>
+
+<p>
+Vorgenanntes Beispiel w&uuml;rde dann zur Seriennummer 12a4f63968; die Seriennummerfragmente werden also in der richtigen 
+Reihenfolge zur Seriennummer zusammengesetzt.
+</p>
+<p>
+Wie sieht das ganze als Code aus?
+</p>
+<p>
+Alles au&szlig;er der Go-Funkion ist trivial. Das einzig bemerkenswerte ist, dass darauf geachtet wird, da&szlig; der Verzeichnispfad 
+mit einem "\" abschlie&szlig;t.
+</p>
+
+<pre style="background='silver';">
+&lt;%
+class SoftwarePackagePersonalizer
+    private m_SrcDir
+    private m_DestDir
+    private m_CopyFiles
+    private m_ParseFiles
+
+    private sub Class_Initialize()
+      m_CopyFiles = Array()
+      m_ParseFiles = Array()
+    end sub
+
+    property let SourceDirectory(value)
+      m_SrcDir = value
+      if right(m_SrcDir,1)&lt;&gt;"\" then
+        m_SrcDir = m_SrcDir &amp; "\"
+      end if 
+    end property
+    
+    property get SourceDirectory
+      SourceDirectory = m_SrcDir
+    end property
+
+    property let DestinationDirectory(value)
+      m_DestDir = value
+      if right(m_DestDir,1)&lt;&gt;"\" then
+        m_DestDir = m_DestDir &amp; "\"
+      end if 
+    end property
+
+    property get DestinationDirectory
+      DestinationDirectory = m_DestDir
+    end property
+
+    property let CopyFiles(value)
+      m_CopyFiles = value
+    end property
+    
+    property get CopyFiles
+      CopyFiles = m_CopyFiles
+    end property
+
+    property let ParseFiles(value)
+      m_ParseFiles = value
+    end property
+    
+    property get ParseFiles
+      ParseFiles = m_ParseFiles
+    end property
+
+    function Go()
+      dim fso, stream, txt, regEx, matches, match
+      dim num, typ, leng, randStr, serials, dummy
+      dim i, j, result, filename
+    
+      dim forReading : forReading = 1
+      dim forWriting : forWriting = 2
+
+      Set fso = Server.CreateObject("Scripting.FileSystemObject")
+</pre>
+
+<p>
+Nach dem Erstellen des FileSystemObjects werden zuerst die Dateien kopiert, die nicht ver&auml;ndert werden m&uuml;ssen:
+</p>
+
+<pre style="background='silver';">
+      ' 1 Copy Files
+      for each filename in m_CopyFiles
+        fso.CopyFile m_SrcDir &amp; filename, m_DestDir, true
+      next
+</pre>
+
+<p>
+Danach werden die zu parsenden Dateien einzeln eingelesen und nach dem erw&auml;hnten Muster durchsucht:
+</p>
+
+<pre style="background='silver';">
+      ' 2 Parse Files
+      for each filename in m_ParseFiles
+          ' 2.1 read file content
+          Set stream = fso.OpenTextFile(m_SrcDir &amp; filename,forReading)
+          txt = stream.readAll()
+          stream.close
+          ' 2.2 search for @@number:type:length@@ …
+          Set regEx = new RegExp
+          regEx.Global = true
+          regEx.Pattern = "@@([^:]*):([^:]*):([^@]*)@@"
+          Set matches = regEx.Execute(txt)
+</pre>
+
+<p>
+Die gefundenen Muster werden in ihre Bestandteile zerlegt und an die Funktion <i>RandomString</i> &uuml;bergeben, die wir sp&auml;ter noch 
+sehen werden (diese kann uns die verschiedenen Typen der Seriennummernfragmente erzeugen). Das erzeugte Fragment wird 
+an die Stelle des gefundenen Musters im eingelesenen Text gesetzt und zus&auml;tzlich zusammen mit der Position in der 
+Seriennummer in der Variable <i>serials</i> gespeichert. Damit k&ouml;nnen wir sp&auml;ter daraus die Seriennummer zusammensetzen. 
+</p>
+<p>
+Zum Speichern der Seriennummerfragmente wird ein CSV-Format benutzt.
+</p>
+
+<pre style="background='silver';">
+          for each match in matches
+            num = CInt(match.subMatches(0))
+            typ = match.subMatches(1)
+            leng = CInt(match.subMatches(2))
+            randStr = randomString(typ,leng)
+            ' 2.3 replace token with random String
+            txt = replace(txt,match.Value,randStr)
+            serials = serials &amp; vbCr &amp; num &amp; vbTab &amp; randStr
+          next
+</pre>
+
+<p>
+Jetzt kann man den ge&auml;nderten Dateininhalt in die Zieldatei schreiben und das gesamte Software-Paket ist personalisiert.
+</p>
+
+<pre style="background='silver';">
+          Set stream = fso.OpenTextFile(m_DestDir &amp; filename,forWriting,true)
+          ' 2.4 ... and write the altered content into the created file
+          stream.write txt
+          stream.close
+      next
+      Set fso = Nothing
+</pre>
+
+<p>
+Das einzige, was jetzt noch zu tun bleibt, ist die Seriennummern aus den Fragmenten zusammenzusetzen und zur&uuml;ckzugeben. 
+Hierzu wird das CSV-Format in einem Array von Arrays expandiert, die einzelnen Fragmente mit einem Bubble-Sort-Derivat 
+nach der Position sortiert und schlie&szlig;lich zur fertigen Seriennummer zusammengef&uuml;gt.
+</p>
+
+<pre style="background='silver';">
+      ' 3 return serial
+      serials = mid(serials,2) ' delete first vbCr
+      ' 3.1 unpack serial parts
+      serials = split(serials, vbCr)
+      for i = 0 to ubound(serials)
+         serials(i) = split(serials(i), vbTab)
+      next
+      ' 3.2 bubble-sort serial parts
+      for i = 0 to ubound(serials)-1
+         for j = ubound(serials) to i+1 step -1
+            if serials(i)(0)&gt;serials(j)(0) then
+               dummy = serials(j)
+               serials(j) = serials(i)
+               serials(i) = dummy
+            end if
+         next
+      next
+      ' 3.3 compile serial
+      result = ""
+      for i = 0 to ubound(serials)
+         result = result &amp; serials(i)(1)
+      next
+      Go = result
+    end function
+</pre>
+
+<h2>Anwendungsbeispiel</h2>
+<p>
+Die eben erstellte Klasse soll eingesetzt werden um personalisierte gezippte Software-Pakete anzubieten. In diesem Fall 
+ist es eine Beispiels-ASP-Applikation, die zwei Zahlen addieren kann.
+</p>
+<p>
+Als erstes brauchen wir ein Registrierungs-Formular. Zur Demonstration reicht die einfache Abfrage nach Namen und 
+Email-Adresse. Auch verzichten wir hier auf besondere &Uuml;berpr&uuml;fungen der Eingaben - Hilfe hierzu bekommt man unter anderem im 
+Artikel <a href="../artikel/20000522.htm">&Uuml;berpr&uuml;fen von HTML-Formularen mit ASP</a> und den weiteren Links dazu.
+</p>
+
+<pre style="background='silver';">
+&lt;html&gt;
+&lt;body&gt;
+  Zum Download des SuperDuper-ASP-Addierers musst Du Dich hier registrieren:
+  &lt;form action="download.asp" method="post"&gt;
+    name: &lt;input name="name"&gt;&lt;br&gt;
+    email: &lt;input name="email"&gt;&lt;br&gt;
+    &lt;input type="submit" value="abschicken"&gt;
+  &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<IMG SRC="/artikel/Bilder/200204/20020411_1.png" width="309" height="274" alt="" border="0">
+
+<p>
+In download.asp wird zuerst ein tempor&auml;res Verzeichnis erstellt, damit sich die einzelnen Downloads des Pakets nicht 
+gegenseitig st&ouml;ren:
+</p>
+
+<pre style="background='silver';">
+&lt;%option explicit%&gt;
+&lt;!--#include file="SoftwarePackagePersonalizer.asp" --&gt;
+&lt;%
+  dim fso, tmp, serial
+  Set fso = CreateObject("Scripting.FileSystemObject")
+  ' generate temp folder...
+  tmp = Server.MapPath(fso.GetTempName)
+  fso.CreateFolder tmp
+</pre>
+
+<p>
+Dann wird die erstellte Klasse benutzt, um das personalisierte Paket in diesem Verzeichnis zu erstellen. Das Paket besteht 
+aus der Datei readme.txt, die nur kopiert wird und default.asp und style.css, die insgesamt drei Seriennummernfragmente 
+enthalten (vollst&auml;ndiger Code im heutigen Download enthalten).
+</p>
+
+<pre style="background='silver';">
+  ' ... and create the software package there.
+  dim spp
+  Set spp = new SoftwarePackagePersonalizer
+  spp.SourceDirectory = Server.MapPath("calculator-package")
+  spp.DestinationDirectory = tmp
+  spp.CopyFiles = Array("readme.txt")
+  spp.ParseFiles = Array("default.asp","style.css")
+  serial = spp.Go()
+</pre>
+
+<p>
+Nun wird noch alles mit den ActiveFile-Komponenten gezippt und zum Client geschickt:
+</p>
+
+<pre style="background='silver';">
+  ' now put everything in a zipfile, ...
+  dim Archive
+  Set Archive = Server.CreateObject("ActiveFile.Archive")
+  Archive.NewArchive tmp &amp; "\calculator.zip"
+  Archive.Add tmp &amp; "\*.*"
+  Archive.SaveArchive
+  Set Archive = Nothing
+
+  ' ... download the ZIP archive ...
+  dim File
+  Set File = Server.CreateObject("ActiveFile.File")
+  File.Name = tmp &amp; "\calculator.zip"
+  Response.Clear
+  Response.AddHeader "Content-Disposition", "inline; filename=calculator.zip"
+  File.Download "application/x-zip-compressed", Now()
+  Set File = Nothing
+</pre>
+
+<p>
+Zum Schlu&szlig; l&ouml;scht man nur noch das tempor&auml;re Verzeichnis mit allen Dateien darin und merkt sich die erstellte Seriennummer 
+zusammen mit den Registrierungsdaten. In diesem Beispiel speichern wir alles der Einfachheit halber nur in einer Textdatei. 
+Im Produktions-Einsatz nimmt man hierzu nat&uuml;rlich eine Datenbank.
+</p>
+
+<pre style="background='silver';">
+  ' and delete everything. (comment this to see the temp folder and its content)
+  fso.DeleteFolder tmp, true
+    
+  ' write serial and name to a log-file.
+  ' this would be a database on a production site of course...
+  const ForAppending = 8
+  dim stream
+  Set stream = fso.OpenTextFile(Server.MapPath(".") &amp; _
+    "\log.txt", ForAppending, true)
+  stream.writeLine "----------------------------"
+  stream.writeLine "Name: " &amp; Request("name") &amp; _
+    " (" &amp; Request("email") &amp; ")"
+  stream.writeLine "Serial: " &amp; serial
+  stream.close
+  Set stream = Nothing
+    
+  Set fso = Nothing
+%&gt;
+</pre>
+
+<IMG SRC="/artikel/Bilder/200204/20020411_2.png" width="311" height="127" alt="" border="0">
+
+<p>
+Entdeckt man nun irgendwo seine Software, braucht man sich nur noch aus den entsprechenden Dateien die Seriennummerfragmente 
+zusammenzusuchen, und sie dann mit den Eintr&auml;gen in der eigenen Datenbank/Logdatei zu vergleichen, um herauszufinden an wen 
+das Paket lizensiert wurde. Nat&uuml;rlich kann man hierzu auch eine Web-Applikation erstellen, die einem diese Vergleichsarbeit 
+abnimmt, vielleicht sogar teilweise manipulierte Seriennummern noch erkennt. Eine weitere n&uuml;tzliche Erweiterungen w&auml;re 
+es bei Eingabe einer URL die Dateien mit den Seriennummerfragmenten herunterzuladen ( z.B. mit ASPTear oder XMLHTTP) und 
+die Seriennummer automatisch zu extrahieren.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Wir haben gesehen, wie man mit einfachen Mitteln durch Seriennummern abgesicherte Pakete zum Download anbieten kann. Eine 
+Beschr&auml;nkung dieser Technologie ist es nat&uuml;rlich, da&szlig; die Seriennummer nicht funktionaler Bestandteil des Skripts ist, 
+also bei Entdeckung entfernt werden k&ouml;nnte. Es kommt also darauf an, die Seriennummer gut zu verstecken.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020411.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020411.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000522.htm">&Uuml;berpr&uuml;fen von HTML-Formularen mit ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000522.htm</span><br>
+<a href="../artikel/20000510.htm">ASP Scripts verschl&uuml;sseln</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000510.htm</span><br>
+<a href="../artikel/20000526.htm">Klassen in VBScript</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000526.htm</span><br>
+<a href="../artikel/20000519.htm">Laden von Dateien aus dem Web mit ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000519.htm</span><br>
+<a href="../artikel/20011123.htm">MS Script Encoder dekodiert</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011123.htm</span><br>
+<a href="../artikel/20011113.htm">Sonderzeichen korrekt grabben mit XmlHttp</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011113.htm</span><br>
+<a href="../artikel/20010328.htm">Webpage-Grabbing mit dem XML Parser</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010328.htm</span><br>
+<a href="../artikel/20010910.htm">Webseiten automatisiert scrapen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010910.htm</span><br>
+<a href="../artikel/20010911.htm">Webseiten automatisiert scrapen, Teil 2</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010911.htm</span><br>
+<a href="../artikel/20001005.htm">Zippen und entzippen von Dateien</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001005.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Einfomentum%2Ecom%2Factivefile%2F">Infomentum ActiveFile</a><br>
+<SPAN class="content">http://www.infomentum.com/activefile/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

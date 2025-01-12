@@ -1,0 +1,285 @@
+<HTML>
+<HEAD>
+<TITLE>Web Services 101 in ASP.NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Mit ASP.NET haben wir nun eine einfache Entwicklungsplattform in der Hand, um Web Services zu programmieren. Ich werde Ihnen heute zeigen, wie leicht man Web Services in C# als auch VB.NET entwickeln kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,WebService,Web Service,SOAP,Simple Object Access Protocol,ASP.NET,Framework,System.Web.Services,Inherits,C#,Csharp,C Sharp,VB.NET,Visual Basic.NET">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Web Services 101 in ASP.NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Web%20Services.htm">Web Services</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010621"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Das Simple Object Access Protocol (SOAP) ist als Protokoll f&uuml;r Web Services schon seit langer Zeit
+in aller Munde, allerdings fehlte bis jetzt unter IIS eine einfache Entwicklungsplattform, um Web
+Services zu programmieren. Diese haben
+wir nun mit ASP.NET in der Hand, und ich werde Ihnen heute zeigen, wie leicht man Web Services in C#
+als auch VB.NET entwickeln kann.
+</p>
+<p>
+Der heutige Artikel ist keine Theorieveranstaltung, sondern alles Hands-on. Wir benutzen SOAP, ohne
+uns n&auml;her damit zu besch&auml;ftigen - genau das ist das Sch&ouml;ne, wenn .NET ins Spiel kommt: die ganze
+l&auml;stige Implementierung der Infrastruktur ist bereits erledigt, man mu&szlig; nur noch die eigene Funktionalit&auml;t
+programmieren - die, f&uuml;r die man Geld bekommt. Die Theorie kann man getrost vergessen.
+</p>
+<p>
+Um den heute vorgestellten Code ausf&uuml;hren zu k&ouml;nnen, mu&szlig; ASP.NET am Server installiert sein. F&uuml;r das
+Erstellen von Assemblies ben&ouml;tigt man das vollst&auml;ndige .NET SDK (nicht notwendigerweise am Server,
+allerdings auf der Maschine, auf der die Assembly kompiliert werden soll).
+</p>
+
+<h2>Ein einfacher Web Service in C#</h2>
+<p>
+Die durchg&auml;ngige Aufgabenstellung &uuml;ber alle heute vorgestellten Web Service Beispiele ist folgende:
+man programmiere einen Web Service, der einen Namen als String Parameter annimmt, und mit diesem
+eine "Hello World" Meldung erstellt, und an den Aufrufer zur&uuml;ckliefert. Die erste Programmiersprache,
+die sich dieser Herausforderung stellen mu&szlig;, ist C#.
+</p>
+<p>
+Hier ist mein L&ouml;sungsvorschlag (<b>SampleCSService.asmx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;%@ WebService Language="C#" Class="DemoCSService" %&gt;
+using System;
+using System.Web.Services;
+
+public class DemoCSService : WebService
+{
+  [WebMethod]
+  public string SayHello(string strName) 
+  { 
+    return "Hello " + strName + " from C#"; 
+  }
+}
+</pre>
+
+<p>
+Die erste Zeile sieht bekannt aus - statt <i>@Page</i> steht bei einem Web Service die
+<i>@WebService</i> Direktive, das <i>Language</i> Attribut ist ident. Neu dazugekommen ist das
+<i>Class</i> Attribut. Dieses gibt an, welche der in dieser ASMX Datei definierten Klassen (ja, es k&ouml;nnen
+mehrere sein: die Serviceklasse und mehrere Hilfsklassen) als 
+Web Service angesprochen werden kann. Da ich nur eine habe, ist die Wahl leicht. Die 
+gew&auml;hlte Klasse mu&szlig; von <i>WebService</i> abgeleitet werden, und diese wiederum findet sich im eingebundenen Namespace
+<i>System.Web.Services</i>.
+</p>
+<p>
+Die Klassenimplementierung selbst ist kaum unterschiedlich zu der anderer Klassen, der einzige Unterschied
+ist, da&szlig; Methoden, die durch den Service verf&uuml;gbar sein sollen (=von au&szlig;en aufrufbar) mit dem 
+<i>WebMethod</i> Attribut markiert werden m&uuml;ssen. Das ist alles, und schon hat man einen funktionierenden
+Web Service.
+</p>
+<p>
+Wie kann ich beweisen, da&szlig; er funktioniert? Nun, ASP.NET generiert f&uuml;r jeden Web Service Standardseiten,
+die es erlauben, die Definition des Services einzusehen (WSDL), als auch die freigegebenen Methoden
+aufzurufen. Alles, was man tun mu&szlig;, ist den URL des Services im Internet Explorer einzutippen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010621_1.png" width="669" height="462" alt="" border="0">
+
+<p>
+Man erh&auml;lt eine Beschreibung des Services, als auch eine Liste der aufrufbaren Methoden - in unserem Fall
+nur <i>SayHello</i>. Wenn man auf die Methode klickt, bekommt man ein Formular, in dem man Parameter
+eintippen und die Methode aufrufen kann:
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010621_2.png" width="669" height="462" alt="" border="0">
+
+<p>
+Nach Klicken des <i>Invoke</i> Buttons wird die Methode aufgerufen, und das Resultat in einem XML Paket
+zur&uuml;ckgeliefert:
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010621_3.png" width="589" height="220" alt="" border="0">
+
+<p>
+Da&szlig; dies keine tolle benutzerfreundliche L&ouml;sung ist um Web Services zu konsumieren, ist klar aber dennoch
+eine andere Geschichte. Heute befassen wir uns nur mit der Erstellung eines einfachen Web Services!
+</p>
+
+<h2>Ein einfacher Web Service in VB.NET</h2>
+<p>
+In C# h&auml;tten wir die Aufgabe des Erstellens eines Web Services schon gemeistert. Nun versuchen
+wir unser Gl&uuml;ck in Visual Basic.NET. Ich habe den Service <b>SampleVBService.asmx</b> durch
+einfaches Umschreiben des C# Codes erstellt, und wie man sieht, sind die notwendigen Anpassungen
+nicht schlimm:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ WebService Language="VB" Class="DemoVBService" %&gt;
+Imports System
+Imports System.Web.Services
+
+Public Class DemoVBService : Inherits WebService
+  &lt;WebMethod()&gt; Public Function SayHello(strName As System.String) As System.String
+    SayHello = "Hello " &amp; strName &amp; " from VB" 
+  End Function
+End Class
+</pre>
+
+<p>
+Im Prinzip sind die Unterschiede nur Syntax: <i>Imports</i> statt <i>Using</i>, das <i>WebMethod</i>
+in spitzen statt eckigen Klammern und eben die &uuml;bliche VB Syntax f&uuml;r Klassen und Methoden. Auf alle
+F&auml;lle ist es keineswegs schwieriger in VB.NET einen Web Service zu erstellen als in C#!
+</p>
+<p>
+Es gilt &uuml;brigens die gleiche Vorgehensweise f&uuml;r das Testen: URL eintippen, und mit den vorgenerierten
+Seiten von ASP.NET herumspielen.
+</p>
+
+<h2>Der etwas andere Weg zum Ziel</h2>
+<p>
+Die folgende einzeilige Datei <b>AssemblyService.asmx</b> erf&uuml;llt die Aufgabe auch:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ WebService Class="AspHeute.SampleService" %&gt;
+</pre>
+
+<p>
+Aber wie? Nun, der Name der Datei verr&auml;t mich ja sowieso: die Web Service Klasse ist in einer separaten
+Assembly implementiert, die kompiliert im <b>bin</b> Verzeichnis der Applikation liegt, und somit
+automatisch eingebunden wird. Ich mu&szlig; nur angeben, welche von <i>WebService</i> abgeleitete Klasse
+aufgerufen werden soll.
+</p>
+<p>
+Was sind die Vorteile, warum w&uuml;rde man das machen? Nun, ein gewichtiger Vorteil ist, da&szlig; Assemblies
+kompiliert sind, und nicht als Quelltext vorliegen. Das beschleunigt den Erstaufruf, und hindert
+unerfahrene Kunden daran, den Web Service nach eigenem Gutd&uuml;nken zu verschlimmbessern. Also doch einige
+Argumente daf&uuml;r, wohl aber auch dieses: der Aufwand ist nahe Null.
+</p>
+<p>
+Warum? Nun, man mu&szlig; nur den existierenden Sourcecode minus der ersten Zeile nehmen, und in eine .cs 
+Datei verfrachten (<b>AssemblyService.cs</b>):
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.Web.Services;
+
+namespace AspHeute 
+{
+  public class SampleService : WebService
+  {
+    [WebMethod]
+    public string SayHello(string strName) 
+    { 
+      return "Hello " + strName + " from the assembly"; 
+    }
+  }
+}
+</pre>
+
+<p>
+Das Kompilieren &uuml;bernimmt ein Tool wie <a href="http://www.icsharpcode.net/opensource/sd/" target="_blank">SharpDevelop</a>:
+</p>
+
+<IMG SRC="/artikel/Bilder/200106/20010621_4.png" width="610" height="400" alt="" border="0">
+
+<p>
+Zusammen mit dem Umkopieren in das <b>bin</b> Verzeichnis habe ich drei Minuten gebraucht - und es liegt
+kein Sourcecode mehr herum, der absichtlich oder unabsichtlich ver&auml;ndert werden k&ouml;nnte. Ein annehmbarer
+Aufwand, zumal er meist sowieso erst zum Abschlu&szlig; des Projektes f&auml;llig wird.
+</p>
+<p>
+Apropos - es ist jeder herzlich eingeladen, auch diesen dritten Service auszuprobieren!
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die heute vorgestellten Web Services waren simpel - allerdings werden auch aufwendigere Aufgabenstellungen
+kaum komplizierter - die Infrastruktur ist da, und sie ist sehr gut implementiert. Sp&auml;tere Artikel werden
+zeigen, wie man n&uuml;tzlichere Services schreiben kann, und wie man diese dann konsumiert.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010621.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010621.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000713.htm">A Brief History of C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000713.htm</span><br>
+<a href="../artikel/20030429.htm">Authentifizierung in Web Services - Windows Integrated</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20030429.htm</span><br>
+<a href="../artikel/20000726.htm">Datentypen in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000726.htm</span><br>
+<a href="../artikel/20000803.htm">Die String Klasse in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000803.htm</span><br>
+<a href="../artikel/20011122.htm">Einstellungssache - Applikationsdaten in web.config</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011122.htm</span><br>
+<a href="../artikel/20021107.htm">Index Server Abfragen per Web Service</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021107.htm</span><br>
+<a href="../artikel/20020117.htm">Last but not least - .NET 1.0 ist da!</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020117.htm</span><br>
+<a href="../artikel/20010627.htm">Session State in ASP.NET Web Services</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010627.htm</span><br>
+<a href="../artikel/20020207.htm">Unions in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020207.htm</span><br>
+<a href="../artikel/20010208.htm">Web Projekte mit SharpDevelop erstellen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010208.htm</span><br>
+<a href="../artikel/20010622.htm">Web Services in Anwendungen konsumieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010622.htm</span><br>
+<a href="../artikel/20010629.htm">Web Services mit dem SOAP Toolkit erstellen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010629.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Edotnetgerman%2Ecom%2F">DotNetGerman Diskussionslisten</a><br>
+<SPAN class="content">http://www.dotnetgerman.com/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eicsharpcode%2Enet%2Fopensource%2Fsd%2F">SharpDevelop</a><br>
+<SPAN class="content">http://www.icsharpcode.net/opensource/sd/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

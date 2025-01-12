@@ -1,0 +1,383 @@
+<HTML>
+<HEAD>
+<TITLE>Performancemessungen in .NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Heute besch&auml;ftigen wir uns mit einem altbekannten Thema, der Messung der (Ausf&uuml;hrungs-)Geschwindigkeit einer bestimmten Implementierung. Dazu sehen wir uns vier verschiedene ADO.NET Implementierungen an...">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Performance,Geschwindigkeit,QueryPerformanceCounter,QueryPerformanceFrequency,ADO.NET,ExecuteReader,ExecuteScalar,SqlCommand">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Performancemessungen in .NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20011206"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Heute besch&auml;ftigen wir uns mit einem altbekannten Thema, der Messung der (Ausf&uuml;hrungs-)Geschwindigkeit
+einer bestimmten Implementierung. Dazu sehen wir uns vier verschiedene ADO.NET Implementierungen
+f&uuml;r ein und dasselbe Problem an, an denen ich auch wieder zeigen werde, da&szlig; so manches Mal der Schein
+tr&uuml;gen kann - Code kann auch langsam aussehen, obwohl er es nicht ist.
+</p>
+
+<p>
+Als Aufgabenstellung errechne ich das Gesamtfrachtgewicht aller Bestellungen eines Kunden bei Northwind
+Traders. Netterweise sind alle Daten in der <i>Orders</i> Tabelle enthalten, und f&uuml;r uns sind die
+Spalten <i>Freight</i> und <i>CustomerId</i> von Interesse.
+Im Prinzip ist das SQL Statement f&uuml;r alle vier Arten der Implementierung fix vorgebenen:
+</p>
+
+<pre style="background='silver';">
+select sum(freight) from orders where CustomerId='somecustomerid'
+</pre>
+
+<p>
+Das WHERE Statement ist klarerweise dynamisch aufzubauen. Die erste Variante der Implementierung sieht
+so aus (die <i>SqlConnection</i> ist bereits ge&ouml;ffnet):
+</p>
+
+<pre style="background='silver';">
+Trace.Write("PerfMonitoring", "Start1");
+SqlCommand cmd = new SqlCommand();
+cmd.CommandText = "select sum(freight) from Orders " + 
+        " where CustomerId = '" + strTestCompany + "'";
+cmd.Connection = scNWind;
+
+object RetVal1 = cmd.ExecuteScalar();
+cmd.Dispose();
+</pre>
+
+<p>
+Hier wird das SQL Statement dynamisch zusammengebaut (Achtung vor <a href="../artikel/20011030.htm">SQL Injection</a>!), und
+die Summe der Frachtgewichte mittels <i>ExecuteScalar</i> in die Variable <i>RetVal</i> geschrieben.
+</p>
+
+<p>
+Die bessere Variante ohne der Gefahr der <a href="../artikel/20011030.htm">SQL Injection</a> ist die folgende:
+</p>
+
+
+<pre style="background='silver';">
+cmd = new SqlCommand();
+cmd.CommandText = "select sum(freight) from Orders where CustomerId = @ParameterCustomerId";
+SqlParameter param2 = cmd.Parameters.Add("@ParameterCustomerId", strTestCompany);
+cmd.Connection = scNWind;
+
+object RetVal2 = cmd.ExecuteScalar();
+cmd.Dispose();
+</pre>
+
+<p>
+Das Konzept der parametrisierten Abfragen unter ADO.NET habe ich bereits im Artikel <a href="../artikel/20011203.htm">Verhinderung von SQL Injection Marke .NET</a>
+besprochen. Also eigentlich ist dies die erste "korrekte" Implementierung unserer Problemstellung.
+</p>
+
+<p>
+Nun aber zu Variante drei:
+</p>
+
+<pre style="background='silver';">
+cmd = new SqlCommand();
+cmd.CommandText = "select sum(freight) from Orders where CustomerId = @ParameterCustomerId";
+SqlParameter param3 = cmd.Parameters.Add("@ParameterCustomerId", strTestCompany);
+cmd.Connection = scNWind;
+
+SqlDataReader MySqlReader = cmd.ExecuteReader();
+MySqlReader.Read();
+object RetVal3 = MySqlReader.GetValue(0);
+MySqlReader.Close();
+cmd.Dispose();
+</pre>
+
+<p>
+Hier verwende ich <i>ExecuteReader</i>, um an einen <i>SqlDataReader</i> heranzukommmen. Aus diesem - und
+der ersten Spalte der ersten (und einzigen) Ergebnisspalte hole ich den Wert.
+</p>
+
+<p>
+Last but not least - und das mu&szlig;te kommen - eine Implementierung in einer Stored Procedure:
+</p>
+
+<pre style="background='silver';">
+CREATE PROCEDURE sp_SumItUp 
+	@CustomerId nvarchar(5),
+	@TheSum float output
+AS
+select @TheSum = sum(freight) from orders where CustomerId=@CustomerId
+GO
+</pre>
+
+<p>
+Der ADO.NET Code dazu sieht dann so aus:
+</p>
+
+<pre style="background='silver';">
+cmd = new SqlCommand();
+cmd.CommandText = "sp_SumItUp";
+cmd.CommandType = CommandType.StoredProcedure;
+SqlParameter param4 = cmd.Parameters.Add("@CustomerId", SqlDbType.NVarChar, 5);
+param4.Value = strTestCompany;
+SqlParameter param5 = cmd.Parameters.Add("@TheSum", SqlDbType.Float);
+param5.Direction = ParameterDirection.Output;
+cmd.Connection = scNWind;
+
+cmd.ExecuteNonQuery();
+object RetVal4 = param5.Value;
+cmd.Dispose();
+</pre>
+
+<p>
+Welche der vier Varianten ist am schnellsten? Jeder soll sich einen Favoriten heraussuchen, und dann erst
+weiterlesen!
+</p>
+
+<h2>Performancetest mittels Trace Statements</h2>
+<p>
+Klingt komisch, ist es aber nicht. Wer sich das <a href="../artikel/20001006.htm">Tracing in ASP.NET</a> einmal genauer
+angeschaut hat, wird gesehen haben, da&szlig; die Zeitangaben hochgenau sind. Warum sollten wir das nicht
+f&uuml;r unsere Zwecke verwenden k&ouml;nnen?
+</p>
+
+<p>
+Wir brauchen nur einige wenige zus&auml;tzliche Zeilen Code in unserem Performance-Me&szlig;script (<b>test.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;%@Page Language="C#" Debug="True" Trace="True" TraceMode="SortByCategory" %&gt;
+&lt;%@Import Namespace="System.Data" %&gt;
+&lt;%@Import Namespace="System.Data.SqlClient" %&gt;
+&lt;%
+string strTestCompany = "HANAR";
+
+string strConn = "user id=sa;password=;initial catalog=northwind;...";
+SqlConnection scNWind = new SqlConnection(strConn);
+scNWind.Open();
+
+// v1
+Trace.Write("PerfMonitoring", "Start1");
+SqlCommand cmd = new SqlCommand();
+cmd.CommandText = "select sum(freight) from Orders " + 
+        " where CustomerId = '" + strTestCompany + "'";
+cmd.Connection = scNWind;
+
+object RetVal1 = cmd.ExecuteScalar();
+cmd.Dispose();
+Trace.Write("PerfMonitoring", "End1");
+
+// v2
+Trace.Write("PerfMonitoring", "Start2");
+cmd = new SqlCommand();
+cmd.CommandText = "select sum(freight) from Orders where CustomerId = @ParameterCustomerId";
+SqlParameter param2 = cmd.Parameters.Add("@ParameterCustomerId", strTestCompany);
+cmd.Connection = scNWind;
+
+object RetVal2 = cmd.ExecuteScalar();
+cmd.Dispose();
+Trace.Write("PerfMonitoring", "End2");
+
+// v3
+Trace.Write("PerfMonitoring", "Start3");
+cmd = new SqlCommand();
+cmd.CommandText = "select sum(freight) from Orders where CustomerId = @ParameterCustomerId";
+SqlParameter param3 = cmd.Parameters.Add("@ParameterCustomerId", strTestCompany);
+cmd.Connection = scNWind;
+
+SqlDataReader MySqlReader = cmd.ExecuteReader();
+MySqlReader.Read();
+object RetVal3 = MySqlReader.GetValue(0);
+MySqlReader.Close();
+cmd.Dispose();
+Trace.Write("PerfMonitoring", "End3");
+
+// v4
+Trace.Write("PerfMonitoring", "Start4");
+cmd = new SqlCommand();
+cmd.CommandText = "sp_SumItUp";
+cmd.CommandType = CommandType.StoredProcedure;
+SqlParameter param4 = cmd.Parameters.Add("@CustomerId", SqlDbType.NVarChar, 5);
+param4.Value = strTestCompany;
+SqlParameter param5 = cmd.Parameters.Add("@TheSum", SqlDbType.Float);
+param5.Direction = ParameterDirection.Output;
+cmd.Connection = scNWind;
+
+cmd.ExecuteNonQuery();
+object RetVal4 = param5.Value;
+cmd.Dispose();
+Trace.Write("PerfMonitoring", "End4");
+
+scNWind.Close();
+%&gt;
+</pre>
+
+Im Prinzip sind es die Zeilen
+
+<pre style="background='silver';">
+Trace.Write("PerfMonitoring", "Start");
+...
+Trace.Write("PerfMonitoring", "End");
+</pre>
+
+<p>
+die die Zeitdifferenz f&uuml;r uns ausmessen (End - Start). Daraus erh&auml;lt man dann folgendes 
+Ergebnis:
+</p>
+
+<IMG SRC="/artikel/Bilder/200112/20011206_1.png" width="595" height="298" alt="" border="0">
+
+<p>
+Die richtige "Performance-&Uuml;berraschung" ist der <i>SqlDataReader</i> Code (Variante 3). Er ist schneller
+als beide <i>ExecuteScalar</i> Varianten (1 und 2). Warum? Nun, ein Blick in den IL Assembler von Sql.Data.dll
+zeigt warum - intern wird auch der <i>SqlDataReader</i> verwendet, nur etliche &Uuml;berpr&uuml;fungen mehr durchgef&uuml;hrt. Ein
+Beweis, da&szlig; mehr Code nicht gleich langsamere Ausf&uuml;hrung bedeuten mu&szlig;.
+</p>
+<p>
+Der Gewinner ist die Stored Procedure. Deutlicher w&uuml;rde der Abstand ausfallen, w&uuml;rde die Stored Procedure
+mehr Arbeit am Server durchf&uuml;hren (Arbeit, die die anderen Varianten am Client ausf&uuml;hren m&uuml;&szlig;ten).
+</p>
+
+<h2>Performancemessung ohne Trace Statements</h2>
+<p>
+Trace Statements sch&ouml;n und gut, aber &uuml;blicherweise misst man eine Codesektion mehrmals, und bildet dann
+&uuml;ber die Gesamtausf&uuml;hrungszeit ein Mittel. Obwohl das mit Trace Statements auch noch so irgendwie ginge,
+sind nicht alle Applikation in ASP.NET geschrieben - es k&ouml;nnte ja auch sein, da&szlig; man eine Komponente
+testen m&ouml;chte.
+</p>
+<p>
+Hierzu w&auml;re es dann geschickt, wenn man die Stoppuhr-Funktionalit&auml;t der Trace Statements irgendwie nachbilden
+k&ouml;nnte. Ich habe mir diese Arbeit gemacht, und folgende Klasse erstellt:
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.Runtime.InteropServices;
+
+public class PerfTiming
+{
+ [DllImport("KERNEL32")]
+ public static extern bool QueryPerformanceCounter(ref Int64 nPfCt);  
+
+ [DllImport("KERNEL32")]
+ public static extern bool QueryPerformanceFrequency(ref Int64 nPfFreq);
+
+ protected Int64 m_i64Frequency;
+ protected Int64 m_i64Start;
+
+ public PerfTiming()
+ {
+  QueryPerformanceFrequency(ref m_i64Frequency);
+  m_i64Start = 0;
+ }
+
+ public void Start()
+ {
+  QueryPerformanceCounter(ref m_i64Start);  
+ }
+
+ public double End()
+ {
+  Int64 i64End=0;
+  QueryPerformanceCounter(ref i64End);
+  return ((i64End - m_i64Start)/(double)m_i64Frequency);
+ }
+}
+</pre>
+
+<p>
+Dieser Code bedient sich zweier Funktionen aus dem WIN32 API, die einen hochgenauen Timer abbilden.
+<i>QueryPerformanceFrequency</i> liefert mir die Anzahl der Ticks pro Sekunde (Frequenz also), wohingegen 
+<i>QueryPerformanceCounter</i> den aktuellen Tickwert liefert. Dividiert man die Differenz Tickendwert und Tickstartwert
+durch die Frequenz, erh&auml;lt man die Zeitdifferenz in Sekunden. In einem Programm sieht das dann so aus:
+</p>
+
+<pre style="background='silver';">
+ PerfTiming pt = new PerfTiming();
+ pt.Start();
+    Console.WriteLine("Test"); // eigentlich sollte das mehr Code sein...
+ double dTimeTaken = pt.End();
+ Console.WriteLine(dTimeTaken.ToString());
+</pre>
+
+<p>
+Die Zeitmessung wird mit <i>Start</i> ausgel&ouml;st, und <i>End</i> liefert die Zeit in Sekunden als Double Wert.
+Damit kann man nun elegant und einfach Ausf&uuml;hrungszeiten in beliebigen .NET Anwendungen messen, als Komponente
+kompiliert ist die Klasse nat&uuml;rlich jeder beliebigen Programmiersprache zug&auml;nglich.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Anhand von vier Implementierungen eines ADO.NET Problems haben wir uns heute angesehen, wie man mit Bordmitteln
+von .NET (oder WIN32) die Performance extrem genau ermitteln kann. Ein weiterer wichtiger Punkt des heutigen Artikels:
+die L&auml;nge des Codes sagt nichts &uuml;ber die Performance aus!
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20011206.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20011206.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020206.htm">Der ODBC .NET Data Provider</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020206.htm</span><br>
+<a href="../artikel/20001012.htm">Einf&uuml;hrung: C#-Klassen in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001012.htm</span><br>
+<a href="../artikel/20020705.htm">Formularbasierte Authentifizierung in f&uuml;nf Minuten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020705.htm</span><br>
+<a href="../artikel/20000809.htm">Performance Monitoring a la .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000809.htm</span><br>
+<a href="../artikel/20011030.htm">SQL Injection</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011030.htm</span><br>
+<a href="../artikel/20010626.htm">Stored Procedures 101 in ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010626.htm</span><br>
+<a href="../artikel/20001006.htm">Tracing in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001006.htm</span><br>
+<a href="../artikel/20011203.htm">Verhinderung von SQL Injection Marke .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011203.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

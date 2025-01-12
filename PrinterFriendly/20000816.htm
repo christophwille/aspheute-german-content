@@ -1,0 +1,613 @@
+<HTML>
+<HEAD>
+<TITLE>Die Kalender-Komponente in ASP.NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor, wie man mit Hilfe der Calendar Web Control sehr schnell zu Resultaten kommen kann - als Grundlage f&uuml;r sp&auml;tere Artikel &uuml;ber einen Terminplaner.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP.NET,C#,Web Control,Calendar Control,Control,Kalender,TODO,Terminplaner">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Die Kalender-Komponente in ASP.NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000816"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Im Moment nicht allzu oft angetroffen, aber dennoch sehr n&uuml;tzlich - ein Kalender auf der Webseite.
+Vielleicht aufgrund der Tatsache, da&szlig; in HTML oder ASP dies sehr aufwendig war und ist. Das &auml;ndert sich nun mit
+der <i>Calendar</i>-Komponente von ASP.NET. Mit ein paar Handgriffen zaubern Sie einen Kalender der nicht nur 
+h&uuml;bsch ausschaut, sondern auch funktionell ist - das ist Rapid Development!
+</p>
+
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation des 
+Microsoft .NET Framework SDK's auf einem Webserver. Weiters setze ich voraus, da&szlig; der Leser die 
+Programmiersprache C# zu einem gewissen Grad beherrscht - es finden sich etliche Artikel auf diesem 
+Server, um das notwendige Wissen zu erlernen. 
+</p>
+
+<h2>Wozu?</h2>
+
+<p>
+Das werden Sie sich vielleicht schon nach den paar Zeilen fragen; N&uuml;tzlich macht sich diese ASP.NET Web Form Control
+nicht einfach nur als graphisch aufgepeppter Webkalender, sondern auch f&uuml;r News Seiten, in der man die aktuellen
+Headlines lesen, oder auch im "News-Archiv" st&ouml;bern kann - oder f&uuml;r einfache Reservierungsaufgaben (Bestellungen,
+Tickets).
+</p>
+
+<p>
+Mit etwas mehr Geschick programmieren Sie sich webbasierende To-Do-Listen, oder Spickzettel welche Sie
+an speziellen Tagen an wichtige Aufgaben erinnern. Sie vergessen Weihnachten nicht mehr, oder "basteln" 
+einen kleinen, aber feinen Terminplaner.
+Das Angenehme an der Komponente ist, da&szlig; sie einfach zu programmieren ist und reich an Funktionen ist und
+man sie modular aufbauen kann, d.h. sie ist einfach wiederzuverwenden.
+</p>
+
+<h2>Getting Started</h2>
+
+<p>
+Die <i>Calendar</i>-Komponente bietet einen Monatskalender mit dem der Client einzelne Tage, ganze Wochen oder 
+Monate ausw&auml;hlen kann. Die Navigation gestaltet sich einfachst, indem man entweder an die Pfeile in der 
+Titelleiste oder je nach Einstellung auf den Monatsnamen klickt. Die <i>Calender</i> Web Control integriert mit dem
+Microsoft .Net Framework <b>DateTime</b> Objekt, d.h. Sie erhalten kompletten Datum-Support f&uuml;r das Format des 
+darzustellenden Datumsstrings, was auch f&uuml;r den G&uuml;ltigkeitsbereich gilt. Es k&ouml;nnen also Datumswerte von
+0 bis 9999(!) n. Chr. ausgeben werden - also lassen sich auch Ihre Zukunftspl&auml;ne oder die Geburtstage Ihrer 
+Ur-Ur-Enkel vermerken.
+</p>
+
+<p>
+<b>Beachte:</b>
+Die <i>Calendar</i>-Control wird beim Client als HTML-Table gerendert, wenn die ASP.NET Web Forms Seite
+- Sie erinnern sich <i>&lt;forms&gt;</i> ... <i>&lt;/forms&gt;</i> - am Web Server geparsed wird. Das bedeutet,
+da&szlig; einige Eigenschaften der Komponente, welche sich auf die Table-Formatierung beziehen, zu Fehlern in der
+Darstellung bei manchen (&auml;lteren) Browsern f&uuml;hren k&ouml;nnen. Um den Client vor etwaigen Fehlermeldungen zu bewahren,
+verwendet man die @ Page-Directive <i>&lt;%@ Page ClientTarget="DownLevel" %&gt;</i>. Damit wird kompatibelstes
+HTML ausgegeben.
+</p>
+
+<p>
+Kommunikationen mit einer Datenbank (Data Binding) ist nicht "direkt" mit der Calendar-Komponente m&ouml;glich. 
+Verst&auml;ndlich, da man ja den gesamten Kalender in die Datenbank einbinden m&uuml;sste und das bei dem G&uuml;ltigkeitsbereich!
+Hier schafft man sich Abhilfe mit einem Handler der das <i>OnDayRender</i> Event implementiert. Dieser greift sich dann
+nur die jeweils ben&ouml;tige Info aus der Datenbank und f&uuml;gt diese dann in den Browserstream der zum Client 
+gesendet wird.
+</p>
+
+<p>
+Aber beginnen wir vorerst mit einfachen Beispielen, um Sie erstmal mit dieser Komponente vertraut zu machen.
+Im aller einfachsten Fall ist f&uuml;r einen einfachen Webkalender nur dies zu programmieren
+(<b>calendar.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Page Language="C#" Culture="de-AT"%&gt;
+&lt;html&gt;
+&lt;body&gt;
+
+  &lt;h2&gt;ASP.NET Calendar Web Control&lt;/h2&gt;
+
+  &lt;form runat="server"&gt;
+  &lt;asp:Calendar id=Kalender1 runat="server" /&gt;
+  &lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+So sieht das dann im Browser aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200008/20000816_1.png" width="186" height="188" border="0" alt="">
+
+<p>
+Zugegeben, das Resultat ist nicht besonders berauschend, aber dennoch funktionell.
+</p>
+
+<p>
+<b>Beachte:</b> Die Darstellung der Tagesnamen ist von den L&auml;ndereinstellungen Ihres Servers abh&auml;ngig. Wenn Sie also
+ein Produkt der Microsoft Windows 2000 Server Family in Deutsch besitzen, ist die Directiven-
+Angabe <i>&lt;%@ Culture="de-AT"%&gt;</i> &uuml;berfl&uuml;ssig. Auf unseren US System hingegen w&uuml;rden wir ohne diese Anweisung
+englische Tagesnamen erhalten.
+</p>
+
+<p>
+Da wir eine ASP.NET Web Control verwenden, m&uuml;ssen wir auch die Komponente mit <i>&lt;form&gt;</i> ...
+<i>&lt;/form&gt;</i> umschlie&szlig;en und mit <i>runat="server"</i> erm&ouml;glichen wir eine serverseitige Abarbeitung.
+Das Kernst&uuml;ck der Komponente ist nat&uuml;rlich <i>&lt;asp:Calendar id=Kalender1 runat="server" /&gt;</i>.
+Was hier in nur diesem Beispiel nicht unbedingt n&ouml;tig ist, ist die Vergabe der ID. Diese ID
+mu&szlig; f&uuml;r jede Web Control eindeutig sein, damit Interaktionen zwischen den einzelnen Controls m&ouml;glich sind.
+Beispiel f&uuml;r eine solche Interaktion w&auml;re, da&szlig; der Inhalt einer <i>TextBox</i> mittels eines <i>RequiredFieldValidator</i> 
+&uuml;berpr&uuml;ft wird.
+</p>
+
+<p>
+Einige Eigenschaften der Control tun auch was f&uuml;rs Auge; aus dem Standard-Look wird schnell ein optisch 
+ansehnliches Werkzeug. Die gesamte Komponente l&auml;&szlig;t sich durchstylen, angefangen von der Ausschreibung der 
+Monatsnamen &uuml;ber Titelleistenfarbe bis zur Zellengr&ouml;&szlig;e - also Farbe, Form, Gr&ouml;&szlig;e, Navigation und Steuerung 
+von Events.
+</p>
+
+<p>
+Jedem sein Geschmack, aber man sollte es auch nicht &uuml;bertreiben, deshalb ist die Control im n&auml;chsten Screenshot nur 
+im Rahmen des Ertr&auml;glichen optisch ver&auml;ndert worden.
+</p>
+
+<IMG SRC="/artikel/Bilder/200008/20000816_2.png" width="418" height="232" border="0" alt="">
+
+<p>
+Dieser Screenshot enth&auml;lt aber auch schon zus&auml;tzliche nicht-graphische Funktionalit&auml;ten, die ich nun in den
+folgenden Beispielen erkl&auml;ren m&ouml;chte.
+</p>
+
+<h2>Format-Optionen</h2>
+
+<p>
+In diesem Beispiel geht es nicht darum, die <i>Calendar</i>-Control bunt und poppig zu machen, sondern einfach
+die Beschriftung dem pers&ouml;nlichen Geschmack anzupassen. Das Beispiel ist bereits so angelegt, da&szlig; der Client durch
+einfache ASP.NET Web Control Steuerung diese Entscheidungen treffen kann. Nat&uuml;rlich kann man dasselbe Spielchen auch
+f&uuml;r die Farben des Kalenders, f&uuml;r die Rahmenformatierung etc. treiben. Aber: Da ich mir die Arbeit ersparen wollte,
+alle 16,7 Millonen Hex-Farbwerte in eine DropDownList-Control einzutragen, habe ich die Kriterien genommen, die 
+auch wichtig sind und weniger Elemente besitzten. Au&szlig;erdem f&uuml;r die Farbwerte funktionierts ja 
+prinzipiell analog (<b>cal_Format.aspx</b>): 
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Page Language="C#" Culture="de"%&gt;
+&lt;html&gt;
+&lt;body&gt;
+&lt;script language="C#" runat="server"&gt;
+
+void Page_Load(Object Src, EventArgs E) 
+{
+  if (!Page.IsPostBack)
+  {
+    DNFormAuswahl.Items.Add(new ListItem("Ein Buchstabe",Enum.Format(typeof(DayNameFormat),_
+        DayNameFormat.FirstLetter,"D")));
+    DNFormAuswahl.Items.Add(new ListItem("Zwei Buchstaben",Enum.Format(typeof(DayNameFormat),_
+        DayNameFormat.FirstTwoLetters,"D")));
+    DNFormAuswahl.Items.Add(new ListItem("Volle Bezeichung",Enum.Format(typeof(DayNameFormat),_
+        DayNameFormat.Full,"D")));
+    DNFormAuswahl.Items.Add(new ListItem("Kurzbezeichung",Enum.Format(typeof(DayNameFormat),_
+        DayNameFormat.Short,"D")));
+    NPFormAuswahl.Items.Add(new ListItem("Monat kurz",Enum.Format(typeof(NextPrevFormat),_
+        NextPrevFormat.ShortMonth,"D")));
+    NPFormAuswahl.Items.Add(new ListItem("Monat lang",Enum.Format(typeof(NextPrevFormat),_
+        NextPrevFormat.FullMonth,"D")));
+    TFormAuswahl.Items.Add(new ListItem("Monat/Jahr",Enum.Format(typeof(TitleFormat),_
+        TitleFormat.MonthYear,"D")));
+    TFormAuswahl.Items.Add(new ListItem("Monat",Enum.Format(typeof(TitleFormat),_
+        TitleFormat.Month,"D")));       
+  }
+}
+...
+</pre>
+
+<p>
+In diesem Sourcecode-Block wird, wie immer zuerst die Seitensprache (hier C#) festgelegt. Dann lasse ich mir f&uuml;r
+das Pulldown-Men&uuml; die Listeneintr&auml;ge vorgenerieren, wobei <i>Page.IsPostBack</i> &uuml;berpr&uuml;ft ob die Seite durch einen
+Client postback geladen wird. Hier soll dies zuerst nicht der Fall sein, daher auch <b>!</b> davor gestellt.
+</p>
+
+<p>
+Es folgt - das Ende des Scriptblockes:
+</p>
+
+<pre style="background='silver';">
+...
+void ChangedDisplay(Object sender, EventArgs e)
+{
+ int nDayNameFormat = Convert.ToInt32(DNFormAuswahl.SelectedItem.Value);
+     Kalender1.DayNameFormat = (DayNameFormat)nDayNameFormat;
+     
+     int nNextPrevFormat = Convert.ToInt32(NPFormAuswahl.SelectedItem.Value);
+     Kalender1.NextPrevFormat = (NextPrevFormat)nNextPrevFormat;
+    
+     int nTitleFormat = Convert.ToInt32(TFormAuswahl.SelectedItem.Value);
+     Kalender1.TitleFormat = (TitleFormat)nTitleFormat;
+}
+&lt;/script&gt;
+...
+</pre>
+
+<p>
+Der Delegate <i>ChangedDisplay</i> wird ausgef&uuml;hrt, wenn eine Auswahl im Pulldown-Men&uuml; getroffen wird.
+Dann wird der, in diesem Anweisungsblock enthaltene Code ausgef&uuml;hrt, d.h. die Attribute f&uuml;r die 
+<i>Calendar</i>-Control werden je nach (Client-) Auswahl gesetzt.
+</p>
+
+<pre style="background='silver';">
+...
+&lt;h2&gt;ASP.NET Calendar Web Control&lt;/h2&gt;
+
+  &lt;form runat="server"&gt;
+  &lt;p&gt;
+  &lt;b&gt;Formatoptionen:&lt;/b&gt;&lt;/p&gt;
+  &lt;table&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Bezeichnung der Tage im Kalender:&lt;/td&gt;
+      &lt;td&gt;&lt;asp:dropdownlist id="DNFormAuswahl" 
+	               runat="server" AutoPostBack="True"
+	               OnSelectedIndexChanged="ChangedDisplay" /&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Formatierung des Monatsnamens f&uuml;r die Navigation:&nbsp;&lt;/td&gt;
+      &lt;td&gt;&lt;asp:dropdownlist id="NPFormAuswahl" runat="server" 
+	               AutoPostBack="True"
+	               OnSelectedIndexChanged="ChangedDisplay" /&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Formatierung des Statusbalkens:&lt;/td&gt;
+      &lt;td&gt;&lt;asp:dropdownlist id="TFormAuswahl" runat="server" 
+	               AutoPostBack="True"
+	               OnSelectedIndexChanged="ChangedDisplay" /&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+   &lt;/table&gt;
+    &lt;asp:Calendar id=Kalender1 Runat="server" 
+            DayNameFormat="FirstTwoLetters"
+            NextPrevFormat="FullMonth"
+            TitleFormat="Month"
+            BorderWidth="1"
+            ShowGridLines="True"
+            CellPadding="3"
+            CellSpacing="0"
+            TitleStyle-BackColor="#aaaadd"
+            TitleStyle-BorderColor="black"
+            TitleStyle-BorderWidth="1" 
+            SelectedDayStyle-BackColor="orange" /&gt;
+  &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Zun&auml;chst werden die <i>DropDownList</i>-Controls erstellt. Diese beinhalten die Formatoptionen, mit
+denen wir das Aussehen der <i>Calendar</i>-Control ver&auml;ndern m&ouml;chten. Hier beweist sich wieder einmal,
+wie wichtig die Vergabe von einzelnen IDs ist. Die &Auml;nderungen im Index der <i>DropDownList</i>-Control
+wird ja durch die Anweisungen im Delegate <i>ChangeDisplay</i> (siehe oben) erst bewirkt.
+</p>
+
+<p> Die erste <i>DropDownList</i>-Control definiert wie die Wochentage anzeigt werden (<i>DayNameFormat</i>),
+also z.B. f&uuml;r Montag entweder "M" (FirstLetter), "Mo" (FirstTwoLetters), oder "Montag" (Full). Die 
+Kurzbezeichnung (Short) &auml;hnelt der Methode <i>FirstTwoLetters</i>.
+</p>
+
+<p>
+Das Attribut <i>NextPrevFormat</i> definiert die Art wie der Navigationslink zwischen den Monaten erfolgen soll,
+also eine kurze Bezeichnung, z.B. f&uuml;r Juli "Jul" oder die lange Version "Juli".
+</p>
+
+<p>
+Damit im Statusbalken nur der Monat dargestellt wird setzt man das Attribut <i>TitleFormat</i> auf 
+"Month", andernfalls, wenn zus&auml;tzlich auch noch das dazugeh&ouml;rige Jahr angezeigt werden soll, dann erfolgt die
+Zuweisung <i>TitleFormat="MonthYear"</i>.
+</p>
+
+<p><b>Beachte:</b>  Damit man die Attribute der 
+<i>Calendar</i> Control dann auch verwenden kann, mu&szlig; dann letztendlich eine Umcastung auf Int32 erfolgen, da
+die Control nur mit numerischen Argumenten arbeiten kann.
+</p>
+
+<p>
+Bei der <i>Calendar</i>-Web Control ist zu beachten, da&szlig; ihr eine eindeutige ID zugewiesen wird (id=Kalender1) und
+da&szlig; das <i>Runat="server"</i>-Attribut gesetzt ist. Der Rest der Attribute dienen dem optischen Glanz und sind
+eigentlich selbsterkl&auml;rend.
+</p>
+
+<h2>Die SelectionMode Eigenschaft</h2>
+
+<p>
+Standardm&auml;&szlig;ig kann man nur einen Tag im Kalender ausw&auml;hlen, was oft zuwenig ist. Mit der <i>SelectionMode</i>
+Eigenschaft kann man also nicht nur einen Tag ausw&auml;hlen, sondern eine ganze Woche oder auch einen Monat.
+Dies wird durch das Attribut
+</p>
+
+<pre style="background='silver';">
+SelectionMode="DayWeek"
+</pre>
+
+<p>
+innerhalb der Control erm&ouml;glicht. Diese Attributoption erm&ouml;glicht eine zus&auml;tzliche Auswahl einer Woche.
+Ab dem Zeitpunkt der Verwendung der Attributoption "DayWeek" erhalten Sie in der Darstellung der Control im
+Browser links neben der Control eine zus&auml;tzliche Navigationsleiste, die das Anw&auml;hlen erleichtert; das gleiche gilt
+dann auch f&uuml;r Attributoption "DayWeekMonth", wo Sie dann auch Monate ausw&auml;hlen k&ouml;nnen. Es erscheint im Browser 
+die M&ouml;glichkeit ein gesamtes Monat auszuw&auml;hlen.
+</p>
+
+<p>
+Im folgenden Beispiel ist diese Funktion mit Hilfe eines Pulldown-Men&uuml;s (asp:dropdownlist) realisiert. Das 
+Pulldown-Men&uuml; soll hier das Ausprobieren der Attribute vereinfachen und sp&auml;ter dem Client u. a. erm&ouml;glichen den 
+Kalender zu personalisieren - dies ist einfach m&ouml;glich da bei Web Controls der Viewstate automatisch
+zwischen den Requests erhalten bleibt.
+</p>
+
+<p>
+Da das n&auml;chste Beispiel schon umfangreicher ist als das vorige, gehe ich die Anweisungsbl&ouml;cke 
+getrennt durch (<b>cal_SelMode.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Page Language="C#" Culture="de"%&gt;
+&lt;html&gt;
+&lt;body&gt;
+&lt;script language="C#" runat="server"&gt;
+void Page_Load(Object Src, EventArgs E) 
+{
+  if (!Page.IsPostBack)
+  {
+     SelMode.Items.Add(new ListItem("Keine Auswahl",Enum.Format(typeof(CalendarSelectionMode), _
+        CalendarSelectionMode.None,"D")));
+     SelMode.Items.Add(new ListItem("Tag-Auswahl",Enum.Format(typeof(CalendarSelectionMode), _
+        CalendarSelectionMode.Day,"D")));
+     SelMode.Items.Add(new ListItem("Tag/Woche-Auswahl",Enum.Format(typeof(CalendarSelectionMode), _
+        CalendarSelectionMode.DayWeek,"D")));
+     SelMode.Items.Add(new ListItem("Tag/Woche/Monat-Auswahl",Enum.Format(typeof(CalendarSelectionMode), _
+        CalendarSelectionMode.DayWeekMonth,"D")));
+  }
+}
+...
+</pre>
+
+<p>
+Wie im vorigen Beispiel wird die Seitensprache definiert, die Art des Requests &uuml;berpr&uuml;ft (erster, folgende) und 
+die Listeneintr&auml;ge vorgeneriert - The same procedure as last time!
+</p>
+
+<p>
+Als n&auml;chstes:
+</p>
+
+<pre style="background='silver';">
+...
+void ChangedDisplay(Object sender, EventArgs e)
+{
+    int nValue = Convert.ToInt32(SelMode.SelectedItem.Value);
+    Kalender1.SelectionMode = (CalendarSelectionMode)nValue;
+}
+
+
+void Date_Selected(object s, EventArgs e) 
+{
+     CurDate.Text = "Ausgew&auml;hltes Datum: " + 
+	       Kalender1.SelectedDate.ToShortDateString();
+}
+&lt;/script&gt;
+...
+</pre>
+
+<p>
+Der Delegate <i>ChangedDisplay</i> tritt dann in Aktion, wenn eine Auswahl im Pulldown-Men&uuml; getroffen wird.
+Dann wird der im Anweisungsblock enthaltene Code ausgef&uuml;hrt. In diesem Fall wird dem Attribut <i>SelectionMode</i>
+ein neuer Wert zugewiesen, der die Auswahloptionen (Tag/Monat/Jahr) im Kalender ver&auml;ndert.</p>
+
+<p>
+Zus&auml;tzlich gibt es ein kleines Zusatzfeature im Delegate <i>Date_Selected</i>, das das ausgew&auml;hlte Datum unter dem Kalender 
+in Form eines Label-Controls best&auml;tigt. <i>ToShortDateString()</i> ist deshalb n&ouml;tig weil die Label-Control nur 
+Daten als <i>Strings</i> &uuml;bernehmen kann.
+Dies ist auch schon das Ende des Script-Blockes; nun folgen die Erstellung der <i>DropDownList</i> Web Control und die
+Generierung der <i>Calendar</i>-Komponente.
+</p>
+
+<pre style="background='silver';">
+...
+&lt;h2&gt;ASP.NET Calendar Web Control&lt;/h2&gt;
+
+  &lt;form runat="server"&gt;
+  &lt;table&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Auswahloptionen f&uuml;r Anzeige:&nbsp;&lt;/td&gt;
+      &lt;td&gt;&lt;asp:dropdownlist id="SelMode" runat="server" 
+                 AutoPostBack="True" 
+                 OnSelectedIndexChanged="ChangedDisplay"/&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/table&gt;
+   &lt;p&gt;
+     &lt;/p&gt;
+  &lt;asp:Calendar id=Kalender1 Runat="server" 
+        onselectionchanged="Date_Selected"
+        SelectionMode="DayWeekMonth"
+        DayNameFormat="FirstTwoLetters"
+        NextPrevFormat="FullMonth"
+        TitleFormat="MonthYear"
+        BorderWidth="1"
+        ShowGridLines="True"
+        CellPadding="3"
+        CellSpacing="0"
+        TitleStyle-BackColor="#aaaadd"
+        TitleStyle-BorderColor="black"
+        TitleStyle-BorderWidth="1"
+        SelectWeekText = "Woche"
+        SelectMonthText = "Monat"
+        SelectedDayStyle-BackColor="orange"
+        SelectedDayStyle-Font-Bold="True" /&gt;
+
+   &lt;asp:Label id=CurDate runat="server" /&gt;
+        
+   &lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Der <i>DropDownList</i>-Control ist eine ID zugewiesen, mit der wir am Anfang des 
+Sourcecodes die Listeneintr&auml;ge generiert haben. Die Web Control wird durch einen Client PostBack gesteuert.
+Wenn eine Auswahl in der Control stattfindet, dann wird der Delegate <i>ChangedDisplay</i> - wie oben beschrieben -
+ausgef&uuml;hrt.
+</p>
+
+<p>
+Als n&auml;chstes folgt die <i>Calendar</i>-Komponente. Abgesehen von den Kalender-Formatoptionen soll, wenn ein Datum
+ausgew&auml;hlt wurde, der Delegate <i>Date_Selected</i> (Eintrag: <i>OnSelectionChanged=</i>) ausgef&uuml;hrt werden, welcher
+in Verbindung mit der weiter unten befindlichen <i>Label</i>-Control das Datum best&auml;tigt.
+</p>
+
+<p>
+<i>SelectionMode</i> beinhaltet die M&ouml;glichkeit, wie schon beschrieben, Tage/Wochen/Monate auszuw&auml;hlen.
+<i>DayNameFormat</i> bewirkt, da&szlig; die Wochentage mit zwei Buchstaben angegeben werden. Bei dieser
+Calendar Control erfolgt die Navigation zwischen den Monaten so, da&szlig; der Verweis mit dem vollen
+Monatsnamen angegeben ist (<i>NextPrevFormat="FullMonth"</i>).
+</p>
+
+<p>
+Im Titelbalken wird der aktuelle Monat samt dazugeh&ouml;rigem Jahr angegeben (<i>TitleFormat="MonthYear"</i>).
+Den Auswahl-Linktext, der dann in der zus&auml;tzlichen Navigationsleiste aufscheint, k&ouml;nnen Sie f&uuml;r die 
+Angabe einer "ganzen Woche" mit <i>SelectWeekText</i> definieren; analog hier zu den f&uuml;r die Monatsauswahl 
+(<i>SelectMonthText</i>).
+</p>
+
+<h2>Die SelectRange Methode</h2>
+
+<p>
+Die zuvor beschriebene <i>SelectMode</i>-Methode l&auml;&szlig;t aber unter Umst&auml;nden einige W&uuml;nsche offen; z.B. ist es nicht
+immer erw&uuml;nscht die Auswahl auf die gesamte Woche oder den gesamten Monat zu beschr&auml;nken. Mit der 
+<i>SelectRange</i>-Methode k&ouml;nnen Sie individuelle Start- und Endwerte f&uuml;r den Auswahlbereich festlegen. 
+Die Einbindung geschieht wie folgt (<b>cal_SelRange.aspx</b>):
+</p>
+
+
+<pre style="background='silver';">
+&lt;%@ Page ClientTarget="DownLevel" Culture="de"%&gt;
+&lt;html&gt;
+&lt;body&gt;
+&lt;script language="C#" runat=server&gt;
+void btnSubM_Click(Object sender, EventArgs e) 
+{
+  if (Page.IsPostBack && Page.IsValid) 
+  {
+    DateTime dt1 = Convert.ToDateTime(txtdt1.Text);
+    DateTime dt2 = Convert.ToDateTime(txtdt2.Text);
+    Kalender1.SelectedDates.SelectRange(dt1, dt2);
+  }
+}
+&lt;/script&gt;
+...
+</pre>
+
+<p>
+Der Aufruf des Scriptblockes erfolgt durch Anklicken des "Bereich ausw&auml;hlen"-Buttons (im Sourcecode
+"btnSubM" benannt). Im Anweisungsblock wird die Seite zuerst auf <i>IsPostBack</i> und <i>IsValid</i> (dazu sp&auml;ter mehr) gepr&uuml;ft.
+Damit ich die <i>SelectRange</i>-Methode auf die <i>Calendar</i>-Control anwenden kann, mu&szlig; ich zuerst die beiden
+Datumsgrenzen "Von" Datum (dt1) und "Bis" Datum (dt2) als Variablen des Datentyps <i>DateTime</i> deklarieren.
+Zus&auml;tzlich erfolgt im gleichen Schritt die Wertzuweisung aus den beiden <i>TextBox</i> Web Controls, mit deren 
+Eingaben der Client den Datumsbereich festlegt. Danach erfolgt die Wert&uuml;bergabe zu der <i>Calendar</i>-Control
+(<i>Kalender1.SelectedDates.SelectRange(dt1, dt2);</i>).
+</p>
+
+<p>
+Als Gustost&uuml;ckerl habe ich mir erlaubt, die Eingabe des Clients auf korrekte Datumseingabe (mm/tt/jjjj) zu 
+&uuml;berpr&uuml;fen. Dies habe ich mit dem <i>CompareValidator</i> gel&ouml;st - einfach aber n&uuml;tzlich. Damit verhindere ich, 
+da&szlig; der Client f&uuml;r die Datumseingabe andere (z.B. nicht numerische) Formate als das vorgegebene (mm/tt/jjjj) eingeben
+kann und vermeide schon das erste Bombardement durch Exceptions.
+</p>
+
+<p>
+Was hier allerdings nicht &uuml;berpr&uuml;ft wird ist, ob der User sich an die Eingabereihenfolge gehalten hat. Also zuerst der 
+Monat, dann Tag (und zum Schlu&szlig; das vierstellige Jahr). Eine zweistellige Eingabe des Jahres ist aber auch 
+"gefahrlos" m&ouml;glich. Sehen wir uns den <i>CompareValidator</i> etwas genauer an:
+</p>
+
+<pre style="background='silver';">
+...
+&lt;td&gt;Von (tt/mm/jjjj):&nbsp;&lt;/td&gt;
+       &lt;td&gt;&lt;asp:textbox id="txtdt1" runat="server"/&gt;&lt;/td&gt;
+       &lt;td&gt;&lt;asp:CompareValidator id="ChkDte1" 
+               Type="Date"
+               ControlToValidate="txtdt1" 
+               operator="DataTypeCheck"
+               valueToCompare="01/01/2000"
+               errorMessage="&lt;b&gt;Von:&lt;/b&gt; Ung&uuml;ltiges Datum"
+               runat="server"/&gt;
+       &lt;/td&gt;
+...
+</pre>
+
+<p>
+Die <i>TextBox</i>-Web Control &uuml;bernimmt den Bereichsanfangswert des Clients. Dies geschieht bei
+&lt;asp:textbox id="txtdt1" runat="server"/&gt;. Der Eingabewert wird nun mittels <i>CompareValidator</i> auf
+den richtigen Datentyp hin &uuml;berpr&uuml;ft. Die Festlegung des zu vergleichenden Datentyps erfolgt mit 
+<i>Type="DateTime"</i>. Das <i>operator</i>-Attribut dient dazu, dem Validator vorzugeben welchen Vergleich 
+er machen soll. In unserem Fall ist <i>operator="DataTypeCheck"</i>, also vergleichen des Datentyps "DateTime" 
+mit dem der Cienteingabe. Bei dem Attribut <i>errorMessage</i> k&ouml;nnen Sie eine benutzerdefinierte Fehlermeldung
+bzw. Hinweis ausgeben, wenn der Vergleich fehlgeschlagen ist.
+</p>
+
+<p>
+Zwar ist diese &Uuml;berpr&uuml;fung noch nicht vollst&auml;ndig "deppensicher", aber f&uuml;r unser Beispiel mehr als ausreichend. Das
+Resultat des Scripts zeigt der abschlie&szlig;ende Screenshot:
+</p>
+
+<IMG SRC="/artikel/Bilder/200008/20000816_3.png" width="479" height="443" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+In diesem Artikel haben Sie die Grundfertigkeiten erlernt, auf Ihren ASP.NET Webseiten die <i>Calendar</i> Web Control
+sinnvoll einzubauen. Sie sind in der Lage, die Control Ihrem oder dem Geschmack des Users anzupassen und 
+Datumsauswahlen zu t&auml;tigen - und das einfach und ohne viel Sourcecode!
+</p>
+
+<p>
+Was ich Ihnen aber bis jetzt verschwiegen 
+habe, ist wie man aus der simplen Web Control einen leistungsf&auml;higen Terminplaner bzw. To-Do-Listen macht. Dieses 
+Thema werde ich nat&uuml;rlich in einem der folgenden ASPHeute-Artikel behandeln! Bevor wir dieses Thema jedoch behandeln
+sind aber die Grundlagen des Datenbankzugriffs in ASP.NET bzw. mit ADO+ und der Control Validation n&ouml;tig.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000816.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000816.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000808.htm">Einf&uuml;hrung in ASP.NET Web Forms</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000808.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

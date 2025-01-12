@@ -1,0 +1,502 @@
+<HTML>
+<HEAD>
+<TITLE>Generieren von Zeichnungen in PDF-Dokumenten</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel m&ouml;chte der Autor Ihnen zeigen, wie man in einer ASP Seite ein 
+PDF-Dokument mit Grafiken erzeugt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,PDF,Acrobat,ASP,Portable Document Format,activePDF,generieren,Dokument,Webserver">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Generieren von Zeichnungen in PDF-Dokumenten</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001103"></SCRIPT>
+</p>
+<p>In diesem Artikel m&ouml;chte ich Ihnen zeigen, wie man in einer ASP Seite ein 
+PDF-Dokument mit Grafiken erzeugt. 
+Im Artikel "<a href="20001017.htm">Generieren von PDF-Dokumenten</a>"
+k&ouml;nnen Sie sich &uuml;ber die Grundlagen von PDF-Dokumenten und &uuml;ber die 
+in diesem Artikel verwendeten ActiveX Komponenten der Firma 
+<a href="http://www.activepdf.com">activePDF, Inc.</a> informieren.</p>
+
+<p>Das nachfolgende PDF Dokument wurde mit ActivePDF (<i>activePDF Server</i> und <i>activePDF Printer</i>)
+in einer ASP Seite generiert:</p>
+
+<p><IMG SRC="Bilder/200011/20001103_Zeichnung.png" width=495 height=377 alt="" border="0">
+<br>
+<i>Bild 1: Zeichnungen in einem PDF Dokument</i></p>
+
+<p>Wie kann man nun Zeichnungen mit Hilfe der activePDF <i>Server</i> und <i>Printer</i>
+Objekte erstellen?</p>
+
+<p>Unter der Voraussetzung, da&szlig; ActivePDF am Webserver installiert ist, instanzieren Sie
+in einer ASP Seite die Objekte <i>APServer.Object</i> und <i>APPrinter.Object</i> mittels
+<i>Server.CreateObject</i> Befehl:</p>
+
+<p><pre style="background='silver';">
+... 
+<i>' Die Datei wird in das Root Verzeichnis geschrieben:</i>
+OutputDirectory = "/"
+physOutputDirectory = Server.MapPath(OutputDirectory)
+
+<i>' Instanziere activePDF Server Objekt</i>
+Set APServer = Server.CreateObject("APServer.Object")
+
+<i>' Instanziere activePDF Printer Objekt</i>
+Set APPrinter = Server.CreateObject("APPrinter.Object")
+
+<i>' Ausgabe Verzeichnis zum Schreiben des PDF Dokumentes</i>
+APServer.OutputDirectory = physOutputDirectory
+...
+</pre></p>
+
+<p>Danach starten Sie den Erstellungsvorgang des PDF Dokumentes, setzen die 
+"Papiergr&ouml;&szlig;e" des Dokumentes auf DIN A4. Au&szlig;erdem ist es angebracht,
+das Dokument im "Farbmodus" zu erstellen (<i>ColorMode = 2</i>):</p>
+
+<p><pre style="background='silver';">
+...
+<i>' Erstellungsvorgang des PDF Dokumentes am Server starten</i>
+lRet = APServer.StartPrinting() 
+If (lRet &lt;&gt; 0) Then
+   Response.Write  "Fehler bei StartPrinting aufgetreten!"
+   Response.End
+End If
+
+<i>' Seitengroesse auf DIN A4 setzen (210 x 297 mm)</i>
+APPrinter.PaperSize = 9	<i>' Siehe APPrinter Dokumentation</i>
+
+<i>' PDF als Farbdokument erstellen</i>
+APPrinter.ColorMode = 2
+...
+</pre></p>
+
+<p>Machen Sie das PDF Dokument mittles <i>APPrinter.StartDoc</i> Methode bereit zum Schreiben,
+und legen Sie noch fest, da&szlig; Text mittles der "AntiAliasing Technik" ausgegeben wird:</p>
+
+<p><pre style="background='silver';">
+... 
+<i>' Erstellen des Dokumentes beginnen:
+' APServer.NewPrinterName liefert den Namen
+' fuer die temporaere Spooling Datei</i>
+APPrinter.StartDoc APServer.NewPrinterName
+
+<i>' Antialias fuer Text festlegen</i>
+APPrinter.AntiAliasText = True
+...
+</pre></p>
+
+
+<h3>Einen dunkelblauen Kreis zeichnen</h3>
+
+<p>Nun k&ouml;nnen Sie Text in das PDF-Dokument schreiben, oder auch, wie in diesem Beispiel,
+einen Kreis zeichnen, der von einer dunkelblauen, strichpunktierten Linie begrenzt wird.
+Setzen Sie die Strichs&auml;rke (<i>APPrinter.DrawWidth</i>) und die Linienart des Kreises 
+(<i>APPrinter.DrawStyle</i>) fest. 
+Achten Sie darauf, da&szlig; Sie eine Strichst&auml;rke von <i>1</i> w&auml;hlen wenn Sie
+keine durchgehende Linie haben m&ouml;chten!</p>
+
+
+<p><pre style="background='silver';">
+..
+<i>' ### Zeichnen eines Kreises der Farbe Blau ###
+' Festlegen der Strichstaerke in Pixel</i>
+APPrinter.DrawWidth = 1
+' Festlegen der Linienart, (3 = Strichpunktierte Linie)
+APPrinter.DrawStyle = 3
+
+<i>' Syntax: APPrinter.PrintCircle Step%, X!, Y!, Radius!, CircleColor</i>
+Color = RGB(&amp;H32, &amp;H0E, &amp;HFE) ' Blau
+APPrinter.PrintCircle 0, 1500, 1000, 700, Color
+...
+</pre></p>
+
+<p>Der Syntax der <i>PrintCircle</i> Methode verlangt nach einer Farbe f&uuml;r den Kreis.
+Diese wird durch einen Integerwert repr&auml;sentiert, den man mittels 
+der VBScript Funktion <i>RGB(Rot, Blau, Gr&uuml;n)</i> ermitteln kann.</p>
+
+<p>Der <i>Step%</i> Parameter der <i>PrintCircle</i> Methode legt fest, ob die Koordinaten
+als absolute (<i>Step% = 0</i>) oder relative Koordinaten (<i>Step% = 1</i>) interpretiert werden.</p>
+
+<p>Die  <i>X!</i>, <i>Y!</i> und  <i>Radius!</i> Parameter werden in der 
+Einheit TWIPS angegeben. Ein "TWIP" ist eine L&auml;ngeneinheit, die 1/20 eines 
+"Print-Punktes" entspricht. 567 Twips ergeben einen Zentimeter, und 1440 Twips ergeben ein Inch (2.54 cm).</p>
+
+<p>Zur Umrechnung von Zentimeter in TWIPS kann man die Funktion <i>CMToTwips</i> benutzen:<br>
+<i>TWIPS = APPrinter.CMToTwips(AnzahlCM)</i></p>
+
+
+<h3>Eine rote Ellipse erstellen</h3>
+
+<p>Um eine Ellipse zu zeichnen, bedient man sich der <i>APPrinter.PrintEllipse</i> Funktion.
+die folgenden Befehle zeichnen eine rote Ellipse mit durchgehender Linie der St&auml;rke 20 Twips:</p>
+
+<p><pre style="background='silver';">
+...
+<i>' ### Zeichnen einer Ellipse der Farbe Rot ###</i>
+APPrinter.DrawWidth = 20
+APPrinter.DrawStyle = 0 ' Durchgehende Linie
+
+<i>' Syntax: APPrinter.PrintEllipse Step%, X!, Y!, XRadius!, YRadius!,CircleColor</i>
+Color = RGB(&amp;HFF, &amp;H00, &amp;H00) ' Rot
+APPrinter.PrintEllipse 0, 2500, 1500, 1200, 700, Color
+...
+</pre></p>
+
+<p>Die Parameter der <i>PrintEllipse</i> Methode sind analog der Parameter der <i>PrintCircle</i>
+zu benutzen.</p>
+
+
+
+<h3>Eine schwarze Linie ziehen</h3>
+
+<p>Zum Zeichen einer Linie dient die Funktion <i>APPrinter.PrintLine</i>:</p>
+
+<p><pre style="background='silver';">
+...
+<i>' ### Zeichnen einer Linie in Schwarz ###</i>
+APPrinter.DrawWidth = 15
+<i>' Syntax: APPrinter.PrintLine Step1%, X1!, Y1!, Step2%, X2!, Y2!, LineColor , FillOptions$</i>
+Color = RGB(&amp;H00, &amp;H00, &amp;H00) ' Schwarz
+APPrinter.PrintLine 0, 1000, 2000, 0, 4000, 800, Color, 0
+...
+</pre></p>
+
+<p>Der Parameter <i>FillOptions</i> wird erst beim Erstellen einer Box (waagrechtes Rechteck)
+ben&ouml;tigt, wie im n&auml;chsten Absatz erkl&auml;rt.</p>
+
+
+<h3>Eine gef&uuml;llte Box zeichnen</h3>
+
+<p>Eine Box erstellt man durch Gebrauch der <i>PrintLine</i> Methode, 
+wobei man als  <i>FillOptions</i> Parameter die Zeichenkette <i>"B"</i> angibt.
+F&uuml;llfarbe und F&uuml;llart legt man durch Setzen der 
+<i>DrawWidth</i> und <i>FillStyle</i> Eigenschaften des <i>APPrinter</i> Objektes fest.</p>
+
+<p><pre style="background='silver';">
+...
+<i>' ### Zeichnen eines gefuellten Rechteckes ###</i>
+APPrinter.DrawWidth = 8
+<i>' Fuellart festlegen: Waagrechte Linien</i>
+APPrinter.FillStyle = 2
+<i>' Fuellfarbe festlegen: Silber</i>
+APPrinter.FillColor = RGB(&amp;HC0, &amp;HC0, &amp;HC0) ' Silber
+<i>' Syntax: APPrinter.PrintLine Step1%, X1!, Y1!, Step2%, X2!, Y2!, LineColor , "B"
+' Zeichenfarbe: Schwarz</i>
+Color = RGB(&amp;H00, &amp;H00, &amp;H00) ' Schwarz
+APPrinter.PrintLine 0, 4000, 1700, 0, 6000, 3000, Color, "BF"
+...
+</pre></p>
+
+
+<p>Zum Abschlu&szlig; wird noch eine Zeichenkette ein wenig "schr&auml;g" in das
+PDF-Dokument geschrieben.</p>
+
+
+<h3>Text schr&auml;ggestellt schreiben</h3>
+
+<p>Die <i>APPrinter.PrintRotatedText</i> dient dazu, um Text um einem 
+bestimmten Winkel gedreht in das PDF-Dokument zu schreiben. 
+In unserem Beispiel wird der Text "<i>Rotation...</i>" (Arial, 24 pt), 
+um 250 Grad im Uhrzeigersinn gedreht, in das Dokument geschrieben:</p>
+
+<p><pre style="background='silver';">
+...
+<i>' ### Zeichnen eines gedrehten Textes ###
+' Font und Schriftgroesse festlegen</i>
+APPrinter.FontName = "Arial"
+APPrinter.FontSize = 24
+<i>' Festlegen der Position des Textes</i>
+APPrinter.CurrentX = 7000
+APPrinter.CurrentY = 2500 
+<i>' Syntax: APPrinter.PrintRotatedText Str$, CWDegrees</i>
+APPrinter.PrintRotatedText "Rotation...", 250
+...
+</pre></p>
+
+<p>Wenn das Dokument fertig ist, wird es durch das Aufrufen der Befehle
+<i>APPrinter.EndDoc</i> und <i>APServer.StopPrinting</i> erstellt und 
+am Webserver auf die Festplatte geschrieben. Von dort kann der User das
+PDF downloaden.</p>
+
+<p><pre style="background='silver';">
+...
+<i>' Erstellen des Dokumentes ist beendet </i>
+APPrinter.EndDoc
+
+<i>' Warten bis der PDF Job beendet ist. </i>
+lRet = APServer.Wait(3)  <i>' Maximale Wartezeit: 3 Sekunden</i>
+If (lRet <> 0) then
+APServer.StopPrinting
+   Response.Write  "Es ist ein Fehler aufgetreten!"
+   Set APPrinter = Nothing
+   Set APServer = Nothing
+   Response.End
+End If
+
+<i>' Erstellungsvorgang des PDF Dokumentes am Server ist fertig</i>
+APServer.StopPrinting
+...
+</pre></p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>Es ist keine gro&szlig;e Schwierigkeit in PDF-Dokumenten Zeichnungen 
+direkt in ASP zu erstellen. Die <i>activePDF Printer</i> Komponente bietet dazu
+gen&uuml;gend Funktionen, die Linien, Kreise, Ellipsen, Kreisb&ouml;gen, Punkte
+oder Boxen zeichen. Die Linienfarbe, F&uuml;llfarbe, Linienst&auml;rke und vieles
+mehr kann man in einer ASP Seite spezifizieren um die gew&uuml;nschten Zeichnungen
+in einem PDF File zu erstellen.</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001103.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20001017.htm">Generieren von PDF-Dokumenten</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eactivepdf%2Ecom">activePDF, Inc.</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eadobe%2Ede%2Fproducts%2Facrobat%2Fadobepdf%2Ehtml">Adobe PDF</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20001103" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Generieren von Zeichnungen in PDF-Dokumenten"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20001103.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Koller"><input type="hidden" name="AuthorEmail" value="christiank@aspexpert.com"><input type="hidden" name="Artikel" value="20001103"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20001103.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

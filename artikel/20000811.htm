@@ -1,0 +1,543 @@
+<HTML>
+<HEAD>
+<TITLE>Ausgabe der Event Log Eintr&auml;ge a la ASP.NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor, wie man mit ASP.NET das Event Log auslesen kann, und die Ausgabe mit Hilfe der DataGrid Control professionell und schnell formatieren kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,EventLog,EventLogEntry,Entries,Event log,Ereignisanzeige,Protokoll,System.Diagnostics">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Ausgabe der Event Log Eintr&auml;ge a la ASP.NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000811"></SCRIPT>
+</p>
+<p>
+Das Event Log unter Windows 2000 (oder NT) ist so ziemlich die wichtigste Informationsquelle
+f&uuml;r einen Administrator - weil dort s&auml;mtliche vorgefallenen Ereignisse vom Erfolg bis zum
+katastrophalen Mi&szlig;erfolg vermerkt sind. Und da es so wichtig ist, was liegt n&auml;her als diese
+Informationen &uuml;ber das Web anzeigbar zu machen?
+</p>
+<p>
+Der Event Viewer (Ereignisanzeige) sollte fast jedem gel&auml;ufig sein (siehe Bild). In diesem 
+Artikel werde ich zeigen, wie man mit ASP.NET und dem .NET Framework SDK die Liste der Eintr&auml;ge
+sehr elegant nachbauen kann. Die Zusatz&uuml;bung f&uuml;r den Leser ist dann, eine Seite f&uuml;r s&auml;mtliche 
+Details eines Eintrags zu basteln.
+</p>
+
+<IMG SRC="Bilder/200008/20000811_1.png" width="590" height="319" border="0" alt="">
+
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation des <i>Microsoft .NET Framework SDK's</i> auf
+einem Webserver. Weiters setze ich voraus, da&szlig; der Leser die Programmiersprache C# zu einem gewissen Grad beherrscht -
+es finden sich etliche Artikel auf diesem Server, um das notwendige Wissen zu erlernen.
+</p>
+<p>
+Sicherheitshinweis: die Beispielannahme ist, da&szlig; der ASP.NET Worker Prozess unter dem SYSTEM Konto l&auml;uft
+(standardm&auml;&szlig;ig l&auml;uft er unter dem ASPNET Account). Bitte &auml;ndern Sie <i>processModel</i> in <i>machine.config</i> entsprechend
+ab, oder geben nur Administratoren Zugriff auf die Dateien (Impersonation).
+</p>
+
+<h2>Die Hau-Ruck Method</h2>
+<p>
+Wenn es schnell gehen mu&szlig;, kann man das Wissen aus ASP-Zeiten durchwegs dazu verwenden, um eine
+Liste von Ereignissen zu generieren (auch mit Tabelle, obwohl das Beispiel dies nicht tut). Der
+Name des Programms ist Programm: <b>simple.aspx</b>.
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Diagnostics&quot; %&gt;
+&lt;%
+EventLog aLog = new EventLog();
+aLog.Log = &quot;System&quot;;
+aLog.MachineName = &quot;.&quot;;  // Lokale Maschine
+string strImage = &quot;&quot;;  // Icon f&uuml;r das Event
+
+Response.Write(&quot;&lt;p&gt;Es sind  &quot; + aLog.Entries.Count + 
+         &quot; Eintr&auml;ge im System Event Log.&lt;/p&gt;&quot;);
+		   
+foreach (EventLogEntry entry in aLog.Entries) 
+{
+  switch (entry.EntryType)
+  {
+    case EventLogEntryType.Warning:
+      strImage = &quot;warning.png&quot;;
+      break;
+    case EventLogEntryType.Error:
+      strImage = &quot;error.png&quot;;
+      break;
+    default:
+      strImage = &quot;info.png&quot;;
+      break;
+  }
+  Response.Write(&quot;&lt;img src=\&quot;&quot; + strImage + &quot;\&quot;&gt;&amp;nbsp;|&amp;nbsp;&quot;);
+  Response.Write(entry.TimeGenerated.ToString() + &quot;&amp;nbsp;|&amp;nbsp;&quot;);
+  Response.Write(entry.Source + &quot;&amp;nbsp;|&amp;nbsp;&quot;);
+  Response.Write(entry.EventID.ToString() + &quot;&lt;br&gt;\r\n&quot;);
+}
+%&gt;
+</pre>
+
+<p>
+Die Klassen f&uuml;r das Event Log finden sich im Namespace <i>System.Diagnostics</i>, der am Anfang der
+Seite eingebunden wird. Das &Ouml;ffnen des Logs ist an sich sehr einfach: ein neues <i>EventLog</i> Objekt
+erzeugen, das <i>Log</i> angeben, und dann noch den <i>MachineName</i> ("." ist die lokale Maschine).
+Und schon kann man aus dem Event Log lesen.
+</p>
+<p>
+Dies geschieht mit einem <i>foreach</i> Loop. Damit das Listing nicht v&ouml;llig einfallslos wird, stelle ich
+noch die korrekten Icons vor jeden Eintrag. Apropos, das Listing der Eintr&auml;ge ist in umgekehrter Reihenfolge, als
+man es im Event Viewer gewohnt ist: hier sind die &auml;ltesten Eintr&auml;ge die ersten.
+</p>
+
+<h2>Eleganter mit dem DataGrid</h2>
+<p>
+ASP.NET bringt sehr viele Neuerungen gerade im Bereich der Anzeige von Daten, und das Sch&ouml;ne ist,
+da&szlig; diese Daten nicht immer aus der Datenbank kommen m&uuml;ssen. Dies ist auch f&uuml;r die <i>DataGrid
+Web Control</i> so, die, wie der Name sagt, eine Tabelle (Grid) aus den Daten erstellt. Die einzige
+Voraussetzung ist da&szlig; die Datenquelle das <i>ICollection</i> Interface unterst&uuml;tzt - und die <i>Entries</i>
+Collection der <i>EventLog</i> Klasse tut dies.
+</p>
+
+<p>
+Der folgende Sourcecode (<b>speccolsonly.aspx</b>) zeigt, wie einfach man das DataGrid einsetzen kann:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Diagnostics" %&gt;
+&lt;script language="C#" runat="server"&gt;
+void Page_Load(Object sender, EventArgs e) 
+{
+  EventLog aLog = new EventLog();
+  aLog.Log = "System";
+  aLog.MachineName = ".";
+  
+  LogGrid.DataSource = aLog.Entries;
+  LogGrid.DataBind();
+}
+&lt;/script&gt;
+</pre>
+
+<p>
+Die DataGrid Control (Sourcecode folgt!) beinhaltet nur Formatierungsanweisungen und sonst nichts. Gef&uuml;llt wird das Grid
+mittels des <i>Page_Load</i> Events, welches nur das Event Log &ouml;ffnet und dann die <i>Entries</i> auf die
+<i>DataSource</i> Eigenschaft des DataGrid zuweist. Mit dem Aufruf von <i>DataBind</i> werden die Daten dann
+in die Tabelle gef&uuml;llt - und zwar nur die Spalten, die in <i>Columns</i> angegeben wurden. Das sieht
+dann so aus:
+</p>
+
+<IMG SRC="Bilder/200008/20000811_2.png" width="500" height="436" border="0" alt="">
+
+<p>
+Diese Einschr&auml;nkung nimmt man im DataGrid Tag selbst vor:
+</p>
+
+<pre style="background='silver';">
+&lt;form runat="server"&gt;
+&lt;asp:DataGrid id="LogGrid" runat="server"
+    BorderColor="black"
+    BorderWidth="1"
+    GridLines="Both"
+    CellPadding="3"
+    CellSpacing="0"
+    Font-Name="Verdana"
+    Font-Size="8pt"
+    HeaderStyle-BackColor="#aaaadd"
+    AutoGenerateColumns="false"&gt;
+    &lt;Columns&gt;
+      &lt;asp:BoundColumn HeaderText="TOF" DataField="EntryType" /&gt;
+      &lt;asp:BoundColumn HeaderText="Date/Time" DataField="TimeGenerated"/&gt;
+      &lt;asp:BoundColumn HeaderText="Source" DataField="Source"/&gt;
+      &lt;asp:BoundColumn HeaderText="Event ID" DataField="EventID"/&gt;
+    &lt;/Columns&gt;
+&lt;/asp:DataGrid&gt;
+&lt;/form&gt;
+</pre>
+
+<p>
+Der erste wichtige Schritt ist das <i>AutoGenerateColumns</i> Attribut auf false zu setzen. Damit
+verhindert man, da&szlig; automatisch alle Eigenschaften angezeigt werden. Nun kann man angeben, welche
+Spalten man haben m&ouml;chte.
+</p>
+<p>
+Ich verwende hier vier gebundene Spalten (an die Datenquelle gebunden). Der <i>HeaderText</i> wird in
+der Topzeile des Grids angezeigt, und in <i>DataField</i> steht, welche Eigenschaft ausgelesen werden
+soll, damit diese Spalte gef&uuml;llt wird.
+</p>
+<p>
+Ich habe dieses Beispiel mit den Spalten (Columns) bewu&szlig;t einfach gehalten. Es gibt noch viele
+andere Spaltentypen, und wenn man dann mit den Formatierungen auch noch zum Herumspielen 
+anf&auml;ngt, dann sind der Gestaltungs-"wut" keine Grenzen mehr gesetzt. Beispiele daf&uuml;r gibt
+es im QuickStart Tutorial genug.
+<p>
+
+<h2>Paging im DataGrid</h2>
+<p>
+Zum Abschlu&szlig; m&ouml;chte ich ein weiteres Feature des DataGrid's verwenden, das vielen vom
+Datenbankprogrammieren ein alter Bekannter ist - das Paging. Der Vorteil des DataGrid's ist
+der, da&szlig; das Paging (fast) ohne Code auskommt, und dann so aussehen k&ouml;nnte:
+</p>
+
+<IMG SRC="Bilder/200008/20000811_3.png" width="506" height="462" border="0" alt="">
+
+<p>
+Diesmal habe ich wieder den gesamten Sourcecode der Seite <b>paging.aspx</b> zum 
+Durchlesen in den Artikel &uuml;bernommen:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Diagnostics" %&gt;
+&lt;script language="C#" runat="server"&gt;
+void Page_Load(Object sender, EventArgs e) 
+{
+  BindGrid();
+}
+
+void LogGrid_Change(Object sender, DataGridPageChangedEventArgs e) 
+{
+  // Set CurrentPageIndex to the page the user clicked.
+  LogGrid.CurrentPageIndex = e.NewPageIndex;
+
+  // Rebind the data. 
+  BindGrid();
+}
+ 
+void BindGrid() 
+{
+  EventLog aLog = new EventLog();
+  aLog.Log = "System";
+  aLog.MachineName = ".";
+  
+  LogGrid.DataSource = aLog.Entries;
+  LogGrid.DataBind();
+}
+&lt;/script&gt;
+&lt;body bgcolor="#ffffff"&gt;
+
+&lt;h3&gt;System Event Log&lt;/h3&gt;
+
+&lt;form runat="server"&gt;
+&lt;asp:DataGrid id="LogGrid" runat="server"
+    AllowPaging="True"
+    PageSize="10"
+    PagerStyle-Mode="NumericPages"
+    PagerStyle-HorizontalAlign="Right"
+    PagerStyle-NextPageText="Next"
+    PagerStyle-PrevPageText="Prev"
+    OnPageIndexChanged="LogGrid_Change"
+    BorderColor="black"
+    BorderWidth="1"
+    GridLines="Both"
+    CellPadding="3"
+    CellSpacing="0"
+    Font-Name="Verdana"
+    Font-Size="8pt"
+    HeaderStyle-BackColor="#aaaadd"
+    AutoGenerateColumns="false"&gt;
+    &lt;Columns&gt;
+      &lt;asp:BoundColumn HeaderText="TOF" DataField="EntryType" /&gt;
+      &lt;asp:BoundColumn HeaderText="Date/Time" DataField="TimeGenerated"/&gt;
+      &lt;asp:BoundColumn HeaderText="Source" DataField="Source"/&gt;
+      &lt;asp:BoundColumn HeaderText="Event ID" DataField="EventID"/&gt;
+    &lt;/Columns&gt;
+&lt;/asp:DataGrid&gt;
+&lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Die ersten &Auml;nderungen finden sich in der DataGrid Control:
+</p>
+
+<pre style="background='silver';">
+AllowPaging=&quot;True&quot;
+PageSize=&quot;10&quot;
+PagerStyle-Mode=&quot;NumericPages&quot;
+PagerStyle-HorizontalAlign=&quot;Right&quot;
+PagerStyle-NextPageText=&quot;Next&quot;
+PagerStyle-PrevPageText=&quot;Prev&quot;
+OnPageIndexChanged=&quot;LogGrid_Change&quot;
+</pre>
+
+<p>
+Die beiden wichtigsten Attribute sind das erste und das letzte: <i>AllowPaging</i> und <i>OnPageIndexChanged</i>.
+Ersteres macht das Paging m&ouml;glich, zweiteres ist die Event-Methode die ausgel&ouml;st wird, wenn sich die Seite &auml;ndert.
+Die restlichen Attribute sind kosmetischer Natur.
+</p>
+<p>
+Da wir in diesem Beispiel mit einer Collection arbeiten, und nicht Datenbankdaten, habe ich es mir
+beim Paging (fast zu) einfach gemacht: ich binde einfach die Daten noch einmal auf das Grid. F&uuml;r
+bessere Performance - speziell f&uuml;r Datenbanken - sollte man dann auch die Daten "h&auml;ppchenweise"
+nachladen.
+</p>
+
+<H2>Schlu&szlig;bemerkung</H2>
+<p>
+Der eigentliche Zweck des heutigen Artikels war weniger das Auslesen des Event Logs zu erlernen
+als zu zeigen, wie vielseitig anwendbar das DataGrid auch au&szlig;erhalb des eigentlichen Hauptanwendungsgebietes
+der Datenbankprogrammierung ist. Man kann sehr viel der Funktionalit&auml;t verwenden, auch wenn das
+Editieren von Event Log Eintr&auml;gen (read-only) nicht sinnvoll und somit nicht verwendbar ist.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000811.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20000720.htm">Das foreach Statement</a><br>
+<a href="20000809.htm">Performance Monitoring a la .NET</a><br>
+<a href="20000925.htm">Services &uuml;ber das Web managen</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Edotnetgerman%2Ecom%2Flisten%2FaspDEdotnet%2Easp">Die aspDEdotnet Diskussionsliste</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000811" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Ausgabe der Event Log Eintr&auml;ge a la ASP.NET"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000811.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20000811"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000811.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

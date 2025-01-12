@@ -1,0 +1,289 @@
+<HTML>
+<HEAD>
+<TITLE>Die Einbindung von WBMP-Graphiken in WML</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Prinzipiell ist die Einbindung von Grafiken in WML der Kodierung in HTML &auml;hnlich. Jedoch sind einige Unterschiede zu HTML zu beachten, die ich in diesem Artikel anhand eines ASP Beispiels besprechen werde.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,WAP,WML,IMG,W@P,Wireless Application Protocol,images,linking">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Die Einbindung von WBMP-Graphiken in WML</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/WAP.htm">WAP</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000707"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Da Sie vielleicht nach dem Lesen des Artikels 
+<a href="../artikel/20000613.htm">WBMP - Das Grafikformat f&uuml;r WAP</a> 
+schon wissen, wie man  Grafiken f&uuml;r die Einbindung in WML vorbereitet, 
+wollen Sie jetzt sicher auch die Einbindung in den WML-Sourcecode lernen. 
+Prinzipiell ist die Einbindung von Grafiken in WML der Kodierung in HTML &auml;hnlich. 
+Jedoch sind einige Unterschiede zu HTML zu beachten, die wir hier besprechen wollen.
+</p>
+<p>
+Zum Ausprobieren der Sourcecode-Beispiele ben&ouml;tigen Sie einen Emulator bzw. WML-tauglichen 
+Browser. Hier einige Links, wo Sie solchen Browser beziehen k&ouml;nnen:
+<ul>
+<li><a href="http://www.slobtrot.com/index.html">WinWap 2.3 Light</a>
+<li><a href="http://www.gelon.net/">Wapalizer</a>
+<li><a href="http://www.wap.com.sg/downloads">Wapman</a>
+<li><a href="http://www.forum.nokia.com/main/1,6668,1_1,00.html">NOKIA WAP Toolkit 1.2 (SDK)</a>
+</ul>
+</p>
+
+<h2>Der &lt;img&gt;-Tag</h2>
+<p>
+Der &lt;img&gt;-Tag mu&szlig; immer innerhalb eines Card-Blocks (&lt;card id="CARDID" ... &lt;/card&gt;) stehen. 
+Dieser Tag wird nicht wie &uuml;blich durch einen Abschlu&szlig;-Tag (z.B. &lt;/tag&gt;), sondern wird nach 
+den Attributen am Ende durch einen Schr&auml;gstrich "/" geschlossen.
+</p>
+<p>
+<pre style="background='silver';">
+&lt;img src="BILD.WBMP" alt="ALTERNATIV TEXT"
+	vspace="VERTIKALER ABSTAND" 
+	hspace="HORIZONTALER ABSTAND"
+	align="AUSRICHTIUNG" height="BILDH&Ouml;HE"    
+	width="BILDBREITE"/&gt;
+</pre>
+</p>
+
+<h3>Die Attribute im Detail</h3>
+<p>
+<i>src="BILD.WBMP"</i> gibt den Pfad bzw. die URL wo das Bild physikalisch
+gespeichert ist an. Richtlinien f&uuml;r die WBMP-Grafik Erstellung siehe 
+<a href="../artikel/20000613.htm">WBMP - Das Grafikformat f&uuml;r WAP</a>.
+</p>
+<p>
+<i>alt="ALTERNATIV TEXT"</i> gibt einen alternativen Text aus f&uuml;r den Fall,
+da&szlig; der WML-Browser keine Bilder darstellen kann. Hier sind Leerzeichen zwischen Worten erlaubt.
+</p>
+<p>
+<i>vspace="VERTIKALER ABSTAND"</i>  Hier k&ouml;nnen Sie den vertikalen Abstand
+des Bildes ober- und unterhalb von Objekten in Pixeln angeben.
+</p>
+<p>
+<i>hspace="HORIZONTALER ABSTAND"</i>  Hier k&ouml;nnen Sie den horizontalen Abstand
+des Bildes links und rechts von Objekten in Pixeln angeben.
+</p>
+<p>
+<i>align="AUSRICHTIUNG"</i> Definiert die Ausrichtung der Grafik innerhalb der
+Card. G&uuml;ltige Werte hierf&uuml;r sind: 
+<ul>
+<li><i>align="middle"</i> mittige Ausrichtung
+<li><i>align="top"</i>  Ausrichtung an der Oberkante
+<li><i>align="bottom"</i> Ausrichtung an der Unterkante
+</ul>
+</p>
+<p>
+<i>height="BILDH&Ouml;HE"</i> bestimmt die H&ouml;he des eingef&uuml;gten Bildes in Pixel.
+</p>
+<p>
+<i>width="BILDBREITE"</i> bestimmt die Breite des eingef&uuml;gten Bildes in Pixel.
+</p>
+<p>
+Sehen wir uns die Verwendung des Tags in einem kleinen Beispiel an
+</p>
+
+<h3>Beispiel</h3>
+<p>
+In diesem Beispiel demonstriere ich da&szlig; <i>vspace</i> (oben/unten) bzw. <i>hspace</i> (links/rechts) 
+symmetrische Abst&auml;nde bewirken (siehe Bild).
+</p>
+<p><IMG SRC="/artikel/Bilder/200007/20000707.png" width="141" height="141" border="0" alt=""></p>
+<p>
+Der Sourcecode, um dieses Display zu erzeugen, sieht wie folgt aus:
+<pre style="background='silver';">
+1: &lt;?xml version="1.0"?&gt; 
+2:&lt;!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN"  
+  "http://www.wapforum.org/DTD/wml_1.1.xml"&gt;
+3:&lt;wml&gt;
+4:	&lt;card id="card1" title="ASPHeute.com"&gt;
+5:		&lt;p&gt;
+6:		&lt;img src="ASPH.WBMP" alt="ASPHeute Logo"
+7:           vspace="3" hspace="5" align="top"
+8:  			 height="15" width="30"/&gt;
+9:		&lt;/p&gt;
+10:	&lt;/card&gt;
+11:&lt;/wml&gt;
+</pre>
+</p>
+<p>
+Das Attribut <i>vspace="3"</i> in Zeile 7 bedeutet, da&szlig; der Abstand ober- und unterhalb des Bildes
+zu anderen Objekten 3 Pixel betragen soll. Der linke und rechte Abstand des Bildes zu anderen
+Objekten wird mit <i>hspace="5"</i> auf 5 Pixel gesetzt. Die Ausrichtung an der Oberkante der Card
+erledigt das Statement <i>align="top"</i>.
+</p>
+<p>
+Als Abschlu&szlig; dieses Artikels noch ein kleines Beispiel, das die WML-Site interessanter macht - 
+ein Beispiel mit ASP.
+</p>
+
+<h2>WBMP-Bilder zuf&auml;llig anzeigen</h2>
+<p>
+F&uuml;r den Fall, da&szlig; Sie wechselnde WBMP-Bilder auf Ihrer WML-Site anzeigen wollen, gibt es eine 
+M&ouml;glichkeit mit Hilfe von ASP (Active Server Pages). Die ASP-Datei w&auml;hlt zuf&auml;llig aus einer 
+beliebigen Anzahl von Bildern eines aus. Bei jedem Sitebesuch wird nun ein anderes angezeigt.
+</p>
+<p>
+Wie das geht? - Ganz einfach:
+</p>
+<p>
+Zuerst erstellen Sie ein neues Verzeichnis auf Ihrem Webserver (z.B. ..\images). Danach kopieren 
+Sie Ihre zuvor erstellten WBMP-Grafiken in dieses Verzeichnis. Wie man WBMP-Grafiken erstellen 
+lesen Sie <a href="../artikel/20000613.htm">hier</a>. 
+</p>
+<p>
+Der folgende Code sorgt f&uuml;r die zuf&auml;llige Auswahl der Bilder:
+</p>
+<p>
+<pre style="background='silver';">
+ 1: &lt;%
+ 2: dim x(3)
+ 3: 
+ 4: 'Angabe des Verzeichnisses wo die bilder gespeichert sind 
+ 5: Const picpath=&quot;/images&quot;
+ 6: 
+ 7: Set filesystem = CreateObject(&quot;Scripting.FileSystemObject&quot;)
+ 8: Set folder = filesystem.GetFolder(Server.MapPath(picpath))
+ 9: 
+10: Set filecollection = folder.Files
+11: 
+12: 'mit Hilfe des FileSystemObjects alle Dateien einlesen
+13: idx=0
+14: For Each file in filecollection
+15:   idx=idx+1
+16:   x(idx)=file.name
+17: Next
+18: 
+19: 'Auswahl eines Bildes
+20: randomize timer
+21: PicNo=int(rnd()*idx)+1
+22: 
+23: 'Ressourcen wieder freigeben
+24: set filesystem=nothing
+25: set folder=nothing
+26: set filecollection=nothing
+27: 
+28: 'Ausgew&auml;hltes Bild Anzeigen
+29: response.write &quot;&lt;img src=&quot; &amp; mypath  &amp; &quot;/&quot; 
+30: response.write x(PicNo)&amp; &quot; alt=&quot; &amp; x(PicNo)&gt;&quot;
+31: %&gt;    
+</pre>
+</p>
+<p>
+In Zeile 2 wurde ein Array der Gr&ouml;&szlig;e 3 erstellt, da hier 3 Beispiel WBMP-Grafiken vorhanden 
+sind. Nat&uuml;rlich k&ouml;nnen Sie je nach Anzahl Ihrer Bilder die von Ihnen ben&ouml;tigte Gr&ouml;&szlig;e des 
+Arrays angeben (und nat&uuml;rlich auch dynamisch mit <i>Redim</i>).
+</p>
+<p>
+Die Zeile 10 weist den Server an die Dateinamen aller Bilder die sich im Verzeichnis (z.B \images) 
+befinden einzulesen (FileSystemObject). In der Zeile 14 bis 17 werden alle gefundenen Dateinamen 
+im Verzeichnis, wo die Bilder gespeichert wurden, in das vorher definiert Array transferiert 
+und gleichzeitig die Anzahl der vorhandenen Bilder ermittelt.
+</p>
+<p>
+Die Randomize-Funktion (Zeile 20) generiert eine Zahl von 1 bis zu der g&uuml;ltigen Anzahl von 
+vorhandenen Bildern. Diese ermittelte Nummer, welche als Index des definierten Arrays verwendet 
+wird, wird in der Variable "PicNo" gespeichert.
+</p>
+<p>
+In Zeile 24 bis 26 werden die verwendeten Ressourcen des FileSystemObjects wieder freigegeben.
+</p>
+<p>
+Jetzt brauchen Sie noch eine Card Ihrer WML-Site erstellen, um die ASP-Datei darin einzubinden. 
+Das k&ouml;nnte so aus sehen (Achtung: die Dateiendung WML mu&szlig; auf die ASP Engine gemappt sein,
+damit das funktioniert!):
+</p>
+<p>
+<pre style="background='silver';">
+&lt;?xml version="1.0"?&gt; 
+&lt;!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" 
+	"http://www.wapforum.org/DTD/wml_1.1.xml"&gt; 
+ 
+&lt;wml&gt; 
+	&lt;card id="card1" title="ASPHeute.com"&gt; 
+	&lt;p&gt; 
+	Ein zufaellig ausgewaehltes Bild:
+	&lt;!-- #INCLUDE FILE="rndpic.asp"--&gt;
+	&lt;/p&gt; 
+	&lt;/card&gt; 
+&lt;/wml&gt;
+</pre>
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Mit diesem Artikel sollten Sie in der Lage sein, in Ihre WML-Site Grafiken einzubinden, und diese 
+auch innerhalb ihrer Card nach Ihren W&uuml;nschen formatieren bzw. zu positionieren. Seien Sie nochmals 
+darauf hingewiesen, da&szlig; die Grafiken im Moment nur 1 Bit Farbtiefe (schwarz/wei&szlig;) haben und die 
+Aufl&ouml;sung noch m&auml;&szlig;ig ist. Obwohl die WBMP-Dateigr&ouml;&szlig;e gering ist, haben Decks mit vielen Grafiken 
+lange Ladezeiten und die Cards m&uuml;ssen, um zu den Textinformationen zu gelangen, m&uuml;hsam 
+durchgescrollt werden.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000707.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000707.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000607.htm">IIS Konfiguration f&uuml;r WAP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000607.htm</span><br>
+<a href="../artikel/20000613.htm">WBMP - Das Grafikformat für WAP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000613.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Enokia%2Ecom%2Fwap%2F">Nokia WAP Developer Page</a><br>
+<SPAN class="content">http://www.nokia.com/wap/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

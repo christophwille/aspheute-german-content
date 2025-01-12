@@ -1,0 +1,232 @@
+<HTML>
+<HEAD>
+<TITLE>Automation - WSH versus Wget</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel beschreibt der Autor, wie man bestimmte Tasks zu bestimmten Zeiten ablaufen lassen - und zwar entweder als ASP Datei, oder als WSH Skript.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,WSH,ASP,Windows Scripting Host,WGet,HTTP,Automation,Administration,AT,Scheduled Task,Scheduler,Windows">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Automation - WSH versus Wget</H1>
+<p>
+Geschrieben von: <a href="../autoren/wernerkofler.htm">Werner Kofler</a><br>
+Kategorie: <a href="../kategorien/Server.htm">Server</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000511"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Eine Frage, die h&auml;ufig auftritt ist: Wie kann ich ASP-Scripts zu bestimmten Zeiten aufrufen? Oder, eng damit 
+verbunden: Wie kann ich die Ausgabe eines ASP-Scripts in eine Datei umleiten? Zwei verschiedene Ans&auml;tze um 
+Probleme dieser Art zu l&ouml;sen werden in diesem Artikel betrachtet.
+</p>
+<p>
+ASP-Dateien und WSH Dateien (.vbs und .js) basieren beide auf der gleichen Technologie: dem ActiveX Scripting 
+Host. Der Unterschied ist, da&szlig; ASP Scripts von Besuchern einer Website aktiviert werden,  und das Ergebnis wird 
+als HTML-Code an den Client zur&uuml;ckgeschickt.  WSH Scripts hingegen werden auf der lokalen Maschine von einem 
+User angestossen (seit dem LoveLetter Virus d&uuml;rfte dies einigen Personen schmerzlich bewu&szlig;t sein...).
+</p>
+<p>
+Zwei Probleme f&uuml;r ASP Programmierer, die sich &ouml;fter stellen, sind nun folgende:
+<ul>
+	<li>Ein Script soll zu einem bestimmten Zeitpunkt oder regelm&auml;&szlig;ig ausgef&uuml;hrt werden.
+	<li>Die komplette Ausgabe (HTML-Code) eines Scripts soll als Datei auf dem Server abgespeichert werden.
+</ul>
+</p>
+
+<h2>Scripts zeitgesteuert aufrufen</h2>
+<p>
+Um irgendeine Aktion auf einem Server zeitgesteuert zu starten, wird normalerweise ein <i>Scheduler</i> verwendet. 
+Windows NT 4.0  hat einen recht einfachen Scheduler als Dienst integriert.
+</p>
+<p>
+Das Dos-Kommando
+<pre style="background=silver;">At /?</pre>
+liefert die Anleitung zur Verwendung des Schedulers.
+</p>
+<p>
+Windows 2000 stellt unter <i>Control Panel/Scheduled Tasks/Add Scheduled Tasks</i> einen wesentlich besseren 
+Scheduler zur Verf&uuml;gung, sofern man die erweiterten Einstellungen miteinbezieht. 
+</p>
+<p>
+Benutzt man NT 4.0, so sollte man, je nach gegebener Aufgabe, &uuml;berpr&uuml;fen, ob AT den eigenen Anforderungen 
+entspricht, oder ob man doch einen professionellen Scheduler installiert. <a href="http://arcanadev.com/" target="_blank">Arcana Development</a> 
+bietet einen effizienten Scheduler an, der einige M&ouml;glichkeiten mehr bietet, allerdings auch etwas kostet. (40 USD)
+</p>
+<p>
+Um ein ASP-Script &uuml;ber einen Scheduler auszuf&uuml;hren, sollte das Script in eine Windows Script Datei umgewandelt 
+werden. Dazu entfernt man jeglichen HTML-Code aus der ASP-Datei, also im Grunde alles was au&szlig;erhalb der 
+&lt;% %&gt; Delimiter steht. Auch die Delimiter werden entfernt. Wenn im Script Objekte erstellt werden, so ist 
+statt <i>Server.CreateObject</i> nur <i>CreateObject</i> zu verwenden. So wird aus 
+<pre style="background=silver;">
+Set Conn = Server.CreateObject("ADODB.Connection")
+</pre>
+einfach nur
+<pre style="background=silver;">
+Set Conn = CreateObject("ADODB.Connection")
+</pre>
+</p>
+<p>
+Wird im Script ein <i>Response.Write</i> verwendet, so ist das durch <i>WScript.Echo</i> zu ersetzen, das eine 
+Ausgabe zur Konsole t&auml;tigt.
+</p>
+<p>
+Die so modifizierte ASP-Datei sollte jetzt je nach verwendeter Script-Sprache als .vbs oder .js-Datei 
+abgespeichert werden und kann dann mit
+<pre style="background=silver;">
+Cscript meinscript.vbs
+</pre>
+aufgerufen werden. Damit kann man z.B. Datenbanken "aufr&auml;umen" oder Daten zu statistischen Zwecken aufarbeiten.
+</p>
+<p>
+Die Vorteile, die das Ausf&uuml;hren mittels WSH mit sich bringt sind folgende:
+<ul>
+<li>das Script mu&szlig; nicht unter dem anonymen IUSR-Account laufen, sondern kann, falls notwendig erweiterte Berechtigungen haben.
+<li>das Script ist nicht durch ein Timeout begrenzt. 
+<li>das Script l&auml;uft nicht im selben Speicherbereich wie der WebServer. Fehler haben also keinen Ausfall zur Folge.
+<li>Der WebServer wird nicht mit Aufgaben wie Logging oder dem Beantworten des http-Requests belastet.
+</ul>
+</p>
+<p>
+Sollte aus irgend einem Grund die Umwandlung in eine WSH-Datei nicht m&ouml;glich sein, oder ist es zu viel Arbeit, 
+kann man auch eine ASP-Datei zu einem bestimmten Zeitpunkt aufrufen. Dazu simuliert man im Prinzip einen 
+Besucher, der das Script aufruft. Ein Tool, das das erm&ouml;glicht stammt aus der Unix-Welt und hei&szlig;t <b>Wget</b>. 
+Tim Charron hat sich die M&uuml;he gemacht, und das Programm in die Microsoft-Welt portiert. Es kann unter
+von seiner <a href="http://www.interlog.com/~tcharron/wgetwin.html" target="_blank">Website</a> heruntergeladen werden.
+</p>
+<p>
+Wget ist ein Command-Line-Tool das http-Requests erm&ouml;glicht. &Uuml;ber zahlreiche Parameter (Anzeige &uuml;ber Kommando 
+<i>wget -help</i>) kann man das Programm sehr gut steuern.
+</p>
+<p>
+Um jetzt ein ASP-Script zeitgesteuert auf dem Web-Server auszuf&uuml;hren benutzt man wiederum einen Scheduler und 
+erstellt einen entsprechenden Task. Dieser kann dabei auf demselben Server wie auch auf einem anderen Host 
+ausgef&uuml;hrt werden. Wichtig ist in letzterem Fall, da&szlig; zum entsprechenden Zeitpunkt eine http-Verbindung zum 
+Server m&ouml;glich sein mu&szlig;.
+</p>
+<p>
+Der Befehl
+<pre style="background=silver;">
+Wget www.webserver.com/script.asp -c
+</pre>
+ruft die Datei script.asp vom Webserver ab, und speichert das Ergebnis (HTML-Code) unter dem selben Namen 
+lokal ab. Der Paramter <i>-c</i> weist Wget an eine eventuell bereits vorhandene Datei zu &uuml;berschreiben. Das ist 
+wichtig da Wget ansonsten eine neue Datei "script.asp.1" usw. erstellt. Funktionen wie das Speichern unter 
+einem anderen Namen, rekursive Aufrufe, Wiederholungsversuche, Benutzer-Authentifizierung usw. k&ouml;nnen 
+ebenfalls angegeben werden.
+</p>
+<p>
+Das Ausf&uuml;hren eines Wget Kommands wirkt sich am Webserver wie ein "richtiger" HTTP-Request eines "richtigen" 
+Besuchers aus. Es wird also auch ein Log-Eintrag erstellt, der bei entsprechender H&auml;ufigkeit Statistiken 
+beeinflussen kann. Weiters zu beachten ist, da&szlig; ein ASP-Script auch zu lange brauchen und ein Timeout 
+zur&uuml;ckgeben kann.
+</p>
+
+<h2>Komplette Script-Ausgabe in Datei umleiten</h2>
+<p>
+Die hier beschriebene Methode ist eigentlich keine richtige Umleitung, sondern eine weitere 
+Anwendungsm&ouml;glichkeit von Wget. Mit
+<pre style="background=silver;">
+Wget www.webserver.com/script.asp -O script.html -nc
+</pre>
+ruft man das Script auf, und speichert das Ergebnis als HTML-Code in der Datei script.html lokal ab. 
+</p>
+<p>
+Wird Wget auf diese Weise auf dem Webserver selbst aufgerufen, hat man hiermit die Ausgabe an den Client in die 
+entsprechende Datei "umgeleitet". Das eignet sich auch hervorragend um vielbesuchte Seiten, die 
+resourcenfressenden Code enthalten, nur einmal alle x Minuten auszuf&uuml;hren, und dem Besucher die statische 
+HTML-Seite zu pr&auml;sentieren. Wird, als Beispiel, die Startseite &ouml;fter als einmal alle 3 Minuten aufgerufen, 
+so kann es sinnvoll sein, diese Seite nur einmal &uuml;ber Wget aufzurufen, und das generierte Ergebnis dann als 
+statische HTML-Seite zu verlinken.
+</p>
+<p>
+In diesem Fall sollte aber auf entsprechende Verfalls-Angaben im http-Header oder im &lt;HEAD&gt;-Teil des 
+HTML-Codes geachtet werden, um dem Besucher auch wirklich immer aktuelle Daten zu pr&auml;sentieren. Der 
+AspHeute-Artikel  <a href="../artikel/19990808.htm">Caching bei Browser und Proxy</a> gibt eine 
+Anleitung dazu. 
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Bei einem Abruf eines ASP-Scripts &uuml;ber Wget von einem anderen Host aus hat man eine hervorragende M&ouml;glichkeit 
+um Content zu replizieren bzw. zu spiegeln. Der ganze Vorgang l&auml;uft &uuml;ber das HTTP-Protokoll ab, und d&uuml;rfte 
+somit weder von Firewalls noch Proxies blockiert werden. Weiters erm&ouml;glicht es Wget auch, ein ASP-Script 
+"remote" zeitgesteuert aufzurufen. Dies ist vor allem sinnvoll wenn man keinen administrativen Zugang zum 
+Webserver hat, um auf diese Weise den Scheduler zu konfiguieren. Grunds&auml;tzlich gilt: Wget eignet sich 
+hervorragend um das Ergebnis von ASP-Scripts lokal in einer Datei abzuspeichern.
+</p>
+<p>
+Zur L&ouml;sung von Automatisationproblemen mit WSH gilt zu sagen, da&szlig; es normalerweise m&ouml;glich ist, ein ASP-Script 
+in ein WSH-Script umzuwandeln. Wenn man diese M&ouml;glichkeit hat, sollte man sich ernsthaft &uuml;berlegen, diese der
+Verwendung von Wget vorzuziehen - die wichtigsten Vorteile sind die Nicht-Belastung des Webservers, die 
+Nicht-Gef&auml;hrdung seiner Laufstabilit&auml;t sowie die erweiterten M&ouml;glichkeiten durch administrative Benutzeraccounts.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000629.htm">Automatisation mit SQL Server</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000629.htm</span><br>
+<a href="../artikel/19990808.htm">Caching bei Browser und Proxy - Woher Seiten wirklich kommen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990808.htm</span><br>
+<a href="../artikel/20040517.htm">Filesystem-Watcher leicht gemacht</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040517.htm</span><br>
+<a href="../artikel/20010516.htm">Kommandozeilen-Programme aufrufen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010516.htm</span><br>
+<a href="../artikel/20010928.htm">Schlu&szlig; mit lustig Teil 3 - das Hfnetchk Tool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010928.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Farcanadev%2Ecom%2F">Arcana Development</a><br>
+<SPAN class="content">http://arcanadev.com/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Einterlog%2Ecom%2F%7Etcharron%2Fwgetwin%2Ehtml">Wget</a><br>
+<SPAN class="content">http://www.interlog.com/~tcharron/wgetwin.html</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

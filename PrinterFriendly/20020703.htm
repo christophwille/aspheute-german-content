@@ -1,0 +1,240 @@
+<HTML>
+<HEAD>
+<TITLE>Eine kleine Bilddatenbank, Teil 1</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im ersten Teil der Artikelserie geht es darum, eine Datenbank mit den Bildinformationen auszulesen und die Bilder in einer Vorschau anzuzeigen. Klickt man das Bild an, popt ein neues Fenster auf.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Bilddatenbank,Bildverwaltung,Bildanzeige,Layer,DIV Tag,Einblenden,Ausblenden,Hover,JavaScript,Datenbank,Anzeige,Liste">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Eine kleine Bilddatenbank, Teil 1</H1>
+<p>
+Geschrieben von: <a href="../autoren/herberthahn.htm">Herbert Hahn</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020703"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Auf die Idee f&uuml;r diese Artikelserie hat mich das Lesen der diversen Mailinglisten von ASPGerman gebracht. Immer wieder werden solche 
+Themen nachgefragt: Wie kann ich ein Popup Fenster auf die Gr&ouml;&szlig;e des Bildes einstellen? Wie kann ich beim Upload von Bildern die 
+Gr&ouml;&szlig;e des Bildes begrenzen? Und so weiter. Diese Artikelserie wird die &uuml;blichsten Fragen abdecken.
+</p>
+<p>
+Im ersten Teil der Artikelserie geht es darum, eine Datenbank mit den Bildinformationen auszulesen und die Bilder in einer Vorschau 
+anzuzeigen. Klickt man das Bild an, "popt" ein neues Fenster auf, klarerweise mit dem Bild und in der tats&auml;chlichen Gr&ouml;&szlig;e des Bildes.
+</p>
+
+<h2>Installation der Beispielskripts</h2>
+<p>
+Der Download beinhaltet folgende Dateien:
+</p>
+
+<ol>
+	<li><b>default.asp</b>  Darstellung der Bilder in einer &Uuml;bersicht mit den Bildbeschreibungen.
+	<li><b>detailbild.asp</b> Zur Darstellung der gro&szlig;en Bilder (Popup)
+	<li><b>tools.asp</b> Funktion zum &Ouml;ffnen der Datenbank
+	<li><b>bilder.mdb</b> Die Datenbank
+</ol>
+
+<p>
+Kopieren Sie alle Dateien in ein Verzeichnis auf Ihrem Webserver.
+</p>
+
+<h2>Die Datenbank</h2>
+<p>
+Um Informationen zu den Bildern zu bekommen verwenden wir folgende Datenbank:
+</p>
+
+<IMG SRC="/artikel/Bilder/200207/20020703_1.png" width="482" height="161" alt="" border="0">
+
+<p>
+In der Bilddatenbank ist alles relevante &uuml;ber die Bilder abgespeichert. Was wir jedoch hier nicht finden ist die Gr&ouml;&szlig;e der Bilder. 
+Sch&ouml;n w&auml;re es wenn wir diese Daten bereits h&auml;tten. Jedoch wie im wirklichen Leben verf&uuml;gen wir nicht &uuml;ber diese Daten (noch nicht). 
+</p>
+
+<h2>Anzeige der Thumbnails</h2>
+<p>
+Bevor wir etwas anzeigen k&ouml;nnen, m&uuml;ssen wir einmal die Datenbank &ouml;ffnen. Dazu habe ich in der Datei tools.asp eine Funktion 
+gekapselt, die die Datenbank relativ zum Scriptpfad &ouml;ffnet. Der folgende Code ist der Beginn von <b>default.asp</b>, das die Thumbnails
+anzeigt:
+</p>
+
+<pre style="background='silver';">
+&lt;!--#include file="tools.asp"--&gt;
+&lt;%
+OpenDB con, "Bilder"
+SQL = "SELECT fldID,fldBildKL,fldBildGR,fldBildText,fldBildBeschreibung,fldKategorie " &amp; _
+  "FROM tblBilder ORDER BY fldID ASC"
+
+Set rs = con.Execute(SQL)
+%&gt;
+</pre>
+
+<p>
+In der Datei <b>default.asp</b> befindet sich ein clientseitiger Scriptblock zum aus- bzw. einblenden einer Ebene (<i>DIV</i>) die uns zum Anzeigen 
+der Beschreibung dient. Dieses Script will ich hier nicht diskutieren, da es von Dreamweaver UltraDev automatisch generiert wurde. 
+Hier aber Screenshots ohne und mit eingeblendeter Ebene:
+</p>
+
+<table>
+<tr>
+	<td><IMG SRC="/artikel/Bilder/200207/20020703_2.png" width="655" height="557" alt="" border="0"><br><i>Ohne Ebene</i></td>
+</tr>
+<tr>
+	<td><IMG SRC="/artikel/Bilder/200207/20020703_3.png" width="655" height="557" alt="" border="0"><br><i>Mit eingeblendeter Ebene</i></td>
+</tr>
+</table>
+
+<p>
+Zur&uuml;ck zum ASP Code: nach dem &Ouml;ffnen der Datenbank selektieren wir die Spalten aus der Tabelle <i>tblBilder</i> in der Reihenfolge des 
+Autowertes. Dieses Statement werden wir in einem weiteren Artikel umformen, um die Bilder nach Kategorien zu sortieren (und nach 
+weiteren Kriterien). Im heutigen Arbeitsschritt k&ouml;nnten wir die <i>ORDER BY</i> Klausel auch weglassen. Die Datens&auml;tze werden ausgelesen 
+(und in einer Tabelle dargestellt): 
+</p>
+
+<pre style="background='silver';">
+&lt;%
+i=1		  
+While Not rs.EOF
+	varBildKL = Trim(rs("fldBildKL"))
+	varBildGR = Trim(rs("fldBildGR"))	
+	varBildText = Trim(rs("fldBildText"))
+	varKategorie = Trim(rs("fldKategorie"))
+	varBildBeschreibung = Trim(rs("fldBildBeschreibung"))
+%&gt;
+</pre>
+
+<p>
+Das HREF Tag des Bildes ist interessant: das <i>onClick</i> Ereignis &ouml;ffnet ein Fenster mit dem gro&szlig;en Bild: 
+</p>
+
+<pre style="background='silver';">
+&lt;a href="javascript:;" onclick="window.open('detailbild.asp?bild=&lt;% = varBildGR %&gt;',
+   'Anzeige',
+   'titlebar=no,toolbar=no,status=no,menubar=no,resizeable=yes')"&gt;
+   &lt;img src="&lt;% = varBildKL %&gt;" width="135" height="94" border="0" alt="mit Klick Detailbild ansehen"&gt;
+&lt;/a&gt;
+</pre>
+
+<p>
+Der zweite HREF Tag (Details... Link) l&auml;&szlig;t mit dem <i>mouseOver</i> Event das versteckte DIV-Tag mit der langen 
+Beschreibung des Bildes erscheinen:
+</p>
+
+<pre style="background='silver';">
+&lt;a href=" javascript:;"  onMouseOver="MM_showHideLayers('text&lt;% = i %&gt;','','show')" 
+     onMouseOut="MM_showHideLayers('text&lt;% = i %&gt;','','hide')"&gt;&lt;br&gt; Details...&lt;/a&gt;&lt;/font&gt;&lt;/b&gt; 
+&lt;div id="text&lt;% = i %&gt;" style="position:absolute; width:319px; height:117px; z-index:1; 
+        background-color: #FFFFCC; layer-background-color: #FFFFCC; 
+        border: 1px none #000000; visibility: hidden"&gt;
+   &lt;b&gt;&lt;font face="Verdana, Arial, Helvetica, sans-serif" size="2"&gt; 
+   &lt;% = varBildBeschreibung %&gt;&lt;/font&gt;&lt;/b&gt;
+&lt;/div&gt;
+
+&lt;/td&gt;&lt;/tr&gt;
+
+&lt;%
+  rs.MoveNext
+  i = i + 1
+Wend
+
+rs.Close
+%&gt;
+</pre>
+
+<p>
+Durch das Umschalten von sichtbar auf unsichtbar wird diese Beschreibung angezeigt.
+</p>
+
+<h2>Detailanzeige im Popup Fenster</h2>
+<p>
+Nun zum Anzeigen der gro&szlig;en Bilder. In der Datei <b>detailbild.asp</b> fragen wir zuerst den QueryString bild ab. Sauber w&auml;re es hier noch 
+mittels <i>FileSystemObject</i> zu &uuml;berpr&uuml;fen ob dieses Bild tats&auml;chlich existiert. 
+</p>
+<p>
+Wir zeigen das Bild in einer Ebene an, damit wir in die oberste linke Ecke positionieren k&ouml;nnen. Machen wir das nicht, stellt der 
+Browser das Bild mit einem Rand dar. Damit der Betrachter dieses Fenster wieder schlie&szlig;en kann, versehen wir das Bild mit einem 
+<i>onClick</i> Ereignis, und f&uuml;hren ein window.close aus. Im IMG Tag haben wir mit dem <i>onLoad</i> Ereignis die M&ouml;glichkeit das Fenster auf 
+die Gr&ouml;&szlig;e des Bildes zu &auml;ndern:
+</p>
+
+<pre style="background='silver';">
+&lt;img src="&lt;% = varBild %&gt;" name="bild" vspace="0" hspace="0" border="0" 
+   onclick="window.close();" 
+   onload="window.resizeTo(document.bild.width, document.bild.height);"&gt;
+</pre>
+
+<p>
+Damit wir die Bildgr&ouml;&szlig;e ver&auml;ndern k&ouml;nnen, geben wir dem Bild den Namen "bild". Und schon haben wir eine Anzeige des Bildes in der 
+Fenstergr&ouml;&szlig;e die wir f&uuml;r die Darstellung des Bildes brauchen. 
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Der Funktionsumfang dieser Bilddatenbank ist noch nicht sehr gro&szlig;. Brauchen w&uuml;rden wir jetzt noch eine Administrationsseite wo wir 
+die Datenbank mit den Informationen f&uuml;llen k&ouml;nnen. Diese Administrationsseite wird der Gegenstand des n&auml;chsten Artikels sein. 
+Weiters plane ich innerhalb der Administrationsseite eine M&ouml;glichkeit des Fileuploads ohne zus&auml;tzliche Komponenten. 
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020703.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020703.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020702.htm">.NET Komponenten in COM+ Clients einsetzen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020702.htm</span><br>
+<a href="../artikel/20001130.htm">Bildinformationen selbst ermitteln</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001130.htm</span><br>
+<a href="../artikel/20001201.htm">Die SQL ORDER BY Clause</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001201.htm</span><br>
+<a href="../artikel/20010212.htm">Thumbnails mit ASP generieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010212.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

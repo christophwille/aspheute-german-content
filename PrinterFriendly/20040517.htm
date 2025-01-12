@@ -1,0 +1,202 @@
+<HTML>
+<HEAD>
+<TITLE>Filesystem-Watcher leicht gemacht</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel zeigt wie man mit Bordmitteln plus eines Freewaretools einen kleinen Service realisiert, der per E-Mail eine Verst&auml;ndigung schickt, wenn in einem bestimmten Verzeichnis (hier ein FTP-Verzeichnis) ein File landet.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,FileNotify,file change,events,create,Email,verschicken,Notifizierung,Benachrichtung,automatisch,File,Upload,Sicherheit,Überwachung">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Filesystem-Watcher leicht gemacht</H1>
+<p>
+Geschrieben von: <a href="../autoren/herberthahn.htm">Herbert Hahn</a><br>
+Kategorie: <a href="../kategorien/Server.htm">Server</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20040517"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Dieser Artikel zeigt wie man mit Bordmitteln plus eines Freewaretools einen kleinen Service realisiert, der per E-Mail 
+eine Verst&auml;ndigung schickt, wenn in einem bestimmten Verzeichnis (hier ein FTP-Verzeichnis) ein File landet.
+</p>
+<p>
+Dazu verwende ich:
+</p>
+
+<ol>
+	<li>Das Freewaretool <a href="http://www.xtware.com/filenotify/" target="_blank">Filenotify</a> von xtware.com .
+	<li>Den Windows Scripting Host, kurz WSH, zum Versenden von Emails mittels des SMTP-Service von Windows.
+</ol>
+
+<h2>Installation</h2>
+<p>
+Die Datei FileNotify.zip einfach in das gew&uuml;nschte Verzeichnis entpacken. Danach ruft man einfach "<i>FileNotify.exe -install</i>" auf.
+Das installiert das Programm als Service und man kann es dann unter "Dienste" starten und stoppen.
+</p>
+<p>
+Damit haben wir einen neuen Dienst der bestimmte Verzeichnisse &uuml;berwacht. 
+</p>
+
+<h2>Konfiguration</h2>
+<p>
+Im Verzeichnis von FileNotify befindet sich das Tool "fnAdmin.exe" das verwendet wird um den Dienst zu konfigurieren. Rufen wir 
+nun fnAdmin auf. Als erstes werden wir gefragt, welche Konfigurations-Datei wir verwenden wollen.
+</p>
+
+<IMG SRC="/artikel/Bilder/200405/20040517_1.png" width="563" height="344" alt="" border="0">
+
+<p>
+Verwenden wir also einfach das als Vorschlag verwendete "FileNotify.txt". Danach erscheint folgendes Fenster:
+</p>
+
+<IMG SRC="/artikel/Bilder/200405/20040517_2.png" width="306" height="288" alt="" border="0">
+
+<p>
+Hier wird mit einem Klick auf Add ein neuer &Uuml;berwachungsauftrag erstellt.
+</p>
+
+<IMG SRC="/artikel/Bilder/200405/20040517_3.png" width="348" height="270" alt="" border="0">
+
+<p>
+Es gibt 2 Optionen: wollen wir &uuml;ber &Auml;nderungen an Dateien oder Verzeichnissen informiert werden? Wir w&auml;hlen "Files" aus. 
+</p>
+<p>
+Weiters m&uuml;ssen wir den Pfad angeben, der &uuml;berwacht werden soll. Es besteht die M&ouml;glichkeit, auch alle Unterverzeichnisse 
+zu &uuml;berwachen (die darunterliegende Checkbox einfach selektieren).
+</p>
+<p>
+Nun geben wir an, welche Ereignisse wir &uuml;berwachen wollen. In unserem Beispiel w&auml;hlen wir "Creation" aus. Insgesamt stehen 
+6 Ereignisse zur Auswahl. Danach w&auml;hlen wir 1 Aktion pro Ereignis (Perform 1 Action(s) at the time) 
+</p>
+<p>
+Und nun folgt die Angabe des Programmes das wir ausf&uuml;hren wollen. In unserem Fall geben wir 
+"<i>cscript (LAUFWERK):\filenotify\mail.vbs %s</i>" an. (Laufwerk = der Pfad ihres FileNotify Verzeichnisses).
+</p>
+<p>
+Damit h&auml;tten wir soweit alles konfiguriert. Danach mu&szlig; man unter Dienste noch den FileNotify Dienst neu starten. 
+Damit ist die &Uuml;berwachung fertig konfiguriert.
+</p>
+
+<h2>Das mail.vbs Script</h2>
+<p>
+Wir brauchen nun noch ein Script das uns ein Mail sendet.
+</p>
+
+<pre style="background='silver';">
+Sub SendMailCDO(aTo, Subject, TextBody, aFrom)
+  Const cdoIIS = 1
+  Dim Message
+  Set Message = CreateObject("CDO.Message")
+  With Message
+    .Configuration.Load cdoIIS
+    .To = aTo
+    .TextBody = TextBody
+    .Subject = Subject
+    If Len(aFrom) > 0 Then .From = aFrom
+    .Send
+  End With
+End Sub
+
+
+Set args = WScript.Arguments
+if args.Count = 0 then
+	liste = "Kein Argument"
+else
+	liste = ""
+	for each argument in args
+		cc=cc+1
+		liste = liste &amp; cc &amp; " Neue Datei eingelangt auf Ihrem FTP-Space: " &amp; argument &amp; vbCrLf
+	next
+end if
+
+SendMailCDO "herbert.hahn@softwing.com", "Neuer Content auf dem FTP Server", liste, "office@softwing.com"
+</pre>
+
+<p>
+Nun, was macht das Script? Zuerst die Funktion zum Versenden der Mail - in diesem Fall ist es <i>sendMailCDO()</i>. Der Funktion 
+wird zuerst die Mailadresse danach der Betreff und der Mailtext, abschlie&szlig;end die Absenderadresse &uuml;bergeben.
+</p>
+<p>
+Nach der Funktion beginnt das eigentliche Hauptprogramm. In diesem werten wir die mitgegebenen Argumente aus (siehe Code), was 
+dem Programm in der Konfiguration von FileNotify mittels <i>%s</i>  mitgegeben wurde.
+</p>
+<p>
+Zur Sicherheit habe ich das ganze in eine Schleife gepackt damit wir wirklich alle Argumente geliefert bekommen. 
+</p>
+<p>
+Danach rufen wir unsere Funktion mit den Angaben zur Adresse und Inhalt auf. Fertig. 
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Wir haben nun eine voll funktionsf&auml;hige &Uuml;berwachung eines Verzeichnisses auf einem FTP-Server realisiert. Zum Testen einfach 
+mittels Kopieren oder auch mittels FTP-Clientprogrammes eine Datei in dieses Verzeichnis kopieren. Wir sollten dann sofort 
+eine Mail erhalten.
+</p>
+<p>
+Das gezeigte Beispiel ist nur eine denkbare Variante. Was man mittels dieses Tools und weiteren Scripts anstellen kann, 
+bleibt Ihrer Phantasie &uuml;berlassen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000511.htm">Automation - WSH versus Wget</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000511.htm</span><br>
+<a href="../artikel/20011204.htm">IIS, was machst du gerade?</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011204.htm</span><br>
+<a href="../artikel/20010419.htm">Site&uuml;berwachung mit Scheduled Tasks</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010419.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Extware%2Ecom%2Ffilenotify%2F">Filenotify</a><br>
+<SPAN class="content">http://www.xtware.com/filenotify/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,320 @@
+<HTML>
+<HEAD>
+<TITLE>Verwendung von Arrays in C#</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel werden die Grundlagen von Arrays in C# erl&auml;utert.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,C#,Array,jagged,multidimensional,new,garbage collector,GC,Index,eindimensional,Feld">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Verwendung von Arrays in C#</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000731"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Heute m&ouml;chte ich Ihnen die Verwendung von Arrays (engl. f&uuml;r Feld) in C# 
+pr&auml;sentieren. Dabei pr&auml;sentiere ich Arrays deren Gr&ouml;&szlig;e zur Compilezeit bestimmt ist, als
+auch solche, die zur Laufzeit mit variabler Gr&ouml;&szlig;e erzeugt werden k&ouml;nnen.
+</p>
+
+<p>
+Die Verwendung von Arrays bietet sich speziell dann an, wenn man mit gro&szlig;en Datenmengen
+vom gleichen Datentyp arbeitet, oder/und die Reihenfolge der Daten eine wichtige Rolle
+spielt - wenn man &uuml;ber den Index ein Element ansprechen k&ouml;nnen soll.
+</p>
+
+<p>
+In diesem Artikel werden wir folgende Arraytypen behandeln:
+<ul>
+	<li>eindimensionale Arrays
+	<li>mehrdimensionale Arrays
+	<li>Arrays von Arrays (<i>Jagged Arrays</i>)
+</ul>
+</p>
+
+<p>
+<b>Definition:</b> Ein Array ist eine Datenstruktur, welche eine Anzahl von Daten gleichen 
+Typs beinhaltet. Dieser Typ wird dann Elementtyp eines Arrays genannt. Arrays k&ouml;nnen jeden 
+m&ouml;glichen Datentyp beinhalten also z.B. Integer, Strings (Zeichenfolgen), Pointer (Zeiger),
+Arraytypen oder jeden anderen g&uuml;ltigen Datentyp, mit Ausnahme von Referenzen (reference types). 
+Die Variablen, die ein Array beinhaltet, werden Array-Elemente genannt. Die einzelnen Elemente 
+werden durch errechnete Indizes adressiert.
+</p>
+
+<p>
+Arrays k&ouml;nnen ein- oder mehrdimensional sein. Die Anzahl der Dimensionen wird auch Rang
+genannt. Eindimensionale Arrays haben somit den Rang Eins (1). Die Gr&ouml;&szlig;e der Dimension eines 
+Arrays ist nicht Teil des Typs des Arrays, sondern diese wird erst bei der Instanzierung 
+des Arrays bei der Laufzeit erstellt. Die Dimensionsgr&ouml;&szlig;e bestimmt die g&uuml;ltige Anzahl von 
+Indizes innerhalb eines Arrays.
+</p>
+
+<p>
+Bei der Verwendung von Arrays gibt es einiges zu beachten:
+<ul>
+	<li>Arrays sind Objekte und m&uuml;ssen instanziert werden
+	<li>Die Arraygr&ouml;&szlig;e wird in eckige Klammern [] geschrieben
+	<li>G&uuml;ltige Werte f&uuml;r die Gr&ouml;&szlig;e eines Arrays sind positive, ganzzahlige Zahlen
+	<li>Der Arrayindex beginnt wie in C++ mit <b>0</b>
+	<li>F&uuml;r ein Array der Gr&ouml;&szlig;e n ist somit der Endindex (n-1)
+	<li>G&uuml;ltige Gr&ouml;&szlig;en f&uuml;r Arrays sind (0, 1, 2, ...). Arrays mit Gr&ouml;&szlig;e Null (0) sind leere 
+		Arrays.
+</ul> 
+</p>
+
+<h3>Arrays sind Objekte</h3>
+<p>
+Wie schon erw&auml;hnt sind nun in C# die Arrays Objekte (<i>System.Array</i> Klasse) - das hei&szlig;t,
+da&szlig; sich der Garbage Collector um das Freigeben des Speichers k&uuml;mmert.
+Ein zus&auml;tzlicher Vorteil da&szlig; ein Array nun ein Objekt ist, da&szlig; Sie nun die Eigenschaften 
+bzw. Methoden verwenden k&ouml;nnen, die die <i>System.Array</i> Klasse hat. Sie k&ouml;nnen dadurch 
+einfachst den Inhalt eines Arrays sortieren (<i>Sort</i> Methode), kopieren (<i>Clone</i>, <i>Copy</i>) und darin 
+suchen (<i>BinarySearch</i>).
+</p>
+
+<h2>Eindimensionale Arrays</h2>
+<p>
+Man kann das Array deklarieren, und erst sp&auml;ter erzeugen:
+<pre style="background='silver';">
+int[] arTestSDim;
+// some code...
+arTestSDim = new int[10];
+</pre>
+</p>
+
+<p>
+Nat&uuml;rlich kann man das auch auf eine einzige Zeile zusammenziehen:
+<pre style="background='silver';">
+int[] arTestSDim = new int[10];
+</pre>
+</p>
+    
+<p>
+Wir haben hier also ein Array namens <i>arTestSDim</i> (der Pr&auml;fix "ar" entstammt der ungarischen 
+Notation und hilft Variablen leichter zu indentifizieren) erstellt; dieses hat 10 Elemente, 
+vom Datentyp Integer.
+</p>
+
+<h3>Initialisierung von Arrays</h3>
+<p>
+Nun wollen wir ein integer Array mit der Gr&ouml;&szlig;e 4 initialisieren - und die Elemente, welche einfache 
+Zahlen sind, zus&auml;tzlich im Deklarationsstatement angeben:
+<pre style="background='silver';">
+int[] arTestSDim = {0, 1, 2, 3};
+</pre>
+</p>
+
+<p>
+Alternativ dazu k&ouml;nnte man das Array auch einfach deklarieren, und die Werte dann einzeln zuweisen:
+<pre style="background='silver';">
+int[] arTestSDim = new int[4];
+for (int n=0; n &lt; 4; n++)
+{
+	arTestSDim[n] = n;
+}
+</pre>
+</p>
+
+<h3>Zugriff auf ein Element innerhalb eines Arrays</h3>
+<p>
+Nat&uuml;rlich m&ouml;chte man auch Elemente des Arrays auslesen oder ver&auml;ndern k&ouml;nnen. Dazu verwendet man
+die eckigen Klammern:
+<pre style="background='silver';">
+int[] arTestSDim = {0, 1, 2, 3};
+int n = arTestSDim[3];
+</pre>
+</p>
+
+<p>
+Um die Verwendung eines eindimensionalen Arrays zu verdeutlichen, habe ich eine (von vielen)
+Varianten zur Errechnung der Primzahlen implementiert. Die Primzahlen werden im Array arPrimZ
+gespeichert, und der Einfachheit halber werden nur die ersten f&uuml;nfzig gesucht. Wer m&ouml;chte, kann
+ein Eingabeformular f&uuml;r die Anzahl der zu suchenden Primzahlen hinzuf&uuml;gen.
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;%
+const int nLimit = 50;
+long[] arPrimZ = new long[nLimit];
+arPrimZ[0] = 2;
+
+long nTest = 1;		// Zahl die auf Primzahl getestet werden soll
+int nAnzahl = 1;	// Anzahl der bis jetzt gefundenen Primzahlen
+bool bTeilbar = false;	// Boolsche Variable f&uuml;r die Schleife
+
+do
+{
+	nTest += 2;
+
+	for(int i=0; i &lt; nAnzahl; i++)
+	{
+		bTeilbar = (0 == (nTest % arPrimZ[i]));
+		if (true == bTeilbar)
+			break;
+	}
+
+	// falls es nicht teilbar war, dann
+	// ist eine Primzahl
+	if (false == bTeilbar)
+	{
+		arPrimZ[nAnzahl] = nTest;
+		nAnzahl++;
+	}
+} 
+while(nAnzahl &lt; nLimit);
+
+// Ausgabe der Primzahlen
+Response.Write("&lt;table border=1&gt;&lt;tr&gt;\r\n");
+for(int i=0; i &lt; nLimit; i++)
+{
+	if (0 == (i % 6))
+		Response.Write("&lt;/tr&gt;\r\n&lt;tr&gt;");
+	Response.Write("&lt;td&gt;" + arPrimZ[i].ToString() + "&lt;/td&gt;");
+}
+Response.Write("&lt;/tr&gt;&lt;/table&gt;\r\n");
+%&gt;
+</pre>
+</p>
+<p>
+Wie gesagt eine von vielen Varianten, Primzahlen zu berechnen.
+</p>
+
+<h2>Mehrdimensionale Arrays</h2>
+<p>
+Mehrdimensionale Arrays sind nicht wirklich schwieriger zu handhaben als eindimensionale - einzig
+und allein die Syntax &auml;ndert sich. Die Deklaration zum Beispiel sieht wie folgt aus:
+<pre style="background='silver';">
+int[,] arTestMDim;
+</pre>
+</p>
+
+<p>
+Instanziert wird das mehrdimensionale Array-Objekt wie folgt:
+<pre style="background='silver';">
+arTestMDim = new int[4,5];
+// oder in einer Zeile geht es auch
+int[,] arTestMDim2 = new int[4,5];
+</pre>
+</p>
+
+<p>
+Der Zugriff auf einzelne Elemente des Arrays funktioniert so:
+<pre style="background='silver';">
+arTestMDim[0, 0] = 5;
+Console.WriteLine(arTestMDim[0, 0].ToString());
+</pre>
+</p>
+
+<h2>Arrays von Arrays (Jagged-Arrays)</h2>
+<p>
+Nun kommen wir zum letzten Arraytyp - dem Jagged Array. Dies ist ein Array, das andere
+Arrays aufnehmen kann. Deklariert wird ein solches wie folgt:
+<pre style="background='silver';">
+byte[] [] arTestJagAr;
+</pre>
+</p>
+
+<p>
+Die Instanzierung erfolgt wie gewohnt (erste Zeile), allerdings m&uuml;ssen dann die Unter-Arrays ebenfalls
+nach Wunsch angelegt werden:
+<pre style="background='silver';">
+byte[] [] arTestJagAr = new byte[4] [];
+for(int n = 0; x &lt; arTestJagAr.Length; n++)
+{
+	arTestJagAr[n] = new byte[3];
+}
+</pre>
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Der vorliegende Artikel umrei&szlig;t nat&uuml;rlich nur die Grundlagen von Arrays. Diese Grundlagen sollen 
+einerseits das Konzept und die Verwendung von Arrays veranschaulichen und andererseits den Umstieg 
+von einer anderen Programmiersprache zu C# erleichtern. Durch die neuen M&ouml;glichkeiten der 
+<i>System.Array</i> Klasse in C#, hat der Programmierer ein m&auml;chtiges Werkzeug bekommen.
+</p>
+<p>
+Weitere Artikel werden sich mit dynamisch vergr&ouml;&szlig;er- oder verkleinerbaren Arrays besch&auml;ftigen,
+sowie die Methoden und Eigenschaften der <i>System.Array</i> Klasse genauer unter die Lupe nehmen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000731.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000731.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020124.htm">Arrays mit Index und Schl&uuml;ssel</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020124.htm</span><br>
+<a href="../artikel/20000802.htm">Dateiupload mit ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000802.htm</span><br>
+<a href="../artikel/20000726.htm">Datentypen in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000726.htm</span><br>
+<a href="../artikel/20020401.htm">Debugging in der Tiefe</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020401.htm</span><br>
+<a href="../artikel/20020507.htm">Deutsche Personalausweisnummern verifizieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020507.htm</span><br>
+<a href="../artikel/20000823.htm">Die Hashtable Klasse</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000823.htm</span><br>
+<a href="../artikel/20001025.htm">Die Performancefalle ReDim Preserve</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001025.htm</span><br>
+<a href="../artikel/20000804.htm">Directory Browsing a la .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000804.htm</span><br>
+<a href="../artikel/20020226.htm">Ein Touch-Utility in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020226.htm</span><br>
+<a href="../artikel/20020417.htm">Sortieren mit dem IComparer Interface</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020417.htm</span><br>
+<a href="../artikel/20020125.htm">Variable Parameterlisten in Funktionen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020125.htm</span><br>
+<a href="../artikel/20010913.htm">Wetterbericht per SMS versenden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010913.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

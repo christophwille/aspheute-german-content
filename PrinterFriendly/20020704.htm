@@ -1,0 +1,345 @@
+<HTML>
+<HEAD>
+<TITLE>Zahl, Datum und W&auml;hrung korrekt formatiert ausgeben</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Ein wenig geliebtes Thema unter ASP war das Formatieren von Zahlen passend zu l&auml;nderspezifischen Einstellungen. Unter .NET gibt es keine Ausreden mehr, seine Applikationen von vorne herein global auszulegen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Internationalisierung,Localization,Lokalisierung,CurrentCulture,Culture,CultureInfo,Internationalization,Thread,Threading,Formatierung,Format,ToString">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Zahl, Datum und W&auml;hrung korrekt formatiert ausgeben</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020704"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Ein wenig geliebtes Thema unter ASP war das Formatieren von Zahlen passend zu l&auml;nderspezifischen Einstellungen - meist
+schummelten sich die Programmierer dar&uuml;ber hinweg, mit dem Ergebnis, da&szlig; wenn man von einem deutschen Webserver auf einen
+englischen migrierte, nichts mehr korrekt ausgegeben wurde. Unter .NET gibt es keine Ausreden mehr, seine Applikationen
+von vorne herein global auszulegen: Internationalisierung hat seinen Schrecken verloren.
+</p>
+<p>
+Wir besch&auml;ftigen uns heute mit der landesspezifisch korrekt formatierten Ausgabe von Zahlenwerten, W&auml;hrungswerten und Datumswerten.
+Die vorgestellten Techniken sind aber auch auf andere Internationalisierungsprobleme anwendbar, so zB das kulturell korrekte vergleichen
+von Zeichenketten. &Uuml;brigens: die heute vorgestellten Beispiele sind in ASP.NET programmiert - die vorgestellten Techniken sind 1:1
+auch in allen anderen .NET Applikationen einsetzbar.
+</p>
+
+<h2>Formatieren mit der CurrentCulture des Threads</h2>
+<p>
+Die einfachste Variante ist, die Eigenschaft <i>CurrentCulture</i> des Threads, auf dem der Code l&auml;uft, umzusetzen. Diese Variante
+hat einen gro&szlig;en Vorteil: es ist nur eine Zeile Code notwendig, und alle nachfolgenden Aufrufe bedienen sich ab dann der neuen
+Einstellungen aus dem <i>CultureInfo</i> Objekt. Der folgende Code aus <b>FormatOne.aspx</b> demonstriert die Vorgehensweise:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Page Language="C#" %&gt;
+&lt;%@ Import Namespace="System.Globalization" %&gt;
+&lt;%@ Import Namespace="System.Threading" %&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Simple Formatting&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;%
+// Testwerte
+DateTime dtVal = DateTime.Now;
+double dVal = 37068.89;
+
+// Ausgabe auf Default-Culture
+Response.Write(dtVal.ToString() + "&lt;br&gt;");
+Response.Write(dVal.ToString() + "&lt;br&gt;&lt;br&gt;");
+
+// Umstellen des Threads auf Deutsch
+CultureInfo ciCurrent = new CultureInfo("de-DE");
+Thread.CurrentThread.CurrentCulture = ciCurrent;
+
+// Ausgabe in deutschem Format
+Response.Write(dtVal.ToString() + "&lt;br&gt;");
+Response.Write(dVal.ToString() + "&lt;br&gt;");
+%&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Um diese Technik einzusetzen, m&uuml;ssen Sie die Namespaces <i>System.Globalization</i> (f&uuml;r die <i>CultureInfo</i> Klasse) und
+<i>System.Threading</i> (f&uuml;r das <i>Thread</i> Objekt) einbinden. Zuerst gibt das Programm einen Zahlenwert und ein Datum nach
+den aktuellen Einstellungen aus, danach stellen wir die <i>CultureInfo</i> des Threads auf Deutsch/Deutschland um:
+</p>
+
+<pre style="background='silver';">
+CultureInfo ciCurrent = new CultureInfo("de-DE");
+Thread.CurrentThread.CurrentCulture = ciCurrent;
+</pre>
+
+<p>
+Damit laufen wir ab sofort mit deutschen Einstellungen, und obwohl ich nichts am Ausgabecode ge&auml;ndert habe, bekomme ich nun korrekt
+deutsch formatierte Werte (die zweiten zwei Zeilen):
+</p>
+
+<pre style="background='silver';">
+7/3/2002 6:30:09 PM
+37068.89
+
+03.07.2002 18:30:09
+37068,89
+</pre>
+
+<p>
+Wie man an den ersten beiden Zeilen sieht, ist mein Server auf US Englisch eingestellt. Das macht aber nun nichts mehr, da ich jederzeit
+die <i>CultureInfo</i> &auml;ndern kann. Jederzeit beliebig umschalten, je nach dem, welche Einstellungen man gerade braucht.
+</p>
+
+<h2>Formatieren mit IFormatProvider Overloads</h2>
+<p>
+Hin und wieder ist das Umstellen des ganzen Threads auf eine andere <i>CultureInfo</i> nicht gew&uuml;nscht (zB ein Chatserver der mehrsprachige
+Chatr&auml;ume bedient). Hier will man sich darauf beschr&auml;nken, nur die jeweilige Formatierungsoperation mit anderen Einstellungen durchzuf&uuml;hren.
+Daf&uuml;r gibt es bei zB <i>ToString</i> oder <i>String.Format</i> Overloads, die ein Interface des Typs <i>IFormatProvider</i> annehmen, mit
+dem dann die Ausgabe kulturspezifisch gemacht wird. 
+</p>
+<p>
+Wie kommt man an ein solches Interface heran? Sehr einfach: die <i>CultureInfo</i> Klasse implementiert es. Die Probe aufs Exempel
+liefert <b>FormatTwo.aspx</b>:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Page Language="C#" %&gt;
+&lt;%@ Import Namespace="System.Globalization" %&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Simple Formatting, 2&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;%
+// Testwerte
+DateTime dtVal = DateTime.Now;
+double dVal = 37068.89;
+
+CultureInfo ciGermany = new CultureInfo("de-DE");
+Response.Write(dtVal.ToString(ciGermany) + "&lt;br&gt;");
+Response.Write(dVal.ToString(ciGermany) + "&lt;br&gt;&lt;br&gt;");
+
+
+CultureInfo ciCdnFrench = new CultureInfo("fr-CA");
+Response.Write(String.Format(ciCdnFrench, "{0} {1}", dtVal, dVal));
+%&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Ich erspare mir einen Namespace-Import, und auch das zentrale umschalten der <i>CurrentThread.CultureInfo</i>. Ich mu&szlig; nur das
+<i>CultureInfo</i> Objekt an die entsprechenden Methoden &uuml;bergeben (<i>ToString</i> und <i>Format</i>). Nicht nur die Formatierung
+kann man auf diese Art und Weise bewerkstelligen, auch Stringvergleiche laufen nach diesem Schema ab.
+</p>
+
+<h2>Ein Culture Browser</h2>
+<p>
+Damit Sie ein kleines Tool zum Experimentieren haben, erstellen wir ein ASP.NET Formular, mit dem Sie die verschiedenen CultureInfo's
+austesten k&ouml;nnen. Fertig sieht das Tool so aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200207/20020704_3.png" width="623" height="494" alt="" border="0">
+
+<p>
+In der linken Listbox werden die neutralen Cultures dargestellt (<i>CultureTypes.NeutralCultures</i>). Die rechte Listbox wird nach
+Selektions&auml;nderung links mit den Unterkategorien der neutralen Culture bef&uuml;llt (<i>CultureTypes.SpecificCultures</i>). Wird dann eine
+spezielle Culture ausgew&auml;hlt, zeigen wir unter den Listboxen Beispiele an, wie sie f&uuml;r diese <i>CultureInfo</i> typisch sind.
+</p>
+<p>
+Als Tool zur Erstellung dieses Web Forms habe ich das <a href="../artikel/20020618.htm">ASP.NET Web Matrix Projekt</a> verwendet. Der
+erste Schritt ist eine neue ASPX Datei anzulegen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200207/20020704_1.png" width="472" height="425" alt="" border="0">
+
+<p>
+Danach f&uuml;gen wir die linke Listbox ein (Drag and Drop), und geben dieser den Namen <b>lbNeutralCultures</b>. Diese m&uuml;ssen wir mit
+den neutralen Cultures bef&uuml;llen, und dies passiert am besten im <i>Load</i> Event der Seite (siehe Screenshot - im <i>Load</i> Event doppelklicken):
+</p>
+
+<IMG SRC="/artikel/Bilder/200207/20020704_2.png" width="731" height="610" alt="" border="0">
+
+<p>
+Damit sind wir in der Codeansicht. Geben Sie folgenden Code im <i>Load</i> Event ein:
+</p>
+
+<pre style="background='silver';">
+    void Page_Load(Object sender, EventArgs e)
+    {
+     if (!Page.IsPostBack)
+     {
+    
+        CultureInfo[] aCIs = CultureInfo.GetCultures(CultureTypes.NeutralCultures);
+        for (int i=0; i &lt; aCIs.Length; i++)
+        {
+            lbNeutralCultures.Items.Add(new ListItem(aCIs[i].EnglishName + " [" + aCIs[i].Name + "]",
+                                        aCIs[i].Name));
+        }
+     }
+    }
+</pre>
+
+<p>
+Die statische Methode <i>GetCultures</i> liefert uns ein Array von <i>CultureInfo</i> Objekten. Die so erhaltenen Werte tragen 
+wir in die Listbox ein. Der Value der Listbox wird f&uuml;r das neuerliche Erzeugen des <i>CultureInfo</i> Objekts verwendet, n&auml;mlich
+dann, wenn der User einen anderen Wert in der Listbox ausw&auml;hlt.
+</p>
+<p>
+Die Auswahl eines neuen Wertes triggert das <i>SelectedIndexChanged</i> Event. W&auml;hlen Sie zuerst aber an, da&szlig; die Listbox ein
+<i>AutoPostback</i> ausl&ouml;st, weil sonst passiert n&auml;mlich gar nichts! Der Code f&uuml;r das Event sieht so aus (<b>lbSpecificCultures</b>
+ist die zweite Listbox, <b>lblInfo</b> der Beispieltext der ausgegeben wird):
+</p>
+
+<pre style="background='silver';">
+    void lbNeutralCultures_SelectedIndexChanged(Object sender, EventArgs e)
+    {
+        lbSpecificCultures.Items.Clear();
+        lblInfo.Text = "";
+    
+        CultureInfo ciCurrent = new CultureInfo(lbNeutralCultures.SelectedItem.Value);
+    
+        CultureInfo[] aCIs = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
+    
+        for (int i=0; i &lt; aCIs.Length; i++)
+        {
+            if (ciCurrent.Equals(aCIs[i].Parent))
+            {
+                ListItem li = new ListItem(aCIs[i].EnglishName + " [" + aCIs[i].Name + "]",
+                                           aCIs[i].Name));				
+                lbSpecificCultures.Items.Add(li);
+            }
+        }
+    }
+</pre>
+
+<p>
+Der etwas umst&auml;ndliche Teil hier ist, da&szlig; man f&uuml;r eine neutrale Culture sich nicht alle spezifischen Cultures auflisten lassen
+kann. Man mu&szlig; sich alle spezifischen holen, und dann mit <i>ciNeutral.Equals(ciSpecific.Parent)</i> herausfinden, ob denn die
+spezifische Culture ein Kind der neutralen ist. Weniger cool, aber that's life.
+</p>
+<p>
+Der letzte Schritt ist, die Beispiele nach Culture formatiert anzuzeigen. Dies passiert nachdem der User in der rechten Listbox
+die Auswahl ge&auml;ndert hat. Also auf der Listbox <b>lbSpecificCultures</b> <i>AutoPostback</i> auf True setzen, und das <i>SelectedIndexChanged</i>
+Event implementieren:
+</p>
+
+<pre style="background='silver';">
+    void lbSpecificCultures_SelectedIndexChanged(Object sender, EventArgs e)
+    {
+        StringBuilder strInfo = new StringBuilder();
+    
+        CultureInfo ciCurrent = new CultureInfo(lbSpecificCultures.SelectedItem.Value);
+    
+        if (!ciCurrent.IsNeutralCulture)
+        {
+            Thread.CurrentThread.CurrentCulture = ciCurrent;
+            strInfo.Append("Kurzes Datum: ");
+            strInfo.Append(DateTime.Now.ToShortDateString());
+            strInfo.Append("&lt;br&gt;Langes Datum: ");
+            strInfo.Append(DateTime.Now.ToLongDateString());
+            strInfo.Append("&lt;br&gt;Kurze Zeit: ");
+            strInfo.Append(DateTime.Now.ToShortTimeString());
+            strInfo.Append("&lt;br&gt;Lange Zeit: ");
+            strInfo.Append(DateTime.Now.ToLongTimeString());
+            strInfo.Append("&lt;br&gt;Zahl (35007.09): ");
+            strInfo.Append((35007.09).ToString("n"));
+            strInfo.Append("&lt;br&gt;W&auml;hrung (1057.80): ");
+            strInfo.Append((1057.80).ToString("c"));
+        }
+    
+        lblInfo.Text = strInfo.ToString();
+    }
+</pre>
+
+<p>
+Damit hat man den Culture Browser fertig, und kann sich "live" die Unterschiede der einzelnen Cultures ansehen, in Bezug auf
+Datums-, Zahlen- und W&auml;hrungswerte. So auf auch chinesisch (wenn man die Schriften installiert hat):
+</p>
+
+<IMG SRC="/artikel/Bilder/200207/20020704_4.png" width="639" height="518" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Das Formatieren von Werten in Bezug auf eine spezielle Culture ist mit .NET extrem vereinfacht worden, man mu&szlig; keine Winkelz&uuml;ge
+mehr machen. Und ein weiterer Vorteil: das Wissen um Internationalisierung mu&szlig; man sich nur einmal aneignen, man kann es in allen
+.NET Anwendungen einsetzen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020704.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020704.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000405.htm">@-Direktiven auf ASP Seiten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000405.htm</span><br>
+<a href="../artikel/20020618.htm">Das ASP.NET Web Matrix Projekt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020618.htm</span><br>
+<a href="../artikel/20000803.htm">Die String Klasse in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000803.htm</span><br>
+<a href="../artikel/20000808.htm">Einf&uuml;hrung in ASP.NET Web Forms</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000808.htm</span><br>
+<a href="../artikel/20040317.htm">Eintr&auml;ge numerieren im DataGrid</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040317.htm</span><br>
+<a href="../artikel/20000922.htm">Eventbehandlung bei ASP.NET WebForms</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000922.htm</span><br>
+<a href="../artikel/20001010.htm">Fern&ouml;stliche Formulare / Unicode die Zweite</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001010.htm</span><br>
+<a href="../artikel/20040318.htm">Pager- und Footerzeilen des DataGrid erweitern</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040318.htm</span><br>
+<a href="../artikel/20000831.htm">Unicode und ASP (Einf&uuml;hrung)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000831.htm</span><br>
+<a href="../artikel/20020905.htm">Wochenberechnung mit .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020905.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,610 @@
+<HTML>
+<HEAD>
+<TITLE>Eventbehandlung bei ASP.NET WebForms</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor, wie man unter ASP.NET Ereignisse f&uuml;r die gesamte Seite, beziehungsweise einzelne Web Form Control behandeln kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP.NET,Web Form,Webform,Webforms,Control,event,trigger,ereignis,eigenschaft,.net,dotnet,C#,CSharp,C Sharp">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Eventbehandlung bei ASP.NET WebForms</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000922"></SCRIPT>
+</p>
+<p>
+In diesem Artikel erlernen Sie das Grundr&uuml;stzeug zur Eventbehandlung in ASP.NET.
+Beginnend mit dem einfachsten Fall des <i>Page_Load</i> Events einer ASP.NET Seite,
+&uuml;ber die sehr n&uuml;tzliche <i>Page.IsPostBack</i> Property (Eigenschaft),
+bis zur Triggerung von Events bei ASP.NET WebForms. ASP.NET bietet hierf&uuml;r eine Vielzahl
+von M&ouml;glichkeiten, die wichtigsten werden wir heute in diesem Artikel besprechen.
+</p>
+<p>
+Wie immer bei ASP.NET Artikeln ist die Voraussetzung um den Sourcecode dieses Artikels 
+verwenden zu k&ouml;nnen eine Installation des Microsoft .NET Framework SDK's auf einem 
+Webserver. Weiters ist es von Vorteil, da&szlig; der Leser schon Grundkenntnisse bzw. 
+Erfahrung in Programmiertechniken besitzt - es finden sich etliche Artikel auf diesem 
+Server, um das notwendige Wissen von Grund auf zu erlernen. 
+</p>
+<p>
+Weiters verwendet dieser Artikel bereits ASP.NET Web Form Controls (TextBox, RadioButtonList,
+etc.). F&uuml;r den Fall, da&szlig; Sie noch nicht sattelfest auf diesem Gebiet sind, bietet der 
+Artikel <a href="20000808.htm">Einf&uuml;hrung in ASP.NET Web Forms</a> das n&ouml;tige 
+Grundwissen hierf&uuml;r.
+</p>
+<p>
+<b>Beachte:</b> F&uuml;r den Fall, da&szlig; Sie die Beispiele in einem anderen Web-Verzeichnis
+als dem standardm&auml;&szlig;igen ("C:\Inetpub") ablaufen lassen wollen, m&uuml;ssen Sie das 
+Unterverzeichnis <i>_aspx</i> (zu finden in "C:\Inetpub\wwwroot\") samt Inhalt
+in das Verzeichnis Ihrer Wahl kopieren. Andernfalls werden Sie wom&ouml;glich mit frustrierenden
+Fehlermeldungen bombardiert, da die Artikelbeispiele u. a. Web Controls verwenden.
+</p>
+
+<h2>Der Event</h2>
+<p>
+Event sch&ouml;n und gut - aber was ist das und wozu? Grunds&auml;tzlich hat das hier gebrauchte
+englische Wort u.a. f&uuml;r Ereignis nichts mit einem Clubbing-Date zu tun. Dennoch tut sich hier
+etwas. Dieses "etwas" m&uuml;ssen Sie als Programmierer definieren, damit der Client auf einer 
+Web-Seite interagieren kann. Sie setzen also zun&auml;chst die Ausl&ouml;ser (z.B eine ASP.NET Web Form Control)
+und geben in den Attributen der Control vor, was dann tats&auml;chlich geschieht.
+Als triviales Beispiel sei hier der Button-Klick des Clients angef&uuml;hrt; nach dem Anklicken
+des Buttons wird ein Event getriggert, der im einfachsten Fall einen PostBack auf den Webserver 
+durchf&uuml;hrt. Dies ist eines der Themen in diesem Artikel.
+</p>
+<p>
+Da dies wom&ouml;glich f&uuml;r Sie nicht mehr Neuland ist, wenn Sie bereits unter ASP VBScript 
+oder &auml;hnliches programmiert haben, schreiten wir nun in medias res.
+</p>
+<h2>Der Page_Load Event</h2>
+<p>
+Die Anweisungen innerhalb dieser Eventroutine werden bei jedem Seitenaufruf, bzw. 
+PostBack ausgef&uuml;hrt. Er ist quasi der erste Event der getriggert wird bevor alle anderen 
+Events, die au&szlig;erhalb dieser Routine stehen, ausgef&uuml;hrt werden. Sie k&ouml;nnen 
+hier z.B. Evaluierungs-Scripts einbauen, Variablen definieren oder eine Datenbankverbindung 
+instanzieren.
+</p>
+<p>
+Damit w&auml;ren wir wieder bei einem Knackpunkt in Sachen Performance. Datenbankverbindungen
+sind ja bekanntlich Resourcenfresser - und bei jedem Refresh oder Postback die Verbindung 
+neu instanzieren - wenn dies 1000 User auf Ihrer Website machen, bei einer sehr 
+umfangreichen Datenbank, wird Ihr Webserver bald in die Knie gehen. Nat&uuml;rlich gibt es f&uuml;r 
+solche Events eine Abhilfe namens Page.IsPostBack die dies verhindert - aber dazu sp&auml;ter mehr.
+</p>
+<p>
+Das nun folgende Beispiel soll hier nur mal zum dar&uuml;ber streuen dienen. Beim Aufruf
+der Seite werden im Browserfenster zwei Meldungen ausgegeben. Die erste benachrichtigt den
+Client da&szlig; das Page Load Event gestartet wurde, und die zweite teilt ihm mit wann und
+um wieviel Uhr Serverzeit er die Seite zuletzt besucht hat. Klarerweise werden hier zu
+Demozwecken und der Einfachheit halber nur Meldungen ausgegeben - wie langweilig!
+Aber ASP.NET Events die einem Web-Programmierer so richtig Spa&szlig; bzw. manchmal leider auch
+Kopfzerbrechen bereiten, werden in anderen AspHeute Artikel besprochen!
+Um das Beispiel auf Ihrem Webserver auszuprobieren laden Sie im Browser die Datei
+<b>Load_Event.aspx</b>.
+</p>
+<p>
+Der prinzpielle Page_Load Event:
+</p>
+<p>
+<pre style="background='silver';">
+...
+void Page_Load(Object Src, EventArgs E)
+{
+  lblLoad.Text="Page Load Events gestartet!";
+  lblMsg1.Text = "Letzter Seitenaufruf: " + DateTime.Now;
+}
+...
+</pre>
+</p>
+<p>
+Der andere interessante Teil des Sourcecodes enth&auml;lt die <i>asp:Button</i> Control, welche
+mit dem <i>onClick</i> Attribut versehen ist. 
+</p>
+<p>
+<pre style="background='silver';">
+...
+&lt;asp:Button id="btnSubmit" text="Abschicken" onClick="btnSubmit_Click" 
+    runat="server" /&gt;
+...
+</pre>
+</p>
+<p>
+Wenn der Client also auf den Button klickt, wird ein PostBack durchgef&uuml;hrt und die angegbene 
+Funktion "btnSubmit_Click" ausgef&uuml;hrt.
+</p>
+</p>
+<p>
+<pre style="background='silver';">
+...
+void btnSubmit_Click(Object Sender, EventArgs E)
+{
+ lblMsg2.Text = "Sie haben den <i>Abschicken</i>-Button zuletzt am " 
+    + DateTime.Now + " angeklickt.";
+}
+...
+</pre>
+</p>
+<p>
+Diese wiederum gibt Datum und Uhrzeit des Anklickens an. Serverzeit wohlgemerkt.
+Wie gesagt nicht besonders einfallsreich, aber als Einstieg passend.
+Diese angegebenen Events werden immer ausgef&uuml;hrt. 
+</p>
+<p>
+Ich habe Ihnen aber f&uuml;r Events
+die aber nur genau einmal bei Seitenaufruf ausgef&uuml;hrt werden sollen eine Abhilfe
+versprochen. Bei solchen Events verwenden wir die <i>Page.IsPostBack</i> Property
+bzw. Eigenschaft.
+</p>
+<p>
+Wie immer hierzu ein Beispiel (Datei <b>Page_Postback.aspx</b>). 
+</p>
+<p>
+<pre style="background='silver';">
+...
+void Page_Load(Object Src, EventArgs E)
+{
+  if (!Page.IsPostBack)
+  {
+    lblStatus.Text="Es hat noch kein PostBack stattgefunden!";
+  }
+  else
+  {
+    lblStatus.Text="&lt;font color=\"red\"&gt;PostBack hat stattgefunden!&lt;/font&gt;";
+  }
+}
+...
+</pre>
+</p>
+<p>
+Hier wird vorerst mit Hilfe eines if-Statements gepr&uuml;ft, ob ein PostBack statt gefunden hat. 
+Ist dies nicht der Fall (<i>!Page.IsPostBack</i> ist true) wird die Meldung
+"Es hat noch kein PostBack stattgefunden!" im Browserfenster ausgegeben.
+Wenn der Button dann bet&auml;tigt wird nat&uuml;rlich ein PostBack auf den WebServer durchgef&uuml;hrt und
+die entsprechende Meldung ausgegeben.
+</p>
+<p>Wie Sie sicherlich bemerkt haben, haben sich schon Events von ASP.NET WebForms 
+eingeschlichen. Da ich Ihnen diese nicht l&auml;nger vorenthalten will, gehen wir zum n&auml;chsten
+Punkt &uuml;ber.
+</p>
+<h2>Events bei ASP.NET WebForms</h2>
+<p>
+Nun, das Grundverst&auml;ndnis was ein von einer ASP.NET Web Form Control getriggerter Event
+verrichten kann, haben Sie bereits in den vorigen Beispielen gesehen. Das ist bei weitem
+noch nicht alles. Die nun folgenden Beispiel besitzten trotz ihrer Einfachheit schon einige 
+Raffinessen.
+</p>
+<p>
+F&uuml;r das n&auml;chste Beispiel m&ouml;chte ich das Registrierungsbeispiel recyclen. Ich habe
+es um einige Features bereichert und in zwei unterschiedlichen Versionen abgespeichert.
+Besprechen wir zun&auml;chst die einfachere (Datei <b>EmailForm.aspx</b>).
+</p>
+<p>
+Sehen wir uns zun&auml;chst die Funktion des "Formular l&ouml;schen" Buttons an.
+Im Scriptblock ist der <i>onClick</i>-Event wie folgt beschrieben:
+</p>
+<p>
+<pre style="background='silver';">
+...
+void btnReset_Click(Object Sender, EventArgs E)
+{
+ if (Page.IsPostBack)
+ {
+ txtName.Text="";
+ txteMail.Text="";
+ lblNameOut.Text="";
+ lbleMailOut.Text="";
+ }
+}
+...
+</pre>
+</p>
+<p>
+Wenn der Client den "Formular l&ouml;schen"-Button anklickt so werden den angef&uuml;hrten
+Feldern ein Leerstring zugewiesen (<b>Wichtig:</b> Page.IsPostBack ist hier <i>nicht</i>
+zu negieren!). In der Sektion "Ihre &uuml;bermittelten Daten:" des Scripts
+sind die Werte, die beim Postback &uuml;bermittelt werden, noch einmal ausgegeben.
+</p>
+<p>
+Gehen wir nun zu weiterer Eventfunktionalit&auml;t, die sich in der Datei <b>EmailForm2.aspx</b> befindet (man
+beachte den kreativen Dateinamen!).
+</p>
+<p>
+In diesem Fall &uuml;bergebe ich bei einem PostBack die vom Client eingegebenen Daten 
+mittels eines QueryStrings auf eine neue Seite. Zugegeben, der QueryString ist eine
+veraltete und f&uuml;r sicherheitssensitive Daten unbrauchbare Methode, aber dennoch
+einfach und funktionell.
+</p>
+<p>
+Die Submit Funktion sieht somit so aus:
+</p>
+<p>
+<pre style="background='silver';">
+...
+void btnSubmit_Click(Object Sender, EventArgs E)
+{
+ if (Page.IsPostBack)
+ {
+   if (txtName.Text != "")
+   {
+     Response.Redirect("datasubmitted.aspx?name=" + txtName.Text + "&amp;email=" 
+     + txteMail.Text);
+   }
+   else
+   {
+     lblMsg1.Text = "Es ist ein Fehler aufgetreten!";
+   } 
+ }
+}
+</pre>
+</p>
+<p>
+Um auf eine neue Seite zu verweisen verwende ich die <i>Navigate</i>-Methode der 
+<i>Page</i>-Klasse. Die Methode erh&auml;lt die Ziel-Seite (<b>datasubmitted.aspx</b>)
+und den QueryString mit den zu &uuml;bermittelnden Parametern "name=" und "email=".
+Da die Werte via Web Form Controls &uuml;bergeben werden ist der Postfix <i>.Text</i>
+zus&auml;tzlich zur Web Form Control ID anzugeben.
+<p>
+<p>Auf der Ziel-Seite <b>datasubmitted.aspx</b> pr&auml;sentieren sich dann die &uuml;bermittelten Daten,
+indem sie mittels des Page_Load Events eingelesen werden:
+</p>
+<p>
+<pre style="background='silver';">
+...
+void Page_Load(Object Sender, EventArgs E)
+{
+  if (!Page.IsPostBack)
+  {
+     lblNameOut.Text = Request.Params["Name"];         
+     lbleMailOut.Text = Request.Params["email"];
+  }
+}
+...
+</pre>
+</p>
+<p>
+Das letzte Thema f&uuml;r heute bestimmt erstens die Wert&uuml;bergabe aus ASP.NET List Web Form
+Controls, d.h. beim PostBack wird der Wert, den Sie ausgew&auml;hlt haben &uuml;bermittelt.
+Weiters pr&auml;sentiere ich Ihnen eine weitere Event-Eigenschaft der ASP.NET Web Form
+Controls - den "automatischen" Postback der getriggert wird sobald Sie eine Auswahl treffen
+bzw. den Inhalt einer Web Form Control ver&auml;ndern.
+</p>
+<p>
+Das pr&auml;sentierte Beispiel enth&auml;lt eine <i>RadioButtonList</i> und eine <i>DropDownList</i>.
+Das Problem bei der RadioButtonList ist, da&szlig; f&uuml;r den Fall, da&szlig; nichts ausgew&auml;hlt
+wurde, die ASP.NET Runtime die <i>NullReferenceException</i> zur&uuml;ckgegeben wird.
+Eigentlich kein wirkliches Problem - oder? Einfach mittels dem <i>catch</i> Statement die
+Exeception aus dem <i>try</i> Statement abfangen - Heureka, that's it!
+Da nat&uuml;rlich der Hinweis in der DropDownList "-Kategorie ausw&auml;hlen-" keine tats&auml;chliche
+Kategorie ist wissen doch (fast) alle. F&uuml;r alle die es noch nicht wissen, habe ich per
+if-Statement die M&ouml;glichkeit zur ung&uuml;ltigen Auswahl genommen.
+</p>
+<p>
+<pre style="background='silver';">
+...
+void btnSubmit_Click(Object Src, EventArgs E )
+{
+  try
+  {
+    if (Level.SelectedItem.Text !="")
+    {
+      lblMsg1.Text = "Benutzer Level: " + Level.SelectedItem.Text +"&lt;br&gt;";
+    }
+    
+  }
+  catch (NullReferenceException e)
+  {  
+    lblMsg1.Text = "&lt;font color=\"red\"&gt;Ung&uuml;ltige Level-Auswahl!&lt;/font&gt;&lt;br&gt;";
+  }
+  
+  if (Thema.SelectedItem.Text !="-Kategorie ausw&auml;hlen-")
+  {
+    lblMsg2.Text = "Thema: " + Thema.SelectedItem.Text;
+  }
+  else
+  {
+    lblMsg2.Text = "&lt;font color=\"red\"&gt;Ung&uuml;ltige Thema-Auswahl!&lt;/font&gt;";
+  }
+}
+...
+</pre>
+</p>
+<p>
+Die Wert&uuml;bergabe des ausgew&auml;hlten Items &uuml;ber die <i>SelectedItem</i> Property und mu&szlig;
+hier wiederum den Postfix <i>.Text</i> beinhalten.
+</p>
+<p>
+Mit Hilfe des Attributs <i>AutoPostBack="True"</i> einer ASP.NET Web Form Control wird
+sofort nach Ver&auml;nderung der Control ein PostBack durchgef&uuml;hrt.
+</p>
+<p>
+Nehmen wir als Beispiel die <i>RadioButtonList</i> Control:
+</p>
+<p>
+<pre style="background='silver';">
+...
+&lt;asp:RadioButtonList id="Level" runat="server" AutoPostBack="True"&gt;
+      &lt;asp:listitem selected="True"&gt;Beginner&lt;/asp:listitem&gt;
+      &lt;asp:listitem&gt;Fortgeschrittener&lt;/asp:listitem&gt;
+      &lt;asp:listitem&gt;Experte&lt;/asp:listitem&gt;    
+&lt;/asp:RadioButtonList&gt;
+...
+</pre>
+</p>   
+<p>
+Das <i>ListItem</i>-Attribut <i>selected="True"</i> besagt, da&szlig; dieser Auswahlpunkt
+standardm&auml;&szlig;ig aktiviert wird.
+</p>
+<p>
+Sobald Sie in diesem Beispiel eine Auswahl treffen, wird sofort ein PostBack 
+durchgef&uuml;hrt und die &Auml;nderungen in der Sektion "Ihre aktuelle Auswahl:" angezeigt.
+Das bietet dem Client die M&ouml;glichkeit zu "experimentieren". Sie k&ouml;nnen Ihm z.B.
+seine &Auml;nderungen pr&auml;sentieren bevor Sie sie letztendlich in einer Datenbank speichern.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Mit diesem als Einf&uuml;hrung in die (fast) unbegrenzten M&ouml;glichkeiten des Eventhandlings 
+bei ASP.NET gedachten Artikel, sollten Sie das Grundr&uuml;stzeug besitzten ASP.NET Seiten
+quasi zum Leben zu "erwecken". Wir besprachen den <i>Page_Load Event</i>, die 
+<i>Page.IsPostBack</i> Property und schlie&szlig;lich die Eventbehandlung bei 
+ASP.NET Web Form Controls. Damit auch schon versiertere Programmierer einen Nutzen
+aus diesem Artikel ziehen habe ich zus&auml;tzliche M&ouml;glichkeiten der Wert&uuml;bergabe mittels
+QueryString, eine Anwendung des Exception Handlings auf die Web Form Controls, sowie
+von Validation Contols pr&auml;sentiert.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000922.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20020206.htm">Der ODBC .NET Data Provider</a><br>
+<a href="20000911.htm">Einf&uuml;hrung in ASP.NET Validation Controls (Teil 1)</a><br>
+<a href="20000913.htm">Einf&uuml;hrung in ASP.NET Validation Controls (Teil 2)</a><br>
+<a href="20000808.htm">Einf&uuml;hrung in ASP.NET Web Forms</a><br>
+<a href="20020705.htm">Formularbasierte Authentifizierung in f&uuml;nf Minuten</a><br>
+<a href="20020801.htm">MS IE WebControls 101</a><br>
+<a href="20020704.htm">Zahl, Datum und W&auml;hrung korrekt formatiert ausgeben</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000922" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Eventbehandlung bei ASP.NET WebForms"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000922.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Holm"><input type="hidden" name="AuthorEmail" value="office@holmcs.com"><input type="hidden" name="Artikel" value="20000922"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000922.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

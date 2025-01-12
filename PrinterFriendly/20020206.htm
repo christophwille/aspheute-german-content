@@ -1,0 +1,258 @@
+<HTML>
+<HEAD>
+<TITLE>Der ODBC .NET Data Provider</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Um auch Datenbanken in .NET verwendbar zu machen, die nur ODBC Treiber zur Verf&uuml;gung stellen, bietet Microsoft den ODBC.NET Data Provider als separaten Download an.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ODBC.NET,ODBC .NET,Data Provider,Datenbank,Connection String,Verbindung,Database,Driver">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Der ODBC .NET Data Provider</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ADOdotNET.htm">ADO.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020206"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Obwohl es einen speziellen Managed Provider für SQL Server gibt, sowie einen Wrapper für OLE DB
+Provider, kann es sein, daß man auf seine Datenbank nicht zugreifen kann, weil es für die Datenbank
+nur einen ODBC Provider gibt. Um auch solche in .NET verwendbar zu machen, stellt Microsoft den
+ODBC.NET Data Provider als separaten Download zur Verfügung.
+</p>
+<p>
+Der <a href="http://www.microsoft.com/downloads/release.asp?ReleaseID=35715" target="_blank">ODBC .NET Data Provider </a>
+ist als Windows Installer Package mit knapp unter einem Megabyte Download erhältlich. Die Installation geht -
+so .NET 1.0 und MDAC 2.7 installiert sind, absolut ereignisfrei vonstatten. Wichtig für uns Programmierer ist, daß eine separate
+Hilfedatei installiert wird (Start Menü, Programs, ODBC .NET Data Provider):
+</p>
+
+<IMG SRC="/artikel/Bilder/200202/20020206_1.png" width="694" height="495" alt="" border="0">
+
+<h2>Erste Schritte</h2>
+<p>
+Der ODBC .NET Data Provider ist im <i>Microsoft.Data.Odbc</i> Namespace verpackt, der im GAC (Global Assembly
+Cache) installiert wurde. Um diesen in ASP.NET verwenden zu können, müssen wir in der <b>web.config</b>
+eine Assembly-Referenz inkludieren:
+</p>
+
+<pre style="background='silver';">
+&lt;configuration&gt;
+   &lt;system.web&gt;
+      &lt;compilation debug="true"&gt;
+        &lt;assemblies&gt;
+                &lt;add assembly="Microsoft.Data.Odbc, Version=1.0.3300.0, 
+                     Culture=neutral, PublicKeyToken=b77a5c561934e089"/&gt;
+        &lt;/assemblies&gt;
+      &lt;/compilation&gt;
+   &lt;/system.web&gt;
+&lt;/configuration&gt;
+</pre>
+
+<p>
+Den Zeilenumbruch habe ich nur für das obige Listing eingebaut - in der echten <b>web.config</b> muß der
+<i>add assembly</i> String auf einer Zeile stehen. Die notwendigen Information erhält man übrigens
+über den Windows Explorer, wenn man in das WINNT\Assembly Verzeichnis browst:
+</p>
+
+<IMG SRC="/artikel/Bilder/200202/20020206_3.png" width="610" height="273" alt="" border="0">
+
+<p>
+Nach dieser Vorarbeit kann man den ODBC .NET Data Provider nun in jeder ASP.NET Seite verwenden. Die
+folgende ASP.NET Seite (<b>datareader.aspx</b>) zeigt einen DataReader, wie er auch schon im Artikel 
+<a href="../artikel/20001106.htm">Datenaufbereitung in ADO.NET</a> verwendet wurde:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Page Language="C#" Debug="true" %&gt;
+&lt;%@ Import Namespace="Microsoft.Data.Odbc" %&gt;
+&lt;script language=C# runat="server"&gt;
+void Page_Load(Object Src, EventArgs E)
+{
+  string strConn = "Driver={SQL Server};Server=WEBDEVSRV01;UID=sa;PWD=;Database=Northwind;";
+  string strSQL ="SELECT Productname, CompanyName, UnitPrice FROM Suppliers INNER JOIN " + 
+     "Products ON (Suppliers.SupplierID = Products.SupplierID) WHERE UnitPrice &lt;= $70";
+  
+  OdbcConnection conn = new OdbcConnection(strConn);
+  OdbcCommand cmd = new OdbcCommand(strSQL, conn);  
+
+  conn.Open();
+  OdbcDataReader dr = cmd.ExecuteReader();
+  while (dr.Read())
+  {
+    txtOutput.Text += dr["Productname"].ToString() + "&lt;br&gt;\r\n";
+  }
+
+  dr.Close(); 
+  conn.Close();
+}
+&lt;/script&gt;
+
+&lt;asp:Label ID="txtOutput" Runat="Server" /&gt;
+</pre>
+
+<p>
+Wer den Code vergleicht, wird bemerken, daß eigentlich nur eine Änderung sich durch den Sourcecode
+zieht - aus dem Prefix <i>Sql</i> wird <i>Odbc</i>. Ein weiterer Beweis ist das nachfolgende Script
+<b>gridbind.aspx</b> - auch dieses ist im Prinzip unverändert zum SQL Managed Provider Beispiel:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Page Language="C#" Debug="true" %&gt;
+&lt;%@ Import Namespace="System.Data" %&gt;
+&lt;%@ Import Namespace="Microsoft.Data.Odbc" %&gt;
+&lt;script language=C# runat="server"&gt;
+void Page_Load(Object Src, EventArgs E)
+{
+  string strConn = "Driver={SQL Server};Server=WEBDEVSRV01;UID=sa;PWD=;Database=Northwind;";
+  string strSQL ="SELECT Productname, CompanyName, UnitPrice FROM Suppliers INNER JOIN " + 
+     "Products ON (Suppliers.SupplierID = Products.SupplierID) WHERE UnitPrice &lt;= $70";
+
+  OdbcConnection conn = new OdbcConnection(strConn);
+
+  DataSet ds = new DataSet();
+  OdbcDataAdapter cmd = new OdbcDataAdapter(strSQL, conn);
+  
+  cmd.Fill(ds, "Lieferanten");
+  conn.Close();
+
+  MyDG.DataSource = ds.Tables["Lieferanten"].DefaultView;
+  MyDG.DataBind();
+}
+&lt;/script&gt;
+
+  &lt;form runat="server"&gt;
+  &lt;asp:DataGrid id="MyDG" runat="server"
+    Width="700"
+    BorderColor="black"
+    CellPadding="2" 
+    CellSpacing="2"
+    HeaderStyle-BackColor="#f8d07a"
+    /&gt;
+ &lt;/form&gt;
+</pre>
+<p>
+Und mit diesem Code erhält man dann folgende Seite präsentiert:
+</p>
+
+<IMG SRC="/artikel/Bilder/200202/20020206_2.png" width="643" height="403" alt="" border="0">
+
+<p>
+Auch die Verwendung von Stored Procedures läuft analog - aus <i>Sql</i> wird <i>Odbc</i>.
+</p>
+
+<h2>Das Wort zum Exception Handling</h2>
+<p>
+Wenn mit dem ODBC .NET Data Provider etwas schiefgeht, dann läßt er uns das via <i>OdbcException</i>
+wissen. Prominentes Beispiel: die Connection zum SQL Server kann nicht aufgebaut werden (<b>exceptionhandling.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Page Language="C#" Debug="true" %&gt;
+&lt;%@ Import Namespace="Microsoft.Data.Odbc" %&gt;
+&lt;%
+  string strConn = "Driver={SQL Server};Server=SomeServer;UID=sa;PWD=;Database=Northwind;";
+  try
+  {
+    OdbcConnection conn = new OdbcConnection(strConn);
+    conn.Open();
+  }
+  catch (OdbcException e)
+  {
+    // Nur zu Demozwecken - den vollen Fehler gibt man nicht aus!
+    Response.Write("Error: " + e.ToString());
+  }
+%&gt;
+</pre>
+
+<p>
+Da der Server SomeServer bei mir im Netzwerk nicht existiert, liefert mir der Aufruf von <i>.Open</i>
+eine <i>OdbcException</i>. Hier gebe ich die Fehlermeldung direkt an den User aus - aus Sicherheitsgründen
+sollte man dies nicht machen. Statt dessen den Fehler ins Event Log schreiben, und dem User eine einfache
+Fehlermeldung präsentieren.
+</p>
+
+<h2>Schlußbemerkung</h2>
+<p>
+Wer noch auf Datenbanken zugreifen muß, die nur einen ODBC Treiber zur Verfügung stellen, ist mit
+dem ODBC .NET Data Provider bestens bedient. Es entsteht kein zusätzlicher Lernaufwand.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020206.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020206.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001106.htm">Datenaufbereitung in ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001106.htm</span><br>
+<a href="../artikel/20001102.htm">Datenbankzugriff mittels ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001102.htm</span><br>
+<a href="../artikel/20000808.htm">Einf&uuml;hrung in ASP.NET Web Forms</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000808.htm</span><br>
+<a href="../artikel/20000922.htm">Eventbehandlung bei ASP.NET WebForms</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000922.htm</span><br>
+<a href="../artikel/20000724.htm">Exception Handling in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000724.htm</span><br>
+<a href="../artikel/20011206.htm">Performancemessungen in .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011206.htm</span><br>
+<a href="../artikel/20010626.htm">Stored Procedures 101 in ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010626.htm</span><br>
+<a href="../artikel/20010802.htm">Web.Config 101</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010802.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsupport%2Emicrosoft%2Ecom%2Fdefault%2Easpx%3Fscid%3Dkb%3BEN%2DUS%3BQ310988">HOW TO: Use the ODBC .NET Managed Provider in Visual C# .NET and Connection Strings (Q310988)</a><br>
+<SPAN class="content">http://support.microsoft.com../default.htmx?scid=kb;EN-US;Q310988</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2Fdownloads%2Frelease%2Easp%3FReleaseID%3D35715">ODBC .NET Data Provider</a><br>
+<SPAN class="content">http://www.microsoft.com/downloads/release.asp?ReleaseID=35715</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

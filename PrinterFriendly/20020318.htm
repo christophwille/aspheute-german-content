@@ -1,0 +1,286 @@
+<HTML>
+<HEAD>
+<TITLE>Das using Schl&uuml;sselwort</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wer mit C# arbeitet, dem ist das using Schl&uuml;sselwort sp&auml;testens seit dem obligatorischen Hello World Programm bekannt - als Statement zum Import von Namespaces. Da&szlig; using noch einiges mehr zu bieten hat, zeigt dieser Artikel.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,using,using Statement,using Directive,using Direktive,Keyword,Namespace,Idisposable,Dispose,Component">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Das using Schl&uuml;sselwort</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020318"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wer mit C# arbeitet, dem ist das <i>using</i> Schl&uuml;sselwort sp&auml;testens seit dem obligatorischen Hello World Programm 
+bekannt - als Statement zum Import von Namespaces. Da&szlig; <i>using</i> noch einiges mehr zu bieten hat, zeigt dieser 
+Artikel, indem er die using Directive und das using Statement n&auml;her beleuchtet.
+</p>
+
+<h2>Die using Directive</h2>
+<p>
+Beginnen wir bei der bekanntesten Verwendungsart der <i>using</i> Directive:
+</p>
+
+<pre style="background='silver';">
+using System;
+</pre>
+
+<p>
+Damit wird der <i>System</i> Namespace importiert, was bedeutet, da&szlig; man statt der absoluten Referenz 
+<i>System.Console</i> nun auch <i>Console</i> direkt verwenden kann. Kritisch w&uuml;rde es bei einer Applikation
+die in zwei Namespaces identische Klassennamen verwendet:
+</p>
+
+<pre style="background='silver';">
+using System;
+
+namespace Directive
+{
+  class MainApp
+  {
+    static void Main(string[] args)
+    {
+      // no using statements
+      AspHeute.NamespaceOne.DemoClass oOne= new AspHeute.NamespaceOne.DemoClass();
+      oOne.SayHello();
+      AspHeute.NamespaceTwo.DemoClass oTwo= new AspHeute.NamespaceTwo.DemoClass();
+      oTwo.SayHello();
+    }
+  }
+}
+
+namespace AspHeute.NamespaceOne
+{
+  class DemoClass
+  {
+    public void SayHello()
+    {
+      Console.WriteLine("Hello, world! (A.O.D)");
+    }
+  }
+}
+
+namespace AspHeute.NamespaceTwo
+{
+  class DemoClass
+  {
+    public void SayHello()
+    {
+      Console.WriteLine("Hello, world! (A.T.D)");
+    }
+  }
+}
+</pre>
+
+<p>
+Dieses Beispiel ist zwar an den Haaren herbeigezogen, aber bei Verwendung von Libraries von Drittherstellern kann es sehr
+wohl vorkommen, da&szlig; Klassen mit identischen Namen auftauchen. Die einfache Variante - das Verwenden von <i>using</i> - wird vom
+Compiler mit einem Fehler quittiert.
+</p>
+
+<pre style="background='silver';">
+using System;
+using AspHeute.NamespaceOne;
+using AspHeute.NamespaceTwo;
+
+namespace Directive
+{
+  class MainApp
+  {
+    static void Main(string[] args)
+    {
+      // error CS0104: 'DemoClass' is an ambiguous reference
+      DemoClass oDemo = new DemoClass();
+    }
+  }
+}
+...
+</pre>
+
+<p>
+Hier wei&szlig; der Compiler nicht mehr, aus welchem Namespace er die Klasse nehmen soll. Hier kann uns die using Directive allerdings
+mit ihrer Alias-Funktionalit&auml;t aushelfen:
+</p>
+
+<pre style="background='silver';">
+using System;
+using DcOne = AspHeute.NamespaceOne.DemoClass;
+using DcTwo = AspHeute.NamespaceTwo.DemoClass;
+
+namespace Directive
+{
+  class MainApp
+  {
+    static void Main(string[] args)
+    {
+      DcOne oOne= new DcOne();
+      oOne.SayHello();
+      DcTwo oTwo= new DcTwo();
+      oTwo.SayHello();
+    }
+  }
+}
+</pre>
+
+<p>
+Die beiden identen Klassennamen werden mit Hilfe von using auf eindeutige Namen "umgebogen". Damit erspart man sich dann die volle
+Angabe der Namespaces wie im ersten Codesample. Nat&uuml;rlich kann man mit der Alias-Funktionalit&auml;t auch die Namespaces selbst "verbiegen":
+</p>
+
+<pre style="background='silver';">
+using System;
+using NsOne = AspHeute.NamespaceOne;
+using NsTwo = AspHeute.NamespaceTwo;
+
+namespace Directive
+{
+  class MainApp
+  {
+    static void Main(string[] args)
+    {
+      NsOne.DemoClass oOne= new NsOne.DemoClass();
+      oOne.SayHello();
+      NsTwo.DemoClass oTwo= new NsTwo.DemoClass();
+      oTwo.SayHello();
+    }
+  }
+}
+</pre>
+
+<p>
+Damit verk&uuml;rzt man sehr elegant lange Namespaces.
+</p>
+
+<h2>Das using Statement</h2>
+<p>
+Neben der <i>using</i> Directive gibt es auch das <i>using</i> Statement, das zu Unrecht weniger bekannt
+ist, denn es ist sehr n&uuml;tzlich in der Welt von .NET: es unterst&uuml;tzt bei der sauberen Aufl&ouml;sung von Resourcen-teuren
+Objekten.
+</p>
+<p>
+Wie funktioniert das? Nun, das <i>using</i> Statement ist f&uuml;r Klassen gedacht, die das <i>IDisposable</i> Interface unterst&uuml;tzen
+(wer die SDK Hilfe installiert hat, kann diesen <a href="ms-help://MS.NETFrameworkSDK/cpref/html/frlrfsystemidisposableclasstopic.htm" target="_blank">Hilfe Link</a> klicken,
+um alle Klassen zu sehen, die dieses Interface implementiert haben). Dieses Interface besitzt genau eine Methode, n&auml;mlich <i>Dispose</i>.
+Diese Methode wird verwendet, um dem Objekt mitzuteilen, da&szlig; es seine teuren Resourcen freigeben kann, weil wir das Objekt nicht mehr
+verwenden werden (und der Garbage Collector es erst sp&auml;ter aufl&ouml;st).
+</p>
+<p>
+Grunds&auml;tzlich sieht das <i>using</i> Statement so aus:
+</p>
+
+<pre style="background='silver';">
+using (expression | type identifier = initializer)
+{
+  // Code der das Objekt verwendet
+}
+</pre>
+
+<p>
+Ein weiterer wichtiger Vorteil des <i>using</i> Statements ist, da&szlig; auch im Falle einer Exception die <i>Dispose</i> Methode aufgerufen
+wird. Man erspart sich also <i>Dispose</i> Aufrufe im <i>finally</i> Teil des Exception Handlings - man kann sie vor allem nicht
+mehr vergessen, weil sie automatisch aufgerufen werden (f&uuml;r Objekte die mit <i>using</i> erzeugt wurden, klarerweise).
+</p>
+<p>
+F&uuml;r eine Applikation die Webseiten grabbt k&ouml;nnte man <i>using</i> wie folgt einsetzen:
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.Net;
+
+namespace Statement
+{
+  class MainApp
+  {
+    static void Main(string[] args)
+    {
+      WebRequest wrq = WebRequest.Create("http://www.aspheute.com/");
+      using (WebResponse response = wrq.GetResponse())
+      {
+        // exception or not, response will always be disposed
+      }
+    }
+  }
+}
+</pre>
+
+<p>
+Es fehlt hier der Exception-Handling Code, aber: <i>Dispose</i> wird immer aufgerufen, was speziell bei offenen TCP/IP Verbindungen
+sehr n&uuml;tzlich ist, denn unlimitiert kann man diese nicht aufmachen. Somit hilft <i>using</i> die Resourcen zu schonen, vor allem mit dem
+Vorteil, da&szlig; man als Programmierer nicht mehr auf den Aufruf von <i>Dispose</i> vergessen kann!
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die using Directive und das using Statement sind beides n&uuml;tzliche Helfer, die die t&auml;gliche Arbeit erleichtern - und den Code verbessern
+k&ouml;nnen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020318.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020318.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20030909.htm">Das ASP.NET DataGrid selbst erweitern</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20030909.htm</span><br>
+<a href="../artikel/20000724.htm">Exception Handling in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000724.htm</span><br>
+<a href="../artikel/20021107.htm">Index Server Abfragen per Web Service</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021107.htm</span><br>
+<a href="../artikel/20020906.htm">On-the-fly Erstellung von vCard's</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020906.htm</span><br>
+<a href="../artikel/20001019.htm">Sichere Konvertierungen von Referenztypen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001019.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,274 @@
+<HTML>
+<HEAD>
+<TITLE>Schleifenbefehle in C#</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im heutigen Artikel befassen wir uns mit den Schleifenbefehlen von C#: for, while und do. Wie im letzten C# Artikel  werde ich die Unterschiede zu VBScript herausarbeiten.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,C#,do,while,loop,statements,Verzweigung,ASP+,Active Server Pages Plus,csharp,Microsoft .NET,.NET,Framework,ASP.NET">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Schleifenbefehle in C#</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000717"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Im heutigen Artikel befassen wir uns mit den Schleifenbefehlen von C#: <i>for</i>, <i>while</i> und <i>do</i>. Wie im letzten
+Artikel <a href="../artikel/20000714.htm">Kontrollstatements in C#</a> werde ich die Unterschiede zu VBScript herausarbeiten.
+</p>
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation des <i>Microsoft .NET Framework SDK's</i> auf
+einem Webserver. Weiters setze ich voraus, da&szlig; der Leser bereits eine Programmiersprache beherrscht - deshalb
+ist die Information auch in sehr komprimierter Form gehalten.
+</p>
+
+<h2>Das for Statement</h2>
+<p>
+Unter VBScript ist das <i>For</i> Statement sehr einfach gestrickt:
+<pre style="background='silver';">
+For Laufvariable=Startwert To Endwert
+...
+Next
+</pre>
+</p>
+<p>
+Man hat eine Laufvariable (die auf Startwert initialisiert wird), eine Endbedingung (&lt;=Endwert) und die
+Statements, die in der Schleife ausgef&uuml;hrt werden sollen. Im Bestfall kann man noch mit <i>Step</i> die Erh&ouml;hung
+der Laufvariable beeinflussen.
+</p>
+<p>
+Da C# von C++ so einiges geerbt hat, sieht die <i>for</i> Schleife auch sehr C++ like aus (kurz, pr&auml;gnant):
+<pre style="background='silver';">
+for (Laufvariable=Startwert; Endbedingung; Erh&ouml;hung Laufvariable)
+{
+}
+</pre>
+</p>
+<p>
+Um das Ganze gleich mit Leben zu erf&uuml;llen, habe ich das ber&uuml;hmte Hello World Beispiel ein bischen
+umgebaut:
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;%
+for (int i=1;i&lt;=5;i++)
+{
+%&gt;
+&lt;font size=&quot;&lt;%=i%&gt;&quot;&gt;Hello World!&lt;/font&gt;&lt;br&gt;
+&lt;%
+}
+%&gt;
+</pre>
+</p>
+<p>
+Was passiert in diesem Code? In der <i>for</i> Schleife darf man Variablen deklarieren (die Variable <i>i</i>),
+und ich habe davon nat&uuml;rlich Gebrauch gemacht. Der Startwert wird zugewiesen, die Endbedingung definiert (Schleife
+ausf&uuml;hren, solange <i>i</i> kleiner oder gleich 5 ist). Und nach jedem Durchlauf wird <i>i</i> um eins erh&ouml;ht:
+<pre style="background='silver';">
+i++;
+</pre>
+</p>
+<p>
+Das ist &auml;quivalent zu
+<pre style="background='silver';">
+i=i+1;
+</pre>
+</p>
+<p>
+Der Operator ++ hei&szlig;t Inkrementoperator, und erh&ouml;ht Variablen um 1. Nat&uuml;rlich gibt es auch den Dekrementoperator (--).
+Diese, als auch andere "verk&uuml;rzte" Operatoren sind aus C++ vererbt worden.
+</p>
+<p>
+Der Output des <i>for</i> Loops sieht wie folgt aus:
+</p>
+<p><IMG SRC="/artikel/Bilder/200007/20000717.png" width="438" height="267" border="0" alt=""></p>
+<p>
+Man kann zwar noch einiges mehr mit dem <i>for</i> Loop anstellen, aber das was ich hier vorgestellt habe, reicht 
+um die meisten Anwendungen programmieren zu k&ouml;nnen. Wer mehr wissen m&ouml;chte, den darf ich an mein Buch, Presenting C#,
+verweisen (Link am Ende des Artikels).
+</p>
+
+<h2>Das while Statement</h2>
+<p>
+Ebenfalls ein alter Bekannter von VBScript ist das <i>While</i> Statement:
+<pre style="background='silver';">
+While (Boolscher Ausdruck)
+...
+Wend
+</pre>
+</p>
+<p>
+In C# sieht das Ganze nicht wirklich viel anders aus:
+<pre style="background='silver';">
+while (Boolscher Ausdruck)
+{
+}
+</pre>
+</p>
+<p>
+Auf unser kleines Hello World Beispiel angewendet, k&ouml;nnte der Sourcecode mit der <i>while</i> Schleife wie
+folgt aussehen:
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;%
+int nHellos = 0;
+while (5 &gt; nHellos++)
+{
+  Response.Write(&quot;&lt;font size=\&quot;&quot;);
+  Response.Write(nHellos.ToString());
+  Response.Write(&quot;\&quot;&gt;Hello World!&lt;/font&gt;&lt;br&gt;");
+}
+%&gt;
+</pre>
+</p>
+<p>
+Der Output ist der Gleiche wie f&uuml;r den <i>for</i> Loop, allerdings habe ich diesmal nicht HTML mit ASP.NET Code
+gemischt, sondern alles &uuml;ber C# ausgeben lassen. In diesem Beispiel wird deutlich, da&szlig; man  
+mit Datentypen nicht "herumwurschteln" kann: <i>Response.Write</i> nimmt nur eine String Variable, und basta. Man
+mu&szlig; also vorher konvertieren. Ebenso ge&auml;ndert im Vergleich zu VBScript ist wie man ein Hochkomma in einen
+String einbaut: nicht durch ein doppeltes Hochkomma <b>""</b>, sondern durch <b>\"</b>.
+</p>
+
+<h2>Das do Statement</h2>
+<p>
+Nun zum letzten Schleifenstatement, das ich in diesem Artikel behandeln m&ouml;chte: das <i>Do</i> Statement. In VBScript
+gibt es 2 Varianten:
+<pre style="background='silver';">
+Do
+...
+Loop While(Boolscher Ausdruck)
+
+Do
+...
+Loop Until(Boolscher Ausdruck)
+</pre>
+</p>
+<p>
+Die <i>Do</i> Schleife l&auml;uft entweder solange ein Ausdruck <i>True</i> ist (<i>While</i>), 
+oder bis ein  Ausdruck zu <i>True</i> wird (<i>Until</i>).
+Beiden gemeinsam ist allerdings, da&szlig; die Statements in der Schleife minimal einmal ausgef&uuml;hrt werden.
+</p>
+<p>
+In C# im Gegensatz dazu gibt es nur eine <i>do</i> Variante:
+<pre style="background='silver';">
+do
+{
+}
+while (Boolscher Ausdruck);
+</pre>
+</p>
+<p>
+Wieder auf unser Beispiel angewendet, k&ouml;nnte eine L&ouml;sung so aussehen:
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;%
+bool bExitDoLoop = false;
+int nHellos = 0;
+string strTempString;
+
+do
+{
+  nHellos++;
+  strTempString = &quot;&lt;font size=\&quot;&quot; + nHellos.ToString() + 
+          <i>[line continued]</i>&quot;\&quot;&gt;Hello World!&lt;/font&gt;&lt;br&gt;&quot;;
+  Response.Write(strTempString);
+  if (5 == nHellos) bExitDoLoop = true;
+}
+while (! bExitDoLoop);
+%&gt;
+</pre>
+</p>
+<p>
+Zugegebenerma&szlig;en h&auml;tte ich die Laufbedingung auch auf <i>nHellos &lt;= 5</i> setzen k&ouml;nnen, anstatt mit einer
+boolschen Variable und einer <i>if</i> Abfrage herumzuspielen - aber ich wollte noch den Negierungsoperator
+Rufzeichen (<b>!</b>) demonstrieren. Dieser ist das &Auml;quivalent zu VBScript's <i>Not</i> Keyword.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+In diesem Artikel habe ich drei Schleifenstatements vorgestellt - <i>for</i>, <i>while</i> und <i>do</i>. Diese sind "alte" Bekannte
+f&uuml;r Schleifenoperationen - aber C# hat noch eine weitere Anweisung zu bieten: <i>foreach</i>. Diese wird
+zum Iterieren &uuml;ber Collections eingesetzt, und ist Thema eines weiteren Artikels.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000717.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000717.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000713.htm">A Brief History of C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000713.htm</span><br>
+<a href="../artikel/20000720.htm">Das foreach Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000720.htm</span><br>
+<a href="../artikel/20000802.htm">Dateiupload mit ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000802.htm</span><br>
+<a href="../artikel/20001106.htm">Datenaufbereitung in ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001106.htm</span><br>
+<a href="../artikel/20020507.htm">Deutsche Personalausweisnummern verifizieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020507.htm</span><br>
+<a href="../artikel/20020226.htm">Ein Touch-Utility in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020226.htm</span><br>
+<a href="../artikel/20010215.htm">Enums lesbar machen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010215.htm</span><br>
+<a href="../artikel/20000714.htm">Kontrollstatements in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000714.htm</span><br>
+<a href="../artikel/20020417.htm">Sortieren mit dem IComparer Interface</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020417.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpgerman%2Ecom%2Faspgerman%2Flisten%2Fanmelden%2FaspDEdotnet%2Easp">Die aspDEdotnet Diskussionsliste</a><br>
+<SPAN class="content">http://www.aspgerman.com/aspgerman/listen/anmelden/aspDEdotnet.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eamazon%2Ecom%2Fexec%2Fobidos%2FASIN%2F0672320371%2Falphasierrapapa">Presenting C#</a><br>
+<SPAN class="content">http://www.amazon.com/exec/obidos/ASIN/0672320371/alphasierrapapa</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,286 @@
+<HTML>
+<HEAD>
+<TITLE>Verwenden von COM Komponenten in ASP.NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im heutigen Artikel besch&auml;ftige ich mich mit einem Thema, das sehr viele ASP.NET Umsteiger interessieren wird: wie kann ich meine gekauften oder selbst erstellten COM Komponenten in der ASP.NET Umgebung einsetzen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP.NET,TlbImp,Metadata,Assembly,DLL,ctor,get,set,.NET,Framework,Runtime,Type library,typelib">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Verwenden von COM Komponenten in ASP.NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000828"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Im heutigen Artikel besch&auml;ftige ich mich mit einem Thema, das sehr viele ASP.NET Umsteiger interessieren
+wird: wie kann ich meine gekauften oder selbst erstellten COM Komponenten in der ASP.NET
+Umgebung einsetzen.
+</p>
+<p>
+Das grunds&auml;tzliche Problem besteht darin, da&szlig; ASP.NET in der Common Language Runtime fu&szlig;t, die ein
+sogenanntes <i>Managed Execution Environment</i> ist. Der Code selbst hei&szlig;t dann <i>Managed Code</i>,
+und die Runtime bezieht die Information zum Management des Codes aus der sogenannten <i>Metadata</i>,
+die vom Compiler zum Beschreiben des Sourcecodes mitgeneriert wurde.
+</p>
+<p>
+Das Problem ist jetzt, da&szlig; existierende Komponenten nat&uuml;rlich keine Metadatainformationen besitzen.
+Also mu&szlig; ich f&uuml;r meine Komponenten diese generieren - aber halt: wenn es ein Tool gibt, das Metadata
+erzeugen kann, woher nimmt es die Informationen f&uuml;r die Metadata? Diese kommen aus der Type Library,
+und normalerweise hat heute jede Komponente eine Type Library. Falls nicht, gibt es zwar einen
+(unsch&ouml;nen) Weg rundherum, allerdings w&uuml;rde ich da vorher noch einen Henkel an der Komponente
+anschwei&szlig;en - zum Wegwerfen!
+</p>
+<p>
+In diesem Artikel werde ich die Generierung der Metadata anhand
+anhand der SA-STMPmailFREE Komponente von Software Artisans demonstrieren. Wer den Beispielen folgen
+m&ouml;chte, kann sie ohne weiteres downloaden - sie ist gratis. Der Downloadlink findet sich
+am Ende des Artikels.
+</p>
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation 
+des Microsoft .NET Framework SDK's auf einem Webserver. Weiters setze ich voraus, da&szlig; der 
+Leser die Programmiersprache C# zu einem gewissen Grad beherrscht - es finden sich etliche 
+Artikel auf diesem Server, um das notwendige Wissen zu erlernen. 
+</p>
+
+<h2>Erzeugen der Metadata DLL</h2>
+<p>
+Der erste Schritt ist, die Metadata zu erzeugen. Dazu mu&szlig; man zuerst in das Verzeichnis
+mit der entsprechenden Komponenten-DLL gehen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200008/20000828_1.png" width="494" height="316" border="0" alt="">
+
+<p>
+In diesem Verzeichnis startet man dann ein Kommandoprompt, und tippt folgenden Befehl ein:
+<pre style="background='silver';">
+tlbimp sasmtp.dll /out:sasmtp_dotnetproxy.dll
+</pre>
+</p>
+<p>
+Mit diesem einfachen Befehl wird die Metadatainformation in die Datei <i>sasmtp_dotnetproxy.dll</i>
+gespeichert (korrekt bezeichnet ist diese DLL eine <i>Assembly</i>). Diese ist jetzt unser 
+<i>Proxy</i> zum eigentlichen "unmanaged" COM Objekt. Hier die Ausgabe f&uuml;r die Generierung des 
+Proxies f&uuml;r SA-SMTPmail:
+</p>
+
+<IMG SRC="/artikel/Bilder/200008/20000828_2.png" width="668" height="142" alt="" border="0">
+
+<h2>Installation f&uuml;r ASP.NET</h2>
+<p>
+F&uuml;r ASP.NET gibt es einige Wege, die Metadata-DLL zu installieren:
+<ul>
+<li>In das <b>bin</b> Verzeichnis der Applikation
+<li>In das Verzeichnis der ASP.NET Datei
+</ul>
+</p>
+<p>
+Die Methode mit dem Speichern neben der ASP.NET Datei hat einen Haken: man mu&szlig; ein <i>@Assembly</i>
+Statement in jede ASP.NET Seite einbauen, die die Komponente verwenden soll. Bei der Speicherung 
+in das <b>bin</b> Verzeichnis erspart man sich das - die Assembly wird f&uuml;r alle ASP.NET Seiten 
+der Applikation geladen.
+</p>
+<p>
+Daher habe ich nat&uuml;rlich die Assembly in das <b>bin</b> Verzeichnis verfrachtet:
+</p>
+
+<IMG SRC="/artikel/Bilder/200008/20000828_4.png" width="532" height="199" alt="" border="0">
+
+<h2>Der IL Disassembler</h2>
+<p>
+Jetzt kommen wir zu etwas, das viele VB oder VBScript Programmierer auf den ersten Blick
+etwas abschrecken wird - wir m&uuml;ssen einen Disassembler bem&uuml;hen, um an einige wichtige Informationen
+zu kommen:
+</p>
+
+<ul>
+<li>Der Namespace der Assembly (f&uuml;r das <i>@Import</i> Statement)
+<li>Die exakten Namen der Klassen (diese k&ouml;nnen sehr wohl von dem unterschiedlich sein,
+    die man in ASP verwendet hat!)
+<li>Die Datentypen der Methoden und Eigenschaften
+<li>Die exakte Schreibweise der Methoden und Eigenschaften - in C# macht es einen Unterschied,
+    ob man BodyText oder Bodytext schreibt.
+</ul>
+
+<p>
+Den IL (Intermediate Language) Disassembler startet man durch eintippen von <b>ildasm.exe</b> in der Run
+Dialogbox des Startmen&uuml;s. Mit
+dem Open Befehl (File Men&uuml;) w&auml;hlt man die entsprechende DLL aus, und in unserem Fall bekommt
+man folgendes Bild:
+</p>
+
+<IMG SRC="/artikel/Bilder/200008/20000828_3.png" width="400" height="600" alt="" border="0">
+
+<p>
+Markiert habe ich den Namespace: <i>sasmtp_dotnetproxy</i>. Diesen brauchen wir f&uuml;r das <i>@Import</i> Statement
+in unseren ASP.NET Seiten. Weiters sind hier einige nette Symbole versteckt - als Tip: wichtig ist
+f&uuml;r den ASP.NET Programmierer nur das vollst&auml;ndig blaue Symbol - das sind Klassen. Die, die uns
+interessiert ist <i>CoSMTPMailClass</i>. Das ist das &Auml;quivalent f&uuml;r die ProgId <i>SoftArtisans.SMTPMail</i>.
+Wie schon angek&uuml;ndigt, es kann Unterschiede in den Namen geben!
+</p>
+<p>
+Wenn man diese Klasse jetzt expandiert, erh&auml;lt man eine Liste von Eigenschaften und Methoden:
+</p>
+
+<IMG SRC="/artikel/Bilder/200008/20000828_6.png" width="400" height="381" alt="" border="0">
+
+<p>
+Wie man sieht, haben alle Methoden sehr eindeutige Datentypzuweisungen: zuerst kommt der 
+Methodenname, gefolgt nach einem Doppelpunkt vom R&uuml;ckgabewert, und dann in Klammern von den
+Parametern der Methode.
+</p>
+<p>
+Ungewohnt f&uuml;r VBScript Programmierer wird es bei den Eigenschaften, weil diese durch <i>get_</i>
+und <i>set_</i> Methoden repr&auml;sentiert sind:
+</p>
+
+<IMG SRC="/artikel/Bilder/200008/20000828_5.png" width="503" height="381" alt="" border="0">
+
+<p>
+Allerdings gibt es dann am Ende eine Auflistung nach Eigenschaftsnamen (rotes Dreieck). Wenn man
+auf eine Eigenschaft doppelklickt, bekommt man die Definition der Eigenschaft pr&auml;sentiert.
+Achtung: Eigenschaften k&ouml;nnen Get, Set oder Get/Set sein.
+</p>
+<p>
+Nehmen Sie sich die Zeit, etwas mit dem IL Disassembler herumzuspielen - er wird Ihnen sicherlich
+noch das ein oder andere Mal sehr hilfreich sein!
+</p>
+
+<h2>Verwendung der Komponente in ASP.NET</h2>
+<p>
+Da wir jetzt bestens &uuml;ber die Metadata informiert sind, bleibt uns nur noch die Komponente in ASP.NET
+auch tats&auml;chlich zu verwenden. Das folgende Beispiel (<b>sasmtpmail.aspx</b>) beweist, da&szlig; wenn man alle
+Voraussetzungen erf&uuml;llt hat, die Programmierung nicht mehr wirklich schwierig ist:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="sasmtp_dotnetproxy" %&gt;
+&lt;%
+// Tested with SMTPMail(tm) 2.0.0.1
+CoSMTPMailClass email = new CoSMTPMailClass();
+
+String strVersion = email.Version;
+Response.Write(strVersion);
+
+email.BodyText = "Das ist die Message, \r\ndie abgeschickt wird";
+email.ConfirmRead = false;
+email.ReturnReceipt = false;
+email.FromName = "Christoph Wille";
+email.FromAddress = "christophw@alphasierrapapa.com";
+email.SMTPLog = Server.MapPath("log.txt");
+
+bool bDone = email.AddRecipient("Chris","christophw@fx2.Dev.AlfaSierraPapa.Com");
+
+email.RemoteHost = "fx2.dev.alfasierrapapa.com";
+bool bResult = email.SendMail();
+
+if (bResult)
+{
+  Response.Write("&lt;br&gt;Mail sent!");
+}
+else
+{
+  Response.Write("&lt;br&gt;Error sending mail: ");
+  Response.Write(email.Response); 
+}
+%&gt;
+</pre>
+
+<p>
+Zuerst wird der Namespace <i>sasmtp_dotnetproxy</i> importiert, gefolgt von der Erzeugung einer Instanz der
+Klasse <i>CoSMTPMailClass</i>. In ASP h&auml;tten wir die Komponente mit diesem Statement erzeugt:
+</p>
+
+<pre style="background='silver';">
+Set xObj = CreateObject("Softartisans.SMTPMail")
+</pre>
+
+<p>
+Der restliche Sourcecode differiert eigentlich nicht mehr (bis auf C# vs VBScript) von einer 
+normalen ASP Seite, auf der SA-SMTPmail verwendet wird.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Einen Vorteil der Methode der Erzeugung der Metadata habe ich bis zum Schlu&szlig; aufgehoben: wir
+arbeiten mit einem Objekt, das im Vergleich zu ASP Early-Bound ist, ergo um vieles schneller
+angesprochen werden kann. Damit hat sich ja die zus&auml;tzliche Arbeit sogar noch so richtig
+ausgezahlt.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000828.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000828.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020702.htm">.NET Komponenten in COM+ Clients einsetzen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020702.htm</span><br>
+<a href="../artikel/20020201.htm">Dateityp-Ermittlung in Managed C++</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020201.htm</span><br>
+<a href="../artikel/20010123.htm">Eine Eurokonvertierungskomponente in C# erstellen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010123.htm</span><br>
+<a href="../artikel/20021107.htm">Index Server Abfragen per Web Service</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021107.htm</span><br>
+<a href="../artikel/20010619.htm">Transaktionen in C# Business Tier Komponenten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010619.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpgerman%2Ecom%2Faspgerman%2Flisten%2Fanmelden%2Faspdedotnet%2Easp">Die aspDEdotnet Diskussionsliste</a><br>
+<SPAN class="content">http://www.aspgerman.com/aspgerman/listen/anmelden/aspdedotnet.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Esoftartisans%2Ecom%2Fsoftartisans%2Fsmtpmail%2Ehtml">SA-SMTPmail</a><br>
+<SPAN class="content">http://www.softartisans.com/softartisans/smtpmail.html</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

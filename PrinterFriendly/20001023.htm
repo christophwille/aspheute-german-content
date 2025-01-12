@@ -1,0 +1,251 @@
+<HTML>
+<HEAD>
+<TITLE>Das SQL Join Statement</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel soll Ihnen die Grundlagen des SQL <i>Join</i> Statements vermitteln. Zuerst besprechen wir die Funktion von <i>Join</i> und die M&ouml;glichkeiten die das Statement bietet.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SQl,JOIN,foreign key,Primärschlüssel,Fremdschlüssel,Enterprise Manager,Query Analyzer,statement,SQL statement,inner join,outer join,left join,full join">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Das SQL Join Statement</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001023"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Dieser Artikel soll Ihnen die Grundlagen des SQL <i>Join</i> Statements vermitteln. Zuerst besprechen wir die
+Funktion von <i>Join</i> und die M&ouml;glichkeiten die das Statement bietet. Mit ein paar einfachen Beispielen wird
+Ihnen die Verwendung rasch in Fleisch und Blut &uuml;bergehen.
+</p>
+<p>
+Damit die Praxis nicht au&szlig;en vor bleibt, testen wir ausgew&auml;hlte Beispiele mit dem Microsoft SQL Query Analyzer,
+der den Enterprise Tools des Microsoft SQL Servers beiliegt.
+</p>
+
+<p>
+Als Beispielgrundlage habe ich die schon seit l&auml;ngeren bekannte "Northwind" Datenbank verwendet. Diese wird standardm&auml;&szlig;ig mit
+dem MS SQL Server installiert. Dadurch, da&szlig; diese Datenbank ein gewisses Ma&szlig; an Komplexizit&auml;t aufweist, aber 
+dennoch &uuml;berschaubar ist, eigenet sie sich hervorragen f&uuml;r &Uuml;bungsbeispiele.
+</p>
+
+<h2>Praktische Anwendung des Join Statements</h2>
+<p>
+Bei komplexen und umfangreichen Datenbanken versucht man die Daten strukturiert abzulegen, ohne den &Uuml;berblick 
+zu verlieren. In unserem Fall, am Beispiel der Northwind Datenbank sind die Daten in mehrere Einzeltabellen 
+unterteilt. So zum Beispiel sind die Datens&auml;tze der Produkte (Products), Lieferanten (Suppliers) oder die Kunden (Customers)
+in eigenen, separaten Tabellen physikalisch gespeichert (eine typische, transaktionsorientierte Datenbank).
+</p>
+<p>
+Nun sollen Sie aber anhand von Ihnen erstellten Kriterien Abfragen (Queries) erstellen um Informationen aus der
+Datenbank zu gewinnen. Sie m&ouml;chten zum Beispiel wissen, welche Lieferanten Produkte vertreiben die maximal USD 70
+kosten. Da aber die Produktdaten in einer physikalisch anderen Tabelle gespeichert sind als die Lieferantendaten,
+m&uuml;ssen Sie eine Abfrage erstellen, die die zwei Tabellen miteinander verbindet.
+</p>
+<p>
+Grunds&auml;tzlich k&ouml;nnen Sie mit dem <i>Join</i> Statement zwei oder mehr Tabellen miteinander zu verbinden. Das Ergebnis stellt
+sich als Reihen und Spalten der angegebenen Tabelle dar. In den meisten F&auml;llen werden Tabellen mit <i>Join</i> 
+"verbunden" wenn sie etwas gemeinsam haben. Diese Gemeinsamkeit kann sich unter anderem in Form eines Fremdschl&uuml;ssels
+darstellen.
+</p>
+<p>
+Die obige Problemstellung aufgreifend, erhalten Sie mit Hilfe des "Join" Statements alle Produkte die die 
+Lieferanten um maximal USD 70 verkaufen. Die Vorgehensweise ist bei diesem Beispiel schlicht und ergreifend einfach.
+Um aber nicht mit der Erkl&auml;rung irgendwo in der Mitte anzufangen, beginnen wir bei der Beziehung (Relationship)
+der beiden Tabellen. Diese Beziehung l&auml;&szlig;t sich am einfachsten im MS SQL Enterprise Manager darstellen.
+Diesen finden Sie bei standardm&auml;&szlig;iger Installation in der Programmgruppe <i>Microsoft SQL Server</i> unter
+dem Eintrag <i>Enterprise Manager</i>. Die folgende Abbildung zeigt die Beziehung der beiden Tabellen
+<i>Suppliers</i> (Lieferanten) und <i>Products</i> (Produkte) im SQL Enterprise Manger.
+</p>
+<p><IMG SRC="/artikel/Bilder/200010/20001023_RelationShip.png" width="431" height="359" alt="" border="0"></p>
+<p>
+Die Beziehung ist so definiert, da&szlig; es f&uuml;r einen Lieferanten mehrere Produkte geben kann. Dies erkennt
+man an der Form des Joins. Bei der Suppliers Tabelle ist dies ein Schl&uuml;ssel, d.h. eine eindeutige Zuordnung.
+Bei der Produkte Tabelle ist dies ein <i>unendlich</i> Zeichen, das eine mehrfache Zuordnung bedeutet.
+</p>
+<p>
+Wenn Sie also <i>Joins</i> verwenden, k&ouml;nnen Sie Daten aus zwei oder mehreren Tabellen erhalten die zueinander in
+logischen Beziehungen stehen. <i>Joins</i> weisen den SQL Server an, da&szlig; er Daten von einer Tabelle verwenden soll,
+um in einer anderen Datenreihen auszuw&auml;hlen.
+</p>
+<p>
+Das <i>Join</i> Statement definiert auf zwei Arten wie Tabellen in einer Abfrage zueinander stehen:
+</p>
+<p>
+<ul>
+<li>durch die Angabe einer Spalte von jeder Tabelle welche f&uuml;r den join verwendet werden soll
+<li> durch die Angabe eines logischen Operators (z.B. =,&lt;,&gt;), um einen Vergleich durchzuf&uuml;hren
+</ul>
+</p>
+<p>
+Zum ersten Punkt sei noch angemerkt, da&szlig; <i>Join</i> &uuml;blicherweise auf einen Fremdschl&uuml;ssel einer Tabelle
+hinweist, und auf einen Prim&auml;rschl&uuml;ssel referenziert, der in einer anderen Tabelle abgelegt ist.
+</p>
+<p>
+Die explizite Angabe von Joins in einer <i>From</i> Abfrage hilft bei der Trennung von anderen Suchkritereien
+welche z.B. in Verbindung mit dem Keyword <i>Where</i> verwendet werden k&ouml;nnten.
+</p>
+<p>
+Im einfachsten Fall sieht ein <i>Join</i> Statement so aus:
+</p>
+<p><pre style="background='silver';">
+FROM QuellTabelle1 [Join-Typ] Tabelle [ON (Join Bedingung)]
+</pre></p>
+<p>
+<i>Join-Typ</i> gibt Art des Joins an der angewendet werden soll. Gebr&auml;uliche Statements sind
+<i>INNER</i> oder <i>OUTER</i> Join. 
+</p>
+<p>
+Die <i>Join Bedingung</i> definiert die Art der Evaluierung jedes Paares an verbundenen Datenreihen der Tabellen.
+</p>
+<p>
+In diesem Artikel m&ouml;chte ich mich auf die Verwendung des <i>INNER Joins</i> beschr&auml;nken. <i>Outer</i>
+Join m&ouml;chte ich nur kurz anf&uuml;hren.
+</p>
+<p>
+<ul>
+<li> <b>Inner Join:</b> Inner Join gibt nur die Datenreihen aus den Tabellen an, welche eine gemeinsame
+&Uuml;bereinstimmung besitzten. Z.B.: Sie erhalten nur jene Produkte die einem Lieferanten auch zugeordnet sind.
+<li><b>Outer Join:</b> Outer Join beinhalten auch Datenreihen die keine verwandten Daten in der anderen Tabelle besitzen.
+Bei der Verwendung von Outer Join bekommen Sie z. B. auch Lieferanten die (im Moment) keine Produkte an Sie liefern.
+</ul>
+</p>
+<p>
+Um das Outer Join Statement zu pr&auml;zisieren, und somit das Ergebnis der retounierten Daten einzuschr&auml;nken bzw. zu erweitern
+gibt es drei Abwandlungen (<i>LEFT</i>, <i>RIGHT</i> und <i>FULL</i>). Diese Abwandlungen m&ouml;chte ich aber in diesem
+Artikel nicht weiter abhandeln.
+</p>
+<p>
+<b>Beachte:</b> Um etwaige Komplikationen zu vermeiden, sollten Sie, wenn Sie einen <i>Inner Join</i> verwenden wollen
+immer auch <i>Inner Join</i> anstatt nur <i>Join</i> angeben.
+</p>
+
+<h2>Testen einer Abfrage</h2>
+<p>
+Wie &uuml;blich folgt nun der praktische Teil, indem wir das zuvor erlernte in die Tat um setzten.
+Wie eingangs erw&auml;hnt, wollen wir alle Produkte der <i>Northwind</i> Datenbank auslesen, die maximal USD 70 kosten.
+Sinnvollerweise lassen wir uns um detailliertere Information &uuml;ber die Produkte zu erhalten, noch die Lieferanten 
+und den tats&auml;chliche Preis der Ware anzeigen.
+</p>
+<p>
+Um unser Gedankenexperiment schnell und einfach auszuprobieren kommt der MS SQL Query Analyzer zum Einsatz.
+Diesen finden Sie bei standardm&auml;&szlig;iger Installation in der Programmgruppe <i>Microsoft SQL Server</i> unter
+dem Eintrag <i>Query Analyzer</i>.
+</p>
+<p>
+Nun m&uuml;ssen wir noch die SQL-Abfrage erstellen. Dies ist nicht weiter tragisch und k&ouml;nnte etwa so aus sehen:
+</p>
+<p><pre style="background='silver';">
+SELECT ProductName, CompanyName, UnitPrice 
+FROM Suppliers INNER JOIN Products
+ON (Suppliers.SupplierID = Products.SupplierID) 
+WHERE UnitPrice <= $70
+</pre>
+</p>
+<p>
+Um dieses Statement zu testen &ouml;ffnen Sie den <i>Query Analyzer</i> und verbinden sich mit einem Ihnen 
+zur Verf&uuml;gung stehenden MS SQL Server (local oder remote). Nach best&auml;tigen der Auswahl des Servers &ouml;ffnet 
+sich auch schon das <i>Query</i> Fenster. Dann selektiern wir die <i>Northwind Datenbank</i> in der
+Auswahl-Pulldown Listbox des Standard Toolbars.
+</p>
+<p><IMG SRC="/artikel/Bilder/200010/20001023_QueryAnalyzer1.png" width="574" height="195" alt="" border="0"></p>
+<p>
+Nun tippen Sie das SQL Statements in das <i>Query</i> Fenster ein. Nach dem Code Check (Button mit dem
+blauen H&auml;kchen) lassen wir den Code ablaufen (gr&uuml;ner Pfeil Button). Der folgende Screenshot zeigt einige 
+Datens&auml;tze, die wir durch die Abfrage erhalten haben.
+</p>
+<p><IMG SRC="/artikel/Bilder/200010/20001023_QueryAnalyzer2.png" width="568" height="339" alt="" border="0"></p>
+<p>
+Als Draufgabe und weil wir die Kriterien noch genauer festlegen wollen, m&ouml;chten wir zus&auml;tzlich nur die 
+Lieferanten deren Name mit "G" anfangen. Der folgende Sourccode zeigt die kleine Ver&auml;nderung:
+</p>
+<p><pre style="background='silver';">
+SELECT ProductName, CompanyName, UnitPrice FROM Suppliers INNER JOIN Products
+ON (Suppliers.SupplierID = Products.SupplierID) WHERE UnitPrice &lt;= $70
+AND CompanyName LIKE 'G%'
+</pre></p>
+<p>
+Das Resultat pr&auml;sentiert sich wie folgt:
+</p>
+<p><IMG SRC="/artikel/Bilder/200010/20001023_QueryAnalyzer3.png" width="567" height="338" alt="" border="0"></p>
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dieser Artikel zeigt den Einsatz des <i>Join</i> Statements in Zusammenhang mit dem Einsatz des MS SQL Servers
+bzw. des SQL Query Analyzers. Sie sollten jetzt in der Lage sein, aus komplexeren Datenbanken mit einer einfachen 
+Kombination von SQL Statements reichhaltige Informationen zu gewinnen - und diese in ADO auslesen k&ouml;nnen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/19990825.htm">ADO und ASP - Datenbanken einmal n&auml;her betrachtet</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990825.htm</span><br>
+<a href="../artikel/20020429.htm">Benutzerverwaltung leicht gemacht: Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020429.htm</span><br>
+<a href="../artikel/20001106.htm">Datenaufbereitung in ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001106.htm</span><br>
+<a href="../artikel/20011015.htm">Der SQL UNION Operator</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011015.htm</span><br>
+<a href="../artikel/19990811.htm">Eigenschaften der Connection und Recordset Objekte</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990811.htm</span><br>
+<a href="../artikel/20010420.htm">Ein einfacher Query Analyzer</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010420.htm</span><br>
+<a href="../artikel/20010918.htm">Erstellung eines Intranets in ASP (Teil 2) - Setup</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010918.htm</span><br>
+<a href="../artikel/20010921.htm">Erstellung eines Intranets in ASP (Teil 5) - Application Day</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010921.htm</span><br>
+<a href="../artikel/19990826.htm">ODBC und ASP - Eine DSN zur Verwendung mit ASP definieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990826.htm</span><br>
+<a href="../artikel/20020903.htm">Stored Procedures einfach erstellt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020903.htm</span><br>
+<a href="../artikel/20011017.htm">T-SQL Clauses: GROUP BY und HAVING</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011017.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

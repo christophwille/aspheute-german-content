@@ -1,0 +1,229 @@
+<HTML>
+<HEAD>
+<TITLE>Eine einfache Newsletter Applikation</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Um Besucher bzw. Kunden immer am neuesten Stand Ihres Website-Inhaltes oder z.B &uuml;ber neue Produkte zu informieren, k&ouml;nnen Sie dies mit Hilfe eines Email-basierenden Newsletters erreichen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Newsletter,Applikation,Infoservice,Administration,Gruppen,CDONTS">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Eine einfache Newsletter Applikation</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010503"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Um Besucher bzw. Kunden immer am neuesten Stand Ihres Website-Inhaltes oder z.B &uuml;ber neue Produkte zu informieren,
+k&ouml;nnen Sie dies mit Hilfe eines Email-basierenden Newsletters erreichen. Bei mehreren Besuchern lohnt es sich aber 
+schon auf sogenannte Newsletter Applikationen zur&uuml;ckzugreifen, die die Administration und den Vorgang des Aussendens
+der (vielen) Emails erleichtern. Dieser Artikel stellt Ihnen eine einfache und kostenlose L&ouml;sung vor.
+</p>
+
+<p>
+Der Sourcecode f&uuml;r diese Applikation wurde von Cenk Yurtseven verfa&szlig;t, und er ist im heutigen Download mit dabei. Der Download besteht aus einem Zip-Archiv, welches eine ASP-Datei und die zur Verwaltung ben&ouml;tigte 
+MS Access Datenbank enth&auml;lt.
+</p>
+
+<p>
+Bevor wir mit einem Testlauf der Applikation anfangen, noch einige Worte zuvor.
+Zun&auml;chst einmal einen kurzen Einblick in die Datenbank und Ihre Struktur. Diese besteht aus vier Tabellen -
+<i>NewsHistory</i>, <i>MailHistory</i>, <i>Newsletter</i> und <i>NewsletterSections</i>.
+</p>
+
+<p>
+Die Tabelle <i>NewsHistory</i> enth&auml;lt die eigentlichen Newsletter. Alle Newsletter, die Sie &uuml;ber die Applikation erstellen, 
+werden hier gespeichert. Die Struktur der Tabelle sieht folgenderma&szlig;en aus:
+</p>
+
+
+<IMG SRC="/artikel/Bilder/200105/20010503_1.png" width="261" height="112" alt="" border="0">
+
+<p>
+&Auml;hnlich wie bei der <i>NewsHistory</i> Tabelle enth&auml;lt die <i>MailHistory</i> Tabelle 
+die verschickten Emails. Daher ist auch die Struktur der Tabelle zur oberen &auml;hnlich:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010503_2.png" width="258" height="135" alt="" border="0">
+
+<p>
+In der <i>Newsletter</i> Tabelle werden die Adressaten verwaltet. Hierbei werden u.a. die Emailadresse des Empf&auml;ngers,
+seine Zugeh&ouml;rigkeit zu der jeweiligen Interessensgruppe - die Sie selbst erstellen k&ouml;nnen - und das Erstellungsdatum des
+Eintrages gespeichert:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010503_3.png" width="262" height="133" alt="" border="0">
+
+<p>
+Die Tabelle, die noch fehlt, ist die <i>NewsletterSections</i>. Sie enth&auml;lt die einzelnen zu 
+verwaltenden Interessensgruppen f&uuml;r den Newsletter:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010503_4.png" width="258" height="96" alt="" border="0">
+
+<p>
+Diese erm&ouml;glicht, da&szlig; Sie mit einer einzigen Applikation mehrere Besucher- bzw. Kundeninteressensgebiete verwalten k&ouml;nnen.
+Da Sie im Moment neue Interessensgruppen nicht &uuml;ber dieses Script eingeben k&ouml;nnen, m&uuml;ssen Sie dies wie gewohnt mit Hilfe
+von Access erledigen.
+</p>
+
+<p>
+Nun noch ein paar Worte zur Implementierung der Datenbankverbindung und zur Emailversendung. In der urspr&uuml;nglichen Version des Sourcecodes wurde
+die Verbindung zur Datenbank mittels <i>ODBC DSN</i> realisiert. Ich habe mir erlaubt dies zu entfernen und stattdessen mit
+einer <i>include</i>-Datei die Verbindungsparameter in das Script einzubinden. Daher wurden folgende &Auml;nderungen durchgef&uuml;hrt:
+</p>
+
+<p>
+Erstellung der <i>include</i>-Datei <i>configuration.asp</i>, welche sich im Unterverzeichnis <i>includes</i> befindet.
+Diese Datei enth&auml;lt folgende Anweisungen:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+DBPath = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source="
+DBPath = DBPath &amp; Server.MapPath("CYNewsletter.mdb") 
+%&gt;
+</pre>
+
+<p>
+Daher mu&szlig; auch im "Hauptscript" ein neuer Eintrag statt des vorigen DSN-Eintrags <i>DBPath =...</i> erfolgen:
+</p>
+
+<pre style="background='silver';">
+&lt;!-- #include virtual="/newsl/includes/configuration.asp" --&gt;
+</pre>
+
+<p>
+Die Emails werden mittels <i>CDONTS</i> (Collaboration Data Objects for NT Server) verschickt. Im Script m&uuml;ssen
+Sie daher nur um den bzw. die Newsletter verschicken zu k&ouml;nnen, den Eintrag f&uuml;r die 
+Variable <i>strFrom</i> des folgenden Codeblocks &auml;ndern:
+</p>
+
+<pre style="background='silver';">
+Dim objCDOMail 'The CDO object
+	
+strTo = rs("EMail")
+strSubject = MessageSubject
+<b>strFrom = "mail@mymail.com"</b>
+strBody = Message
+</pre>
+
+<p>
+Wenn Sie nun die neu erstellte ASP-Datei <b>default.asp</b> auf einem Web Server ausf&uuml;hren, erhalten Sie folgende
+Startseite der Newsletter Applikation:
+</p>
+
+<p>
+<IMG SRC="/artikel/Bilder/200105/20010503_5.png" width="590" height="435" alt="" border="0">
+</p>
+
+<p>
+Diese ist zwar schlicht gehalten, aber dennoch ausreichend funktionell. Von hier aus k&ouml;nnen Sie einen neuen Newsletter
+verschicken, einen neuen Newsletter-Empf&auml;nger hinzuf&uuml;gen oder die History der Newsletter ansehen. Erstellen wir 
+zun&auml;chst einen neuen Empf&auml;nger. Hierf&uuml;r klicken Sie auf <i>Add New Address</i> und Sie erhalten folgende Eingabemaske:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010503_6.png" width="481" height="266" alt="" border="0">
+
+<p>
+Sie m&uuml;ssen lediglich eine Emailadresse und eine Zugeh&ouml;rigkeit zu einer (evtl. vorher erstellten) Sparte angeben.
+Damit ist es m&ouml;glich, themenspezifische Newsletter auszusenden - und damit erh&ouml;hen Sie auch die Wahrscheinlichkeit, da&szlig; 
+diese Interesse finden.
+</p>
+
+<p>
+Nun klicken Sie auf <i>Add</i> und der neue Empf&auml;nger wird in der Datenbank gespeichert. Als zus&auml;tzliche Best&auml;tigung
+erhalten Sie je nach dem ob der Vorgang erfolgreich war oder nicht eine Meldung:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010503_7.png" width="596" height="218" alt="" border="0">
+
+<p>
+Nun sind wir soweit, da&szlig; wir einen Newsletter verschicken k&ouml;nnen. Wir gelangen &uuml;ber den Link <i>Control Panel</i>
+wieder zum Ausgangsscreen zur&uuml;ck. Dort geben wir - wie gewohnt f&uuml;r eine Email - die ben&ouml;tigten Daten wie Subject und
+die eigentliche Nachricht ein. Die Empf&auml;nger w&auml;hlen wir &uuml;ber das Pulldown Men&uuml; <i>Select Group</i>. Jetzt k&ouml;nnen wir 
+den Newsletter eigentlich abschicken und klicken auf den <i>Preview</i>-Button und erhalten folgendes:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010503_8.png" width="600" height="347" alt="" border="0">
+
+<p>
+In dieser Voransicht k&ouml;nnen Sie den Newsletter vor dem Abschicken noch einmal &uuml;berpr&uuml;fen und danach durch Klicken auf den
+<i>Send Newsletter</i>-Button diesen versenden. Gleichzeitig wird der Newsletter in der Datenbank gespeichert bzw. in der
+History, also der <i>NewsHistory</i> Tabelle abgelegt.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Dies war eine kurze Anleitung f&uuml;r den Gebrauch der kostenlos downloadbaren Newsletter Applikation in vielen bunten Bildern.
+Diese ist zwar schlicht gehalten, enth&auml;lt aber alle notwendigen Funktionen um Newsletter zu versenden und auch mehrere
+Interessensgruppen zu verwalten. Nur ein kundenseitiges Anmeldeformular f&uuml;r die Newsletter mu&szlig; man
+selber schreiben - oder besser aus dem existierenden Code "extrahieren".
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010503.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010503.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000515.htm">Emails senden mit CDONTS</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000515.htm</span><br>
+<a href="../artikel/19990826.htm">ODBC und ASP - Eine DSN zur Verwendung mit ASP definieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990826.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fcenk%2Eyurtseven%2Ecom%2Fprograms%2Fenglish%2Fnewsletter%2Fdefault%2Easp%3Fmode%3Ddrafts">Download der Newsletterapplikation</a><br>
+<SPAN class="content">http://cenk.yurtseven.com/programs/english/newsletter../default.htm?mode=drafts</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

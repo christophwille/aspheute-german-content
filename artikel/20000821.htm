@@ -1,0 +1,488 @@
+<HTML>
+<HEAD>
+<TITLE>Streams in NTFS Dateien</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel stellt der Autor das NTFS-Feature der Streams vor, und wie man diese in ASP dazu verwenden kann, Daten zu verstecken, oder verwandte Daten gruppiert zu speichern.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Streams,NTFS,file system,security,$DATA,FileSystemObject,ReadAll,Write">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Streams in NTFS Dateien</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000821"></SCRIPT>
+</p>
+<p>
+Im heutigen Artikel m&ouml;chte ich etwas in die Untiefen von NTFS (NT File System) abtauchen,
+und ein interessantes Feature besprechen: Streams. Zuerst werde ich mich mit den 
+Grundlagen besch&auml;ftigen, und dann Beispiele bringen, wie man in Streams schreibt, und Daten
+aus Streams ausliest. Das Sch&ouml;ne ist, da&szlig; man keinerlei zus&auml;tzliche Komponenten braucht, um
+dieses Feature des Betriebssystems zu seinen Gunsten zu verwenden.
+</p>
+
+<h2>Streams - die Grundlagen</h2>
+<p>
+Was sind Streams? Vereinfacht gesagt kann eine Datei auf einer NTFS Partition in mehrere 
+"Unterbereiche" (Streams) aufgeteilt werden, die separat ansprechbar 
+sind - wobei allerdings nur einer davon standardm&auml;&szlig;ig sichtbar (=lesbar) ist - der unbenannte 
+Standardstream. Das folgende Bild zeigt schematisch eine Datei und ihre Streams.
+</p>
+<p><IMG SRC="Bilder/200008/20000821_2.png" width="225" height="244" border="0" alt=""></p>
+<p>
+Wie bereits erw&auml;hnt mu&szlig; nur der Standardstream existieren, alle weiteren Streams sind optional.
+Der Zugriff via zB FileSystemObject auf den Standardstream erfolgt einfach &uuml;ber den Dateinamen: <b>myfile.ext</b>. Bei
+Streams stellt sich nur eine kleine &Auml;nderung ein: <b>myfile.ext:streamname</b>. An den eigentlichen
+Dateinamen wird mit Doppelpunkt der Streamname angeh&auml;ngt.
+</p>
+<p>
+Die Daten des jeweiligen Streams werden intern vom Betriebssystem wie folgt angesprochen:
+<pre style="background='silver';">
+myfile.ext:mystream:$DATA
+</pre>
+</p>
+<p>
+Ich hoffe, mit dem $DATA habe ich jetzt bei einigen Herrschaften eine Glocke gel&auml;utet - es gab
+bei IIS mit ASP den sogenannten <b>::$DATA </b>Bug, der es erlaubte, an der ASP Engine vorbei den 
+Sourcecode einer ASP Datei downzuloaden - und zwar genau &uuml;ber das Standardstreamfeature von NTFS,
+das von IIS nicht korrekt abgeblockt wurde. 
+</p>
+<p>
+Weil wir gerade beim Thema Sicherheit sind: wof&uuml;r soll denn nun f&uuml;r einen ASP Programmierer
+das Streams Feature von Nutzen sein? Nun, wenn nur der Standardstream sichtbar ist, hei&szlig;t das, 
+da&szlig; ich sensitive Informationen in weiteren Streams ablegen kann. Und das Beste ist, da&szlig; weder 
+&uuml;ber FTP, einen Web Browser und festhalten - noch &uuml;ber den Windows Explorer - diese Streams 
+sichtbar werden! Wer also bestimmte Daten nicht nur vor Hackern sondern auch vor seinem Provider 
+verstecken will, der liegt mit Streams genau richtig.
+</p>
+<p>
+Ein weiteres Anwendungsgebiet von Streams w&auml;re zum Beispiel, da&szlig; man eine Datei f&uuml;r Lesen
+und Schreiben gleichzeitig aufmachen kann - das Locking funktioniert per Stream. Anwendung
+k&ouml;nnte das f&uuml;r Datei-basierte Foren und so weiter finden.
+</p>
+<p>
+Da wir nun die Anwendungsgebiete im Groben mal abgesteckt haben, kommen wir zu einem wichtigen
+Punkt der impliziert ist, aber auch explizit erw&auml;hnt werden sollte: das Streams Feature ist nur 
+auf NTFS vorhanden ist (ergo Windows NT/2000). Will man eine Datei, die mehrere Streams enth&auml;lt, 
+auf eine andere Partition kopieren (FAT, FAT32), so werden die zus&auml;tzlichen Streams nicht
+mitgenommen - man wird allerdings davor gewarnt:
+</p>
+<p><IMG SRC="Bilder/200008/20000821_1.png" width="419" height="240" border="0" alt=""></p>
+<p>
+Aus diesem Grund sollte man sich r&uuml;ckversichern, da&szlig; die aktuelle Partition Streams unterst&uuml;tzt
+- m&ouml;glichst bevor man Streams herumspielt. Die folgende Funktion ist Teil der Datei
+<b>StreamLibrary.asp</b>, die als Include in allen anderen Beispielen verwendet wird (auch Teil des
+Downloads).
+</p>
+<p>
+<pre style="background='silver';">
+Function IsDriveNTFSDrive(strDriveLetter)
+  Dim fsObj, drvObj, strTypeOfFS
+  IsDriveNTFSDrive = False
+  
+  Set fsObj = CreateObject(&quot;Scripting.FileSystemObject&quot;)
+  Set drvObj = fsObj.GetDrive(strDriveLetter)
+  strTypeOfFS = drvObj.FileSystem
+  
+  If (0 = StrComp(&quot;NTFS&quot;, strTypeOfFS)) Then
+    IsDriveNTFSDrive = True
+  End If
+End Function
+</pre>
+</p>
+<p>
+Diese Funktion verwendet die <i>FileSystem</i> Eigenschaft des <i>Drive</i> Objekts um den Typ des Dateisystems
+zu ermitteln. Bei NTFS liefert sie True, ansonsten immer False.
+</p>
+
+<h2>Schreiben von Streams</h2>
+<p>
+Die Voraussetzungen sind abgekl&auml;rt, jetzt geht es um's Schreiben in die Datei. Dazu habe ich
+auch eine universell einsetzbare Funktion gebaut: <b>WriteStreamData</b>.
+</p>
+<p>
+<pre style="background='silver';">
+Sub WriteStreamData(strTargetFile, strTargetStream, strStreamData)
+  Dim fsObj, objTextStream, strFullStreamedName
+  
+  Set fsObj = CreateObject(&quot;Scripting.FileSystemObject&quot;)
+  
+  ' der default stream mu&szlig; zwar nicht explizit generiert werden, es 
+  ' empfiehlt sich aber sehr!
+  If (Not fsObj.FileExists(strTargetFile)) Then
+    Set objTextStream = fsObj.CreateTextFile(strTargetFile)
+    objTextStream.Write &quot;Mehrfach-Stream Datei&quot;
+    objTextStream.Close
+    Set objTextStream = Nothing
+  End If
+  
+  strFullStreamedName = strTargetFile &amp; &quot;:&quot; &amp; strTargetStream
+  Set objTextStream = fsObj.CreateTextFile(strFullStreamedName)
+  objTextStream.Write strStreamData
+  objTextStream.Close
+  
+  Set objTextStream = Nothing
+  Set fsObj = Nothing
+End Sub
+</pre>
+</p>
+<p>
+Etwas, das ich nicht tun m&uuml;&szlig;te, ist den Standardstream mit Daten anzuf&uuml;llen - es dient nur
+dazu, da&szlig; die Datei nicht 0 Byte lang ist. Der Grund warum sie 0 Byte w&auml;re ist der, da&szlig; 
+nur der Standardstream zur Gr&ouml;&szlig;enkalkulation herangezogen werden kann (also wer seinem 
+Systemadministrator ein Ei legen will, der kann mehrere MB's in Dateien der L&auml;nge 0
+verstecken...). Auch wenn die Gr&ouml;&szlig;e vom Standardstream gerechnet wird, werden alle Streams
+bei einem Backup gesichert - also um die Daten in den zus&auml;tzlichen Streams mu&szlig; man sich
+nicht f&uuml;rchten.
+</p>
+<p>
+Das eigentliche Schreiben in einen Stream ist sehr simpel - nur 4 Zeilen inklusive des Erstellens
+eines Strings mit dem Streamnamen und dem Schlie&szlig;en der Datei. Schon hat man Daten erfolgreich
+versteckt.
+</p>
+<p>
+Verwendet wird die Funktion wie folgt (<b>WriteStream.asp</b>):
+</p>
+<p>
+<pre style="background='silver';">
+&lt;!--#include file=&quot;StreamLibrary.asp&quot;--&gt;
+&lt;%
+Dim strFile, strStream
+strFile = Server.MapPath(&quot;demo.txt&quot;)
+strStream = &quot;mystream&quot;
+
+If IsDriveNTFSDrive(&quot;d&quot;) Then
+  WriteStreamData strFile, strStream, &quot;some data you won't see on disk&quot;
+End If
+%&gt;
+</pre>
+</p>
+<p>
+Das Beispiel ist wirklich sehr straight-forward: die Datei wird definiert, das Dateisystem
+auf NTFS gecheckt, und dann die Daten geschrieben. Sollte alles gutgehen, bekommt man eine
+leere Seite pr&auml;sentiert (das sollte man unter Umst&auml;nden &auml;ndern), sonst eine Fehlermeldung.
+</p>
+<p>
+Wer m&ouml;chte, kann die Datei nun in Notepad &ouml;ffnen - er wird nur den Standardtext aus der
+Funktion <i>WriteStreamData</i> erhalten. Um die Daten des zus&auml;tzlichen Streams zu sehen, mu&szlig; man mit
+Doppelpunkt hinter dem Dateinamen den Streamnamen angeben, und schon sieht man die Daten auch
+in Notepad - aber wie gesagt, man mu&szlig; den Namen des Streams kennen.
+</p>
+
+<h2>Lesen von Streams</h2>
+<p>
+Da unsere Daten nun sicher in einem Stream liegen, stellt sich noch die Frage, wie man sie
+wieder auslesen kann. Diese Frage beantwortet der Sourcecode zur Funktion <b>ReadStreamData</b>:
+</p>
+<p>
+<pre style="background='silver';">
+Function ReadStreamData(strFileName, strStreamName)
+  Dim fsObj, objTextStream, strContent
+  Set fsObj = CreateObject(&quot;Scripting.FileSystemObject&quot;)
+  
+  If Not fsObj.FileExists(strFileName) Then
+    Err.Raise vbObjectError+1, &quot;Datei existiert nicht!&quot;
+  End If
+  
+  Set objTextStream = fsObj.OpenTextFile(strFileName &amp; &quot;:&quot; &amp; strStreamName)
+  strContent = objTextStream.ReadAll()
+  objTextStream.Close
+  Set objTextStream = Nothing
+  Set fsObj = Nothing
+  
+  ReadStreamData = strContent
+End Function
+</pre>
+</p>
+<p>
+Wieder passiert hier eigentlich nichts aufregendes - ich habe nur eine kleine Sicherheitsma&szlig;nahme
+eingebaut: das Checken, ob die Datei existiert. Allerdings k&uuml;mmere ich mich nicht um die Fehler,
+die entstehen falls der Stream nicht existiert - das ist Aufgabe des Lesers!
+</p>
+<p>
+Anwendung findet die Funktion in der Datei <b>ReadStreams.asp</b>:
+</p>
+<p>
+<pre style="background='silver';">
+&lt;!--#include file=&quot;StreamLibrary.asp&quot;--&gt;
+&lt;%
+Dim strFile, strStream
+strFile = Server.MapPath(&quot;demo.txt&quot;)
+strStream = &quot;mystream&quot;
+
+If IsDriveNTFSDrive(&quot;d&quot;) Then
+  Response.Write ReadStreamData(strFile, strStream)
+End If
+%&gt;
+</pre>
+</p>
+<p>
+Das Lesen funktioniert im Grunde genauso einfach wie das Schreiben. 
+</p>
+<p>
+Mit der Library die ich 
+Ihnen in diesem Artikel vorgestellt habe, kann man bequem mit Streams arbeiten - und diese
+zum "Verstecken" von Daten oder zum Speichern von verwandten Daten in einer einzigen Datei
+verwenden.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Wichtig zu bemerken ist unbedingt, da&szlig; man mit dem FileSystemObject keine M&ouml;glichkeit hat,
+alle Streams, die in einer Datei vorhanden sind, einfach aufzulisten. Man mu&szlig; wissen, da&szlig; ein
+Stream existiert (auch nicht schlecht von der Perspektive der Sicherheit). Wer allerdings
+einen C++ Compiler hat, der kann mit WIN32 API Funktionen sehr wohl alle Streams auflisten
+und anzeigen lassen - also 100% sicher sind die Daten nicht, das w&uuml;rde nur mit 
+Verschl&uuml;sselung stimmen (wenn sie richtig angewendet ist).
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000821.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20000523.htm">Dateiattribute unter ASP auslesen</a><br>
+<a href="20000530.htm">Lesen von Textdateien</a><br>
+<a href="20030324.htm">Minigolf - 99 Bottles of Beer</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2Ftechnet%2Fsecurity%2Fbulletin%2Fms98%2D003%2Easp">File Access Issue with Windows NT Internet Information Server ($DATA Bug)</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000821" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Streams in NTFS Dateien"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000821.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20000821"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000821.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

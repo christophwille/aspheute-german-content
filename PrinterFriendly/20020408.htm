@@ -1,0 +1,347 @@
+<HTML>
+<HEAD>
+<TITLE>Klassenauflistungen mit dem Dictionary-Objekt</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Mit Klassenauflistungen hat jeder ernsthafte Visual Basic-Programmierer irgendwann einmal zu tun. Dieser Artikel zeigt einen kleinen Trick mit dem Klassenauflistungen sehr einfach aufgebaut und verwendet werden k&ouml;nnen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Klassenauflistung,Collection,dictionary,recordset,array,multidimensional,dimension,Performance">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Klassenauflistungen mit dem Dictionary-Objekt</H1>
+<p>
+Geschrieben von: <a href="../autoren/marcteufel.htm">Marc Teufel</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020408"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Mit Klassenauflistungen hat jeder ernsthafte Visual Basic-Programmierer irgendwann einmal zu tun. 
+Ob freiwillig oder unfreiwillig sei mal dahingestellt, klar ist aber, wer sie einmal kennen- und 
+liebengelernt hat will nicht mehr ohne sie auskommen. Um so schlimmer also, da&szlig; gerade 
+diese beliebte Technologie nicht in VBScript und ASP zur Verf&uuml;gung steht. Was also tun? 
+Dieser Artikel zeigt einen kleinen Trick mit dem Klassenauflistungen sehr einfach aufgebaut 
+und verwendet werden k&ouml;nnen.
+</p>
+
+<h2>Wie ging das nochmal in Visual Basic?</h2>
+<p>
+Klassenauflistungen in Visual Basic sind relativ einfach zu handhaben, da ja dort ein 
+Klassengenerator zur Verf&uuml;gung steht der die meiste Programmierarbeit abnimmt.  Diesem 
+Artikel liegt zu Demonstrationszwecken ein kleines VB-Beispiel bei, in dem eine 
+Klassenauflistung zum Einsatz kommt.
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020408_1.png" width="668" height="376" alt="" border="0">
+
+<p>
+Hier ist der VB-Klassengenerator zu sehen, in dem ich eine kleine Klassenauflistung 
+(<b>colAdressen</b>) zur Speicherung von Adressen (<b>clsAdresse</b>) angelegt habe. <b>clsAdresse</b> stellt hierbei 
+den Container dar der immer wieder neu instanziert und mit Daten gef&uuml;llt in die Klassenauflistung 
+<b>colAdressen</b> gespeichert wird.
+</p>
+
+<p>
+Hat man die Klasse im VB-Klassengenerator definiert und man schlie&szlig;t denselbigen, wird die erstellte 
+Klassenauflistung in das Projekt &uuml;bernommen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200204/20020408_2.png" width="351" height="187" alt="" border="0">
+
+<p>
+In diesem Beispiel hat der Klassengenerator die in der Abbildung (siehe oben) aufgef&uuml;hrten Klassen 
+erstellt. Im Normalfall mu&szlig; an den Klassen <b>clsAdresse</b> und <b>colAdresse</b> jetzt nichts mehr 
+ge&auml;ndert werden, der Klassengenerator hat den Code selbst&auml;ndig angelegt, soda&szlig; sich der Programmierer 
+um wichtigere Aufgaben k&uuml;mmern kann. 
+</p>
+
+<p>
+Der automatisch erzeugte Code f&uuml;r die Klasse <b>clsAdresse</b> sieht wie folgt aus:
+</p>
+
+<pre style="background='silver';">
+Private mvarNachname As String
+Private mvarVorname As String
+
+Public Property Let Vorname(ByVal vData As String)
+    mvarVorname = vData
+End Property
+
+Public Property Get Vorname() As String
+    Vorname = mvarVorname
+End Property
+
+Public Property Let Nachname(ByVal vData As String)
+    mvarNachname = vData
+End Property
+
+Public Property Get Nachname() As String
+    Nachname = mvarNachname
+End Property
+</pre>
+
+<p>
+Die Klasse <b>clsAdresse</b> ist dazu gedacht um immer wieder neu instanziert und mit Daten gef&uuml;llt in 
+eine Collection gepackt zu werden, die wiederrum von der Klasse <b>colAdressen</b> verwaltet wird. 
+Der automatisch generierte Code von <b>colAdressen</b> enth&auml;lt Routinen zum Anlegen, Entfernen 
+und Zugreifen auf Elemente der Auflistung.
+</p>
+
+<p>
+Wie man in VB mit den Klassen umgeht zeigt folgendes kleines Snippet:
+</p>
+
+<pre style="background='silver';">
+   Dim lCounter As Long
+   Dim EinzelneAdresse As clsAdresse
+    
+    ' Daten in die Klassenauflistung aufnehmen
+    ' ohne Schl&uuml;ssel
+    Adressen.Add "Stoiber", "Edmund"
+    Adressen.Add "Merkel", "Angela"
+    
+    ' mit Schl&uuml;ssel
+    Adressen.Add "Schr&ouml;der", "Gerhard", "Bundeskanzler"
+        
+    MsgBox "Im folgenden wird der Inhalt der kompletten  Klassenauflistung ausgegeben:"
+    
+    For lCounter = 1 To Adressen.Count
+        Set EinzelneAdresse = Adressen.Item(lCounter)
+        
+        MsgBox "Vorname: " &amp; EinzelneAdresse.Vorname &amp; vbCrLf &amp; _
+               "Nachname: " &amp; EinzelneAdresse.Nachname
+    Next lCounter
+    
+
+    MsgBox "Im folgenden wird &uuml;ber einen Key nur der Bundeskanzler ausgelesen und ausgegeben:"
+    
+    Set EinzelneAdresse = Adressen.Item("Bundeskanzler")
+    
+    MsgBox "Vorname: " &amp; EinzelneAdresse.Vorname &amp; vbCrLf &amp; _
+           "Nachname: " &amp; EinzelneAdresse.Nachname
+</pre>
+
+<p>
+Dieses VB-Beispiel ist nat&uuml;rlich auch in den Sourcen enthalten, die zu diesem Artikel 
+heruntergeladen werden k&ouml;nnen.
+</p>
+
+<h2>Die Umsetzung in ASP mit VBScript</h2>
+<p>
+VBScript kennt keine Collections und auch das Klassenkonzept so wie man es von VB her gew&ouml;hnt ist, 
+gibt es in VBScript in dieser Form nicht. Ab Version 5.0 bietet VBScript Klassen an (die wir im 
+Verlaufe dieses Artikels noch noch benutzen), diese werden im Gegensatz zu Visual Basic jedoch nicht 
+in eigenen Klassenmodulen (.cls) definiert sondern mit den Schl&uuml;sselw&ouml;rten <i>Class</i> und <i>End Class</i> 
+direkt in den Quelltext geschrieben (siehe dazu auch den Artikel 
+<a href="../artikel/20000526.htm">Klassen mit VBScript</a>).
+</p>
+
+<p>
+Wie also Klassenauflistungen in ASP nachbilden? Nun, da gibt es mehrere M&ouml;glichkeiten auf die ich an dieser Stelle 
+etwas n&auml;her eingehen m&ouml;chte:
+</p>
+
+<ul>
+<li>Mehrdimensionale Arrays
+<li>Verbindungslose ADO-Recordsets
+<li>VBScript-Klassen/Dictionary Objekt
+</ul>
+
+<p>
+<b>Mehrdimensionale Arrays</b> haben den Nachteil, da&szlig; der Zugriff auf einzelne Elemente &uuml;ber Indizes 
+erfolgt, was mitunter sehr kryptisch werden kann, wenn man z.B. eine komplette Kundenadresse 
+abbildet (an welcher Stelle war nochmal die PLZ gespeichert?). Ferner hat man bei einem Array 
+immer das Problem, da&szlig; einzelne Elemente nicht, wie beim Dictionary-Objekt, &uuml;ber einen Key 
+adressierbar sind.
+</p>
+
+<p>
+<b>Verbindungslose ADO-Recordsets</b> sind eine weitere elegante Methode um Daten im Speicher zu 
+ halten, da dieses jederzeit per <i>AddNew</i> erweitert werden kann. Auch das Durchlaufen eines 
+ verbindungslosen ADO-Recordsets ist ohne Probleme m&ouml;glich. Einen Nachteil sehe ich hier 
+ allerdings beim Speicherverbrauch. Das Recordset mu&szlig; ja schlie&szlig;lich auch verwaltet werden 
+ und das ist speicherlastig.
+</p>
+
+<p>
+Bleiben nur noch <b>VBScript-Klassen und das Dictionary-Objekt</b>. Und tats&auml;chlich, wenn man diese 
+beiden Techniken miteinander verkn&uuml;pft kann man Klassenauflistungen ann&auml;hernd wie in VB nachbilden. 
+Das Dictionary-Objekt ist in diesem Zusammenhang zwar auch speicherlastig, aber nicht so sehr wie 
+ein ADO-Recordset.
+</p>
+
+<p>
+Hinweis: Da VBScript Objekte sowieso nicht in Application- oder Session State gespeichert werden 
+k&ouml;nnen, entf&auml;llt auch die Problematik des Dictionary Objekts, siehe dazu den Artikel 
+<a href="../artikel/19990806.htm">Das Dictionary Objekt - Dein Feind und Helfer</a>.
+</p>
+
+<h2>Klassen in VBScript mit Class ... End Class</h2>
+<p>
+Den Grundstein f&uuml;r eine Klassenauflistung in VBScript legt man indem man eine Klasse definiert in 
+der alle Felder die sp&auml;ter gespeichert werden sollen enthalten sind. Setzt man das VB-Beispiel 
+von oben in VBScript und ASP um, s&auml;he der Sourcecode der Klasse so aus:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Class Adresse
+        dim sVorname
+        dim sNachname
+
+        Public Property Get Vorname
+                Vorname = sVorname
+        End Property
+        Public Property Let Vorname(newVorname)
+                sVorname = newVorname
+        End Property
+
+        Public Property Let Nachname(newNachname)
+                sNachname = newNachname
+        End Property
+        Public Property Get Nachname
+                Nachname = sNachname
+        End Property
+
+End Class
+%&gt;
+</pre>
+
+<p>
+Die Programmierung der Properties erfolgt hier &auml;hnlich wie in VB, nur da&szlig; man sie hier selbst 
+codieren mu&szlig; (diese Arbeit kann man in VB vom Klassengenerator erledigen lassen). Der einzige 
+Unterschied zu VB-Klassen besteht darin, da&szlig; in VB eine Klasse immer eine Datei mit der 
+Dateinamenserweiterung .cls ist und in VBScript eine Klasse mit den Schl&uuml;sselwort <i>Class</i> 
+eingeleitet und <i>End Class</i> abgeschlo&szlig;en wird.
+</p>
+
+<h2>Der Trick</h2>
+<p>
+Jetzt kommt der eigentliche Trick mit dem die Klassenauflistung gef&uuml;llt wird: Man nimmt sich zun&auml;chst 
+ein Dictionary, danach erstellt man eine Instanz einer Klasse (z.B. die oben abgebildete Klasse 
+Adresse), f&uuml;llt sie mit Daten und packt dieses Objekt in das Dictionary. Eigentlich gar nicht so 
+schwer, aber sehr effizient da in einem Dictionary zu jedem Element ein eindeutiger Key mitgegeben 
+werden mu&szlig;, mit dem man sofortigen Zugriff auf alle Elemente des Dictionarys bekommt. Das 
+Dictionary mu&szlig; also nicht sequentiell bis zu dem Element durchlaufen werden, das gesucht wird.
+</p>
+
+<p>
+Folgender Code speichert zwei Adressen in die Klassenauflistung:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+dim dicKlassenauflistung
+dim cAdresse
+
+' Dictionary definieren
+set dicKlassenauflistung = CreateObject("Scripting.Dictionary")
+
+' 1. Adresse in die Klassenauflistung speichern
+set cAdresse = new Adresse
+with cAdresse
+     .Vorname = "Edmund"
+     .Nachname = "Stoiber"
+end with
+dicKlassenauflistung.Add "CSU-Vorsitzender", cAdresse
+
+' 2. Adresse in die Klassenauflistung speichern
+set cAdresse = new Adresse
+with cAdresse
+     .Vorname = "Gerhard"
+     .Nachname = "Schr&ouml;der"
+end with
+dicKlassenauflistung.Add "Bundeskanzler", cAdresse
+%&gt;
+</pre>
+
+<p>
+Irgendwann will man die Daten auch wieder aus der Klassenauflistung 
+auslesen, auch das schafft man mit einfachen Mitteln:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Dim cEinzelneAdresse
+
+Set cEinzelneAdresse = dicKlassenauflistung.Item("Bundeskanzler")
+Response.write " Vorname: " &amp; cEinzelneAdresse.Vorname
+Response.write " Nachname: " &amp; cEinzelneAdresse.Nachname 
+%&gt;
+</pre>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Mit dem oben beschriebenen Trick kann man also sehr effizient Klassenauflistungen bauen und damit 
+auch kompliziertere Datenstrukturen in ASP verarbeiten. Einziges Manko an dieser Technik ist, da&szlig; 
+diese Klassenauflistungen nicht &uuml;ber Session- oder Applicationvariablen weitergegeben werden 
+k&ouml;nnen. Dieser Artikel wird &uuml;brigens fortgesetzt - in der Fortsetzung wird ein Klassengenerator 
+vorgestellt, der selbst in ASP geschrieben, &auml;hnlich funktioniert wie der VB-Klassengenerator 
+und automatisch VBScript-Klassen erstellen kann.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020408.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020408.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/19990806.htm">Das Dictionary Objekt - Dein Feind und Helfer</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990806.htm</span><br>
+<a href="../artikel/20020205.htm">Der Object Construct String</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020205.htm</span><br>
+<a href="../artikel/20020430.htm">Gro&szlig;e Datenmengen in Formularfeldern erfolgreich auslesen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020430.htm</span><br>
+<a href="../artikel/20010320.htm">In VB Komponenten auf ASP Objekte zugreifen (Variante 1)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010320.htm</span><br>
+<a href="../artikel/20010322.htm">In VB Komponenten auf ASP Objekte zugreifen (Variante 2)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010322.htm</span><br>
+<a href="../artikel/20000526.htm">Klassen in VBScript</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000526.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

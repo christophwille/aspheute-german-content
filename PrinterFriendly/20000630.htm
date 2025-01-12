@@ -1,0 +1,274 @@
+<HTML>
+<HEAD>
+<TITLE>Verwendung von SSL Test-Certificates</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Sie entwickeln gerade eine eCommerce Site f&uuml;r einen Kunden, und der Shop soll nat&uuml;rlich mit SSL (Secure Socket Layer) abgesichert werden. Dieser Artikel zeigt alle Schritte - beginnend bei der Generierung des Certificate Antrags.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SSL,Thawte,Certificate,CA,Authority,CSR,certificate signing request,IIS,https">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Verwendung von SSL Test-Certificates</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000630"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Sie entwickeln gerade eine eCommerce Site f&uuml;r einen Kunden, und der Shop soll nat&uuml;rlich mit 
+SSL (Secure Socket Layer) abgesichert werden. F&uuml;r SSL braucht man aber ein Certificate, und
+das kostet fast USD 300 - ein Grund, das Testen der SSL Funktionalit&auml;t bis zum Start der
+Website am Liveserver zu verschieben - wo man ein g&uuml;ltiges Certificate sowieso braucht.
+</p>
+<p>
+Da&szlig; es keine gute Idee ist, das Testen der Sicherheitsfunktionen so lange hinauszuschieben, brauche
+ich wohl nicht zu betonen. Aus diesem Gr&uuml;nden sollte man sich f&uuml;r den Entwicklungsserver ein 
+Testcertificate besorgen - und das Gute an der Sache ist, da&szlig; diese Certificates sogar gratis sind!
+</p>
+<p>
+Dieser Artikel zeigt alle Schritte - von der Generierung des Antrags, Abholen des Testcertificates und
+anschlie&szlig;endem Installieren. Bis auf den Schritt des Abholens des Testcertificates k&ouml;nnen Sie das
+Wissen, das Sie in diesem Artikel erwerben, auch f&uuml;r die Generierung der Live-Certificates anwenden.
+</p>
+
+<h2>Generierung eines CSR</h2>
+<p>
+Der erste Schritt am Weg zum Certificate ist es, am Webserver f&uuml;r die in Frage kommende Website einen
+Certificate Signing Request (CSR) zu erstellen. Dieser wird dann sp&auml;ter verwendet, um bei einer CA (Certificate
+Authority) das Certificate zu beantragen.
+</p>
+<p>
+W&auml;hlen Sie die Website, f&uuml;r die Sie das Certificate beantragen wollen, im Internet Services
+Manager aus. &Ouml;ffnen Sie die Eigenschaften der Website und gehen zum <i>Directory Security</i> Tab. Dort
+klicken Sie auf <i>Server Certificate</i>.
+</p>
+<p><IMG SRC="/artikel/Bilder/200006/20000630_1.png" width="461" height="453" border="0" alt=""></p>
+<p>
+Der IIS Certificate Wizard wird gestartet. Die erste Seite ist eine reine Informationsseite,
+und kann getrost &uuml;bersprungen werden. Interessanter ist da schon die nachfolgende Seite: was der Wizard
+f&uuml;r uns tun soll - wir wollen "Create New ..." durchf&uuml;hren, die standardm&auml;&szlig;ig ausgew&auml;hlte Option.
+</p>
+<p>
+Der n&auml;chste Punkt des Wizards ist wie wir das Certificate generieren wollen - einen CSR (Certificate
+Signing Request) anlegen, oder direkt mit einer CA (Certificate Authority) online ein Certificate erstellen.
+Letzteres geht nur, wenn man im Windows 2000 Netz einen Certificate Server laufen hat - f&uuml;r Internet Websites
+mu&szlig; man aufgrund der Vertrauensstellung der Browser sowieso auf bekannte CA's zur&uuml;ckgreifen.
+</p>
+<p>
+Nun wird es wirklich wichtig - der aktuelle Schritt im Wizard fragt uns, wie wir unser Certificate nennen wollen,
+und vor allem welche Schl&uuml;ssell&auml;nge der Public Key bekommen soll. Generell gilt: je mehr Bits, desto sicherer und
+desto langsamer die Verschl&uuml;sselungsprozedur.
+</p>
+<p><IMG SRC="/artikel/Bilder/200006/20000630_2.png" width="503" height="386" border="0" alt=""></p>
+<p>
+Weiter geht es mit der Angabe des Firmennamens (Organization) und der Abteilung (Organizational Unit). F&uuml;r letztere
+wird man meist Verkauf oder &auml;hnliches angeben.
+</p>
+<p>
+Eine Falle bei der Erstellung eines Testcertificates kann der Schritt f&uuml;r die Angabe des Common Name des Webservers
+werden. F&uuml;r den Releaseserver ist der Common Name www.firmenname.com, aber bei einem Testserver wird es eher die
+IP Adresse sein. 
+</p>
+<p><IMG SRC="/artikel/Bilder/200006/20000630_3.png" width="503" height="386" border="0" alt=""></p>
+<p>
+Der folgende Schritt fragt nach Land (Country), Bundesland (State) sowie Stadt (City). Damit haben wir auch
+schon alle Infos f&uuml;r den CSR angegeben, es fehlt nur noch der Dateiname, wo der Wizard den CSR hinspeichern
+soll. 
+</p>
+<p>
+Nach einer kurzen Infoseite was Sie alles eingegeben haben generiert der Wizard den CSR (dies kann
+je nach Rechner und Schl&uuml;ssell&auml;nge etwas dauern). Das war dann auch schon der erste Schritt zur Generierung eines
+Certificates.
+</p>
+
+
+<h2>Beantragen eines Testcertificates</h2>
+<p>
+Unter der Seite <a href="https://www.thawte.com/cgi/server/test.exe" target="_blank">Test Thawte Certificates</a>
+kann man sich ein Testcertificate erstellen. Da Thawte sich ja nicht selbst das Gesch&auml;ft abgraben w&uuml;rde, mu&szlig; man
+zuerst f&uuml;r eine explizit als Test-CA gekennzeichnet CA das <i>Root Certificate</i> installieren - damit das Testcertificate
+vom Browser als g&uuml;ltig anerkannt wird.
+</p>
+
+<h3>Installation des Root Certificates</h3>
+<p>
+Der Link zu diesem Root Certificate findet sich auf der oben angef&uuml;hrten Seite. Man mu&szlig; nur darauf klicken, und
+schon startet der Installationsprozess f&uuml;r dieses Root Certificate. Wichtig dabei ist, da&szlig; man zur Installation
+<i>Open this file from the current location</i> ausw&auml;hlt - und nicht <i>Save this file to disk</i>. Daraufhin zeigt Internet
+Explorer einen <i>Certificate</i> Dialog an:
+</p>
+<p><IMG SRC="/artikel/Bilder/200006/20000630_4.png" width="409" height="476" border="0" alt=""></p>
+<p>
+Klicken Sie auf <i>Install Certificate</i> und akzeptieren Sie alle Defaults im <i>Certificate Import Wizard</i>. Beanworten
+Sie die Frage, ob das Certificate in den <i>Root Store</i> eingef&uuml;gt werden soll mit Ja. Damit ist der Import abgeschlossen,
+und Sie k&ouml;nnen Certificates, die von dieser CA ausgestellt wurden, ab sofort uneingeschr&auml;nkt verwenden.
+</p>
+<p>
+Wiederholen Sie diese Prozedur auf allen Rechnern, von denen aus Sie auf die Website zugreifen wollen, die mit 
+dem noch zu generierenden Testcertificate abgesichert ist.
+</p>
+
+<h3>Generieren des Testcertificates</h3>
+<p>
+Jetzt haben wir endlich alle Vorarbeiten erledigt, und k&ouml;nnen uns um die Generierung des Testcertificates
+k&uuml;mmern. Dazu gehen Sie bitte auf die Seite <a href="https://www.thawte.com/cgi/server/test.exe" target="_blank">Test Thawte Certificates</a>.
+</p>
+<p>
+Als Erstes m&uuml;ssen wir den mit dem IIS Certificate Wizard generierten CSR in das Textfeld kopieren. &Ouml;ffnen Sie
+dazu einfach die CSR Datei (den Namen wissen Sie hoffentlich noch, oder?), markieren alles, und kopieren es in
+die Zwischenablage. Pasten Sie das dann in das Textfeld. Es sieht zwar wie Datenm&uuml;ll aus, ist aber nur ein
+verschl&uuml;sseltes Datenpaket (also doch M&uuml;ll).
+</p>
+<p>
+Geben Sie danach an, f&uuml;r wie lange das Testcertificate g&uuml;ltig sein soll. Arbeiten Sie an einem l&auml;ngerlaufenden Projekt,
+kann das Certificate bis zu einem Jahr L&auml;nge ausgeben werden (365 Tage). Der Rest der Optionen ist bereits
+korrekt vorselektiert. Sie m&uuml;ssen nur noch auf <i>Generate Test Certificate</i> am Ende der Seite klicken.
+</p>
+<p>
+Nach einer kurzen "Nachdenkpause" liefert Ihnen der Thawte Server Ihr neues Testcertificate. Es sieht vermutlich
+irgendwie so aus:
+<pre style="background='silver';">
+Here is your certificate:
+
+
+-----BEGIN CERTIFICATE-----
+MIIEIDCCA4mgAwIBAgIDekbyMA0GCSqGSIb3DQEBBAUAMIGHMQswCQYDVQQGEwJa
+QTEiMCAGA1UECBMZRk9SIFRFU1RJTkcgUFVSUE9TRVMgT05MWTEdMBsGA1UEChMU
+VGhhd3RlIENlcnRpZmljYXRpb24xFzAVBgNVBAsTDlRFU1QgVEVTVCBURVNUMRww
+GgYDVQQDExNUaGF3dGUgVGVzdCBDQSBSb290MB4XDTAwMDYyOTIwMjI0NVoXDTAw
+MDczMDIwMjI0NVowdzEWMBQGA1UEAxMNMTkyLjE2OC4xLjEwNDEUMBIGA1UECxML
+RGV2ZWxvcG1lbnQxGDAWBgNVBAoTD0FscGhhU2llcnJhUGFwYTEPMA0GA1UEBxMG
+TGVvYmVuMQ8wDQYDVQQIEwZTdHlyaWExCzAJBgNVBAYTAkFUMIICIjANBgkqhkiG
+9w0BAQEFAAOCAg8AMIICCgKCAgEAnDSj+CyMRiFm9WjlONTGl6Tms9iaFd6k3jYf
+c06gD9YDKH4/+n2XeqFaK7T+3jcRzb38UlP5qPmJVTi6o1MARmo5uUdHVohYZLgk
+krXVmvdYYGHxqI5kLV1xgHXJ5YwRfe3SErWZsb9ScXtkZa8xHxs7Znj3aChzpoTA
+s4JDQ5hOUeDOhLAaXo4iDB+4Iu5bvY+k8Yp8FjaxZFsfXTtohbliNHDFWdDYBf5p
+q+UP3hQ3glwjdze7x8Oxl9yqJe8FFu1ggD6tpv94IqcsWDMut/8+VX/AyIgZ/7vg
+4NlYXqsZUdymybtXRW7jGh3qNTmuQWjFy1cihGfDKKprcPzxpIrHiJpW65BRqoPd
+OEiASfQgZynPDTYYmjShBki7f39ytK32reZkso4UUA8FiCl6l162gc/HSGcIEXVj
+UcD5KtzbaHEaPsLjUH1LDzWL8id2ZmDN+I4DdrSmzq65Rpg20P4k5rSKd52Y2LQK
+jOHVaNQy/1z86egnwJvYrQ+jdnvM+ErClpFnN9+tYofY1r5T96GdN9LAzlkow5Du
+Mk0g4FhnG2QW7iiWkghZ1E/HVrfYlJvBqWm8jPsscGPPd4Gq6cY1rS2spG+2hy0R
+yweweWuGqa76bugzGvyrZnvgYb1Zssgri9r981j4wEQqwWGs7x9NYf5fc1vhJl11
+9OSC408CAwEAAaMlMCMwEwYDVR0lBAwwCgYIKwYBBQUHAwEwDAYDVR0TAQH/BAIw
+ADANBgkqhkiG9w0BAQQFAAOBgQCttvc0N07UJBJ2tDa6ps+u2RUHgCN6UqcNcU8s
+VktvdkeZeloWnNvdYv/JLJpPDc2LW9UPb4FleweWEbSaA/faON3Q2eIcmoD6vi/f
+rmaqql8KuX1AXNqUBhzgBrJ///1msrMxjyhkrtsK0KguIagomibVQeL+saaWV86E
+jamC5w==
+-----END CERTIFICATE-----
+</pre>
+</p>
+<p>
+Markieren Sie alles au&szlig;er der ersten Zeile und speichern es in eine Datei - das ist Ihr Certificate, das Sie nun
+nur noch im IIS installieren m&uuml;ssen. Ach ja - verwenden Sie bitte <b>.cer</b> als Dateiendung f&uuml;r das Certificate.
+</p>
+
+<h2>Installieren des Certificates</h2>
+<p>
+Jetzt geht es ans Installieren des Certificates. Dazu gehen Sie wieder zum <i>Directory Security</i> Tab und klicken
+auf <i>Server Certificate</i>. Der <i>IIS Certificate Wizard</i> startet, und wenn Sie die Infoseite &uuml;berspringen, bekommen
+Sie 2 Optionen: das ausstehende Certificate installieren, oder den Request (CSR) canceln. Wir w&auml;hlen
+nat&uuml;rlich ersteres.
+</p>
+<p>
+Jetzt fragt der Wizard nach der Datei - w&auml;hlen Sie die Datei, die Sie im vorgegangenem Tutorial gespeichert
+haben. Der Wizard zeigt Ihnen dann folgende Certificate &Uuml;bersicht an (Beispiel meines Certificates):
+</p>
+<p><IMG SRC="/artikel/Bilder/200006/20000630_5.png" width="503" height="386" border="0" alt=""></p>
+<p>
+Im letzten Schritt klicken Sie einfach auf <i>Finish</i> und das war's - das Certificate ist installiert!
+</p>
+<p>
+Obwohl das Certificate installiert ist, gibt es noch eine kleine H&uuml;rde zu nehmen - der richtige Serverport
+f&uuml;r SSL ist noch nicht eingetragen. Der Port f&uuml;r SSL ist <b>443</b>, und mu&szlig; auf dem Web Site Tab eingetragen 
+werden. Aber jetzt sind wir wirklich fertig.
+</p>
+<p><IMG SRC="/artikel/Bilder/200006/20000630_6.png" width="461" height="453" border="0" alt=""></p>
+
+<h2>Testen des Certificates</h2>
+<p>
+Das Testen des Certificates gestaltet sich als relativ einfach - geben Sie einfach die Adresse Ihres gerade
+abgesicherten Servers ein - mit dem <b>https:</b> Protokoll. F&uuml;r mein Testcertificate s&auml;he das folgenderma&szlig;en
+aus:
+<pre style="background='silver';">
+https://192.168.1.104/
+</pre>
+</p>
+<p>
+Ab sofort kann man alle SSL-gesicherten Teile der Anwendung unter realistischen Bedingungen testen.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Bis auf das Beantragen bei Thawte sind die vorgestellten Schritte v&ouml;llig gleich wie wenn man ein "richtiges"
+Certificate f&uuml;r den eCommerce Server beantragt. Testcertificates sind ein einfacher (und g&uuml;nstiger Weg),
+die gesamte SSL Funktionalit&auml;t von Websites auch am Entwicklungsserver ad&auml;quat testen zu k&ouml;nnen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010521.htm">ASP-basierte Basic Authentication</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010521.htm</span><br>
+<a href="../artikel/20010608.htm">Formular-basierte Basic Authentication</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010608.htm</span><br>
+<a href="../artikel/20010330.htm">Passw&ouml;rter mit SHA1 absichern</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010330.htm</span><br>
+<a href="../artikel/20000901.htm">Sichere Zahlungen im Internet mit SET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000901.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ethawte%2Ecom">Thawte</a><br>
+<SPAN class="content">http://www.thawte.com</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Everisign%2Ecom">Verisign</a><br>
+<SPAN class="content">http://www.verisign.com</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

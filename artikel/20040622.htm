@@ -1,0 +1,495 @@
+<HTML>
+<HEAD>
+<TITLE>Einf&uuml;hrung in Typed DataSets</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Eine Neuerung, die mit ADO.NET eingef&uuml;hrt wurde, sind die sogenannten DataSets, welche eine oder mehrere Datentabellen im Speicher abbilden. Um Tabellen und Spaltennamen nicht &uuml;ber den Namen als Strings anzusprechen, verwendet man Typed DataSets">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,DataSet,ADO.NET,Datenbank,Tabelle,Spalte,Definition,Name,Typ,Null,Sql,SqlConnection,OleDbConnection,Xsd.exe,Xsd,Typed DataSet,typisiert">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Einf&uuml;hrung in Typed DataSets</H1>
+<p>
+Geschrieben von: <a href="../autoren/alexanderzeitler.htm">Alexander Zeitler</a><br>
+Kategorie: <a href="../kategorien/ADOdotNET.htm">ADO.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20040622"></SCRIPT>
+</p>
+<p>
+Eine Neuerung, die mit ADO.NET eingef&uuml;hrt wurde, sind die sogenannten DataSets, welche eine oder mehrere Datentabellen im 
+Speicher abbilden. Hierzu werden die Namen der Spalten und die Daten des Abfrageergebnisses aus der Datenbank &uuml;ber den Namen 
+als Strings angesprochen. Doch eben diese Art der Speicherung kann in der Praxis zu Problemen f&uuml;hren. Die L&ouml;sung ist 
+Gegenstand dieses Artikels und hei&szlig;t "Typed DataSets".
+</p>
+
+<h2>Nachteile normaler DataSets</h2>
+<p>
+Die Verwendung normaler DataSets sieht in der Praxis wie folgt aus (ClassicDataSet.aspx):
+</p>
+
+<pre style="background='silver';">
+// Verbindung zur DB definieren
+OleDbConnection MyNWConn = 
+    new OleDbConnection("PROVIDER=Microsoft.Jet.OLEDB.4.0;Data Source=" + 
+    Server.MapPath("NWind.mdb"));
+
+// DataSet erzeugen
+DataSet MyDataSet = new DataSet();
+
+// OleDbDataApter und OleDbCommand erzeugen
+OleDbDataAdapter oCommand	= new OleDbDataAdapter();
+OleDbCommand oledbcmd		= new OleDbCommand();
+
+// SQL-String defnieren
+oledbcmd.CommandType 	= CommandType.Text;
+oledbcmd.CommandText 	= "SELECT * FROM Customers";
+
+// Connection und SQL-String zuweisen
+oledbcmd.Connection		= MyNWConn;
+oCommand.SelectCommand	= oledbcmd;
+
+// DataSet bef&uuml;llen
+oCommand.Fill(MyDataSet,"Events");
+
+// Connection schlie&szlig;en
+MyNWConn.Close();
+
+// Daten aus dem DataSet ausgeben
+foreach(DataRow dr in MyDataSet.Tables["Customers"].Rows)
+{
+    Response.Write(dr["CompanyName"] + "&lt;br&gt;");
+} 
+</pre>
+
+<p>
+Interessant sind letztlich nur die beiden letzten Zeilen - wie man dort sieht, werden sowohl die Tabelle(n) als auch die 
+Spalten &uuml;ber den Namen als Strings der entsprechenden Klassen (z.B. DataColumn)  angesprochen.
+</p>
+<p>
+Hierdurch ergeben sich zwei Nachteile: zum einen verliert man nach dem Lesen der Daten aus der Datenbank die Typisierung 
+des Abfrageergebnisses, d.h. man wei&szlig; nicht mehr, ob in der Datenbank ein String, ein Integer oder ein Datum stand. Dies 
+hat zur Folge, da&szlig; man die Abfrageergebnisse vor der weiteren Verwendung in lokalen Variablen erst casten mu&szlig;, etwa so:
+</p>
+
+<pre style="background='silver';">
+int myInt = int.Parse(dr["IntFeldInDerDB"].ToString());
+</pre>
+
+<p>
+Dies wiederum ist nat&uuml;rlich sehr anf&auml;llig gegen Tipp- und Denkfehler - man versucht ein Integer-Feld in der Datenbank in ein 
+Datum zu casten oder vergi&szlig;t schlicht ein Zeichen. Solche Fehler werden weder beim kompilieren in Visual Studio .NET noch 
+mittels csc.exe erkannt. Im schlimmsten Fall ist der Kunde der erste, der den Fehler bemerkt.
+</p>
+<p>
+Der zweite Nachteil findet sich ebenfalls in Visual Studio .NET wieder: der Verlust der IntelliSense. Da Visual Studio .NET 
+f&uuml;r die abgebildete Datenstruktur keinerlei Schemainformationen besitzt, mu&szlig; man auf die liebgewonnene Eingabehilfe verzichten. 
+Das Ergebnis auch hier: Tippfehler.
+</p>
+
+<h2>Abhilfe: Typed DataSets</h2>
+<p>
+Die L&ouml;sung dieser Probleme stellen  sogenannte Typed DataSets dar. Sie stellen eine Ableitung von System.Data.DataSet dar - dem 
+klassischen DataSet also. Der gro&szlig;e Unterschied hierzu liegt jedoch in der Implementierung der Spalten und Tabellen-Namen.
+</p>
+<p>
+Diese werden nicht wie beim normalen DataSet als Strings abgelegt, sondern durch typsichere Eigenschaften mit dem der Datenbank 
+entsprechenden Datentyp, d.h. ein Integer in der Datenbank bleibt auch nach dem Auslesen ein Integer. Ebenso gibt es f&uuml;r alle 
+anderen Datenbankdatentypen die Entsprechungen. Datenbanktabellen und Zeilen werden durch eigene Klassen abgebildet.
+</p>
+
+<h2>Erzeugung von Typed DataSets</h2>
+<p>
+Die Frage, die Sie sich nun stellen werden: Wie erstelle ich ein solches Typed DataSet?
+</p>
+<p>
+Die Erzeugung von Typed DataSets basiert darauf, zun&auml;chst eine Datei in der XML Schema Definition Language (XSD) zu erzeugen, 
+welche die Struktur der Datenbank-Tabelle repr&auml;sentiert. Hierzu bedienen wir uns des normalen DataSets, welches eine Methode 
+zur Erzeugung von XSD-Files aus einem bestehenden DataSet beinhaltet.
+</p>
+<p>
+Die Erzeugung des XSD-Files sieht wie folgt aus (CreateTypedDataSet.aspx):
+</p>
+
+<pre style="background='silver';">
+// Verbindung zur DB definieren
+OleDbConnection MyNWConn = 
+    new OleDbConnection("PROVIDER=Microsoft.Jet.OLEDB.4.0;Data Source=" + 
+    Server.MapPath("Nwind.mdb"));
+
+// DataSet erzeugen
+DataSet MyDataSet = new DataSet();
+
+// OleDbDataApter und OleDbCommand erzeugen
+OleDbDataAdapter oCommand	= new OleDbDataAdapter();
+OleDbCommand oledbcmd		= new OleDbCommand();
+
+// SQL-String defnieren
+oledbcmd.CommandType 	= CommandType.Text;
+oledbcmd.CommandText 	= "SELECT * FROM Customers";
+
+// Connection und SQL-String zuweisen
+oledbcmd.Connection		= MyNWConn;
+oCommand.SelectCommand	= oledbcmd;
+
+// DataSet bef&uuml;llen
+oCommand.Fill(MyDataSet,"Customers");
+
+// Connection schlie&szlig;en
+MyNWConn.Close();
+
+// Daten aus dem DataSet in XSD-Datei speichern
+MyDataSet.DataSetName = "CustomersDataSet";
+MyDataSet.Tables[0].TableName = Customers";
+MyDataSet.WriteXmlSchema(Server.MapPath("Customers.xsd"));
+</pre>
+
+<p>
+Zun&auml;chst lesen wir die gew&uuml;nschte Tabelle, aus der die Schema-Informationen erzeugt werden sollen, aus und bef&uuml;llen hiermit 
+unser DataSet "MyDataSet". Die DataSet-Klasse stellt zum Erzeugen von XSD-Dateien die Methode <i>WriteXmlSchema</i> bereit, 
+welche wir aufrufen, nachdem wir den Namen unseres DataSets und der darin enthaltenen DataTable zugewiesen haben.
+</p>
+<p>
+Die Datei Customers.xsd befindet sich nun in unserem Projektordner. Was jetzt noch fehlt, ist die Generierung der 
+<i>CustomersDataSet</i>-Klasse aus unserer XSD-Datei. Auch hierf&uuml;r stellt das .NET-Framework ein Kommandozeilen-Tool 
+bereit: xsd.exe. Dieses dient dazu, Schema- oder Klassendateien aus der angegebenen Quelle zu erzeugen. Um ein 
+Typed DataSet aus der Customers.xsd zu erzeugen, ist folgender Aufruf notwendig:
+</p>
+
+<pre style="background='silver';">
+Xsd.exe /d /l:C# Customers.xsd
+</pre>
+
+<p>
+Der Parameter /d gibt hierbei an, da&szlig; ein Typed DataSet erzeugt werden soll, /l:C# weist Xsd an, da&szlig; eine C#-Klassendatei 
+erstellt werden soll.
+</p>
+<p>
+Nun mu&szlig; die erzeugte Klasse noch zu unserem Projekt hinzugef&uuml;gt werden:
+</p>
+
+<IMG SRC="Bilder/200406/20040622_1.png" width="402" height="372" alt="" border="0">
+
+<h2>Verwenden von Typed DataSets</h2>
+<p>
+Die Verwendung von Typed DataSets (TypedDataSet.aspx) ist &auml;hnlich wie bei normalen DataSets:
+</p>
+
+<pre style="background='silver';">
+// Verbindung zur DB definieren
+OleDbConnection MyNWConn = 
+    new OleDbConnection("PROVIDER=Microsoft.Jet.OLEDB.4.0;Data Source=" + 
+    Server.MapPath("Nwind.mdb"));
+	
+// DataSet erzeugen
+<b>CustomersDataSet MyDataSet = new CustomersDataSet();</b>
+
+// OleDbDataApter und OleDbCommand erzeugen
+OleDbDataAdapter oCommand	= new OleDbDataAdapter();
+OleDbCommand oledbcmd		= new OleDbCommand();
+
+// SQL-String definieren
+oledbcmd.CommandType 	= CommandType.Text;
+oledbcmd.CommandText 	= "SELECT * FROM Customers";
+
+// Connection und SQL-String zuweisen
+oledbcmd.Connection		= MyNWConn;
+oCommand.SelectCommand	= oledbcmd;
+
+// DataSet bef&uuml;llen
+oCommand.Fill(MyDataSet, "Customers");
+
+// Connection schlie&szlig;en
+MyNWConn.Close();
+
+
+// Daten aus dem DataSet ausgeben
+foreach(<b>CustomersDataSet.CustomersRow dr in MyDataSet.Customers</b>)
+{
+    Response.Write(<b>dr.CompanyName</b> + "&lt;br&gt;");
+}
+</pre>
+
+<p>
+Die entscheidenden &Auml;nderungen sind in der Instanzierung des DataSets sowie dem Zugriff auf die Datenspalten und Tabellen zu finden.
+</p>
+<p>
+Anstelle von Strings werden wie eingangs bereits erw&auml;hnt zur Abbildung der Tabellen (hier: MyDataSet.Customers)  und Zeilen 
+(hier: CustomersDataSet.CustomersRow)  nun eigene Klassen verwendet. Die Spalten werden als Eigenschaften (hier: dr.CompanyName) 
+dargestellt.
+</p>
+<p>
+Zum Beweis, da&szlig; die Typisierung nun vorhanden ist, ein weiterer Screenshot aus VisualStudio.NET:
+</p>
+
+<IMG SRC="Bilder/200406/20040622_2.png" width="515" height="117" alt="" border="0">
+
+<p>
+Und auch die versprochene IntelliSense-Unterst&uuml;tzung ist nun gew&auml;hrleistet:
+</p>
+
+<IMG SRC="Bilder/200406/20040622_3.png" width="480" height="209" alt="" border="0">
+
+<p>
+Wenn Sie nun einen Blick in die erzeugten Methoden unserer Typed DataTable werfen, werden Sie z.B. die Methode 
+<i>IsCompanyNameNull()</i> entdecken. Diese bietet Ihnen die M&ouml;glichkeit, zu pr&uuml;fen, ob die Spalte Daten beinhaltet - diese 
+Pr&uuml;fung sollte auch generell durchgef&uuml;hrt werden, bevor Daten aus einer Typed DataTable-Spalte ausgegeben werden, sonst 
+kann man unangenehme Fehlermeldungen zur Laufzeit erhalten.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Damit sind wir am Ende unserer Einf&uuml;hrung in Typed DataSets. Wie man sieht, kann man mit relativ geringem Aufwand die 
+Stabilit&auml;t einer Applikation im Bereich des Datenbanklayers durchaus verbessern - allerdings machen Typed DataSets nur 
+dann Sinn, wenn sich die Struktur der Daten nicht st&auml;ndig &auml;ndert: aber man kann die Generierung der Typed DataSets ja 
+auch in den Buildprozess einh&auml;ngen.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20040622.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20001116.htm">Das DataTable Objekt in ADO.NET</a><br>
+<a href="20040123.htm">DataViews als DataTable persistieren</a><br>
+<a href="20001102.htm">Datenbankzugriff mittels ADO.NET</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20040622" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Einf&uuml;hrung in Typed DataSets"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20040622.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Alexander Zeitler"><input type="hidden" name="AuthorEmail" value="azeitler@aspintranet.de"><input type="hidden" name="Artikel" value="20040622"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20040622.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

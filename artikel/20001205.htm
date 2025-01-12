@@ -1,0 +1,542 @@
+<HTML>
+<HEAD>
+<TITLE>Erstellung eines Newstickers in ASP</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel beschreibt wie man mithilfe von ASP und JavaScript einen Newsticker erstellt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP,News,Newsticker,Browser">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Erstellung eines Newstickers in ASP</H1>
+<p>
+Geschrieben von: <a href="../autoren/alexanderzeitler.htm">Alexander Zeitler</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001205"></SCRIPT>
+</p>
+<p>
+Willkommen zum 1. Teil einer 2-teiligen Artikelserie zur Erstellung eines Newstickers. In diesem Artikel 
+zeige ich Ihnen, welche grundlegenden Strukturen notwendig sind und wie Sie den Newsticker anzeigen 
+lassen. Im zweiten Teil werden Sie dann erfahren, wie Sie eine Administrations-Seite f&uuml;r den Newsticker 
+erstellen.
+</p>
+
+<p>
+Im Download zum heutigen Artikel finden Sie die ben&ouml;tigte Access-Datenbank sowie den Sourcecode zur 
+Anzeige des Newstickers.Der Newsticker funktioniert mit dem Internet Explorer und Netscape Navigator 
+ab Version 4.0. Netscape 6.0 unterst&uuml;tzt keine Layer, weswegen dieses Script nicht funktioniert.
+</p>
+
+<h2>Site- und Datenbankdesign</h2>
+
+<p>
+Zun&auml;chst will ich Ihnen ein m&ouml;gliches Ergebnis f&uuml;r einen Newsticker vorstellen, an dem wir uns in diesem 
+Artikel orientieren werden.
+</p>
+
+<p><IMG SRC="Bilder/200012/20001205_newsticker_anzeigen.png" width="444" height="368" alt="" border="0"></p>
+
+<p>
+Der Ticker scrollt die 3 (dieser Wert l&auml;sst sich mit der Administrationsseite beliebig &auml;ndern) 
+aktuellsten Eintr&auml;ge aus der Datenbank von unten nach oben in einer Endlosschleife.
+</p>
+
+<p>
+Jeder Tickereintrag besteht aus bis zu 6 Teilen, welche in der Datenbank gespeichert werden:
+</p>
+
+<p>
+<ul>
+<li>&Uuml;berschrift
+<li>Text
+<li>Link
+<li>Link-Ziel (Target)
+<li>Datum
+<li>Darf der Eintrag angezeigt werden? (Ja/Nein)
+</ul>
+</p>
+
+<p>
+Beim Internet-Explorer l&auml;sst sich das Scrolling relativ leicht &uuml;ber eine Marquee erstellen. Beim 
+Netscape-Navigator m&uuml;ssen wir hierzu ein JavaScript verwenden, das mittels Layern den gleichen Effekt 
+erzielt. Deshalb ist der gesamte Ticker f&uuml;r beide Browser in JavaScript implementiert.
+</p>
+
+<p>
+Das JavaScript f&uuml;r Internet Explorer und Netscape  - ohne ASP-Code - sieht wie folgt aus:
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;script language="JavaScript1.2">
+var tickerbreite=210
+var tickerhoehe=200
+var geschwindigkeit=1
+var tickerparameter='&lt;font face="verdana" color="#000000" size="1"&gt;'
+
+tickerparameter=tickerparameter+'Tickertext';
+tickerparameter=tickerparameter+'&lt;/font&gt;';
+  if (document.all)
+   document.write('&lt;marquee direction="up" scrollAmount='+geschwindigkeit+' style="width: _
+   '+tickerbreite+';height:'+tickerhoehe+'"&gt;'+tickerparameter+'&lt;/marquee&gt;')
+		
+function erneuern(){
+    window.location.reload()
+}
+
+function erneuern1(){
+   if (document.layers){
+      setTimeout("window.onresize=erneuern",450)
+      tickerinitialisieren()
+    }
+}
+		
+function tickerinitialisieren(){
+  document.tickerl1.document.tickerl2.document.write(tickerparameter)
+  document.tickerl1.document.tickerl2.document.close()
+  laenge=document.tickerl1.document.tickerl2.document.height
+     tickerscrollen()
+}
+		
+function tickerscrollen(){
+  if (document.tickerl1.document.tickerl2.top>=laenge*(-1)){
+	document.tickerl1.document.tickerl2.top-=geschwindigkeit
+	setTimeout("tickerscrollen()",100)
+  }
+  else{
+    document.tickerl1.document.tickerl2.top=tickerhoehe
+    tickerscrollen()
+  }
+}
+		
+window.onload=erneuern1
+&lt;/script&gt;
+				
+&lt;ilayer width=&{tickerbreite}; height=&{tickerhoehe}; name="tickerl1"&gt;
+&lt;layer name="tickerl2" width=&{tickerbreite}; height=&{tickerhoehe};&gt;&lt;/layer&gt;
+&lt;/ilayer&gt;
+</pre>
+</p>
+
+<p>
+Aus dem JavaScript ergeben sich weitere Felder, die wir in der Datenbank ben&ouml;tigen:
+</p>
+
+<p>
+<ul>
+<li>Tickerbreite
+<li>Tickerh&ouml;he
+<li>Geschwindigkeit
+</ul>
+</p>
+
+<p>
+Au&szlig;erdem ben&ouml;tigen wir noch ein Feld, das festlegt, wie viele Eintr&auml;ge der Ticker anzeigen soll.
+</p>
+
+<p>
+Mit diesem Vorgaben ergibt sich die Notwendigkeit, 2 Tabellen in unserer Datenbank zu erstellen:
+</p>
+
+<p><IMG SRC="Bilder/200012/20001205_tabelle_settings.png" width="476" height="122" alt="" border="0"></p>
+
+<p><IMG SRC="Bilder/200012/20001205_tabelle_news.png" width="554" height="154" alt="" border="0"></p>
+
+<h2>Darstellung des Newstickers</h2>
+
+<p>
+Wie stellen wir nun die Werte aus der Datenbank dar? Hierzu werfen wir noch einmal einen kurzen Blick 
+auf die Darstellung unseres Beispiels. Wir m&ouml;chten die in der Datenbank eingestellte Anzahl an 
+Eintr&auml;gen anzeigen lassen. Au&szlig;erdem sollen auch H&ouml;he, Breite und Geschwindigkeit aus der Datenbank 
+gelesen werden. Der notwendige Code ist relativ einfach und sieht wie folgt aus:
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;%
+Set conn = Server.CreateObject("ADODB.Connection")
+
+strConn = "Driver={Microsoft Access Driver (*.mdb)};DriverID=25;DBQ="
+strConn = strConn &amp; Server.MapPath("newsticker.mdb")
+strConn = strConn &amp; ";FIL=MS Access;MaxBufferSize=512;PageTimeout=5;"
+conn.Open strConn
+
+strSQL = "SELECT * FROM settings"
+Set rs = conn.Execute(strSQL)
+tickerbreite = rs.fields("tickerbreite")
+tickerhoehe = rs.fields("tickerhoehe")
+geschwindigkeit = rs.fields("geschwindigkeit")
+anzahlangezeigt = rs.fields("anzahlangezeigt")
+%&gt;
+</pre>
+</p>
+
+<p>
+Weiters &uuml;berpr&uuml;fen wir, ob die Werte f&uuml;r die Breite, H&ouml;he und Geschwindigkeit des Tickers 
+sowie die Anzahl der angezeigten Eintr&auml;ge in einem g&uuml;ltigen bzw. sinnvollen Bereich liegen:
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;%
+if anzahlangezeigt &lt; 1 then anzahlangezeigt=3
+if (tickerbreite &lt; 135 or tickerbreite &gt; 300) then tickerbreite=220
+if (tickerhoehe &lt; 30 or tickerhoehe &gt; 300) then tickerhoehe=220
+if (geschwindigkeit &lt; 1 or geschwindigkeit &gt; 6) then geschwindigkeit = 2
+%&gt;
+</pre>
+</p>
+
+<p>
+Um zu vermeiden, da&szlig; evtl. alte Parameter bzw. auch veraltete Eintr&auml;ge angezeigt werden, schalten wir 
+das Caching f&uuml;r Proxies und Browser mit den folgenden Befehlen ab:
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;%
+Response.Expires=0
+Response.AddHeader "Pragma","no-cache"
+Response.AddHeader "cache-control", "no-store"
+%&gt;
+</pre>
+</p>
+
+<p>
+Weitere Informationen zum Thema "Caching" finden Sie <a href="19990808.htm">hier</a>
+</p>
+
+<p>
+Jetzt k&ouml;nnen wir die ermittelte Breite, H&ouml;he und Geschindigkeit an unser JavaScript &uuml;bergeben:
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;script language="JavaScript1.2"&gt;
+var tickerbreite=&lt;%=tickerbreite%&gt;
+var tickerhoehe=&lt;%=tickerhoehe%&gt;
+var geschwindigkeit=&lt;%=geschwindigkeit%&gt;
+.
+.
+.
+</pre>
+</p>
+
+<p>
+Um die vorher ausgelesene Anzahl an Eintr&auml;gen aus der Datenbank zu lesen, m&uuml;ssen wir nun zuerst 
+unseren ConnectionString zusammensetzen:
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;%
+strSQL = "SELECT TOP "
+strSQL = strSQL &amp; cstr(anzahlangezeigt)
+strSQL = strSQL &amp; " * FROM news where eintraganzeigen = true order by datum desc"
+%&gt;
+</pre>
+</p>
+
+<p>
+Wie man sieht, wurde mittels "desc" im SQL String die Sortierreihenfolge der Eintr&auml;ge umgekehrt. 
+Dies ist notwendig, um die neuesten Eintr&auml;ge zuerst anzeigen zu lassen. Au&szlig;erdem mu&szlig; mittels "cstr" der 
+Integer-Wert der Variable "anzahlangezeigt" in einen String umgewandelt werden.
+</p>
+
+<p>
+Zuletzt &uuml;bergeben wir die ausgelesenen Eintr&auml;ge an unser JavaScript. Hierbei m&uuml;ssen wir beachten, da&szlig; 
+das Feld "Link" leer sein k&ouml;nnte. In diesem Fall darf auch kein Link in dem Ticker angezeigt werden, um 
+einen "Sprung ins Leere" f&uuml;r den Surfer zu vermeiden. Das ganze l&auml;&szlig;t sich mit einer IF-Abfrage leicht 
+realisieren:
+</p>
+
+<p>
+<pre style="background='silver';">
+&lt;%
+strSQL = "SELECT TOP "
+strSQL = strSQL + cstr(anzahlangezeigt)
+strSQL = strSQL + " * FROM news where eintraganzeigen = true order by datum desc"
+Set rs = conn.Execute(strSQL)
+Do While Not(rs.EOF)
+  Response.Write "tickerparameter=tickerparameter+'&lt;B&gt;" &amp; rs("datum") &amp; ": " &amp;
+    rs("ueberschrift") &amp; "&lt;/B&gt;" &amp; "&lt;br&gt;" &amp; rs("text") &amp; "&lt;br&gt;';"
+    if rs("link") &lt;&gt; "" then
+      Response.Write "tickerparameter=tickerparameter+' _
+      &lt;A HREF=" + rs("link") + " target=" + rs("link_target") + "&gt;mehr...&lt;/A&gt;&lt;br&gt;';"
+    end if
+  Response.Write "tickerparameter=tickerparameter+'<br>';"
+  rs.MoveNext
+Loop
+rs.Close
+conn.Close
+%&gt;
+</pre>
+</p>
+
+<p>
+In dem dargestellten Code wird in die JavaScript-Variable "tickerparameter" nun Eintrag f&uuml;r Eintrag 
+eingelesen und entsprechend formatiert. &Auml;nderungen an der Formatierung (Schriftart etc.) m&uuml;ssen Sie 
+also hier vornehmen, indem Sie entsprechende HTML-Tags verwenden. Sie k&ouml;nnten allerdings auch die 
+Datenbank dahingehend erweitern, dass Formatierungen der Eintr&auml;ge gespeichert werden k&ouml;nnen...
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Im ersten Teil meines Artikels haben Sie gesehen, wie sie mit Hilfe der TOP-Abfrage schnell und einfach 
+eine bestimmte Anzahl von Werten aus einer Datenbank auslesen k&ouml;nnen. Damit diese beim Client immer 
+aktuell sind, haben wir auch kurz das Thema Caching angesprochen.
+</p>
+
+<p>
+Auch in die Kombinationsm&ouml;glichkeiten von ASP und JavaScript haben Sie einen kleinen Einblick erhalten.
+</p>
+
+<p>
+Bleibt mir nur, Ihnen mit den bisher gezeigten Werkzeugen viel Spa&szlig; zu w&uuml;nschen und Sie zum zweiten Teil 
+des Kurses einzuladen, um auf die leichte Administration des Newstickers einzugehen.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001205.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20010417.htm">Eine Umfrage in ASP erstellen</a><br>
+<a href="20010209.htm">Erstellung eines Newstickers in ASP - Teil 2</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20001205" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Erstellung eines Newstickers in ASP"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20001205.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Alexander Zeitler"><input type="hidden" name="AuthorEmail" value="azeitler@aspintranet.de"><input type="hidden" name="Artikel" value="20001205"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20001205.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

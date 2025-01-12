@@ -1,0 +1,263 @@
+<HTML>
+<HEAD>
+<TITLE>Dateien zum Client schicken</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch¸tzt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Sie m&ouml;chten dem Client eine Datei via ASP zum Browser schicken - ohne Redirect? Das ist ja prinzipiell nicht schwer. Dieser Artikel zeigt Ihnen anhand von Beispielen wie man einfach...">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,FileSystemObject,OpenTextFile,BinaryWrite,FileCache,AlphaSierraPapa,binary,content">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Dateien zum Client schicken</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010223"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Sie m&ouml;chten dem Client eine Datei via ASP zum Browser schicken - ohne Redirect? Das ist ja prinzipiell nicht schwer. Dieser Artikel zeigt Ihnen 
+anhand von Beispielen wie man einfach Text/HTML Dateien mit dem FileSystemObject zum Client schicken kann, und was
+passiert, wenn man das gleiche mit Dateien in bin&auml;rer Form z.B. gezippten Dateien probiert.
+</p>
+
+<p>
+Je nach Ihren Anspr&uuml;chen biete ich Ihnen zwei unterschiedliche L&ouml;sungswege an. Die eine angebotene M&ouml;glichkeit ist straight 
+ASP und ist nur f&uuml;r plain Text bzw. HTML Dateien geeignet. Die andere behilft sich mit der 
+<a href="http://www.alphasierrapapa.com/IisDev/Components/FileCache/" target="_blank">FileCache 2.1 Komponente</a> von 
+<a href="http://www.alphasierrapapa.com/" target="_blank">AlphaSierraPapa.com</a>. Neben der M&ouml;glichkeit Dateien beliebigen Typs zu 
+versenden bietet sie den zus&auml;tzlichen Bonus, da&szlig; Sie die uneingeschr&auml;nkte Version der 
+Komponente <i>kostenlos</i> downloaden k&ouml;nnen.
+</p>
+
+<p>
+Je nachdem wie Sie sich entscheiden, bietet wie gesagt dieser Artikel f&uuml;r beide M&ouml;gllichkeiten je ein Beispiel. Beginnen wir
+mit dem straight ASP Ansatz f&uuml;r Text/HTML Dateien.
+</p>
+
+<h2>Textdateien senden</h2>
+
+<p>
+F&uuml;r das erste Beispiel habe ich eine plain-Text bzw. eine Html Datei ausgew&auml;hlt, die dem Client
+gesendet werden soll. Dies erledigen wir wie eingangs erw&auml;hnt mit dem FileSystemObject. Dabei wollen wir pr&uuml;fen ob die
+Datei richtig beim Client ankommt. 
+</p>
+
+<p>
+Die <i>OpenTextFile</i> Methode &uuml;bersetzt n&auml;mlich den Inhalt in einen je nach Einstellung einen anderen Zeichencode
+Aber sehen wir uns dazu erst einmal den Sourcecode an, und zwar f&uuml;r eine plain-Text Datei an (<b>RetrieveTXT.asp</b>).
+</p>
+
+<p>
+Zuerst die Vorgabe des <i>ContentTypes</i>.
+In diesem Fall - da wir eine Textdatei schicken wollen - verwenden wir <i></i>
+</p>
+
+<pre style="background='silver';">
+Response.ContentType = "text/plain"
+</pre>
+
+<p> 
+Jetzt m&uuml;ssen wir aber die Datei angeben, die ja zum Browser des Clients geschickt werden soll. Die ben&ouml;tigten 
+Informationen &uuml;ber die zu &uuml;bermittelnde Datei selbst weisen wir Variablen zu (um sp&auml;tere &Auml;nderungen zu erleichtern):
+</p>
+
+<pre style="background='silver';">
+strFile = "TestTXT.txt"
+strPath = "F:\Inetpub\wwwroot\TestRoot\"
+strResource = strPath &amp; strFile
+</pre>
+
+<p>
+Nun sind wir soweit, da&szlig; wir die Datei &uuml;bermitteln k&ouml;nnen. Hierbei m&uuml;ssen wir mit dem 
+<i>FileSystemObject</i> hantieren. Diesem &uuml;bergeben wir den Pfad und den Dateinamen.
+</p>
+
+<pre style="background='silver';">
+Set oFso = Server.CreateObject("Scripting.FileSystemObject")
+Set oByteSize = oFso.GetFile(strResource)
+</pre>
+
+<p>
+Um performant zu bleiben ermitteln wir die Gr&ouml;&szlig;e der vorher angegebenen Datei. Dies erledigen wir mit der <i>Size</i>
+Property (Eigenschaft). Diese gibt, verwendet im Zusammenhang mit einer Datei  - hier als Alias das <i>oByteSize</i> Objekt - 
+die Bytegr&ouml;&szlig;e der Datei zur&uuml;ck. Da wir die Bytegr&ouml;&szlig;e in einer Variablen abspeichern, ben&ouml;tigen wir das 
+oByteSize Objekt nicht mehr und k&ouml;nnen es mit <i>Nothing</i> zerst&ouml;ren.
+</p>
+
+<pre style="background='silver';">
+bByteSize= oByteSize.Size
+Set oByteSize = Nothing
+...
+</pre>
+
+<p>
+Als n&auml;chstes lesen wir den Inhalt der Datei mit der <i>OpenTextFile</i> Methode des FileSystem Objektes ein. Diese Methode
+nimmt als Parameter den vollst&auml;ndigen Pfad samt Dateinamen (gespeichert in der Variable <i>strResource</i>), 
+sowie den IO-Modus (hier <i>lesen</i>), die Option zur Erstellung einer Datei (hier <i>false</i>) und das Format in dem
+die Datei gespeichert wurde (hier <i>Unicode</i>).
+</p>
+
+<pre style="background='silver';">
+Set oStream = oFso.OpenTextFile(strResource, 1, false, -1)
+bBinContent = oStream.Read(bByteSize)
+Set oStream = Nothing
+</pre> 
+
+<p>
+Schlie&szlig;lich k&ouml;nnen wir die Datei zum Browser schicken. Dies erledigen wir wie gewohnt in solchen F&auml;llen mit der <i>BinaryWrite</i>
+Methode:
+</p>
+
+<pre style="background='silver';">
+Response.BinaryWrite(bBinContent)
+</pre>
+
+<p>
+Da der Sourcecode nun fertig ist, k&ouml;nnen wir die ASP Datei <b>RetrieveTXT.asp</b> auf einem Web Server ausf&uuml;hren. Das 
+Ergebnis pr&auml;sentiert sich wie erhofft:
+</p>
+
+<p>
+<IMG SRC="/artikel/Bilder/200102/20010223_1.png" width="326" height="175" alt="" border="0">
+</p>
+
+<p>
+F&uuml;r HTML Dateien gilt &auml;hnliches; hier setzen wir den <i>ContentType</i> aber auf:
+</p>
+
+<pre style="background='silver';">
+Response.ContentType = "text/html"
+</pre>
+
+<p>
+Ausgef&uuml;hrt in einem Browser sieht das dann wie folgt aus:
+</p>
+
+<p>
+<IMG SRC="/artikel/Bilder/200102/20010223_2.png" width="406" height="168" alt="" border="0">
+</p>
+
+<p>
+Dieser "Trick" des Auslesens von HTML Dateien kann dann n&uuml;tzlich werden, wenn man in ASP mit vorgefertigten 
+Templates arbeitet, die an den Client geschickt werden sollen.
+</p>
+
+
+<p>
+Nun das gleiche Spiel mit einer Zip-Datei was uns aber auch nach der Umstellung des ContentTypes folgende Fehlermeldung beschert:
+</p>
+
+<p>
+<IMG SRC="/artikel/Bilder/200102/20010223_3.png" width="354" height="125" alt="" border="0">
+</p>
+
+<p>
+Die Begr&uuml;ndung liegt darin, da&szlig; die bin&auml;re Zip-Datei etliche Sonderzeichen der Art 
+&quot;&acute;.&ldquo;&frac12;&frac12;y.&raquo;&ETH;F=ù7.&Ocirc;&iquest;&reg;rI&Iacute;e&Ocirc;&Eacute;=&ugrave;&Euml;&divide;ê&quot; beinhaltet.
+Diese werden nach der Formatumwandlung falsch interpretiert. Daher sollte man sich nach einer Alternative umsehen.
+</p>
+
+<h2>Die FileCache Komponente</h2>
+
+<p>
+Wenn Sie das Spiel mit mehreren Dateien durchf&uuml;hren wollen, auf die Codeschreiberei verzichten wollen oder aus
+anderen Gr&uuml;nden lieber eine Komponete verwenden wollen, bietet sich nichts einfacheres als der Einsatz der kostenlosen
+<a href="http://www.alphasierrapapa.com/IisDev/Components/FileCache/" target="_blank">FileCache 2.1 Komponente</a> an.
+</p>
+
+<p>
+Komplizierte Installation, m&uuml;hseliges Einbinden in ASP Code bzw. die Notwendigkeit dicke Handb&uuml;cher zu lesen -
+<b>mitnichten</b>! Die Integration ist ganz einfach, und das demonstiert das n&auml;chste Sourcecode Beispiel (<b>RetrieveZip.asp</b>):
+</p>
+
+<pre style="background='silver';">
+Set objFileCache = Server.CreateObject("Softwing.FileCache.1")
+
+bOutput = objFileCache.InitFromFile("2001023.zip", False)
+objFileCache.MimeType = "application/x-zip-compressed"
+
+bOutput = objFileCache.Write()
+</pre>
+
+<p>
+Das interne Prozedere &uuml;bernimmt die Komponente. Einfach die ben&ouml;tigten Dateiinformationen und den gew&uuml;nschten MIME-Type
+angeben - in diesem Fall wieder <i>application/x-zip-compressed</i> - damit wir den <i>Speichern als</i> Dialog erhalten.
+</p>
+
+<p>
+Nach der Ausf&uuml;hrung auf einem Web Server gibt die ASP Datei <i>RetrieveZip.asp</i> einen <i>Speichern als</i> Dialog aus
+und wir k&ouml;nnen die Datei lokal speichern. Danach kann man das ZIP in einem Dekomprimierungsprogramm ohne Probleme &ouml;ffnen.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Dieser Artikel zeigte, da&szlig; bei der Verwendung der <i>OpenTextFile</i> Methode bei einfachen Text enthaltenden Dateien alles nach 
+Plan l&auml;uft, aber bin&auml;re Dateien hingegen unbrauchbar werden. Man kann sich aber z.B. mit Komponenten wie der
+kostenlos downloadbaren FileCache 2.1 Abhilfe verschaffen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010223.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010223.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010425.htm">ASP-basierte resumable Downloads</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010425.htm</span><br>
+<a href="../artikel/20010305.htm">Ein Excel-Sheet am Server generieren und zum Client schicken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010305.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2FIisDev%2FComponents%2FFileCache%2F">FileCache 2.1</a><br>
+<SPAN class="content">http://www.alphasierrapapa.com/IisDev/Components/FileCache/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,191 @@
+<HTML>
+<HEAD>
+<TITLE>Probleme beim Verarbeiten von Datumswerten</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Als Entwickler von Web Sites ist das Datumsformat ein ganz spezielles Problem, bei dem man sehr schnell anst&ouml;&szlig;t - weil sich die L&auml;ndereinstellungen des jeweiligen Servers auf den Code Ihrer ASP Seiten auswirken.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP,ADO,Date,Datum,Ländereinstellungen,L&auml;ndereinstellungen,VBScript,SetLocale">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Probleme beim Verarbeiten von Datumswerten</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000413"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Als Entwickler von Web Sites ist das Datumsformat ein Problem, bei dem man sehr schnell anst&ouml;&szlig;t - besonders,
+wenn man auf deutschen Servern entwickelt (L&auml;ndereinstellung), und dann der Provider einen englischsprachig aufgesetzten Server
+betreibt - mit amerikanischen Datumseinstellungen. In diesem Artikel stelle ich eine L&ouml;sung vor, die auf allen
+Systemen die gew&uuml;nschten Ergebnisse liefert.
+</p>
+
+<p>Das in den <u>deutschsprachigen L&auml;ndern</u> gebr&auml;uchliche Datumsformat hat die Form
+<b>Tag&nbsp;.&nbsp;Monat&nbsp;.&nbsp;Jahr</b> (<i>13.4.2000</i>).</p>
+
+<p>Hingegen ist in den <u>USA</u> das folgende Datumsformat gebr&auml;uchlich:
+<b>Monat&nbsp;/&nbsp;Tag&nbsp;/&nbsp;Jahr</b> (<i>4/13/2000</i>).</p>
+
+<p>Wenn Sie nun unter ASP mit VBScript programmieren, so benutzt VBScript
+intern ein prinzipiell von der L&auml;ndereinstellung unabh&auml;ngiges Datumsformat. 
+Erst bei Ausgabe von Datumswerten oder bei der Umwandlung in Strings (Zeichenketten)
+wird das Datum entsprechend der L&auml;ndereinstellung formatiert.</p>
+
+<p>Machen Sie auf einer ASP Seite einmal folgenden Test:</p>
+
+<pre style="background='silver';">
+&lt;%
+' Laenderkennung auf Deutschland setzen
+SetLocale("de")
+strDatum = "14.2.2000"
+datDatum = CDate(strDatum)
+
+deDatum = CStr(datDatum)
+
+' Laenderkennung auf USA setzen
+SetLocale("en-us")
+usDatum = CStr(datDatum)
+
+Response.Write "Datum (US): " & usDatum & "&lt;br&gt;" & VbCrLf
+Response.Write "Datum (Deutsch): " & deDatum & "&lt;br&gt;" & VbCrLf
+%&gt;
+</pre>
+
+<p>Das Ergebnis sieht wie folgt aus:</p>
+
+<pre style="background='silver';">
+Datum (US): 2/14/00
+Datum (Deutsch): 14.02.00
+</pre>
+
+<p>VBScript verwaltet intern Datumswerte auf eine Art und Weise,
+da&szlig; immer wenn ein Wert vom Variablentyp <i>Date</i> (deutsch. Datum) 
+in einer Variable vom Typ <i>String</i> (deutsch. Zeichenkette) gespeichert 
+wird, dieser Wert der L&auml;nderkennung entsprechend in das jeweilige Datumsformat
+umgewandelt wird. Bei einer Ausgabe einer Variable vom Typ
+<i>Date</i> mit <i>Response.Write</i> geschieht dies automatisch.</p>
+
+<p>F&uuml;r den Fall, da&szlig; Sie Ihre Internetseiten bei einem amerikanischen Provider
+hosten (z.B. <a href="http://www.InnerHost.com" target="_blank">InnerHost</a> oder 
+<a href="http://www.DataReturn.com" target="_blank">DataReturn</a>), so sollten Sie auf einer 
+ASP Seite, die mit Datumswerten arbeitet, die aktuelle L&auml;nderkennung
+f&uuml;r die Seite mittels <i>SetLocale("de")</i> auf Deutsch setzen. Nur so ist 
+sichergestellt, da&szlig; deutsch formatierte Datumswerte in Zeichenketten bei der Umwandlung
+in Daten vom Typ <i>Date</i> richtig interpretiert werden. 
+Dasselbe gilt auch f&uuml;r die Umwandlung eines Wertes von Typ <i>Date</i>
+in eine Zeichenkette.</p>	
+
+<p>Wenn man unter ASP mit Datenbanken wie Microsoft SQL Server 7.0 oder 
+Microsoft Access 2000 arbeitet, dann kann es zu einem anderen
+Problem kommen. Falls Sie unter <u>ADO</u> (ActiveX Data Objects) mit 
+<u>SQL Befehlen</u> arbeiten, um zum Beispiel Datens&auml;tze in eine
+Datenbank einzuf&uuml;gen, zu &auml;ndern oder zu l&ouml;schen, so m&uuml;ssen Sie einen 
+<u>Datumswert in SQL</u> wie folgt angeben: <b>'Monat/Tag/Jahr'</b>.</p>
+
+<p>Wie aber wandelt man ein deutsches Datum in ein Datum der US-amerikanischen Form um?
+Die folgenden VBScript-Funktionen l&ouml;sen diese Aufgabe. Die Funktion <i>DatumDEZuUS</i>
+wandelt einen <i>String</i>, der ein deutsch formatiertes Datum enth&auml;lt,
+in einen <i>String</i> mit US-amerikanisch formatierten Datum um. 
+Die Funktion <i>DatumUSZuDE</i> macht genau das Gegenteil.</p>
+
+<pre style="background='silver';">
+&lt;%
+Function DatumDEZuUS(deDatum)
+	Dim strDatum, usDatum, dateDatum
+	Dim OriginalLocale
+	strDatum = CStr(deDatum)
+	OriginalLocale = SetLocale("de")
+	dateDatum = CDate(strDatum)
+	SetLocale("en-us")
+	usDatum = CStr(dateDatum)
+	SetLocale(OriginalLocale)
+	DatumDEZuUS = usDatum
+End Function
+
+Function DatumUSZuDE(usDatum)
+	Dim strDatum, deDatum, dateDatum
+	Dim OriginalLocale
+	strDatum = CStr(usDatum)
+	OriginalLocale = SetLocale("en-us")
+	dateDatum = CDate(strDatum)
+	SetLocale("de")
+	deDatum = CStr(dateDatum)
+	SetLocale(OriginalLocale)
+	DatumUSZuDE = deDatum
+End Function
+
+Response.Write "DatumDEZuUS(""14.2.2000""): "
+Response.Write DatumDEZuUS("14.2.2000") & "&lt;br&gt;" & VbCrLf
+Response.Write "DatumUSZuDE(""2/14/2000""): "
+Response.Write DatumUSZuDE("2/14/2000") & "&lt;br&gt;" & VbCrLf
+%&gt;
+</pre>
+
+<p>Das Ergebnis der letzen 4 Zeilen des vorhergehenden Skripts sieht wie folgt aus:</p>
+
+<pre style="background='silver';">
+DatumDEZuUS("14.2.2000"): 2/14/00
+DatumUSZuDE("2/14/2000"): 14.02.00
+</pre>
+
+<p>
+Damit haben Sie alle notwendigen Funktionen an der Hand, um ASP Seiten zu programmieren, die von den
+L&auml;ndereinstellungen des jeweiligen Web Servers unabh&auml;ngig sind.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020319.htm">Ein einfacher Eventkalender f&uuml;r Projektteams</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020319.htm</span><br>
+<a href="../artikel/20010509.htm">Neue Inhalte einer Web Site f&uuml;r den Benutzer hervorheben</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010509.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

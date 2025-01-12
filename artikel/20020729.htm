@@ -1,0 +1,404 @@
+<HTML>
+<HEAD>
+<TITLE>Den Webserver umsiedeln (IIS 4 oder 5)</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel besch&auml;ftigt sich mit dem Problem, das man hat, wenn man daran denkt einen Webserver mit mehreren konfigurierten Websites auf eine andere (neue) Servermaschine umzusiedeln.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,MetaEdit,Metabase,Shares,Freigaben,IIS Export,IISExport,kopieren,migrieren,Serverinstallation,SSL,Settings,Einstellungen">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Den Webserver umsiedeln (IIS 4 oder 5)</H1>
+<p>
+Geschrieben von: <a href="../autoren/herberthahn.htm">Herbert Hahn</a><br>
+Kategorie: <a href="../kategorien/Server.htm">Server</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020729"></SCRIPT>
+</p>
+<p>
+Dieser Artikel besch&auml;ftigt sich mit dem Problem, das man hat, wenn man daran denkt einen Webserver 
+mit mehreren konfigurierten Websites auf eine andere (neue) Servermaschine umzusiedeln. Ohne 
+Handarbeit geht es n&auml;mlich mit den mitgelieferten Bordmitteln nicht. Wenn dann noch dazukommt 
+da&szlig; sich der Pfad zur Site &auml;ndert, hat man nat&uuml;rlich gleich eine Menge an zus&auml;tzlich m&ouml;glichen 
+Fehlerquellen. Praktisch w&auml;re es also, wenn man die ganze Konfiguration einfach kopieren k&ouml;nnte.
+</p>
+<p>
+Praktischerweise gibt es ein Tool, das den Anspr&uuml;chen gerecht werden kann: 
+<a href="http://www.adsonline.co.uk/iisexport" target="_blank">IIS Export v3.0</a> von Adsonline. 
+Dieses Tool ist ShareWare, kann also kostenlos getestet werden ob es entspricht. Die Registrierung 
+zahlt sich auf alle F&auml;lle aus wenn man mehrere Websites kopieren will.
+</p>
+
+<h2>Das Programm im &Uuml;berblick</h2>
+<p>
+Nach dem Herunterladen von IIS Export einfach das Installationsprogramm aufrufen. Der Rechner auf 
+dem installiert wird mu&szlig; nicht unbedingt der Webserver sein. Des weiteren gilt - und wird auch 
+w&auml;hrend der Installation angemerkt -  da&szlig; man die Metabase des Webservers sichern sollte. Dazu 
+empfehle ich <a href="http://support.microsoft.com../default.htmx?scid=kb;EN-US;q232068" target="_blank">MetaEdit</a>. 
+</p>
+<p>
+Nach dieser obligatorischen Sicherung geht es ans Werk. Hinweis: In der ShareWare Version k&ouml;nnen Sie jeweils 
+nur eine Website umkopieren. Das Umkopieren kann auf zwei Wegen geschehen. Der erste f&uuml;hrt &uuml;ber die lokale 
+Datenbank des IIS Export Tools. Hier werden alle Informationen in einer lokalen Datenbank zwischengespeichert. 
+Das hat jedoch den Nachteil da&szlig; nur die Konfiguration und nicht die Dateien umkopiert werden. Praktisch f&uuml;r 
+das Duplizieren von Websitekonfigurationen, minder praktisch f&uuml;r das Migrieren von einem Server auf 
+einen neuen.
+</p>
+<p>
+Der zweite Weg ist da&szlig; die Website direkt umkopiert wird. Wenn man direkt kopiert, dann hat man zur Auswahl ob 
+man die Dateien und auch die Dateiberechtigungen (Permissions) mitkopieren m&ouml;chte. Dabei ist zu beachten, 
+da&szlig; man beim IIS Server links oben nicht <i>localhost</i> angibt, sondern die IP Adresse (oder den Namen) 
+des Servers. 
+</p>
+
+<IMG SRC="Bilder/200207/20020729_1.png" width="269" height="145" alt="" border="0">
+
+<p>
+Der Grund daf&uuml;r ist, da&szlig; das Programm &uuml;ber Shares auf die Dateien des Webs zugreift. Der Pfad 
+<b>\\localhost\D$\www</b> funktioniert einfach nicht, au&szlig;er wenn der Rechnername zuf&auml;lligerweise localhost 
+hei&szlig;t (eher auszuschlie&szlig;en). Klarerweise mu&szlig; man die administrativen Freigaben aktiviert haben 
+(C$, D$, E$ usw.). Als Anmerkung sei noch gesagt, da&szlig; das Thema Sicherheit in diesem Zusammenhang 
+eine wichtige Rolle spielt. Sollten Sie n&auml;mlich auf die Idee kommen und die Dateien mit Berechtigungen von 
+einer Dom&auml;ne in eine andere Dom&auml;ne kopieren, m&uuml;ssen Sie vorher auch die einzelnen User umkopieren. 
+</p>
+<p>
+Die zweite Einstellung in Sachen Berechtigungen kopieren ist f&uuml;r die Sicherheit sehr relevant. Wenn man die 
+Auswahl <i>Fast File Permission</i> setzt, dann werden die Dateiberechtigungen der &uuml;bergeordneten Ordner 
+mit&uuml;bernommen. Wenn man innerhalb einer Website Dateien oder Verzeichnisse mittels Berechtigungen gesch&uuml;tzt 
+hat bekommt dann pl&ouml;tzlich unter Umst&auml;nden wieder jeder Leseberechtigung.
+</p>
+<p>
+Auch ist wichtig die Servervarianten (IIS 4 oder 5) richtig einzustellen. Wenn Sie von IIS 4 auf IIS 5 migrieren 
+sollten sie <b>beide</b> Server als IIS 5 angeben, da der IIS 5 um einen Anwendungssschutz mehr hat (niedrige, mittlere 
+und hohe Isolation). Mit dieser Einstellung haben Sie den besten Erfolg, da sonst die 
+Anwendungsschutzeinstellungen nicht korrekt transferiert werden. F&uuml;r den Fall da&szlig; am Zielserver diese 
+Website bereits existiert, kann man angeben ob ein Web neu angelegt wird oder ob das existierende Web 
+&uuml;berschrieben werden soll. Weiters hat man nun noch die M&ouml;glichkeit bestimmte Dinge w&auml;hrend des Kopierens zu 
+&auml;ndern. 
+</p>
+
+<ol>
+	<li>Der Speicherort: Das Web kann sich am Zielserver in einem anderen Ordner befinden.<br>
+	<IMG SRC="Bilder/200207/20020729_2.png" width="451" height="180" alt="" border="0"></li>
+	<li>Die IP Adresse: Wenn in der Konfiguration die IP Adressen explizit eingetragen sind. Weiters 
+	lassen sich hier die Hostheader auch &auml;ndern - das ist ein echtes Highlight, da man so eine komplette 
+	Kopie bekommen kann.<br>
+	<IMG SRC="Bilder/200207/20020729_3.png" width="449" height="169" alt="" border="0"></li>
+	<li>Die SSL IP Adresse (Hinweis: die SSL Unterst&uuml;tzung ist nur in der gekauften Version vorhanden)</li>
+	<li>Find &amp; Replace: Dies ist der interessanteste Punkt. Das Ersetzen von Textteilen im Web. Man 
+	denke da an Pfadangaben im Sourcecode des Webs: diese k&ouml;nnen ganz einfach ersetzt werden. Aber Achtung: 
+	die Angaben, die man hier macht, gelten f&uuml;r alle Sites die man kopiert!<br>
+	<IMG SRC="Bilder/200207/20020729_4.png" width="447" height="168" alt="" border="0"></li>
+</ol>
+
+<p>
+Wenn wir diese Einstellungen gemacht haben, dann geht es ans kopieren. Ist das Web nicht allzu gro&szlig;, dann 
+ist innerhalb von wenigen Sekunden das gesamte Web umgezogen. 
+</p>
+
+<IMG SRC="Bilder/200207/20020729_5.png" width="736" height="500" alt="" border="0">
+
+<p>
+Je nach dem wie man diesen Umzug geplant hat, kann man nun sofort testen ob es funktioniert hat. Sollen der 
+Quell- und der Zielserver erhalten bleiben, so mu&szlig; man nat&uuml;rlich die entsprechenden &Auml;nderungen im zust&auml;ndigen 
+DNS-Server vornehmen. Andernfalls mu&szlig; man sowieso vorher beziehungsweise nachher die IP-Adressen der Server 
+&auml;ndern. Ein weiterer wichtiger Punkt ist der, da&szlig; man nun das neue Web auf dem neuen Server noch starten mu&szlig;.
+</p>
+
+<h2>IIS Export als Backuptool</h2>
+<p>
+Dieses Tool l&auml;&szlig;t sich auch hervorragend als Backuptool verwenden. Man kann dieses Tool mit der Option 
+<i>/runbackup</i> und <i>/d</i> und Jobnamen (den Job kann man generieren und unter einem Namen abspeichern) aufrufen. Damit 
+hat man die M&ouml;glichkeit den IIS zu sichern. 
+</p>
+<p>
+Mittels AT Job zum Beispiel: 
+</p>
+
+<pre style="background='silver';">
+AT \\webserver 00:00 /every:F c:\progra~1\Adsonl~1\IISExp~1\IISExport.exe RUNBACKUP
+</pre>
+
+<p>
+Damit startet das Programm im Backupmodus und den Default Backup Job "backup.job" starten.
+</p>
+
+<h2>Was man mit diesem Tool nicht kann</h2>
+<ol>
+	<li>ActiveX Komponenten m&uuml;ssen von Hand kopiert / installiert werden.</li>
+	<li>Anwendungseinstellungen werden nicht mitkopiert. Es sind die nicht mitkopierten Werte, die 
+	maschinenbezogen sind, extra unter <i>Properties to Exclude</i> angef&uuml;hrt. Das sollte man vielleicht 
+	vorher schon bedenken. Wie etwa die Debugeinstellungen, Isolation der Anwendung usw. <br>
+	<IMG SRC="Bilder/200207/20020729_6.png" width="265" height="128" alt="" border="0"></li>
+	<li>Einstellungen f&uuml;r Frontpage Extentions werden nicht exportiert. Daher auch kein Zugriff mit 
+	Frontpage solange Sie diese nicht manuell konfigurieren.</li>
+	<li>Die Einstellungen der Verzeichnissicherheit (bei ausgeschaltetem anonymen Zugriff) k&ouml;nnten nicht 
+	funktionieren weil die Standardberechtigungen f&uuml;r den Webserver nicht reichen. Sie m&uuml;ssen dazu bei 
+	Standardauthentifizierung (Basic Authentication) die Standarddom&auml;ne richtig angeben aus der die User 
+	kommen. Dazu siehe MS knowledge base article Q168908 and Q184319. Ebenso kann das beim Ftp-Server 
+	passieren (User hat keinen Zugriff mehr) und hat die gleiche Ursache.</li>
+	<li>Die Einstellungen im FTP-Server, vor allem die IP-Restrictions Einstellungen, k&ouml;nnen nicht exportiert 
+	werden. </li>
+</ol>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Was das eigentlich geniale an diesem Tool ist, ist die Tatsache da&szlig; man bei bestehenden Webservern die sich 
+nicht &auml;ndern sollen, einfach ein Web auf einen anderen Server, sozusagen mittels ein paar Handgriffen, 
+verschieben kann. 
+</p>
+<p>
+Das Tool ist nicht kostenlos, aber wenn bedenkt wie viel Arbeit man sich erspart und wie viele Fehler man 
+vermeiden kann, dann ist der Kaufpreis nicht der Rede wert.
+</p><h2>Verwandte Artikel</h2>
+<p>
+<a href="20000801.htm">Eine IP Adresse f&uuml;r mehrere Websites</a><br>
+<a href="20010504.htm">Script-basierte IIS Administration</a><br>
+<a href="20010419.htm">Site&uuml;berwachung mit Scheduled Tasks</a><br>
+<a href="20030911.htm">Virtuelle Verzeichnisse umbenennen</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eadsonline%2Eco%2Euk%2Fiisexport">IIS Export</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsupport%2Emicrosoft%2Ecom%2Fdefault%2Easpx%3Fscid%3Dkb%3BEN%2DUS%3Bq232068">MetaEdit</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsupport%2Emicrosoft%2Ecom%2Fdefault%2Easpx%3Fscid%3Dkb%3BEN%2DUS%3Bq168908">Q168908: How to Authenticate a User Against All Trusting Domains</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsupport%2Emicrosoft%2Ecom%2Fdefault%2Easpx%3Fscid%3Dkb%3BEN%2DUS%3Bq184319">Q184319: FTP Service's DefaultLogonDomain Not Available in MMC</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20020729" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Den Webserver umsiedeln (IIS 4 oder 5)"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20020729.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Herbert Hahn"><input type="hidden" name="AuthorEmail" value="herbert.hahn@softwing.com"><input type="hidden" name="Artikel" value="20020729"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20020729.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

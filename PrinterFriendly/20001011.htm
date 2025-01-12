@@ -1,0 +1,285 @@
+<HTML>
+<HEAD>
+<TITLE>Fehlerbehandlung richtig eingesetzt</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wozu dient Fehlerbehandlung, wie funktioniert sie in ASP, und worauf mu&szlig; man achten? Diese Fragen m&ouml;chte der vorliegende Artikel anschneiden und beantworten.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,On Error Goto 0,On Error Resume Next,Error,VBScript,Resume,ASP,Fehlerbehandlung,Err">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Fehlerbehandlung richtig eingesetzt</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001011"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>Fehlerbehandlung in ASP Seiten ist ein Thema, das viel zu oft vernachl&auml;ssigt wird.
+ASP Seiten werden von Entwicklern geschrieben und getestet. Gedanken an
+das m&ouml;gliche Auftreten von Fehlern werden ignoriert, Fehlerbehandlung findet nicht statt.
+</p>
+
+<p>Wozu dient Fehlerbehandlung, wie funktioniert sie in ASP, und worauf mu&szlig; man achten?
+Diese Fragen m&ouml;chte der vorliegende Artikel anschneiden und beantworten.</p>
+
+
+<h2>Fehlerbehandlung in ASP</h2>
+
+
+<p>Wenn in einem ASP Skript ein Laufzeit-Fehler (run-time error) auftritt, so stoppt das Skript im allgemeinen
+und schreibt eine Fehlermeldung zum Browser. Um Laufzeitfehler im Skript selbst auffangen
+zu k&ouml;nnen, die Fehlermeldung zu unterdr&uuml;cken und Informationen &uuml;ber Art und
+Quelle des Fehlers zu bekommen, erlaubt ASP in VBScript die Verwendung der 
+Befehle "<i>On Error Resume Next</i>" und "<i>On Error Goto 0</i>".</p>
+
+<p><i>On Error Resume Next</i> bewirkt, da&szlig; das Skript auch bei einem Laufzeitfehler
+weiter ausgef&uuml;hrt wird. Der eigentliche Zweck des Befehls ist aber nicht, den
+Fehler nur zu unterdr&uuml;cken, sondern das Skript weiter auszuf&uuml;hren um
+Fehlerbehandlungsroutinen dem Problem gem&auml;&szlig; reagieren zu lassen.</p>
+
+<p>Die eigentliche Fehlerbehandlung benutzt das ASP Objekt namens <i>Err</i>.
+Mittels <i>Err</i> Objekt kann nicht nur der Error-Code des letzten Laufzeitfehlers, 
+sondern seine Quelle und eine kurze Beschreibung des Fehlers ausgelesen werden.</p>
+
+<p>Selbstverst&auml;ndlich kann man die Wirkung des "<i>On Error Resume Next</i>"
+Befehles wieder aufheben. Dazu dient der Befehl "<i>On Error Goto 0</i>".</p>
+
+<p>Um nun einen Teil des Sourcecodes eines ASP Skripts in einer Fehlerbehandlung zu
+kapseln, benutzt man einen Codeblock wie folgt:</p>
+
+
+<pre style="background='silver';">
+%lt;%
+
+' Fehler abfangen
+On Error Resume Next
+
+' Es tritt ein Fehler auf:
+strA = missingObject.Property
+
+' Auf Fehler pruefen
+If Err.Number <> 0 Then
+   ' Fehlerbehandlung:
+   Response.Write("Es ist ein Laufzeitfehler aufgetreten!<br>")
+   Response.Write("Fehlercode: " &amp; Err.Number &amp; "<br>")
+   Response.Write("Quelle: " &amp; Err.Source &amp; "<br>")	
+   Response.Write("Beschreibung: " &amp; Err.Description &amp; "<br>")
+End If
+' Fehler nicht mehr abfangen
+On Error Goto 0
+
+%&gt;
+</pre>
+
+<p>Die Fehlerbehandlung wird mit dem Befehl <i>On Error Resume Next</i> eingeleitet.
+Der Befehl selbst bewirkt, da&szlig; das Skript auch nach einem Laufzeitfehler weiter 
+ausgef&uuml;hrt wird, solange nicht der Befehl <i>On Error Goto 0</i> 
+die Fehlerbehandlung wieder beendet.</p>
+
+<p>Tritt nun ein Fehler auf, weil zum Beispiel ein Objekt im Skript nicht instanziert wurde,
+so enth&auml;lt die <i>Number</i> Eigenschaft des <i>Err</i> Objektes einen Wert verschieden
+von Null. Dementsprechend kann man die Fehlerbehandlung, wie im Skript gezeigt, starten lassen, 
+wenn <i>Err.Number</i> verschieden von Null ist.</p>
+
+<p>Die Fehlerbehandlungsroutine selbst kann aus dem <i>Err</i> Objekt den
+Fehlercode (<i>Err.Number</i>), die Quelle des Fehlers (<i>Err.Source</i>) und 
+eine Kurzbeschreibung des Fehlers (<i>Err.Description</i>) auslesen.</p>
+
+
+<p>Das vorher angef&uuml;hrte Beispielskript gibt zum Beispiel die folgende Meldung
+zur&uuml;ck:</p>
+
+<p><IMG SRC="/artikel/Bilder/200010/20001011_fehler1.png" width=513 height=221 alt="" border="0">
+<br>
+<i>Bild 1: Ausgabe von Fehlernummer, Quelle und Beschreibung.</i></p>
+
+
+<p>Welcher Fehler welchen Fehlercode zur&uuml;ck gibt, sieht man am besten,
+indem man den Fehler provoziert.</p>
+
+
+
+<h2>Fallstricke bei der Fehlerbehandlung</h2>
+
+<p>Manche Programmierer setzen dem <i>On Error Resume Next</i> Befehl
+einfach mal vorsichtshalber in jedes ASP Skript. Dies in der Hoffnung,
+da&szlig; damit allf&auml;llig auftretende Fehler &uuml;berdeckt werden,
+und der Benutzer vom Fehler selbst nichts mitbekommt.
+Eine etwas kurzsichtige Denkweise. Wenn ein ASP Befehl einen Laufzeit-Fehler 
+verursacht, so liegt das meist an der Kurzsichtigkeit des Programmierers,
+der nicht in der Lage war abzusch&auml;zten, welche Probleme m&ouml;glicherweise
+auftauchen k&ouml;nen.</p>
+
+<p>Ein typisches Beispiel, wie man es NICHT machen sollte:</p>
+
+<p><pre style="background='silver';">
+&lt;%
+
+On Error Resume Next
+' Ab hier kann ein Fehler Unheil anrichten, soviel er will:
+
+
+Set recordset = Connection.Execute("SELECT * FROM tTable")
+
+' Diese Schleife wird zur Endlosschleife
+Do While Not recordset.EOF
+%&gt;
+Name:
+&lt;%= recordset("Name") %&gt;&lt;br&gt;
+
+&lt;%
+   recordset.MoveNext
+Loop 
+%&gt;
+</pre></p>
+
+<p>Das Skript unterdr&uuml;ckt alle Laufzeit-Fehler, die w&auml;hrend
+der Ausf&uuml;hrung des Skripts auftreten. 
+Da im speziellen Fall das Objekt <i>recordset</i> nicht existiert, weil es nicht
+erstellt werden konnte, wird die Abfrage nach <i>recordset.EOF</i>
+in der Abbruchbedingung der Do While Schleife erst gar nicht vollst&auml;ndig ausgef&uuml;hrt.
+Da der Fehler vom <i>On Error Resume Next</i> Befehl unterd&uuml;rckt worden ist,
+wird die Schleife zur Endlosschleife, was schlie&szlig;lich den Webserver zum Absturz
+bringen kann (&Uuml;berlastung des Arbeitsspeichers oder der CPU
+wie in Bild 2). Bild 2 ist direkt eine Aufnahme des Windows Task Manager,
+nachdem das Programm auf einem Windows 2000 Server gestartet wurde.
+Bereits nach etwa 20 Sekunden hat dieses ASP Skript 700 MB des Server-Speichers
+belegt. Schlie&szlig;lich versagte der <i>dllhost.exe</i> Prozess,
+den ich daraufhin terminierte (starkes Abflachen der Kurve der Speicherbelegung).
+</p>
+
+<p><IMG SRC="/artikel/Bilder/200010/20001011_ueberlastung.png" width=404 height=447 alt="" border="0">
+<br>
+<i>Bild 2: &Uuml;berlastung des Webservers</i></p>
+
+<p>Im schlimmsten Fall kann das Aufrufen eines solchen Skripts zur Folge haben,
+da&szlig; der Webserver neu gestartet werden mu&szlig;, da
+er auf Browseranfragen nicht mehr reagiert - und dies alles nur wegen
+einer mi&szlig;br&auml;uchlichen Verwendung von <i>On Error Resume Next</i>!</p>
+
+<p>Ein beliebter Fehler ist auch, den Befehl <i>On Error Goto 0</i> unabsichtlich 
+zu vergessen - mit den gleichen Folgen.</p>
+
+
+
+<h2>Sinnvoller Einsatz der Fehlerbehandlung</h2>
+
+<p>Grunds&auml;tzlich sollte Fehlerbehandlung und insbesondere 
+der <i>On Error Resume Next</i> Befehl nur dort eingesetzt werden,
+wo ein Laufzeitfehler beim Eintreffen bestimmter Umsta&auml;nde nicht zu vermeiden ist,
+und die Umst&auml;nde selbst nicht gepr&uuml;ft werden k&ouml;nnen.</p>
+
+<p>Ein typ&uuml;isches Beispiel f&uuml;r eine sinnvolle Fehlerbehandlung ist 
+die Verwendung in Zusammenhang mit dem Schreiben von Text in Dateien mittels
+<i>FileSystemObject</i>: Um von ASP aus auf die Festplatte des Servers zu schreiben,
+mu&szlig; der IUSR_MachineName Account die Schreibberechtigung f&uuml;r die Dateien und 
+Verzeichnisse der NTFS Partition der Festplatte haben. Ansonsten w&uuml;rde bei jedem
+Schreibversuch (oder beim &Ouml;ffnen einer Datei zum Schreiben ein Laufzeitfehler auftreten.
+Das folgende Skript ist das modifizierte Skript aus dem ASPHeute Artikel 
+"<a href="../artikel/20000725.htm">Schreiben einer Textdatei auf den Server</a>".
+Das Skript versucht nicht nur einen Text auf die Festplatte zu schreiben,
+es f&auml;ngt auch einen m&ouml;glichen Laufzeitfehler beim Erstellen
+der Textdatei mittels <i>objFs.CreateTextFile</i> auf und gibt eine 
+entsprechende Fehlermeldung aus:</p>
+
+
+
+<p><pre style="background='silver';">
+&lt;%
+ Set objFs= CreateObject("Scripting.FileSystemObject")
+ strDateiname = Server.MapPath("/testdatei.txt") 
+
+ On Error resume Next
+ Set objTextStream = objFs.CreateTextFile(strDateiname, True)
+ ' Fehler wenn IUSR_Machine Account keine Schreibrechte hat!
+
+ If Err.Number &lt;&gt; 0 Then
+   Response.Write("Konnte Datei nicht &amp;ouml;ffen!")
+   Response.End
+ End If
+ On Error Goto 0
+  
+ strWriteString = "Text fuer die Datei"
+ objTextStream.Write strWriteString
+
+ objTextStream.Close
+ Set objTextStream = Nothing
+ Set objFs = Nothing
+ Response.Write "Der folgende Inhalt wurde in die Datei "
+ Response.Write strDateiname &amp; " geschrieben:&lt;BR&gt;" 
+ Response.Write Replace(Server.HTMLEncode(strWriteString) , _ 
+      vbCrLf,"&lt;BR&gt;" &amp; vbCrLf)
+%&gt;
+</pre></p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>Fehlerbehandlung ist &uuml;berall da sinnvoll einsetzbar, wo man Laufzeitfehler nicht
+im vornherein ausschlie&szlig;en und vermeiden kann.</p>
+
+<p>Vor eine mi&szlig;br&auml;uchlichen Verwendung des Befehls
+<i>On Error Resume Next</i> m&ouml;chte ich eindringlich warnen.
+Damit Programmierfehler zu kaschieren kann im schlechtesten Fall zum
+laufenden Absturz des Webservers f&uuml;hren!</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001011.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20001011.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000512.htm">ASP-Fehlerbehandlung unter IIS5</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000512.htm</span><br>
+<a href="../artikel/20000725.htm">Schreiben einer Textdatei auf den Server</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000725.htm</span><br>
+<a href="../artikel/20011112.htm">Strukturierter Aufbau in der ASP-Programmierung</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011112.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

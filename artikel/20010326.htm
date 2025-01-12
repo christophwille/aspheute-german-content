@@ -1,0 +1,450 @@
+<HTML>
+<HEAD>
+<TITLE>Records z&auml;hlen mit Stored Procedures</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wie viele Datens&auml;tze sind in meiner Tabelle gespeichert? Die &uuml;bliche Antwort f&uuml;r SQL Server ist COUNT(*), allerdings wird das wiederkehrende implementieren irgendwann l&auml;stig - Zeit, das Ganze in einer Stored Procedure zu verpacken!">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Stored Procedure,COUNT,Errors,Collection,ADO,Message,PRINT,Statement,RecordCount,Anzahl">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Records z&auml;hlen mit Stored Procedures</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010326"></SCRIPT>
+</p>
+<p>
+Eine Frage, die immer wieder auftaucht, ist: "Wie viele Datens&auml;tze sind in meiner Tabelle 
+gespeichert?". Die &uuml;bliche (und richtige) Antwort f&uuml;r SQL Server ist COUNT(*), allerdings 
+wird das wiederkehrende implementieren irgendwann l&auml;stig - Zeit, das Ganze in einer Stored Procedure
+zu verpacken!
+</p>
+
+<h2>Die Stored Procedure</h2>
+<p>
+Auf den ersten Blick scheint die Antwort ja simpel zu sein: in meiner Datenbank lege ich eine
+Stored Procedure an, der ich den Tabellennamen &uuml;bergebe, und mit dem ich ein SELECT COUNT(*) 
+Statement absetze - jedoch so einfach ist es leider nicht. Hier eine Liste der Ans&auml;tze, die nicht
+funktionieren, und vor allem warum.
+</p>
+<p>
+<b>Cursors</b> Wir brauchen ein dynamisches SQL Statement, da erst zur Laufzeit bekannt ist, welche
+Tabelle wir abfragen m&uuml;ssen. Das funktioniert aber mit dem <i>DECLARE CURSOR</i> Statement nicht.
+Und auf die undokumentierten <i>sp_cursoropen</i> usw. XP's auszuweichen ist auch keine Idee.
+</p>
+<p>
+<b>Recordsets und EXEC</b> Technisch m&ouml;glich (und oft eingesetzt), aber ineffizient. Ich mu&szlig; f&uuml;r eine Zeile
+und eine Spalte ein ganzes Recordset aufbauen und danach zerst&ouml;ren.
+Da kann ich gleich bei reinem ADO Code ohne Stored Procedure bleiben.
+</p>
+<p>
+<b>RETURN und EXEC</b> W&auml;re zu sch&ouml;n, der SQL Server l&auml;&szlig;t es nur nicht zu. <i>RETURN</i> kann nur
+in Stored Procedures verwendet werden, nicht aber in <i>EXEC</i>, das in einer SP aufgerufen wird.
+</p>
+<p>
+Die L&ouml;sung, mit der ich mir Abhilfe verschafft habe? Ich benutze das <i>PRINT</i> Statement, das 
+eine Nachricht ausgibt. Was mir das hilft? Ich kann diese Nachricht &uuml;ber ein <i>ADO Error</i>
+Objekt am Client auslesen. Krank? Ja. Aber f&uuml;r solche L&ouml;sungen bin ich bekannt.
+</p>
+<p>
+Bevor wir jetzt theoretisch weiterdisktuieren, betrachten wir den Code der Stored Procedure:
+</p>
+<pre style="background='silver';">
+CREATE  PROCEDURE 
+   sp_GetRecordCount @Table_Name varchar(255)
+AS
+  DECLARE @qryStmt varchar(255)
+  SELECT @qryStmt = 'DECLARE @RCount int' + CHAR(13) + CHAR(10) + 
+                    'SELECT @RCount=COUNT(*) FROM ' + @Table_Name +
+                    CHAR(13) + CHAR(10) + 
+                    'PRINT @RCount'
+  EXEC(@qryStmt)
+GO
+</pre>
+
+<p>
+Hier sieht man das ganze Problem sehr eindringlich - ich mu&szlig; das ben&ouml;tigte Transact-SQL selbst
+dynamisch erstellen, und dann erst ausf&uuml;hren. Dadurch kann ich nicht auf lokale Variablen zugreifen,
+und das Zur&uuml;ckgeben von Werten funktioniert auch nicht wie gerne gew&uuml;nscht. Aber zumindest erlaubt
+mir das <i>PRINT</i> Statement die Anzahl der Datens&auml;tze effizient zur&uuml;ckzuliefern - denn die Messages
+des Servers werden immer abgeholt.
+</p>
+
+<h2>Das Beispielformular</h2>
+<p>
+Wie verwendet man diese Stored Procedure nun? Das Haupteinsatzgebiet wird zwar woanders liegen,
+aber machen wir uns ein kleines visuelles Formular, in dem der Benutzer eine Tabelle ausw&auml;hlen
+kann, und wir ihm dann mit Hilfe der Stored Procedure die Anzahl der Datens&auml;tze eruieren.
+</p>
+<p>
+Damit jeder eine Idee bekommt wie einfach ich mir das vorstelle, hier ein Screenshot der
+fertigen Anwendung.
+</p>
+
+<IMG SRC="Bilder/200103/20010326.png" width="529" height="247" alt="" border="0">
+
+<p>
+Ein interessanter Part ist sicher, wie ich an die Namen der Tabellen herankomme - denn ich
+habe sie nicht eingetippt! Da ich ein von Natur aus effizienter (=fauler) Mensch bin, lasse
+ich mir die Liste vom SQL Server in die Hand dr&uuml;cken - und zwar mit einer einfachen Abfrage.
+Der folgende Formularcode enth&auml;lt alles notwendige, um die Tabellen der Northwind Datenbank
+zu erhalten:
+</p>
+
+<pre style="background='silver';">
+&lt;form method="POST" action="&lt;%=Request.ServerVariables("SCRIPT_NAME")%&gt;"&gt;
+&lt;select name="cbTableName"&gt;
+&lt;%
+strConnStr = "Provider=SQLOLEDB;Data Source=strangelove;Initial Catalog=Northwind;..."
+strTableStmt = "select * from sysobjects where type='U'"
+
+Set rs = Server.CreateObject("ADODB.Recordset")
+rs.Open strTableStmt, strConnStr
+While Not rs.EOF
+  Response.Write "&lt;option&gt;" &amp; rs("name") &amp; "&lt;/option&gt;" &amp; vbCrlf
+  rs.MoveNext
+Wend
+rs.Close
+Set rs = Nothing
+%&gt;
+&lt;/select&gt;
+&lt;input type="submit" value="Anzahl d. Records ermitteln"&gt;
+&lt;/form&gt;
+</pre>
+
+<p>
+SQL Server verwaltet alle Objekte selbst in Tabellen, und die "Mastertabelle" ist <i>sysobjects</i>,
+aus der ich mir alle Tabellenobjekte heraus-SELECTe. Mit dem erhaltenen Recordset baue ich eine
+DropDown Box auf, aus der der Benutzer dann die gew&uuml;nschte Tabelle selektieren kann.
+</p>
+<p>
+Nach Auswahl der Tabelle und klicken auf das Formular werden die Daten an den Server zur&uuml;ckgepostet,
+wo dann der folgende Code die Arbeit &uuml;bernimmt:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+strTableName = Request.Form("cbTableName")
+If "" &lt;&gt; strTableName Then
+  Response.Write "&lt;p&gt;&lt;b&gt;Die Tabelle " &amp; strTableName
+  strTableName = "[" &amp; strTableName &amp; "]"
+  Response.Write " hat " &amp; GetRecordCount(strConnStr, strTableName)
+  Response.Write " Eintr&auml;ge.&lt;/b&gt;&lt;/p&gt;"
+End If
+%&gt;
+</pre>
+
+<p>
+Ich &uuml;berpr&uuml;fe, ob eine Tabelle gew&auml;hlt wurde, und beginne dann mit der Ausgabe der Anzahl der
+Eintr&auml;ge. Der wichtige Part ist das Einschlie&szlig;en des Tabellennamens in eckige Klammern - weil
+Tabellennamen Leerzeichen enthalten k&ouml;nnten, die dann zu Fehlern in der Stored Procedure f&uuml;hren -
+die in der Funktion <i>GetRecordCount</i> aufgerufen wird.
+</p>
+
+<pre style="background='silver';">
+&lt;script language="vbscript" runat="server"&gt;
+Function GetRecordCount(ByVal strConnStr, ByVal strTableName)
+  Const adParamInput = 1
+  Const adVarChar = 200
+
+  Set conn = Server.CreateObject("ADODB.Connection")
+  conn.Open strConnStr
+
+  Set cmd = Server.CreateObject("ADODB.Command")
+  cmd.ActiveConnection = conn
+  cmd.CommandText = "sp_GetRecordCount"
+  cmd.CommandType = 4
+
+  Set adoParam = cmd.CreateParameter("@Table_Name", adVarChar, 
+                   adParamInput, 255, strTableName)
+  cmd.Parameters.Append adoParam
+
+  cmd.Execute
+
+  ' there should be only one! + .Number should be zero
+  nErrorObjects = conn.Errors.Count
+  Set errObj = conn.Errors(0)
+  GetRecordCount = CLng(errObj.Description)
+  Set cmd = Nothing
+  Set conn = Nothing
+End Function
+&lt;/script&gt;
+</pre>
+
+<p>
+Im Prinzip ist dies ein v&ouml;llig normaler Aufruf einer Stored Procedure. Der Unterschied besteht darin,
+da&szlig; wir uns den gew&uuml;nschten R&uuml;ckgabewert aus der <i>Errors</i> Collection abholen m&uuml;ssen.
+Und dort steht nur unser "Fehler", und die Beschreibung (<i>Description</i>) ist die Anzahl der Records
+in der gew&uuml;nschten Tabelle.
+</p>
+
+<p>
+Wie man sieht, ich brauche nicht einmal ein <i>On Error Resume Next</i> Statement, da der durch <i>PRINT</i>
+ausgel&ouml;ste "Fehler" kein ernsthafter ist, der die Abarbeitung des Befehls beeintr&auml;chtigt h&auml;tte. Es ist
+nur die Message, die an die aufrufende Applikation zur&uuml;ckgeliefert wird - entweder in den Query Analyzer,
+oder hier an ADO und ASP.
+</p>
+
+<p>
+Wer den heute hier vorgestellten Code weiterverwenden m&ouml;chte, mu&szlig; nur die Stored Procedure in die 
+jeweilige Datenbank importieren, und den Code von <i>GetRecordCount</i> in ein inkludierbares ASP
+File kopieren. Erweitert werden k&ouml;nnte die Stored Procedure auch noch: durch ein <i>use database</i>
+Statement, soda&szlig; man die Stored Procedure nur noch einmal pro Server installieren mu&szlig;.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Daten k&ouml;nnen auf vielerlei Arten ihren Weg in die Client-Anwendung finden - auch als Fehlermeldung
+getarnt.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010326.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20010327.htm">Code Generator f&uuml;r die AddNew Methode</a><br>
+<a href="20010130.htm">Datens&auml;tze zuf&auml;llig sortieren</a><br>
+<a href="20010308.htm">Der ADO Command Code Generator</a><br>
+<a href="20011031.htm">Gegengifte f&uuml;r SQL Injection</a><br>
+<a href="20001013.htm">Highspeed-Abfragen einer SQL Server Datenbank</a><br>
+<a href="20040901.htm">Optimiertes Erstellen von DropDowns</a><br>
+<a href="20010626.htm">Stored Procedures 101 in ADO.NET</a><br>
+<a href="20000606.htm">Zugriff auf autom. generierte ID beim Einf&uuml;gen eines Datensatzes</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20010326" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Records z&auml;hlen mit Stored Procedures"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20010326.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20010326"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20010326.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

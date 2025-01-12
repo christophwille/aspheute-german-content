@@ -1,0 +1,447 @@
+<HTML>
+<HEAD>
+<TITLE>Dateien zum Client schicken</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch¸tzt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Sie m&ouml;chten dem Client eine Datei via ASP zum Browser schicken - ohne Redirect? Das ist ja prinzipiell nicht schwer. Dieser Artikel zeigt Ihnen anhand von Beispielen wie man einfach...">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,FileSystemObject,OpenTextFile,BinaryWrite,FileCache,AlphaSierraPapa,binary,content">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Dateien zum Client schicken</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010223"></SCRIPT>
+</p>
+<p>
+Sie m&ouml;chten dem Client eine Datei via ASP zum Browser schicken - ohne Redirect? Das ist ja prinzipiell nicht schwer. Dieser Artikel zeigt Ihnen 
+anhand von Beispielen wie man einfach Text/HTML Dateien mit dem FileSystemObject zum Client schicken kann, und was
+passiert, wenn man das gleiche mit Dateien in bin&auml;rer Form z.B. gezippten Dateien probiert.
+</p>
+
+<p>
+Je nach Ihren Anspr&uuml;chen biete ich Ihnen zwei unterschiedliche L&ouml;sungswege an. Die eine angebotene M&ouml;glichkeit ist straight 
+ASP und ist nur f&uuml;r plain Text bzw. HTML Dateien geeignet. Die andere behilft sich mit der 
+<a href="http://www.alphasierrapapa.com/IisDev/Components/FileCache/" target="_blank">FileCache 2.1 Komponente</a> von 
+<a href="http://www.alphasierrapapa.com/" target="_blank">AlphaSierraPapa.com</a>. Neben der M&ouml;glichkeit Dateien beliebigen Typs zu 
+versenden bietet sie den zus&auml;tzlichen Bonus, da&szlig; Sie die uneingeschr&auml;nkte Version der 
+Komponente <i>kostenlos</i> downloaden k&ouml;nnen.
+</p>
+
+<p>
+Je nachdem wie Sie sich entscheiden, bietet wie gesagt dieser Artikel f&uuml;r beide M&ouml;gllichkeiten je ein Beispiel. Beginnen wir
+mit dem straight ASP Ansatz f&uuml;r Text/HTML Dateien.
+</p>
+
+<h2>Textdateien senden</h2>
+
+<p>
+F&uuml;r das erste Beispiel habe ich eine plain-Text bzw. eine Html Datei ausgew&auml;hlt, die dem Client
+gesendet werden soll. Dies erledigen wir wie eingangs erw&auml;hnt mit dem FileSystemObject. Dabei wollen wir pr&uuml;fen ob die
+Datei richtig beim Client ankommt. 
+</p>
+
+<p>
+Die <i>OpenTextFile</i> Methode &uuml;bersetzt n&auml;mlich den Inhalt in einen je nach Einstellung einen anderen Zeichencode
+Aber sehen wir uns dazu erst einmal den Sourcecode an, und zwar f&uuml;r eine plain-Text Datei an (<b>RetrieveTXT.asp</b>).
+</p>
+
+<p>
+Zuerst die Vorgabe des <i>ContentTypes</i>.
+In diesem Fall - da wir eine Textdatei schicken wollen - verwenden wir <i></i>
+</p>
+
+<pre style="background='silver';">
+Response.ContentType = "text/plain"
+</pre>
+
+<p> 
+Jetzt m&uuml;ssen wir aber die Datei angeben, die ja zum Browser des Clients geschickt werden soll. Die ben&ouml;tigten 
+Informationen &uuml;ber die zu &uuml;bermittelnde Datei selbst weisen wir Variablen zu (um sp&auml;tere &Auml;nderungen zu erleichtern):
+</p>
+
+<pre style="background='silver';">
+strFile = "TestTXT.txt"
+strPath = "F:\Inetpub\wwwroot\TestRoot\"
+strResource = strPath &amp; strFile
+</pre>
+
+<p>
+Nun sind wir soweit, da&szlig; wir die Datei &uuml;bermitteln k&ouml;nnen. Hierbei m&uuml;ssen wir mit dem 
+<i>FileSystemObject</i> hantieren. Diesem &uuml;bergeben wir den Pfad und den Dateinamen.
+</p>
+
+<pre style="background='silver';">
+Set oFso = Server.CreateObject("Scripting.FileSystemObject")
+Set oByteSize = oFso.GetFile(strResource)
+</pre>
+
+<p>
+Um performant zu bleiben ermitteln wir die Gr&ouml;&szlig;e der vorher angegebenen Datei. Dies erledigen wir mit der <i>Size</i>
+Property (Eigenschaft). Diese gibt, verwendet im Zusammenhang mit einer Datei  - hier als Alias das <i>oByteSize</i> Objekt - 
+die Bytegr&ouml;&szlig;e der Datei zur&uuml;ck. Da wir die Bytegr&ouml;&szlig;e in einer Variablen abspeichern, ben&ouml;tigen wir das 
+oByteSize Objekt nicht mehr und k&ouml;nnen es mit <i>Nothing</i> zerst&ouml;ren.
+</p>
+
+<pre style="background='silver';">
+bByteSize= oByteSize.Size
+Set oByteSize = Nothing
+...
+</pre>
+
+<p>
+Als n&auml;chstes lesen wir den Inhalt der Datei mit der <i>OpenTextFile</i> Methode des FileSystem Objektes ein. Diese Methode
+nimmt als Parameter den vollst&auml;ndigen Pfad samt Dateinamen (gespeichert in der Variable <i>strResource</i>), 
+sowie den IO-Modus (hier <i>lesen</i>), die Option zur Erstellung einer Datei (hier <i>false</i>) und das Format in dem
+die Datei gespeichert wurde (hier <i>Unicode</i>).
+</p>
+
+<pre style="background='silver';">
+Set oStream = oFso.OpenTextFile(strResource, 1, false, -1)
+bBinContent = oStream.Read(bByteSize)
+Set oStream = Nothing
+</pre> 
+
+<p>
+Schlie&szlig;lich k&ouml;nnen wir die Datei zum Browser schicken. Dies erledigen wir wie gewohnt in solchen F&auml;llen mit der <i>BinaryWrite</i>
+Methode:
+</p>
+
+<pre style="background='silver';">
+Response.BinaryWrite(bBinContent)
+</pre>
+
+<p>
+Da der Sourcecode nun fertig ist, k&ouml;nnen wir die ASP Datei <b>RetrieveTXT.asp</b> auf einem Web Server ausf&uuml;hren. Das 
+Ergebnis pr&auml;sentiert sich wie erhofft:
+</p>
+
+<p>
+<IMG SRC="Bilder/200102/20010223_1.png" width="326" height="175" alt="" border="0">
+</p>
+
+<p>
+F&uuml;r HTML Dateien gilt &auml;hnliches; hier setzen wir den <i>ContentType</i> aber auf:
+</p>
+
+<pre style="background='silver';">
+Response.ContentType = "text/html"
+</pre>
+
+<p>
+Ausgef&uuml;hrt in einem Browser sieht das dann wie folgt aus:
+</p>
+
+<p>
+<IMG SRC="Bilder/200102/20010223_2.png" width="406" height="168" alt="" border="0">
+</p>
+
+<p>
+Dieser "Trick" des Auslesens von HTML Dateien kann dann n&uuml;tzlich werden, wenn man in ASP mit vorgefertigten 
+Templates arbeitet, die an den Client geschickt werden sollen.
+</p>
+
+
+<p>
+Nun das gleiche Spiel mit einer Zip-Datei was uns aber auch nach der Umstellung des ContentTypes folgende Fehlermeldung beschert:
+</p>
+
+<p>
+<IMG SRC="Bilder/200102/20010223_3.png" width="354" height="125" alt="" border="0">
+</p>
+
+<p>
+Die Begr&uuml;ndung liegt darin, da&szlig; die bin&auml;re Zip-Datei etliche Sonderzeichen der Art 
+&quot;&acute;.&ldquo;&frac12;&frac12;y.&raquo;&ETH;F=ù7.&Ocirc;&iquest;&reg;rI&Iacute;e&Ocirc;&Eacute;=&ugrave;&Euml;&divide;ê&quot; beinhaltet.
+Diese werden nach der Formatumwandlung falsch interpretiert. Daher sollte man sich nach einer Alternative umsehen.
+</p>
+
+<h2>Die FileCache Komponente</h2>
+
+<p>
+Wenn Sie das Spiel mit mehreren Dateien durchf&uuml;hren wollen, auf die Codeschreiberei verzichten wollen oder aus
+anderen Gr&uuml;nden lieber eine Komponete verwenden wollen, bietet sich nichts einfacheres als der Einsatz der kostenlosen
+<a href="http://www.alphasierrapapa.com/IisDev/Components/FileCache/" target="_blank">FileCache 2.1 Komponente</a> an.
+</p>
+
+<p>
+Komplizierte Installation, m&uuml;hseliges Einbinden in ASP Code bzw. die Notwendigkeit dicke Handb&uuml;cher zu lesen -
+<b>mitnichten</b>! Die Integration ist ganz einfach, und das demonstiert das n&auml;chste Sourcecode Beispiel (<b>RetrieveZip.asp</b>):
+</p>
+
+<pre style="background='silver';">
+Set objFileCache = Server.CreateObject("Softwing.FileCache.1")
+
+bOutput = objFileCache.InitFromFile("2001023.zip", False)
+objFileCache.MimeType = "application/x-zip-compressed"
+
+bOutput = objFileCache.Write()
+</pre>
+
+<p>
+Das interne Prozedere &uuml;bernimmt die Komponente. Einfach die ben&ouml;tigten Dateiinformationen und den gew&uuml;nschten MIME-Type
+angeben - in diesem Fall wieder <i>application/x-zip-compressed</i> - damit wir den <i>Speichern als</i> Dialog erhalten.
+</p>
+
+<p>
+Nach der Ausf&uuml;hrung auf einem Web Server gibt die ASP Datei <i>RetrieveZip.asp</i> einen <i>Speichern als</i> Dialog aus
+und wir k&ouml;nnen die Datei lokal speichern. Danach kann man das ZIP in einem Dekomprimierungsprogramm ohne Probleme &ouml;ffnen.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Dieser Artikel zeigte, da&szlig; bei der Verwendung der <i>OpenTextFile</i> Methode bei einfachen Text enthaltenden Dateien alles nach 
+Plan l&auml;uft, aber bin&auml;re Dateien hingegen unbrauchbar werden. Man kann sich aber z.B. mit Komponenten wie der
+kostenlos downloadbaren FileCache 2.1 Abhilfe verschaffen.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010223.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20010425.htm">ASP-basierte resumable Downloads</a><br>
+<a href="20010305.htm">Ein Excel-Sheet am Server generieren und zum Client schicken</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2FIisDev%2FComponents%2FFileCache%2F">FileCache 2.1</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20010223" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Dateien zum Client schicken"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20010223.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Holm"><input type="hidden" name="AuthorEmail" value="office@holmcs.com"><input type="hidden" name="Artikel" value="20010223"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20010223.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

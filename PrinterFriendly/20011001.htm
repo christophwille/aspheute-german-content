@@ -1,0 +1,409 @@
+<HTML>
+<HEAD>
+<TITLE>Bannerzwang</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Da ein Kollege von mir den WebWasher einsetzt, habe ich mich einmal eingehender mit ihm &uuml;ber die technischen M&ouml;glichkeiten unterhalten, die man als Websitebetreiber h&auml;tte, den WebWasher auszutricksen...">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Banner,Werbebanner,Bannerzwang,JavaScript,GenerateRandom,Werbung,Banner-blocker,Bannerblocker">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Bannerzwang</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20011001"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Viele User die im Netz surfen verwenden sogenannte Banner-Blocker, mit denen Werbebanner 
+abgeblockt werden - ein bekanntes Tool aus dieser Kategorie w&auml;re der WebWasher.
+Allerdings gibt es am Internet viele Websites, die ihre Inhalte zu einem guten Teil &uuml;ber Bannerwerbung
+auf ihren Seiten finanzieren. F&uuml;r diese Websites sind Tools wie der WebWasher wahrlich eine
+"Killerapplikation", da diese die Einnahmequelle effektiv herausfiltern. 
+</p>
+<p>
+Da ein Kollege von mir den WebWasher einsetzt, habe ich mich einmal eingehender mit ihm 
+&uuml;ber die technischen M&ouml;glichkeiten unterhalten, die man als Websitebetreiber h&auml;tte, den
+WebWasher auszutricksen:
+</p>
+
+<ul>
+    <li>Nicht-Standardgr&ouml;&szlig;en der Werbebanner. Das verbietet sich von selbst.
+    <li>Da sowohl auf URL als auch Bildgr&ouml;&szlig;e gefiltert wird, alle Grafiken der Site nur
+    in Werbebannergr&ouml;&szlig;en erzeugen. Wenn der User dann die Banner blockieren will, erlebt
+    er ein "wei&szlig;es Wunder".
+    <li>Die Werbebanner zerst&uuml;ckeln, und in Nicht-Standardgr&ouml;&szlig;en verschicken. Solange man
+    keine animierten Banner verwendet, w&uuml;rde das sogar funktionieren.
+    <li>Die Seite nicht anzeigen, wenn die Banner nicht geladen werden.
+</ul>
+
+<p>
+Der letzte Punkt klingt geradezu blau&auml;ugig, aber nach l&auml;ngerer &Uuml;berlegung hat uns die Variante
+eigentlich am besten gefallen.
+</p>
+
+<h2>Die Grundidee</h2>
+<p>
+Die Idee dahinter ist bestechend einfach: jeder moderne Browser unterst&uuml;tzt CSS und DIV Tags. 
+Mittels CSS kann man DIV Tags unsichtbar machen - es ist also naheliegend, den Inhalt der Seite
+solange in einem unsichtbaren DIV Tag zu verstecken, bis die Banner geladen sind. Kommt
+kein Banner, wird das DIV Tag nicht auf sichtbar gesetzt - Pech f&uuml;r den Werbeverweigerer.
+</p>
+<p>
+Das Umschalten von unsichtbar auf sichtbar passiert mittels eines Events auf dem Werbebanner-Image
+Tag. Das bedeutet, JavaScript mu&szlig; enabled sein - und man hat somit gleich den automatischen
+Browsertest mit dabei.
+</p>
+<p>
+In der Datei <b>bannerpage.htm</b> habe ich eine einfache Seite mit dieser Idee implementiert:
+</p>
+
+<pre style="background='silver';">
+&lt;html&gt;
+&lt;head&gt;
+	&lt;title&gt;Bannerpage&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div id="pleaseWait"&gt;
+Bitte warten Sie, w&auml;hrend die Seite geladen wird. Sollten Sie Probleme haben, 
+&lt;a href=""&gt;klicken Sie bitte hier&lt;/a&gt;.
+&lt;/div&gt;
+
+&lt;div id="mainDiv" STYLE="display:None;"&gt;
+&lt;p&gt;Dieser Content wird erst nach dem Banner sichtbar - inklusive dem Banner.&lt;/p&gt;
+&lt;img src="http://ads.softartisans.com/servead.asp?s=11&amp;b=1" onload="yesImage()"&gt;
+&lt;/div&gt;
+
+&lt;SCRIPT LANGUAGE=JavaScript&gt;
+&lt;!--
+function yesImage() 
+{
+  document.all.pleaseWait.style.display = "none";
+  document.all.mainDiv.style.display = "";
+}
+//--&gt;
+&lt;/SCRIPT&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Es gibt zwei DIV Tags - <i>pleaseWait</i> mit der Meldung da&szlig; die Seite geladen wird, und
+<i>mainDiv</i>, das versteckt ist, und den zu sch&uuml;tzenden Inhalt der Seite umschlie&szlig;t. Am
+Image Tag ist das <i>onload</i> Ereignis mit der Funktion <i>yesImage</i> gehooked - wird
+das Event ausgel&ouml;st, ist die Grafik fertig geladen, und die Sichtbarkeit der beiden DIV
+Tags wird vertauscht.
+</p>
+<p>
+Damit hat man den Inhalt effektiv gesch&uuml;tzt - killt der Banner-Blocker das Bild, wird das 
+Event nie ausgel&ouml;st. Dadurch, da&szlig; CSS automatisch ausgef&uuml;hrt wird, hat der User auch keine
+Chance, den Inhalt sichtbar zu machen (au&szlig;er er speichert die Seite auf die Festplatte und
+modifiziert das HTML).
+</p>
+<p>
+Der Sinn der "Bitte warten" Nachricht mit Link ist der, da&szlig; Kunden die die Seite wegen
+Blocking nicht zu Gesicht bekommen, auf eine Seite gehen k&ouml;nnen, wo Ihnen h&ouml;flich erkl&auml;rt
+wird, warum sie nichts zu sehen bekommen haben. Bei Sites mit sparsamer Bannerwerbung (wie
+AspHeute) werden wahrscheinlich auch nicht allzu viele Besucher Einwand erheben.
+</p>
+
+<h2>Implementierung mit ASP</h2>
+<p>
+Die vorgestelle HTML Seite hat ihre gewissen Nachteile - die DIV Tags haben fest vorgegebene
+Namen, und w&auml;ren somit relativ leicht automatisiert herausl&ouml;schbar. Daher werden wir bei der
+Implementierung in ASP etwas "R&uuml;cksicht" auf solche Probleme nehmen - und diesen Schutz neben
+DIV Tags auch auf die Variablen und Funktionsnamen in JavaScript ausdehnen.
+</p>
+<p>
+Die gew&uuml;nschte Funktionalit&auml;t habe ich in <b>bannerfunctions.asp</b> implementiert, die in jede
+beliebige zu sch&uuml;tzende Datei eingebaut werden kann.
+</p>
+
+<h3>Das Include</h3>
+<p>
+Eine wichtige Vorgabe f&uuml;r uns ist, da&szlig; die Namen der DIV Tags nicht fest vorgegeben sein d&uuml;rfen.
+Daher bietet sich an, die Funktionen zur <a href="../artikel/20000531.htm">Generierung eines sicheren Passworts</a>
+etwas anzupassen:
+</p>
+
+<pre style="background='silver';">
+&lt;script language="vbscript" runat="server"&gt;
+Function GenerateRandom(ByVal Laenge)
+  Dim intI, strRandom
+  strRandom = ""
+  For intI = 1 to Laenge
+    strRandom = strRandom &amp; GenerateCharacter()
+  Next
+  GenerateRandom = strRandom
+End Function
+
+Function GenerateCharacter()
+  Dim intRnd, strRnd
+  Randomize
+  Do
+    intRnd = Int(Rnd * 60)
+    If intRnd &gt;=52 Then
+      strRnd = CStr(intRnd - 51)
+    ElseIf intRnd &gt;= 26 Then
+      strRnd = Chr(Asc("A") + intRnd - 26)			
+    Else
+      strRnd = Chr(Asc("a") + intRnd)			
+    End If
+  Loop Until (strRnd &lt;&gt; "0" And strRnd &lt;&gt; "l" _
+    And strRnd &lt;&gt; "I")
+  GenerateCharacter = strRnd
+End Function
+&lt;/script&gt;
+</pre>
+
+<p>
+Durch den Aufruf der Funktion <i>GenerateRandom</i> erhalten wir eine zuf&auml;llige Zeichenfolge, die wir
+als Namen f&uuml;r DIV Tags, Variablen und auch Funktionen verwenden k&ouml;nnen. Den ersten Auftritt hat 
+<i>GenerateRandom</i> in den Funktionen <i>ShowWaitMessage</i> und <i>PreCreateSections</i>.
+</p>
+
+
+<pre style="background='silver';">
+&lt;%
+Dim m_nSections, m_arrSections(), m_strFunctionName, m_nNumberOfImages
+Dim m_strWaitSection
+m_nSections = -1
+m_nNumberOfImages = 0
+
+Function ShowWaitMessage()
+    Dim strMessage
+    m_strWaitSection = "div" &amp; GenerateRandom(12)
+    strMessage = "&lt;div id=""" &amp; m_strWaitSection &amp; """&gt;" &amp; vbCrlf
+    strMessage = strMessage &amp; "Bitte warten Sie, w&amp;auml;hrend die Seite geladen wird. "
+    strMessage = strMessage &amp; "Sollten Sie Probleme haben, " &amp; _
+         "&lt;a href=""xplain.htm""&gt;klicken Sie bitte hier&lt;/a&gt;."
+    strMessage = strMessage &amp; vbCrlf &amp; "&lt;/div&gt;" &amp; vbCrlf
+    ShowWaitMessage = strMessage
+End Function
+
+Sub PreCreateSections(ByVal nSections)
+    Dim i
+    m_nSections = nSections
+    ReDim m_arrSections(nSections)
+    For i = 0 To (nSections-1)
+        m_arrSections(i) = "div" &amp; GenerateRandom(10)
+    Next
+    m_strFunctionName = "set" &amp; GenerateRandom(15)
+End Sub
+</pre>
+
+<p>
+In <i>ShowWaitMessage</i> wird <i>GenerateRandom</i> verwendet um den Namen des DIV Tags zu generieren,
+das die "Bitte warten" Mitteilung umschlie&szlig;t. Die Funktion <i>PreCreateSections</i> erf&uuml;llt einen sehr
+speziellen Zweck - nach deren Aufruf sind alle zu versteckenden DIV Tag Sektionen namentlich bekannt,
+und man kann an beliebiger Stelle mittels <i>GetDisplayFunction</i> das JavaScript rendern lassen (dazu
+m&uuml;&szlig;te allerdings <i>GetImageFunction</i> angepasst werden).
+</p>
+
+<pre style="background='silver';">
+Function BeginSection(ByVal nSection)
+    If (nSection &lt; 0 Or nSection &gt; m_nSections) Then
+        Response.Write "ERROR: BeginSection - section requested does not exist: " &amp; nSection
+        Response.End
+    End If
+    BeginSection = vbCrlf &amp; "&lt;div id=""" &amp; m_arrSections(nSection-1) &amp; _
+                """ STYLE=""display:None;""&gt;" &amp; vbCrlf
+End Function
+
+Function EndSection()
+    EndSection = vbCrlf &amp; "&lt;/div&gt;" &amp; vbCrlf
+End Function
+
+Function GetImageFunction()
+    GetImageFunction = " onload=""" &amp; m_strFunctionName &amp; "()"" "
+    m_nNumberOfImages = m_nNumberOfImages + 1
+End Function
+
+Function GetDisplayFunction()
+    Dim strScript, strVariable, i
+    strVariable = "var" &amp; GenerateRandom(10)
+    strScript = "&lt;SCRIP" &amp; "T LANGUAGE=JavaScript&gt;" &amp; vbCrlf
+    strScript = strScript &amp; "&lt;!--"  &amp; vbCrlf
+    strScript = strScript &amp; "var " &amp; strVariable &amp; "=" &amp; m_nNumberOfImages &amp; ";" &amp; vbCrlf
+    strScript = strScript &amp; "function " &amp; m_strFunctionName &amp; "() {" &amp; vbCrlf
+    strScript = strScript &amp; strVariable &amp; "--;" &amp; vbCrlf
+    strScript = strScript &amp; "if (0 == " &amp; strVariable &amp; ") {" &amp; vbCrlf
+    strScript = strScript &amp; "document.all." &amp; m_strWaitSection &amp; _
+                  ".style.display = ""none"";" &amp; vbCrlf
+    For i = 0 To (m_nSections-1)
+        strScript = strScript &amp; "document.all." &amp; m_arrSections(i) &amp; _
+                ".style.display = """";" &amp; vbCrlf
+    Next
+    strScript = strScript &amp; "}" &amp; vbCrlf &amp; "}" &amp; vbCrlf &amp; "//--&gt;" &amp; vbCrlf &amp; _
+                        "&lt;/SCR" &amp; "IPT&gt;" &amp; vbCrlf
+    GetDisplayFunction = strScript
+End Function
+%&gt;
+</pre>
+
+<p>
+Mit der Funktion <i>BeginSection</i> wird der Anfang einer Content-Sektion markiert, mit <i>EndSection</i>
+abgeschlossen. Warum &uuml;berhaupt mehrere Content-Sektionen verstecken? Nun, wir wollen es den Blockern nicht
+unbedingt erleichtern, unseren Code herauszunehmen, oder?
+</p>
+<p>
+Wichtig ist <i>GetImageFunction</i>, die in jedem zu sch&uuml;tzenden Image Tag aufgerufen werden mu&szlig; (Beispiel
+folgt sofort). Damit wei&szlig; das Script, wie die JavaScript Funktion in <i>GetDisplayFunction</i> angepasst
+werden mu&szlig;.
+</p>
+
+<h3>Ein Zwangsbannerseite</h3>
+<p>
+Genug der Vorabeiten - wie sieht nun der Code aus, den man in eine zu sch&uuml;tzende Seite einbauen mu&szlig;? Ein
+Beispiel w&auml;re die Datei <b>bannerpage.asp</b>:
+</p>
+
+<pre style="background='silver';">
+&lt;% Option Explicit %&gt;
+&lt;html&gt;
+&lt;head&gt;
+	&lt;title&gt;Bannerpage&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;!--#include file="bannerfunctions.asp"--&gt;
+&lt;%=ShowWaitMessage()%&gt;
+&lt;%PreCreateSections(2)%&gt;
+
+&lt;%=BeginSection(1)%&gt;
+&lt;p&gt;Dieser Content wird erst nach dem Banner sichtbar - inklusive dem Banner.&lt;/p&gt;
+&lt;img src="http://ads.softartisans.com/servead.asp?s=11&amp;b=1" &lt;%=GetImageFunction()%&gt;&gt;
+&lt;%=EndSection()%&gt;
+
+&lt;%=BeginSection(2)%&gt;
+&lt;p&gt;Weiterer Text, nur als Demo gedacht.&lt;/p&gt;
+&lt;%=EndSection()%&gt;
+
+&lt;%=GetDisplayFunction%&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Zuerst wird <i>ShowWaitMessage</i> aufgerufen, danach mit <i>PreCreateSections</i> die Sektionen (zwei an
+der Zahl hier) erzeugt. Und nun kann man mit <i>BeginSection</i> und <i>EndSection</i> den Content sch&uuml;tzen.
+In jedem Bannerimage wird <i>GetImageFunction</i> aufgerufen, und mittels <i>GetDisplayFunction</i> wird das JavaScript
+dann am Ende generiert.
+</p>
+<p>
+Das HTML sieht dann so aus:
+</p>
+
+<pre style="background='silver';">
+&lt;html&gt;
+&lt;head&gt;
+	&lt;title&gt;Bannerpage&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div id="divQLyVKAQ3JtdV"&gt;
+Bitte warten Sie, w&amp;auml;hrend die Seite geladen wird. ...
+&lt;/div&gt;
+
+&lt;div id="divoFkEnsWByT" STYLE="display:None;"&gt;
+
+&lt;p&gt;Dieser Content wird erst nach dem Banner sichtbar - inklusive dem Banner.&lt;/p&gt;
+&lt;img src="url removed" alt="" onload="setqBv4nJ7uobMWXV2()" &gt;
+
+&lt;/div&gt;
+
+&lt;div id="divQi3jesvMdf" STYLE="display:None;"&gt;
+
+&lt;p&gt;Weiterer Text, nur als Demo gedacht.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;SCRIPT LANGUAGE=JavaScript&gt;
+&lt;!--
+var varKBKozSWZPk=1;
+function setqBv4nJ7uobMWXV2() {
+varKBKozSWZPk--;
+if (0 == varKBKozSWZPk) {
+document.all.divQLyVKAQ3JtdV.style.display = "none";
+document.all.divoFkEnsWByT.style.display = "";
+document.all.divQi3jesvMdf.style.display = "";
+}
+}
+//--&gt;
+&lt;/SCRIPT&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Mit jedem Aufruf der Seite &auml;ndern sich die ID's der DIV Tags, der Name der Funktion und die Variable, die
+die Anzahl der Bilder speichert. Gemischt mit mehreren Content-Sektionen, eine &auml;u&szlig;erst schwer zu knackende
+Nu&szlig; f&uuml;r Banner-Blocker.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Perfekt ist das vorgestellte Skript nat&uuml;rlich nicht - die L&auml;ngen der Namen von DIV Tags, Variablen und Funktion
+sollten sich auch zuf&auml;llig &auml;ndern. Ein Problem kann dieses Script auch in bester Abwandlung nicht verhindern:
+wenn der Banner-Blocker ein Platzhalterbild statt dem originalen Werbebanner schickt.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20011001.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20011001.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000531.htm">Generieren eines sicheren Pa&szlig;wortes</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000531.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

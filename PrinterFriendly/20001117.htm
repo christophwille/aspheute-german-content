@@ -1,0 +1,172 @@
+<HTML>
+<HEAD>
+<TITLE>Einfaches XML-Auslesen in .NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im heutigen Artikel m&ouml;chte ich Ihnen zeigen, wie einfach es in .NET geworden ist, mit XML zu arbeiten. Um einen Vergleich zu erhalten, habe ich mir zum Ziel gesetzt, den Code des Artikels "Auslesen von XML Dateien mit dem DOM" nachzubauen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,XML,.NET,XmlDocument,XmlReader,XmlNode,XmlElement,ASPX,ASP.NET,C#,Csharp,C Sharp">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Einfaches XML-Auslesen in .NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/XML.htm">XML</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001117"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Im heutigen Artikel m&ouml;chte ich Ihnen zeigen, wie einfach es in .NET geworden ist, mit XML zu arbeiten.
+Um einen Vergleich zu erhalten, habe ich mir zum Ziel gesetzt, den Code des Artikels
+<a href="../artikel/20000417.htm">Auslesen von XML Dateien mit dem DOM</a> nachzubauen.
+</p>
+<p>
+Der Artikel verwendet auch heute wieder die Datei <a href="http://www.aspheute.com/currentarticles.xml" target="_blank">currentarticles.xml</a>,
+welche die f&uuml;nf neuesten Artikel von AspHeute.com beinhaltet. Die Struktur dieser XML Datei sieht wie folgt
+aus:
+</p>
+
+<pre style="background='silver';">
+&lt;?xml version="1.0" encoding="Windows-1252"?&gt;
+&lt;articles&gt;
+ &lt;article&gt;
+   &lt;title&gt;&lt;/title&gt;
+   &lt;author&gt;&lt;/author&gt;
+   &lt;url&gt;&lt;/url&gt;
+   &lt;date&gt;&lt;/date&gt;
+   &lt;description&gt;&lt;/description&gt;
+ &lt;/article&gt;
+&lt;/articles&gt;
+</pre>
+
+<p>
+Das <i>&lt;article&gt;</i> Element wiederholt sich f&uuml;nf Mal in dieser Datei.
+</p>
+<p>
+Wer heute mit dem MSXML Parser und dem DOM (Document Object Model) arbeitet, kennt dessen hierarchischen
+Aufbau. Die gute Nachricht - Sie m&uuml;ssen nicht allzuviel umlernen, bekommen aber vieles an neuer 
+Funktionalit&auml;t dazu. Alle Standards inklusive XPath sind in einfach zu verwendenden Objekten verpackt.
+</p>
+<p>
+Da wir heute aber einen Einstieg in XML f&uuml;r .NET machen, m&ouml;chte ich gar nicht zu weit vorgreifen, und das
+Beispiel f&uuml;r sich sprechen lassen:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Xml&quot; %&gt;
+&lt;%
+XmlDocument doc = new XmlDocument();
+doc.Load(Page.MapPath(&quot;currentarticles.xml&quot;));
+    
+XmlElement root = doc.DocumentElement;
+
+foreach(XmlNode article in root.ChildNodes)
+{
+  Response.Write(@&quot;&lt;font size=&quot;&quot;1&quot;&quot;&gt;[&quot; + article[&quot;date&quot;].InnerText);
+  Response.Write(&quot;] &lt;/font&gt;&quot;);
+  Response.Write(&quot;&lt;b&gt;&quot; + article[&quot;title&quot;].InnerText + &quot;&lt;/b&gt;&lt;br&gt;&quot;);
+  Response.Write(&quot;&lt;p&gt;&quot; + article[&quot;description&quot;].InnerText + &quot;&lt;/p&gt;\r\n&quot;);
+}
+%&gt;
+</pre>
+
+<p>
+Der Code ist leicht lesbar. Zuerst importiere ich den <i>System.Xml</i> Namespace, und erstelle mir ein 
+<i>XmlDocument</i> Objekt, in das ich meine XML Datei lade (<i>Load</i>). Von meinem Dokument mu&szlig; ich nun
+zum Root Element (<i>&lt;articles&gt;</i>), welches meine f&uuml;nf Kindelemente (=Artikel) enth&auml;lt. Dazu verwende
+ich die Eigenschaft <i>DocumentElement</i>.
+</p>
+<p>
+Das Iterieren &uuml;ber die Elemente funktioniert dankenswerterweise mit einer <i>foreach</i> Schleife, wobei die
+<i>ChildNodes</i> Collection zu Verwendung kommt - sie enth&auml;lt die Artikel. Der Output funktioniert hervorragend
+einfach: da jeder Artikel weitere Kindelemente (Titel, etc) hat, verwende ich den Indexer der Klasse:
+</p>
+
+<pre style="background='silver';">
+XmlElement xel = article[&quot;title&quot;];
+if (null != xel) Response.Write(xel.InnerText);
+</pre>
+
+<p>
+Hier habe ich die "korrekte" Verwendung dargestellt - es k&ouml;nnte ja sein, da&szlig; das gew&uuml;nschte Element nicht
+existiert. In diesem Fall wird <i>null</i> geliefert. Da ich in meinem Beispiel direkt auf <i>InnerText</i> durchgreife,
+k&ouml;nnte ich im Falle des Fehlens des Elements eine Null-Reference Exception erhalten. Damit so etwas bei einem wichtigen
+Element wie Titel nicht passiert, sollte man ein Schema (XSD) anlegen.
+</p>
+<p>
+Damit haben wir's auch schon - die Artikel werden ausgeben. Das Ganze sieht dann im Browser wie folgt aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200011/20001117.png" width="574" height="242" alt="" border="0">
+
+<p>
+Das Versch&ouml;nern des Outputs &uuml;berlasse ich Ihnen als Finger&uuml;bung.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Heute habe ich gezeigt, wie das Auslesen von XML unter .NET funktioniert, verglichen zu Code aus ASP und dem
+MSXML Parser. Obwohl wir nur wenige der vielen Klassen gestreift haben, k&ouml;nnen Sie bereits mit einfachen
+Ausgaben beginnen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001117.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20001117.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020416.htm">Arbeiten mit dem SQL Server XML View Mapper</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020416.htm</span><br>
+<a href="../artikel/20000417.htm">Auslesen von XML Dateien mit dem DOM</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000417.htm</span><br>
+<a href="../artikel/20020730.htm">C# XML-Kommentare &mdash; Dokumentation von selbst</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020730.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

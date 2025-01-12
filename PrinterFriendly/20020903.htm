@@ -1,0 +1,210 @@
+<HTML>
+<HEAD>
+<TITLE>Stored Procedures einfach erstellt</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Stored Procedures bieten sich als Schnittstelle zwischen Applikation und SQL Server Datenbank an. Warum werden SP's dann so selten eingesetzt? Weil viele Leute glauben, da&szlig; es mit viel Arbeit verbunden ist. Stimmt aber nicht.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Stored Procedure,wizard,create stored procedure wizard,sp,gespeicherte prozedur,sql,tsql,transact sql">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Stored Procedures einfach erstellt</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020903"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Stored Procedures bieten sich als Schnittstelle zwischen Applikation und SQL Server Datenbank geradezu an, da 
+man der Applikation nur Rechte auf die Stored Procedures geben mu&szlig;, und einen Direktzugriff auf Tabellen somit
+verhindern kann. Au&szlig;erdem ist es m&ouml;glich, erweiterte &Uuml;berpr&uuml;fungslogik in die Stored Procedure einzubauen - bevor
+ein INSERT, UPDATE oder DELETE ausgef&uuml;hrt wird. Warum werden SP's dann so selten eingesetzt? Weil viele Leute glauben,
+da&szlig; es mit viel Arbeit verbunden ist. Stimmt aber nicht.
+</p>
+<p>
+Dieser Irrglaube kommt daher, da&szlig; eine Stored Procedure (SP), auf den ersten Blick kompliziert zu programmieren scheint:
+</p>
+
+<pre style="background='silver';">
+CREATE PROCEDURE insert_Categories
+	(@CategoryID  [int],
+	 @CategoryName  [nvarchar](15),
+	 @Description  [ntext],
+	 @Picture  [image])
+
+AS INSERT INTO Categories 
+	 ( [CategoryID],
+	 [CategoryName],
+	 [Description],
+	 [Picture]) 
+ 
+VALUES 
+	(@CategoryID,
+	 @CategoryName,
+	 @Description,
+	 @Picture)
+GO
+</pre>
+
+<p>
+Das ist eine einfache SP f&uuml;r das Einf&uuml;gen von einem Datensatz in die <i>Categories</i> Tabelle in der Northwind Datenbank.
+Wenn man das jetzt f&uuml;r alle Tabellen machen mu&szlig;, und dann noch dazu f&uuml;r UPDATE und DELETE auch noch, dann sieht das nach
+viel Arbeit aus - auf den ersten Blick.
+</p>
+<p>
+Der Trick zur Arbeitsumgehung liegt im SQL Server Enterprise Manager:
+</p>
+
+<IMG SRC="/artikel/Bilder/200209/20020903_1.png" width="671" height="465" alt="" border="0">
+
+<p>
+Und zwar sehr versteckt unter dem Punkt <i>Tools/Wizards</i>:
+</p>
+
+<IMG SRC="/artikel/Bilder/200209/20020903_2.png" width="355" height="245" alt="" border="0">
+
+<p>
+Hier verstecken sich viele Wizards, die nicht &uuml;ber Kontextmen&uuml; oder andere Befehlssequenzen erreichbar sind, aber dennoch
+die t&auml;gliche Arbeit sehr erleichtern k&ouml;nnen, wie auch der <i>Create Stored Procedure Wizard</i>:
+</p>
+
+<IMG SRC="/artikel/Bilder/200209/20020903_3.png" width="344" height="448" alt="" border="0">
+
+<p>
+Damit kann man sich Stored Procedures erstellen lassen. Sehen wir uns das Schritt f&uuml;r Schritt an, wobei der erste Screen
+des Wizards ein Willkommensscreen ist und somit unwichtig. Auf dem zweiten Screen geht es um die Datenbankauswahl:
+</p>
+
+<IMG SRC="/artikel/Bilder/200209/20020903_4.png" width="498" height="391" alt="" border="0">
+
+<p>
+Aus dieser holt der Wizard dann eine Liste von Tabellen und Views, auf die man INSERT, UPDATE und DELETE Stored Procedures
+anlegen kann.
+</p>
+
+<IMG SRC="/artikel/Bilder/200209/20020903_5.png" width="498" height="391" alt="" border="0">
+
+<p>
+Ich habe die Categories Tabelle gew&auml;hlt, und alle drei SP-Typen angew&auml;hlt. Damit zeigt mir der Wizard dann folgenden Screen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200209/20020903_6.png" width="498" height="391" alt="" border="0">
+
+<p>
+Theoretisch w&auml;re man nun fertig, jedoch gefallen mir die Namen der SP's noch nicht, deshalb w&auml;hle ich den <i>Edit</i> Button:
+</p>
+
+<IMG SRC="/artikel/Bilder/200209/20020903_7.png" width="558" height="397" alt="" border="0">
+
+<p>
+Hier kann man nun den Namen der SP &auml;ndern, und auch Spalten abw&auml;hlen, die man nicht einf&uuml;gen will (zB Autowert Spalten und
+dergleichen). Will man noch mehr Kontrolle, kann man auch im Wizard gleich in das SQL eingreifen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200209/20020903_8.png" width="509" height="435" alt="" border="0">
+
+<p>
+Jedoch w&uuml;rde ich das Editieren eher nach der Generierung empfehlen, &uuml;ber die Eigenschaften der erzeugten SP:
+</p>
+
+<IMG SRC="/artikel/Bilder/200209/20020903_9.png" width="446" height="354" alt="" border="0">
+
+<p>
+Weil hier kann man auch gleich mitdefinieren, welche User welche Rechte auf der Stored Procedure haben sollen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200209/20020903_10.png" width="559" height="448" alt="" border="0">
+
+<p>
+F&uuml;r SELECT Abfragen mu&szlig; man die Stored Procedure &uuml;brigens noch von Hand erstellen, aber da meist parameterlos, sollte
+die SELECT SP keine gro&szlig;en Probleme aufwerfen - die arbeitsintensiven SP's werden durch den Wizard automatisch generiert.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Diese Tour durch den Create Stored Procedure Wizard hat neben der durch den Wizard gebotenen Funktionalit&auml;t einen
+weiteren Aspekt: viele interessante Features schlummern meist im verborgenen, dort, wo man selten oder nie solche
+n&uuml;tzlichen Hilfsmittel erwarten w&uuml;rde. 
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001124.htm">Aktualisieren von Daten mit dem UPDATE Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001124.htm</span><br>
+<a href="../artikel/20010329.htm">Auto-Generierung von performantem Abfragecode</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010329.htm</span><br>
+<a href="../artikel/20010327.htm">Code Generator f&uuml;r die AddNew Methode</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010327.htm</span><br>
+<a href="../artikel/20001023.htm">Das SQL Join Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001023.htm</span><br>
+<a href="../artikel/20001127.htm">Datens&auml;tze mit dem DELETE Statement l&ouml;schen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001127.htm</span><br>
+<a href="../artikel/20010308.htm">Der ADO Command Code Generator</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010308.htm</span><br>
+<a href="../artikel/20011015.htm">Der SQL UNION Operator</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011015.htm</span><br>
+<a href="../artikel/20001201.htm">Die SQL ORDER BY Clause</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001201.htm</span><br>
+<a href="../artikel/20010420.htm">Ein einfacher Query Analyzer</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010420.htm</span><br>
+<a href="../artikel/20001107.htm">Einf&uuml;gen eines Datensatzes mit dem INSERT Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001107.htm</span><br>
+<a href="../artikel/20001013.htm">Highspeed-Abfragen einer SQL Server Datenbank</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001013.htm</span><br>
+<a href="../artikel/20020322.htm">Query Express f&uuml;r MSDE</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020322.htm</span><br>
+<a href="../artikel/20011030.htm">SQL Injection</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011030.htm</span><br>
+<a href="../artikel/20001108.htm">SQL Server Objekte scripten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001108.htm</span><br>
+<a href="../artikel/20011017.htm">T-SQL Clauses: GROUP BY und HAVING</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011017.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

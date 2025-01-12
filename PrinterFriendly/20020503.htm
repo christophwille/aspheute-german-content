@@ -1,0 +1,164 @@
+<HTML>
+<HEAD>
+<TITLE>Show me the source - Includes aufgel&ouml;st</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Mit Hilfe des ISAPI Filters ssinc.dll kann man sich die ASP Dateien ansehen wie sie die ASP Engine ausf&uuml;hrt - nach dem Einbinden aller Includedateien.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SSI,server-side include,ssinc.dll,ISAPI,filter,include,expand,expandieren,auflösen,anzeigen,Sourcecode,Code,Source">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Show me the source - Includes aufgel&ouml;st</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020503"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Includes sind sehr praktisch, wenn man Funktionalit&auml;t in ASP Projekten gezielt wiederverwertbar machen m&ouml;chte. Der damit 
+erreichte Vorteil der Modularisierung hat einen "Nachteil" - m&ouml;chte man sich den gesamten Code einer ASP Seite ansehen, wie er von der 
+ASP Engine nach dem Expandieren der Includes ausgef&uuml;hrt wird, dann gibt es zwei Wege: manuell zusammenkopieren, was bei selbst verschachtelten
+Includes l&auml;stig wird, oder mit einem Winkelzug mit dem ISAPI Filter f&uuml;r SSI (server-side includes) automatisch anzeigen.
+</p>
+<p>
+Die erste Variante ist definitiv nicht zu empfehlen, au&szlig;er man hat h&ouml;chstens zwei oder drei Includes in Verwendung (und will nicht
+regelm&auml;&szlig;ig verschiedenste Dateien eines Projektes betrachten). Werden es mehr oder die Sourcereviews h&auml;ufiger,
+dann empfiehlt es sich, den ISAPI Filter f&uuml;r server-side Includes zweckzuentfremden. 
+</p>
+<p>
+Bei dieser Methode g&auml;be es wieder zwei Varianten: die ASP Dateiendung (tempor&auml;r) auf den ISAPI Filter zuweisen, oder eine zweite Site
+einrichten, die generell ASP auf diesen Filter gemappt hat, und nur zum Sourcecodelesen dient. Der heutige Artikel besch&auml;ftigt sich
+mit der zweiten Variante, da diese den Vorteil hat, sicherer zu sein: man zerst&ouml;rt nicht das Setup der echten Site, und man kann die zweite
+Site besser absichern. Allerdings gibt es einen Nachteil: es ist mehr Arbeit, die "Sourcesite" parallel zur echten Site zu f&uuml;hren.
+</p>
+
+<h2>Einrichten der Site</h2>
+<p>
+Ich habe ein Kochrezept zusammengestellt, um eine Site zu erstellen, die nur dem Lesen von Sourcecode dient. Der erste Schritt
+ist das Erstellen einer neuen Site, bevorzugt auf einem anderen Port als 80 - ich habe hier 8181 gew&auml;hlt:
+</p>
+
+<IMG SRC="/artikel/Bilder/200205/20020503_2.png" width="461" height="453" alt="" border="0">
+
+<p>
+Diese Site - <i>STM Site</i> - spiegelt die Hauptsite <i>Default Web Site</i>:
+</p>
+
+<IMG SRC="/artikel/Bilder/200205/20020503_1.png" width="621" height="384" alt="" border="0">
+
+<p>
+<b>Wichtig</b>: hat man virtuelle Verzeichnisse in der Hauptsite, so mu&szlig; man diese auch in der "Sourcesite" anlegen. Weil ich gerade
+von Source rede - wie kommt man denn nun an den expandierten Source einer Datei, die mehrere Includes enh&auml;lt? Nun, dazu mu&szlig; man die Dateiendung
+ASP auf den <i>ssinc.dll</i> ISAPI Filter ummappen (unter <i>Home Directory</i>/<i>Configuration</i>):
+</p>
+
+<IMG SRC="/artikel/Bilder/200205/20020503_3.png" width="488" height="554" alt="" border="0">
+
+<p>
+Aus Sicherheitsgr&uuml;nden habe ich alle unn&ouml;tigen Mappings bis auf <i>.asp</i> und <i>.asa</i> herausgel&ouml;scht. Danach habe ich das Mapping editiert:
+</p>
+
+<IMG SRC="/artikel/Bilder/200205/20020503_6.png" width="429" height="243" alt="" border="0">
+
+<p>
+Alles, was man tun mu&szlig;, ist per <i>Browse</i> den Filter von <i>asp.dll</i> auf <i>ssinc.dll</i> umzustellen (beide liegen im 
+gleichen Verzeichnis). Die gleiche Prozedur auch noch f&uuml;r die <i>.asa</i> Erweiterung, da&szlig; man sich auch die global.asa's expandiert ansehen kann.
+</p>
+
+<p>
+Eine freiwillige Sicherungsma&szlig;nahme ist diese:
+</p>
+
+<IMG SRC="/artikel/Bilder/200205/20020503_4.png" width="614" height="516" alt="" border="0">
+
+<p>
+Damit schr&auml;nkt man ein, wer Zugriff auf diese Site haben soll. Im Entwicklungsstadium ist es zwar nicht so "hei&szlig;", allerdings tut
+dieser geringe Mehraufwand sicherlich nicht "weh". Es soll ja auch weniger vertrauensw&uuml;rdige Kollegen im Firmennetzwerk geben,
+die keinen Zugriff auf den Code bekommen sollen (nicht einmal zuf&auml;llig).
+</p>
+
+<h2>Show me the source</h2>
+<p>
+Nach dieser Einrichtungsarbeit kann man schon auf seine Codeseiten surfen. Allerdings wird in den meisten aller F&auml;lle nichts
+oder HTML Fragmente angezeigt. Rechte Maustaste und View Source sind angesagt:
+</p>
+
+<IMG SRC="/artikel/Bilder/200205/20020503_5.png" width="548" height="482" alt="" border="0">
+
+<p>
+Und damit hat man dann den expandierten ASP Sourcecode vor sich, nachdem alle Includes eingebaut wurden. Wer sich &uuml;brigens fragt,
+ob Include-Anweisungen in Includedateien ebenfalls expandiert werden: ja. Im Dowload ist ein kleines Beispiel f&uuml;r den Selbstversuch
+mit dabei.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Es wird sicherlich nicht oft vorkommen, da&szlig; man auf diese Technik zur&uuml;ckgreifen mu&szlig;. Aber manchmal wird ein Fehler nur im Gesamtkontext
+sichtbar, beziehungsweise zwingen Dokumentationsrichtlinien dazu, den gesamten Code einer Seite in die Projektdokumentation aufzunehmen -
+und dann ist diese Technick sehr n&uuml;tzlich!
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020503.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020503.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000801.htm">Eine IP Adresse f&uuml;r mehrere Websites</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000801.htm</span><br>
+<a href="../artikel/20011204.htm">IIS, was machst du gerade?</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011204.htm</span><br>
+<a href="../artikel/20020305.htm">Mitlauschen bei der Browser-Webserver Kommunikation</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020305.htm</span><br>
+<a href="../artikel/20010423.htm">Tracing in ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010423.htm</span><br>
+<a href="../artikel/20001109.htm">Verzeichnissicherheit mit NTFS und IIS Authentifizierung</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001109.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

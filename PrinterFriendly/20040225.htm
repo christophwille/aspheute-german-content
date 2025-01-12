@@ -1,0 +1,539 @@
+<HTML>
+<HEAD>
+<TITLE>Installation von Subversion in einer .NET Entwicklungsumgebung</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Die derzeit sowohl preislich als auch funktionell interessanteste Software zur Versionsverwaltung stellt Subversion dar. Allerdings ist der Weg von der ersten Installation bis zum reibungsfreien Betrieb mitunter steinig.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Subversion,CVS,Source Safe,SourceSafe,VS.NET,VCS,version control,Versionskontrolle,Versionierung,change,Apache,Konfiguration,Integration,TortoiseSVN,AnkhSVN">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Installation von Subversion in einer .NET Entwicklungsumgebung</H1>
+<p>
+Geschrieben von: <a href="../autoren/alexanderzeitler.htm">Alexander Zeitler</a><br>
+Kategorie: <a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20040225"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Eine in Entwicklerkreisen wohlbekannte Aussage bzw. Frage d&uuml;rfte folgende sein: "Das hat doch schon funktioniert, warum 
+funktioniert es jetzt nicht mehr?". Wie sch&ouml;n w&auml;re es jetzt, den Stand des Quellcodes zur Verf&uuml;gung zu haben, der funktionierte. 
+Doch nat&uuml;rlich hat man in der Freude &uuml;ber die neu implementierten Features v&ouml;llig vergessen, den Quellcode zu sichern. 
+</p>
+<p>
+Diese oder &auml;hnliche Probleme hat sicher jeder von uns bereits erlebt. Doch das mu&szlig; nicht sein - die 
+L&ouml;sung hei&szlig;t Versionsverwaltung.
+</p>
+<p>
+Sie bietet die M&ouml;glichkeit jeden Entwicklungsschritt zur&uuml;ckzuverfolgen und auf jede
+gesicherte Version jeder zu dem Projekt geh&ouml;rigen Datei zur&uuml;ckzugreifen.
+Dabei wird die Entwicklung im Team unterst&uuml;tzt und es ist mehreren Mitarbeitern eines
+Projekts m&ouml;glich, gleichzeitig die gleichen Dateien zu bearbeiten.
+</p>
+<p>
+Die derzeit sowohl preislich als auch funktionell interessanteste Software zur Versionsverwaltung stellt Subversion dar. 
+Allerdings ist der Weg von der ersten Installation bis zum reibungsfreien Betrieb in einer .NET-Entwicklungsumgebung mitunter 
+steinig. Einige Steine soll dieser Artikel aus dem Weg r&auml;umen.
+</p>
+
+<h2>Ziel und Systemvoraussetzungen</h2>
+<p>
+Das Ziel dieses Artikels ist die Einrichtung eines Windows 2003 Servers mit Subversion mit mehreren Repositories, auf welche 
+verschiedene User mit unterschiedlichen Rechten per Visual Studio .NET 2003 zugreifen k&ouml;nnen. Entgegen den  Erwartungen l&auml;uft 
+Subversion jedoch nicht mit dem IIS, weswegen wir den Apache Webserver ben&ouml;tigen. Da Visual Studio .NET normalerweise nur 
+Microsoft Visual SourceSafe unterst&uuml;tzt ben&ouml;tigen wir f&uuml;r Visual Studio .NET noch ein Add-In: AnkhSVN. Ferner ist eine 
+Administration auf Kommandozeilenebene nicht mehr zeitgem&auml;&szlig;. Deshalb verwenden wir hierf&uuml;r TortoiseSVN.
+</p>
+<p>
+Somit ergibt sich also folgende Anforderungsliste:
+</p>
+<p>
+Server:
+</p>
+
+<ul>
+<li><a href="http://www.microsoft.com/germany/server" target="_blank">Server mit Windows 2000 / 2003</a>
+<li><a href="http://httpd.apache.org/download.cgi" target="_blank">Apache Webserver</a> (mind. 2.0.48)
+<li><a href="http://subversion.tigris.org/servlets/ProjectDocumentList?folderID=91" target="_blank">Subversion</a>
+<li><a href="http://tortoisesvn.tigris.org/servlets/ProjectDocumentList?folderID=616" target="_blank">TortoiseSVN</a>
+</ul>
+
+<p>
+Client:
+</p>
+
+<ul>
+<li><a href="http://subversion.tigris.org/servlets/ProjectDocumentList?folderID=91" target="_blank">Subversion</a>
+<li><a href="http://tortoisesvn.tigris.org/servlets/ProjectDocumentList?folderID=616" target="_blank">TortoiseSVN</a>
+<li><a href="http://ankhsvn.tigris.org/servlets/ProjectDocumentList?folderID=1520" target="_blank">AnkhSVN</a>
+</ul>
+
+<h2>Server-Installation und Konfiguration</h2>
+<p>
+Da&szlig; die Serverinstallation von Windows 2000 bzw. 2003 funktioniert hat, setze ich hier voraus. 
+</p>
+<p>
+Auch die Basis-Installation des Apache Webserver, der mindestens in der Version 2.0.48 vorliegen mu&szlig;, sollte dank 
+MSI-Installer keine Probleme bereiten - gleiches gilt f&uuml;r Subversion und TortoiseSVN.
+</p>
+<p>
+Entscheidend komplexer stellt sich hingegen die Konfiguration des Apache Servers f&uuml;r die Zusammenarbeit mit Subversion dar.
+</p>
+<p>
+Da auf einem Windows Server in aller Regel der Internet Information Server installiert ist und dieser wiederum auf Port 80 l&auml;uft, 
+werden nach der Apache-Installation sicher Probleme auftauchen, da Apache ebenfalls versucht, Port 80 zu benutzen.
+</p>
+<p>
+Die erste Konfigurationseinstellung, die wir deshalb &auml;ndern, ist der Port des Apache-Webservers. Diese Einstellung findet sich 
+in der Datei httpd.conf, welche man entweder &uuml;ber das Startmen&uuml; oder nach einer Standard-Installation unter 
+"C:\Program Files\Apache Group\Apache2\conf\httpd.conf" findet.
+</p>
+<p>
+Der Eintrag findet sich unter dem Schl&uuml;sselwort "Listen" (also an welchem Port Apache "horchen" soll). Der aktuelle Eintrag:
+</p>
+
+<pre style="background='silver';">
+Listen 80
+</pre>
+
+<p>
+ist zu &auml;ndern in:
+</p>
+
+<pre style="background='silver';">
+Listen 8080
+</pre>
+
+<p>
+Danach sollte Apache ordnungsgem&auml;&szlig; starten und seine Testseite wie folgt pr&auml;sentieren:
+</p>
+
+<IMG SRC="/artikel/Bilder/200402/20040215_1.png" width="520" height="381" alt="" border="0">
+
+<p>
+Wenn Sie Subversion nach dem Apache Webserver installiert haben, sollte Subversion den Apache Server finden und die 
+nachfolgenden Konfigurationseinstellungen selbst&auml;ndig vornehmen. Ist dies nicht der Fall, sind die folgenden Schritte 
+zu erledigen, bevor wir ein Repository anlegen k&ouml;nnen:
+</p>
+<p>
+Die Dateien mod_dav_svn.so und mod_authz_svn.so aus dem Verzeichnis C:\Program Files\Subversion\Apache2\modules sind in das 
+Apache-Modules-Verzeichnis zu kopieren (C:\Program Files\Apache Group\Apache2\modules).
+</p>
+<p>
+Weiterhin m&uuml;ssen die Dateien libdb42.dll , libeay32.dll und ssleay32.dll aus dem Verzeichnis C:\Program Files\Subversion\bin in 
+das Apache-Modules-Verzeichnis kopiert werden.
+</p>
+<p>
+Nun sind die Voraussetzungen geschaffen, um Subversion und Apache zusammenarbeiten zu lassen - allerdings wei&szlig; Apache noch nichts 
+von Subversion, was wir jetzt durch einige Konfigurationseinstellungen &auml;ndern werden.
+</p>
+<p>
+Zun&auml;chst  mu&szlig; hierzu ein neues Repository angelegt werden. Hierf&uuml;r legen wir uns einen Ordner an, der alle Repositories 
+aufnimmt, in unserem Falle verwende ich 
+</p>
+
+<pre style="background='silver';">
+D:\SVN
+</pre>
+
+<p>
+Unterhalb dieses Ordners ist nun noch ein Ordner f&uuml;r das eigentliche Repository n&ouml;tig. Da unser (fiktives Artikel-)Projekt den 
+Titel MyProject tr&auml;gt, verwende ich diesen auch f&uuml;r den Ordner.
+</p>
+<p>
+Das Anlegen des Repositories geschieht mittels TortoiseSVN durch einen Rechtsklick in dem Repository-Ordner "MyProject" auf die 
+Option "Projektarchiv hier erstellen":
+</p>
+
+<IMG SRC="/artikel/Bilder/200402/20040215_2.png" width="467" height="569" alt="" border="0">
+
+<p>
+Damit ist das Anlegen des Repositories bereits erledigt und wir k&ouml;nnen uns wieder der httpd.conf des Apache zuwenden.
+</p>
+<p>
+In dieser sollten sich die beiden Zeilen
+</p>
+
+<pre style="background='silver';">
+#LoadModule dav_module modules/mod_dav.so
+</pre>
+
+<p>
+und
+</p>
+
+<pre style="background='silver';">
+#LoadModule dav_fs_module modules/mod_dav_fs.so
+</pre>
+
+<p>
+befinden. Ist dies der Fall, sind bei beiden Zeilen die "#"-Zeichen zu entfernen. Sollten die Zeilen nicht existieren, 
+sind diese ohne # hinzuzuf&uuml;gen.
+</p>
+<p>
+Weiterhin sind am Ende der "LoadModule"-Auflistung folgende Zeilen hinzuzuf&uuml;gen:
+</p>
+
+<pre style="background='silver';">
+LoadModule dav_svn_module modules/mod_dav_svn.so
+LoadModule authz_svn_module modules/mod_authz_svn.so
+</pre>
+
+<p>
+Danach ist der Apache &uuml;ber den in der Systray abgelegten Apache Service Monitor neu zu starten:
+</p>
+
+<IMG SRC="/artikel/Bilder/200402/20040215_3.png" width="567" height="397" alt="" border="0">
+
+<p>
+Nun ist am Ende der httpd.conf folgendes einzuf&uuml;gen:
+</p>
+
+<pre style="background='silver';">
+&lt;Location /svn/MyProject&gt;
+DAV svn
+SVNPath D:/SVN/MyProject
+AuthType Basic
+AuthName "MyProject Repository"
+AuthUserFile MyProjectpasswd
+Require valid-user
+&lt;/Location&gt;
+</pre>
+
+<p>
+Nach einen Neustart des Apache ist das Repository von MyProject bereits &uuml;ber 
+</p>
+
+<pre style="background='silver';">
+http://localhost:8080/svn/MyProject
+</pre>
+
+<p>
+verf&uuml;gbar. Allerdings nur f&uuml;r registrierte, hei&szlig;t in der Pa&szlig;wort-Datei "MyProjectpasswd" bekannte Benutzer. Da wir diese 
+bisher weder definiert noch mit User-Accounts best&uuml;ckt haben kann sich also noch niemand anmelden.
+</p>
+<p>
+Damit dies nicht so bleibt erzeugen wir mit dem Kommandozeilen-Tool "htpasswd", welches sich im Verzeichnis \bin der 
+Apache-Verzeichnisstruktur befindet ein neues Pa&szlig;wort-File, dem wir auch gleich einen User "Alex" zuordnen.
+</p>
+<p>
+Da wir die Pa&szlig;wort-Datei im Root-Verzeichnis der Apache-Verzeichnisstruktur angegeben haben, m&uuml;ssen wir sie auch dort anlegen. 
+Der Aufruf von htpasswd sieht deshalb wie folgt aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200402/20040215_4.png" width="590" height="91" alt="" border="0">
+
+<p>
+Wenn Sie weitere Benutzer hinzuf&uuml;gen m&ouml;chten, mu&szlig; htpasswd ohne die Option "-c" aufgerufen werden.
+</p>
+<p>
+Damit ist ein Aufruf des Repositories nach einem weiteren Apache-Neustart ab sofort problemlos m&ouml;glich.
+</p>
+<p>
+Unter http://localhost:8080/svn/MyProject sollte sich folgendes Bild pr&auml;sentieren:
+</p>
+
+<IMG SRC="/artikel/Bilder/200402/20040215_5.png" width="508" height="493" alt="" border="0">
+
+<p>
+Nach der Eingabe des Usernamen und Pa&szlig;wort schlie&szlig;lich wird das (noch leere) Repository von MyProject im Browser dargestellt:
+</p>
+
+<IMG SRC="/artikel/Bilder/200402/20040215_6.png" width="508" height="242" alt="" border="0">
+
+<p>
+Somit steht einer weiteren Verwendung dieses Repositories f&uuml;r unser Projekt nichts mehr im Wege.
+</p>
+
+<h2>Integration in Visual Studio.NET</h2>
+<p>
+Die Integration von Subversion geschieht wie Eingangs bereits erw&auml;hnt, &uuml;ber das Add-In AnkhSVN, dessen Installation reibungslos 
+durch den mitgelieferten Installer erfolgen sollte.
+</p>
+<p>
+Verwendet man Subversion bzw. AnkSVN, um WinForm-Applikationen oder Webservices zu verwalten, stellt dies kein Problem dar - Subversion ist gem&auml;&szlig; 
+<a href="http://svnbook.red-bean.com/" target="_blank">Handbuch</a> verwendbar.
+</p>
+<p>
+Anders gestaltet sich dies bei ASP.NET-Webanwendungen. Da Visual Studio.NET hier ein Problem mit Ordnern hat, deren Endung mit 
+einem Punkt beginnen, stellt der obligatorische ".SVN"-Ordner in jedem Verzeichnis der Arbeitskopie unseres Repositories eine 
+H&uuml;rde dar. Diese &auml;u&szlig;ert sich beim Laden und Aktualisieren des Projektmappenexplorers wie folgt:
+</p>
+
+<IMG SRC="/artikel/Bilder/200402/20040215_7.png" width="578" height="107" alt="" border="0">
+
+<p>
+Die Fehlermeldung f&uuml;hrt zwar nicht dazu, da&szlig; eine weitere Arbeit nicht mehr m&ouml;glich ist, doch sie st&ouml;rt erheblich.
+</p>
+<p>
+Abhilfe schafft die Verwendung von zwei Batchfiles, die in den jeweiligen Ordnern der Arbeitskopie abzulegen sind:
+</p>
+
+<pre style="background='silver';">
+hide-svn.cmd:
+@ECHO OFF
+FOR /R %%f IN (.svn) DO IF EXIST "%%f" (
+   ATTRIB -h "%%f"
+   RENAME "%%f" _svn
+)
+</pre>
+
+<pre style="background='silver';">
+restore-svn.cmd:
+@ECHO OFF
+FOR /R %%f IN (_svn) DO IF EXIST "%%f" (
+   RENAME "%%f" .svn
+   ATTRIB +h "%%~pf\.svn"
+    ) 
+</pre>
+
+<p>
+"hide-svn.cmd" ist vor dem &Ouml;ffnen des Projekts in VS.NET aufzurufen. Die Batchdatei benennt dann den .SVN-Ordner in "_SVN" um und 
+VS.NET kann das Projekt problemlos laden. Nach dem Laden kann man "restore-svn.cmd" aurufen, was den eben beschrieben Proze&szlig; 
+wieder r&uuml;ckg&auml;ngig macht. Will man zwischendurch den Projektmappenexplorer aktualisieren, ist diese Prozedur wieder auszuf&uuml;hren.
+</p>
+<p>
+Da dies zugegebenerma&szlig;en sehr umst&auml;ndlich ist, sollte man eine zweite, elegantere und vor allem dauerhaft einfach zu 
+bedienende L&ouml;sung bevorzugen. 
+</p>
+<p>
+Hierzu ist allerdings einmalig etwas Feintuning sowie eine ge&auml;nderte Arbeitsweise im Umgang mit ASP.NET-Projekten in VS.NET notwendig.
+</p>
+<p>
+Neue ASP.NET-Projekte, die mit Subversion verwaltet werden sollen, d&uuml;rfen nicht mehr als "ASP.NET-Webanwendung" verwendet werden, 
+sondern m&uuml;ssen nach dem Anlegen in Lokale Projekte umgewandelt werden.
+</p>
+<p>
+Um dies jedoch mit MyProject tun zu k&ouml;nnen, m&uuml;ssen wir es erst als ASP.NET-Webanwendung anlegen. Damit die sowohl die 
+Projektinformationen als auch die eigentlichen Sourcecode-Dateien mittels Subversion verwaltet werden k&ouml;nnen, d&uuml;rfen wir es jedoch 
+nicht auf dem gewohnten Weg anlegen. Stattdessen ist zun&auml;chst im Visual Studio Projektordner, der normalerweise unter 
+<i>C:\Dokumente und Einstellungen\&lt;BenutzerName&gt;\Eigene Dateien\Visual Studio Projekte\</i> liegt h&auml;ndisch ein neuer Ordner 
+"MyProject" anzulegen.Danach wird im IIS-Manager ein neues virtuelles Verzeichnis mit dem Namen "MyProject" angelegt, welches auf den 
+soeben angelegten Ordner verweist. Ein detailierte Anleitung finden Sie 
+<a href="http://www.dotnetgerman.com/blogs/aspxintra.net/PermaLink.aspx?guid=f56e5b07-33b8-4cad-b252-95ad561e2448">hier</a>.
+</p>
+<p>
+Nachdem das Web angelegt wurde, k&ouml;nnen wir nun in VS.NET eine neue ASP.NET-Webanwendung mit dem Namen "MyProject" anlegen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200402/20040215_8.png" width="531" height="371" alt="" border="0">
+
+<p>
+Direkt im Anschlu&szlig; k&ouml;nnen wir die erzeugte Projektmappe schlie&szlig;en. Das Projekt mu&szlig; nun nachtr&auml;glich in ein lokales Projekt 
+umgewandelt werden. Hierzu ist die Datei <i>C:\Dokumente und Einstellungen\&lt;BenutzerName&gt;\Eigene Dateien\Visual Studio Projekte\MyProject\MyProject.sln</i> 
+in einem Texteditor zu &ouml;ffnen.
+</p>
+<p>
+Die Zeile (nur der Lesbarkeit halber hier auf mehrere Zeilen verteilt)
+</p>
+
+<pre style="background='silver';">
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyProject", 
+	"http://localhost/MyProject/MyProject.csproj", 
+	"{42E73FAB-08AE-492E-B6D8-FB380EB43AF7}"
+</pre>
+
+<p>
+ist wie folgt zu &auml;ndern:
+</p>
+
+<pre style="background='silver';">
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyProject", 
+	"MyProject.csproj", 
+	"{42E73FAB-08AE-492E-B6D8-FB380EB43AF7}"
+</pre>
+
+<p>
+D.h. die Server-Information samt Pfadangaben ist zu l&ouml;schen. Danach kann diese Datei gespeichert und geschlossen werden.
+</p>
+<p>
+Sollte eine Datei mit der Endung ".webinfo" existieren, ist diese zu l&ouml;schen.
+</p>
+<p>
+Nun ist die Datei "MyProject.csproj" im gleichen Ordner in einem Texteditor zu &ouml;ffnen.
+</p>
+<p>
+Der Eintrag
+</p>
+
+<pre style="background='silver';">
+ProjectType = "Web"
+</pre>
+
+<p>
+ist zu &auml;ndern in
+</p>
+
+<pre style="background='silver';">
+ProjectType = "Local"
+</pre>
+
+<p>
+Danach kann auch diese Datei wieder geschlossen werden.
+</p>
+<p>
+Wenn Sie nun "MyProject" wieder in VS.NET &ouml;ffnen, werden sie zun&auml;chst bis auf ein ver&auml;ndertes Projektmappen-Symbol im 
+Projektmappenexplorer keine Ver&auml;nderungen feststellen.
+</p>
+<p>
+Doch wenn Sie nun versuchen, ein neues Webform oder andere Web-bezogene Elemente hinzuzuf&uuml;gen, werden Sie sicher entsetzt 
+feststellen, da&szlig; dies nicht mehr m&ouml;glich ist.
+</p>
+<p>
+Der Grund hierf&uuml;r ist schlicht und ergreifend, da&szlig; VS.NET f&uuml;r den Projekttyp "Local" andere Vorlagen hinterlegt hat, als f&uuml;r den 
+Projekttyp "Web". Deshalb m&uuml;ssen wir VS.NET nun auch f&uuml;r die lokalen Projekte die Webprojekt-Elemente zur Verf&uuml;gung stellen.
+</p>
+<p>
+Dies geschieht einfach dadurch, da&szlig; alle in der Datei <i>C:\Programme\Microsoft Visual Studio .NET 2003\VC#\CSharpProjectItems\WebProjectItems\WebProjectItems.vsdir</i> 
+stehenden Eintr&auml;ge in der Datei <i>C:\Programme\Microsoft Visual Studio .NET 2003\VC#\CSharpProjectItems\LocalProjectItems\LocalProjectItems.vsdir</i>
+anzuf&uuml;gen sind. F&uuml;r VB.NET oder andere Sprachen lauten die Ordner analog.
+</p>
+<p>
+Nach einem Neustart von VS.NET und einem erneuten Aufruf von "MyProject" stehen nun die bekannten Elemente wieder zur Verf&uuml;gung. 
+Allerdings nicht wie gewohnt direkt im Kontextmen&uuml; der Projektmappe, sondern &uuml;ber den Kontextmen&uuml;eintrag 
+"Neues Element hinzuf&uuml;gen...".
+</p>
+<p>
+Was jetzt noch fehlt, um MyProject mit Subversion verwalten zu k&ouml;nnen, ist die Daten von MyProject  in das bereits angelegte Repository auf 
+unserem Server zu kopieren.
+</p>
+<p>
+Hierzu ist zun&auml;chst ein initialer CheckOut durchzuf&uuml;hren, der eine Arbeitskopie unseres Repositories erzeugt. Der Aufruf geschieht 
+in dem VS.NET-Ordner MyProject, in dem sich die Projektdateien befinden durch einen Rechtsklick, welcher TortoiseSVN ans Tageslicht 
+bef&ouml;rdert (Sie sollten den Rechner nach der Installation von TortoiseSVN neu starten, damit die Shell-Erweiterungen aktiviert werden):
+</p>
+
+<IMG SRC="/artikel/Bilder/200402/20040215_9.png" width="590" height="449" alt="" border="0">
+
+<p>
+Nach dem Klick auf "Auschecken" &ouml;ffnet sich der folgende Dialog:
+</p>
+
+<IMG SRC="/artikel/Bilder/200402/20040215_10.png" width="456" height="282" alt="" border="0">
+
+<p>
+Ein Klick auf "Ok" zeigt uns nun einen Login-Dialog, den wir mit den auf dem Server angelegten Login-Daten versorgen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200402/20040215_11.png" width="336" height="169" alt="" border="0">
+
+<p>
+Bei korrekter Eingabe sollte TortoiseSVN den CheckOut-Vorgang starten und dessen erfolgreichen 
+Abschlu&szlig; nach kurzer Zeit wie folgt best&auml;tigen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200402/20040215_12.png" width="554" height="271" alt="" border="0">
+
+<p>
+Nun fehlt nur noch der Import der bereits vorhandenen Dateien in das Repository, was einfach durch das markieren aller Dateien und 
+Ordner (au&szlig;er dem durch den CheckOut angelegten .SVN-Ordner) und einem anschlie&szlig;enden Rechtsklick und "Hinzuf&uuml;gen" gestartet wird:
+</p>
+
+<IMG SRC="/artikel/Bilder/200402/20040215_13.png" width="190" height="287" alt="" border="0">
+
+<p>
+Nach einem Klick auf "Ok" im unten dargestellten Dialog
+</p>
+
+<IMG SRC="/artikel/Bilder/200402/20040215_14.png" width="374" height="284" alt="" border="0">
+
+<p>
+werden die Files schlie&szlig;lich hinzuf&uuml;gt:
+</p>
+
+<IMG SRC="/artikel/Bilder/200402/20040215_15.png" width="554" height="271" alt="" border="0">
+
+<p>
+Damit die Dateien nun endg&uuml;ltig gespeichert werden, m&uuml;ssen sie noch auf den Server &uuml;bertragen werden. Dies geschieht durch einen 
+neuerlichen Rechtsklick und die Auswahl von "&Uuml;bertragen":
+</p>
+
+<IMG SRC="/artikel/Bilder/200402/20040215_16.png" width="192" height="370" alt="" border="0">
+
+<p>
+Nach Eingabe der Log Meldung "Erster Import." und einem Klick auf "Ok" startet TortoiseSVN die &Uuml;bertragung aller Projektdateien 
+auf unseren Server. Dieser Vorgang kann je nach Umfang der Dateien und Verbindungsgeschwindigkeit einige Zeit in Anspruch nehmen 
+und endet mit einer Best&auml;tigung &auml;hnlich der des CheckOut- oder des Hinzuf&uuml;gen-Vorgangs:
+</p>
+
+<IMG SRC="/artikel/Bilder/200402/20040215_17.png" width="554" height="271" alt="" border="0">
+
+<p>
+Wenn Sie MyProject nun in VS.NET &ouml;ffnen, wird sich Ihnen zum ersten Mal AnkhSVN im Projektmappenexplorer pr&auml;sentieren:
+</p>
+
+<IMG SRC="/artikel/Bilder/200402/20040215_18.png" width="235" height="194" alt="" border="0">
+
+<p>
+Hier stehen Ihnen nun die wichtigsten Funktionen zum Hinzuf&uuml;gen neuer oder &Uuml;bertragen ge&auml;nderter Dateien direkt in
+Visual Studio .NET zur Verf&uuml;gung.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Damit sind wir am Ende der Installation von Subversion und seinen Utilities in einer .NET Entwicklungsumgebung angekommen. Wenn Sie 
+sich nun zu Recht fragen, wie Subversion, TortoiseSVN oder AnkhSVN denn zu bedienen sind, mu&szlig; ich Sie an das bereits erw&auml;hnte 
+<a href="http://svnbook.red-bean.com" target="_blank">SVN-Book</a> sowie die jeweils verf&uuml;gbaren Programmdokumentationen verweisen. 
+Alleine das SVN-Book ist bereits &uuml;ber 250 Seiten dick und w&uuml;rde den Rahmen eines Artikels sprengen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fankhsvn%2Etigris%2Eorg%2Fservlets%2FProjectDocumentList%3FfolderID%3D1520">AnkhSVN</a><br>
+<SPAN class="content">http://ankhsvn.tigris.org/servlets/ProjectDocumentList?folderID=1520</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fhttpd%2Eapache%2Eorg%2Fdownload%2Ecgi">Apache Webserver</a><br>
+<SPAN class="content">http://httpd.apache.org/download.cgi</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsubversion%2Etigris%2Eorg%2Fservlets%2FProjectDocumentList%3FfolderID%3D91">Subversion</a><br>
+<SPAN class="content">http://subversion.tigris.org/servlets/ProjectDocumentList?folderID=91</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsvnbook%2Ered%2Dbean%2Ecom">SVN-Book</a><br>
+<SPAN class="content">http://svnbook.red-bean.com</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Ftortoisesvn%2Etigris%2Eorg%2Fservlets%2FProjectDocumentList%3FfolderID%3D616">TortoiseSVN</a><br>
+<SPAN class="content">http://tortoisesvn.tigris.org/servlets/ProjectDocumentList?folderID=616</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,524 @@
+<HTML>
+<HEAD>
+<TITLE>Auswertung von HTML Formularen mit ASP</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel beschreibt die Grundlagen der Programmierung von HTML Formularen, und wie man Formulardaten in ASP Seiten auswertet.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP,HTML,FORM,Formular,Auswertung,QueryString,Form,Request,Item">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Auswertung von HTML Formularen mit ASP</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000406"></SCRIPT>
+</p>
+<p>
+Sicherlich kennen sie die Eingabeformulare in HTML Seiten. Sie werden zum Beispiel benutzt um Registrierungsdaten 
+einzugeben, oder um in einer Suchmaschine den Suchbegriff festzulegen.
+</p>
+<p>
+Wie sieht nun der HTML Code eines Formulares prinzipiell aus? Um ein Formular zu kennzeichnen bedarf 
+es des <i>&lt;FORM&gt;</i> Tags.  
+</p>
+<p>
+Die wichtigsten Parameter des &lt;FORM&gt; Tags sind wie folgt:
+</p>
+<p>
+<table cellspacing=3 cellpadding=3>
+<tr>
+	<td>ACTION</td>
+	<td>Internet-Adresse, an welche der Inhalt des Formulars geschickt wird</td>
+</tr>
+<tr>
+	<td>METHOD</td>
+	<td>Methode der Daten&uuml;bertragung (GET oder POST)</td>
+</tr>
+<tr>
+	<td>ENCTYPE</td>
+	<td>Codierungsart der Daten </td>
+</tr>
+</table>
+</p>
+<p>
+Somit k&ouml;nnte ein Formular wie folgt eingeleitet werden:
+</p>
+<p>
+<pre style="background='silver';">&lt;FORM ACTION="http://www.aspgerman.com" METHOD="Get"&gt;</pre>
+</p>
+<p>
+Zwischen dem &lt;FORM&gt; und dem &lt;/FORM&gt; Tag des Formulars stehen die HTML Tags der Formularelemente:
+</p>
+<h3>Textfeld</h3>
+<p>
+Erlaubt dem User Text einzugeben
+<pre style="background='silver';">
+&lt;INPUT TYPE="Text" NAME="TextName" VALUE="Wert1"&gt; 
+</pre>
+</p>
+<h3>Passwortfeld</h3>
+<p>
+Das Passwortfeld sieht im Prinzip gleich aus wie das Textfeld, hier wird aber der Text beim Eintippen unkenntlich 
+gemacht und als *** angezeigt
+<pre style="background='silver';">&lt;INPUT TYPE="Password" NAME="PasswordName" VALUE="Wert7"&gt;</pre>
+</p>
+<h3>Verborgenes Feld</h3>
+<p>
+In diesem Feld ist der Text nicht sichtbar oder &auml;nderbar, der Wert wird mit dem Formular geschickt
+<pre style="background='silver';">
+&lt;INPUT TYPE="Hidden" NAME="HiddenName" VALUE="Wert2"&gt;
+</pre>
+</p>
+<h3>Checkbox</h3>
+<p>
+Das ist ein Feld zum Ankreuzen. Der Parameter "CHECKED" gibt an, da&szlig; das Feld standardm&auml;&szlig;ig angekreuzt ist. 
+Diese Felder k&ouml;nnen, m&uuml;ssen aber nicht markiert werden.
+<pre style="background='silver';">
+&lt;INPUT TYPE="Checkbox" NAME="CheckboxName" VALUE="Wert5"&gt;
+&lt;INPUT TYPE="Checkbox" NAME="CheckboxName" VALUE="Wert6" CHECKED&gt;
+</pre>
+</p>
+<h3>Radio-Button</h3>
+<p>
+Ein Feld zum Ausw&auml;hlen, bei mehreren Radio-Kn&ouml;pfen mit selben Namen kann immer nur einer ausgew&auml;hlt werden. 
+Der Parameter "CHECKED" gibt an, da&szlig; das Feld standardm&auml;&szlig;ig ausgew&auml;hlt ist.
+<pre style="background='silver';">
+&lt;INPUT TYPE="Radio" NAME="RadioName" VALUE="Wert3"&gt;
+&lt;INPUT TYPE="Radio" NAME="RadioName" VALUE="Wert4" CHECKED&gt;
+</pre>
+</p>
+<h3>Button (Knopf)</h3>
+<p>
+Dieser Button kann gedr&uuml;ckt werden, hat aber nur im Zusammenspiel mit client-side JavaScript/VBScript eine 
+Funktion. Der Wert wird nicht mit dem Formular abgesendet.
+<pre style="background='silver';">
+&lt;INPUT TYPE="Button" NAME="ButtonName" VALUE="Wert8"&gt;
+</pre>
+</p>
+<h3>Bild Knopf / Image Button</h3>
+<p>
+Der Image Button kann statt dem Submit Knopf verwendet werden. Beim Klicken auf das Bild wird das Formular 
+abgesendet und die X- und Y-Koordinaten der Mouseposition werden auch mitgeschickt 
+(als Werte von ImageName.x und ImageName.y). Das Bild des Knopfes selbst wird von der Internetadresse 
+bezogen, die im Parameter SRC angegeben ist. Der Parameter Border gibt die St&auml;rke der Bildumrandung vor.
+<pre style="background='silver';">
+&lt;INPUT TYPE="Image" NAME="ImageName" 
+	SRC="http://www.aspgerman.com/button1.jpg" BORDER="0"&gt;
+</pre>
+</p>
+<h3>Listenauswahl (Dropdown Box)</h3>
+<p>
+Bei einer Listenauswahl kann der User einen Eintrag aus der Liste ausw&auml;hlen. Der sichtbare Wert jedes 
+Listeneintrags wird von den &lt;OPTION&gt; und &lt;/OPTION&gt; Tags begrenzt. Der Value Parameter in 
+den &lt;OPTION&gt; Tags enth&auml;lt den Wert, der bei Auswahl des Eintrags mit dem Formular &uuml;bermittelt wird.
+Der Size Parameter im &lt;SELECT&gt; Tag gibt an, wieviele Eintr&auml;ge gleichzeitig sichtbar sind.
+<pre style="background='silver';">
+&lt;SELECT NAME="SelectName" SIZE="1"&gt;
+		&lt;OPTION VALUE="Select1"&gt;Auswahl 1&lt;/OPTION&gt;
+	   	&lt;OPTION VALUE="Select2"&gt;Auswahl 2&lt;/OPTION&gt;
+	   	&lt;OPTION VALUE="Select3"&gt;Auswahl 3&lt;/OPTION&gt;
+&lt;/SELECT&gt;
+</pre>
+</p>
+<h3>Mehrfachliste (Multiple Select)</h3>
+<p>
+Eine Mehrfachliste erlaubt dem User mehrere Listeneintr&auml;ge auszuw&auml;hlen, dabei mu&szlig; bei jeder zus&auml;tzlichen 
+Auswahl die "Shift" Taste gedr&uuml;ckt sein. Ein Mehrfachlisteneintrag wird durch den Parameter MULTIPLE 
+im &lt;SELECT&gt; Tag angezeigt. Ansonsten verh&auml;lt sich die Mehrfachlsite so wie die Listenauswahl.
+<pre style="background='silver';">
+&lt;SELECT NAME="SelectName" SIZE="2" MULTIPLE&gt;
+		&lt;OPTION VALUE="Select1"&gt;Auswahl 1&lt;/OPTION&gt;
+	   	&lt;OPTION VALUE="Select2"&gt;Auswahl 2&lt;/OPTION&gt;
+	   	&lt;OPTION VALUE="Select3"&gt;Auswahl 3&lt;/OPTION&gt;
+&lt;/SELECT&gt;
+</pre>
+</p>
+<h3>Senden Knopf / Submit Button</h3>
+<p>
+Durch Dr&uuml;cken dieses Knopfes wird das Formular abgesendet.
+<pre style="background='silver';">
+&lt;INPUT TYPE="Submit" NAME="SubmitName" VALUE="Absenden"&gt;
+</pre>
+</p>
+<h3>Zur&uuml;cksetzen Knopf / Reset Button</h3>
+<p>
+Das Dr&uuml;cken dieses Knopfes setzt das Formular in den Ursprungszustand zur&uuml;ck, und l&ouml;scht ihre Eingaben.
+<pre style="background='silver';">
+&lt;INPUT TYPE="Reset" VALUE="Zur&uuml;cksetzen"&gt;
+</pre>
+</p>
+
+<h2>Auswerten eines abgesendeten Formulares</h2>
+<p>
+Sehen wir uns einmal folgendes HTML Formular an:
+</p>
+<p>
+Text1: <INPUT TYPE="Text" NAME="Text1" VALUE="Wert1">
+<BR>
+<INPUT TYPE="Hidden" NAME="Verborgen" VALUE="Wert2">
+<BR>
+<INPUT TYPE="Radio" NAME="RadioKnopf" VALUE="Radio1">Radio 1<BR>
+<INPUT TYPE="Radio" NAME="RadioKnopf" VALUE="Radio2" CHECKED>Radio 2<BR>
+<BR>
+<INPUT TYPE="Checkbox" NAME="Checkbox" VALUE="Wert5">Checkbox 1<BR>
+<INPUT TYPE="Checkbox" NAME="Checkbox" VALUE="Wert6" CHECKED>
+Checkbox 2<BR>
+<BR>
+<INPUT TYPE="Submit" NAME="Abschicken" VALUE="Absenden">
+<INPUT TYPE="Reset" VALUE="Zur&uuml;cksetzen">
+</p>
+<p>
+Es hat diesen HTML Code:
+<pre style="background='silver';">
+&lt;FORM ACTION="empfang.asp" METHOD="GET"&gt;
+Text1: &lt;INPUT TYPE="Text" NAME="Text1" VALUE="Wert1"&gt;
+&lt;BR&gt;
+&lt;INPUT TYPE="Hidden" NAME="Verborgen" VALUE="Wert2"&gt;
+&lt;BR&gt;
+&lt;INPUT TYPE="Radio" NAME="RadioKnopf" VALUE="Radio1"&gt;Radio 1&lt;BR&gt;
+&lt;INPUT TYPE="Radio" NAME="RadioKnopf" VALUE="Radio2" CHECKED&gt;Radio 2&lt;BR&gt;
+&lt;BR&gt;
+&lt;INPUT TYPE="Checkbox" NAME="Checkbox" VALUE="Wert5"&gt;Checkbox 1&lt;BR&gt;
+&lt;INPUT TYPE="Checkbox" NAME="Checkbox" VALUE="Wert6" CHECKED&gt;
+Checkbox 2&lt;BR&gt;
+&lt;BR&gt;
+&lt;INPUT TYPE="Submit" NAME="Abschicken" VALUE="Absenden"&gt;
+&lt;INPUT TYPE="Reset" VALUE="Zur&uuml;cksetzen"&gt;
+&lt;/FORM&gt;
+</pre>
+</p>
+<p>
+Wenn sie dieses Formular absenden wird es an die ASP Seite <b>empfang.asp</b> geschickt.
+Da der Parameter METHOD auf GET gesetzt ist, werden die Daten des Formulars im sogenannten QueryString 
+der URL &uuml;bertragen. Daher k&ouml;nnte die URL beim Absenden des Formulars wie folgt aussehen:
+</p>
+<p>
+<i>http://www.aspgerman.com/empfang.asp?Text1=Wert1&HiddenName=Wert2&RadioName=Radio2&CheckboxName=Wert6&Abschicken=Absenden</i>
+</p>
+<p>
+Der Teil hinter dem Fragezeichen wird als QueryString bezeichnet und enth&auml;lt die Daten in Form von 
+FELDNAME=WERT Paaren. Die FELDNAME=WERT Paare werden mit <b>&amp;</b> aneinandergereiht. 
+</p>
+<p>
+Wenn sie beide Checkboxen im vorhergehenden Formular ankreuzen, dann kommt der Feldname Checkbox5 zweimal vor, 
+einmal mit dem Wert "Wert5", und einmal mit "Wert6".
+</p>
+<p>
+Wie kann nun eine ASP Seite (empfang.asp) dieses abgeschickte Formular auswerten? ASP stellt &uuml;ber das ASP 
+<i>Request</i> Object  die sogennanten <i>QueryString</i> und <i>Form</i> Collection (Auflistung) zur Verf&uuml;gung, in der alle 
+Formulardaten enthalten sind. 
+Wird das Formular mit der Method "POST" abgeschickt, dann kommt die Form Collection zur Anwendung, 
+andernfalls die QueryString Collection.
+</p>
+
+<h3>Auswertung nach GET &Uuml;bermittlung</h3>
+<p>
+Die Daten des vorhergehenden Formulares wurde nun mit der GET Methode &uuml;bermittelt. Daher stehen die Daten 
+in der QueryString Collection zur Verf&uuml;gung. Den Wert eines Feldes bekommt man indem man den Wert der 
+Collection ausliest:
+<pre style="background='silver';">
+StrText1 = Request.QueryString("Text1")
+StrVerborgen = Request.QueryString("Verborgen")
+StrRadio = Request.QueryString("RadioKnopf")
+StrAbschicken = Request.QueryString("Abschicken")
+</pre>
+Was macht man aber, wenn ein Feldname mehreren Werten zugeordnet sein kann, wie das beim Checkbox Feld names 
+Checkbox der Fall sein kann? In diesem Fall pr&uuml;ft man zuerst mit der Count Eigenschaft wieviele Werte mit 
+dem Feldname Checkbox &uuml;bergeben wurden:
+<pre style="background='silver';">
+Anzahl = Request.QueryString("Checkbox").Count
+</pre>
+Danach liest man &uuml;ber die Item Collection des jeweiligen Feldes alle Werte aus, speichert es in einem 
+Array oder wertet es sofort aus.
+<pre style="background='silver';">
+Dim arrCheck(2)
+For intI = 1 To Anzahl
+	arrCheck(intI) = Request.QueryString("Checkbox").Item(intI)
+Next
+</pre>
+Diese Art des Auslesens mehrerer Werte f&uuml;r den selben Feldnamen wird nat&uuml;rlich auch bei der Mehrfachliste 
+angewendet.
+</p>
+<p>
+Achtung: Bei der &Uuml;bermittlung mit der GET Methode k&ouml;nnen sie nur ungef&auml;hr zwischen 500 und 2000 Zeichen pro 
+Formular &uuml;bermitteln.
+</p>
+
+<h3>Auswertung nach POST &Uuml;bermittlung</h3>
+<p>
+Wenn ein Formular mit der POST Method &uuml;bermittelt wird, so ist kein QueryString zu sehen. Stattdessen werden 
+alle Daten im sogenannten Rumpf (Body) des Seitenaufrufes zur Auswertungsseite gesendet.
+</p>
+<p>
+Ein mit der Post Method &uuml;bermitteltes Formular wertet man &uuml;ber die Form Collection des Request Objektes aus. 
+Das Auslesen der Werte unseres Beispielformulares (METHOD ge&auml;ndert zu POST) k&ouml;nnte daher folgenderma&szlig;en 
+geschehen:
+<pre style="background='silver';">
+Dim arrCheck(2)
+StrText1 = Request.Form("Text1")
+StrVerborgen = Request.Form("Verborgen")
+StrRadio = Request.Form("RadioKnopf")
+StrAbschicken = Request.Form("Abschicken")
+
+Anzahl = Request.Form("Checkbox").Count
+For intI = 1 To Anzahl
+	arrCheck(intI) = Request.Form("Checkbox").Item(intI)
+Next
+</pre>
+</p>
+
+
+<p>
+Da es f&uuml;r die &Uuml;bermittlung nur die GET und POST METHOD gibt, bin ich somit am Ende der Ausf&uuml;hrungen zur Auswertung
+von Formularen mittels ASP angelangt. Mit den in diesem Artikel pr&auml;sentierten Grundlagen sind sie in der
+Lage, Formulare f&uuml;r ihre Website zu bauen, und erfolgreich mit ASP auszulesen.
+</p><h2>Verwandte Artikel</h2>
+<p>
+<a href="20000529.htm">&Uuml;bergeben von Informationen von einer ASP-Seite zur n&auml;chsten</a><br>
+<a href="20000522.htm">&Uuml;berpr&uuml;fen von HTML-Formularen mit ASP</a><br>
+<a href="20001121.htm">AutoCompletion f&uuml;r Web Formulare</a><br>
+<a href="20020429.htm">Benutzerverwaltung leicht gemacht: Teil 1</a><br>
+<a href="20010531.htm">Keine gefakten Bestellungen mehr!</a><br>
+<a href="20000505.htm">Session Variablen - Verwendung und Stolpersteine</a><br>
+<a href="20010404.htm">Sonderzeichen f&uuml;r Forms decodieren</a><br>
+<a href="20011112.htm">Strukturierter Aufbau in der ASP-Programmierung</a><br>
+<a href="20001030.htm">Uploaden einer beliebigen Datei in eine Datenbank</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000406" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Auswertung von HTML Formularen mit ASP"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000406.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Koller"><input type="hidden" name="AuthorEmail" value="christiank@aspexpert.com"><input type="hidden" name="Artikel" value="20000406"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000406.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

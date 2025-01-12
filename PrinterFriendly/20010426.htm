@@ -1,0 +1,211 @@
+<HTML>
+<HEAD>
+<TITLE>Seitenzugriffscounter f&uuml;r HTML Dokumente in ASP realisieren</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Zugriffsz&auml;hler gibt es im Internet viele - aber warum sollte man sich einen solchen nicht selbst implementieren? Der heutige Artikel zeigt, wie man mit Bordmitteln einen
+universell einsetzbaren Hitcounter programmieren kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Hitcounter,Zugriffsz&auml;hler,Zugriff,Page counter,hit count,JavaScript,Update,SELECT">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Seitenzugriffscounter f&uuml;r HTML Dokumente in ASP realisieren</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010426"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Zugriffsz&auml;hler gibt es im Internet viele - aber warum sollte man sich einen solchen nicht selbst
+implementieren? Solange man immer nur mit ASP-Seiten zu tun hat, ist dies auch nicht weiter schwer - 
+sollen aber aktuelle Zugriffszahlen in statische HTML Seiten eingef&uuml;gt werden, mu&szlig; man schon
+etwas tiefer in die Trickkiste greifen.
+</p>
+
+<p>
+Der heutige Artikel zeigt, wie man mit Bordmitteln - ASP, Access Datenbanken und JavaScript - einen
+universell einsetzbaren Hitcounter programmieren kann. In der Datenbank haben wir klarerweise die 
+Seite und die Anzahl der Zugriffe gespeichert, und &uuml;ber ASP greifen wir auf die Datenbank zu - aber
+was soll JavaScript in diesem Mix? Nun, es erlaubt uns mittels seiner Funktionen Text in eine 
+statische Seite zu injizieren.
+</p>
+
+<p>
+Sehen wir uns die Struktur der Datenbank an. Die Datenbank beinhaltet nur eine Tabelle, <i>PageCounter</i>. Diese hat
+die Spalten <i>PageId</i>, <i>PageHitCount</i>, <i>PageURL</i> und <i>PageDescription</i>:
+</p>
+
+<IMG SRC="/artikel/Bilder/200104/20010426_1.png" width="622" height="112" alt="" border="0">
+
+<p>
+Die Datenbankeintr&auml;ge der angegebenen Seiten werden durch die <i>PageId</i> verwaltet, die kein AutoWert ist - der einfacheren
+Verwaltung wegen. Wichtig ist noch <i>PageHitCount</i>, rein informativen Charakter haben die restlichen beiden 
+Spalten. Alle Datenbankzugriffe &uuml;ber unser Counter Script <b>pagecounter.asp</b> laufen &uuml;ber <i>PageId</i>.
+</p>
+
+<p>
+Wie schon erw&auml;hnt, enth&auml;lt <b>pagecounter.asp</b> die Logik f&uuml;r die Datenbankanbindung und die Ermittlung der
+Seitenzugriffe. Sehen wir uns also die Datei n&auml;her an, und beginnen mit dem "Infrastrukturcode" am Anfang:
+</p>
+
+<pre style="background='silver';">
+Response.Buffer = True
+Response.Expires=0
+Response.AddHeader "Pragma","no-cache"
+Response.AddHeader "cache-control", "no-store"
+Response.ExpiresAbsolute = CDate("01/01/2000")
+
+nPageId = Trim(Request.QueryString("PageId"))
+If Not IsNumeric(nPageId) Then Response.End
+
+strDSN = "Provider=Microsoft.Jet.OLEDB.4.0; Data Source=" &amp; _
+    Server.MapPath("pagecounter.mdb")
+
+Dim dataConn,dataRec, strSQL
+Set dataConn = Server.CreateObject("ADODB.Connection")
+dataConn.Open strDSN
+</pre>
+
+<p>
+Zuerst soll nat&uuml;rlich das Caching der Seite verhindert werden, da immer die aktuellen Werte angezeigt werden sollen.
+Da die Abfrage der Seitenzugriffe mittels QueryString erfolgt, mu&szlig; dieser nun eingelesen werden und sinnvollerweise von 
+etwaigen (st&ouml;renden) Leerzeichen befreit werden. Als Sicherheitsabfrage wird noch &uuml;berpr&uuml;ft, ob die <i>PageId</i>
+auch numerisch angegeben wurde - man wei&szlig; ja nie...
+</p>
+
+<p>
+Nun erfolgt die Datenbank"magie" mit der Angabe des DSNs und schlie&szlig;lich dem &Ouml;ffnen der Datenbankverbindung.
+Der eigentliche Datenbankcode - Auslesen des Zugriffsz&auml;hler und erh&ouml;hen um eins - kommt jetzt zum Zug:
+</p>
+
+<pre style="background='silver';">
+strSQL = "UPDATE PageCounter SET PageHitCount=PageHitCount+1 WHERE PageId=" &amp; nPageId
+dataConn.Execute strSQL
+
+strSQL = "SELECT PageHitCount FROM PageCounter WHERE PageId=" &amp; nPageId
+Set dataRec = dataConn.Execute(strSQL)
+If (dataRec.Eof and dataRec.Bof) Then
+    nHitCount = 0
+Else
+    nHitCount = dataRec.Fields(0).Value
+End If
+</pre>
+
+<p>
+Das <i>UPDATE</i> Statement erh&ouml;ht bei jedem Seitenzugriff den Wert der Spalte <i>PageHitCount</i> um den Wert <b>1</b> 
+f&uuml;r die mit <i>PageId</i> referenzierte Seite. Das darauffolgende SQL Statement holt dann den neuen Zugriffsz&auml;hler
+aus der Tabelle ab.
+Wenn die Seite in der Datenbank nicht vorhanden ist - ermittelt durch die Bedingung <i>dataRec.Eof and dataRec.Bof</i> -
+wird die Variable <i>nHitCount</i>, welche die Integerwerte der Zugriffswerte enth&auml;lt, auf <b>0</b> gesetzt. 
+</p>
+
+<p>
+Nun folgt die Ausgabe der Zugriffswerte der angegebenen Webseite. Dies erfolgt mit Hilfe eines 
+client-seitigen JavaScripts, das wir uns dynamisch mit <i>Response.Write</i> Statements aufbauen:
+</p>
+
+<pre style="background='silver';">
+Response.Write "function showHitCount()" &amp; vbCrLf &amp; "{"
+Response.Write "document.write('"
+If 0 = nHitCount Then
+	Response.Write "Datei wird nicht erfasst. "
+Else
+	Response.Write nHitCount &amp; " Zugriffe. "
+End If
+
+Response.Write "');return;" &amp; vbCrlf
+Response.Write "}" &amp; vbCrlf
+Response.Write "showHitCount()" &amp; vbCrlf
+</pre>
+
+<p>
+Damit ist unser ASP-basierter Page Counter auch schon fertig.
+Das von dieser Seite generierte JavaScript k&ouml;nnte wie folgt aussehen:
+</p>
+
+<pre style="background='silver';">
+function showHitCount() {document.write('7 Zugriffe. ');return; } showHitCount()
+</pre>
+
+<p>
+Das ist also der Trick - <i>document.write</i> f&uuml;gt dem HTML Dokument einen Text, unseren Zugriffsz&auml;hler, hinzu.
+Dazu bedarf es aber eines Eingriffs in der HTML Seite, die einen Page Counter verwenden m&ouml;chte.
+Diese mu&szlig; folgende Codezeile enthalten (die <i>PageId</i> &auml;ndert sich klarerweise):
+</p>
+
+<pre style="background='silver';">
+    &lt;SCRIPT src="pagecounter.asp?PageId=1"&gt;&lt;/SCRIPT&gt;
+</pre>
+
+<p>
+Unser universeller Counter generiert zwar kein tolles HTML (bis jetzt), aber die Funktionalit&auml;t ist vorhanden, wie
+der abschlie&szlig;ende Screenshot zeigt.
+</p>
+
+<IMG SRC="/artikel/Bilder/200104/20010426_2.png" width="509" height="293" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dieser Artikel hat eine einfache L&ouml;sung f&uuml;r die Erstellung von Zugriffsz&auml;hlern f&uuml;r HTML Seiten 
+geboten. Dieser Sourcecode l&auml;&szlig;t sich nat&uuml;rlich f&uuml;r umfangreichere Seiten noch 
+skalieren, sowie eine etwaige Visualisierung hinzuf&uuml;gen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010426.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010426.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001124.htm">Aktualisieren von Daten mit dem UPDATE Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001124.htm</span><br>
+<a href="../artikel/20001013.htm">Highspeed-Abfragen einer SQL Server Datenbank</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001013.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

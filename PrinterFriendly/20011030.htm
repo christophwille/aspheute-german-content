@@ -1,0 +1,219 @@
+<HTML>
+<HEAD>
+<TITLE>SQL Injection</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Der Vortrag &uuml;ber Websicherheit auf der PDC hat mich davon &uuml;berzeugt, wie wichtig es ist, Programmierer &uuml;ber das Sicherheitsrisiko #1 f&uuml;r ASP Datenbankapplikationen zu informieren: SQL Injection.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SQL Injection,SWI,SQL Server,sa Account,Vulnerability,Validierung,Sicherheit,Risiko,PDC">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>SQL Injection</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20011030"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Ein wie immer brillanter Michael Howard (Program Manager, Secure Windows Initiative, Microsoft Corporation) hat
+auf der Professional Developers Conference (PDC) 2001 in Los Angeles zwei Vortr&auml;ge &uuml;ber Sicherheit gehalten - 
+einen &uuml;ber Windows-, den anderen &uuml;ber Websicherheit. Der letztere hat mich davon &uuml;berzeugt, wie wichtig es ist,
+Programmierer &uuml;ber das Sicherheitsrisiko #1 f&uuml;r ASP Datenbankapplikationen zu informieren: SQL Injection. 
+</p>
+<p>
+Was ist SQL Injection? Am besten erkl&auml;rt sich das anhand eines Augen-&ouml;ffnenden Beispiels, und ich habe dazu ein
+beliebtes Formular gew&auml;hlt: das Login Formular.
+</p>
+
+<IMG SRC="/artikel/Bilder/200110/20011030_1.png" width="528" height="371" alt="" border="0">
+
+<p>
+Der Code f&uuml;r das Formular ist simpel genug um ihn auszulassen - interessant ist nur der Code, der den Login
+durchf&uuml;hrt:
+</p>
+
+<pre style="background='silver';">
+&lt;% @ Language=VBScript %&gt;
+&lt;%
+strConn = "Provider=SQLOLEDB;Data Source=webdevsrv01;" &amp; _
+	  "Initial Catalog=Demo;User Id=sa;Password="
+
+bValidationFailed = False
+
+If Request.ServerVariables("CONTENT_LENGTH") &gt; 0 Then
+  strUsername = Trim(Request.Form("UName"))
+  strPassword = Trim(Request.Form("UPwd"))
+  Set rs = Server.CreateObject("ADODB.Recordset")
+  rs.Open "select count(*) from Users where UserName='" &amp; strUsername &amp;_
+        "' AND UserPassword='" &amp; strPassword &amp; "'" , strConn
+  If (rs.Fields(0).Value &gt; 0) Then 
+    Response.Redirect "supa.asp"
+    Response.End
+  Else
+    bValidationFailed = True
+  End If
+End If
+%&gt;
+</pre>
+
+<p>
+Sieht doch ganz normal aus, oder? Sehen wir uns an, wie der SQL String aussieht, wenn sich der Administrator 
+mit <b>admin</b> / <b>admin</b> einloggt:
+</p>
+
+<pre style="background='silver';">
+select count(*) from users where UserName='<font color="Red">admin</font>' AND UserPassword='<font color="Red">admin</font>'
+</pre>
+
+<p>
+Der Administrator f&auml;llt also definitiv unter die Kategorie "Gute Menschen" - was aber w&uuml;rde ein Cracker versuchen?
+Wie w&auml;r's mit folgender Benutzername und Passwort Kombination: <b>' OR '1'='1</b> und <b>' OR '1'='1</b>. Der SQL String sieht
+dann so aus:
+</p>
+
+<pre style="background='silver';">
+select count(*) from users where UserName='<font color="Red">' OR '1'='1</font>' AND 
+         UserPassword='<font color="Red">' OR '1'='1</font>'
+</pre>
+
+<p>
+Oopsie! Tja, damit sind wir schon auf der gesicherten Site gelandet - und nur weil wir die Benutzereingaben nicht
+validiert haben.
+</p>
+
+<p>
+Aber es geht noch mehr... wie w&auml;r's mit Benutzername <b>' DELETE Users --</b>?
+</p>
+
+<pre style="background='silver';">
+select count(*) from users where UserName='<font color="Red">' DELETE Users --</font>' AND 
+         UserPassword=''
+</pre>
+
+<p>
+Oopsie! Da hab' ich doch gerade s&auml;mtliche Benutzeraccounts aus der Tabelle gel&ouml;scht! Die zwei Dashes (<b>-</b>) leiten
+einen Kommentar ein, deswegen gab's mit dem nach <b>AND</b> folgenden String keinen Fehler.
+</p>
+
+<p>
+Kein Problem, als Cracker kann man das Problem wieder beseitigen... wie w&auml;r's hiermit als Benutzername: <b>' insert into Users values('got','you') --</b>"?
+Guess what - damit kann man sich einen Account anlegen!
+</p>
+
+<pre style="background='silver';">
+select count(*) from users where UserName='<font color="Red">' insert into Users values('got','you') --</font>' AND 
+         UserPassword=''
+</pre>
+
+<p>
+Das ist der Fahnenstange Ende leider noch nicht. Warum? Folgende weitere Dummheit im Sourcecode:
+</p>
+
+<pre style="background='silver';">
+&lt;% @ Language=VBScript %&gt;
+&lt;%
+strConn = "Provider=SQLOLEDB;Data Source=webdevsrv01;" &amp; _
+	  "Initial Catalog=Demo;<font color="Red">User Id=sa;Password=</font>"
+...
+</pre>
+
+<p>
+Wir sind der Faulheit halber mit dem <b>sa</b> Account eingeloggt. Nun, da w&uuml;rde sich doch folgendes ganz
+hervorragend anbieten: <b>' EXEC master..xp_cmdshell 'dir *.* > c:\listing.txt' --</b>
+</p>
+
+<pre style="background='silver';">
+select count(*) from users where UserName='<font color="Red">' EXEC master..xp_cmdshell 'dir *.* > c:\listing.txt' --</font>' AND 
+         UserPassword=''
+</pre>
+
+<p>
+Das ist ein h&ouml;fliches Beispiel, das "nur" das Root des Systemlaufwerks auflistet. Mit Hilfe des <b>net</b> 
+Kommandos k&ouml;nnten wir uns aber einen User Account in der Administratorengruppe
+anlegen. Den Code soll sich aber jeder selber basteln.
+</p>
+
+<p>
+Mit diesen Beispielen hoffe ich demonstriert zu haben, was SQL Injection ist - das Einf&uuml;gen von beliebigen SQL
+Strings in Formulare, die dann am Server ausgef&uuml;hrt werden. Und warum passiert das? Weil die Formulare dem Input
+der Benutzer vertrauen, und ihn nicht entsprechend validieren. Generell sollte Michael Howard's Regel gelten: 
+<b>All input is evil, until proven otherwise!</b>. Somit ist die Gegenma&szlig;nahme klar: validieren, validieren, validieren.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Im n&auml;chsten Artikel besch&auml;ftige ich mich mit einigen Gegenma&szlig;nahmen, die neben validieren, validieren, validieren auch
+einige RegEx und ADO Ans&auml;tze beinhalten.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020429.htm">Benutzerverwaltung leicht gemacht: Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020429.htm</span><br>
+<a href="../artikel/20020412.htm">Der Microsoft Baseline Security Analyzer (MBSA) 1.0</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020412.htm</span><br>
+<a href="../artikel/20020130.htm">Eigene Tags - User Input einfach und sicher</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020130.htm</span><br>
+<a href="../artikel/20020319.htm">Ein einfacher Eventkalender f&uuml;r Projektteams</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020319.htm</span><br>
+<a href="../artikel/20020705.htm">Formularbasierte Authentifizierung in f&uuml;nf Minuten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020705.htm</span><br>
+<a href="../artikel/20011031.htm">Gegengifte f&uuml;r SQL Injection</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011031.htm</span><br>
+<a href="../artikel/20011206.htm">Performancemessungen in .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011206.htm</span><br>
+<a href="../artikel/20020903.htm">Stored Procedures einfach erstellt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020903.htm</span><br>
+<a href="../artikel/20011203.htm">Verhinderung von SQL Injection Marke .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011203.htm</span><br>
+<a href="../artikel/20020131.htm">Vorsicht Falle: Dateien, die keine sind</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020131.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

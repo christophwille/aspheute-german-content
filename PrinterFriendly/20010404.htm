@@ -1,0 +1,175 @@
+<HTML>
+<HEAD>
+<TITLE>Sonderzeichen f&uuml;r Forms decodieren</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wenn Sie die im Querystring abgelegten Informationen in Forms weiterverarbeiten m&ouml;chten, m&uuml;ssen Sie diese Zeichen &quot;decodieren&quot;. Dieser Artikel zeigt Ihnen eine server-seitige L&ouml;sung wie Sie dieses Problem angehen k&ouml;nnen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,UrlEncode,UrlDecode,Sonderzeichen,Decodierung,hexadezimal">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Sonderzeichen f&uuml;r Forms decodieren</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010404"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Bei Datenbankabfragen oder Webseitennavigation &uuml;ber Querystrings enthalten diese Strings meist URL-encodierte Zeichen
+(hexadezimale, zweistellige ASCII Codes),
+mit denen client-seitige Forms nichts anfangen k&ouml;nnen. Wenn Sie also die im Querystring abgelegten Informationen in Forms 
+weiterverarbeiten m&ouml;chten, m&uuml;ssen Sie diese Zeichen &quot;decodieren&quot;. Dieser Artikel zeigt Ihnen eine
+server-seitige L&ouml;sung wie Sie dieses Problem angehen k&ouml;nnen.
+</p>
+
+<p>
+Wenn man <i>Request.QueryString(Variablenname)</i> aufruft, so wird die Decodierung automatisch von ASP
+f&uuml;r uns durchgef&uuml;hrt. Greift man selbst auf den Querystring zu, dann steht man vor dem heute thematisierten
+Problem: es gibt keine eingebaute Funktion zum decodieren eines individuellen Querystrings.
+</p>
+
+<p>
+Das hier pr&auml;sentierte Script (erstellt von <a href="http://www.emsi.at/" target="_blank">Christian Mairoll</a>) ist quasi die umgekehrte Aktion der <i>Server.URLEncode</i> Methode. 
+Es generiert z.B. aus dem URL-encodeten String <i>http%3A%2F%2Fwww%2Easpheute%2Ecom</i> den u.a. auch f&uuml;r 
+Forms lesbaren String <i>http://www.aspheute.com</i>.
+</p>
+
+<p>
+Sehen wir uns das Script einmal n&auml;her an. Beginnen wir mit der server-seitigen Funktion <i>DecodeURL</i>:
+</p>
+<pre style="background='silver';">
+Function DecodeURL(strQuery)
+    strQuery = Replace(strQuery, "+", " ")
+    arTeile = Split(strQuery, "%")
+    y = 0
+    For Each strTeil In arTeile
+        y = y + 1
+        If y &gt; 1 Then
+            Teil1 = Left(strTeil, 2)
+            Teil2 = Mid(strTeil, 3)
+            x = "&amp;H" &amp; Teil1
+            x = CInt(x)
+            strQueryString = strQueryString &amp; Chr(x) &amp; Teil2
+        Else
+            strQueryString = strQueryString &amp; strTeil
+        End If
+    Next
+DecodeURL = strQueryString
+End Function
+</pre>
+
+<p>
+Zuerst werden aus dem der <i>DecodeURL</i> Funktion &uuml;bergebene Querystring (strQuery) die Pluszeichen (+) herausgesucht und
+durch die <i>Replace</i> Function durch ein Leerzeichen ersetzt. Pluszeichen in Querystrings entsprechen normalen
+Wortabst&auml;nden und keiner boolschen Addition (AND). D.h. w&uuml;rde im Querystring &quot;Active+Server+Pages&quot; stehen,
+w&uuml;rde das einfach <i>Active Server Pages</i> bedeuten.
+</p>
+
+<p>
+Als n&auml;chstes werden die zweistelligen hexadezimalen ASCII Code Zeichen in ihre &auml;quvivalenten Sonderzeichen umgewandelt. Vor jedem
+einzelnen zweistelligen ASCII Zahlencode, der ein Sonderzeichen repr&auml;sentiert,  erfolgt immer eine Trennung mit einem Prozentzeichen (%). Daher liegt es nahe, mit der 
+<i>Split</i> Function zuerst die einzelnen Zeichen des Querystrings (strQuery) - vor der Umwandlung in ihr &Auml;quvivalent -
+zu trennen bzw. zu gruppieren. Da die <i>Split</i> Function ein Array zur&uuml;ck gibt, weisen wir ihr auch ein Array (<i>arTeile</i>) zu.
+</p>
+
+<p>
+Im <i>For ... Each</i> Statement werden, falls mit einem Prozentzeichen getrennte Sonderzeichen (die ja noch in Form eines hexadezimalen
+ASCII Codes vorhanden sind) gefunden wurden,
+umgewandelt. Um die Umwandlung durchf&uuml;hren zu k&ouml;nnen suchen wir uns vorerst mit Hilfe der <i>Left</i> Function die vorher getrennten zweistelligen ASCII Codes 
+aus dem Array heraus. Diese herausgesuchten Zahlencodes werden dann mit dem Pr&auml;fix <i>&amp;H</i> versehen um das hexadezimale 
+Zahlensystem zu signalisieren. Danach werden sie mit der <i>CInt</i> Funktion in ihre Integerwerte umgerechnet.
+</p>
+
+<p>
+Die Umrechnung in Integerwerte hat den Sinn, da&szlig; man sie der <i>Chr</i> Function &uuml;bergeben kann. Die Chr Function
+gibt dann das entsprechende - nun lesbare - Sonderzeichen zur&uuml;ck. F&uuml;r den Fall, da&szlig; der Querystring neben den Sonderzeichen auch andere
+bzw. nur normale Zeichen (z.B Buchstaben) enth&auml;lt tritt die Alternative der If-Verzweigung in Kraft.
+</p>
+
+<p>
+Was noch fehlt ist die Kombination mit einem client-seitigen Formular. Dies ist der 
+Einfachheit halber sehr simpel gehalten:
+</p>
+
+<pre style="background='silver';">
+&lt;form method=GET&gt;
+    String mit Sonderzeichen eingeben:
+    &lt;input type="text" name="Eingabe"&gt;
+    &lt;input type="submit" value="OK"&gt;
+&lt;/form&gt;
+</pre>
+
+<p>
+Wenn Sie diese Beispieldatei (<b>DecodeURL.asp</b>) auf einem Web Server ablaufen lassen, sowie der Function einen
+Querystring &uuml;bergeben, so erhalten Sie folgendes Resultat (mit dem essentiellen Teil des Querystings in der Adresszeile):
+</p>
+
+<IMG SRC="/artikel/Bilder/200104/20010404_1.png" width="585" height="213" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Das gezeigte Beispielscript zeigt eine simple Methode wie man einen kryptischen Querystring der aus Sonderzeichen
+in Form von ASCII Codes besteht wieder in die u.a. auch f&uuml;r Forms verst&auml;ndliche Art konvertiert.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010404.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010404.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000522.htm">&Uuml;berpr&uuml;fen von HTML-Formularen mit ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000522.htm</span><br>
+<a href="../artikel/20000406.htm">Auswertung von HTML Formularen mit ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000406.htm</span><br>
+<a href="../artikel/20000503.htm">Einfache String Operationen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000503.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

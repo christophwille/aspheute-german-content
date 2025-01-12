@@ -1,0 +1,216 @@
+<HTML>
+<HEAD>
+<TITLE>Eigene History</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel zeigt, wie man mit server-side ASP die History des Client-Browsers modifiziert - damit der User Daten nicht zweimal eingeben kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,History,JavaScript,Back,Session,Browserhistory">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Eigene History</H1>
+<p>
+Geschrieben von: <a href="../autoren/rainervoelschow.htm">Rainer Völschow</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001027"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wenn man beim Browser eine Seite besucht hat und mit Javascript () oder dem Back-Button eine oder 
+mehrere Seiten zur&uuml;ckspringt, so kann man mittels des Forward-Buttons zu dieser Seite zur&uuml;ckkehren.
+Dies erm&ouml;glicht so einem User, Daten zweimal einzugeben. Wie man dies verhindert, soll dieser 
+Artikel zeigen. Weil die Historyliste des Browsers nur in geringem Ma&szlig;e (&uuml;ber client-side 
+JavaScript oder VBScript) manipuliert werden kann, mu&szlig; eine andere L&ouml;sung gefunden werden.
+</p>
+
+<h2>Anlegen einer Liste</h2>
+<p>
+Eine L&ouml;sung des Problems best&auml;nde darin, eine eigene History f&uuml;r jeden User am Webserver mittels 
+ASP anzulegen. Kern dieses Unterfangens ist die Servervariable <i>SCRIPT_NAME</i>. Sie enth&auml;lt den Namen 
+(inklusive Pfad) der aktuellen ASP Seite.
+</p>
+<p>
+Man kann also mittels der ServerVariable <i>SCRIPT_NAME</i> den Namen des augenblicklich abgearbeiteten 
+ASP Skripts inklusive dem virtuellen Pfad (z.b. <i>/support/anfrage.asp</i>)  auslesen, diesen mit den 
+besuchten Seiten in der Historyliste vergleichen, und danach die besuchte Seite zur Historyliste 
+hinzuf&uuml;gen.
+</p>
+
+<h2>Speichern der Liste in einer Session Variable</h2>
+<p>
+&Auml;hnlich wie das client-side Vorbild - das History Objekt im Browser - soll auch die von uns benutzte 
+Liste skript&uuml;bergreifend verf&uuml;gbar sein. Allerdings soll die Liste gel&ouml;scht werden, wenn die 
+aktuelle Webapplikation nicht mehr verwendet wird. Diese Eigenschaft erf&uuml;llen vorrangig ASP 
+Sessionvariablen.
+</p>
+<p>
+Wie man nun die augenblickliche Seite abfragt und die in einer Sessionvariable gespeicherte 
+Historyliste verwaltet, zeigt das folgende ASP Skript:
+<pre style="background='silver';">
+&lt;%
+ curSite = Request.Servervariables("Script_Name")
+ ablage = Session("history")
+ If InStr(ablage,curSite) &gt; 0 Then 
+ Response.Write("Diese Seite wurde schon besucht." &amp; _ 
+    "&lt;a href=javascript:history.go(-1)&gt;Zur&uuml;ck&lt;/a&gt;")
+ Else
+    Session("history") = Session("history") &amp; _
+    curSite &amp; " | "
+ End if
+%&gt;
+</pre>
+</p>
+<p>
+Zun&auml;chst wird im ersten Schritt der Name (inklusive virtuellem Pfad) des aktuellen Skriptes 
+ermittelt und in der Variablen <i>curSite</i> abgelegt. Der Inhalt der Sessionvariable History wird 
+in der Variablen ablage zwischengespeichert. Im Anschlu&szlig; daran wird mit Hilfe der Funktion 
+<i>InStr</i> (= in String enthalten) &uuml;berpr&uuml;ft, ob der zuvor ermitteltet Name der augenblicklichen 
+ASP Seite, der jetzt als String zur Verf&uuml;gung steht, sich bereits in der Variable <i>ablage</i> 
+befindet oder nicht. Der R&uuml;ckgabewert der Funktion <i>InStr</i> ist f&uuml;r diese &Uuml;berpr&uuml;fung entweder 0 
+f&uuml;r den Fall, da&szlig; die Seite noch nicht besucht wurde, oder gr&ouml;&szlig;er als 0, wenn die Seite bereits 
+in der Variablen <i>ablage</i> gespeichert ist. Die Null als Ergebnis der InStr Funktion bedeutet, da&szlig; 
+die Zeichenkette <i>cursite</i> nicht in der Zeichenkette <i>ablage</i> vorhanden ist. Ein Wert von gr&ouml;&szlig;er 
+als Null gibt die Position der Zeichenkette <i>ablage</i> in <i>curSite</i> an. 
+</p>
+<p>
+Wird nun dieser String in der Sessionvariable nicht gefunden, so wird der Inhalt der Sessionvariable
+um den Variableninhalt von <i>curSite</i> erweitert. Das Zeichen " | " dient als Trennzeichen und kann 
+eigentlich durch jedes beliebige andere Zeichen ersetzt werden. Es wird aber nicht empfohlen, den 
+Punkt oder den Schr&auml;gstrich (Slash) zu verwenden, weil selbiger bereits im Namen der ASP Datei 
+verwendet wird. Da dieser Skriptteil in jeder gesch&uuml;tzen Seite gleich aussieht und unver&auml;ndert 
+verwendet werden kann, ist das Includen des Scripts, mittels <i>#include</i> Directive, in alle zu 
+sch&uuml;tzenden ASP Seiten empfehlenswert.
+</p>
+<p>
+Auch das Z&auml;hlen der Eintr&auml;ge ist in unserer Historyliste m&ouml;glich. Nun gibt es in VBScript keine 
+vordefinierte Zeichenkettenfunktion, mit der man einfach die Anzahl eines beliebigen Zeichens 
+ermitteln kann (vom RegExp Objekt in VBScript 5 kann man nicht sagen, da&szlig; es einfach zu benutzen 
+ist). Im Gegensatz dazu gibt es bei den Arrays eine Z&auml;hlfunktion, mit der man die Anzahl der 
+Elemente ermitteln kann. Bevor man diese Funktion benutzen kann,  mu&szlig; zun&auml;chst ein Aufsplitten 
+des Strings in ein Array erfolgen. Da der Inhalt der Sessionvariable weiterhin ben&ouml;tigt wird, 
+darf dieser nicht ver&auml;ndert werden. 
+</p>
+<p>
+<pre style="background='silver';">
+&lt;%
+  ablage = Split(Session("history"),"|")
+  anzahl = UBound(ablage,1)
+%&gt;
+</pre>
+</p>
+<p>
+Das Aufsplitten der Zeichenkette in ein Array kann, wie hier gezeigt, mit der Funktion 
+<i>Split(Variable, Trennzeichen)</i> erfolgen. Jeder Teilstring zwischen dem zuvor definierte 
+Trennzeichen wird in ein eigenes Arrayelelement geschrieben. Nach  Umwandlung der Zeichenkette 
+in ein Array kann man mit der Funktion U<i>Bound(Arrayname, Dimension)</i> die Abmessungen eines Arrays 
+ermitteln. Der Parameter 1 gibt nur an, da&szlig; die Anzahl der Elemente in der ersten Dimension des  
+Array ermittelt werden soll. 
+</p>
+<p>
+Das L&ouml;schen von Eintr&auml;gen in der History Session Variable erfolgt mit <i>Replace</i>, wobei zu beachten 
+ist, da&szlig; auch das Trennzeichen gel&ouml;scht wird. So verhindert man ein Verf&auml;lschung der Anzahl von 
+Listeneintr&auml;gen. Der Historyinhalt kann durch Verwendung von Response.Write() zum Browser 
+geschrieben werden.
+</p>
+<p>
+Mit Verlassen der Webapplikation (Schlie&szlig;en der Browserfenster oder Inaktivit&auml;t auf der Website 
+f&uuml;r eine gewisse Zeitspanne) durch den User wird die aktuelle Session beendet, wodurch auch die 
+Sessionvariable History ihre G&uuml;ltigkeit verliert und vom Server automatisch verworfen wird.
+</p>
+
+<h2>M&ouml;glichkeit des Speicherns der History in der Application</h2>
+<p>
+Der Nachteil bei der Verwendung von Session Variablen ist, da&szlig; der Browser einen Session Cookies 
+speichern mu&szlig;, damit der Webserver den Aufruf einer ASP Seite einer bestimmten Session zuordnen 
+kann. Akzeptiert der Browser keine Cookies, so beginnt f&uuml;r den Benutzer mit dem Aufruf einer 
+neuen ASP Seite eine neue Session. VBScript bietet als Alternative zu Sessionvariablen die 
+Applicationvariablen an, die an keine Cookies gebunden sind. Im Gegensatz zu den Sessionvariablen 
+werden sie nicht der aktuellen SessionID zugeordnet, so da&szlig; der Inhalt einer Applicationvariablen
+f&uuml;r ASP Skripts aller Benutzer zu Verf&uuml;gung steht. 
+</p>
+<p>
+Aufgrund dieser Eigenschaft ist f&uuml;r das Anlegen einer eigenen Historyliste ein wenig mehr 
+Programmieraufwand n&ouml;tig, um f&uuml;r jeden Benutzer eine eigene Historyliste zu erstellen. Dies kann
+durch die Definition eines Variablenames erreicht werden, der f&uuml;r jeden Benutzer eindeutig 
+sein mu&szlig;. Au&szlig;erdem mu&szlig; darauf geachtet werden, da&szlig; nicht mehr ben&ouml;tigte Application Variablen 
+gel&ouml;scht werden, da ansonsten der Speicher des Webservers unn&ouml;tig belastet und zugem&uuml;llt wird, 
+was sich in einer drastischen Performanceeinbu&szlig;e bemerkbar macht. 
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die hier vorgestellte M&ouml;glichkeit kann innerhalb einer User-Session (Sitzung) verhindern, da&szlig; 
+der Besucher Daten in eine Datenbank doppelt eintr&auml;gt. Allerdings k&ouml;nnte man eine bereits 
+besuchte Seite immer noch mit den 'Vorw&auml;rts' oder 'Zur&uuml;ck'-Buttons des Browsers erreichen. Will 
+man auch dies verhindern so wendet man einen weiteren Kunstgriff an, indem man in jedem ASP 
+Skript am Anfang das Ablaufdatum f&uuml;r eine ASP Seite auf "Sofort" setzt:
+</p>
+<p>
+<pre style="background='silver';">
+Response.Expires=0
+Response.AddHeader "Pragma","no-cache"
+Response.AddHeader "cache-control", "no-store"
+</pre>
+</p>
+<p>
+Dies veranlasst die meisten Browser, die Seite nicht mehr anzuzeigen wenn man mit den 
+'Vorw&auml;rts' oder 'Zur&uuml;ck'-Buttons arbeitet.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001027.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20001027.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/19990808.htm">Caching bei Browser und Proxy - Woher Seiten wirklich kommen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990808.htm</span><br>
+<a href="../artikel/20010530.htm">Redirects mit Frame-Targets</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010530.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,313 @@
+<HTML>
+<HEAD>
+<TITLE>Das foreach Statement</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="F&uuml;r VBScript Programmierer ist das foreach Statement ein alter Bekannter, unter einen anderen Namen: For...Each.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,C#,c-sharp,Csharp,foreach,for,each,vbscript,Microsoft .NET Framework,.NET,framework,servervariables,querystring,ASP.NET">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Das foreach Statement</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000720"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Ein Statement, das es in C++ nicht gab, ist das <i>foreach</i> Statment. F&uuml;r VBScript Programmierer
+allerdings ist es ein alter Bekannter, unter einen anderen Namen: <i>For...Each</i>. In diesem
+Artikel betrachten wir die Unterschiede, vor allem bei der Abarbeitung der <i>ServerVariables</i>
+und <i>QueryString</i> Collections.
+</p>
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation des <i>Microsoft .NET Framework SDK's</i> auf
+einem Webserver. Weiters setze ich voraus, da&szlig; der Leser bereits eine Programmiersprache beherrscht - deshalb
+ist die Information auch in sehr komprimierter Form gehalten.
+</p>
+
+<h2>Die Syntax</h2>
+<p>
+Schauen wir uns noch einmal die von VBScript her bekannte Syntax des <i>For...Each</i> Statements
+an:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+For Each key in Request.QueryString
+	Response.Write key &amp; "=" &amp; Request.QueryString(key) &amp; "&lt;br&gt;"
+Next
+%&gt;
+</pre>
+
+<p>
+Das <i>For...Each</i> Statement iteriert einfach &uuml;ber eine Collection, in diesem Fall &uuml;ber die
+<i>QueryString</i> Collection. Wenn man diese Seite mit einem Query String aufruft
+</p>
+
+<pre style="background='silver';">
+http://localhost/foreach.asp?Location=Orlando&amp;Name=Christoph
+</pre>
+
+<p>
+dann erh&auml;lt man logischerweise folgenden Output:
+</p>
+
+<pre style="background='silver';">
+Location=Orlando
+Name=Christoph
+</pre>
+
+<p>
+Will man dieses Beispiel nun nach ASP.NET und C# portieren, dann sind die Unterschiede nicht
+sehr gravierend:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;%
+foreach (string strKey in Request.QueryString.AllKeys)
+{
+	Response.Write(strKey);
+	Response.Write(&quot;=&quot;);
+	Response.Write(Request.QueryString.Get(strKey));
+	Response.Write(&quot;&lt;br&gt;&quot;);
+}
+%&gt;
+</pre>
+
+<p>
+Um die <i>QueryString</i> Collection im <i>foreach</i> Statement auflisten zu k&ouml;nnen, mu&szlig; man die <i>AllKeys</i>
+Eigenschaft verwenden, um an das Array der Keys zu kommen. Jedes Element dieses Arrays
+wird dann in die Variable strKey eingelesen, um dann kann man das Ergebnis am Bildschirm
+ausgeben.
+</p>
+<p>
+Es d&uuml;rfte zwar bereits aus dem vorhin gezeigten Beispiel hervorgehen, aber ich 
+bin ich Ihnen immer noch die generelle Syntax eines <i>foreach</i> Statements schuldig:
+</p>
+
+<pre style="background='silver';">
+<i>foreach</i> (VariablenName <i>in</i> CollectionName)
+{
+...
+}
+</pre>
+
+<p>
+Wie gesagt, anhand der Beispiels h&auml;tte man die Syntax auch "erraten" k&ouml;nnen.
+</p>
+
+<h2>Weitere Beispiele</h2>
+<p>
+Alternativ zur Verwendung von <i>foreach</i> h&auml;tte man die <i>QueryString</i> Collection auch anders ausgeben k&ouml;nnen:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;%
+// alternative Methode
+NameValueCollection collQS = Request.QueryString;
+int nCount = collQS.Count;
+for (int i=0;i &lt; nCount;i++)
+{
+	Response.Write(collQS.GetKey(i));
+	Response.Write(&quot;=&quot;);
+	Response.Write(collQS.Get(i));
+	Response.Write(&quot;&lt;br&gt;&quot;);
+}
+%&gt;
+</pre>
+
+<p>
+Im gezeigten Beispiel referenziere ich die <i>QueryString</i> Collection in einer lokalen Variable
+des Typs <i>NameValueCollection</i> - dies ist der tats&auml;chliche Typ der <i>QueryString</i> Collection. Damit erspare ich mir
+einiges an Tipparbeit, und kann zeigen, wie universell Collections sich im Framework wiederfinden.
+</p>
+
+<p>
+Wenn man nun folgenden URL aufruft
+</p>
+
+<pre style="background='silver';">
+http://localhost/alternate.aspx?Location=Orlando&amp;Name=Christoph
+	&amp;Location=Leoben
+</pre>
+
+<p>
+dann erh&auml;lt man folgenden Output:
+</p>
+
+<pre style="background='silver';">
+Location=Orlando,Leoben
+Name=Christoph
+</pre>
+
+<p>
+Die Elemente der Location sind als gesamter String zur&uuml;ckgegeben worden, und nicht als
+Einzelelemente. Das w&auml;re auch mit dem ASP Sourcecode, als auch dem ASP.NET <i>foreach</i> Beispiel passiert.
+Um das "Problem" zu beheben, kann man folgenden Sourcecode verwenden (<b>foreach2.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;%
+foreach (string strKey in Request.QueryString.AllKeys)
+{
+	Response.Write(strKey);
+	Response.Write(&quot;=&quot;);
+	string[] astrValues = Request.QueryString.GetValues(strKey);
+
+	for (int i=0;i&lt;astrValues.Length;i++)
+	{
+		Response.Write(astrValues[i]);
+		if (i != (astrValues.Length-1))
+			Response.Write(&quot;, &quot;);
+	}
+	Response.Write(&quot;&lt;br&gt;&quot;);
+}
+%&gt;
+</pre>
+
+<p>
+Nun werden alle Mehrfachelemente der <i>QueryString</i> Collection korrekt angegriffen und
+ausgegeben. Dieses Beispiel kann man gleich in das Codearsenal f&uuml;r ASP.NET aufnehmen,
+da man es m&ouml;glicherweise &ouml;fter ben&ouml;tigen wird.
+</p>
+<p>
+Als abschlie&szlig;endes Beispiel m&ouml;chte ich noch zeigen, wie man die <i>ServerVariables</i> Collection
+in ASP.NET mit dem <i>foreach</i> Statement "dumpen" kann.
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;pre&gt;
+&lt;%
+foreach (string strKey in Request.ServerVariables.AllKeys)
+{
+	// diese Variable auslassen
+	if (&quot;ALL_HTTP&quot; == strKey) continue;
+	
+	// einfache Ausgabe am Bildschirm
+	Response.Write(strKey);
+	Response.Write(&quot;=&quot;);
+	Response.Write(Request.ServerVariables.Get(strKey));
+	Response.Write(&quot;&lt;br&gt;&quot;);
+}
+%&gt;
+&lt;/pre&gt;
+</pre>
+
+<p>
+Dieses Beispiel gibt alle Server Variablen exklusive <b>ALL_HTTP</b> aus, weil diese ja nur wieder
+alle anderen Variablen beeinhaltet. Das Beispiel habe ich deshalb gebracht, weil in ASP.NET
+kaum jemand mehr die <i>ServerVariables</i> Collection in dieser Art und Weise angreifen wird - weil
+(fast) alle Items nun auch als Eigenschaften des <i>Request</i> Objekts verf&uuml;gbar sind, so 
+zum Beispiel:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;pre&gt;
+&lt;%
+Response.Write(Request.UserHostAddress + &quot;&lt;br&gt;&quot;);
+Response.Write(Request.UserAgent + &quot;&lt;br&gt;&quot;);
+Response.Write(Request.FilePath + &quot;&lt;br&gt;&quot;);
+%&gt;
+&lt;/pre&gt;
+</pre>
+
+<p>
+Fr&uuml;her mu&szlig;te man diese Daten (REMOTE_HOST, HTTP_USER_AGENT, SCRIPT_NAME) &uuml;ber die <i>ServerVariables</i>
+Collection auslesen - jetzt hat man typisierten Zugriff &uuml;ber Eigenschaften.
+Mehr zu diesen Neuerungen in weiteren Artikeln &uuml;ber ASP.NET.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+In diesem Artikel habe ich Ihnen das <i>foreach</i> Statement von C# n&auml;her gebracht, und im Zuge
+der Erkl&auml;rung seiner Verwendung auch noch die <i>QueryString</i> und <i>ServerVariables</i> Collections
+von ASP.NET "gestreift". Nun haben Sie genug C# Basiswissen, um bereits jetzt interessante
+ASP.NET Seiten zu schreiben.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000720.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000720.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020124.htm">Arrays mit Index und Schl&uuml;ssel</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020124.htm</span><br>
+<a href="../artikel/20000811.htm">Ausgabe der Event Log Eintr&auml;ge a la ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000811.htm</span><br>
+<a href="../artikel/20000926.htm">Collections einmal anders: Stacks und Queues</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000926.htm</span><br>
+<a href="../artikel/20000823.htm">Die Hashtable Klasse</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000823.htm</span><br>
+<a href="../artikel/20000714.htm">Kontrollstatements in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000714.htm</span><br>
+<a href="../artikel/20020906.htm">On-the-fly Erstellung von vCard's</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020906.htm</span><br>
+<a href="../artikel/20020902.htm">Regex'en zu Assemblies kompilieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020902.htm</span><br>
+<a href="../artikel/20000717.htm">Schleifenbefehle in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000717.htm</span><br>
+<a href="../artikel/20020417.htm">Sortieren mit dem IComparer Interface</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020417.htm</span><br>
+<a href="../artikel/20020125.htm">Variable Parameterlisten in Funktionen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020125.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpgerman%2Ecom%2Faspgerman%2Flisten%2Fanmelden%2FaspDEdotnet%2Easp">Die aspDEdotnet Liste</a><br>
+<SPAN class="content">http://www.aspgerman.com/aspgerman/listen/anmelden/aspDEdotnet.asp</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

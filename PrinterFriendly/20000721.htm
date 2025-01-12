@@ -1,0 +1,250 @@
+<HTML>
+<HEAD>
+<TITLE>Seitenzugriffe mit der PageCounter Komponente erfassen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Um die Popularit&auml;t Ihrer Website zu &uuml;berpr&uuml;fen, k&ouml;nnen Sie auf den Seiten Ihrer Site einen Page Counter (Z&auml;hler) einsetzen, der die Clientzugriffe mitloggt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,IIS,PageCounter,page count,counter,zugriff,zugriffszaehler,zugriffszähler,impression,page view">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Seitenzugriffe mit der PageCounter Komponente erfassen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000721"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Um die Popularit&auml;t Ihrer Website zu &uuml;berpr&uuml;fen, k&ouml;nnen Sie auf den Seiten 
+Ihrer Site einen Page Counter (Z&auml;hler) einsetzen, der die Clientzugriffe mitloggt. Nat&uuml;rlich gibt 
+es eine Vielzahl von Drittanbieter die dieses Feature zur Verf&uuml;gung stellen. Dabei m&uuml;ssen Sie 
+wieder ein fremdes Script in Ihre Seite einbinden, sich l&auml;stige Werbung gefallen lassen - von 
+Konfigurationsproblemen ganz zu schweigen. 
+</p>
+<p>
+Warum sollte man also auf solche Angebote ausweichen, vor allem dann,  wenn der Internet Information 
+Server (IIS) eine kleine ASP-Komponete zur Verf&uuml;gung stellt, die sich einfachst einbinden l&auml;&szlig;t - 
+die PageCounter Komponente. 
+Diese l&auml;&szlig;t sich leicht konfigurieren und mit ein bischen Code sogar professionell aufpeppen.
+</p>
+<p>
+Die Page Counter Komponente ist bereits ab dem Internet Information Server (IIS) Version 4 
+verf&uuml;gbar (IIS Resource Kit), und wird bei Windows 2000 Internet Information Services 
+standardm&auml;&szlig;ig mitinstalliert. 
+</p>
+
+<h2>Verwendung der PageCounter Komponente</h2>
+<p>
+Die PageCounter Komponente z&auml;hlt die Zugriffe auf eine ASP Seite und kann die Gesamtstatistik 
+auf derselben oder einer anderen Seite wieder ausgeben. Innerhalb bestimmter, regelm&auml;&szlig;iger 
+Intervalle schreibt das Objekt die Pagehits in eine Textdatei (die sogenannte Hit Count 
+Data Datei), damit diese Daten auch &uuml;ber Serverrestarts verf&uuml;gbar bleiben.
+</p>
+<p>
+F&uuml;r Programmierer als auch Administratoren ist es nat&uuml;rlich gut zu wissen, wo diese Hit Count Data 
+Datei gespeichert wird (etwaige Zugriffsrechteprobleme k&ouml;nnten mit der Standardeinstellung 
+entstehen), sowie wie oft die Counter dort gespeichert werden (bei vielen Seiten mit hoher 
+Zugriffsfrequenz sollte man das Intervall erh&ouml;hen).
+</p>
+<p>
+Diese Informationen (Speicherort und Speicherfrequenz) werden in der Registrierdatenbank des 
+Servers abgelegt. Der Pfad ist <i>HKEY_CLASSES_ROOT\MSWC.PageCounter</i> (siehe Bild).
+</p>
+<p><IMG SRC="/artikel/Bilder/200007/20000721.png" width="590" height="340" border="0" alt=""></p>
+<p>
+Die beiden Schl&uuml;sselwerte, die man ver&auml;ndern kann, sind hier beschrieben:
+<table cellspacing="5">
+<tr><th align="left">Wert</th><th align="left">Beschreibung</th></tr>
+<tr>
+	<td valign="top"><b>File_Location</b></td>
+	<td valign="top"><p>
+	Dieser Wert gibt den Pfad und den Dateinamen der Hit Count Data Datei an. Standardm&auml;&szlig;ig 
+	wird der Dateiname Hitcnt.cnt verwendet und ist im Data Verzeichnis des IIS zu finden (wie 
+	gesagt, dies k&ouml;nnte ein Berechtigungsproblem f&uuml;r IUSR_machinename sein).
+	</p></td>
+</tr>
+<tr>
+	<td valign="top"><b>Save_Count</b></td>
+	<td valign="top"><p>
+	Enth&auml;lt die Anzahl der Pagehits bevor sie in der Hit Count Data Datei gespeichert wird (=das 
+	Maximum an Hits die verloren gehen w&uuml;rden, falls der Server vorher abst&uuml;rzen w&uuml;rde). Der Wert 
+	ist vom Datentyp ein DWORD (Double Word), und standardm&auml;&szlig;ig auf 25 gesetzt.
+	</p>
+	<p>
+	<b>Beachte:</b> Dieser Wert entspricht der Gesamtanzahl der Pagehits &uuml;ber den gesamten Server, und 
+	nicht der Anzahl von Treffern pro Internetseite.
+	</p>
+	</td>
+</tr>
+</table>
+</p>
+<p>
+Da wir jetzt alle funktionalen Details gekl&auml;rt haben, k&ouml;nnen wir nun zum Programmieren kommen.
+Wenn man die PageCounter Komponente nun verwenden m&ouml;chte, so hat man drei Methoden zur Verf&uuml;gung
+<ul>
+<li><b>Hits</b> Zeigt die Anzahl der Zugriffe auf eine lokale URL an
+<li><b>PageHit</b> Erh&ouml;ht den Page Hit Count um 1
+<li><b>Reset</b> Setzt den Hit Count der angegeben Seite auf Null (0) zur&uuml;ck  					
+</ul>
+</p>
+<p>
+Mit diesen Information wollen wir uns nun auf Beispiele st&uuml;rzen.
+</p>
+
+<h2>Auslesen und Erh&ouml;hen von Page Counts</h2>
+<p>
+Dieses Beispiel  verwendet die <i>PageHit</i> und <i>Hits</i> Methoden der PageCounter Komponente, um die
+Anzahl der Besucher zu ermitteln (<b>countertest.asp</b>).
+<pre style="background='silver';">
+&lt;% @LANGUAGE=&quot;VBSCRIPT&quot; %&gt;
+&lt;% 
+Option Explicit 
+Response.Expires = 0
+%&gt;
+&lt;html&gt;
+&lt;head&gt;
+	&lt;title&gt;PageCount'd Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body bgcolor=&quot;#ffffff&quot;&gt;
+&lt;p&gt;
+Z&auml;hlen der HitCounts mit Hilfe der Hits-Methode:
+&lt;%
+Dim PgeCount
+Set PgeCount = Server.CreateObject(&quot;MSWC.PageCounter&quot;)
+PgeCount.PageHit
+%&gt;
+Diese Website wurde 
+  &lt;b&gt;&lt;%= PgeCount.Hits %&gt;&lt;/b&gt; 
+Mal besucht.
+&lt;/p&gt;
+
+&lt;p&gt;
+Ausgabe Counter f&uuml;r beliebige Seite:
+Die Seite prettyscript.asp wurde 
+  &lt;b&gt;&lt;%= PgeCount.Hits(&quot;/aspheute/prettyscript.asp&quot;) %&gt;&lt;/b&gt;
+Mal besucht.
+&lt;/p&gt; 
+
+&lt;%
+Set PgeCount = Nothing
+%&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</p>
+<p>
+Wie man im Beispielcode sehen kann, verwende ich die <i>Hits</i> Methode einmal ohne, als auch einmal 
+mit Parameter. Der optionale Parameter gibt eine beliebige Datei an, von der der Hit Count 
+ermittelt werden soll. Falls der Parameter nicht gesetzt ist, dann wird der Hit Count der 
+aktuell ausgef&uuml;hrten Seite ausgegeben.
+</p>
+<p>
+Der R&uuml;ckgabewert der <i>Hits</i> Methode entspricht der Anzahl an Hit Counts und hat den Datentyp Long.
+</p>
+<p>
+Wie komme ich aber nun zu meinem Hit Count - sprich, wie erh&ouml;he ich die Anzahl der Zugriffe? 
+Das erledigt die Methode <i>PageHit</i> f&uuml;r uns - sie erh&ouml;ht den Hit Count der aktuellen Webseite 
+um eins (1). In diesem Beispiel mache ich es sofort nach der Instanzierung des MSWC.PageCounter
+Objekts.
+</p>
+
+<h2>Hit Counts zur&uuml;cksetzen</h2>
+<p>
+Hier kommt uns die dritte Methode - die <i>Reset</i> Method - zu Hilfe. Sie setzt beliebige 
+Zugriffsz&auml;hler auf 0 zur&uuml;ck. Auch diese Methode hat einen optionalen Pfadparameter, der auch
+wie bei <i>Hits</i> dazu verwendet werden kann, um beliebige Z&auml;hler zur&uuml;ckzusetzen.
+</p>
+<p>
+Das nun folgende Beispiel setzt den Z&auml;hler der aktuellen Seite und f&uuml;r eine externe Datei 
+auf 0 zur&uuml;ck (<b>counterreset.asp</b>).
+<pre style="background='silver';">
+&lt;% Option Explicit %&gt;
+&lt;html&gt;
+&lt;head&gt;
+	&lt;title&gt;Resetten der Page Counter&lt;/title&gt;
+&lt;/head&gt;
+&lt;body bgcolor=&quot;#ffffff&quot;&gt;
+&lt;% 
+Dim PgeCount
+Set PgeCount = Server.CreateObject(&quot;MSWC.PageCounter&quot;)
+' R&uuml;cksetzung der aktuellen Seite
+PgeCount.Reset
+' R&uuml;cksetzung einer beliebigen Seite
+PgeCount.Reset(&quot;/webroot/webseite.asp&quot;)
+' ab jetzt sind alle Counter auf 0:
+%&gt;
+&lt;P&gt;
+Page Hits auf aktueller Seite: 
+	&lt;%= PgeCount.Hits %&gt; &lt;br&gt;
+Page Hits auf prettyscript.asp: 
+	&lt;%= PgeCount.Hits(&quot;/aspheute/prettyscript.asp&quot;) %&gt;
+&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dieser Artikel beschreibt die M&ouml;glichkeiten der PageCounter Komponente mit ihren zur Verf&uuml;gung 
+gestellten Methoden. Hier wurde lediglich das Grundwissen zur Komponente vermittelt - durch 
+zus&auml;tzliches Tuning l&auml;&szlig;t sich nat&uuml;rlich noch einiges verbessern (Statistiken &uuml;ber alle Seiten, 
+Tagescounter, etc).
+</p>
+<p>
+In den meisten F&auml;llen kann man auf einen optischen Aufputz verzichten - was sicherlich das 
+T&uuml;pfelchen auf dem "i" ist, ist die graphische Auswertung der Page Hits.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000721.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000721.zip</span></p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

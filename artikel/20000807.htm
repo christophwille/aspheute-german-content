@@ -1,0 +1,534 @@
+<HTML>
+<HEAD>
+<TITLE>Windows 2000 Internet Server Security Configuration Tool</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor, wie man mit dem IISLock Utility einen IIS 5.0 Webserver gegen Angriffe aller Art absichern kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Sicherheit,MMC,Konfiguration,IISLock,Windows 2000,IIS 5.0,IIS,Internet Information Server Security,Security">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Windows 2000 Internet Server Security Configuration Tool</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000807"></SCRIPT>
+</p>
+<p>
+Sicherheit ist ein Thema, das man nie aus den Augen lassen sollte.
+Sp&auml;testens bei einem gro&szlig;en E-Commerce Project auf einem 
+Webserver unter IIS 5.0 (Windows 2000 Server)
+sollte man sich ernsthaft Gedanken &uuml;ber die Absicherung des Webservers machen.
+Auch in einem Intranet, das Informationen &uuml;ber den IIS 5.0 zur Verf&uuml;gung stellt,
+ist es ratsam, den Webserver so abzusichern, da&szlig; 
+Unbefugten der Zugriff auf vertrauliche Daten erschwert wird.
+</p>
+
+<p>
+Das Thema Sicherheit und Webserver-Security umfa&szlig;t ein 
+gro&szlig;es Feld. Man ben&ouml;tigt zur Implementierung eines
+vern&uuml;nftigen Sicherheitskonzepts grundlegende
+Kenntnisse in User und Group Security unter Windows 2000 und NTFS.
+Allgemeine Netzwerksicherheit sollte auch kein Fremdwort sein.
+</p>
+<p>
+Um nun die Absicherung eines IIS 5.0 Webservers ein wenig zu vereinfachen,
+kann man das <i>Windows 2000 Internet Server Security Configuration Tool</i>
+(kurz <i>IISLock</i>) benutzen, das auf der Microsoft Website
+<a href="http://www.microsoft.com/downloads/release.asp?releaseid=19889">zum Download</a>
+zur Verf&uuml;gung steht.
+</p>
+<p>
+Dieses Tool erlaubt es, einen IIS 5.0 in wenigen Schritten und 
+etwa 15 Minuten Zeit weitgehend gegen Zugriff nicht-autorisierter
+Personen zu sch&uuml;tzen. Den wirklich gro&szlig;en Trumpf
+kann dieses Tool dann ausspielen, wenn man mehrere Webserver
+gleichartig absichern m&ouml;chte. Daf&uuml;r mu&szlig; man die
+Sicherheitseinstellungen nur einmal definieren, bevor man
+sie auf jedem Webserver in Kraft setzt.
+</p>
+
+
+<h2>Installation des IISLock Tools</h2>
+
+<p>Nachdem Sie die Datei <i>IISLock.exe</i> downgeloaded haben, 
+k&ouml;nnen Sie das Tool mittels Doppelklick auf die Datei entzippen. 
+Geben Sie als Folder das Verzeichnis an, wo Sie das Tool griffbereit 
+haben wollen, z.B.<i> C:\IISLock</i> (Siehe Bild 1).</p>
+
+<p><IMG SRC="Bilder/200008/20000807_01.png" width=345 height=185 alt="" border="0">
+<br><i>Bild 1: Extrahieren von IISLock.exe in Verzeichnis C:\IISLock</i></p>
+
+<p>Im Verzeichnis <i>C:\IISLock\Tool</i> finden Sie dann die Datei
+<i>Readme.txt</i> und die Verzeichnisse <i>DataEntry</i> und <i>Engine</i> 
+(siehe Bild 2).</p>
+
+<p><IMG SRC="Bilder/200008/20000807_02.png" width=441 height=74 alt="" border="0">
+<br><i>Bild 2: Verzeichnis C:\IISLock\Tool nach dem Extrahieren</i></p>
+
+<p>Das Verzeichnis DataEntry enth&auml;lt das HTML-Interface,
+&uuml;ber das man Template Dateien f&uuml;r bestimmte Sicherheitseinstellungen
+generieren kann. Diese Template Dateien werden dann vom Programm
+<i>IISConfig.cmd</i> aus dem Engine Verzeichnis benutzt, um die gew&auml;hlten
+Sicherheitseinstellungen tats&auml;chlich am Server zu installieren.
+</p>
+
+<p>Das Verzeichnis Engine enth&auml;lt neben dem Program <i>IISConfig</i>
+auch die DLL <i>iissecuritywiz.dll</i>, die COM+ Interfaces bereitstellt, 
+um diverse administrative Abfragen und Manipulationen an 
+Windows 2000 Services (wie dem IIS- oder dem SMTP-Service) 
+durchf&uuml;hren zu k&ouml;nnen.</p>
+
+<p>Die Datei <i>hisecweb.inf</i> im Engine-Verzeichnis ist eine 
+Installations Datei, die Sicherheitseinstellungen enth&auml;lt. 
+Diese werden beim Ausf&uuml;hren des Tools <i>IISConfig.cmd</i>
+ausgelesen und (intern &uuml;ber das Windows 2000 Tool <i>SecEdit</i>) 
+umgesetzt. Die Datei <i>hisecweb.inf</i> kann sowohl 
+in einem Texteditor editiert, als auch mittels graphischem
+Interface in der Microsoft Management Console (MMC) ver&auml;ndert werden.</p>
+
+
+<h3>Registrierung der iissecuritywiz.dll</h3>
+<p>
+Die Datei <i>iissecuritywiz.dll</i> definiert Objekte, die zum 
+Ausf&uuml;hren der eigentlichen Konfigurationsdatei <i>IISConfig.cmd</i> 
+ben&ouml;tigt werden. Um die DLL <i>iissecuritywiz.dll</i> am Webserver zu installieren,
+f&uuml;hrt man lokal am Server in einem Command Prompt
+den Befehl <i>regsvr32 iissecuritywiz.dll</i> im <i>Engine</i>
+Verzeichnis aus (siehe Bild 3):
+</p>
+
+<p>
+<pre style="background='silver';">
+C:
+cd C:\IISLock\Tool\Engine
+regsvr32 iissecuritywiz.dll
+</pre>
+</p>
+
+<p><IMG SRC="Bilder/200008/20000807_03.png" width=444 height=264 alt="" border="0">
+<br><i>Bild 3: Befehle im Command Prompt</i></p>
+
+<p>Die Meldung "<i>DllRegisterServer in iissecuritywiz.dll succeeded.</i>"
+zeigt an, da&szlig; die DLL ordnungsgem&auml;&szlig; installiert wurde.</p>
+
+<h3>Installation des Security Template Snap-In in der MMC</h3>
+<p>
+Dieser Schritt ist optional, wird aber dringend empfohlen. 
+Sie ben&ouml;tigen ihn, wenn Sie einen detaillierten 
+&Uuml;berblick &uuml;ber die betriebssystemnahen Windows 2000 
+Sicherheitseinstellungen am Webserver gewinnen wollen. 
+Mit Hilfe des <i>Security Template Snap-In</i> k&ouml;nnen Sie
+auch diverse Sicherheiteinstellungen direkt ver&auml;ndern.
+</p>
+
+<p>&Ouml;ffnen Sie die MMC durch starten der <i>mmc.exe</i>
+(z.B. aus einem Command Prompt heraus). F&uuml;gen Sie
+das <i>Security Template Snap-In</i> mittels Men&uuml;
+<i>Console/Add Remove Snap-in</i> (oder Ctrl+M) ein (siehe Bild 4).</p>
+
+<p><IMG SRC="Bilder/200008/20000807_04.png" width=381 height=267 alt="" border="0">
+<br><i>Bild 4: Men&uuml; Console/Add Remove Snap-in in der MMC</i></p>
+
+<p>Das <i>Add/Remove Snap-In</i> Fenster erscheint.
+Klicken Sie dort auf die Schaltfl&auml;che <i>Add...</i> (siehe Bild 5).</p>
+
+<p><IMG SRC="Bilder/200008/20000807_05.png" width=409 height=436 alt="" border="0">
+<br><i>Bild 5: Add/Remove Snap-In Fenster</i></p>
+
+<p>
+Im erscheinenden <i>Add Standalone Snap-in</i> Fenster 
+w&auml;hlen Sie <i>Security Templates</i> aus und klicken auf 
+die Schaltfl&auml;che <i>Add</i> (siehe Bild 6). Danach schlie&szlig;en Sie
+das Fenster mit der Schaltfl&auml;che <i>Close</i>.
+</p>
+
+<p><IMG SRC="Bilder/200008/20000807_06.png" width=378 height=366 alt="" border="0">
+<br><i>Bild 6: Auswahl des Security Templates Snap-ins</i></p>
+
+<p>Schlie&szlig;en Sie nun auch das <i>Add/Remove Snap-in</i>
+Fenster indem Sie auf die Schaltfl&auml;che <i>OK</i> klicken.</p>
+
+<p>Das <i>Security Templates Standalone Snap-in</i> dient dazu, um
+maschinenunabh&auml;ngige Sicherheitseinstellungen, die in
+einer <i>.inf</i>-Konfigurationsdatei gespeichert sind,
+in einem visuellen Tool (MMC) manipulieren zu k&ouml;nnen.
+In unserem speziellen Fall werden wir das <i>Security Templates Snap-in</i>
+dazu benutzen, um die Datei <i>hisecweb.inf</i> im Engine 
+Verzeichnis (des IISLock <i>Tools</i> Verzeichnis) 
+einzusehen und zu manipulieren.</p>
+
+<p>Um die in der Installationsdatei 
+<i>hisecweb.inf</i> (Tool\DataEngine) definierten
+Einstellungen n&uuml;tzen zu k&ouml;nnen, m&uuml;ssen Sie
+im <i>Security Templates Service</i> der MMC einen "Pfad" 
+dorthin setzen. Klicken Sie mit der rechten Maustaste auf
+das Icon oder den Text des <i>Security Template Snap-in</i>, und 
+w&auml;hlen Sie <i>New Template Search Path</i> im Kontextmen&uuml;.
+</i> (siehe Bild 7).</p>
+
+<p><IMG SRC="Bilder/200008/20000807_07.png" width=504 height=329 alt="" border="0">
+<br><i>Bild 7: New Template Search Path im Kontextmen&uuml;</i></p>
+
+<p>W&auml;hlen Sie den Pfad <i>Tool\Engine</i>, in dem sich die Datei
+<i>hisecweb.inf</i> befindet, zum Beispiel 
+<i>C:\IISLock\Tool\Engine</i>.</p>
+
+<p>Speichern Sie nun die MMC Konfiguration, um so schnellen Zugriff
+auf die Datei <i>hisecweb.inf</i> &uuml;ber das <i>Security Templates 
+Snap-in</i> mit dem richtig konfigurierten Pfad zu haben:
+W&auml;hlen Sie im Men&uuml; 
+<i>Console/Save As</i> und speichern Sie die Konfiguration als 
+<i>.msc</i> Datei ab (zum Beispiel als 
+<i>C:\IISLock\Tool\Engine\HiSecWeb.msc</i>).
+Ab nun gen&uuml;gt ein Doppelklick auf die Datei <i>HiSecWeb.msc</i>
+um ein grafisches Interface zur Konfiguration der Datei <i>hisecweb.inf</i>
+zu erhalten. Die Daten sind &uuml;ber den MMC-Tree 
+<i>Console Root / Security Templates / C:\IISLock\Tool\Engine\hisecweb</i>
+verf&uuml;gbar und konfigurierbar.</p>
+
+
+<h3>Definieren der Sicherheitseinstellungen</h3>
+
+<p>Grundlegende Sicherheitseinstellungen k&ouml;nnen im Internet Explorer
+konfiguriert werden: Dazu rufen Sie die Datei <i>default.htm</i> im
+Verzeichnis <i>DataEntry</i> (<i>C:\IISLock\Tool\DataEntry</i>) auf
+(siehe Bild 8).</p>
+
+<p><IMG SRC="Bilder/200008/20000807_08.png" width=499 height=433 alt="" border="0">
+<br><i>Bild 8: Default.htm</i></p>
+
+<p>Klicken Sie auf <i>Build a Security Template</i> im Men&uuml;
+auf der linken Seite. W&auml;hlen Sie danach auf der rechten Seite
+welche Dinge auf dem Webserver noch ausf&uuml;hrbar sein sollen.</p>
+
+<p>Durch Klicken auf die Schaltfl&auml;che <i>Create Template</i> wird das 
+Sicherheitstemplate erstellt und auf dem Desktop gespeichert 
+(siehe Bild 9). Achtung: Beantworten Sie nach dem Dr&uuml;cken der Schaltfl&auml;che
+alle Fragen mit "Ja" oder "Yes".</p>
+
+<p><IMG SRC="Bilder/200008/20000807_09.png" width=499 height=433 alt="" border="0">
+<br>Bild 9: Sicherheits-Template erstellen</p>
+
+<p>Das erstellte Sicherheitstemplate enth&auml;lt alle Einstellungen,
+um Ihr Sicherheitprofil auf den Ebenen Service-,
+IPSec-(Internet Protocol Sicherheit), SCE- (Security Configuration Editor)
+und IIS- Einstellungen zu konfigurieren.</p>
+
+<p>Um das Sicherheitsprofil des Templates wirksam werden zu lassen,
+f&uuml;hren Sie das Kommandozeilen-Tool <i>IISConfig.cmd</i> aus dem
+Engine Verzeichnis im Command Prompt aus, wobei sie im 
+Parameter <i>-f</i> den Dateinamen angeben. Ein Beispiel daf&uuml;r:</p>
+
+<pre style="background='silver';">
+C:
+
+cd \IISLock\Tool\Engine
+
+IISConfig -f 
+  "E:\Documents and Settings\Administrator\Desktop\IISTemplate.txt"
+</pre>
+
+
+<h3>Benutzung des IISConfig Tools</h3>
+
+<p>Die Datei <i>IISConfig.cmd</i> ist ein Kommandozeilen-Tool,
+mit dessen Hilfe Sie die Sicherheitseinstellungen der Dateien
+<i>hisecweb.inf</i> und Ihres Sicherheitstemplates 
+(z.B: <i>IISTemplate.txt</i>) auf einem Webserver einstellen (
+"Deployment Tool").</p>
+
+<p>Um die m&ouml;glichen Parameter f&uuml;r <i>IISConfig.cmd</i>
+zu erhalten, tippen Sie im Command Prompt 
+(im Unterverzeichnis <i>Tool\Engine</i>) einfach den folgenden Befehl:</p>
+
+<pre style="background='silver';">
+IISConfig -?
+</pre>
+
+<p>Mit dem IISConfig Parameter <i>-f Dateiname</i> geben Sie an,
+welche Sicherheitstemplate-Datei (zus&auml;tzlich zu den Definitionen
+in der Datei <i>hisecweb.inf</i>) zur Einstellung des Webservers
+benutzt werden soll. Beispiel:</p>
+
+<pre style="background='silver';">
+IISConfig -f IISTemplate.txt
+</pre>
+
+<p>Wenn Sie die Einstellungen der Datei <i>hisecweb.inf</i>
+NICHT wirksam werden lassen wollen, so benutzen Sie den Parameter <i>-n</i>.
+Somit werden nur TCP (IP und UCP) Ports gesperrt, Services konfiguriert und 
+IIS-Script Mappings eingestellt:</p>
+
+<pre style="background='silver';">
+IISConfig -f IISTemplate.txt -n
+</pre>
+
+<p>Die Datei <i>hisecweb.inf</i> beinhaltet Sicherheitseinstellungen,
+die vom Betriebssystem direkt verwaltet werden.</p>
+
+<p>Um den vollst&auml;ndigen Debug Output w&auml;hrend dem Ausf&uuml;hren
+des <i>IISConfig</i> Tools zu sehen, benutzen Sie den Parameter <i>-d</i>:</p>
+
+<pre style="background='silver';">
+IISConfig -f IISTemplate.txt -n -d
+</pre>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>Das <i>IISConfig</i> Tool erlaubt Ihnen Sicherheitsrelevante Einstellungen zu definieren.
+Diese k&ouml;nnen Sie auf zwei Ebenen festlegen. 
+Auf der einen Seite k&ouml;nnen Sie ein Sicherheitstemplate Datei mit Hilfe der HTML Seite <i>default.htm</i>
+aus dem <i>DataEntry</i> Verzeichnis generieren. Auf der anderen Seite k&ouml;nnen Sie die betriebssystemnahen Einstellungen in der Datei <i>hisecweb.inf</i> 
+(<i>Engine</i> Verzeichnis) mit Hilfe des <i>Security Templates Snap-in</i> aus der MMC heraus &auml;ndern.
+</p>
+<p>
+Danach konfiguieren Sie einen Webserver mit Hilfe der Einstellungen
+in den beiden Dateien durch das Ausf&uuml;hren des <i>IISConfig</i> Tools,
+gegebenenfalls mit dem <i>-f Sicherheitstemplate</i> Parameter.
+</p><h2>Verwandte Artikel</h2>
+<p>
+<a href="20000914.htm">Hotfix Check Tool f&uuml;r IIS 5.0</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2Fdownloads%2Frelease%2Easp%3Freleaseid%3D19889">Windows 2000 Internet Server Security Configuration Tool</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000807" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Windows 2000 Internet Server Security Configuration Tool"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000807.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Koller"><input type="hidden" name="AuthorEmail" value="christiank@aspexpert.com"><input type="hidden" name="Artikel" value="20000807"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000807.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

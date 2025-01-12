@@ -1,0 +1,424 @@
+<HTML>
+<HEAD>
+<TITLE>Serverseitiges Caching mit XCache</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor, wie man mit dem XCache ISAPI Filter der Firma Post Point Software enorme Geschwindigkeitsgewinne erreichen kann, ohne viel an der ASP Site &auml;ndern zu m&uuml;ssen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,XCache,XTune,XBuilder,Caching,Partielles Caching,Active Caching,Output Caching,Optimierung,Performance,Steigerung,Improvement">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Serverseitiges Caching mit XCache</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/Optimierung.htm">Optimierung</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000817"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Etwas, das man am Client vermeiden m&ouml;chte ist das Cachen von Seiten. Am Server allerdings
+w&auml;re es eine tolle Sache, wenn Seiten, die f&uuml;r alle User gleich sind -
+aber dynamisch generiert werden - f&uuml;r eine bestimmte Zeitspanne gecacht werden k&ouml;nnten.
+Und noch besser w&auml;re es, bestimmte Teile der Seite zu cachen (zB die Produktdetails), allerdings
+andere per User zu generieren (zB den Shopping Bag).
+</p>
+<p>
+Wie k&ouml;nnte das funktionieren?
+Man kann auf einem IIS 5.0 (und IIS 4.0) Webserver
+eine bemerkenswerte Performancesteigerung erzielen, wenn man
+ASP Seite nur einmal ausf&uuml;hrt und dann in einem speziellen
+Cache des Webservers zwischenspeichert. So mu&szlig; bei einer
+neuen Anfrage der selben Seite der ASP Code nicht mehr ausgef&uuml;hrt
+werden sondern nur noch der gecachte Output der Seite zum Client
+geschickt werden.
+</p>
+<p>
+Der Performance-Gewinn durch Caching kann bis zum 10-fachen 
+im Vergleich zu nicht-gecachten Seiten betragen.
+</p>
+<p>
+Mit dem Tool <b>XCache</b> hat die Firma Post Point Software ein
+bemerkenswertes, aber leider nicht gerade billiges
+Produkt f&uuml;r den Internet Information
+Server auf den Markt gebracht, das das Caching von ASP-Seiten
+auf einfache Weise erm&ouml;glicht. 
+Wenn XCache einmal auf dem Server installiert ist, 
+so k&ouml;nnen beliebige ASP Seiten (oder auch nur Teile davon) 
+im Arbeitsspeicher des Webservers gecacht werden. 
+Die erzielbaren Performancegewinne sind um so 
+bemerkenswerter je mehr Zugriffe die Website pro Tag hat.
+Auch das Manko einer langsamen Datenbank l&auml;&szlig;t sich
+mit dem XCache Tool bestm&ouml;glich kaschieren.
+</p>
+
+
+
+<h2>Arbeitsweise der XCache Erweiterung</h2>
+<p>
+Die XCache Webservererweiterung installiert sich als ISAPI Filter
+in den IIS und kann so jeden Request eines Browsers abfangen.
+Wird vom Browser eine ASP Seite angefordert, die sich nocht nicht im
+Cache der XCache Erweiterung befindet, so gibt XCache den Request
+an den IIS (und an die ASP bzw. VBscript und JScript Engine) weiter,
+wo die zugeh&ouml;rige ASP Seite von der Platte oder aus dem Speicher
+gelesen und ausgef&uuml;hrt wird. Der <i>Response</i> des Webservers 
+enth&auml;lt nun das Ergebnis der ASP Seite.
+</p>
+<p>
+Das Ergebnis des IIS Requests speichert XCache dann in einem
+eigenen Bereich des Speichers bevor es den <i>Response</i>
+weiter zum Browser schickt.
+</p>
+<p>
+Wenn der Browser eine Seite des Webservers anfordert, die 
+schon im Cache der XCache Erweiterung liegt, so gibt XCache
+direkt den gespeicherten Response an den Browser zur&uuml;ck,
+ohne da&szlig; der IIS die ASP Seite aufrufen und ausf&uuml;hren mu&szlig;.
+</p>
+<p>
+Ein gro&szlig;artiges Feature des XCache Tools ist
+das partielle (also nur teilweise) cachen von ASP Seiten.
+Dabei werden die Teile der ASP-Seite, die bei jedem Aufruf
+ausgef&uuml;hrt werden sollen, in spezielle Delimiter
+(&lt;$ und $&gt;) geschrieben. Dadurch f&uuml;hrt XCache
+diese Teile der ASP Seite auch in den gecachten Seiten aus.
+Weiters erlaubt der XCache Manager das Cachen f&uuml;r 
+Websites, Verzeichnisse und einzelne Dateien ein- und auszuschalten.
+</p>
+
+
+
+<h2>Installation von XCache</h2>
+<p>
+Auf der XCache Produktseite
+kann man eine 30 Tage g&uuml;ltige Version von XCache anfordern
+und nach Erhalt des Best&auml;tigungsemails downloaden.
+Die Downloaddatei wird entzipt. Danach startet man das Setup
+durch Doppelklick auf die Datei <i>Setup.exe</i>.
+</p>
+<p>
+Die Installation selbst verl&auml;uft Men&uuml;gesteuert 
+(InstallShield Wizard) und dementsprechend einfach. 
+W&auml;hrend des Installationsvorganges wird der IIS 
+(und andere Webserverdienste) kurzzeitig angehalten.
+</p>
+<p>
+Nach der Installation ist in der Programmgruppe
+ein Untermen&uuml; XCache vorhanden, in dem sich 
+die XCache Hilfe und der XCache Manager befinden
+(siehe Bild 1).
+</p>
+<p>
+<IMG SRC="/artikel/Bilder/200008/20000816_01.png" width=424 height=84 alt="" border="0">
+<br>
+<i>Bild 1: XCache Men&uuml;</i>
+</p>
+<p>
+Die De-Installation des XCache Tools bewerkstelligt man &uuml;ber
+Software Installieren/Deinstallieren (Add/Remove Programs) im Control
+Panel des Webservers.
+</p>
+
+
+<h2>Einsatz von XCache</h2>
+<p>
+Um XCache zu aktivieren &ouml;ffnet man den XCache Manager
+aus der Programmgruppe XCache. Man &ouml;ffnet den 
+Baum (Tree) der XCache Gruppe im XCache Manager und klickt mit
+der rechten Maustaste auf das Webserver-Symbol oder auf eine Website.
+Im erscheinenden Kontext Men&uuml; w&auml;hlt man
+All Tasks, Register XCache (siehe Bild 2).
+</p>
+<p>
+<IMG SRC="/artikel/Bilder/200008/20000816_02.png" width=394 height=223 alt="" border="0">
+<br>
+<i>Bild 2: Aktivieren von XCache</i>
+</p>
+<p>
+Der XCache Install Wizard erscheint. Kopieren Sie aus
+dem Best&auml;tigungsemail den Product License Key 
+in das Textfeld des Wizards und klicken Sie auf <i>Next</i>.
+Klicken Sie "I Agree" im Lizenzfenster und auf <i>Finish</i>.
+Nun sollte das XCache Tool einsatzbereit sein.
+</p>
+<p>
+Im XCache Manager sind nun alle Websites mit <i>(Stopped)</i>
+gekennzeichnet. Um XCache f&uuml;r eine Website zu aktivieren klicken
+Sie mit der rechten Maustaste auf die Website und w&auml;hlen Start.
+Danach wird jeder Aufruf einer ASP Seite von dieser Website
+(identische URL inklusive Querystring) von XCache gecacht.
+</p>
+<p>
+Das folgende ASP Skript (Time.asp) gibt zum Beispiel immer die 
+aktuelle Uhrzeit aus:
+<pre style="background='silver';">
+&lt;%
+Response.Write(Time)
+%&gt;
+</pre>
+</p>
+<p>
+Wenn Sie diese Datei in eine gecachte Website geben und
+in einem Browser aufrufen, so sehen Sie immer die Uhrzeit des
+ersten Aufrufs. Wenn Sie nun das Caching der Website im 
+XCache Manager wieder ausschalten (Stop im Kontextmen&uuml;
+der Website), so erscheint beim Aufruf von Time.asp immer
+die aktuelle Uhrzeit des Webservers. 
+Die Funktion <i>Unload</i> im Kontextmen&uuml;
+bewirkt, da&szlig; der Cache geleert wird.
+</p>
+<p>
+Der Men&uuml;punkt <i>Make Uncacheable</i> im Kontextmen&uuml; einer
+Website, eines Directories oder einer ASP Datei bewirkt,
+da&szlig; die Datei nicht gecacht wird.
+</p>
+<p>
+XCache speichert zu jeder URL (inklusive Querystring) den Response.
+Wenn man nun Time.asp aufruft, so erscheint immer die selbe Uhrzeit.
+Ruft man jedoch <i>Time.asp?ohneBedeutung=1</i> auf, so bekommt man bei diesem
+Aufruf immer das selbe Ergebnis, das jedoch unterschiedlich zum Ergebnis
+von <i>Time.asp</i> ist (<i>?ohneBedeutung=1</i> ist der Querystring
+in der URL).
+</p>
+
+
+<h2>Steuerung von XCache</h2>
+<p>
+Wenn Sie verhindern wollen, da&szlig; XCache eine ASP Datei
+cacht, so k&ouml;nnen Sie im XCache Manager die Datei 
+mit dem Kontextmen&uuml;eintrag <i>Make Uncacheable</i> 
+f&uuml;r den Cache sperren.
+</p>
+<p>
+Die maximale Anzahl der gecachten Seiten, 
+die maximale Speicherdauer einer gecachten Seite (Expiration) 
+und andere XCache Parameter lassen sich f&uuml;r jede Website
+im XCache Manager (Kontextmen&uuml;, Properties) einstellen
+(siehe Bild 3).
+</p>
+<p>
+<IMG SRC="/artikel/Bilder/200008/20000816_03.png" width=388 height=401 alt="" border="0">
+<br>
+<i>Bild 3: XCache Eigenschaften f&uuml;r eine Website</i>
+</p>
+
+
+<h2>Partielles Cachen</h2>
+<p>
+Um die Webserverperformance zu verbessern lassen sich
+ASP Seiten cachen. Will man aber nun bestimmte Bereiche 
+der ASP Seite bei jedem Aufruf neu ausf&uuml;hren, 
+so  erlaubt XCache auch dieses. Die 
+daf&uuml;r zust&auml;ndige Technik nennt sich
+partielles Caching (bei XCache Active Caching genannt).
+</p>
+<p>
+Partielles Caching f&uuml;r eine Website aktiviert man
+im Eigenschaften-Fenster der Website im XCache Manager 
+(Kontextmen&uuml;, Properties). Dort stellt man 
+<i>Enable Active Caching</i> auf "Ein".
+</p>
+<p>
+Active Caching ist ein Prozess, bei dem eine ASP Seite
+zweimal kompiliert (ausgef&uuml;hrt) wird.
+</p>
+<p>
+Der gesamte ASP Sourcecode, der von den 
+Begrenzungszeichen &lt;% %&gt; 
+(oder auch &lt;SCRIPT LANGUAGE="VBSCRIPT" RUNAT="SERVER"&gt;
+&lt;/SCRIPT&gt;) begrenzt ist, wird vor dem Laden in den
+Cache ausgef&uuml;hrt. Genauso werden inkludierte Dateien
+und deren ASP Code ausgef&uuml;hrt.
+</p>
+<p>
+Der Teil der ASP Seite, der hingegen von den Begrenzungszeichen
+&lt;$ und $&gt; eingeschlossen ist, wird bei jedem Aufruf der Seite
+neu kompiliert und ausgef&uuml;hrt. Dasselbe gilt auch
+f&uuml;r "XCache Includes", die mit der folgenden Direktive in eine
+ASP Seite eingebunden werden:
+<pre style="background='silver';">
+&lt;!-- #dynamic virtual="/cachetest2.asp" --&gt;
+</pre>
+</p>
+<p>
+Es werden also die folgenden Aktionen und Skripts
+vor dem Laden in den Cache ausgef&uuml;hrt:
+</p>
+<p>
+<ul>
+<li>Scripts in <i>&lt;% %&gt;</i></li>
+<li>Inkludieren von Dateien mittels <i>#include</i></li>
+<li>Alle Scripts in <i>&lt;% %&gt;</i> in <i>#includes</i></li>
+<li>Alle <i>#includes</i> in <i>#includes</i></li>
+</ul>
+</p>
+<p>
+Die folgenden Teile hingegen werden bei jedem Aufruf der Seite
+neu ausgef&uuml;hrt:
+</p>
+<p>
+<ul>
+<li>Alle Scripts in <i>&lt;$ $&gt;</i></li>
+<li>Alle mittels <i>#dynamic</i> inkludierten Dateien</li>
+<li>Alle Scripts in <i>&lt;$ $&gt;</i> in <i>#dynamics</i></li>
+<li>Alle Scripts in <i>&lt;% %&gt;</i> in <i>#dynamics</i></li>
+<li>Alle Scripts in <i>&lt;$ $&gt;</i> in <i>#includes</i></li>
+<li>Alle <i>#dynamics</i> in <i>#dynamics</i></li>
+<li>Alle <i>#includes</i> in <i>#dynamics</i></li>
+<li>Alle <i>#dynamics</i> in <i>#includes</i></li>
+</ul>
+</p>
+<p>
+Zur Veranschaulichung ein Beispiel:
+<pre style="background='silver';">
+Ausfuehrung vor dem Cachen:
+&lt;%
+Response.Write(Time)
+%&gt;
+&lt;br&gt;
+Aufuehren bei jedem Seitenaufruf:
+&lt;$
+Response.Write(Time)
+$&gt;
+</pre>
+</p>
+<p>Die erste Zeitangabe wird vom Server berechnet und im Cache gespeichert,
+die zweite Zeitangabe jedoch wird bei jedem Aufruf der Seite neu errechnet
+und ist somit immer aktuell.
+</p>
+<p>
+<b>Achtung</b>: Wenn sie im Eigenschaftenfenster einer Website 
+<i>Enable Active Caching</i> auf Nein setzen, so wird der 
+ASP Teil innerhalb der Begrenzungszeichen 
+&lt;$ und $&gt; nicht ausgef&uuml;hrt. Stattdessen wird
+der Sourcecode zum Browser geschickt. Dieses Verhalten tritt auch dann auf,
+wenn sie im XCache Manager das Caching einer Website stoppen.
+</p>
+<p>
+Ein Tip f&uuml;r Leute, die sich mit Active Caching weiter spielen
+wollen: Es ist auch m&ouml;glich im ASP Teil, der vor dem Cachen
+ausgef&uuml;hrt wird, ASP Kommandos dynamisch zu erstellen.
+</p>
+<p>
+Beispiel eines dynamisch erstellten ASP Sripts, das
+mittels Active Caching bei jedem Aufruf ausgef&uuml;hrt wird:
+<pre style="background='silver';">
+&lt;%
+strASPCommand = "Response.Write(7*7)" &amp; vbcrlf &amp; _
+       "Response.Write("" ... feiner Sand"")"
+
+Response.Write("&lt;$ " &amp; strASPCommand &amp; " $&gt;")
+%&gt;
+</pre>
+</p>
+<p>
+Vor dem Cachen des ASP Skripts werden die "normalen"
+ASP Teile ausgef&uuml;hrt. Die gecachte Seite
+sieht somit wie folgt aus:
+<pre style="background='silver';">
+&lt;$ Response.Write(7*7)" &amp; vbcrlf &amp; _
+       Response.Write(" ... feiner Sand") $&gt;
+</pre>
+</p>
+<p>
+Beim Aufruf der gecachten Seite werden alle 
+&lt;$ und $&gt; Begrenzungszeichen in normale 
+Begrenzungszeichen umgewandelt und das ASP Skript 
+ausgef&uuml;hrt.
+</p>
+<p>
+Daher ist das Ergebnis der Seite beim Aufruf in einem Browser
+wie folgt:
+<pre style="background='silver';">
+49 ... feiner Sand
+</pre>
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+XCache erlaubt ein komfortables und effizientes Cachen
+von ASP Seiten. Die dadurch erzielbare Performance
+ist dabei oftmals 10 mal so hoch wie ohne XCache.
+</p>
+<p>
+Um XCache sinnvoll einsetzen zu k&ouml;nnen mu&szlig; man
+sich die interne Funktionsweise von XCache vor Augen f&uuml;hren:
+Ein ASP Skript wird beim ersten Aufruf ausgef&uuml;hrt und im
+Cache gespeichert. Beim n&auml;chsten Aufruf des ASP Skripts
+(mit demselben Querystring) werden die Skripts
+der ASP Datei NICHT mehr ausgef&uuml;hrt, sondern einfach
+aus dem Cache zum Browser geschickt.
+</p>
+<p>
+Um ein partielles Cachen von Seiten zu erzielen, bietet
+das XCache Tool das <i>Active Caching</i> Feature an. Dadurch
+lassen sich einzelne Bereich von ASP Seiten bei
+jedem Aufruf frisch berechnen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001115.htm">HTTP Komprimierung in IIS5</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001115.htm</span><br>
+<a href="../artikel/20011008.htm">Output Caching 101</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011008.htm</span><br>
+<a href="../artikel/20020731.htm">Trafficreduzierung mit XCompress</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020731.htm</span><br>
+<a href="../artikel/20000814.htm">Webserver-Tuning mit XTune</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000814.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Epostpointsoft%2Ecom%2F">Post Point Software</a><br>
+<SPAN class="content">http://www.postpointsoft.com/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Epostpointsoft%2Ecom%2Fhome%2Fxcache%5Ftechnical%5Fspecs%2Ehtm">XCache</a><br>
+<SPAN class="content">http://www.postpointsoft.com/home/xcache_technical_specs.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

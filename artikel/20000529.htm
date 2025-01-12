@@ -1,0 +1,492 @@
+<HTML>
+<HEAD>
+<TITLE>&Uuml;bergeben von Informationen von einer ASP-Seite zur n&auml;chsten</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel beschreibt, wie man Formularwerte zwischen ASP Seiten weiterreichen kann, ohne das Session Objekt zu verwenden.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Request,QueryString,Form,Formulare,Werte,Session,Tracking,Weiterleitung">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>&Uuml;bergeben von Informationen von einer ASP-Seite zur n&auml;chsten</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000529"></SCRIPT>
+</p>
+<p>Man kann <i>Session</i> Variablen benutzen, um Informationen von einer ASP-Seite an
+andere ASP-Seiten der selben Website weiterzugeben.
+Dies erfordert jedoch, da&szlig; der Browser Cookies unterst&uuml;tzt und die ASP-Seite
+Sessions unterst&uuml;tzt.</p>
+
+<p>Daneben gibt es aber noch andere Methoden, um Informationen von einer 
+Seite zur n&auml;chsten weiterzuleiten.</p>
+
+<p>Sehen wir uns einmal an, was passiert, wenn ein Benutzer von einer ASP-Seite zur n&auml;chsten geht.
+Der Benutzer ist auf einer Seite und kommt mittels Link, oder dem Absenden eines Formulares, von
+einer beliebigen ASP-Seite zur n&auml;chsten ASP-Seite.</p>
+
+<p>Wenn man nun Informationen an die aufgerufene ASP-Seite weitergeben will,
+so mu&szlig; man diese Informationen in den Link oder in das Formular auf eine Art und Weise verpacken,
+da&szlig; die aufgerufene ASP-Seite Zugriff auf diese Informationen erh&auml;lt.</p>
+
+<p>Sehen wir uns also an, wie man das Weiterleiten von Informationen bewerkstelligt f&uuml;r den Fall,
+da&szlig; der User auf einen Link einer ASP-Seite klickt um die n&auml;chste Seite aufzurufen.</p>
+
+<h2>Informationen &uuml;ber einen Link weitergeben</h2>
+
+<p>Der folgende Link enth&auml;lt Informationen in Form eines Querystrings,
+der einfach an die URL des Links angeh&auml;ngt wird:</p>
+
+<pre style="background='silver';">
+&lt;a href="<i>neueSeite.asp</i><b>?Vorname=Christian&amp;Nachname=Koller</b>"&gt;Ein Link&lt;/a&gt;
+</pre>
+
+<p>Wenn nun der User auf diesen Link klickt, so ruft er die Seite <i>neueSeite.asp</i> auf.
+Diese Seite wiederum kann die Werte aus dem Querystring mit Hilfe der <i>Request.QueryString</i>
+Collection auslesen:</p>
+
+<pre style="background='silver';">
+&lt;%
+<i>strVorname</i>  = <b>Request.QueryString(</b>"<i>Vorname</i>"<b>)</b>
+<i>strNachname</i> = <b>Request.QueryString(</b>"<i>Nachname</i>"<b>)</b>
+%&gt;
+</pre>
+
+<p>Das Auslesen der Werte aus dem Querystring geht also genauso vor sich,
+wie das Auslesen eines mit <i>METHOD="GET"</i> abgeschickten HTML-Formulares.</p>
+
+<p>Es gibt nat&uuml;rlich einige wichtige Dinge, die man beachten mu&szlig;,
+wenn man Werte in einen Querystring verpackt:</p>
+
+<ul>
+	<li><b>L&auml;nge des Querystrings</b>: Die URL und der Querystring zusammen sollten nicht mehr als
+500 bis 2000 Zeichen enthalten, ansonsten besteht die Gefahr, da&szlig; einige Werte einfach nicht
+&uuml;bergeben werden (vom Browser abh&auml;ngig).</li>
+
+	<li><b>Sonderzeichen:</b> Sonderzeichen im Querystring mu&szlig; man "kodieren".
+Dies geschieht &auml;hnlich wie die Darstellung von Sonderzeichen unter HTML. 
+ASP selbst stellt die <i>Server.URLEncode</i> Funktion zur Verf&uuml;gung, die analog der 
+<i>Server.HTMLEncode</i> Funktion die Feldnamen und Feldwerte kodiert.</li>
+</ul>
+
+<h2>Erzeugen des Querystrings in einer ASP-Seite</h2>
+
+<p>Der Querystring wird einfach mit einem Fragezeichen eingeleitet und an die URL angeh&auml;ngt.
+Ein Querystring kann mehrere Felder enthalten. Jedes Feld besteht aus einem
+Feldnamen und einem Feldwert. Feldname und Feldwert werden durch ein Gleichheitszeichen
+getrennt:
+</p>
+
+<pre style="background='silver';">
+Vorname=Christian</pre>
+
+<p>Feldnamen sollten keine Sonderzeichen, Umlaute oder Leerzeichen enthalten. 
+Nur die zus&auml;tzliche Verwendung des Unterstriches (<b>_</b>) ist gefahrlos.
+Sonderzeichen in Feldwerten m&uuml;ssen richtig kodiert sein, was mit dem Einsatz der 
+ASP-Funktion <i>Server.URLEncode</i> einfach zu erreichen ist.</p>
+
+<p>Mehrere Felder des Querystrings werden durch das kaufm&auml;nnische Und (<b>&amp;</b>) verbunden.
+Die Reihenfolge der Felder selbst spielt keine Rolle.</p>
+
+<pre style="background='silver';">
+Vorname=Christian<b>&amp;</b>Nachname=Koller
+</pre>
+
+<p>Wie f&uuml;gt man nun dynamisch Werte in den Querystrings eines Links ein? 
+Nehmen wir einmal an, in den Variablen <i>strVorname</i> und <i>strNachname</i> werden in der 
+ASP-Seite (nat&uuml;rlich vor dem Link) Werte gespeichert. 
+Die Variablen werden dann in den Querystring des Links als Werte eingebaut:</p>
+
+<pre style="background='silver';">
+&lt;%
+<i>strVorname</i> = "Lao"
+<i>strNachname</i> = "Tse"
+%&gt;
+&lt;a href="neueSeite.asp?<i>Vorname</i>=&lt;%= <i>strVorname</i> 
+   %&gt;&amp;<i>Nachname</i>=&lt;%= <i>strNachname</i> %&gt;"&gt;Ein Link&lt;/a&gt;</pre>
+
+<p>Nat&uuml;rlich k&ouml;nnte man den Link auch mit einem <i>Response.Write</i> Befehl
+zum Browser schreiben:</p>
+
+<pre style="background='silver';">
+&lt;%
+strVorname = "Lao"
+strNachname = "Tse"
+
+Response.Write "&lt;a href="""
+Response.Write "neueSeite.asp"
+' QueryString:
+Response.Write "?Vorname=" &amp; strVorname &amp; "&amp;Nachname=" &amp; strNachname
+
+Response.Write """&gt;Ein Link&lt;/a&gt;"
+%&gt;</pre>
+
+<p>Wenn man nun, aus welchem Grund auch immer, Sonderzeichen (Umlaute, Zeilenschaltungen, Leerzeichen)
+in den Feldwerten erwartet, so kodiert man die Feldwerte mit der <i>Server.URLEncode</i> Methode:</p>
+
+<pre style="background='silver';">
+&lt;%
+strVorname = "Lao"
+strNachname = "Tse"
+%&gt;
+&lt;a href="neueSeite.asp?Vorname=&lt;%= <b>Server.URLEncode(</b>strVorname<b>)</b>
+%&gt;&amp;Nachname=&lt;%= <b>Server.URLEncode(</b>strNachname<b>)</b> 
+%&gt;"&gt;Ein Link&lt;/a&gt;</pre>
+
+<p>Oder auch:</p>
+
+<pre style="background='silver';">
+&lt;%
+strVorname = "Lao"
+strNachname = "Tse"
+
+Response.Write "&lt;a href="""
+Response.Write "neueSeite.asp"
+Response.Write "?Vorname=" &amp; <b>Server.URLEncode(</b>strVorname<b>)</b> 
+Response.Write "&amp;Nachname=" &amp; <b>Server.URLEncode(</b>strNachname<b>)</b> 
+Response.Write """&gt;Ein Link&lt;/a&gt;"
+%&gt;</pre>
+
+<h2>Auslesen der Werte des Querystrings in der aufgerufenen Seite</h2>
+
+<p>Die im Querystring enthaltenen Werte kann man auf der aufgerufenen 
+ASP-Seite mit Hilfe der <i>Request.QueryString</i> Collection wieder auslesen.</p>
+
+<p>Wenn Werte in Querystring kodiert waren, so liefert <i>Request.Querystring</i> bereits
+die r&uuml;ckkodierten (also originalen) Werte.</p>
+
+<p>Um das Feld mit dem Feldnamen <i>Nachname</i> in einer ASP-Seite 
+aus dem Querystring zu lesen und in der Variable <i>strNachname</i> zu speichern, 
+benutzt man den folgenden Befehl:</p>
+
+<pre style="background='silver';">
+&lt;%
+<i>strNachname</i> = <b>Request.QueryString(</b>"<i>Nachname</i>"<b>)</b>
+%&gt;</pre>
+
+<p>Analog liest man alle anderen Feldwerte des QueryStrings aus.</p>
+
+
+<h2>&Uuml;bergeben von Informationen in Formularen</h2>
+
+<p>Wenn man Informationen beim Absenden von HTML-Formularen weitergeben will,
+so hat man grunds&auml;tzlich die folgende M&ouml;glichkeit.</p>
+
+<p>Man speichert Feldwerte in sogenannten "Hidden Fields" (Verborgenen Feldern) des Formulares.
+Diese Felder werden dann beim Absenden einfach zusammen mit den anderen Feldwerten
+verschickt und k&ouml;nnen genauso wie die anderen Feldwerte ausgelesen werden.</p>
+
+<p>Ein verstecktes Feld in einem Formular hat die folgende HTML-Syntax:</p>
+
+<pre style="background='silver';">
+&lt;input type="Hidden" name="<i>Feldname</i>" value="<i>Feldwert</i>"&gt;</pre>
+
+<p>Hierbei darf der Feldwert nicht verschl&uuml;sselt werden. Feldwerte in 
+verborgenen Formularfeldern d&uuml;rfen keine Zeilenschaltungen enthalten.</p>
+
+<p>Um einen Wert dynamisch einem verborgenen Feld zuzuweisen,
+ f&uuml;gt man eine ASP-Variable anstelle des Feldwertes ein:</p>
+
+<pre style="background='silver';">
+&lt;input type="Hidden" name="<i>Feldname</i>" value="&lt;= <b>strFeldwert</b> %&gt;"&gt;
+
+<b><u>oder:</u></b>
+
+&lt;%
+Response.Write "&lt;input type=""Hidden"" name=""<i>Feldname</i>"" " 
+Response.Write "value=""" &amp; <b>strFeldwert</b> &amp; """&gt;"
+%&gt;</pre>
+
+<h2>&Uuml;bergeben eines Querystrings in einem POST Formular</h2>
+
+<p>Ein ausgefuchstes Vorgehen, um Informationen beim Abschicken eines HTML-Formulares 
+von einer ASP-Seite zur n&auml;chsten zu transportieren ist wie folgt:</p>
+
+<p>Man benutzt die POST Sendemethode f&uuml;r das Formular und gestaltet das HTML-Formular wie gewohnt.
+An die Empf&auml;ngeradresse (im Attribut ACTION) allerdings h&auml;ngt man einen
+Querystring mit Feldwerten an:</p>
+
+<pre style="background='silver';">
+&lt;form action="<i>Empfaenger.asp</i><b>?Vorname=Chris</b>" method="<b>POST</b>"&gt;
+Wert: &lt;input type="Text" name="Wert" value="Ein Wert"&gt;&lt;br&gt;
+&lt;input type="Submit"&gt;
+&lt;/form&gt;</pre>
+
+<p>Nat&uuml;rlich kann man den Querystring wieder dynamisch generieren:</p>
+
+<pre style="background='silver';">
+&lt;%
+strVorname = "Chris"
+%&gt;
+&lt;form action="<i>Empfaenger.asp</i><b>?Vorname=&lt;%= strVorname
+%&gt;</b>" method="POST"&gt;
+...
+&lt;/form&gt;</pre>
+
+<p>Alle Werte des Formulares liest man dann (wegen METHOD="POST") 
+mit der <i>Request.Form</i> Collection aus. Nur die Werte des Querystrings werden
+mittels <i>Request.QueryString</i> ausgelesen.</p>
+
+<p>Hat das HTML-Formular also einem Querystring in der Action-URL, und
+benutzt es die POST &Uuml;bermittlungsmethode, so k&ouml;nnte die
+Empf&auml;ngerseite wie folgt aussehen:</p>
+
+<pre style="background='silver';">
+&lt;%
+<i>strVorname</i> = Request.QueryString("<i>Vorname</i>")
+<i>strWert</i>    = Request.Form("<i>Wert</i>")
+%&gt;</pre>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Um einzelne Werte von einer ASP-Seite zur n&auml;chsten zu &uuml;bergeben
+sind die in diesem Artikel beschriebenen Methoden hervorragend geeignet.
+Will man aber Werte f&uuml;r einen User speichern (&auml;hnlich wie in einer Session Variable),
+so mu&szlig; man andere Methoden finden (zum Beispiel das &Uuml;bergeben einer User ID von
+einer Seite zur n&auml;chsten und dem Speichern der Userdaten in einer Datenbank, 
+die dann mittels User ID wieder ausgelesen werden).
+</p><h2>Verwandte Artikel</h2>
+<p>
+<a href="20000522.htm">&Uuml;berpr&uuml;fen von HTML-Formularen mit ASP</a><br>
+<a href="20000406.htm">Auswertung von HTML Formularen mit ASP</a><br>
+<a href="20020429.htm">Benutzerverwaltung leicht gemacht: Teil 1</a><br>
+<a href="20000505.htm">Session Variablen - Verwendung und Stolpersteine</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000529" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="&Uuml;bergeben von Informationen von einer ASP-Seite zur n&auml;chsten"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000529.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Koller"><input type="hidden" name="AuthorEmail" value="christiank@aspexpert.com"><input type="hidden" name="Artikel" value="20000529"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000529.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

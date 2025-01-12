@@ -1,0 +1,159 @@
+<HTML>
+<HEAD>
+<TITLE>Geschwindigkeitsmessungen in ASP</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Geschwindigkeitsmessungen von verschiedenen Lösungsansätzen ist wichtig, da sich die Unterschiede in mehreren 100 Prozent ausdrücken können.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Geschwindigkeit,Performance,IIS,ASP,profile,profiler,profiling">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Geschwindigkeitsmessungen in ASP</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Optimierung.htm">Optimierung</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=19990919"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Ein von Anf&auml;ngern oft &uuml;bersehener Bereich der Programmierung ist die Optimierung des geschriebenen
+Codes. Aber auch Experten sollten sich dieses Themas annehmen - denn nur eine Geschwindigkeitsmessung kann
+genauen Aufschlu&szlig; &uuml;ber die Performance verschiedener L&ouml;sungsans&auml;tze bringen. Gef&uuml;hlsm&auml;&szlig;ige
+Entscheidungen sind meist falsch.
+</p>
+<p>
+Nehmen wir als Beispiel die Diskussion um das Formatieren der Zahl 0 aus der AspGerman Newsliste. Folgender Code
+wurde vorgeschlagen:
+
+<pre>Replace(FormatNumber(Variable, 2, -1),&quot;0,00&quot;,&quot;0&quot;)</pre>
+
+Abgesehen davon, da&szlig; neben der gew&uuml;nschten Umwandlung von 0,00 in 0 auch alle zehnfachen (70,00 etc)
+gek&uuml;rzt werden (in 70), hat dieser L&ouml;sungsansatz gegen&uuml;ber
+
+<pre>
+Function Waehrung(Variable)
+   If Variable <> 0 then
+      Waehrung = FormatNumber(Variable, 2, -1)
+   Else
+      Waehrung = "0"
+   End If
+End Function
+</pre>
+
+sogar einen krassen Geschwindigkeitsnachteil - und zwar von &uuml;ber 330 Prozent! Und das bei einer Implementierung
+als Funktion! Inline w&auml;re er sogar noch um vieles gr&ouml;&szlig;er (500 Prozent).
+</p>
+<p>
+Und wie komme ich zu diesen Zahlen? Ganz einfach: da wir hausintern gro&szlig;e Seiten zu optimieren haben, habe ich eine
+Komponente zur Geschwindigkeitsmessung programmiert (gratis erh&auml;ltlich bei IISDEV auf unserem Server).
+Ich habe die oben vorgestellten L&ouml;sungsans&auml;tze mit der Profiler Komponente gemessen, 
+und zwar mit folgender ASP Datei:
+<pre>
+&lt;%
+Function Waehrung(Variable)
+   If Variable &lt;&gt; 0 then
+      Waehrung = FormatNumber(Variable, 2, -1)
+   Else
+      Waehrung = &quot;0&quot;
+   End If
+End Function
+
+Dim xObj, i, Variable, interim, runCount
+Dim timerStart, timerDiff, profileElapsed, prfTime1, prfTime2
+
+Set xObj = Server.CreateObject(&quot;Softwing.Profiler&quot;)
+runCount = 100
+
+Variable = 0
+xObj.ProfileStart()
+For i = 1 To runCount
+  interim = Replace(FormatNumber(Variable, 2, -1),&quot;0,00&quot;,&quot;0&quot;)
+Next
+profileElapsed = xObj.ProfileStop()
+
+prfTime1 = profileElapsed / runCount
+
+
+Variable = 0
+xObj.ProfileStart()
+For i = 1 To runCount
+   interim = Waehrung(Variable)
+Next
+profileElapsed = xObj.ProfileStop()
+prfTime2 = profileElapsed / runCount
+
+Response.Write (prfTime1/prfTime2*100)
+%&gt;
+</pre>
+</p>
+<p>
+Erw&auml;hneswert ist die Variable <i>runCount</i>: da ein einziger Durchlauf keine Aussagekraft hat, mu&szlig; man
+den Code in einer Schleife laufen lassen und den Mittelwert bilden. Der Einfachheit halber habe ich 100 Durchl&auml;ufe
+eingestellt - und dennoch wird bei jedem Aufruf dieser Seite sich der Prozentsatz &auml;ndern (der Grund ist zb die Zuweisung der Prozessorzeit
+an den IIS, etc). Die Zahlen, die ich ermittelt habe, stammen von einem PIII 450, IIS 5.0 RC1.
+</p>
+<p>
+Was lernen wir aus diesem Beispiel? Vermeintlich elegante oder kurze L&ouml;sungen sind nicht immer die schnellsten. Und Entscheidungen
+&uuml;ber Geschwindigkeitsvorteile sollten nie aus dem Bauch heraus getroffen werden.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001013.htm">Highspeed-Abfragen einer SQL Server Datenbank</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001013.htm</span><br>
+<a href="../artikel/20000814.htm">Webserver-Tuning mit XTune</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000814.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2FIisDev%2FComponents%2FProfiler%2F">IISDEV Profiling Komponente</a><br>
+<SPAN class="content">http://www.alphasierrapapa.com/IisDev/Components/Profiler/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

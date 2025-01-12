@@ -1,0 +1,257 @@
+<HTML>
+<HEAD>
+<TITLE>Eine simple UNZIP-Komponente programmieren</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im heutigen Artikel werden wir uns eine einfache Unzip Komponente selbst programmieren - mit Hilfe von frei erh&auml;ltlichen Klassen-Bibliotheken und Visual C++.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,zip,GZIP,Komponente,C,C++,MFC,Programmierung,entzippen,ASP">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Eine simple UNZIP-Komponente programmieren</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Komponenten.htm">Komponenten</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001113"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Im heutigen Artikel werden wir uns eine einfache Unzip Komponente selbst programmieren -
+mit Hilfe von frei erh&auml;ltlichen Klassen-Bibliotheken und Visual C++. Selbst wenn man nicht
+daran interessiert ist, die vorgestellte Komponente zu erweitern - der Download enth&auml;lt
+die fertige Komponente, die man nur noch am eigenen Server registrieren mu&szlig;!
+</p>
+<p>
+In diesem Artikel verwendet ich die MFC Zip Bibliothek von Tadeus Dracz. Die aktuelleste
+Version kann man sich bei CodeGuru 
+<a href="http://codeguru.earthweb.com/cpp_mfc/ZipFunc.shtml" target="_blank">downloaden</a>.
+</p>
+
+<h2>Voraussetzungen</h2>
+<p>
+Die Grundvoraussetzung um den hier vorgestellten Sourcecode zu modifizieren und zu
+erweitern ist ein installiertes Visual C++ 6.0 oder h&ouml;her.
+Ich werde auf einige Details des Komponenten-Erstellens in Visual C++ eingehen, und wer
+m&ouml;chte, kann anhand der Anleitung die Komponente selbst nachbauen.
+</p>
+<p>
+Die fertig kompilierte DLL ist Teil des Downloads, ebenso wie der Sourcecode.
+</p>
+
+<h2>Das Projekt erstellen</h2>
+<p>
+Der Code der Zip Bibliothek ist mit Hilfe der MFC (Microsoft Foundation Classes) geschrieben
+worden, deshalb habe ich mich aus Einfachheitsgr&uuml;nden entschieden, die Komponente ebenso
+mit Hilfe der MFC zu erstellen. Dazu w&auml;hle ich im Projekt-Wizard das MFC DLL Projekt aus,
+vergebe einen Namen, und kann dann folgende Einstellungen treffen:
+</p>
+<p><IMG SRC="/artikel/Bilder/200011/20001113_01.png" width="477" height="384" alt="" border="0"></p>
+<p>
+Die wichtigste Einstellung f&uuml;r uns ist, da&szlig; unsere DLL <b>Automation</b> unterst&uuml;tzen mu&szlig;, weil
+sonst k&ouml;nnen wir keine COM Komponenten einbauen. Da die Zip Bibliothek dynamisch zur MFC
+linkt, sollte man der Einfachheit halber den selben Weg gehen.
+</p>
+<p>
+Das Projekt wird jetzt f&uuml;r uns erstellt, allerdings sind noch keine Komponenten im Projekt (es
+ist also eine leere H&uuml;lle). Um nun eine Komponente hinzuzuf&uuml;gen, w&auml;hlen wir New Class vom 
+Kontextmen&uuml; des Projekts:
+</p>
+<p><IMG SRC="/artikel/Bilder/200011/20001113_02.png" width="351" height="335" alt="" border="0"></p>
+<p>
+Jetzt beginnt der Spa&szlig; - die richtigen Einstellungen f&uuml;r die Klasse sind gefragt. Der folgende
+Screenshot zeigt meine Auswahl:
+</p>
+<p><IMG SRC="/artikel/Bilder/200011/20001113_03.png" width="404" height="396" alt="" border="0"></p>
+<p>
+Wichtig ist die Basisklasse CCmdTarget, da diese die Unterst&uuml;tzung f&uuml;r Automation enth&auml;lt.
+Weiters sollte man unter keinen Umst&auml;nden vergessen, die ProgId zu generieren - in unserem
+Falle ist es <b>ZipCOM.SimpleZip</b>.
+</p>
+
+<h2>Das Skelett erstellen</h2>
+<p>
+Wir haben zwar nun eine COM Komponente, allerdings mit exakt Null Funktionalit&auml;t. Daher mu&szlig; 
+unser n&auml;chster Schritt sein, die Funktionen f&uuml;r SimpleZip zu deklarieren:
+<ul>
+<li>BOOL Open(LPCTSTR ZipFileName)
+<li>BOOL Close()
+<li>BOOL Unzip(LPCTSTR File, LPCTSTR ExtractToPath)
+</ul>
+</p>
+<p>
+Wer in den "guten alten Zeiten" h&auml;ndisch COM Interfaces und Methoden deklariert hat (inklusive
+IDL vielleicht), der wird den MFC ClassWizard sch&auml;tzen, der uns das Hinzuf&uuml;gen in einem
+eigenen Tab erm&ouml;glicht:
+</p>
+<p><IMG SRC="/artikel/Bilder/200011/20001113_04.png" width="561" height="403" alt="" border="0"></p>
+<p>
+Als Beispiel des Erstellens habe ich die Methode <i>Open</i> herausgegriffen. Dabei gibt es eigentlich
+kaum Spielraum, weil alle ausw&auml;hlbaren Datentypen vorgeben sind.
+</p>
+<p><IMG SRC="/artikel/Bilder/200011/20001113_05.png" width="357" height="344" alt="" border="0"></p>
+<p>
+Wenn man alle drei Methoden eingegeben hat, sieht der Automation Tab wie folgt aus:
+</p>
+<p><IMG SRC="/artikel/Bilder/200011/20001113_06.png" width="561" height="403" alt="" border="0"></p>
+<p>
+Ein Klick auf OK, und die Skelette der drei Funktionen werden f&uuml;r uns generiert.
+</p>
+
+<h2>Funktionalit&auml;t einbauen</h2>
+<p>
+Bevor man selbst Code schreibt, mu&szlig; man noch die Zip Bibliothek einbinden. Dazu gibt es
+mehrere Verfahrensweisen, die alle auf der Downloadseite der Bibliothek beschrieben sind.
+Ich bin den Weg des Einbindens des Zip Projekts in das Komponentenprojekt gegangen, da dies
+einiges an Kopieraufwand von Libraries erspart.
+</p>
+<p>
+Die ersten &Auml;nderungen sind in der Headerdatei <i>SimpleZip.h</i> vorzunehmen - man mu&szlig;
+zur Datei <i>ZipArchive.h</i> linken. F&uuml;r mein lokales Projekt war das (je nach Installation des
+Bibliothekprojekts mu&szlig; man diesen Pfad &auml;ndern):
+<pre style="background='silver';">
+#include "..\UnZip\ZipFunc\ZipArchive.h"
+</pre>
+</p>
+<p>
+Weiters habe ich noch eine Membervariable deklariert, die das Zip Archiv repr&auml;sentiert
+(ich habe leider nicht den Platz, detailliert auf die Funktionalit&auml;t dieser Klasse einzugehen,
+aber man kann mit dieser so ziemlich alles "anstellen"):
+<pre style="background='silver';">
+protected:
+   CZipArchive m_zip;
+</pre>
+</p>
+<p>
+Der Sourcecode f&uuml;r die drei Methoden ist absolut straight-forward, es sind im Prinzip nur
+Aufrufe in die Instanz des <i>CZipArchive</i> Objekts:
+</p>
+<p>
+<pre style="background='silver';">
+BOOL CSimpleZip::Open(LPCTSTR lpszZipFilename) 
+{
+  m_zip.Open(lpszZipFilename, CZipArchive::open, 0 );
+  return TRUE;
+}
+
+BOOL CSimpleZip::Close() 
+{
+  m_zip.Close();
+  return TRUE;
+}
+
+BOOL CSimpleZip::Unzip(LPCTSTR lpszFilename, LPCTSTR lspzTargetDirectory) 
+{
+  int nIndex = m_zip.FindFile(lpszFilename,false);
+  if (-1 == nIndex) return FALSE;
+
+  bool bResult = m_zip.ExtractFile(nIndex,lspzTargetDirectory);
+
+  if (true == bResult) return TRUE;
+
+  return FALSE;
+}
+</pre>
+</p>
+<p>
+Damit haben wir den fertigen Sourcecode. Man mu&szlig; die Komponente nun nur noch kompilieren
+und registrieren, um sie testen zu k&ouml;nnen. Ich gehe davon aus, da&szlig; C++ Programmierer das
+mit links schaffen.
+</p>
+
+<h2>Testen</h2>
+<p>
+Der Download des heutigen Artikels beeinhaltet ein Testarchiv <b>demo.zip</b> sowie die dazugeh&ouml;rige
+ASP Datei <b>unzip.asp</b>. Diese verwendet unsere SimpleZip Komponente:
+</p>
+<p>
+<pre style="background='silver';">
+&lt;%
+Response.Expires = 0
+
+Set objZip = Server.CreateObject(&quot;ZipCOM.SimpleZip&quot;)
+strZipFile = Server.MapPath(&quot;/demo.zip&quot;)
+
+bResult = objZip.Open(strZipFile)
+bResult = objZip.Unzip(&quot;pic001.jpg&quot;, &quot;c:\temp\&quot;)
+bResult = objZip.Close()
+Response.Write &quot;Done&quot;
+%&gt;
+</pre>
+</p>
+<p>
+Der Code zur Verwendung der Komponente ist absolut straight-forward. Ich hoffe, Euch 
+gef&auml;llt das Bild!
+</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Der heutige Artikel war ein verk&uuml;rzter &Uuml;berblick &uuml;ber die Erstellung einer Komponente mit
+Visual C++. Allerdings haben wir mit sehr geringem Programmieraufwand eine einfache Zip
+Komponente erstellt, die man auch ohne weiteres ausbauen kann - neue Archive erstellen,
+Dateien zippen, ganze Archive automatisch entzippen, und so weiter.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001113.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20001113.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010507.htm">Web-basiertes Dateimanagement mit dem ASP FileMan</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010507.htm</span><br>
+<a href="../artikel/20001005.htm">Zippen und entzippen von Dateien</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001005.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fcodeguru%2Eearthweb%2Ecom%2Fcpp%5Fmfc%2FZipFunc%2Eshtml">Zip Bibliothek</a><br>
+<SPAN class="content">http://codeguru.earthweb.com/cpp_mfc/ZipFunc.shtml</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

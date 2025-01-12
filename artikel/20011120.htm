@@ -1,0 +1,568 @@
+<HTML>
+<HEAD>
+<TITLE>Ein Popup-Kalender im Einsatz</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Online-Buchungssysteme sind weit verbreitet, allerdings bereitet die Datumseingabe immer wieder Probleme. Um das Problem elegant zu umschiffen bietet es sich an, dem User einen Popup-Kalender in die Hand zu geben.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Kalender,Buchung,Buchungssystem,Popupkalender,Datumseingabe,visueller Kalender,Datumsauswahl">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Ein Popup-Kalender im Einsatz</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20011120"></SCRIPT>
+</p>
+<p>
+Online-Buchungssysteme sind weit verbreitet, allerdings bereitet die Datumseingabe immer wieder Probleme. 
+Vor allem bei Hotelzimmer- oder Flugticketreservierungen ist es notwendig, da&szlig; das Datum korrekt
+eingegeben wird - bei all den verschiedenen internationalen Formaten, die man antreffen k&ouml;nnte. Um das
+Problem elegant zu umschiffen bietet es sich an, dem User einen Kalender in die Hand zu geben, aus dem
+er bequem das Datum w&auml;hlen kann: einen Popup-Kalender.
+</p>
+
+<p>
+Der in diesem Artikel vorgestellte L&ouml;sungsansatz kommt ohne zus&auml;tzliche Komponente aus, und ist
+in ASP bzw. JavaScript ausgef&uuml;hrt. Die Demo zeigt eine M&ouml;glichkeit einer datumsabh&auml;ngigen Zimmerreservierung eines 
+Hotels. Der Code wurde von <a href="mailto:hotel-andre@t-online.de">Andr&eacute; Scheres</a> erstellt, und AspHeute
+f&uuml;r einen Artikel zur Verf&uuml;gung gestellt.
+</p>
+
+<p>
+Die Beispieldateien sind wie immer im Download enthalten. Extrahieren
+Sie die Zip-Datei in ein beliebiges virtuelles Verzeichnis auf dem Web Server. Das Demo hat folgende 
+Verzeichnisstruktur in einem virtuellen Verzeichnis:
+</p>
+
+<ul>
+<li>Root (Inhalt: <b>favicon.ico</b>, <b>style.css</b>)</li>
+<li>/calendar (Inhalt: <b>calabreis.asp</b>, <b>calanreis.asp</b>, <b>calendar.asp</b>): Hier befinden sich die ASP Dateien die den sp&auml;teren Kalender generieren</li>
+<li>/formular (Inhalt: <b>anfrage.asp</b>): In diesem Verzeichnis ist das Formular abgelegt, in dem Sie die Reservierungsdaten 
+eintragen m&uuml;ssen</li>
+<li>/images : Hier befinden sich die ben&ouml;tigten Bilder</li>
+<li>/includes (Inhalt: <b>start.asp</b>, <b>subs.asp</b>): Dieses Verzeichnis enth&auml;lt die "Business Logik", also u.a. die 
+Weiterverarbeitung der Eingabewerte (z.B. in eine Datenbank schreiben)</li>
+</ul>
+
+<h2>Das Buchungsformular (anfrage.asp)</h2>
+
+<p>
+In diesem Formular werden der An- und Abreisetag, sowie die Anzahl und Kategorie (Einzelzimmer, etc.) der Zimmer
+bekanntgegeben:
+</p>
+
+<IMG SRC="Bilder/200111/20011120_1.png" width="480" height="262" alt="" border="0">
+
+<p>
+Beim Aufruf des Formulars (<b>anfrage.asp</b>) wird &uuml;berpr&uuml;ft, ob Daten gesendet worden sind.
+Wenn dies nicht der Fall ist, wird das Formular angezeigt und wenn Popup Fenster im Browser erlaubt sind, &ouml;ffnet sich 
+eines - der "Kalender".  Dieser schlie&szlig;t sich automatisch, wenn die ben&ouml;tigten Datumswerte ausgew&auml;hlt worden 
+sind.
+</p>
+
+<p>
+Wird der Kalender nicht ben&ouml;tigt, schlie&szlig;t es sich automatisch nach einer vorgegebenen Zeit (nach 10 Sekunden). Nach dem 
+Absenden wird es per "post" an sich selbst gesendet und validiert die Eingaben auf Richtigkeit. Die Logik f&uuml;r das Validieren
+ist daher auch in der <b>anfrage.asp</b> inkludiert. Bei falschen Eingaben kommt eine Fehlermeldung und das Formular 
+wird nebst Kalender wieder angezeigt.
+</p>
+
+<h2>Aufbau des Kalenders</h2>
+
+<p>
+Die f&uuml;r den Kalender (Popup-Fenster) ben&ouml;tigten Dateien befinden sich im <i>/calendar</i> Unterverzeichnis.
+Dort finden sich je nach Erfordernis drei Dateien. Die <b>calanreis.asp</b> Datei zeigt einen Kalender in dem man
+das Anreisedatum ausw&auml;hlen kann. Dieses Fenster wird ge&ouml;ffnet, wenn Sie auf das Kalender-Icon rechts neben der 
+Jahresauswahl klicken. &Auml;hnlich funktioniert die <b>calabreis.asp</b> Datei, die ein Popup-Fenster &ouml;ffnet, wo das 
+Abreisedatum einzugeben ist. Die <b>calendar.asp</b> Datei &ouml;ffnet sich wie gesagt sobald man auf das Formular
+zugreift und/oder noch keine Daten beim Post &uuml;bergeben wurden. Dieses Popup-Fenster bietet die M&ouml;glichkeit
+beide Daten (An- und Abreise) einzutragen:
+</p>
+
+<IMG SRC="Bilder/200111/20011120_2.png" width="226" height="450" alt="" border="0">
+
+<p>
+Sehen wir uns nun die <b>calendar.asp</b> Datei einmal an:
+</p>
+
+<pre style="background='silver';">
+&lt;!--#include file = "../includes/start.asp" --&gt;
+&lt;!--#include file = "../includes/subs.asp" --&gt;
+&lt;%
+WindowTimeOut 10000
+scriptFormfuellen "Anreise",0
+scriptFormfuellen "Abreise",1	
+
+%&gt;
+&lt;title&gt;Kalender&lt;/title&gt;
+&lt;/head&gt;
+&lt;body bgcolor='#ffffff' text='#0a0b68'&gt;
+
+&lt;%
+If Request.Form.Count &gt; 0 then
+    monat = Request.Form("month")
+    my_month = Request.Form("month")
+    my_year = Request.Form("year")
+    my_come_Day = 1
+    my_go_day = 2
+elseif Request.QueryString.Count &gt; 0 and Request.Form.Count = 0 then
+    monat = Request.QueryString("month")
+    my_month = Request.QueryString("month")
+    my_year = Request.QueryString("year")
+    my_come_Day = 1
+    my_go_day = 2
+elseif Request.QueryString.Count = 0 and Request.Form.Count = 0 then
+    my_come_Day = day(date)
+    my_go_day = my_come_day + 1
+    my_year = year(date)
+    my_month = month(date)
+end if
+
+WriteCalender my_come_day,my_month,my_year,vbMonday,"Anreisedatum"
+WriteCalender my_go_day,my_month,my_year,vbMonday,"Abreisedatum"
+selFormCalendar
+
+%&gt;
+</pre>
+
+<p>
+Alle Funktionalit&auml;t kommt aus <b>subs.asp</b>.
+Diese Include-Datei enth&auml;lt die Anpassung des Kalenders an die jeweilige Landesinformation (LCID),
+und es wird eine eventuell n&ouml;tige Umlautkonvertierung vorgenommen. Die <b>subs.asp</b> Datei werden wir uns in wenigen 
+Augenblicken ansehen. Es wird das Timeout zum Schlie&szlig;en des Popup-Fensters definiert, sowie die Funktionen (<i>scriptFormfuellen</i>) aufgerufen, die
+die im Popup eingetragenen Datumswerte in das Formular (<b>anfrage.asp</b>) &uuml;bertragen. Zus&auml;tzlich wird noch das aktuelle Datum ermittelt.
+Abschlie&szlig;end wird mit der Funktion <i>WriteCalender</i> der/die Kalender generiert.
+</p>
+
+<h2>Die Funktionen und Routinen der subs.asp Datei</h2>
+
+<p>
+Diese Datei enth&auml;lt also die n&ouml;tigen Routinen um die L&auml;nderinformationen festzustellen, die Datumswerte in das Buchungsformular 
+zu &uuml;bertragen und die Kalender-Popups zu generieren. Sehen wir uns die <b>subs.asp</b> Datei st&uuml;ckweise an:
+</p>
+
+<pre style="background='silver';">
+Session.LCID = 1031
+
+function SQLdate(datum)
+    sTag = Day(datum)
+    sMonat = Month(datum)
+    sJahr = Year(datum)
+    if sTag &lt; 10 then sTag = "0" &amp; sTag
+    if sMonat &lt; 10 then sMonat = "0" &amp; sMonat
+    SQLdate = sMonat &amp; "/" &amp; sTag &amp; "/" &amp; sJahr
+end function
+</pre>
+
+<p>
+Die erste Zeile stellt sicher, da&szlig; die Seite nach dem deutschen Datumsformat verarbeitet wird. Die <i>SQLdate</i>
+Funktion erstellt ein Datenbank-taugliches (amerikanisches) Datumsformat (mm/dd/yyyy) aus dem in Europa &uuml;blichen 
+Format.
+</p>
+
+<pre style="background='silver';">
+sub AddEntry(Frage_name, Frage_inhalt)
+    set formular = Server.CreateObject("Scripting.Dictionary")
+
+    if formular.Exists(Frage_name) then
+        formular(Frage_name) = formular(Frage_name) &amp; Frage_inhalt
+    else
+        formular.Add Frage_name, Frage_inhalt
+    end if
+end sub
+</pre>
+
+<p>
+Mit dieser Routine werden gleiche Werte des Request.Form und des Request.QueryString addiert und k&ouml;nnen bei Bedarf mit 
+der Split() Function in ein Array umgewandelt werden.
+</p>
+
+<pre style="background='silver';">
+function GetLastDay(datum)
+    for n_day = 28 to 32
+        n_date = dateserial(my_year, Cdbl(my_month), n_day)
+        if not month(n_date) = Cdbl(my_month) then
+        	GetLastDay = n_day - 1
+            exit for
+        end if
+    next
+end function
+</pre>
+
+<p>
+Diese Funktion findet den letzten Tag des Monats, der angezeigt werden soll. 
+</p>
+<p>
+Nun kommen wir zu einem weiteren interessanten
+Abschnitt - die Daten aus dem generierten Popup in das Formular (<b>anfrage.asp</b>) zu &uuml;bertragen:
+</p>
+
+<pre style="background='silver';">
+sub scriptFormFuellen(Art,windowClose)
+    If Art = "Anreise" then
+        Art = "SetDateAn"
+        SelectTag = "tt"
+        SelectMonat = "mm"
+        SelectJahr = "jj"
+    else
+        Art = "SetDateAb"
+        SelectTag = "tt1"
+        SelectMonat = "mm1"
+        SelectJahr = "jj1"
+    end if
+    
+    if windowClose == 1 then 
+        popupClose = "window.close();"
+    else
+        popupClose = ""
+    end if
+    %&gt;
+    
+    &lt;Script language="Javascript"&gt;
+    
+    function &lt;%= Art %&gt; (y, m, d)
+    {    
+        window.opener.document.DateSelect.&lt;%=Selecttag%&gt;.selectedIndex = d-1;
+        window.opener.document.DateSelect.&lt;%=SelectMonat%&gt;.selectedIndex = m-1;
+        intLen = window.opener.document.DateSelect.&lt;%= SelectJahr %&gt;.length;
+        	for (i = 0; i &lt; intLen; i++)
+    	    {
+                if (window.opener.document.DateSelect.&lt;%=SelectJahr%&gt;[i].value == y)
+                {
+                    window.opener.document.DateSelect.&lt;%=SelectJahr%&gt;.selectedIndex = i;
+    		    	break;
+    		    }
+    	    }
+    	&lt;%= popupClose %&gt;
+    }
+    &lt;/SCRIPT&gt;
+    &lt;%
+end sub
+</pre>
+
+<p>
+Hier werden zun&auml;chst die einzelnen Datumsgr&ouml;&szlig;en (Tag, Monat, Jahr) getrennt in Variablen geschrieben.
+Danach werden diese Werte mittels Javascript in das Formular &uuml;bertragen und das Popup wieder geschlossen.
+</p>
+
+<p>
+In der Prozedur <i>WriteCalender</i> wird dann der eigentliche Kalender generiert. Die
+Prozedur &uuml;bernimmt die Datumswerte, den Wochenbeginn und die Art des &uuml;bergebenen Datums. Weiters unterscheidet
+die Prozedur welche Art von Kalender generiert werden soll, also entweder den An-, Abreise- oder beide Kalender
+im Popup.
+</p>
+
+<pre style="background='silver';">
+Sub WriteCalender(my_day,my_month,my_year,wochenbeginn,ArtDatum)
+   ' voller Code im Download enthalten
+End Sub
+</pre>
+
+<p>
+Die in <i>WriteCalender</i> ben&uuml;tzte Funktion <i>html</i> ist der &Uuml;bersicht halber nur ein K&uuml;rzel f&uuml;r ein <i>Response.Write</i>.
+</p>
+<p>
+Um das gew&uuml;nschte Datum auch per Select-Box auszuw&auml;hlen und alle restlichen Tables ordungsgem&auml;&szlig; zu 
+schlie&szlig;en folgt <i>selFormCalendar</i>:
+</p>
+
+<pre style="background='silver';">
+                sub selFormCalendar()
+                %&gt;
+                &lt;tr&gt;
+                &lt;td align=center&gt;
+                    &lt;table width='100%' border='0' cellpadding='1' cellspacing='0'&gt;
+                        &lt;form method='post'&gt;
+                        &lt;tr&gt;
+                            &lt;td class='selbox' valign='top' align='right'&gt;
+                            &lt;select class='selbox' name='month' valign='top'&gt;
+                                &lt;%
+                                    for i = 1 to 12
+                                    html "&lt;option value='" &amp; i &amp; "'&gt;" &amp; monthName(i) &amp; 
+                                    "&lt;/option&gt;" &amp; vbCRLF
+                                    next
+                                %&gt;
+                            &lt;/select&gt;
+                            &lt;/td&gt;
+                            &lt;td class='selbox' valign='top'&gt;
+                            &lt;select name='year' class='selbox'&gt;
+                            &lt;%
+                                for i = 0 to 2	
+                                html "&lt;option value='" &amp; year(date) + i &amp; "'&gt;" &amp; 
+                                year(date)+ i &amp; "&lt;/option&gt;" &amp; vbCRLF
+                                next
+                            %&gt;
+                            &lt;/select&gt;
+                            &lt;/td&gt;  
+                            &lt;td class='selbox' valign='top'&gt;
+                            &lt;input type='image' src='../images/go.gif' width='24' height='24' border='0' 
+                            name='Zeige Datum' alt='Zeige Datum'&gt;
+                            &lt;/td&gt;
+                        &lt;/tr&gt;
+                        &lt;/form&gt;
+                    &lt;/table&gt;
+                &lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/table&gt;
+        &lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+&lt;%
+end sub
+%&gt;
+</pre>
+
+<p>
+Damit h&auml;tten wir alle Funktionen besprochen, die den Kalender f&uuml;r das Reservierungsformular zum Leben
+erwecken.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dieser Artikel zeigte eine einfache M&ouml;glichkeit um den Benutzern das Reservieren einer bestimmten Zeitperiode
+mittels einem mit ASP und JavaScript generierten Kalenders wesentlich zu vereinfachen.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20011120.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20020319.htm">Ein einfacher Eventkalender f&uuml;r Projektteams</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20011120" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Ein Popup-Kalender im Einsatz"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20011120.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Holm"><input type="hidden" name="AuthorEmail" value="office@holmcs.com"><input type="hidden" name="Artikel" value="20011120"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20011120.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

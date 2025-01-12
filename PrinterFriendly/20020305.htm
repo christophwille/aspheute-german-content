@@ -1,0 +1,206 @@
+<HTML>
+<HEAD>
+<TITLE>Mitlauschen bei der Browser-Webserver Kommunikation</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Des &ouml;fteren k&ouml;nnen die Eigenheiten eines Browsers dem Programmierer mehr als nur Kopfschmerzen bereiten. In diesem Fall ist es wichtig, genau herausfinden zu k&ouml;nnen, was der Browser dem Server schickt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,proxyTrace,proxy server,proxy,tracing,set-cookie,Header,Content,Browser,Webserver,Server">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Mitlauschen bei der Browser-Webserver Kommunikation</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Server.htm">Server</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020305"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Des &ouml;fteren k&ouml;nnen die Eigenheiten eines Browsers dem Programmierer mehr als nur Kopfschmerzen
+bereiten, vor allem dann, wenn es um das Debuggen von Cookies, speziellen Headern und Daten&uuml;bertragungsformaten
+geht. In diesem Fall ist es wichtig, genau herausfinden zu k&ouml;nnen, was der Browser dem Server
+schickt, und was vom Server an den Browser retourkommt.
+</p>
+<p>
+Die besonders elegante L&ouml;sung zu diesem Problem ist ein Proxy, also ein Programm, das die Anfrage
+des Browsers erh&auml;lt, und diese an den Server weiterleitet. Die Antwort kommt an den Proxy retour,
+und dieser leitet sie an den Browser weiter. Der Proxy sieht also den gesamten Datenverkehr zwischen
+Client und Server.
+</p>
+<p>
+Normalerweise besitzt jede Firma einen Proxyserver f&uuml;r Internetzugriffe, jedoch ist es sehr unwahrscheinlich,
+da&szlig; man f&uuml;r seine Testzwecke mal schnell am Firmenproxy herumexperimentieren darf. Man sollte gar keinen
+Gedanken an ein solches Ansinnen verschwenden, vor allem weil es ein spezialisiertes Tool genau f&uuml;r 
+unseren Zweck gibt: <a href="http://www.pocketsoap.com/tcptrace/pt.asp" target="_blank">proxyTrace</a>.
+Neben seiner Kleinheit hat es einen weiteren Vorteil - es ist gratis.
+</p>
+
+<h2>Inbetriebnahme</h2>
+<p>
+Von einer Installation kann man bei proxyTrace nicht wirklich reden, da es nur aus einer einzigen Datei besteht.
+Diese wird durch Doppelklick gestartet, und man bekommt die einzige wirkliche Einstellung pr&auml;sentiert:
+</p>
+
+<IMG SRC="/artikel/Bilder/200203/20020305_1.png" width="443" height="132" alt="" border="0">
+
+<p>
+Das ist der Port, an dem sich proxyTrace als Proxy Server am lokalen Computer installiert. Diesen Port
+mu&szlig; man dann auch im Internet Explorer, Tools/Internet Options, Connections Tab, LAN Settings Dialogbox
+eintragen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200203/20020305_2.png" width="384" height="332" alt="" border="0">
+
+<p>
+<b>Achtung:</b> wer einen Firmenproxy hat, bei dem wird wahrscheinlich Bypass proxy server for local
+addresses eingestellt sein. Unbedingt ausschalten! Sonst "hintergeht" der Internet Explorer n&auml;mlich proxyTrace
+bei Tests die gegen hausinterne Server laufen. Und das wird wohl der Hauptanwendungsfall sein.
+</p>
+
+<h2>Verwendung</h2>
+<p>
+Die Verwendung von proxyTrace ist denkbar simpel. Im Prinzip mu&szlig; man nur eine beliebige URL ansurfen,
+ich habe folgendes Beispiel gew&auml;hlt:
+</p>
+
+<pre style="background='silver';">
+http://sleeper/AspHeute/SortedList/iterateforeach.aspx
+</pre>
+
+<p>
+Diese Aktion wird automatisch in proxyTrace mitgeloggt:
+</p>
+
+<IMG SRC="/artikel/Bilder/200203/20020305_3.png" width="675" height="375" alt="" border="0">
+
+<p>
+Neben der Statistikpane links (mit Bytes In und Bytes Out) sind die beiden rechten Panels die wirklich
+interessanten: hier erh&auml;lt man oben die volle Anfrage des Clients an den Server, und unten die volle Antwort des Servers,
+beide jeweils mit vollen Headerinformationen (man k&ouml;nnte auch von Rohdaten sprechen).
+</p>
+
+<p>
+Beginnen wir bei der Anfrage des Clients:
+</p>
+
+<pre style="background='silver';">
+GET http://sleeper/AspHeute/SortedList/iterateforeach.aspx HTTP/1.0
+Accept: */*
+Referer: http://sleeper/AspHeute/SortedList/
+Accept-Language: en-us
+Proxy-Connection: Keep-Alive
+User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; Q312461; .NET CLR 1.0.3705)
+Host: sleeper
+Pragma: no-cache
+</pre>
+
+<p>
+Da der Browser neu ge&ouml;ffnet war, und ich keine andere Seite auf diesem Server vorher angesurft hatte,
+wird kein Cookie an den Server geschickt. Daf&uuml;r aber erf&auml;hrt der Server von uns, welchen Browser wir
+verwenden, welche Sprachen von uns akzeptiert werden, und auch woher wir kommen (<i>Referer</i>, siehe
+dazu auch der Artikel <a href="../artikel/20020304.htm">Unerw&uuml;nschte Referer sperren</a>). Und nat&uuml;rlich
+ist die erste Information wie die Seite angefragt wird: GET oder POST (<a href="../artikel/20010205.htm">GET oder POST, das ist hier die Frage</a>).
+</p>
+<p>
+Die Antwort des Servers ist zweigeteilt - und zwar durch eine Leerzeile. Der erste Teil sind die Header
+der Antwort, nach der Leerzeile folgt der eigentliche Content:
+</p>
+
+<pre style="background='silver';">
+HTTP/1.1 200 OK
+Server: Microsoft-IIS/5.0
+Date: Mon, 04 Mar 2002 20:47:58 GMT
+Cache-Control: private
+Content-Type: text/html; charset=utf-8
+Content-Length: 122
+
+ASP.NET - aspDEdotnet@aspfriends.com&lt;br&gt;
+C# - dotnetDEcsharp@aspfriends.com&lt;br&gt;
+VB.NET - dotnetDEvb@aspfriends.com&lt;br&gt;
+</pre>
+
+<p>
+Hier zum Beispiel tauchen dann die richtig interessanten Header zum Thema Content Caching auf
+(siehe auch Artikel <a href="../artikel/19990808.htm">Caching bei Browser und Proxy - Woher Seiten wirklich kommen</a>), 
+die <i>Set-Cookie</i> Header und alles was man an Content Type
+gesetzt hat. Man sieht das, was der Server abgeschickt hat - und kann somit sofort entscheiden, wo der
+Fehler liegt: an einer Fehlinterpretation des Clients, oder ob die Informationen nicht korrekt abgeschickt
+wurden.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Wenn man alle Header des Requests als auch des Response in Rohform betrachten kann, fallen einem offensichtliche
+Fehler viel schneller ins Auge als wenn man sich anders an das Problem herantastet. Die Header sind sozusagen
+der Schl&uuml;ssel zur L&ouml;sung bei Problemen in der Browser-Server Kommunikation.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020305.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020305.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/19990808.htm">Caching bei Browser und Proxy - Woher Seiten wirklich kommen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990808.htm</span><br>
+<a href="../artikel/20010205.htm">GET oder POST, das ist hier die Frage</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010205.htm</span><br>
+<a href="../artikel/20020503.htm">Show me the source - Includes aufgel&ouml;st</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020503.htm</span><br>
+<a href="../artikel/20020731.htm">Trafficreduzierung mit XCompress</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020731.htm</span><br>
+<a href="../artikel/20020304.htm">Unerw&uuml;nschte Referer sperren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020304.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Epocketsoap%2Ecom%2Ftcptrace%2Fpt%2Easp">proxyTrace Download</a><br>
+<SPAN class="content">http://www.pocketsoap.com/tcptrace/pt.asp</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

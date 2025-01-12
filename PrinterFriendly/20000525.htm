@@ -1,0 +1,231 @@
+<HTML>
+<HEAD>
+<TITLE>Access Abfragen in ADO verwenden</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel zeigt, wie man Access Abfragen in ADO verwendet - mit und ohne Parametern.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,View,Stored Procedure,Command,Connection,Recordset,Execute,Parameters,Array,CreateParameter,Append,METADATA">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Access Abfragen in ADO verwenden</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000525"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Es gibt in Microsoft Access Datenbanken <i>Abfragen</i> (Query), die eine Mixtur aus SQL Server Views und
+Stored Procedures darstellen: Wenn man keine Parameter definiert, ist es mit einer View vergleichbar, auf
+die ein SELECT Statement abgesetzt werden kann. Hat man Parameter festgelegt, dann hat man ein "&Auml;quivalent"
+zu Stored Procedures, obwohl bei weitem nicht so leistungsf&auml;hig. Und au&szlig;erdem werden Abfragen in der
+Datenbank abgelegt, was bedeutet, man verteilt den Code nicht auf verschiedenste ASP Seiten.
+</p>
+<p>
+Trotz dieser Vorteile verwenden Abfragen meist nur Access Programmierer, und ASP Programmierer
+lassen in den meisten F&auml;llen die Finger davon. Um dies zu &auml;ndern, enth&auml;lt dieser Artikel die Kochrezepte um
+parameterlose als auch mit Eingabeparametern versehene Abfragen von ADO aus zu nutzen.
+</p>
+<p>
+Um das Thema in ein sinnvolles Beispiel zu gie&szlig;en, habe ich meine L&auml;nderdatenbank ausgegraben, die nur die 
+Tabelle <b>tCountry</b> mit 2 Spalten beeinhaltet: L&auml;ndercode (CountryCode) und L&auml;ndername (CountryName). Es sind alle
+L&auml;nder enthalten, man kann diese Tabelle also hervorragend f&uuml;r verschiedenste Arten von Formularen verwenden:
+</p>
+<p><IMG SRC="/artikel/Bilder/200005/20000525_1.png" width="328" height="206" border="0" alt="tCountry Tabelle"></p>
+
+
+<h2>Parameterlose Abfragen</h2>
+<p>
+Abfragen, bei denen keine Parameter angegeben werden m&uuml;ssen, k&ouml;nnen auf 2 Arten abgefragt werden:
+<ul>
+<li>SELECT * FROM AbfrageName
+<li>Als <i>Command</i> Objekt mit Typ <i>adCmdStoredProc</i>
+</ul>
+</p>
+<p>
+Zu SELECT gibt es nichts Neues zu sagen, da dies wie eine normales SQL SELECT Statement gehandhabt wird.
+Die Implementierung mit dem <i>Command</i> Objekt sieht hingegen anders aus. Um dies zu demonstrieren, habe ich
+die Abfrage <b>Einfache Abfrage</b> in die Datenbank hinzugef&uuml;gt, die alle L&auml;nder nach L&auml;ndercode sortiert
+ausgibt (&uuml;blicherweise w&uuml;rde man nach Namen sortieren):
+</p>
+<p><IMG SRC="/artikel/Bilder/200005/20000525_2.png" width="305" height="264" border="0" alt="Einfache Abfrage"></p>
+<p>
+Wer schon SQL Server Stored Procedures programmiert hat, dem wird der folgende Code bekannt vorkommen:
+</p>
+<p>
+<pre style="background=silver;">
+&lt;% Response.Expires = 0 %&gt;
+&lt;!--METADATA NAME="Microsoft ActiveX Data Objects 2.5 Library" 
+	TYPE="TypeLib" 
+	UUID="{00000205-0000-0010-8000-00AA006D2EA4}"
+--&gt;
+&lt;%
+   Dim cn, rs
+
+   Set cn = CreateObject("ADODB.Connection")
+   Set rs = CreateObject("ADODB.Recordset")
+   
+   ' Connection zur Datenbank aufbauen
+   cn.Open "Provider=Microsoft.Jet.OLEDB.4.0;" &amp; _
+      "Data Source=" &amp; Server.MapPath("cc.mdb") &amp; ";"
+
+   ' Recordset &ouml;ffnen
+   rs.Open "[Einfache Abfrage]", _
+      cn, adOpenForwardOnly, adLockReadOnly, adCmdStoredProc
+
+   ' Records anzeigen
+   Do Until rs.EOF
+   	Response.Write rs(0) &amp; " " &amp; rs(1) &amp; "&lt;br&gt;" &amp; vbCrLf
+      rs.MoveNext
+   Loop
+
+   ' Recordset schlie&szlig;en
+   rs.Close
+   cn.Close
+%&gt;
+</pre>
+</p>
+<p>
+Die ADO Konstanten habe ich &uuml;ber das <i>METADATA</i> Tag eingebunden, aber wo ist das von mir versprochene Command
+Objekt? Man kann es bei parameterlosen Abfragen durch Angabe des <i>adCmdStoredProc</i> Parameters bei der Open
+Methode des Recordsets einsparen.
+</p>
+<p>
+Wenn eine Abfrage Leerzeichen oder Sonderzeichen enth&auml;lt, mu&szlig; man den Namen der Abfrage in eckige Klammern
+einschlie&szlig;en. Generell empfehle ich, von Leer- und Sonderzeichen abzusehen.
+</p>
+
+<h2>Abfragen mit Parametern</h2>
+<p>
+Bei Abfragen, die Parameter entgegennehmen, mu&szlig; man das Command Objekt verwenden, Abk&uuml;rzungen sind nicht
+erlaubt. Um es anhand eines praktischen Beispiels zu demonstrieren, habe ich die Abfrage <b>qParamQuery</b>
+erstellt, die den L&auml;ndercode als Parameter verlangt, und dann das entsprechende Land zur&uuml;ckgibt:
+</p>
+<p>
+<table>
+<tr>
+	<td valign="center"><IMG SRC="/artikel/Bilder/200005/20000525_3.png" width="305" height="268" border="0" alt="Query"></td>
+	<td>&nbsp;&nbsp;</td>
+	<td valign="center"><IMG SRC="/artikel/Bilder/200005/20000525_4.png" width="219" height="253" border="0" alt="Parameters"></td>
+</tr>
+</table>
+</p>
+<p>
+Der zugeh&ouml;rige ASP Code sieht wie folgt aus:
+</p>
+<p>
+<pre style="background=silver;">
+&lt;% Response.Expires = 0 %&gt;
+&lt;!--METADATA NAME="Microsoft ActiveX Data Objects 2.5 Library" 
+	TYPE="TypeLib" 
+	UUID="{00000205-0000-0010-8000-00AA006D2EA4}"
+--&gt;
+&lt;%
+	Dim cn, cmd, rs, param
+
+	Set cn = CreateObject("ADODB.Connection")
+	Set cmd = CreateObject("ADODB.Command")
+   
+	' Connection zur Datenbank aufbauen
+	cn.Open "Provider=Microsoft.Jet.OLEDB.4.0;" &amp; _
+    		"Data Source=" &amp; Server.MapPath("cc.mdb") &amp; ";"
+
+	Set cmd.ActiveConnection = cn
+	cmd.CommandText = "qParamQuery"
+	cmd.CommandType = adCmdStoredProc
+
+	' Set rs = cmd.Execute(, Array("AT"))
+	Set rs = cmd.Execute(, "AT")
+
+	' Records anzeigen
+	Do Until rs.EOF
+		Response.Write rs(0) &amp; " " &amp; rs(1) &amp; "&lt;br&gt;" &amp; vbCrLf
+		rs.MoveNext
+	Loop
+
+	' Recordset schlie&szlig;en
+	rs.Close
+	cn.Close
+%&gt;
+</pre>
+</p>
+<p>
+Dem Command Objekt mu&szlig; zuerst die <i>ActiveConnection</i> zugewiesen werden. Danach folgen <i>CommandText</i> sowie
+<i>CommandType</i> - dieser jedoch k&ouml;nnte auch erst im <i>Execute</i> Statement angegeben werden. Womit wir beim 
+interessantesten Teil des Codes sind, n&auml;mlich wie Parameter &uuml;bergeben werden. 
+</p>
+<p>
+Im Gegensatz zu SQL Server kann man die <i>Parameters</i> Collection nicht verwenden, sondern mu&szlig; die Parameter 
+als Array &uuml;bergeben. F&uuml;r einen Parameter ist dies nicht notwendig, allerdings wird auch kein Fehler
+ausgel&ouml;st wenn man es doch tut - man mu&szlig; nur die auskommentierte Zeile ausprobieren.
+</p>
+<p>
+Die Problematik, die sich aus der Array &Uuml;bergabe ergibt ist die, da&szlig; zum &Uuml;bergabezeitpunkt keine Kontrolle
+durchgef&uuml;hrt wird, ob die Parameter den richtigen Datentyp haben. Man mu&szlig; sich also auf Laufzeitfehler einstellen,
+oder die VBScript Datentypen vorher strikter kontrollieren.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+F&uuml;r Access-Verh&auml;ltnisse sind Abfragen ein leistungsf&auml;higes Konzept, das es erlaubt, oft gebrauchte Views
+und parametrisierte Abfragen zentral abzulegen. Allerdings sind sie dennoch bei weiten nicht so leistungsf&auml;hig
+wie SQL Server Stored Procedures. Und ein weiteres Manko ist, da&szlig; die ADO Syntax sehr stark von der von 
+Stored Procedures abweicht - dies kann einem viel Arbeit einbringen, wenn man auf SQL Server umsteigt.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000525.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000525.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001107.htm">Einf&uuml;gen eines Datensatzes mit dem INSERT Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001107.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

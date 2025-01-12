@@ -1,0 +1,462 @@
+<HTML>
+<HEAD>
+<TITLE>Formular-basierte Basic Authentication</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Die im heutigen Artikel gezeigte Methode soll  zwei entscheidende Nachteile von Basic Authentication beheben: die unsch&ouml;ne Login-Dialogbox und die Verzeichnisauswahl via URL.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Basic Authentication,Login,Userverwaltung,Community,Gesperrte Bereiche,Formular">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Formular-basierte Basic Authentication</H1>
+<p>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010608"></SCRIPT>
+</p>
+<p>
+Basic Authentication ist an und f&uuml;r sich eine sehr praktische und einfache M&ouml;glichkeit ganze Verzeichnisse (und deren 
+Inhalt - unabh&auml;ngig welchen Dateiformats) zu sch&uuml;tzen. Die im nachfolgenden gezeigte Methode soll nun zwei 
+entscheidende Nachteile von Basic Authentication beheben: die unsch&ouml;ne Login-Dialogbox und die Verzeichnisauswahl 
+via URL.
+</p>
+
+<IMG SRC="Bilder/200106/20010608_1.png" width="562" height="462" alt="" border="0">
+
+
+<h2>Unser Login Formular</h2>
+
+<p>
+Als erstes ben&ouml;tigen wir ein Formular, in das durch den Benutzer die zum Login ben&ouml;tigten Parameter eingegeben 
+und &uuml;bertragen werden k&ouml;nnen. Wichtig f&uuml;r die einwandfreie Zusammenarbeit mit dem im n&auml;chsten Abschnitt 
+gezeigten ASP Script (<b>login.asp</b>) sind folgende Punkte:
+</p>
+
+<ul>
+<li>Die &Uuml;bertragungsmethode mu&szlig; POST sein (method="post")</li>
+<li>Der Name des aufzurufenden Scripts (ACTION="login.asp")</li>
+<li>Die Namen der Texteingabefelder (txtDirectory, txtUser, txtPassword)</li>
+</ul>
+
+<p>
+Die Gestaltung des Formulars ist selbstverst&auml;ndlich v&ouml;llig frei. Hier eben ein simples Formular, das man leicht 
+graphisch anpassen kann (<b>form.asp</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;&lt;/title&gt;
+&lt;/head&gt;
+&lt;body bgcolor="#FFFFFF"&gt;
+&lt;form name="forLogin" method="post" action="login.asp"&gt;
+  &lt;table width="180" border="0" cellspacing="0" cellpadding="0"&gt;
+    &lt;tr&gt; 
+      &lt;td align="left"&gt;Directory:&lt;/td&gt;
+      &lt;td align="right"&gt; 
+        &lt;input type="text" name="txtDirectory" size="12" maxlength="20"&gt;
+      &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt; 
+      &lt;td align="left"&gt;User:&lt;/td&gt;
+      &lt;td align="right"&gt; 
+        &lt;input type="text" name="txtUser" size="12" maxlength="20"&gt;
+      &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt; 
+      &lt;td align="left"&gt;Password:&lt;/td&gt;
+      &lt;td align="right"&gt; 
+        &lt;input type="text" name="txtPassword" size="12" maxlength="20"&gt;
+      &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt; 
+      &lt;td align="left"&gt;&amp;nbsp;&lt;/td&gt;
+      &lt;td align="right"&gt; 
+        &lt;input type="submit" value="Login"&gt;
+      &lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/table&gt;
+&lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Und so sieht dann unser Loginformular im Browserfenster aus:
+</p>
+
+<IMG SRC="Bilder/200106/20010608_2.png" width="562" height="462" alt="" border="0">
+
+<h2>Unser Login Script</h2>
+
+<p>
+Beginnen wir mit einem Blick auf den Sourcecode am Anfang des Scripts, der uns einiges an sp&auml;teren 
+Kopfschmerzen ersparen wird:
+</p>
+
+<pre style="background='silver';">
+&lt;%@Language="VBScript" EnableSessionState="False"%&gt;
+&lt;%
+Option Explicit
+Response.Buffer = True
+Response.AddHeader "cache-control", "no-store"
+Response.AddHeader "pragma", "no-cache"
+Response.ExpiresAbsolute = Now() - 1
+Response.Expires = 0
+</pre>
+
+<p>
+In der ersten Zeile legen wir die verwendete Scriptsprache fest, und verhindern, da&szlig; f&uuml;r unser Script unn&ouml;tige 
+Sessions auf dem Server erzeugt werden. Durch <i>Option Explicit</i> wird die ausschlie&szlig;liche Verwendung der durch 
+uns explizit deklarierten Variablen erzwungen. Mit <i>Response.Buffer</i> und den erweiterten Headern ersparen wir 
+uns Caching-Probleme bei Browser und Proxy.
+</p>
+
+<p>
+Nun werden die drei ben&ouml;tigten Variablen deklariert , und ihnen mittels Request.Form die mit dem Formular 
+(<b>form.asp</b>) &uuml;bergebenen Werte zugewiesen:
+</p>
+
+<pre style="background='silver';">
+Dim strUser, strPassword, strDirectory
+
+strUser = Request.Form("txtUser")
+strPassword = Request.Form("txtPassword")
+strDirectory = Request.Form("txtDirectory")
+</pre>
+
+<p>
+Im Nachfolgenden wird die Verbindung zur Datenbank aufgebaut und ein Recordset erzeugt. Gesucht wird hier mittels 
+einer SQL-Abfrage nach einer Zeile in der Tabelle ("YourTable"), die exakt die vom Formular (<b>form.asp</b>) 
+&uuml;bergebenen drei Parameter in den entsprechenden Spalten aufweist:
+</p>
+
+<pre style="background='silver';">
+Dim rsUser
+Set rsUser = Server.CreateObject("ADODB.Recordset")
+    rsUser.ActiveConnection = "Driver={Microsoft Access Driver (*.mdb)}; DBQ=" &amp; _
+        Server.MapPath("YourDataBase.mdb") &amp; "; UID=; PWD=YourPassword"
+    rsUser.Source = "SELECT COUNT (*) FROM YourTable WHERE Directory = '" &amp; (strDirectory) &amp; _
+        "' AND User = '" &amp; (strUser) &amp; "' AND Password = '" &amp; (strPassword) &amp; "'"
+    rsUser.CursorType = 0 'adOpenForwardOnly
+    rsUser.CursorLocation = 2 'adUseServer
+    rsUser.LockType = 3 'adLockOptimistic
+    rsUser.Open
+</pre>
+
+<p>
+Wenn die Abfrage eine entsprechend g&uuml;ltige Zeile als Ergebnis hat, setzt das Script mit dem n&auml;chsten Block fort :
+</p>
+
+<pre style="background='silver';">
+If rsUser.Fields(0).Value = 1 Then
+</pre>
+
+<p>
+Soweit war das nun alles nichts Neues, der kleine "Kniff",  mit dem wir es schaffen, dem Browser die vom User 
+eingegeben Parameter (Verzeichnis, Benutzer, Kennwort) zu &uuml;bergeben, folgt in diesem Teil des Scripts. Hier 
+wird dem Browser als Antwort eine minimale HTML-Datei geschickt, deren einzige Aufgabe darin besteht, unmittelbar 
+folgende URL aufzurufen: <i>http://User:Password@YourDomain.com/Directory</i>
+</p>
+
+<p>
+Auf diese Weise werden alle ben&ouml;tigten Daten an den Server &uuml;bergeben, und die l&auml;stige und unsch&ouml;ne Pa&szlig;wort 
+Dialogbox unterdr&uuml;ckt:
+</p>
+
+<pre style="background='silver';">
+Response.Write "&lt;html&gt;"
+Response.Write "&lt;head&gt;"
+Response.Write "&lt;title&gt;&lt;/title&gt;"
+Response.Write "&lt;meta http-equiv=""refresh"" content=""0; url=http://" &amp; _
+    (strUser) &amp; ":" &amp; (strPassword) &amp; "@YourDomain.com/" &amp; _
+    (strDirectory) &amp; """" &amp; "&gt;"
+Response.Write "&lt;/head&gt;"
+Response.Write "&lt;body&gt;"
+Response.Write "&lt;/body&gt;"
+Response.Write "&lt;/html&gt;"
+</pre>
+
+<p>
+Sollten die vom Nutzer eingegebenen Daten (Verzeichnis, Benutzer, Kennwort) keine Entsprechung in der 
+Datenbank gefunden haben, wird er hier im Beispiel einfach wieder mit <i>Response.Redirect("form.asp")</i> auf das 
+Login_Formular zur&uuml;ckgeschickt:
+</p>
+
+<pre style="background='silver';">
+Else 
+    Response.Redirect("form.asp")
+End If
+</pre>
+
+<p>
+Zuletzt wird das Recordset wieder geschlossen und auch der Speicherbereich geleert:
+</p>
+
+<pre style="background='silver';">
+rsUser.Close
+Set rsUser = Nothing
+%&gt;
+</pre>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Die heute vorgestellte Methode hat einen Nachteil: Alle Benutzer m&uuml;ssen zus&auml;tzlich in einer Datenbank (oder 
+Flatfile) gef&uuml;hrt werden. Allerdings, einen gro&szlig;en Vorteil hat sie auch: Nicht alle .asp-Dateien m&uuml;ssen im 
+Gegensatz zu einer rein ASP-basierten Authentication L&ouml;sung mit einem zus&auml;tzlichen Include versehen werden, 
+es werden alle Dateitypen im Verzeichnis gesch&uuml;tzt, es werden keine Servererweiterungen ben&ouml;tigt, die 
+meist Geld kosten und bei gemietetem Webspace ohnehin nicht installiert sind.
+</p>
+
+<p>
+Es gibt auch einige Erweiterungsm&ouml;glichkeiten, so kann zB die Sicherheit durch Verwendung eines SSL 
+gesch&uuml;tzten Bereiches deutlich gesteigert werden. Zudem k&ouml;nnte man fehlerhafte Loginversuche mit Angabe von 
+(Verzeichnis, Benutzer, Kennwort, IP-Adresse, Datum, Uhrzeit) erfassen.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010608.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20010521.htm">ASP-basierte Basic Authentication</a><br>
+<a href="20011207.htm">On Demand Zugriffsrechte f&uuml;r Web Sites vergeben</a><br>
+<a href="20010330.htm">Passw&ouml;rter mit SHA1 absichern</a><br>
+<a href="20000630.htm">Verwendung von SSL Test-Certificates</a><br>
+<a href="20001109.htm">Verzeichnissicherheit mit NTFS und IIS Authentifizierung</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20010608" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Formular-basierte Basic Authentication"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20010608.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value=""><input type="hidden" name="AuthorEmail" value=""><input type="hidden" name="Artikel" value="20010608"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20010608.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

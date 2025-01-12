@@ -1,0 +1,244 @@
+<HTML>
+<HEAD>
+<TITLE>Tabellenerstellung mit ADOX</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Normalerweise erstellt man sich eine Access Datenbank direkt in MS Access um sie dann in ASP Seiten zu verwenden. Sehr wenige wissen allerdings, da&szlig; man diese Tabellenerstellung (als auch Datenbankerstellung) ohne MS Access abwicklen kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ADO,ADOX,ADO Extensions,DDL,Security,ADO 2.5,ActiveX Data Objects,Access,Jet,Index,Table,Tabellenerstellung,Datenbankerstellung">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Tabellenerstellung mit ADOX</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000626"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+ADOX ist das K&uuml;rzel f&uuml;r <i>Microsoft ADO Ext. 2.5 for DDL and Security</i> - auf gut Deutsch die 
+"ADO Erweiterungen f&uuml;r Datendefinition und Sicherheit". Damit kann man Access Datenbanken vollst&auml;ndig
+von Code aus managen, inklusive der Erstellung von Tabellen.
+</p>
+<p>
+In diesem Artikel m&ouml;chte ich mich ganz auf die Tabellenerstellungsfunktionen von ADOX konzentrieren. Normalerweise
+erstellt man sich eine Access Datenbank direkt in MS Access um sie dann in ASP Seiten zu verwenden. Sehr wenige
+wissen allerdings, da&szlig; man diese Tabellenerstellung (als auch Datenbankerstellung) ohne MS Access
+abwicklen kann.
+</p>
+
+<h2>Anlegen einer neuen Datenbank</h2>
+<p>
+Der erste Schritt zur neuen Tabelle k&ouml;nnte das Anlegen einer v&ouml;llig neuen Datenbank sein (mu&szlig; es 
+allerdings nicht). Dazu ben&ouml;tigt man nicht mehr als eine Zeile ADOX Code:
+<pre style="background=silver;">
+&lt;%
+   Set cat = CreateObject("ADOX.Catalog")
+   cat.Create "Provider=Microsoft.Jet.OLEDB.4.0;" &amp; _
+   		"Data Source=C:\MyDb.mdb"
+%&gt;
+</pre>
+</p>
+<p>
+Das <i>Catalog</i> Objekt erlaubt es, sowohl neue Datenbanken anzulegen, als auch bestehende zu &ouml;ffnen. In diesem
+Fall hat uns die <i>Create</i> Methode eine neue Datenbank mit dem Namen <b>MyDb.mdb</b> angelegt (entsprechende Schreibrechte
+vorausgesetzt!).
+</p>
+
+<h2>Anlegen einer Tabelle</h2>
+<p>
+Um eine Tabelle in der neuen Datenbank anzulegen, stellt uns ADOX das <i>Table</i> Objekt zur Verf&uuml;gung. Der
+folgende Code demonstriert, da&szlig; man auch leere Tabellen (ohne Felder) in eine Datenbank einf&uuml;gen kann,
+ohne da&szlig; sich Access beschwert.
+<pre style="background=silver;">
+&lt;%
+    Set cat = CreateObject("ADOX.Catalog")
+    cat.ActiveConnection = "Provider=Microsoft.Jet.OLEDB.4.0;" &amp; _
+			"Data Source=C:\MyDb.mdb"
+
+    Set tbl = CreateObject("ADOX.Table")
+    tbl.Name = "tBeispielTabelle"
+    cat.Tables.Append tbl
+%&gt;
+</pre>
+</p>
+<p>
+Man mu&szlig; nur ein <i>Table</i> Objekt erstellen, einen Namen zuweisen (eindeutig), und die Tabelle dann an die <i>Tables</i>
+Collection anf&uuml;gen. Schon hat die Datenbank eine Tabelle mehr. 
+</p>
+
+<h2>Hinzuf&uuml;gen von Feldern</h2>
+<p>
+F&uuml;r das Hinzuf&uuml;gen von Feldern sollte man sich doch etwas mehr Zeit nehmen, da man sehr viele Eigenschaften
+setzen kann. Und da auch bei ADOX viele Wege nach Rom f&uuml;hren, habe ich in dem folgenden Beispiel 5 Felder
+in die Tabelle eingef&uuml;gt, jeweils mit unterschiedlichen Eigenschaften.
+</p>
+<p>
+<pre style="background=silver;">
+&lt;!--METADATA NAME="Microsoft ActiveX Data Objects 2.5 Library" 
+	TYPE="TypeLib" 
+	UUID="{00000205-0000-0010-8000-00AA006D2EA4}"
+--&gt;
+&lt;!--METADATA NAME="Microsoft ADO Ext. 2.5 for DDL and Security" 
+	TYPE="TypeLib" UUID="{00000600-0000-0010-8000-00AA006D2EA4}"
+--&gt;
+&lt;%
+    Set cat = CreateObject("ADOX.Catalog")
+    cat.ActiveConnection = "Provider=Microsoft.Jet.OLEDB.4.0;" &amp; _
+		"Data Source=c:\MyDb.mdb"
+    Set tbl = cat.Tables("tBeispielTabelle")
+
+    Set col = CreateObject("ADOX.Column")
+    With col
+        .Name = "Benutzername"
+        .Type = adVarWChar
+        .DefinedSize = 64
+    End With
+    tbl.Columns.Append col
+
+    tbl.Columns.Append "Passwort", adVarWChar, 12
+    tbl.Columns.Append "EmailAdresse", , 96
+    tbl.Columns.Append "Alter", adInteger, 4
+
+    Set col = CreateObject("ADOX.Column")
+    With col
+        .Name = "AutoWertFeld"
+        .Type = adInteger
+    End With
+    Set col.ParentCatalog = cat
+    col.Properties("Autoincrement") = True
+    tbl.Columns.Append col
+%&gt;
+</pre>
+</p>
+<p>
+Die beiden <i>METADATA</i> Statements dienen dazu, sowohl die Typenbibliothek von ADO als auch ADOX einzubinden.
+Der Zweck der &Uuml;bung ist, die benannten Konstanten verwenden zu k&ouml;nnen, ohne diese m&uuml;hsam als <i>const</i> definieren
+zu m&uuml;ssen.
+</p>
+<p>
+Das erste Feld, das ich einf&uuml;ge, nennt sich <b>Benutzername</b>. Es ist ein Textfeld, ist 64 Zeichen lang, und nimmt
+sonst alle Standardwerte an. Obwohl es umst&auml;ndlich aussieht, ist es die bevorzugte Feldhinzuf&uuml;gevariante, weil
+man bequem alle Feldeigenschaften in einem <i>With</i> Block setzen kann.
+</p>
+<p>
+Die folgenden drei Felder werden mit der <i>Append</i> Method angef&uuml;gt. Diese ist die schnellste Variante, erlaubt aber
+nicht alle Einstellungen des <i>Column</i> Objekts. L&auml;&szlig;t man Parameter aus (wie f&uuml;r <b>EmailAdresse</b>), werden die Standardwerte
+eingesetzt (f&uuml;r Jet Datenbanken ist der Standardfeldtyp immer String).
+</p>
+<p>
+Zum Abschlu&szlig; f&uuml;ge ich das Feld <b>AutoWertFeld</b> ein. Grunds&auml;tzlich nichts besonderes, allerdings ver&auml;ndere
+ich auch noch eine Nicht-Standardeigenschaft: <i>Autoincrement</i>. Diese Nicht-Standardeigenschaften werden vom OLE-DB
+Provider zur Verf&uuml;gung gestellt, und in diesem Falle ist es die <i>Autowert</i> Funktionalit&auml;t von Jet Datenbanken.
+</p>
+
+<h2>Anlegen eines Prim&auml;rschl&uuml;ssels</h2>
+<p>
+Tja, wir haben zwar jetzt ein Feld mit dem Typ <i>Autowert</i>, allerdings fehlt uns noch der Prim&auml;rschl&uuml;ssel auf dieses
+Feld (Jet Tabellen ohne Prim&auml;rschl&uuml;ssel sind problematisch...). Mit Hilfe des <i>Index</i> Objekts ist das Hinzuf&uuml;gen
+allerdings nicht wirklich ein Problem:
+</p>
+<p>
+<pre style="background=silver;">
+&lt;!--METADATA NAME="Microsoft ADO Ext. 2.5 for DDL and Security" 
+	TYPE="TypeLib" UUID="{00000600-0000-0010-8000-00AA006D2EA4}"
+--&gt;
+&lt;%
+    Set cat = CreateObject("ADOX.Catalog")
+    cat.ActiveConnection = "Provider=Microsoft.Jet.OLEDB.4.0;" &amp; _
+		 "Data Source=c:\MyDb.mdb"
+
+    Set idx = CreateObject("ADOX.Index")
+    With idx
+        .Name = "PrimaryKey"
+        .IndexNulls = adIndexNullsDisallow
+        .PrimaryKey = True
+        .Unique = True
+        .Columns.Append "AutoWertFeld"
+    End With
+
+    Set tbl = cat.Tables("tBeispielTabelle")
+    tbl.Indexes.Append idx
+%&gt;
+</pre>
+</p>
+<p>
+Wer in Access schon Prim&auml;rschl&uuml;ssel angelegt hat, wird die &uuml;blichen Einstellungen sofort erkennen:
+keine Nullwerte erlaubt, Uniqueness sowie primary key Einstellung. Dann wird noch das Feld <b>AutoWertFeld</b>
+in die Collection <i>Columns</i> angef&uuml;gt, und der Index dann der entsprechenden Tabelle zugeordnet.
+</p>
+<p>
+Ich m&ouml;chte darauf hinweisen, da&szlig; man Indizes auch &uuml;ber mehrere Felder anlegen kann. Man mu&szlig; nur <i>Columns.Append</i>
+mehrfach mit den gew&uuml;nschten Feldern aufrufen.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+In dieser Kurztour durch ADOX haben wir eine Datenbank erstellt, eine Tabelle angelegt, Felder eingef&uuml;gt, sowie
+einen Index kreiert. Dies ist allerdings Bruchteil dessen, was ADOX alles kann. Weitere Artikel besch&auml;ftigen
+sich mit Sicherheit, Management und weiteren Tabellenerstellungsaktivit&auml;ten.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000626.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000626.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010607.htm">Daten aus CSV-Dateien in MDBs importieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010607.htm</span><br>
+<a href="../artikel/20010321.htm">MS Access Datenbanken kompaktieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010321.htm</span><br>
+<a href="../artikel/20020322.htm">Query Express f&uuml;r MSDE</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020322.htm</span><br>
+<a href="../artikel/20010511.htm">Tabellenexistenz in Datenbanken &uuml;berpr&uuml;fen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010511.htm</span><br>
+<a href="../artikel/20020410.htm">Yet Another Access Database Administration Tool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020410.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

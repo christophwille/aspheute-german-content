@@ -1,0 +1,426 @@
+<HTML>
+<HEAD>
+<TITLE>Die Performancefalle ReDim Preserve</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wer mit Arrays in VB arbeitet, dem wird auch das ReDim Statement zum Ver&auml;ndern der Gr&ouml;&szlig;e eines Arrays nicht unbekannt sein. In diesem Artikel erkl&auml;rt der Autor, warum es NICHT verwenden sollte!">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,VB,VB.NET,Visual Basic,Visual Basic.net,Redim,Redim Preserve,Preserve,.NET Framework,Framework SDK,C#,C Sharp,Csharp,Array,ArrayList,Add,Trace,Performance,Tuning,Tips,ASP.NET">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Die Performancefalle ReDim Preserve</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/VBdotNET.htm">VB.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001025"></SCRIPT>
+</p>
+<p>
+Wer mit Arrays in VB arbeitet, dem wird auch das <i>ReDim</i> Statement zum Ver&auml;ndern der Gr&ouml;&szlig;e eines Arrays nicht
+unbekannt sein. Heute werde ich Ihnen ausf&uuml;hrlich darlegen, warum Sie dieses Statement in Zukunft besser 
+nicht mehr, oder nur noch sehr, sehr selten einsetzen sollten.
+</p>
+
+<h2>Die Einsatzm&ouml;glichkeiten von ReDim</h2>
+<p>
+Bevor ich jetzt &uuml;ber das <i>ReDim</i> Statement herfalle und es zerzause, m&ouml;chte ich noch einmal die &uuml;blichsten
+Anwendungsf&auml;lle anhand eines Codebeispiels zeigen (<b>redimsamples.aspx</b>). Dabei handelt es sich um das
+simple <i>ReDim</i>, als auch <i>ReDim Preserve</i>:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="VB" %&gt;
+&lt;%
+Dim arrStrings(1) as String
+Response.Write(UBound(arrStrings) &amp; "&lt;br&gt;")
+
+ReDim arrStrings(20)
+Response.Write(UBound(arrStrings) &amp; "&lt;br&gt;")
+
+ReDim Preserve arrStrings(25)
+Response.Write(UBound(arrStrings) &amp; "&lt;br&gt;")
+%&gt;
+</pre>
+
+<p>
+<i>ReDim</i> erlaubt es, ein Array zu vergr&ouml;&szlig;ern oder zu verkleinern. Dabei wird immer ein neues Array angelegt. Der
+Grund hierf&uuml;r ist, da&szlig; das VB.NET Array vom <i>System.Array</i> der .NET Runtime hergeleitet ist, und dieses per Definition
+eine ab Ersterstellung fixe Gr&ouml;&szlig;e hat. In C# ist das offensichtlich, wie der folgende Code - der <i>ReDim</i> emuliert - zeigt:
+</p>
+
+<pre style="background='silver';">
+string[] arrTest = new string[1];
+// und jetzt wollen wir die Gr&ouml;&szlig;e ver&auml;ndern: ReDim arrTest(20)
+arrTest = new string[20];
+</pre>
+
+<p>
+An sich ist das kein Problem, das Problem kommt erst mit <i>Preserve</i> (unser heutiges Thema).
+Wenn man <i>Redim</i> mit dem Schl&uuml;sselwort <i>Preserve</i> verwendet, so werden die alten Elemente beibehalten - 
+als Kopie im neuen Array.
+</p>
+
+<h2>ReDim Preserve als Performancekiller</h2>
+<p>
+Im Prinzip ist die Katze bereits aus dem Sack - das <i>ReDim Preserve</i> Statement erzeugt ein neues Array - und die Elemente des
+alten Arrays werden in das neue kopiert. Da dies unter VB.NET (wie auch im "alten" VB) implizit passiert, merkt man
+au&szlig;er schlechter Performance nichts. Um es etwas krasser zu zeigen, habe ich einen Loop gebastelt, der ein Array
+f&uuml;nftausend Mal ReDimmed (<b>redimloop.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="VB" Trace="True" %&gt;
+&lt;%
+Dim arrStrings() as String
+Dim i as Integer
+
+Trace.Write("Redim","Start")
+
+For i = 1 To 5000
+  ReDim Preserve arrStrings(i)
+  arrStrings(i-1) = i
+Next
+
+Trace.Write("Redim","End")
+%&gt;
+</pre>
+
+<p>
+Da ich Tracing eingeschaltet habe, kann ich sehr einfach die Performancedaten ermitteln:
+</p>
+
+<IMG SRC="Bilder/200010/20001025.png" width="533" height="209" alt="" border="0">
+
+<p>
+Nat&uuml;rlich wird das mit jedem Aufruf etwas differieren (und mit der Maschine), aber man bekommt einen groben 
+Anhaltspunkt f&uuml;r die Performance - und es z&auml;hlt ja die Relativperformance auf ein und derselben 
+Maschine.
+</p>
+<p>
+Was passiert aber im Hintergrund, wenn man <i>ReDim Preserve</i> aufruft? Um es zu illustrieren, habe ich das <i>ReDim</i>
+Statement in C# nachgebaut - weil dort mu&szlig; man alles h&auml;ndisch machen, was <i>ReDim</i> in VB.NET automatisch hinter den
+Kulissen veranstaltet (<b>redimloopexplicit.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" Trace="True" %&gt;
+&lt;%
+string[] arrStrings = new string[1];
+int i;
+
+Trace.Write("Redim","Start");
+
+for (i=1;i&lt;=5000;i++)
+{
+  string[] arrHelper = new string[i];
+  arrStrings.CopyTo(arrHelper, 0);
+  arrHelper[i-1] = i.ToString();
+  arrStrings = arrHelper;
+}
+
+Trace.Write("Redim","End");
+%&gt;
+</pre>
+
+<p>
+Hier sieht man deutlich, wie schlecht die Performance sein mu&szlig; - zuerst wird ein Array der neuen Gr&ouml;&szlig;e angelegt, und
+dann der Inhalt des alten Arrays in das neue kopiert. Die Laufvariable wird zugewiesen, wobei ich in C# den Cast zu String
+selbst machen mu&szlig;. Und zu guter letzt wechsle ich die Arrayvariablen aus.
+</p>
+<p>
+Wer glaubt, VB.NET macht was anderes, der irrt - die Performance ist haarklein dieselbe wie <i>ReDim Preserve</i> (mein Code ist vielleicht
+eine Spur besser, weil ich das Verkleinern des Arrays nicht ber&uuml;cksichtige). Wie schlecht die Performance tats&auml;chlich ist, sieht
+man allerdings erst im Vergleich mit einer besseren Technologie - der <i>ArrayList</i> Klasse.
+</p>
+
+<h2>Die beste L&ouml;sung - ArrayLists</h2>
+<p>
+Die beste L&ouml;sung f&uuml;r ein dynamisches Array ist die <i>ArrayList</i> Klasse aus dem <i>System.Collections</i> Namespace. Eine
+ArrayList kann dynamisch wachsen und schrumpfen, und ist in der Verwendung &auml;u&szlig;erst einfach (<b>arraylistloop.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="VB" Trace="True" %&gt;
+&lt;% @Import Namespace="System.Collections" %&gt;
+&lt;%
+Dim arrList as New ArrayList(100)
+Dim i as Long
+
+Trace.Write("ArrayList","Start")
+
+For i = 1 To 50000
+  arrList.Add(i)
+Next
+
+Trace.Write("ArrayList","End")
+%&gt;
+</pre>
+
+<p>
+Wer genauer hinsieht wird bemerkt haben, da&szlig; der Loop nicht bis f&uuml;nftausend, sondern bis f&uuml;nfzigtausend l&auml;uft - der
+Grund: mit f&uuml;nftausend konnte ich die Performance nicht messen. Aber mit f&uuml;nfzigtausend ist sie immer noch sehr
+beeindruckend:
+</p>
+
+<IMG SRC="Bilder/200010/20001025_2.png" width="539" height="220" alt="" border="0">
+
+<p>
+Die Ausf&uuml;hrungszeit ist 0.01 zu 0.45  - und das obwohl der Loop zehn Mal &ouml;fters l&auml;uft! Ich wollte <i>ReDim Preserve</i> 
+ebenfalls mit dieser Anzahl laufen lassen, habe aber dann irgendwann den Server resetted...
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die Quintessenz des Artikels ist da&szlig; man unter VB.NET dringend die Finger von <i>ReDim Preserve</i> lassen sollte. Wenn
+man ver&auml;nderbare Arrays braucht, sollte man statt dessen zur <i>ArrayList</i> greifen, die sich sowieso fast wie ein 
+normales Array verh&auml;lt.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001025.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20000731.htm">Verwendung von Arrays in C#</a><br>
+<a href="20010913.htm">Wetterbericht per SMS versenden</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20001025" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Die Performancefalle ReDim Preserve"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20001025.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20001025"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20001025.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

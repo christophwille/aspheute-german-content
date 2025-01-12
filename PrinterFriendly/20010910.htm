@@ -1,0 +1,295 @@
+<HTML>
+<HEAD>
+<TITLE>Webseiten automatisiert scrapen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Viele Webseiten bieten einen aktuellen Wetterbericht an. Um diesen f&uuml;r eigene Zwecke verwerten zu k&ouml;nnen, mu&szlig; man die Webseite scrapen, aufparsen, und dann in das eigene Layout einbinden.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Scrapen,ASP.NET,.NET,Csharp,C#,Webseiten,Content,Download,Wetterbericht,Datenbank,SQL Server,Tabelle,Class,Klassen">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Webseiten automatisiert scrapen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010910"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Viele Webseiten bieten einen aktuellen Wetterbericht an. Um diesen f&uuml;r eigene Zwecke verwerten zu k&ouml;nnen, mu&szlig; man die 
+Webseite scrapen, aufparsen, und dann in das eigene Layout einbinden (rechtliche Probleme einmal dahingestellt).
+Allerdings ist es nicht klug, auf jeder eigenen Seite f&uuml;r jeden User neu zu scrapen - es reicht, dies automatisiert
+alle x Minuten oder Stunden zu machen, und den gescrapten Content in eine Datenbank zu schreiben.
+</p>
+<p>
+Wir erledigen heute das Scrapen und Schreiben in die Datenbank mit Hilfe von C# bzw.
+dem .NET Framework und Scheduled Tasks - damit die Aktion auch automatisch abl&auml;uft. Dieser Artikel 
+einer neuen Serie (Parsen, etc. folgt) zeigt Ihnen ein einfaches Beispiel, wie man die Sache angehen kann.
+Unser Projekt besteht der Einfachheit halber aus einer C# Kommandozeilenapplikation, welche die gescrapten Daten der
+Webseite mit den Wetterdaten in eine vorhandene SQL Datenbank schreibt. 
+</p>
+<p>
+Beginnen wir mit der Erstellung der Datenbank.
+Erstellen Sie im SQL Enterprise Manager eine Datenbank namens <i>ScrapApp</i> und eine Tabelle namens
+<i>tContent</i>, die folgende Struktur aufweist:
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010910_1.png" width="402" height="447" alt="" border="0">
+
+<p>
+Da wir dies schnell erledigt haben, k&ouml;nnen wir uns nun den Beispiel-Sourcecode der Kommandozeilenapplikation ansehen.
+Diese in C# geschriebene Applikation (<b>main.cs</b>) besteht aus drei Klassen: <i>Main</i>, welche die Basisklasse darstellt und 
+<i>ScrapPage</i>, welche von der Webseite den Content holt, sowie <i>Write2DB</i>, die den Content der Seite in die
+vorher erstellte SQL Datenbank schreibt.
+</p>
+
+<p>
+Wie immer m&uuml;ssen wir am Anfang alle ben&ouml;tigten Namespaces referenzieren. In der <i>Main</i> Klasse deklariere ich
+die n&ouml;tigen Variablen und f&uuml;hre die Methoden aus, die einerseits den Content scrapen (<i>ScrapIt</i>) bzw. den 
+Content in die SQL Datenbank schreiben (<i>WriteIt</i>). Damit dies funktioniert, mu&szlig; vorher nat&uuml;rlich eine Referenz
+auf die jeweilige Klasse erstellt werden:
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.Net;
+using System.Text;
+using System.Data;
+using System.Data.SqlClient;
+using System.IO;
+
+class MainClass
+{
+	public static void Main()
+	{
+            string strURL = "<a href="http://prognoza.hr/jadran_e.html" target="_blank">http://prognoza.hr/jadran_e.html</a>";
+            string strContent,strErrCode;
+            DateTime dtGrabTime;
+            bool bSuccess;
+            
+            ScrapPage MyScrapPage = new ScrapPage();
+            MyScrapPage.ScrapIt(strURL, out strContent, out strErrCode,out dtGrabTime);
+            
+            if("" == strErrCode)
+            {
+                bSuccess = true;
+            }
+            else
+            {
+                bSuccess = false;
+            }       
+            Write2DB MyWrite2DB = new Write2DB();
+            MyWrite2DB.WriteIt(dtGrabTime, bSuccess, strContent,strErrCode);
+	}
+}
+</pre>
+
+<p>
+Der angegebene URL holt den Inhalt des Wetterberichts f&uuml;r die Adria. Die Stringvariable <i>strContent</i> repr&auml;sentiert
+den gescrapten Content der Webseite und die Stringvariable <i>strErrCode</i> enth&auml;lt den eventuell anfallenden Fehlercode,
+wenn beim Scrapen etwas schief gelaufen ist. Die Variable <i>dtGrabTime</i> vom Datentyp DateTime ist die sogenannte
+Timestamp im Format yyyymmddhhmmss. Diese Timestamp bezieht sich auf das Zugriffsdatum und -zeit auf die Webseite.
+Die Variable <i>bSuccess</i> vom Typ bool ist ein Flag f&uuml;r den Erfolgstatus des Scrapens.
+</p>
+
+<p>
+Bevor wir nun die Methode <i>ScrapIt</i> der Klasse <i>ScrapPage</i> aufrufen k&ouml;nnen, m&uuml;ssen wir hierf&uuml;r ein neues Objekt
+erstellen. Die <i>ScrapIt</i> Methode hat als Eingabeparameter den URL der Webseite und gibt deren Inhalt, einen eventuellen
+Fehlercode des Scrapens und die Timestamp zur&uuml;ck:
+</p>
+
+<pre style="background='silver';">
+class ScrapPage
+{
+	public void ScrapIt(string strUrl, out string strContent, 
+                  out string strErrCode,out DateTime dtGrabTime)
+	{
+        strErrCode ="";
+        WebRequest WebReq = WebRequest.Create(strUrl);
+        WebResponse WebResp = WebReq.GetResponse();
+        StringBuilder strBuildContent = new StringBuilder(); 
+        dtGrabTime = DateTime.Now;
+        
+        try
+        {
+            StreamReader MyStrmR = new StreamReader(WebResp.GetResponseStream(), Encoding.ASCII);                    
+            while (-1 != MyStrmR.Peek())
+            {
+                strBuildContent.Append(MyStrmR.ReadLine());
+            }
+        }
+        catch (Exception e)
+        {
+            strErrCode = e.ToString();
+        }
+        strContent = strBuildContent.ToString();
+	}
+}
+</pre>
+
+<p>
+Wir erstellen zuerst einen WebRequest auf die angegebene URL und schreiben dann Zeile f&uuml;r Zeile
+(ReadLine Methode) den Inhalt der WebResponse bzw. des Streams in ein StringBuilder Objekt.
+Um eventuelle Fehler abzufangen ist dieser Code in einen try-Block gekapselt und mit Hilfe des 
+catch Statements fangen wir die Exception ab. Um die Timestamp zu erhalten, verwenden wir die <i>Now</i>
+statische Eigenschaft der DateTime Structure.
+</p>
+
+<p>
+Da wir nun den Content der Webseite, die Timestamp und hoffentlich keine Exception erhalten haben k&ouml;nnen wir
+die SQL Datenbank bef&uuml;llen. Dies geschieht wie schon erw&auml;hnt mit der <i>WriteIt</i> Methode der Write2DB
+Klasse. Der Methode &uuml;bergeben wir die gesammelten Daten (dtGrabTime, bSuccess, strContent, strErrCode) als 
+Eingabeparameter:
+</p>
+
+<pre style="background='silver';">
+class Write2DB
+{
+    public void WriteIt(DateTime dtGrabTime, bool bSuccess,string strContent,string strErrCode)
+    {
+    string strConn = "server=(local)\\NetSDK;database=ScrapApp;Trusted_Connection=yes";
+    string insertCmd = "insert into tContent (GrabTime, Success, Content, ErrCode) values_
+            (@GrabTime,@Success,@Content,@ErrCode)";
+    
+    SqlConnection MySqlConnection = new SqlConnection(strConn);
+    SqlCommand MyCmd = new SqlCommand(insertCmd, MySqlConnection);
+
+    MyCmd.Parameters.Add(new SqlParameter("@GrabTime", SqlDbType.DateTime, 8));
+    MyCmd.Parameters["@GrabTime"].Value = dtGrabTime;
+    MyCmd.Parameters.Add(new SqlParameter("@Success", SqlDbType.Bit, 1));
+    MyCmd.Parameters["@Success"].Value = bSuccess;
+    MyCmd.Parameters.Add(new SqlParameter("@Content", SqlDbType.NVarChar,4000));
+    MyCmd.Parameters["@Content"].Value = strContent;
+    MyCmd.Parameters.Add(new SqlParameter("@ErrCode", SqlDbType.NVarChar, 255));
+    MyCmd.Parameters["@ErrCode"].Value = strErrCode;
+    MyCmd.Connection.Open();
+    MyCmd.ExecuteNonQuery();
+    MyCmd.Connection.Close();
+    }
+}
+</pre>
+
+<p>
+Nach Bekanntgabe des Connectionstrings (<i>strConn</i>) zur SQL Datenbank <i>ScrapApp</i> legen wir noch
+das SQL INSERT Statement fest, welches die Daten dann einf&uuml;gen wird. Nun k&ouml;nnen wir das Objekt f&uuml;r die
+SqlConnection erstellen und als Parameter den Connectionstring &uuml;bergeben. Um die Daten einzuf&uuml;gen
+erstelle ich ein SqlCommand Objekt (<i>MyCmd</i>) das als Parameter hier das INSERT Statement und das SqlConnection
+Objekt &uuml;bernimmt.
+</p>
+
+<p>
+Nun wird die Datenreihe in Form einer Parametercollection &uuml;bergeben, der zuerst das Datenbankfeld, der SqlDbType 
+kompatible Datentyp und die Feldl&auml;nge &uuml;bergeben wird. Schlie&szlig;lich erfolgen die einzelnen Wert&uuml;bergaben aus den Variablen.
+</p>
+
+<p>
+Jetzt ist es an der Zeit die Applikation zu kompilieren. Dies kann entweder durch Verwendung einer IDE geschehen oder durch
+Angabe von
+</p>
+
+<pre style="background='silver';">
+csc /t:exe /out:ScrapApp.exe main.cs
+</pre>
+
+<p>
+bei der Kommandozeile. Was noch fehlt ist der Eintrag dieser Applikation in die Scheduled Task Liste, damit die Applikation 
+t&auml;glich automatisch gestartet wird. Dazu &ouml;ffen wir das Scheduled Tasks Applet in der Systemsteuerung und doppelkicken
+auf <i>Add Scheduled Task</i>. Es &ouml;ffnet sich nun ein Wizard, dem wir zun&auml;chst die Applikations Informationen, wie
+Applikationsname und -pfad angeben. Da unsere Applikation nicht im System registriert ist, m&uuml;ssen wir mit <i>Browse</i>
+diese Angaben erstellen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010910_2.png" width="439" height="314" alt="" border="0">
+
+<p>
+Nach der Angabe des Namens f&uuml;r den Eintrag in die Taskliste und die Vorauswahl f&uuml;r den Zeitpunkt des Startvorganges,
+geben wir im n&auml;chsten Schritt die genauen Angaben f&uuml;r den Startzeitpunkt unserer Applikation:
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010910_4.png" width="439" height="316" alt="" border="0">
+
+<p>
+Im letzten Schritt m&uuml;ssen wir noch den Benutzer und sein zugeh&ouml;riges Pa&szlig;wort angeben, da die Applikation unter diesem 
+ausgef&uuml;hrt wird. In der Taskliste scheint nun der Eintrag unser Appliaktion auf:
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010910_5.png" width="454" height="292" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Damit "l&auml;uft" unser automatisierter Scrapvorgang, allerdings noch ohne visuellen Output f&uuml;r den Benutzer.
+In den weiteren Artikeln dieser Serie werden wir diese Applikation mit Funktionalit&auml;t erweitern,
+bis wir den gefilterten Content dieser Webseite per SMS (Short Message Service) Nachricht verschicken.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010910.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010910.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020411.htm">Kopieren verboten - Lizenzsicherung bei ASP Scripts</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020411.htm</span><br>
+<a href="../artikel/20000824.htm">Scrapen von Webseiten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000824.htm</span><br>
+<a href="../artikel/20010419.htm">Site&uuml;berwachung mit Scheduled Tasks</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010419.htm</span><br>
+<a href="../artikel/20011113.htm">Sonderzeichen korrekt grabben mit XmlHttp</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011113.htm</span><br>
+<a href="../artikel/20010911.htm">Webseiten automatisiert scrapen, Teil 2</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010911.htm</span><br>
+<a href="../artikel/20010913.htm">Wetterbericht per SMS versenden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010913.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fprognoza%2Ehr%2Fjadran%5Fe%2Ehtml">Seewetterbericht Adria</a><br>
+<SPAN class="content">http://prognoza.hr/jadran_e.html</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

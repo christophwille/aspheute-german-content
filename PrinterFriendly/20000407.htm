@@ -1,0 +1,277 @@
+<HTML>
+<HEAD>
+<TITLE>XML Data Islands</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel beschreibt die Verwendung der XML Data Islands zur Darstellung von Tabellendaten in Internet Explorer.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP,ADO,XML,Data Island,DSO,Data Source Object,datasource object">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>XML Data Islands</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/XML.htm">XML</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000407"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+In den MS Internet Explorer k&ouml;nnen mit Hilfe von <b>Data Source Objects</b> (<b>DSO</b>) Datenquellen eingebunden
+werden, die es erlauben, HTML Elemente an Spalten dieser Datenquellen zu binden. Damit kann man sehr
+einfach und bequem Datenbankdaten am Client rendern, ohne den Server zu belasten. Wie dies mit XML und
+ASP am besten gel&ouml;st werden kann, beschreibe ich in diesem Artikel.
+</p>
+<p>
+Eine dieser DSO Datenquellen ist das <i>XML Data Source Object</i>, das normalerweise als &lt;OBJECT&gt; Tag 
+eingebunden wird. Damit allerdings ist die Seite abh&auml;ngig davon, da&szlig; ActiveX Komponenten ausgef&uuml;hrt werden
+d&uuml;rfen - was heutzutage im Zuge der Sicherheitsprobleme nicht immer gew&auml;hrleistet ist, da sehr viele Personen
+diese Option deaktivieren.
+Um von dieser Problematik wegzukommen, kann man statt dessen <i>XML Data Islands</i> verwenden - das ist XML,
+das entweder direkt in der Seite eingebettet ist, oder aus einer externen Datei kommen kann.
+</p>
+ 
+<h2>Ein einfaches Data Island</h2>
+<p>
+Ein XML Data Island wird &uuml;ber ein <i>&lt;XML&gt;</i> Tag direkt in das HTML Dokument eingebettet. Dieses Tag kann
+entweder alle Daten enthalten, oder &uuml;ber das <i>SRC</i> Attribut eine externe Datei ansprechen. Die erste 
+Variante k&ouml;nnte zum Beispiel f&uuml;r das Rendern einer Linksammlung verwendet werden:
+</p>
+<p>
+<IMG SRC="/artikel/Bilder/200004/20000407_1.png" width="344" height="267" border="0" alt="Einfaches XML Data Island">
+</p>
+<p>
+Der dazugeh&ouml;rige Sourcecode ist in der Datei <b>simpledataisland.asp</b> enthalten:
+<pre style="background='silver';">
+&lt;html&gt;
+&lt;head&gt;
+	&lt;title&gt;XML Data Islands&lt;/title&gt;
+&lt;/head&gt;
+&lt;body bgcolor="#ffffff"&gt;
+
+&lt;XML ID="dsoLinks"&gt;
+&lt;Links&gt;
+	&lt;Link&gt;
+		&lt;Titel&gt;AspHeute&lt;/Titel&gt;
+		&lt;URL&gt;http://www.aspheute.com&lt;/URL&gt;
+		&lt;Beschreibung&gt;T&auml;gliche Artikel zu ASP&lt;/Beschreibung&gt;
+	&lt;/Link&gt;
+	&lt;Link&gt;
+		&lt;Titel&gt;AspKurse&lt;/Titel&gt;
+		&lt;URL&gt;http://www.aspkurse.com&lt;/URL&gt;
+		&lt;Beschreibung&gt;Kurse rund um ASP&lt;/Beschreibung&gt;
+	&lt;/Link&gt;
+&lt;/Links&gt;
+&lt;/XML&gt;
+
+&lt;h2&gt;Die Linksammlung&lt;/h2&gt;
+&lt;TABLE ID="tblLinks" DATASRC="#dsoLinks" CELLSPACING=5&gt;
+  &lt;TR&gt;
+    &lt;TD&gt;&lt;A DATAFLD="URL"&gt;&lt;SPAN DATAFLD="Titel"&gt;&lt;/SPAN&gt;&lt;/A&gt;&lt;BR&gt;
+    &lt;i&gt;&lt;SPAN DATAFLD="Beschreibung"&gt;&lt;/SPAN&gt;&lt;/i&gt;&lt;/TD&gt;
+  &lt;/TR&gt;
+&lt;/TABLE&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</p>
+<p>
+Das XML Data Island beginnt mit <i>&lt;XML ID="dsoLinks"&gt;</i>, und enth&auml;lt ein vollst&auml;ndiges XML Dokument.
+Die ID <i>dsoLinks</i> wird sp&auml;ter dazu verwendet, um das Data Island an die Tabelle zu linken:
+<pre>&lt;TABLE ID="tblLinks" DATASRC="#dsoLinks"&gt;</pre>
+Mit dem <i>DATASRC</i> Attribut wird festgelegt, welche Datenquelle verwendet werden soll (das # kennzeichnet
+eine Datenquelle im aktuellen Dokument).
+</p>
+<p>
+Um nun einzelne HTML Elemente an eine Spalte der Datenquelle zu binden, verwendet man das <i>DATAFLD</i> Attribut.
+Dies kann man sogar f&uuml;r das <i>A</i> Element einsetzen, wobei das <i>DATAFLD</i> Attribut das <i>HREF</i> Attribut ersetzt:
+<pre>&lt;A DATAFLD="URL"&gt;</pre>
+</p>
+<p>
+Die Tabelle enth&auml;lt so viele Zeilen wie auch das XML Data Island.
+</p>
+<h2>Externe XML Datenquellen</h2>
+<p>
+Derzeit ist die Linksammlung statisch in das HTML Dokument eingebettet. Man k&ouml;nnte sie allerdings ohne weiteres
+mit ADO am Server generieren lassen, und schon h&auml;tte man eine L&ouml;sung die auf ASP und XML basiert. Sie hat 
+allerdings einen Nachteil - die Seite l&auml;dt immer alle Daten, und wenn mehrere Seiten die gleichen Daten
+ben&ouml;tigen w&uuml;rden, m&uuml;&szlig;te man den Code &uuml;berall duplizieren und jede Seite w&uuml;rde die gleichen Daten &uuml;ber das Netz
+transferieren.
+</p>
+<p>
+Um das Problem zu umgehen, kann man externe Dateien im XML Element linken:
+<pre>&lt;XML SRC="my.xml"&gt;</pre>
+Nat&uuml;rlich mu&szlig; es sich nicht um ein statisches XML Dokument handeln, man kann nat&uuml;rlich das XML Dokument
+am Server generieren lassen.
+</p>
+<p>
+Um das Ganze mit einem Beispiel zu illustrieren, habe ich eine existierende Tabelle der Northwind Datenbank
+gew&auml;hlt, um die externe Datenquelle zu generieren. Die notwendige ASP Datei zur Generierung des XML sieht wie
+folgt aus:
+<pre style="background='silver';">
+&lt;%
+Set conn = CreateObject("ADODB.Connection")
+Set rs = CreateObject("ADODB.Recordset")
+
+conn.Open "provider=sqloledb.1;user id=sa;password=;" & _
+	initial catalog=northwind;data source=strangelove"
+
+strSQL = "select CategoryName, Description from Categories"
+rs.Open strSQL, conn
+
+Response.ContentType="text/xml"
+Response.Write "&lt;?xml version=""1.0"" encoding=""Windows-1252""?&gt;" & vbCrlf
+Response.Write "&lt;Categories&gt;" & vbCrlf
+While Not rs.EOF
+	Response.Write "&lt;Category&gt;" & vbCrlf
+	For Each fld in rs.Fields
+		strFldName = fld.Name
+		Response.Write "&lt;" & strFldName & "&gt;" & fld.Value & _
+			"&lt;/" & strFldName & "&gt;" & vbCrlf
+	Next
+	Response.Write "&lt;/Category&gt;" & vbCrlf
+	rs.MoveNext
+Wend
+Response.Write "&lt;/Categories&gt;"
+%&gt;
+</pre>
+Im Prinzip handelt es sich um eine v&ouml;llig normale ASP Datei, der Unterschied ist allerdings da&szlig; ich den 
+<i>ContentType</i> auf <b>text/xml</b> umstelle, und aus den ADO Recordsetdaten ein XML Dokument bastle, das
+im Browser betrachtet wie folgt aussieht:
+</p>
+<p>
+<IMG SRC="/artikel/Bilder/200004/20000407_2.png" width="438" height="276" border="0" alt="XML">
+</p>
+<p>
+Das so generierte XML Dokument kann man dann in einer HTML Datei in einem XML Data Island einsetzen:
+<pre style="background='silver';">
+&lt;html&gt;
+&lt;head&gt;
+	&lt;title&gt;XML Data Islands&lt;/title&gt;
+&lt;/head&gt;
+&lt;body bgcolor="#ffffff"&gt;
+
+&lt;XML ID="dsoCategories" SRC="categories.asp"&gt;&lt;/XML&gt;
+
+&lt;TABLE ID="tblCategories" DATASRC="#dsoCategories" BORDER="1"&gt;
+  &lt;TR&gt;
+    &lt;TD&gt;&lt;DIV DATAFLD="CategoryName"&gt;&lt;/DIV&gt;&lt;/TD&gt;
+    &lt;TD&gt;&lt;DIV DATAFLD="Description"&gt;&lt;/DIV&gt;&lt;/TD&gt;
+  &lt;/TR&gt;
+&lt;/TABLE&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+Die Verwendung einer externen Quelle ist v&ouml;llig identisch zu eingebetteten Daten, allerdings sind die Daten nun separat und k&ouml;nnen von anderen Dateien
+aus angesprochen werden - und wenn man das XML-generierende ASP Dokument mit einem <i>Response.Expires</i> Statement
+versieht, kann man ganz einfach Netzwerkbandbreite einsparen.
+</p>
+<h2>Navigieren im DSO</h2>
+<p>
+Nat&uuml;rlich kann man ein Datasource Object auch programmieren! Dazu gibt es die Methoden <b>firstPage</b>, <b>previousPage</b>,
+<b>nextPage</b> und <b>lastPage</b>. Eingebaut in das vorherige Beispiel sieht das dann wie folgt aus:
+</p>
+<p>
+<IMG SRC="/artikel/Bilder/200004/20000407_3.png" width="525" height="282" border="0" alt="Paging">
+</p>
+<p>
+Die Anzahl der Zeilen ist auf 3 pro Seite eingeschr&auml;nkt, und ich habe Buttons f&uuml;r alle Navigationsbefehle
+eingebaut. Die &Auml;nderungen am Sourcecode waren nicht besonders aufwendig:
+<pre style="background='silver';">
+&lt;html&gt;
+&lt;head&gt;
+	&lt;title&gt;XML Data Islands&lt;/title&gt;
+&lt;/head&gt;
+&lt;body bgcolor="#ffffff"&gt;
+
+&lt;XML ID="dsoCategories" SRC="categories.asp"&gt;&lt;/XML&gt;
+
+&lt;TABLE ID="tblCategories" DATASRC="#dsoCategories" BORDER="1" DATAPAGESIZE=3&gt;
+  &lt;TR&gt;
+    &lt;TD&gt;&lt;DIV DATAFLD="CategoryName"&gt;&lt;/DIV&gt;&lt;/TD&gt;
+    &lt;TD&gt;&lt;DIV DATAFLD="Description"&gt;&lt;/DIV&gt;&lt;/TD&gt;
+  &lt;/TR&gt;
+&lt;/TABLE&gt;
+
+&lt;p&gt;
+&lt;INPUT TYPE="button" VALUE="&lt;&lt;" ONCLICK="tblCategories.firstPage();"&gt;
+&lt;INPUT TYPE="BUTTON" VALUE="&lt;" ONCLICK="tblCategories.previousPage();"&gt;
+&lt;INPUT TYPE="BUTTON" VALUE="&gt;" ONCLICK="tblCategories.nextPage();"&gt;
+&lt;INPUT TYPE="BUTTON" VALUE="&gt;&gt;" ONCLICK="tblCategories.lastPage();"&gt;
+&lt;/p&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+Was hat sich alles ge&auml;ndert? Zuallererst habe ich im <i>TABLE</i> Tag das Attribut <i>DATAPAGESIZE</i> eingebaut,
+um die Anzahl von Zeilen pro Seite auf drei einzuschr&auml;nken. Ebenso neu hinzugekommen sind 4 Buttons, die jeweils
+eine Navigationsoperation durchf&uuml;hren. Damit kann man bequem in den Daten bl&auml;ttern, ohne jemals einen 
+Roundtrip zum Server machen zu m&uuml;ssen.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+XML Data Islands sind eine Funktionalit&auml;t, die es nur in Internet Explorer gibt. Allerdings f&uuml;r eine
+Intranet Anwendung k&ouml;nnen Data Islands sehr n&uuml;tzlich sein, da man auf diese Weise zB Drop-Down Boxen mit Werten f&uuml;llen 
+kann, die nur einmal &uuml;bertragen werden m&uuml;ssen - ein nicht zu untersch&auml;tzender Geschwindigkeitsvorteil in einem Bestellsystem mit
+vielen Vorauswahlen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000407.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000407.zip</span></p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Fworkshop%2Fauthor%2Fdatabind%2Fdataconsumer%2Easp">Binding HTML Elements to Data</a><br>
+<SPAN class="content">http://msdn.microsoft.com/workshop/author/databind/dataconsumer.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Fxml%2Fxmlguide%2Fxmldso%2Easp">Binding the XML Data Source Object to Data</a><br>
+<SPAN class="content">http://msdn.microsoft.com/xml/xmlguide/xmldso.asp</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,555 @@
+<HTML>
+<HEAD>
+<TITLE>Debugging in der Tiefe</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im heutigen Artikel besch&auml;ftige ich mich mit Debugging von User Stacks. Debugging ist auch mit dem Debug Interface von C# nach wie vor eher eine Kunstform als eine exakte Wissenschaft.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Towed arrays,user stack,debugging,C#,.NET,streamer,System.Diagnostics,Aprilscherz,April April">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Debugging in der Tiefe</H1>
+<p>
+Geschrieben von: <a href="../autoren/bernhardspuida.htm">Bernhard Spuida</a><br>
+Kategorie: <a href="../kategorien/Aprilscherz.htm">Aprilscherz</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020401"></SCRIPT>
+</p>
+<p>
+Im heutigen Artikel besch&auml;ftige ich mich mit Debugging von User Stacks. Debugging ist auch mit dem Debug Interface von C# nach wie vor eher
+eine Kunstform als eine exakte Wissenschaft. Besonders der Zugriff auf tiefliegende Komponenten eines
+Programmes ist schwierig, wenn man Seiteneffekte zur Laufzeit vermeiden will.
+</p>
+
+<p>
+Das Debugging Interface des .NET SDK Framework ist gut dokumentiert und kann durch Dritte in seiner
+Funktionalit&auml;t erweitert werden. Die Debugging-Funktionalit&auml;t liegt in den <b>Systems.Diagnostics</b> Klassen.
+Am Beispiel der User Stacks zeige ich, wie eine Erweiterung der Debugging-Funktionalit&auml;t
+implementiert werden kann.
+</p>
+
+<p>
+Voraussetzung f&uuml;r das bessere Verst&auml;ndnis des Artikels ist eine genaue Kenntnis des julianischen
+Kalenders in Bezug auf datumsm&auml;&szlig;ig bedingte Br&auml;uche.
+</p>
+
+<h2>User Stacks</h2>
+<p>
+Zuerst einmal m&ouml;chte ich den Begriff <i>User Stack</i> erkl&auml;ren: Ein Programm verwendet zur Verwaltung seiner Daten und Speicherstrukturen den <i>Heap</i> einerseits
+und den <i>Stack</i> andererseits. Der wesentliche Unterschied dieser beiden Strukturen ist die Handhabung
+von Ein- und Ausgabe von Daten - am Stack wird immer das zuletzt abgelegte Element zur&uuml;ckgegeben.
+Es handelt sich also um einen <i>LIFO</i> (last in, first out) Puffer.
+In Wirklichkeit ist wie zu erwarten die Verwendung des Stacks nicht ganz so einfach. Es
+gibt de facto mehrere Stacks, die unterschiedliche Aufgaben wahrnehmen: Event Queueing, I/O-Pufferung etc.
+Die blutigen Details lasse ich aus, um den geneigten Leser vor dem Einschlafen zu bewahren.
+</p>
+
+<p>
+Richtig interessant wird es sobald wir als Entwickler unsere eigenen Stacks anlegen
+- das geht und ist n&uuml;tzlich! <i>User Stacks</i> k&ouml;nnen wir zum Beispiel verwenden um in einer
+Web-Applikation Nachrichten in einem Chat zu verwalten, Warteschlangen einzurichten etc.
+Die Verwendung von User Stacks nimmt uns viel Arbeit bei der Verwaltung dieser Puffer ab.
+</p>
+
+<p>
+Debugging systemnaher Datenstrukturen bringt immer Probleme mit sich:
+</p>
+
+<ul>
+    <li>Schwierigkeiten beim direkten Zugriff</li>
+    <li>Potentielle Seiteneffekte</li>
+    <li>Performanceprobleme</li>
+</ul>
+
+<p>
+Speziell im Falle von User Stacks besteht die Gefahr da&szlig; ein einfacher, naiver Direktzugriff auf den Stack
+die Integrit&auml;t des Stacks gef&auml;hrdet. Lesen von einem Stack schlie&szlig;t im Normalfall
+einen <i>pop</i> ein, also das <b>Entfernen</b> des Wertes vom Stack. Das ist beim Debuggen
+genau das was wir nicht wollen - der Debugvorgang beeinflu&szlig;t den Zustand des zu debuggenden Programms.
+Schreibt man das Element wieder zur&uuml;ck, hat man im g&uuml;nstigsten Falle eine
+Performance-Einbu&szlig;e, im schlimmsten Fall ein 'zerschossenes' Programm, falls in der Zwischenzeit ein
+Stackzugriff erfolgte.
+Da die <b>System.Diagnostics</b> Klassen wie alle C# Klassen erweiterbar sind, gibt es jedoch 
+L&ouml;sungsm&ouml;glichkeiten.
+</p>
+
+<p>
+Und genau einen solchen Ansatz stellt die Klasse <b>Debug.Sub</b> dar. <I>Sub</i>
+steht dabei f&uuml;r <b>S</b>tack <b>U</b>se <b>B</b>uffer. Die Klasse Debug.Sub setzt auf sogenannte <i>OHIO</i>s
+- <b>O</b>ver<b>H</b>ead <b>I</b>ndependent <b>O</b>bjects - auf. Dadurch werden die mit Debugvorg&auml;ngen verbundenen
+Performanceprobleme minimiert. Die Integrit&auml;tsproblematik wird dadurch gel&ouml;st, da&szlig;
+statt den User Stack auf normalen Arrays abzubilden, ein spezieller Array-Typ zum Einsatz
+kommt: das <b>TowedArray</b>.
+</p>
+
+<p>
+Die grundlegende Idee hinter <b>TowedArrays</b> ist die, da&szlig; im Gegensatz zu normalen
+Arrays von unserer Seite aus keine schreibenden Zugriffe erfolgen k&ouml;nnen. Durch diese Pufferung
+des User Stacks wird selbst wenn man einen Weg finden sollte ihn zu schreiben, die Integrit&auml;t des
+User Stacks gew&auml;hrleistet.
+Beschickt wird das Array &uuml;ber eine Kopie des zu beobachtenden Stacks. Der Name <b>TowedArray</b> ergibt sich 
+also aus diesem 'Nachschleppen' hinter dem eigentlichen Stack.
+</p>
+
+<p>
+Jedes Towed Array kann mehrere sogenannte <b>Streamer</b> beinhalten, die jeweils einen User Stack
+&uuml;berwachen. Die &Uuml;berwachung kann in zwei verschiedenen Modi erfolgen: <b>listen</b> und
+<b>pulse</b>. Der listen-Modus liefert ein kontinuierliches Update des Stack Use Buffers, der
+pulse-Modus bildet den User Stack auf einen Trigger hin als 'Snapshot' ab.
+</p>
+
+<h2>Die Debug.Sub Klasse</h2>
+<p>
+Im Folgenden eine rudiment&auml;re Implementation der <b>Debug.Sub</b> Klasse (Listing). Wie man sieht, ist es in C#
+ein Leichtes, leistungsf&auml;hige Erweiterungen der Debugfunktionalit&auml;t zu
+implementieren. Diese zus&auml;tzliche Funktionalit&auml;t steht nat&uuml;rlich auch in allen anderen
+.NET Sprachen zur Verf&uuml;gung.
+</p>
+
+<pre style="background='silver';">
+// Sub class :
+        class sealed Debug.Sub {
+
+                // ...
+
+                // overloaded  {...} operators :
+
+                public Streamer this{int trace} {
+                        get;
+                }
+                public Streamer this{int trace, int section} {
+                        get;
+                }
+
+                /// &lt;summary&gt;
+                /// Attaches a streamer to a user stack.
+                /// &lt;/summary&gt;
+                public void Lower(UserStack stack);
+
+                /// &lt;summary&gt;
+                /// Detaches a streamer from a user stack.
+                /// &lt;/summary&gt;
+                public void Raise(UserStack stack);
+
+                /// &lt;summary&gt;
+                /// Sets the towed array to listen mode.
+                /// &lt;/summary&gt;
+                public void Silent();
+
+                /// &lt;summary&gt;
+                /// Sets the towed array to pulse mode.
+                /// &lt;/summary&gt;
+                public void Pulse();
+
+                /// &lt;summary&gt;
+                /// Gets a current 'snapshot' in pulse mode.
+                /// &lt;/summary&gt;
+                /// &lt;Exception name="SinkException"&gt;Is thrown when the towed
+                /// array is in listen mode and &lt;code&gt;Trigger()&lt;/code&gt; is called.
+                /// &lt;/Exception&gt;
+                public void Trigger();
+
+                public event TowedArrayEventHandler TowedArrayEvent;
+        }
+</pre>
+
+<p>
+Bemerkenswert an diesem St&uuml;ck Code ist die &Uuml;berladung von <b>Streamer</b>,
+da wir es hier mit <b>TowedArray</b>s statt gew&ouml;hnlichen Arrays zu tun haben. Der <b>Trigger</b>mechanismus
+wird wie man sieht &uuml;ber eine Exception gehandhabt. Dieses Vorgehen dient zur weiteren
+Minimierung des Overheads des Debugvorganges, da Exceptions vom System abgehandelt werden und
+somit unseren Userprozess nicht belasten. Es ist auch
+wichtig zu beachten, da&szlig; nicht nur das gesamte <b>TowedArray</b>, sondern auch einzelne
+Streamer gezielt abgefragt werden k&ouml;nnen. Ebenso ist es vorgesehen, die Streamer individuell
+in das <b>TowedArray</b> aufzunehmen und wieder auszugliedern, da nicht jeder User Stack
+die gesamte Lebensdauer des Programmes &uuml;ber existiert.
+</p>
+
+<h2>Anwendung</h2>
+<p>
+Nun eine einfache Beispielanwendung von <b>Debug.Sub</b>, die beide Modi demonstriert:
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.Diagnostics;
+
+class OhioSample
+{
+        Debug.Sub myTowedArray;
+
+        public void OhioSample()
+        {
+                myTowedArray = new Debug.Sub();
+        }
+
+        public void RunPulseSample()
+        {
+                // demonstrate pulse
+                myTowedArray.Pulse();
+                // attaches the towed array to the user stack
+                myTowedArray.Lower(Debug.UserStack);
+                for (int j = 0; j &lt; 5; ++j) {
+                        // get 'snapshot'
+                        myTowedArray.Trigger();
+                        // shows the streamer as string data.
+                        for (int i = 0; i &lt; myTowedArray.Length;++i) {
+                                Console.WriteLine(myTowedArray{i}.ToString());
+                        }
+                }
+                // detaches the towed array from the user stack
+                myTowedArray.Raise(Debug.UserStack);
+        }
+
+        void TowedEventListener(object sender, TowedArrayEventArgs e)
+        {
+                Console.WriteLine("Tracked  call : " + e.TowedArray{e.RetrievedTrace}{e.RetrievedSection});
+        }
+
+        public void RunListenSample()
+        {
+                // demonstrate silent
+                myTowedArray.Silent();
+                myTowedArray.TowedArrayEvent += new TowedArrayEventHandler(TowedEventListener);
+
+                // attaches the towed array to the user stack
+                myTowedArray.Lower(Debug.UserStack);
+
+                // track 10 Console.WriteLine calls
+                for (int i = 0; i &lt; 10;++i) {
+                        Console.WriteLine("I'm call " + i);
+                }
+
+                // detaches the towed array from the user stack
+                myTowedArray.Raise(Debug.UserStack);
+        }
+
+        public static void Main(string[] args)
+        {
+                OhioSample sample = new OhioSample();
+                sample.RunPulseSample();
+                sample.RunListenSample();
+        }
+}
+
+</pre>
+
+<p>
+Sehen wir uns diesen Code etwas n&auml;her an: zuerst werden die ben&ouml;tigten Namespaces <i>System</i> und 
+<i>System.Diagnostics</i> importiert, gefolgt von der Erzeugung einer Instanz der
+Klasse <b>OhioSample</b> - und dort wird auch das <b>TowedArray</b> eingerichtet:
+</p>
+
+<pre style="background='silver';">
+class OhioSample
+{
+        Debug.Sub myTowedArray;
+
+        public void OhioSample()
+        {
+                myTowedArray = new Debug.Sub();
+        }
+        ...
+</pre>
+
+<p>
+Ist doch einfach, oder? Ab jetzt steht uns das TowedArray zur Verf&uuml;gung. Die Instrumentierung von C#-Code f&uuml;r erfolgreiches Debugging ist
+auch nicht aufwendiger als Einstreuen von diagnostischen <b>Console.WriteLine</b> Statements.
+Und wir k&ouml;nnen noch dazu viel tiefer in unseren Code eintauchen...
+</p>
+<p>
+Die eigentliche Verfolgung der User Stacks erfolgt in sehr &auml;hnlichen Routinen,
+so da&szlig; hier nur <b>RunPulseSample()</b> betrachtet wird:
+</p>
+
+<pre style="background='silver';">
+ public void RunPulseSample()
+        {
+                // demonstrate pulse
+                myTowedArray.Pulse();
+                // attaches the towed array to the user stack
+                myTowedArray.Lower(Debug.UserStack);
+                for (int j = 0; j &lt; 5; ++j) {
+                        // get 'snapshot'
+                        myTowedArray.Trigger();
+                        // shows the streamer as string data.
+                        for (int i = 0; i &lt; myTowedArray.Length;++i) {
+                                Console.WriteLine(myTowedArray{i}.ToString());
+                        }
+                }
+                // detaches the towed array from the user stack
+                myTowedArray.Raise(Debug.UserStack);
+        }
+</pre>
+
+<p>
+Die simple Eleganz der Routine macht eine Erkl&auml;rung nahezu &uuml;berfl&uuml;ssig.
+Nach dem Aktivieren durch <b>myTowedArray.Pulse()</b> wird das Array mit dem zu &uuml;berwachenden
+User Stack <b>Debug.Userstack</b> verbunden. Unser <b>TowedArray</b> besitzt also nur einen
+<b>Streamer</b>. Anschlie&szlig;end werden 5 Snapshots gemacht und ausgegeben. Zu guter
+Letzt wird das <b>TowedArray</b> wieder frei gegeben. Das war's! Wozu User Stacks
+'von Hand' zu debuggen versuchen, wenn es mit <b>TowedArray</b>s so einfach geht?
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Es ist nicht allzu schwierig, sich erweiterte Debug-Funktionalit&auml;t in .NET zu verschaffen.
+Gleichzeitig kann man wie gezeigt die &uuml;blichen Probleme mit Low-Level Debugging vermeiden.
+May the source be with you!
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020401.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20020124.htm">Arrays mit Index und Schl&uuml;ssel</a><br>
+<a href="20000926.htm">Collections einmal anders: Stacks und Queues</a><br>
+<a href="20000823.htm">Die Hashtable Klasse</a><br>
+<a href="20030401.htm">Hochleistungskompression mit .NET-Bordmitteln</a><br>
+<a href="20040401.htm">Neues in .NET Codename "Swinomish"</a><br>
+<a href="20020506.htm">Schreib&quot;kunst&quot; f&uuml;r Programmierer, Teil I</a><br>
+<a href="20000731.htm">Verwendung von Arrays in C#</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Epatrickrobinson%2Ecom%2Fbooks%2Fseawolf%2Ehtml">Patrick Robinson - USS Seawolf</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Finventors%2Eabout%2Ecom%2Flibrary%2Finventors%2Fblsonar%2Ehtm">The History of Sonar</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ekerzap%2Ecom%2Fhfro%2F">The Hunt for Red October</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Echinfo%2Enavy%2Emil%2Fnavpalib%2Fimages%2Fimagesub%2Ehtml">U.S. Navy - Submarine Images</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20020401" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Debugging in der Tiefe"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20020401.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Bernhard Spuida"><input type="hidden" name="AuthorEmail" value="bernhard@icsharpcode.net"><input type="hidden" name="Artikel" value="20020401"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20020401.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

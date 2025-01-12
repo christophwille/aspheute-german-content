@@ -1,0 +1,313 @@
+<HTML>
+<HEAD>
+<TITLE>Eine Eurokonvertierungskomponente in C# erstellen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im heutigen Artikel zeigt der Autor, wie man in C# eine Komponente programmiert, die korrekte W&auml;hrungsumrechnungen nach den EMU Regeln durchf&uuml;hren kann. Von Euro nach Landsw&auml;hrung, von Landesw&auml;hrung nach Euro und Triangulation.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Euro,EMU,C#,Csharp,C Sharp,Komponente,.NET,DotNet,ASP.NET,System.Math,Hashtable,Konvertierung,Triangulation,ECU,European Monetary Union">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Eine Eurokonvertierungskomponente in C# erstellen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010123"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Die Einf&uuml;hrung des "angreifbaren" Eurogeldes r&uuml;ckt immer n&auml;her, und die doppelte Preisauszeichnung
+ist mittlerweile auch schon &uuml;berall zu sehen. Letztes Jahr haben wir uns im Artikel 
+<a href="../artikel/19990827.htm">Preisauszeichnung in Euro mit ASP</a> bereits mit diesem
+Thema besch&auml;ftigt, allerdings haben wir damals eine bereits bestehende Komponente von
+<a href="http://www.alphasierrapapa.com/componentcenter/euro/" target="_blank">AlphaSierraPapa</a> 
+verwendet.
+</p>
+<p>
+Heute werden wir diese Komponente mit C# nachprogrammieren - und zwar weil eine native .NET Komponente
+viel performanter ist als wenn man die existierende COM Komponente mit Interop in ASP.NET einbindet (siehe dazu auch der Artikel
+<a href="../artikel/20000828.htm">Verwenden von COM Komponenten in ASP.NET</a>).
+</p>
+
+<h2>Die Funktionalit&auml;t</h2>
+<p>
+Folgende &ouml;ffentlich angreifbare Funktionen werden wir in die Komponente einbauen:
+</p>
+
+<pre style="background='silver';">
+public double GetExchangeRate(String strCurrencySymbol);
+public double ConvertToEuro(double dVal2Convert, string strCurrencyFrom);
+public double ConvertFromEuro(double dVal2Convert, string strCurrencyTo);
+public double Triangulate(double dVal2Convert, string strCurrencyFrom, 
+                          string strCurrencyTo);
+</pre>
+
+<p>
+Diese Funktionen entsprechen dem, was die COM Komponente auch "leistet". Intern gibt es
+dann noch die <i>Round</i> Methode, die die korrekte Rundung nach den Richtlinien der
+EMU (European Monetary Union) durchf&uuml;hrt.
+</p>
+
+<p>
+Zum Programmieren der Komponente kann man aus einer Vielzahl von Tools w&auml;hlen, so zum
+Beispiel Notepad, Visual Studio.NET uvm. Ich habe mich f&uuml;r den Open Source Editor
+<a href="http://www.icsharpcode.net/opensource/sd/" target="_blank">SharpDevelop</a> entschieden (siehe Screenshot).
+</p>
+
+<IMG SRC="/artikel/Bilder/200101/20010123.png" width="651" height="483" alt="" border="0">
+
+<h2>Die Umrechnungsfaktoren</h2>
+<p>
+Die Umrechnungskurse f&uuml;r die L&auml;nder, die an der W&auml;hrungsunion teilnehmen, finden sich bei der
+<a href="http://europa.eu.int/euro/html/dossiers/00232/html/index-DE.html" target="_blank">Euro Info der EU</a>.
+Mit diesen Kursen ausgestattet, kann man beginnen, die Komponente zu programmieren.
+</p>
+<p>
+Ich habe mich entschieden, die Zuordnung der W&auml;hrungskurse zu den W&auml;hrungssymbolen in einem 
+Hashtable zu implementieren (gesch&uuml;tzte Membervariable, Initialisierung im Konstruktor):
+</p>
+
+<pre style="background='silver';">
+  protected Hashtable m_MapCurrencySymbol2Factor;
+  
+  public EuroConverter()
+  {
+    m_MapCurrencySymbol2Factor = new Hashtable();
+    m_MapCurrencySymbol2Factor.Add("ATS", 13.7603);	// Austria
+    m_MapCurrencySymbol2Factor.Add("BEF", 40.3399);	// Belgium
+    m_MapCurrencySymbol2Factor.Add("LUF", 40.3399);	// Luxemburg
+    m_MapCurrencySymbol2Factor.Add("FIM", 5.94573);	// Finland
+    m_MapCurrencySymbol2Factor.Add("FRF", 6.55957);	// France
+    m_MapCurrencySymbol2Factor.Add("DEM", 1.95583);	// Germany
+    m_MapCurrencySymbol2Factor.Add("IEP", 0.787564);	// Ireland
+    m_MapCurrencySymbol2Factor.Add("ITL", 1936.27);	// Italy
+    m_MapCurrencySymbol2Factor.Add("NLG", 2.20371);	// Netherlands
+    m_MapCurrencySymbol2Factor.Add("PTE", 200.482);	// Portugal
+    m_MapCurrencySymbol2Factor.Add("ESP", 166.386);	// Spain
+    m_MapCurrencySymbol2Factor.Add("GRD", 340.750);	// Greece
+  }
+</pre>
+
+<h2>Konvertieren von Landesw&auml;hrung nach Euro</h2>
+<p>
+Der Funktion <i>ConvertToEuro</i> wird eine Dezimalzahl und ein W&auml;hrungssymbol &uuml;bergeben.
+Anhand des W&auml;hrungssymbols wird der Umrechnungskurs aus dem Hashtable ausgelesen, und 
+dann die Konvertierung durchgef&uuml;hrt:
+</p>
+
+<pre style="background='silver';">
+  public double ConvertToEuro(double dVal2Convert, string strCurrencyFrom) 
+  {
+	if (!m_MapCurrencySymbol2Factor.ContainsKey(strCurrencyFrom))
+	{
+          throw new ArgumentException("Lookup of currency symbol failed!");
+	}
+	
+	double dRate = (double)m_MapCurrencySymbol2Factor[strCurrencyFrom];
+	return Round((dVal2Convert / dRate));
+  } 
+</pre>
+
+<p>
+Sollte das W&auml;hrungssymbol nicht in unserem Hashtable gespeichert sein, so lassen wir dies
+dem Benutzer der Komponente mit einer <i>ArgumentException</i> wissen. Der Rest der Rechnung
+ist einfach, bis auf die Verwendung der selbstgebastelten <i>Round</i> Funktion - es gibt
+n&auml;mlich eigene Rundungsregeln f&uuml;r das Rechnen mit Euro!
+</p>
+<p>
+Hier ist ein korrekte Implementierung nach den Richtlinien der EMU:
+</p>
+
+<pre style="background='silver';">
+  protected double Round(double dVal2Round)
+  {
+    // first, strip off everything after third decimal
+    double dVal2 = 0.0;
+    dVal2Round *= 1000;
+    dVal2 = Fix(dVal2Round);
+    
+    // now, round the result
+    dVal2 /= 10;
+    dVal2Round = Fix(dVal2 + (dVal2 > 0 ? 0.5 : -0.5));
+    
+    // we are done.
+    return (dVal2Round/100);
+  }
+</pre>
+
+<p>Die <i>Round</i> Methode verwendet eine Funktion namens <i>Fix</i>, die ebenso nicht Bestandteil von
+C# oder dem .NET Framework ist - sie liefert genauso wie das VB Pendant den Ganzzahlteil der Double Variable:
+</p>
+
+<pre style="background='silver';">
+  protected double Fix(double dVarIn)
+  {
+    if (Math.Sign(dVarIn) &lt; 0)
+    {
+        // less than 0, negative values
+        return Math.Ceiling(dVarIn);
+    }
+    else
+    {
+        return Math.Floor(dVarIn);
+    }
+    return -1;	// unreachable code; intentionally
+  }
+</pre>
+
+<p>
+Damit h&auml;tten wir die Methode <i>ConvertToEuro</i> besprochen - <i>ConvertFromEuro</i> ist
+analog implementiert.
+</p>
+
+<h2>Triangulieren</h2>
+<p>
+Unter <a href="http://www.alphasierrapapa.com/ComponentCenter/Euro/Help/triangulation.html" target="_blank">Triangulation</a>
+versteht man den Vorgang des Konvertieren eines Geldbetrages von einer Eurow&auml;hrung in eine andere,
+zum Beispiel Schilling in Deutsche Mark. Dabei rechnet man erst den Betrag in Schilling nach Euro, und
+ dann von Euro nach Deutsche Mark. Eine direkte Umrechnung ist nicht gestattet.
+</p>
+<p>
+Der entsprechende Sourcecode sieht wie folgt aus:
+</p>
+
+<pre style="background='silver';">
+  public double Triangulate(double dVal2Convert, string strCurrencyFrom, 
+                            string strCurrencyTo) 
+  {
+    if (!m_MapCurrencySymbol2Factor.ContainsKey(strCurrencyFrom) ||
+        !m_MapCurrencySymbol2Factor.ContainsKey(strCurrencyTo))
+    {
+        throw new ArgumentException("Lookup of currency symbol failed!");
+    }
+    
+    double dRateFrom =(double)m_MapCurrencySymbol2Factor[strCurrencyFrom];
+    double dRateTo = (double)m_MapCurrencySymbol2Factor[strCurrencyTo];
+    
+    // do the conversion
+    double dHelper = dVal2Convert / dRateFrom;
+    dHelper *= dRateTo;
+    
+    return Round(dHelper);
+  }
+</pre>
+
+<p>
+Damit h&auml;tten wir alle wichtigen Funktionen der Komponente durchbesprochen - 
+<a href="../artikel/20010123_code.htm">klicken Sie hier</a>, um den gesamten 
+<a href="../artikel/20010123_code.htm">Sourcecode der Komponente</a> zu betrachten.
+</p>
+
+<h2>Die Komponente verwenden</h2>
+<p>
+Nat&uuml;rlich mu&szlig; man die Komponente zuallererst kompilieren - entweder mit Hilfe des Editors,
+oder &uuml;ber die Kommandozeile:
+</p>
+
+<pre style="background='silver';">
+csc /out:EuroConv.dll /target:library EuroConv.cs
+</pre>
+
+<p>
+Wenn man die Komponente in ASP.NET einsetzt, kopiert man sie am besten in das <i>bin</i>
+Verzeichnis der Web Site - damit steht sie automatisch allen Seiten zur Verf&uuml;gung, so zum Beispiel meiner
+Testseite <b>simple.aspx</b>:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language= "C#" %&gt;
+&lt;% @Import Namespace="AlphaSierraPapa.Utilities" %&gt;
+&lt;%
+ EuroConverter ecuConv = new EuroConverter();
+ Response.Write(ecuConv.ConvertToEuro(100, "ATS") + "&lt;br&gt;");
+ Response.Write(ecuConv.ConvertFromEuro(100, "ATS") + "&lt;br&gt;");
+ Response.Write(ecuConv.Triangulate(100, "ATS", "DEM") + "&lt;br&gt;");
+ Response.Write(ecuConv.GetExchangeRate("ESP") + "&lt;br&gt;");
+%&gt;
+</pre>
+
+<p>
+Das ist nat&uuml;rlich nur eine &auml;u&szlig;erst einfach gehaltene Testseite, die alle zur Verf&uuml;gung
+gestellten Methoden einmal einbindet. Im t&auml;glichen Betrieb wird die Komponente aber gute Dienste
+leisten.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die heute vorgestellte Komponente stellt alle Funktionen bereit, die man zur korrekten
+Konvertierung von Geldbetr&auml;gen der Euroteilnehmerstaaten ben&ouml;tigt - und zwar als native
+.NET Komponente. Diese kann sowohl in ASP.NET als auch WinForms oder Kommandozeilenapplikationen
+eingesetzt werden.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010123.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010123.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20011115.htm">Eine Klasse f&uuml;r sich - die .NET Zip Library</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011115.htm</span><br>
+<a href="../artikel/19990827.htm">Preisauszeichnung in Euro mit ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990827.htm</span><br>
+<a href="../artikel/20000828.htm">Verwenden von COM Komponenten in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000828.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2Fcomponentcenter%2Feuro%2F">Euro Conversion Component</a><br>
+<SPAN class="content">http://www.alphasierrapapa.com/componentcenter/euro/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Feuropa%2Eeu%2Eint%2Feuro%2Fhtml%2Fdossiers%2F00232%2Fhtml%2Findex%2DDE%2Ehtml">Euro Umrechnungsfaktoren</a><br>
+<SPAN class="content">http://europa.eu.int/euro/html/dossiers/00232/html/index-DE.html</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eicsharpcode%2Enet%2Fopensource%2Fsd%2F">SharpDevelop</a><br>
+<SPAN class="content">http://www.icsharpcode.net/opensource/sd/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2FComponentCenter%2FEuro%2FHelp%2Ftriangulation%2Ehtml">Triangulation</a><br>
+<SPAN class="content">http://www.alphasierrapapa.com/ComponentCenter/Euro/Help/triangulation.html</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

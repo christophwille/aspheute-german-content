@@ -1,0 +1,282 @@
+<HTML>
+<HEAD>
+<TITLE>Dateizugriff auf Netzlaufwerken</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Ein beliebtes Sorgenkind unter ASP Programmierern ist der Zugriff auf Dateien, die sich auf Netzlaufwerken (Shares) befinden. Der Grund der Probleme ist die NT Sicherheit, und heute werde ich Ans&auml;tze vorstellen, um den Zugriff auf Netzlaufwerke.....">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Netzlaufwerk,Netzwerklaufwerk,Share,Server,FileSystemObject,Sicherheit,NTFS,Konto,Konten,Zugriffsrechte,Zugriff">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Dateizugriff auf Netzlaufwerken</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010508"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Ein beliebtes Sorgenkind unter ASP Programmierern ist der Zugriff auf Dateien, die sich auf
+Netzlaufwerken (Shares) befinden. Der Grund der Probleme ist die NT Sicherheit, und heute
+werde ich Ans&auml;tze vorstellen, um den Zugriff auf Netzlaufwerke (a) zu erm&ouml;glichen, und (b) m&ouml;glichst
+sicher zu bewerkstelligen.
+</p>
+
+<p>
+Beginnen wir mit einem Sourcecode, wie ihn sich klein Hansi vorstellen w&uuml;rde (<b>fileshare.asp</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Language="VBSCRIPT" %&gt;
+&lt;% Option Explicit %&gt;
+&lt;%
+Dim fs, fldr, subfldrs, strFolder, strResult
+
+strFolder = "\\Server\Share" ' WICHTIG: Serverpfad hier anpassen!
+
+Set fs = Server.CreateObject("Scripting.FileSystemObject")
+Set fldr = fs.GetFolder(strFolder)
+Set subfldrs = fldr.SubFolders
+
+For Each fldr In subfldrs
+  strResult = strResult &amp; fldr.Name
+  strResult = strResult &amp; vbCrLf
+Next
+
+Response.Write "&lt;pre&gt;" &amp; strResult &amp; "&lt;/pre&gt;" 
+%&gt;
+</pre>
+
+<p>
+L&auml;&szlig;t man diesen Sourcecode jetzt laufen - der f&uuml;r ein lokales Verzeichnis perfekt funktioniert - so 
+erlebt man folgende Fehlermeldung:
+</p>
+
+<pre style="background='silver';">
+Microsoft VBScript runtime error '800a004c' 
+Path not found 
+/aspheute/filemgmt/fileshare.asp, line 9 
+</pre>
+
+<p>
+Nun, das kann's ja wohl nicht sein, vor allem dann, wenn man im Explorer dieses Share gerade offen hat.
+Woran krankt die Sache also?
+</p>
+
+<p>
+Die Sache ist die - standardm&auml;&szlig;ig wird der IIS mit einem Anonymzugriffskonto namens <i>IUSR_machinename</i>
+ausgestattet. Jeder anonyme Zugriff auf die Website wird &uuml;ber diesen Account tats&auml;chlich ausgef&uuml;hrt - weil
+unter NT ohne Account nichts geht, und zwar absolut nichts - und irgendwie mu&szlig; ja auf die ASP Dateien auf
+der Festplatte zugegriffen werden. Der Hasenfu&szlig; an der Sache ist, da&szlig; das IUSR Konto nur lokal auf der Webservermaschine
+angelegt wird, und am Server, auf dem das Share liegt, nicht bekannt ist - und da man ohne Account niemand ist,
+ist man angeschmiert.
+</p>
+
+<p>
+Um das Problem mit dem Konto zu umgehen gibt es zwei L&ouml;sungen: 
+</p>
+<ul>
+  <li>Man legt ein neues Konto f&uuml;r den anonymen Zugriff an,
+    und zwar auf dem Webserver und dem Fileserver, und stattet beide mit dem gleichen Passwort aus.
+    Dann &auml;ndert man das anonyme Konto f&uuml;r den Webserver in der ISM, und voila - es funktioniert (vorausgesetzt,
+    das neue Konto erh&auml;lt am Share die entsprechenden Rechte).
+  <li>Variante zwei funktioniert dann, wenn Webserver und Fileserver in einer gemeinsamen Domain zu Hause
+      sind - dann legt man einen Domain Account an, und gibt diesem am Fileserver Zugriff, und verwendet
+      ihn ebenso als anonymes Konto f&uuml;r den IIS.
+</ul>
+
+<p>
+Das sind doch zwei hervorragende L&ouml;sungen, warum also zeigt der Scrollbar, da&szlig; der Artikel noch um einiges
+l&auml;nger ist? Nun, ich bin mit dieser L&ouml;sung nicht sehr gl&uuml;cklich. Warum?
+</p>
+
+<p>
+Das Problem liegt darin, da&szlig; ich durch &Auml;nderung des Anonymkontos die Rechte der gesamten Website ver&auml;ndere,
+und nicht nur dort, wo ich die zus&auml;tzlichen Rechte brauche (also pro Verzeichnis w&uuml;rde ich das nicht empfehlen...). Dadurch er&ouml;ffne ich potentielle Sicherheitsl&uuml;cken
+auf meinem Server, weil der anonyme Account pl&ouml;tzlich Rechte im gesamten Netzwerk hat. Wird dieser kompromitiert
+kann man in teuflische Probleme kommen.
+</p>
+
+<p>
+Nun gut - ich fordere also, da&szlig; man die Rechte f&uuml;r Netzwerklaufwerke nur so lange h&auml;lt, wie man sie 
+braucht. Nur - wie bewerkstellige ich das? Wer einen Background in C++ Programmierung f&uuml;r WIN32
+hat, wei&szlig; worauf ich hinaus will: es gibt API's, mit denen ich Benutzer impersonieren kann - also
+f&uuml;r eine gewisse Zeit als jemand anderer gegen&uuml;ber dem Betriebssystem auftreten kann.
+</p>
+
+<p>
+Zwar k&ouml;nnte ich eine solche Komponente selbst schreiben, nur bin ich daf&uuml;r zu bequem, vor allem dann,
+wenn es eine leistungsf&auml;hige Komponente bereits gibt, die netterweise vollst&auml;ndig gratis ist:
+<a href="http://www.softartisans.com/safilemanager.html" target="_blank">SA-FileManager</a>. Diese
+ist - salopp formuliert - eine deutlich leistungsf&auml;higere Variante als das FileSystemObject - und noch
+dazu funktioniert sie &uuml;ber weite Strecken vollst&auml;ndig gleich (<b>safileshare.asp</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Language="VBSCRIPT" %&gt;
+&lt;% Option Explicit %&gt;
+&lt;%
+Dim oFM, oFolder, oFiles, oFile, strFolder, strResult
+
+strFolder = "\\Server\Share" ' WICHTIG: Serverpfad hier anpassen!
+
+Set oFM = Server.CreateObject("SoftArtisans.FileManager")
+Set oFolder = oFM.GetFolder(strFolder)
+
+Set oFiles = oFolder.Files
+For Each oFile In oFiles
+  strResult = strResult &amp; oFile.Name
+  strResult = strResult &amp; vbCrLf
+Next
+
+Response.Write "&lt;pre&gt;" &amp; strResult &amp; "&lt;/pre&gt;" 
+%&gt;
+</pre>
+
+<p>
+Ein wichtiger Unterschied wird beim Ausf&uuml;hren des Skriptes sofort ersichtlich - die Fehlermeldung
+ist deutlich leichter einsichtig:
+</p>
+
+<pre style="background='silver';">
+FileMgr.Folder.1 error '80020009' 
+Access is denied. 
+/aspheute/filemgmt/safileshare.asp, line 9 
+</pre>
+
+<p>
+Hier k&ouml;nnten wir nun wie oben beschrieben mit neuen Anonymkontos das Gleiche bewerkstelligen wie f&uuml;r
+das FileSystemObject. Nur das wollen wir ja nicht! Deshalb bedienen wir uns der Methoden 
+<i>LogonUser</i> und <i>RevertToSelf</i>. Erstere impersoniert einen anderen Account f&uuml;r uns, letztere
+l&auml;&szlig;t uns wieder auf den Ursprungsaccount "zur&uuml;ckfallen" (<b>safileshare-logon.asp</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Language="VBSCRIPT" %&gt;
+&lt;% Option Explicit %&gt;
+&lt;!--#include file="vbFileManagerInclude.asp"--&gt;
+&lt;%
+Dim oFM, oFolder, oFolders, oSubFolder, strFolder, strResult
+strFolder = "\\Server\Share" ' WICHTIG: Serverpfad hier anpassen!
+
+Set oFM = Server.CreateObject("SoftArtisans.FileManager")
+
+oFM.LogonUser "domain", "account", "password", saLogonBatch
+
+Set oFolder = oFM.GetFolder(strFolder) 
+
+Set oFolders = oFolder.SubFolders
+For Each oSubFolder In oFolders
+  strResult = strResult &amp; oSubFolder.Name
+  strResult = strResult &amp; vbCrLf
+Next
+
+Set oFolders = Nothing
+Set oFolder = Nothing
+
+oFM.RevertToSelf
+
+Response.Write "&lt;pre&gt;" &amp; strResult &amp; "&lt;/pre&gt;" 
+%&gt;
+</pre>
+
+<p>
+Nur zwischen den Zeilen mit <i>LogonUser</i> und <i>RevertToSelf</i> l&auml;uft unser Script mit einem
+Account, der auf das Netzwerklaufwerk zugreifen kann - der Rest der Ausf&uuml;hrung ist das bekannte
+anonyme Konto <i>IUSR_machinename</i>.
+</p>
+
+<p>
+Damit haben wir den Zweck erreicht - nur dort, wo wir mehr Benutzerrechte brauchen, verwenden wir
+diese auch. Einen weiteren Vorteil hat es ebenso - irrt&uuml;mliche &Auml;nderungen an den Einstellungen des
+IIS f&uuml;r Anonymzugriff oder NTFS Rechte ber&uuml;hren die Funktionsf&auml;higkeit dieses Scripts kaum mehr -
+wir haben unseren eigenen Account. Und unsere W&uuml;nsche nach Zugriff auf Netzlaufwerke ber&uuml;hren die
+Sicherheitseinstellungen anderer Skripts auch nicht mehr - egal, auf wieviele Netzlaufwerke wir
+zugreifen wollen. Und: wir k&ouml;nnen den Benutzer unserer Scripts den gew&uuml;nschten Benutzernamen und
+Passwort eintippen lassen.
+</p>
+
+<p>
+Ein Sicherheitsproblem hat das vorgestellte Script, das ich nicht verschweigen m&ouml;chte: der 
+verwendete NT Account steht im Plaintext in der ASP Datei, inklusive Passwort. Es versteht sich daher,
+die ASP Dateien vor Sourcecodezugriff zu sichern, und als Account immer einen zu verwenden, der so wenig
+Rechte als nur irgend m&ouml;glich besitzt. Dieses Problem ergibt sich nicht, wenn man den Benutzer
+zur Laufzeit nach diesen Informationen fragt.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die Methoden <i>LogonUser</i> und <i>ReverToSelf</i> beziehen sich auf das gesamte Script, nicht
+nur auf die FileManager Komponente - das hei&szlig;t, man kann mit dieser Funktionalit&auml;t auch andere Tasks
+unter bestimmten Accounts ausf&uuml;hren lassen, ohne das Anonymkonto des IIS ver&auml;ndern zu m&uuml;ssen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010508.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010508.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000530.htm">Lesen von Textdateien</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000530.htm</span><br>
+<a href="../artikel/20010402.htm">NT Account Management via ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010402.htm</span><br>
+<a href="../artikel/20000725.htm">Schreiben einer Textdatei auf den Server</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000725.htm</span><br>
+<a href="../artikel/20011119.htm">Schritt-f&uuml;r-Schritt Debuggen von Sicherheitsproblemen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011119.htm</span><br>
+<a href="../artikel/20001109.htm">Verzeichnissicherheit mit NTFS und IIS Authentifizierung</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001109.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Esoftartisans%2Ecom%2Fsafilemanager%2Ehtml">SA FileManager</a><br>
+<SPAN class="content">http://www.softartisans.com/safilemanager.html</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,415 @@
+<HTML>
+<HEAD>
+<TITLE>Gegengifte f&uuml;r SQL Injection</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im Artikel SQL Injection habe ich demonstriert, was darunter zu verstehen ist, und wie es funktioniert. Heute wollen wir uns die diversen Gegenstrategien ansehen, um SQL Injection in Zukunft zu verhindern.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SQL Injection,Stored Procedure,SQL Server,ADO,prepared Statement,Command,regex,regular expression,regulärer Ausdruck">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Gegengifte f&uuml;r SQL Injection</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20011031"></SCRIPT>
+</p>
+<p>
+Im Artikel <a href="20011030.htm">SQL Injection</a> habe ich demonstriert, was
+darunter zu verstehen ist, und wie es funktioniert. Heute wollen wir uns die diversen Gegenstrategien
+ansehen, um SQL Injection in Zukunft zu verhindern. Darunter f&auml;llt wie schon im gestrigen
+Artikel erw&auml;hnt validieren, validieren, validieren und ein Umstellen des Codes auf nicht anf&auml;llige
+Konstrukte.
+</p>
+
+<p>
+Es gilt Michael Howard's Regel: <b>All input is evil, until proven otherwise!</b>
+</p>
+
+<p>
+Und wie findet man nun heraus, ob der Input good oder evil ist? Man kann es entweder h&auml;ndisch
+(mit Stringfunktionen) machen, oder sich endlich mit Regular Expressions anfreunden. Gerade 
+Regular Expressions (regul&auml;re Ausdr&uuml;cke) sind die ultimative Power bei der &Uuml;berpr&uuml;fung von Input.
+Sie sind sehr vielseitig, und erlauben eine Validierung, die man mit normalen Stringfunktionen
+nicht leicht hinbekommt.
+</p>
+
+<p>
+Dieser Artikel kann und will keine Einf&uuml;hrung in Regular Expressions sein. Aber ein guter
+Start- und Referenzpunkt, schlie&szlig;lich geht es ja um Validierung von Input. Ein guter Startpunkt
+ist der Artikel <a href="20000829.htm">Regul&auml;re Ausdr&uuml;cke / Regular Expressions</a>,
+und wer RegEx'en in Aktion sehen m&ouml;chte, sollte den Artikel <a href="20010911.htm">Webseiten automatisiert scrapen, Teil 2</a>
+lesen. Und wer ein tolles Archiv an RegEx'en sein eigen nennen will, soll die Website
+<a href="http://regexlib.com" target="_blank">Regular Expression Library</a> besuchen - man kann
+ohne eigenen Erfindungsreichtum die Regular Expressions anderer weiterverwenden. Es ist also einfach,
+wenn man nur wei&szlig;, wo man die RegEx'en fertig herbekommt.
+</p>
+
+<p>
+Validieren, validieren, validieren. Nicht vergessen.
+</p>
+
+<p>
+Hat man den Input auf G&uuml;ltigkeit abgeklopft, sollte man nicht den Fehler machen, trotzdem die
+selben fehleranf&auml;lligen SQL Konstrukte weiterzuverwenden. Man k&ouml;nnte unter Umst&auml;nden ja ein Attackeszenario vergessen
+haben. F&uuml;r die Umstellung bieten sich bei SQL Server zwei Varianten an:
+</p>
+
+<ul>
+  <li>Parametrisierte Kommandos
+  <li>Stored Procedures
+</ul>
+
+<h2>Parametrisierte Kommandos</h2>
+<p>
+Parametrisierte Kommandos bieten sich nicht nur f&uuml;r SQL Server an, diese funktionieren auch mit
+anderen Datenbanken. Generell sieht ein parametrisiertes Kommando f&uuml;r das Loginformular des letzten
+Artikels so aus:
+</p>
+
+<pre style="background='silver';">
+SELECT COUNT(*) FROM Users WHERE UserName=? AND UserPassword=?
+</pre>
+
+<p>
+Der gro&szlig;e Unterschied ist, da&szlig; ich den SQL String nicht mehr dynamisch zusammenbaue. Das Kommando
+wird &uuml;ber ADO vorbereitet (deshalb findet sich auch oft der Ausdruck <i>prepared statement</i>), man
+k&ouml;nnte auch sagen vorkompiliert. Im Prinzip ist es eine tempor&auml;re Stored Procedure in SQL Server.
+</p>
+
+<p>
+Durch diese Parametrisierung ist die Verwendung sehr &auml;hnlich zu einer Stored Procedure:
+</p>
+
+<pre style="background='silver';">
+  strSQL = "SELECT COUNT(*) FROM Users WHERE UserName=? AND UserPassword=?"
+  Set cmd = Server.CreateObject("ADODB.Command")
+  cmd.CommandText = strSQL
+  cmd.CommandType = adCmdText
+
+  ' Kein Parametername wird &uuml;bergeben
+  Set param = cmd.CreateParameter("", adVarChar, adParamInput, nMaxUsernameLength, strUsername)
+  cmd.Parameters.Append param
+  
+  ' Aus Geschwindigkeitsgr&uuml;nden in ASP nicht empfehlenswert
+  Set param = Server.CreateObject("ADODB.Parameter")
+  param.Type = adVarChar
+  param.Direction = adParamInput
+  param.Value = strPassword
+  param.Size = nMaxPasswordLength
+  cmd.Parameters.Append param
+  
+  cmd.ActiveConnection = strConn 
+  Set rs = cmd.Execute()
+</pre>
+
+<p>
+Auch v&ouml;llig ohne Validierung funktioniert hier keinerlei SQL Injection mehr (vergesst die Idee
+gleich wieder, <b>All input is evil, until proven otherwise!</b>).
+</p>
+
+<p>
+Der gezeigte Code ist klarerweise ein wenig mehr Aufwand als das einfache zusammenbauen eines SQL Strings,
+allerdings erspart man sich einiges an Kopfweh (der vollst&auml;ndige Code ist im Download in der Datei
+<b>FortifiedLogin.asp</b> zu finden). Und &uuml;brigens: das funktioniert nicht nur f&uuml;r SELECT, sondern
+genauso f&uuml;r INSERT, UPDATE oder DELETE.
+</p>
+
+<p>
+Hinweis zum Beispielcode: aus Gr&uuml;nden der Klarheit der parametrisierten 
+Kommandos fehlen die Regular Expression Validierungen - und auch deswegen, da&szlig; man sehen kann, da&szlig; 
+SQL Injection nicht mehr funktioniert. Ebenfalls mit Absicht wird der 
+<b>sa</b> Account verwendet. L&auml;uft das Beispiel unmodifiziert auf Eurem SQL Server, dann habt Ihr ein
+zu stopfendes Sicherheitsloch!
+</p>
+
+<h2>Stored Procedures</h2>
+<p>
+Eine andere und bessere Umstellung des Codes ist die Verwendung von Stored Procedures.
+Stored Procedures werden am Datenbankserver programmiert, und k&ouml;nnen dort mit entsprechenden
+Ausf&uuml;hrungsberechtigungen versehen werden (ja, das ist in der Dokumentation zu finden - sogar
+sehr leicht!). Die Programmierung und Verwendung geht einem mit ein wenig &Uuml;bung sehr leicht 
+von der Hand, und es ist keineswegs schwarze Magie.
+</p>
+<p>
+Obwohl ebenfalls keine schwarze Magie, ist das Erstellen des notwendigen ADO Codes zum Aufruf
+von Stored Procedures l&auml;stig. Au&szlig;er man verwendet den
+<a href="20010308.htm">ADO Command Code Generator</a>: einfach den Namen der
+Stored Procedure eingetippt, und schon wird der ADO Code automatisch generiert. Apropos
+Stored Procedures: der Artikel <a href="20001013.htm">Highspeed-Abfragen einer SQL Server Datenbank</a>
+w&auml;re auch nicht zu verachten, wenn es um Hintergrundwissen zu Stored Procedures, ADO und Performance
+geht.
+</p>
+<p>
+Die .NET Programmierer habe ich auch nicht vergessen: f&uuml;r sie h&auml;tte ich den Einf&uuml;hrungsartikel
+<a href="20010626.htm">Stored Procedures 101 in ADO.NET </a> zu empfehlen.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Damit h&auml;tten wir die Punkte Validierung, Validierung, Validierung und Codeumbau abgehandelt. Die
+Beschreibung ist mit Absicht auf den Punkt gebracht, weil die Beschreibung der jeweiligen Techniken
+bereits existiert. 
+Ein Kritikpunkt spezifisch f&uuml;r mein Loginformular ist noch, da&szlig; die Passw&ouml;rter in Plaintext in der Datenbank gespeichert
+werden. Dem kann abgeholfen werden, wie im Artikel
+<a href="20010330.htm">Passw&ouml;rter mit SHA1 absichern</a> nachzulesen ist.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20011031.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20020429.htm">Benutzerverwaltung leicht gemacht: Teil 1</a><br>
+<a href="20010308.htm">Der ADO Command Code Generator</a><br>
+<a href="20020319.htm">Ein einfacher Eventkalender f&uuml;r Projektteams</a><br>
+<a href="20001013.htm">Highspeed-Abfragen einer SQL Server Datenbank</a><br>
+<a href="20010330.htm">Passw&ouml;rter mit SHA1 absichern</a><br>
+<a href="20010326.htm">Records z&auml;hlen mit Stored Procedures</a><br>
+<a href="20000829.htm">Regul&auml;re Ausdr&uuml;cke / Regular Expressions</a><br>
+<a href="20011030.htm">SQL Injection</a><br>
+<a href="20010626.htm">Stored Procedures 101 in ADO.NET</a><br>
+<a href="20011203.htm">Verhinderung von SQL Injection Marke .NET</a><br>
+<a href="20020131.htm">Vorsicht Falle: Dateien, die keine sind</a><br>
+<a href="20010911.htm">Webseiten automatisiert scrapen, Teil 2</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fregexlib%2Ecom">Regular Expression Library</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20011031" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Gegengifte f&uuml;r SQL Injection"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20011031.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20011031"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20011031.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

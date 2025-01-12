@@ -1,0 +1,213 @@
+<HTML>
+<HEAD>
+<TITLE>Eine Webanwendung auf CD</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="F&uuml;r das Internet werden mittlerweile nicht mehr nur einfache Anwendungen geschrieben - oft ist sehr n&uuml;tzliche Software  im Internet zu finden. Daher der Wunsch, diese Applikationen auch Kunden ohne Internetzugang zur Verf&uuml;gung zu stellen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Site Compiler,Intorel,Offline,ASP Compiler,ASP auf CD,Web auf CD,CD-ROM,CDROM">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Eine Webanwendung auf CD</H1>
+<p>
+Geschrieben von: <a href="../autoren/andreasroth.htm">Andreas Roth</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20030905"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+F&uuml;r das Internet werden mittlerweile nicht mehr nur einfache Anwendungen geschrieben - oft ist sehr n&uuml;tzliche Software  im 
+Internet zu finden. Daher ist der oft geh&ouml;rte Wunsch verst&auml;ndlich, diese Applikationen auch Kunden ohne Internetzugang zur 
+Verf&uuml;gung zu stellen. Mit der Software <a href="http://www.intorel.com/sitecomp/" target="_blank">Intorel ActiveSite Compiler</a> 
+ist es m&ouml;glich, ein ASP Anwendung als Exe(cutable) weiterzugeben. Hier nun der Bericht, von einem Projekt das den Weg vom Netz 
+auf die Scheibe mit einigen seiner Haken wieder gibt.
+</p>
+
+<h2>Die Webanwendung</h2>
+<p>
+Die Firma <a href="http://www.araymond.com" target="_blank">A. Raymond</a>, Grenoble, stellt Schnellbefestigungen f&uuml;r die 
+Automobilindustrie her. Um die Entwickler unser aller liebsten Kinder, der Fahrzeuge, besser zu unterst&uuml;tzen, wurde ein
+mehrsprachiger Katalog Online gestellt, der sehr komplexe Recherchem&ouml;glichkeiten beinhaltet. Vorbild war eine alte MS-Foxpro 
+Anwendung, die an die Entwickler auf CD Rom versendet wurde. Als zweiter Teil dieser Entwicklung sollte die MS-Foxpro Anwendung 
+selbst ebenfalls abgel&ouml;st werden, da mit modernen Systemen teilweise erhebliche Probleme auftraten. Da f&uuml;r das Internet die 
+ganze Anwendung bereits entwickelt und getestet war, lag es nahe, diese Programmierung weiter zu verwenden.
+</p>
+
+<IMG SRC="/artikel/Bilder/200309/20030905_1.png" width="784" height="657" alt="" border="0">
+
+<h2>Der Intorel ActiveSite Compiler</h2>
+<p>
+Nach einiger Recherche stie&szlig; ich auf den <a href="http://www.intorel.com/sitecomp/" target="_blank">Intorel ActiveSite Compiler</a>, 
+der es erlaubt, ASP Anwendungen zu ausf&uuml;hrbaren Dateien zu kompilieren. Die Funktionsweise ist dabei in etwa die folgende: 
+Die Dateien der Anwendung werden, zusammen mit einem kleinen Webserver in eine einzige Datei kombiniert. Beim Start des 
+Executables wird der Webserver ausgef&uuml;hrt, der sich aus der Datei die jeweils aufgerufene ASP Datei in das Temp-Verzeichnis 
+des Windows Verzeichnisses extrahiert, dort ausf&uuml;hrt und die Datei anschlie&szlig;end gleich wieder l&ouml;scht. 
+</p>
+<p>
+Ich kann hier nur vom Funktionsumfang der Vorversion, dem Octopod Weblicator berichten. Die aktuelle Version besitzt eine 
+weitaus gr&ouml;&szlig;ere Zahl an Funktionen und unterst&uuml;tzt auch ASP.NET.
+</p>
+
+<h2>Gro&szlig;e Datenmengen</h2>
+<p>
+Wie f&uuml;r einen Katalog &uuml;blich, galt es, eine gro&szlig;e Menge an Information zu hinterlegen. Zu etwa 8.000 Produkten und zur 
+Men&uuml;f&uuml;hrung gab es jeweils Abbildungen, was eine Flut von ca. 30.000 Dateien zur  Folge hatte. Zuviel um sie mit dem 
+Sitecompiler in eine einzelne Datei zusammenzufassen. Der Site-Compiler erlaubt aber auf Wunsch den Zugriff auf Dateien 
+au&szlig;erhalb des Kompilats. 
+</p>
+<p>
+Auch die Informationen in der Datenbank lie&szlig;en die MDB auf 16 MB anschwellen. Da Daten f&uuml;r Suchabfragen gespeichert werden, 
+konnte ich Sie auch nicht auf der CD lassen, denn diese ist ja nicht beschreibbar. Um die Datenbank tempor&auml;r auf die 
+Festplatte zu schreiben sind 16MB jedoch zu viel. Die L&ouml;sung f&uuml;r die Datenbank wurde in einem angenehmen Feature der Jet 
+Engine gefunden. In einer MDB kann man Tabellen anderer MDBs verkn&uuml;pfen, die dann wie eigene Tabellen behandelt werden. Dies 
+geht allerdings nur mit dem Access Frontend und nicht mit der Jet-Engine zur Laufzeit. Jedoch bleiben Verkn&uuml;pfungen erhalten. 
+Somit bestand der Trick darin, Tabellen, deren Inhalt sich &auml;ndert, in eine MDB zu kopieren. Dort wurden Verkn&uuml;pfungen 
+eingebaut, die auf eine MDB auf der CD verweisen. Diese MDB enth&auml;lt die Tabellen mit den Produktinformationen, die den 
+meisten Raum einnehmen und sich zur Laufzeit nicht &auml;ndern. 
+</p>
+<p>
+Da f&uuml;r Verkn&uuml;pfungen Pfade gespeichert werden, wurde es dar&uuml;ber hinaus n&ouml;tig, f&uuml;r jeden m&ouml;glichen Laufwerksbuchstaben des CD 
+Laufwerks eine solche MDB zu generieren. Auch der sp&auml;tere Pfad einer solchen Datenbank mu&szlig; immer der gleiche sein. Ich 
+entschied mich f&uuml;r C:\temp.  Soll die Anwendung nun von CD gestartet werden, ist der Bildpfad relativ zum Ausf&uuml;hrungs-Ort 
+gleich, die Datenbank wird immer in C:\temp\cdtemp.mdb gesucht. Damit die Bedingungen f&uuml;r die Anwendung stimmen, wird die 
+Anwendung nicht direkt gestartet, sondern &uuml;ber ein VB Programm, das zuerst den Laufwerksbuchstaben bestimmt, gegebenenfalls 
+den "Temp" Ordner anlegt und die MDB mit den richtigen Verkn&uuml;pfungen dorthin kopiert. F&uuml;r das &Uuml;berspielen des Katalogs auf 
+Festplatte wurde eine zweite Anwendung kompiliert, welche die vollst&auml;ndige  Datenbank beinhaltet - und die Bilder werden 
+komplett in den daf&uuml;r angelegten Ordner kopiert. 
+</p>
+
+<h2>Die Herausforderung</h2>
+<p>
+Dem Kunden wurde eine Anwendung versprochen, die auf allen Windowssystemen ohne Installation l&auml;uft. Aus diesem Kontext ergaben 
+sich erhebliche Probleme, denn auch der Sitecompiler hat gewisse Bed&uuml;rfnisse, im wesentlichen waren dies:
+</p>
+
+<ol>
+	<li>Jet Engine 4.0
+	<li>MDAC
+	<li>aktuelle Scripting Engine (WSH)
+	<li>TCP/IP mu&szlig; auf dem System eingerichtet sein.
+</ol>
+
+<p>
+Da diese Komponenten auf den meisten Systemen aber bereits installiert sind, war die Bedingung in 90% aller F&auml;lle erf&uuml;llt. Dennoch 
+mu&szlig;te f&uuml;r die restlichen 10% eine L&ouml;sung gefunden werden. 
+</p>
+<p>
+Eine weitere Schwierigkeit bestand darin, da&szlig; die CD Rom international lauff&auml;hig sein mu&szlig;te. Gerade mit der Installationsroutine 
+der urspr&uuml;nglichen CD Rom Anwendung gab es hier Probleme, da diese in Frankreich entwickelt wurde und ohne R&uuml;ckfrage einige 
+franz&ouml;sischsprachige DLLs installiert. Ein Problem, das sich nat&uuml;rlich nicht wiederholen sollte!
+</p>
+
+<h2>Die L&ouml;sung</h2>
+<p>
+Nachdem einige Installer getestet wurden, zeigte sich, da&szlig; diese meist ein unerw&uuml;nschtes Vorgehen zeigen: Sie installieren 
+einfach, selbst wenn es nicht n&ouml;tig sein sollte. Einzig der Installer von Wise war soweit anpassbar, da&szlig; er sowohl die 
+richtigen Komponenten zur Sprache als auch eine Installationsroutine, als auch gegebenenfalls einen direkten Start der 
+Applikation erm&ouml;glicht, ohne da&szlig; eine Komponente installiert wird. Aus firmenpolitischen Gr&uuml;nden wurde jedoch auf den Einsatz 
+dieser Software verzichtet - soda&szlig; ich gezwungen war, ein eigenes Installations- und Startprogramm zu schreiben.
+</p>
+<p>
+Visual Basic 5 zeigte sich hier als  passendes Werkzeug. Da DLLs, wenn nicht auf dem System installiert, im Verzeichnis der 
+Anwendung gesucht werden, konnte ich eine Ausf&uuml;hrung ohne Installation garantieren, indem ich einen Basissatz der zur 
+"Runtime" ben&ouml;tigten DLLs mit in das entsprechende Verzeichnis legte. Es war jedoch nicht m&ouml;glich die erweiterten DLLs, 
+wie zum Beispiel die Common Controls zu nutzen - das f&uuml;hrte zu massiven Konflikten mit evt. vorhandenen Installationen. 
+Systemprogrammierern l&auml;ngst vertraut, gibt es daf&uuml;r eine passende Bezeichnung: "DLL-Hell".  
+</p>
+<p>
+Das selbstgeschriebene Installationsprogramm pr&uuml;ft nun zuerst auf die Existenz der ben&ouml;tigten Klassen und Schnittstellen und 
+bietet gegebenenfalls die Installation an. Die 3 Dateien waren jeweils f&uuml;r die 4 Basissprachen auf der CD-Rom, ein Link f&uuml;r 
+das Laden besagter Dateien direkt von Microsoft wurde f&uuml;r weitere Sprachen angeboten. 
+</p>
+
+<h2>Tips f&uuml;r eigene Projekte</h2>
+<h3>Autostart und eigenes Logo</h3>
+<p>
+Um der CD-Rom ein eigenes Logo zu geben, braucht man eine *.ico Datei mit dem gew&uuml;nschten Icon. Dann schreibt man in das 
+Wurzelverzeichnis der CD-Rom eine Textdatei: Autorun.inf, die folgenden Aufbau hat:
+</p>
+
+<pre style="background='silver';">
+[autorun]
+open={relativer Pfad zur Anwendung, die automatisch gestartet werden soll}
+Icon={ relativer Pfad zum Icon, das als CD Logo angezeigt werden soll},0
+</pre>
+
+<h3>Start und Installation</h3>
+<p>
+Wise Installer ist kein g&uuml;nstiges Programm, aber es ist um einiges billiger als ein Entwickler, der das Rad neu erfindet.
+</p>
+
+<h3>Testen, testen, testen</h3>
+<p>
+Besorgen Sie sich gleich zu Beginn einen schnellen Brenner und einen 200er Pack Rohlinge. Dr&uuml;cken Sie all Ihren Freunden, 
+Verwandten und Bekannten eine Kopie der Beta in die Hand und bitten sie diese Menschen m&ouml;gen die CD auf  allen ihnen 
+verf&uuml;gbaren Systemen einlegen und ausprobieren. Besonders Freunde im Ausland sind willkommen.
+</p>
+<p>
+Eine CD kann nicht mehr ge&auml;ndert werden, wenn Sie erst einmal gepresst ist. Deshalb mu&szlig; jede M&ouml;glichkeit ausgesch&ouml;pft werden, 
+Probleme zu finden, bevor der Master (eine ganz normale, gebrannte CD) zum Dienstleister geschickt wird, der sich um die 
+Pressung k&uuml;mmert.
+</p>
+
+<IMG SRC="/artikel/Bilder/200309/20030905_2.png" width="323" height="330" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Es ist faszinierend, welche M&ouml;glichkeiten sich ergeben, wenn man Webanwendungen f&uuml;r das Internet weitergibt. Demoversionen von 
+Online-Produkten, Katalogysteme wie Rasch Safix, oder aber Wissensdatenbanken. Das Projekt hat gezeigt: Es ist m&ouml;glich und 
+gar nicht allzu schwer, ASP Anwendungen auf die Silberscheibe zu bringen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eintorel%2Ecom%2Fsitecomp%2F">Intorel ActiveSite Compiler</a><br>
+<SPAN class="content">http://www.intorel.com/sitecomp/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,485 @@
+<HTML>
+<HEAD>
+<TITLE>Dynamische Includes in ASP</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Der Nachteil der #Include Direktive ist, da&szlig; man dan Namen der inkludierten Datei fix in den Sourcecode der ASP-Seite (oder des ASP-Skripts) schreiben mu&szlig;. Um dies zu umgehen habe ich eine Sammlung von Funktionen erstellt…">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Execute,VBScript,dynamisch,Include,Include Anweisung,Code,Source Code">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Dynamische Includes in ASP</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000706"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Vielen ASP Programmieren ist die #Include Direktive vertraut, mit der man 
+weiteren ASP-Code aus einer Datei in eine ASP-Seite einbinden kann.</p>
+
+<p>Eine #Include Direktive mu&szlig; au&szlig;erhalb der &lt;% und %&gt; Begrenzungszeichen stehen.
+Ebenso ist der Einsatz in einem &lt;SCRIPT RUNAT=SERVER LANGUAGE=VBScript&gt;&lt;/SCRIPT&gt; 
+Block nicht erlaubt.</p>
+
+<p>Wo setzt man nun Includes ein?
+Zum Beispiel wenn man eine immer wiederkehrende Funktion in vielen ASP-Seiten verwenden will,
+so definiert man diese VBScript Funktion in einer Include Datei, und f&uuml;gt dann mittels
+der #Include Direktive diese Datei in die gew&uuml;nschte ASP Seite ein.</p>
+
+<p>Nehmen wir einmal an, die Datei "Add.asp" definiert eine VBScript Funktion, die
+2 Werte addiert:</p>
+
+<pre style="background='silver';">
+&lt;%
+Function Add(x,y)
+   Add = x + y
+End Function
+%&gt;
+</pre>
+
+<p>Wenn die Datei "Add.asp" im Unterverzeichnis "Includes" am Webservers liegt,
+so kann man sie mit folgenden Befehl in eine beliebige ASP-Seite des
+Webservers einbinden:</p>
+
+<pre style="background='silver';">
+&lt;!-- #include virtual="/Includes/Add.asp" --&gt;</pre>
+
+<p>Wenn man den absoluten Pfad zur Datei angeben m&ouml;chte, so kann man dies
+in folgender Form tun:</p>
+<pre style="background='silver';">
+&lt;!-- #include file="D:\Web\AspHeute\www\Includes\Add.asp" --&gt;</pre>
+
+
+<p>Die folgende ASP-Seite greift auf die Funktionalit&auml;t der 
+Add-Funktion zur&uuml;ck:</p>
+
+<pre style="background='silver';">
+&lt;% Option Explicit %&gt;
+&lt;!-- #include virtual="/Includes/Add.asp" --&gt; 
+&lt;%
+Dim a, b, c
+a = 17
+b = 4
+c = Add(a,b)
+Response.Write a &amp; " + " &amp; b &amp; " = " &amp; c
+%&gt;</pre>
+
+<p>Man kann nicht nur Funktionen, sondern nat&uuml;rlich auch komplette Teile
+einer ASP-Seite, wie zum Beispiel ein Men&uuml; oder einen Copyright-Vermerk in ein Include geben.</p>
+
+<p>So schreibt die folgende Include Datei "copyright.asp" einen Copyright Vermerk zum User:</p>
+
+<pre style="background='silver';">
+&lt;div align="center"&gt;
+   &lt;font size="-1"&gt;
+      Copyright &amp;copy; &lt;%= Year(Date) %&gt; by AspHeute.com
+   &lt;/font&gt;
+&lt;/div&gt;
+</pre>
+
+<p>Diese Datei kann man dann in alle ASP-Dateien inkludieren.</p>
+
+<p>Der Nachteil der #Include Direktive ist, da&szlig; man dan Namen
+der inkludierten Datei fix in den Sourcecode der ASP-Seite
+(oder des ASP-Skripts) schreiben mu&szlig;. Man kann also nicht zur Laufzeit des Skripts
+w&auml;hlen, welche Datei man includiert und ausgef&uuml;hrt haben m&ouml;chte.</p>
+
+<p>Um dies zu umgehen habe ich eine Sammlung von Funktionen erstellt, mit
+deren Hilfe es m&ouml;glich ist, zur Laufzeit des Skripts den Inhalt einer
+bestimmten Datei auszulesen und in VBScript mit der original VBScript Engine
+auszuf&uuml;hren.</p>
+
+<p>Da die Funktionen auf der VBScript <i>Execute</i> Methode beruhen, die
+ab VBScript Version 5.0 zur Verf&uuml;gung steht, mu&szlig; der ausf&uuml;hrende Webserver 
+die dementsprechende VBScript.dll (\WinNT\System32\VBScript.dll) 
+der Version 5 (oder h&ouml;her) installiert haben.</p>
+
+<p><u>Anmerkung</u>: Wenn Sie Internet Explorer Version 5.0 (oder h&ouml;her) installiert haben,
+so ist automatisch auch eine VBScript.dll der Version 5.0 installiert
+
+<p>Das folgende ASP-Script zeigt Ihnen, welche VBscript Version auf dem
+Webserver installiert ist:</p>
+
+<pre style="background='silver';">
+&lt;%
+Function GetScriptEngine()
+   Dim strSE
+   strSE = ScriptEngine &amp; " " 
+   strSE = strSE &amp; ScriptEngineMajorVersion &amp; "."
+   strSE = strSE &amp; ScriptEngineMinorVersion &amp; "."
+   strSE = strSE &amp; ScriptEngineBuildVersion
+   GetScriptEngine = strSE
+End Function
+
+Response.Write GetScriptEngine()
+ %&gt;</pre>
+
+ <p>Um dieses Script auf unserem Webserver auszuf&uuml;hren klicken Sie auf
+<a href="../artikel/20000706_listing1.asp" target="_blank"> VBScript Version testen</a>.</p>
+ <p>Die neueste Version der VBscript.dll k&ouml;nnen Sie bei Microsoft auf folgenden
+ Seiten downloaden (ca. 750 KB):</p>
+ 
+ <p>US-Version: 
+ <a href="http://www.microsoft.com/msdownload/vbscript/scripting.asp" target="_blank">http://www.microsoft.com/msdownload/vbscript/scripting.asp</a>
+ <br>
+ Deutsche Version:
+ <a href="http://www.microsoft.com/msdownload/vbscript/scripting.asp?id=11" target="_blank">http://www.microsoft.com/msdownload/vbscript/scripting.asp?id=11</a>
+ </p>
+ 
+<h2>Dateien dynamisch inkludieren</h2>
+
+<p>Die folgenden Schritte zeigen auf, wie man eine Datei zur Laufzeit (also dynamisch) in
+eine ASP-Seite inkludiert und ihren Inhalt (VBScript Source Code) ausf&uuml;hrt.</p>
+
+<h3>VBScript Code zur Laufzeit ausf&uuml;hren</h3>
+
+<p>Die in der VBScript Version 5.0 enthaltene <i>Execute</i> Methode
+erlaubt das Ausf&uuml;hren von in Variablen gespeicherten VBscript Code
+zur Laufzeit. Sehen Sie dazu folgendes Beispiel:</p>
+
+<pre style="background='silver';">
+&lt;% Option Explicit %&gt;
+&lt;%
+Dim a, b, strFormel
+' Formel des Pythagoras
+<b>strFormel = "c = sqr(a*a + b*b)"</b>
+
+<b>a = 3
+b = 4</b>
+' Errechnen von c nach der Formel:
+<b>Execute strFormel</b>
+Response.Write "Formel des Pythagoras: a&amp;sup2;+b&amp;sup2;=c&amp;sup2; :&lt;br&gt;"
+Response.Write "a = " &amp; a &amp; "&lt;br&gt;"
+Response.Write "b = " &amp; b &amp; "&lt;br&gt;"
+Response.Write "c = " &amp; c &amp; "&lt;br&gt;"
+%&gt;
+</pre>
+
+<p>Wie leicht nachzuvollziehen ist, wird <i>a</i> der Wert <i>3</i> und <i>b</i> der Wert <i>4</i> 
+zugewiesen. Die Variable <i>strFormel</i> enth&auml;lt einen (in VBScript) g&uuml;ltigen Ausdruck, der aus den
+Werten von <i>a</i> und <i>b</i> den Wert von <i>c</i> errechnet.</p>
+
+<p>Die VbScript Methode <i>Execute strFormel</i> (entspricht <i>Execute "c = sqr(a*a + b*b)"</i>)
+f&uuml;hrt den in strFormel gespeicherten VBScript Code aus. Somit hat danach die Variable
+<i>c</i> den Wert <i>5</i>.</p>
+
+<a name="SafeExecuteExpression"></a>
+
+<p>Das folgende Skript f&uuml;hrt den in der Variablen <i>strAusdruck</i> gespeicherten VBScript-Ausdruck 
+zur Laufzeit aus. 
+Zus&auml;tzlich f&uuml;hrt das Script einen Check aus, um sicherzustellen, da&szlig; tats&auml;chlich eine 
+VBScript Version 5.0 (oder h&ouml;her) benutzt wird.</p>
+
+<pre style="background='silver';">
+&lt;%
+Dim blnOK, strMajorVersion, strAusdruck
+
+strFunction =               "Function Add(x,y)" &amp; VbCrLf
+strFunction = strFunction &amp; "   Add = x + y   " &amp; VbCrLf
+strFunction = strFunction &amp; "End Function     " &amp; VbCrLf
+
+strAusdruck = strFunction
+
+strMajorVersion = ScriptEngineMajorVersion
+If strMajorVersion &lt; 5 Then
+   Response.Write "Ihre Script Engine ist " &amp; GetScriptEngine &amp; _
+      ".&lt;br&gt;" &amp; VbCrLf
+   Response.Write "Bitte Updaten Sie die Scripting-Engine " &amp; _ 
+      "auf Version 5.0 oder hoeher!&lt;br&gt;" &amp; VbCrLf
+   Response.Write "Dowload der neuesten Scripting-Eninge unter &lt;br&gt;"
+   Response.write "&lt;a href =""http://www.microsoft.com/" &amp; _
+      "msdownload/vbscript/scripting.asp""&gt;"
+   Response.Write "http://www.microsoft.com/msdownload/" &amp; _
+      "vbscript/scripting.asp&lt;/a&gt;.&lt;br&gt;"
+   blnOK = False
+Else
+   On Error Resume Next
+   ' Ausdruck dynamisch ausfuehren:
+   Execute strAusdruck
+   On Error Goto 0      
+   If Err.Number &lt;&gt; 0 Then
+      blnOK = False
+   Else
+      blnOK = True
+   End If
+End If   
+
+If blnOK = True Then
+   Response.Write "Funktion Add(x,y) ist nun definiert:&lt;br&gt;"
+   Response.Write "Add(1,1) = " &amp; Add(1,1)
+Else
+   Response.Write "Ein Fehler ist aufgetreten ..."
+End If
+%&gt;</pre>
+
+<p>Wenn der Ausdruck in der Variable <i>strAusdruck</i> einen Laufzeitfehler verursacht,
+dann hat die Variable <i>blnOK</i> den Wert <i>False</i>, ansonsten den Wert <i>True</i>.</p>
+
+<p><b><u>Achtung</u></b>: Wenn Sie die Methode <u>Execute(strAusdruck)</u> in einer 
+Function oder Sub, anstatt im Hauptprogramm aufrufen, so k&ouml;nnen Sie
+eine im Argument <i>strAusdruck</i> definierte Function nicht benutzen!</p>
+
+<p>Daher einen Ausdruck, der eine Function oder Sub definiert, mittels
+der <i>Execute</i> Methode nur im Hauptprogramm ausf&uuml;hren, 
+anderenfalls ist die Function oder Sub nicht benutzbar!</p>
+
+<h3>Code aus einer Datei zur Laufzeit ausf&uuml;hren</h3>
+
+<p>Um nun einen VBScript Code, der in einer Datei enthalten ist, zur Laufzeit auszuf&uuml;hren,
+l&auml;dt man einfach den Inhalt der Datei, und f&uuml;hrt ihn dann mit
+der <i>Execute</i> Methode aus.</p>
+
+<p>Wie man eine Textdatei ausliest, wurde bereits im Artikel 
+<a href="../artikel/20000530.htm">Lesen von Textdateien</a> gezeigt.</p>
+
+<p>Mit der <a href="20000706.htm#SafeExecuteExpression">ExecuteExpression</a> Funktion und 
+ der nachfolgend vorgestellten <i>ReadFile</i> Funktion, die den Inhalt einer Datei
+ausliest und zur&uuml;ck gibt, l&auml;sst sich die Funktionalit&auml;t einer dynamiscn inkludierten
+Datei verwirklichen:</p>
+
+<p>Auslesen des Inhaltes einer Textdatei in der Funktion <i>ReadFile</i>:</p>
+
+<pre style="background='silver';">
+Function ReadFile(strDateiname)
+   ' ### Listing aus dem Artikel "Lesen von Textdateien" ###
+   ' ### (http://www.aspheute.com) ###
+   ' strDateiname in der Form "C:\Testdateien\MeineDatei.txt"
+   Const fsForReading = 1
+   Dim strInhalt
+   Dim objFs           ' FileSystemObject Objekt
+   Dim objTextStream   ' Textstream Objekt
+   
+   Set objFs = CreateObject("Scripting.FileSystemObject")
+   
+   On Error Resume Next
+   Set objTextStream = objFs.OpenTextFile(strDateiname, fsForReading)
+   If Err.Number &lt;&gt; 0 Then
+      ' Fehler aufgetreten
+      strInhalt = ""
+   Else
+      strInhalt = objTextStream.ReadAll
+   End If
+   objTextStream.Close
+   On Error Goto 0
+   Set objTextStream = Nothing
+   Set objFs = Nothing
+   ReadFile = strInhalt
+End Function</pre>
+
+<p>Die Funktion <i>ReadFile</i> gibt den Inhalt der Textdatei zur&uuml;ck.</p>
+
+<p>Um nun den Inhalt einer Datei dynamisch auszuf&uuml;hren, benutzt man die Methode
+<i>Execute</i> im Hauptprogramm zusammen mit der Funktion 
+<i>ReadFile</i>. Das &Auml;quivalent zu 
+<pre style="background='silver';">
+&lt;!--#Include file="C:\www\text.asp"--&gt;
+</pre>
+</p>
+<p>
+sieht also wie folgt aus:
+</p>
+
+<pre style="background='silver';">
+Dim blnOK
+Dim strDateiInhalt
+
+' Localer Dateiname in der Form "C:\www\text.asp"
+Dim strLocalerDateiName
+strLocalerDateiName = "C:\www\text.asp"
+
+strDateiInhalt = <i>ReadFile</i>(strLocalerDateiName)
+If ScriptEngineMajorVersion &gt;= 5 Then
+   Execute strDateiInhalt
+End If
+</pre>
+
+<p>Die auszuf&uuml;hrende Datei darf dabei, im Gegensatz zu Dateien die mittels 
+#Include Direktive eingef&uuml;gt werden, nur den reinen VBScript Code enthalten,
+jedoch kein HTML oder irgendwelche Begrenzungszeichen (wie &lt% %&gt;) und nat&uuml;rlich auch
+keine #Include Direktiven enthalten.</p>
+
+<p>Um nun zum Beispiel die in der Datei "Add.asp" enthaltene Funktion <i>Add</i>
+in der ASP Seite verwenden zu k&ouml;nnen, ist es m&ouml;glich, die Datei "Add.asp" 
+dynamisch zu inkludieren.</p>
+
+<p>Der Inhalt der Datei "Add.asp":</p>
+
+<pre style="background='silver';">
+Function Add(x,y)
+   Add = x + y
+End Function
+</pre>
+
+<p>Ein Script, das die Methode <i>Execute</i> benutzt und
+die <i>Function Add(x,y)</i> aus der Datei Add.asp dynamisch inkludiert,
+k&ouml;nnte wie folgt aussehen.</p>
+
+<p>Beachten Sie, da&szlig; die Datei "Add.asp" in einem virtuellen Pfad angegeben
+ist, es ergibt sich somit das &Auml;quivalent zu folgender #Include Direktive <br>
+<i>&lt;!--#include virtual="/Includes/Add.asp"--&gt;</i></p>
+
+<pre style="background='silver';">
+&lt;%
+Dim x,y, strAusdruck, strDateiInhalt, strHTML
+Response.Write "Ihre ASP-Datei wird gerade unter " &amp; GetScriptEngine()
+Response.Write " ausgefuehrt!&lt;br&gt;&lt;br&gt;"
+
+x = 7 
+y = 0
+strAusdruck = "y = x + 2"
+
+Response.Write "x hat einen Wert von: " &amp; x &amp; "&lt;br&gt;"
+Response.Write "y hat einen Wert von: " &amp; y &amp; "&lt;br&gt;&lt;br&gt;"
+
+Response.Write "Ausfuehren des Ausdrucks """ &amp; strAusdruck
+Response.Write """:&lt;br&gt;"
+Execute strAusdruck
+Response.Write "x hat einen Wert von: " &amp; x &amp; "&lt;br&gt;"
+Response.Write "y hat einen Wert von: " &amp; y &amp; "&lt;br&gt;&lt;br&gt;"
+
+Response.Write "Inhalt der Datei &lt;i&gt;/Includes/add.asp&lt;/i&gt;:&lt;br&gt;"
+strDateiInhalt = ReadVirtualFile("Include.asp")
+strHTML = Replace(strDateiInhalt,vbCrLf,"&lt;br&gt;" &amp; VbCrLf)
+strHTML = Server.HTMLEncode(strHTML)
+Response.Write strHTML
+
+Response.Write "&lt;br&gt;&lt;br&gt;" &amp; VbCrLf
+
+Response.Write "Ausfuehren der Datei &lt;i&gt;/Includes/add.asp&lt;/i&gt;:&lt;br&gt;"
+
+Execute ReadVirtualFile("/Includes/Add.asp")
+
+Response.Write "x hat einen Wert von: " &amp; x &amp; "&lt;br&gt;"
+Response.Write "y hat einen Wert von: " &amp; y &amp; "&lt;br&gt;&lt;br&gt;"
+Response.Write "Add(x,y) = Add(" &amp; x &amp; "," &amp; y &amp; ") = "
+Response.Write Add(x,y)
+
+' ### Definition der Funktionen:
+Function ReadFile(strDateiname)
+   ' ### Listing aus dem Artikel "Lesen von Textdateien" ###
+   ' strDateiname in der Form "C:\Testdateien\MeineDatei.txt"
+   Const fsForReading = 1
+   Dim strInhalt, strInhaltHTML
+   Dim objFs           ' FileSystemObject Objekt
+   Dim objTextStream   ' Textstream Objekt
+   
+   Set objFs = CreateObject("Scripting.FileSystemObject")
+   
+   On Error Resume Next
+   Set objTextStream = objFs.OpenTextFile(strDateiname, fsForReading)
+   If Err.Number &lt;&gt; 0 Then
+      ' Fehler aufgetreten
+      strInhalt = ""
+   Else
+      strInhalt = objTextStream.ReadAll
+   End If
+   objTextStream.Close
+   On Error Goto 0
+   Set objTextStream = Nothing
+   Set objFs = Nothing
+   ReadFile = strInhalt
+End Function
+
+Function ReadVirtualFile(strVirtualDateiname)
+   ' strVirtualDateiname in der Form "/includes/add.asp" 
+   ' oder als "datei.asp" fuer relative Angaben
+   Dim strDateiname
+   strDateiname = Server.MapPath(strVirtualDateiname)
+   ReadVirtualFile = ReadFile(strDateiname)
+End Function
+
+Function GetScriptEngine()
+   Dim strSE
+   strSE = ScriptEngine &amp; " " 
+   strSE = strSE &amp; ScriptEngineMajorVersion &amp; "."
+   strSE = strSE &amp; ScriptEngineMinorVersion &amp; "."
+   strSE = strSE &amp; ScriptEngineBuildVersion
+   GetScriptEngine = strSE
+End Function
+%&gt;
+</pre>
+
+<h2>Schlu&szlig;bemerkung:</h2>
+
+<p>Die Methode Execute kann beliebige VBScript Ausdr&uuml;cke zur Laufzeit ausf&uuml;hren.
+So ist es auch m&ouml;glich, VBScript Code aus Dateien zu lesen und zur Laufzeit auszuf&uuml;hren.</p>
+
+<p>Damit werden quasi dynamische Includes m&ouml;glich, da man erst zur Laufzeit bestimmen mu&szlig;,
+welche Datei geladen und ausgef&uuml;hrt wird.</p>
+
+<p><u>Achtung</u>: Dynamisch inkludierte Dateien d&uuml;rfen nur reinen VBScript Code enthalten,
+aber keine Begrenzungszeichen oder HTML Code.</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000706.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000706.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000727.htm">Berechnen von beliebigen mathematischen Formeln</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000727.htm</span><br>
+<a href="../artikel/20000710.htm">Cachen von Dynamischen Includes</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000710.htm</span><br>
+<a href="../artikel/20020319.htm">Ein einfacher Eventkalender f&uuml;r Projektteams</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020319.htm</span><br>
+<a href="../artikel/20000725.htm">Schreiben einer Textdatei auf den Server</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000725.htm</span><br>
+<a href="../artikel/20011112.htm">Strukturierter Aufbau in der ASP-Programmierung</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011112.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2Fmsdownload%2Fvbscript%2Fscripting%2Easp%3Fid%3D11">VBScript - Deutsche Version</a><br>
+<SPAN class="content">http://www.microsoft.com/msdownload/vbscript/scripting.asp?id=11</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2Fmsdownload%2Fvbscript%2Fscripting%2Easp">VBScript - US Version</a><br>
+<SPAN class="content">http://www.microsoft.com/msdownload/vbscript/scripting.asp</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

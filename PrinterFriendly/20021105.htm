@@ -1,0 +1,335 @@
+<HTML>
+<HEAD>
+<TITLE>Online File Management System mit ASP.NET und C# - Teil 2</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im ersten Teil der Artikelserie haben wir uns damit besch&auml;ftigt, Dateien und Verzeichnisse online browsebar zu machen.Heute implementieren wir die Funktionen f&uuml;r Upload und Download, sowie das Editieren von Textdateien.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,OFMS,Upload,File,Management,Artikelserie,Editieren,Bearbeiten,Dateien,Download,Content,Disposition">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Online File Management System mit ASP.NET und C# - Teil 2</H1>
+<p>
+Geschrieben von: <a href="../autoren/rudolfball.htm">Rudolf Ball</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20021105"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Es gibt eine komfortable M&ouml;glichkeit, seine Daten, Dateien und Verzeichnisse online zu verwalten: ein Online File Management 
+System (OFMS). Im ersten Teil der Artikelserie haben wir uns damit besch&auml;ftigt, Dateien und Verzeichnisse online browsebar zu machen.
+Heute implementieren wir die Funktionen f&uuml;r Upload und Download (Sektion "Bestandsver&auml;nderungen"), sowie das Editieren von Textdateien -
+mehr dazu in der Sektion "Facelifting".
+</p>
+
+<h2>Bestandsver&auml;nderungen</h2>
+<p>
+Als n&auml;chsten Schritt wollen wir den Dateidownload als auch den Upload implementieren. Der Dateidownload ist einfach, wir ben&ouml;tigen 
+dazu nur eine weitere Spalte in unserer <i>DateienUndVerzeichnisse</i> Tabelle, in welche wir das Symbol 
+</p>
+
+<IMG SRC="/artikel/Bilder/200211/20021105_1.png" width="16" height="16" alt="" border="0">
+
+<p>
+einf&uuml;gen. Der extra ben&ouml;tigte Code in der Funktion <i>TabelleDateienUndVerzeichnisseFuellen</i> sieht folgenderma&szlig;en aus:
+</p>
+
+<pre style="background='silver';">
+...
+ZelleDownload = new TableCell();
+LinkDownload = new HyperLink();
+...
+LinkDownload.Text = "&lt;img src=\"./Bilder/Download.gif\" border=\"0\" height=\"16\" width=\"16\"" + 
+                           "Alt=\"Datei herunterladen\"&gt;";
+LinkDownload.NavigateUrl = "Download.aspx?Dateiname=" + Ort;
+ZelleDownload.Controls.Add(LinkDownload);
+...
+Zeile.Cells.Add(ZelleDownload);
+...
+</pre>
+
+<p>
+Wie man sieht linken wir auf einen neuen WebForm namens <b>Download.aspx</b>. Diese WebForm besitzt kein User Interface sondern besteht 
+nur aus einem PageLoad Event, welches ich im Folgenden besprechen m&ouml;chte.
+</p>
+
+<pre style="background='silver';">
+string Dateiname = Server.MapPath(Request.Params["Dateiname"]);
+System.IO.FileInfo Datei = new System.IO.FileInfo(Dateiname);
+Response.Clear();
+Response.AddHeader("Content-Disposition","attachment; filename=" + Datei.Name);
+Response.AddHeader("Content-Length",Datei.Length.ToString());
+Response.ContentType = "application/octet-stream";
+Response.WriteFile(Datei.FullName);
+Response.End();
+</pre>
+
+<p>
+Die Variable <i>Dateiname</i> wird mit dem Wert des Parameters Dateiname des Querystrings gef&uuml;llt. Ein FileInfo namens <i>Datei</i> beschreibt 
+diese. Mit dem Aufruf Response.Clear l&ouml;schen wir den Puffer (falls bereits etwas geschrieben sein sollte). Um einen "Speichern 
+unter" Dialog erzeugen zu k&ouml;nnen m&uuml;ssen wir einen zus&auml;tzlichen Header einf&uuml;gen, und diesem Header weisen wir den gew&uuml;nschten 
+Dateinamen zu. Als n&auml;chsten Schritt weisen wir dem Header Content-Length die Dateigr&ouml;&szlig;e zu, denn damit ist gew&auml;hrleistet, da&szlig; 
+der Benutzer eine Fortschrittsanzeige angezeigt bekommen. Mit dem ContentType "application/octet-stream" definieren wir, da&szlig; 
+es sich um einen Stream handelt, welcher vom Client nur heruntergeladen werden kann (und eben nicht ge&ouml;ffnet). Anschlie&szlig;end 
+senden wir den Stream zum Client. Response.End beendet die Ausf&uuml;hrung dieser Seite. 
+</p>
+<p>
+Somit wird durch einen Klick auf das Download-Image zur Downloadseite gelinkt (<b>Download.aspx</b>) und der Dateinname im Querystring 
+&uuml;bergeben. Die Datei wird als Stream zum Client gesendet. Ganz anders sieht der Vorgang jedoch beim Upload aus.
+</p>
+<p>
+F&uuml;r den Upload haben wir auf die Hauptseite (<b>OFMS.aspx</b>) ein HTML Input Control gesetzt, welches wir jedoch mit dem runat=server 
+Attribut vesehen haben, um auf die Daten zugreifen zu k&ouml;nnen. Der eingef&uuml;gte HTML Code sieht wie folgt aus.
+</p>
+
+<pre style="background='silver';">
+&lt;tr bgColor="khaki"&gt;
+   &lt;td width="100"&gt;&lt;font face="Verdana" color="black" size="1"&gt;&lt;b&gt;Datei Upload &lt;/b&gt;&lt;/font&gt;
+   &lt;/td&gt;
+   &lt;td width="200"&gt;
+      &lt;input id="DateiUpload" runat="server" type="file" name="DateiUpload" width="100%"&gt;
+   &lt;/td&gt;
+   &lt;td width="500"&gt;
+      &lt;asp:Button Runat="server" ID="Upload" Text="Upload"&gt;&lt;/asp:Button&gt;
+   &lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+
+<p>
+Wie wir sehen, haben wir ein Inputfeld <i>DateiUpload</i> vom Typ "file" eingef&uuml;gt. Automatisch wird hier eine Textbox und ein "Browse" 
+Button angezeigt, welcher bei Klick einen Dialog zur Dateiauswahl &ouml;ffnet. Weiters ben&ouml;tigen wir einen Button "Upload", welcher 
+die zuvor selektierte Datei endg&uuml;ltig in unser Web bef&ouml;rdert. Der Click-Event des Buttons Upload sieht wie folgt aus.
+</p>
+
+<pre style="background='silver';">
+private void DateiUpload_Click(object sender, System.EventArgs e)
+{
+   string aktuellesVerzeichnis = Request.Params["Verzeichnis"];
+   if (aktuellesVerzeichnis == null || aktuellesVerzeichnis.Length == 0)
+   {
+      aktuellesVerzeichnis = Request.ApplicationPath.ToString();
+   }
+   if (DateiUpload.PostedFile != null &amp;&amp; DateiUpload.PostedFile.FileName.Length &gt; 0)
+   {
+      string Zielverzeichnis = Server.MapPath(aktuellesVerzeichnis);
+      try
+      {
+         string Dateiname = Path.GetFileName(DateiUpload.PostedFile.FileName);
+         DateiUpload.PostedFile.SaveAs(Path.Combine(Zielverzeichnis,Dateiname));
+         Response.Redirect("OFMS.aspx?Verzeichnis=" + aktuellesVerzeichnis);
+      }
+      catch(Exception ex)
+      {
+         StatusMessage.Text = ex.Message;
+         StatusMessage.Visible = true;
+      }
+   }
+}
+</pre>
+
+<p>
+Interessant ist hier, da&szlig; wir auf die selektierte Datei durch DateiUpload.PostedFile zugreifen k&ouml;nnen. Somit k&ouml;nnen wir die 
+Datei mit DateiUpload.PostedFile.Save einfach in unserem Zielverzeichnis speichern. Anschlie&szlig;end f&uuml;hrt uns ein Response.Redirect 
+wieder auf die Hauptseite <b>OFMS.aspx</b> zur&uuml;ck, nat&uuml;rlich ins richtige Verzeichnis. Somit sehen wir, da&szlig; weder der Up- noch der 
+Download von Dateien mit ASP.NET ein Problem darstellt. Im Browser sieht das Ganze dann so aus.
+</p>
+
+<IMG SRC="/artikel/Bilder/200211/20021105_2.png" width="852" height="555" alt="" border="0">
+
+<p>
+Beim Klick auf "Browse" &ouml;ffnet sich der Dialog "Datei &ouml;ffnen ...". Anschlie&szlig;end steht der Dateipfad in der Textbox. Erst durch den 
+Klick auf den "Upload"-Button wird die Datei hochgeladen.
+</p>
+
+<h2>Facelifting</h2>
+<p>
+Was hilft es uns, die Dateien online aufzulisten, wenn wir sie weder einsehen noch bearbeiten k&ouml;nnen. Aus diesem Grund m&ouml;chten 
+wir mit unserem OFMS dem Benutzer diese M&ouml;glichkeit einr&auml;umen. Wir ben&ouml;tigen hierf&uuml;r zwei Komponenten. Einerseits eine WebForm 
+zum Editieren (Editor.aspx) und andererseits einen Edit-Button 
+</p>
+
+<IMG SRC="/artikel/Bilder/200211/20021105_4.png" width="16" height="16" alt="" border="0">
+
+<p>
+mit Link auf die Editorseite von unserer Hauptseite aus. Der Code f&uuml;r den Link ist einfach und unterscheidet sich nur 
+geringf&uuml;gig von dem des Download-Buttons.
+</p>
+
+<pre style="background='silver';">
+LinkEdit.Text = "&lt;img src=\"./Bilder/Editor.gif\" border=\"0\" height=\"16\" _
+		width=\"16\" Alt=\"Datei editieren\"&gt;";
+LinkEdit.NavigateUrl = "Editor.aspx?Dateiname=" + Ort;
+ZelleEdit.Controls.Add(LinkEdit);
+</pre>
+
+<p>
+Dem zuvor erzeugten Hyperlink <i>LinkEdit</i> wird als Text ein Image-Tag hinzugef&uuml;gt (Editor.gif). Als Ziel (NavigateUrl) wird die 
+Editor.aspx Seite angegeben, jedoch mit dem Pfad der zu editierenden Datei (<i>Ort</i>) als Parameter. Anschlie&szlig;end wird der 
+Hyperlink der Zelle <i>ZelleEdit</i> hinzugef&uuml;gt. Dies war der einfache Teil. 
+</p>
+<p>
+Auf die Editor.aspx Seite gelinkt wird sogleich das PageLoad-Event ausgef&uuml;hrt. Dieses Event sieht wie folgt aus:
+</p>
+
+<pre style="background='silver';">
+private void Page_Load(object sender, System.EventArgs e)
+{
+if (!Page.IsPostBack)
+{
+   string Dateipfad = Request.Params["Dateiname"];
+   if (Dateipfad != null)
+   {
+      if (Request.Params["erzeugen"] == null || Request.Params["erzeugen"] == "false")
+      {
+         try
+         {
+           StreamReader sr = new StreamReader(File.Open(Server.MapPath(Dateipfad),FileMode.Open));
+           DateiInhalt.Text = sr.ReadToEnd();
+           sr.Close();
+         }
+         catch (Exception ex)
+         {
+           StatusMessage.Text = ex.Message;
+           StatusMessage.Visible = true;
+         }
+      }
+   DateiSpeichernUnter.Text = Dateipfad;
+   }
+}
+}
+</pre>
+
+<p>
+Der Variable <i>Dateipfad</i> wird der Dateiname, welcher durch den Querystring &uuml;bergeben wurde, zugewiesen. Weiters wird der Parameter 
+"erzeugen" abgefragt, denn sollte dieser &uuml;bersprungen werden wollen wir eine neue Datei erzeugen und ben&ouml;tigen nicht das 
+Hochladen und Anzeigen einer anderen. Anschlie&szlig;end &ouml;ffnen wir einen neuen StreamReader, welchem wir als Eingabeparameter die 
+offenen Datei &uuml;bergeben. Der auf der Editor.aspx - Seite definierten Textbox <i>DateiInhalt</i> weisen wir den StreamReader zu, welcher 
+sie f&uuml;llt. Somit zeigen wir den Inhalt (=Text) der Datei in der Textbox an. Zu guter letzt wird in die Textbox 
+<i>DateiSpeichernUnter</i> der Dateipfad eingetragen, was ein Speichern bei Ver&auml;nderung auch unter einem anderen Name erlaubt. 
+</p>
+<p>
+Schlu&szlig;endlich m&ouml;chten wir noch die Datei nach eventuellen &Auml;nderungen speichern. Das Click-Event hierf&uuml;r sieht folgenderma&szlig;en aus:
+</p>
+
+<pre style="background='silver';">
+private void DateiSpeichern_Click(object sender, System.EventArgs e)
+{
+   try
+   {
+      string DateiPfad = DateiSpeichernUnter.Text;
+      if (!DateiPfad.StartsWith("/"))
+      {
+         DateiPfad = "/" + DateiPfad;
+      }
+      StreamWriter DateiStreamWriter = File.CreateText(Server.MapPath(DateiPfad));
+      DateiStreamWriter.Write(DateiInhalt.Text);
+      DateiStreamWriter.Close();
+      StatusMessage.Text = "Datei wurde erfolgreich gespeichert!";
+   }
+   catch (Exception ex)
+   {
+      StatusMessage.Text = ex.Message;
+   }
+   StatusMessage.Visible = true;
+}
+</pre>
+
+<p>
+Hierf&uuml;r pr&uuml;fen wir den noch virtuellen Dateipfad auf syntaktische G&uuml;ltigkeit und mappen ihn, damit wir ihn physisch erhalten. 
+Anschlie&szlig;end erzeugen wir einen StreamWriter, in welchen wir den Inhalt unserer Textbox <i>DateiInhalt</i> schreiben. Nachdem wir 
+den StreamWriter geschlossen haben geben wir noch eine Erfolgsmeldung aus. In diesem Codebeispiel sehen wir sehr sch&ouml;n, da&szlig; 
+das Speichern von Dateien aus dem Webbrowser heraus keinerlei Problem darstellt. Der folgende Screenshot zeigt, wie die Datei 
+web.config im OFMS-Editor dargestellt wird.
+</p>
+
+<IMG SRC="/artikel/Bilder/200211/20021105_3.png" width="855" height="617" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Ein Online File Management System zu entwickeln hat mir sehr viel Spa&szlig; bereitet. Dieses n&uuml;tzliche Tool ist jedoch noch nicht 
+reif, eine ganze Reihe von Zusatzfunktionen sind m&ouml;glich und w&auml;ren w&uuml;nschenswert. Ich denke da nur an die M&ouml;glichkeit von 
+Kopier-, Ausschneid- und Move-Funktionen, das Erstellen von Verzeichnissen (dem der Dateien sehr &auml;hnlich), die Kontrollabfragen 
+bei L&ouml;schen ("Wollen Sie wirklich ...") etc. 
+</p>
+<p>
+Und auf einen wichtigen Punkt haben wir &uuml;berhaupt keine R&uuml;cksicht genommen, und zwar auf Datensicherheit. Es w&auml;re ein zu gro&szlig;es 
+Risiko, diese Funktionalit&auml;t ohne Zugriffssicherung ins Web zu stellen. Aus diesem Grund w&auml;re eine Form der Authentifizierung 
+denkbar und notwendig. Ansonsten ist die Entwicklung solch eines Systems mit ASP.NET und dem .NET Framework recht einfach, da 
+alle notwendigen Funktionen vorhanden und leicht verst&auml;ndlich verwendbar sind.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20021105.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20021105.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000929.htm">Dateien lesen in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000929.htm</span><br>
+<a href="../artikel/20020409.htm">Dateien umbenennen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020409.htm</span><br>
+<a href="../artikel/20000804.htm">Directory Browsing a la .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000804.htm</span><br>
+<a href="../artikel/20020226.htm">Ein Touch-Utility in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020226.htm</span><br>
+<a href="../artikel/20021031.htm">Online File Management System mit ASP.NET und C# - Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021031.htm</span><br>
+<a href="../artikel/20010507.htm">Web-basiertes Dateimanagement mit dem ASP FileMan</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010507.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Faspalliance%2Ecom%2Faldotnet%2Fexamples%2Fcd%2Easpx">Are you sure you want to delete that?</a><br>
+<SPAN class="content">http://aspalliance.com/aldotnet/examples/cd.aspx</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Faspnet%2E4guysfromrolla%2Ecom%2Farticles%2F081402%2D1%2Easpx">Dynamic Controls in ASP.NET</a><br>
+<SPAN class="content">http://aspnet.4guysfromrolla.com/articles/081402-1.aspx</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ecsharphelp%2Ecom%2Farchives%2Farchive147%2Ehtml">TextReader and TextWriter In C#</a><br>
+<SPAN class="content">http://www.csharphelp.com/archives/archive147.html</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,423 @@
+<HTML>
+<HEAD>
+<TITLE>Eine kleine Bilddatenbank, Teil 1</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im ersten Teil der Artikelserie geht es darum, eine Datenbank mit den Bildinformationen auszulesen und die Bilder in einer Vorschau anzuzeigen. Klickt man das Bild an, popt ein neues Fenster auf.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Bilddatenbank,Bildverwaltung,Bildanzeige,Layer,DIV Tag,Einblenden,Ausblenden,Hover,JavaScript,Datenbank,Anzeige,Liste">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Eine kleine Bilddatenbank, Teil 1</H1>
+<p>
+Geschrieben von: <a href="../autoren/herberthahn.htm">Herbert Hahn</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020703"></SCRIPT>
+</p>
+<p>
+Auf die Idee f&uuml;r diese Artikelserie hat mich das Lesen der diversen Mailinglisten von ASPGerman gebracht. Immer wieder werden solche 
+Themen nachgefragt: Wie kann ich ein Popup Fenster auf die Gr&ouml;&szlig;e des Bildes einstellen? Wie kann ich beim Upload von Bildern die 
+Gr&ouml;&szlig;e des Bildes begrenzen? Und so weiter. Diese Artikelserie wird die &uuml;blichsten Fragen abdecken.
+</p>
+<p>
+Im ersten Teil der Artikelserie geht es darum, eine Datenbank mit den Bildinformationen auszulesen und die Bilder in einer Vorschau 
+anzuzeigen. Klickt man das Bild an, "popt" ein neues Fenster auf, klarerweise mit dem Bild und in der tats&auml;chlichen Gr&ouml;&szlig;e des Bildes.
+</p>
+
+<h2>Installation der Beispielskripts</h2>
+<p>
+Der Download beinhaltet folgende Dateien:
+</p>
+
+<ol>
+	<li><b>default.asp</b>  Darstellung der Bilder in einer &Uuml;bersicht mit den Bildbeschreibungen.
+	<li><b>detailbild.asp</b> Zur Darstellung der gro&szlig;en Bilder (Popup)
+	<li><b>tools.asp</b> Funktion zum &Ouml;ffnen der Datenbank
+	<li><b>bilder.mdb</b> Die Datenbank
+</ol>
+
+<p>
+Kopieren Sie alle Dateien in ein Verzeichnis auf Ihrem Webserver.
+</p>
+
+<h2>Die Datenbank</h2>
+<p>
+Um Informationen zu den Bildern zu bekommen verwenden wir folgende Datenbank:
+</p>
+
+<IMG SRC="Bilder/200207/20020703_1.png" width="482" height="161" alt="" border="0">
+
+<p>
+In der Bilddatenbank ist alles relevante &uuml;ber die Bilder abgespeichert. Was wir jedoch hier nicht finden ist die Gr&ouml;&szlig;e der Bilder. 
+Sch&ouml;n w&auml;re es wenn wir diese Daten bereits h&auml;tten. Jedoch wie im wirklichen Leben verf&uuml;gen wir nicht &uuml;ber diese Daten (noch nicht). 
+</p>
+
+<h2>Anzeige der Thumbnails</h2>
+<p>
+Bevor wir etwas anzeigen k&ouml;nnen, m&uuml;ssen wir einmal die Datenbank &ouml;ffnen. Dazu habe ich in der Datei tools.asp eine Funktion 
+gekapselt, die die Datenbank relativ zum Scriptpfad &ouml;ffnet. Der folgende Code ist der Beginn von <b>default.asp</b>, das die Thumbnails
+anzeigt:
+</p>
+
+<pre style="background='silver';">
+&lt;!--#include file="tools.asp"--&gt;
+&lt;%
+OpenDB con, "Bilder"
+SQL = "SELECT fldID,fldBildKL,fldBildGR,fldBildText,fldBildBeschreibung,fldKategorie " &amp; _
+  "FROM tblBilder ORDER BY fldID ASC"
+
+Set rs = con.Execute(SQL)
+%&gt;
+</pre>
+
+<p>
+In der Datei <b>default.asp</b> befindet sich ein clientseitiger Scriptblock zum aus- bzw. einblenden einer Ebene (<i>DIV</i>) die uns zum Anzeigen 
+der Beschreibung dient. Dieses Script will ich hier nicht diskutieren, da es von Dreamweaver UltraDev automatisch generiert wurde. 
+Hier aber Screenshots ohne und mit eingeblendeter Ebene:
+</p>
+
+<table>
+<tr>
+	<td><IMG SRC="Bilder/200207/20020703_2.png" width="655" height="557" alt="" border="0"><br><i>Ohne Ebene</i></td>
+</tr>
+<tr>
+	<td><IMG SRC="Bilder/200207/20020703_3.png" width="655" height="557" alt="" border="0"><br><i>Mit eingeblendeter Ebene</i></td>
+</tr>
+</table>
+
+<p>
+Zur&uuml;ck zum ASP Code: nach dem &Ouml;ffnen der Datenbank selektieren wir die Spalten aus der Tabelle <i>tblBilder</i> in der Reihenfolge des 
+Autowertes. Dieses Statement werden wir in einem weiteren Artikel umformen, um die Bilder nach Kategorien zu sortieren (und nach 
+weiteren Kriterien). Im heutigen Arbeitsschritt k&ouml;nnten wir die <i>ORDER BY</i> Klausel auch weglassen. Die Datens&auml;tze werden ausgelesen 
+(und in einer Tabelle dargestellt): 
+</p>
+
+<pre style="background='silver';">
+&lt;%
+i=1		  
+While Not rs.EOF
+	varBildKL = Trim(rs("fldBildKL"))
+	varBildGR = Trim(rs("fldBildGR"))	
+	varBildText = Trim(rs("fldBildText"))
+	varKategorie = Trim(rs("fldKategorie"))
+	varBildBeschreibung = Trim(rs("fldBildBeschreibung"))
+%&gt;
+</pre>
+
+<p>
+Das HREF Tag des Bildes ist interessant: das <i>onClick</i> Ereignis &ouml;ffnet ein Fenster mit dem gro&szlig;en Bild: 
+</p>
+
+<pre style="background='silver';">
+&lt;a href="javascript:;" onclick="window.open('detailbild.asp?bild=&lt;% = varBildGR %&gt;',
+   'Anzeige',
+   'titlebar=no,toolbar=no,status=no,menubar=no,resizeable=yes')"&gt;
+   &lt;img src="&lt;% = varBildKL %&gt;" width="135" height="94" border="0" alt="mit Klick Detailbild ansehen"&gt;
+&lt;/a&gt;
+</pre>
+
+<p>
+Der zweite HREF Tag (Details... Link) l&auml;&szlig;t mit dem <i>mouseOver</i> Event das versteckte DIV-Tag mit der langen 
+Beschreibung des Bildes erscheinen:
+</p>
+
+<pre style="background='silver';">
+&lt;a href=" javascript:;"  onMouseOver="MM_showHideLayers('text&lt;% = i %&gt;','','show')" 
+     onMouseOut="MM_showHideLayers('text&lt;% = i %&gt;','','hide')"&gt;&lt;br&gt; Details...&lt;/a&gt;&lt;/font&gt;&lt;/b&gt; 
+&lt;div id="text&lt;% = i %&gt;" style="position:absolute; width:319px; height:117px; z-index:1; 
+        background-color: #FFFFCC; layer-background-color: #FFFFCC; 
+        border: 1px none #000000; visibility: hidden"&gt;
+   &lt;b&gt;&lt;font face="Verdana, Arial, Helvetica, sans-serif" size="2"&gt; 
+   &lt;% = varBildBeschreibung %&gt;&lt;/font&gt;&lt;/b&gt;
+&lt;/div&gt;
+
+&lt;/td&gt;&lt;/tr&gt;
+
+&lt;%
+  rs.MoveNext
+  i = i + 1
+Wend
+
+rs.Close
+%&gt;
+</pre>
+
+<p>
+Durch das Umschalten von sichtbar auf unsichtbar wird diese Beschreibung angezeigt.
+</p>
+
+<h2>Detailanzeige im Popup Fenster</h2>
+<p>
+Nun zum Anzeigen der gro&szlig;en Bilder. In der Datei <b>detailbild.asp</b> fragen wir zuerst den QueryString bild ab. Sauber w&auml;re es hier noch 
+mittels <i>FileSystemObject</i> zu &uuml;berpr&uuml;fen ob dieses Bild tats&auml;chlich existiert. 
+</p>
+<p>
+Wir zeigen das Bild in einer Ebene an, damit wir in die oberste linke Ecke positionieren k&ouml;nnen. Machen wir das nicht, stellt der 
+Browser das Bild mit einem Rand dar. Damit der Betrachter dieses Fenster wieder schlie&szlig;en kann, versehen wir das Bild mit einem 
+<i>onClick</i> Ereignis, und f&uuml;hren ein window.close aus. Im IMG Tag haben wir mit dem <i>onLoad</i> Ereignis die M&ouml;glichkeit das Fenster auf 
+die Gr&ouml;&szlig;e des Bildes zu &auml;ndern:
+</p>
+
+<pre style="background='silver';">
+&lt;img src="&lt;% = varBild %&gt;" name="bild" vspace="0" hspace="0" border="0" 
+   onclick="window.close();" 
+   onload="window.resizeTo(document.bild.width, document.bild.height);"&gt;
+</pre>
+
+<p>
+Damit wir die Bildgr&ouml;&szlig;e ver&auml;ndern k&ouml;nnen, geben wir dem Bild den Namen "bild". Und schon haben wir eine Anzeige des Bildes in der 
+Fenstergr&ouml;&szlig;e die wir f&uuml;r die Darstellung des Bildes brauchen. 
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Der Funktionsumfang dieser Bilddatenbank ist noch nicht sehr gro&szlig;. Brauchen w&uuml;rden wir jetzt noch eine Administrationsseite wo wir 
+die Datenbank mit den Informationen f&uuml;llen k&ouml;nnen. Diese Administrationsseite wird der Gegenstand des n&auml;chsten Artikels sein. 
+Weiters plane ich innerhalb der Administrationsseite eine M&ouml;glichkeit des Fileuploads ohne zus&auml;tzliche Komponenten. 
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020703.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20020702.htm">.NET Komponenten in COM+ Clients einsetzen</a><br>
+<a href="20001130.htm">Bildinformationen selbst ermitteln</a><br>
+<a href="20001201.htm">Die SQL ORDER BY Clause</a><br>
+<a href="20010212.htm">Thumbnails mit ASP generieren</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20020703" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Eine kleine Bilddatenbank, Teil 1"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20020703.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Herbert Hahn"><input type="hidden" name="AuthorEmail" value="herbert.hahn@softwing.com"><input type="hidden" name="Artikel" value="20020703"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20020703.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,473 @@
+<HTML>
+<HEAD>
+<TITLE>.NET auf Warp 9 beschleunigen: Ngen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Das Ngen (Native Image Generator) Tool, welches dem .NET Framework SDK beiliegt, erstellt ein Abbild Ihrer Assembly in Maschinensprache im Global Assembly Cache. Dies beschleunigt die Ausf&uuml;hrung gewaltig.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Ngen,Native Image Generator,IL,MSIL,Intermediate Language,MetaData,Optimizing,Optimierung,Performance,Ladezeit,Assembly,GAC,Global Assembly Cache">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>.NET auf Warp 9 beschleunigen: Ngen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20011114"></SCRIPT>
+</p>
+<p>
+Das Ngen (Native Image Generator) Tool, welches dem .NET Framework SDK beiliegt, erstellt
+ein Abbild Ihrer Assembly in Maschinensprache im Global Assembly Cache (C#/VB.NET kompilieren zu IL,
+nicht Maschinensprache) . Dies beschleunigt
+die Ausf&uuml;hrung gewaltig, da beim Erstaufruf der Assembly diese bereits in Maschinensprache vorliegt
+und nicht mehr durch den JIT Compiler dynamisch generiert werden mu&szlig;.
+</p>
+
+<p>
+Schon aus der Einleitung sollte ersichtlich sein, da&szlig; der Native Image Generator nichts mit 
+irgendwelchen Eingeborenen oder deren Bildererstellung zu tun hat, obwohl der Name 
+"verleitend" ist. Mit Native Code (Maschinensprache) ist eine Datei
+gemeint, die kompilierten Sourcecode enth&auml;lt, der einem Prozessor-spezifischen
+Bytecode entspricht.
+</p>
+
+<h2>.NET Execution Process</h2>
+
+<p>
+Mit der Verwendung des .NET Frameworks hat sich einiges am Executionproze&szlig; einer 
+Anwendung ge&auml;ndert. Dieser sieht schematisch f&uuml;r eine .NET Applikation
+folgenderma&szlig;en aus:
+</p>
+
+<IMG SRC="Bilder/200111/20011114_1x.png" width="570" height="352" alt="" border="0">
+
+<p>
+Wenn der Sourcecode geschrieben ist, wird es Zeit, diesen zu kompilieren. Verwendet man
+C# oder VB.NET, so wird der Sourcecode nicht auf Maschinensprache kompiliert, sondern auf
+IL (Intermediate Language), die zusammen mit MetaData in die Assembly (EXE oder DLL zum Beispiel)
+geschrieben wird. Wichtig: es ist nicht verpflichtend f&uuml;r eine Programmiersprache auf
+IL zu kompilieren. Managed Code kann auch in Maschinensprache vorliegen (und das macht sich
+Ngen zunutze).
+</p>
+
+<p>
+Die Kompilierung auf Native Code
+geschieht erst beim ersten Aufruf des Programms durch einen JIT-Compiler. Erst wenn
+diese Schritte erfolgreich abgeschlossen werden, wird Ihr Programm ausgef&uuml;hrt. 
+</p>
+
+<p>
+Hierbei sind wir schon beim Knackpunkt bzw. Flaschenhals. F&uuml;r den Fall, da&szlig; Ihre .NET 
+Applikation viele Assemblies umfa&szlig;t, m&uuml;ssen diese beim ersten Aufruf erst auf Native
+Code kompiliert werden. Bei vielen Assemblies kann dies sehr lange dauern. Nat&uuml;rlich
+werden die Assemblies nicht bei jedem Funktionsaufruf, sondern eben nur beim ersten kompiliert
+- solange sich an der Signatur der Assembly nichts &auml;ndert.
+</p>
+
+<h2>Vorhang auf f&uuml;r NGen</h2>
+
+<p>
+Mit dem Ngen Tool haben Sie nun die M&ouml;glichkeit diese Assemblies sofort auf Native
+Code zu kompilieren. Diese werden im GAC (Global Assembly Cache, \WinNT\assembly)
+als "Native Images" (bzw. Win 2000: "PreJit") geflaggt, damit der JIT-Compiler bzw. die
+Runtime wei&szlig;, da&szlig; diese Assemblies nicht mehr zu kompiliern sind, da diese schon als 
+Native Code vorliegen. 
+</p>
+
+<p>
+Da die gesamte Arbeit vom Ngen Tool erledigt wird, brauchen Sie weder in Ihrem Sourcecode
+oder bei der Ausf&uuml;hrung irgendwelche Anweisungen bzw. Switches hinzuf&uuml;gen - die Runtime
+inspiziert automatisch die Assemblies und entscheidet je nach gesetztem Flag was zu tun 
+ist.
+</p>
+
+<p>
+Jetzt werden Sie vielleicht zwei Fragen brennend interessieren:
+</p>
+<ul>
+<li>Was passiert wenn Methoden einer Assembly mit dem Ngen Tool nicht sofort auf 
+    Native Code kompiliert werden k&ouml;nnen?
+<li>Bei welchem Anwendungsfall sollte man das Tool f&uuml;r die
+    jeweiligen Assemblies verwenden?
+</ul>
+
+
+<p>
+Methoden die aus irgendwelchen Gr&uuml;nden nicht mit dem Ngen Tool auf Native Code kompiliert
+werden k&ouml;nnen, werden vom Tool nicht in das Native Image inkludiert. Wenn nun die
+Runtime diese Native Code Assembly bearbeitet, werden exkludierte Methoden
+trotz des "Native Images" Flag mit dem JIT Compiler kompiliert.
+</p>
+
+<p>
+Die zweite Frage l&auml;&szlig;t sich nur unscharf beantworten. Unscharf deshalb, weil
+mehrere Faktoren die Startupphase einer Applikation beeinflussen k&ouml;nnen.
+Aber als Grundregel sollte gelten, da&szlig; das Vorkomplieren von Assemblies auf jeden 
+Fall f&uuml;r clientseitige Applikationen und bei sehr vielen gleichzeitig zu ladenden
+Assemblies angewandt werden sollte.
+</p>
+
+<h2>NGen im Einsatz</h2>
+
+<p>
+Nat&uuml;rlich wollen wir nun dieses Tool ausprobieren und seine Handhabung kennenlernen.
+Daf&uuml;r habe ich ein kleines Szenario vorbereitet, und etwas (einfachen) 
+Sourcecode geschrieben. Der Sourcecode ist heute nur Mittel zum (Optimierungs)Zweck, deshalb
+entf&auml;llt seine Vorstellung. Der erste Schritt ist klarerweise die Kompilierung auf MSIL. Bei Erfolg
+wird eine DLL Assembly generiert, mit der wir nun weiterarbeiten werden.
+</p>
+
+<p>
+Jetzt kommen wir zum interessanten Teil:
+die Erstellung eines Native Images aus der Assembly. Da das Ngen Tool im Moment
+eine Konsolenanwendung ist, &ouml;ffnen wir zuallererst ein Kommandoprompt-Fenster (<b>cmd.exe</b>). 
+</p>
+
+<p>
+Hinweis: Wenn Sie das .NET Framework SDK
+installiert haben, haben Sie hoffentlich die Option "Register .NET Environment
+Variables" angeklickt. Ansonsten werden Sie bei der Arbeit mit .NET Tools
+am Kommandoprompt einige Probleme haben. Um dies nachtr&auml;glich zu korrigieren
+rufen Sie das Setup des .NET Frameworks in der  Auflistung der installierten
+Software (Control Panel, Add or Remove Software) auf und &auml;ndern Sie die Einstellung.
+</p>
+
+<p>
+Wenn Sie hingegen Visual Studio .NET installiert haben, sind eigentlich keine
+&Auml;nderungen vorzunehmen. Sie verwenden jedoch statt des herk&ouml;mmlichen
+Kommandoprompts (cmd.exe) das Visual Studio .NET Command Prompt, welches Sie in der 
+Microsoft Visual Studio .NET Programmgruppe unter Visual Studio .NET Tools finden.
+</p>
+
+<p>
+Im Kommandoprompt wechseln wir in das Verzeichnis wo sich die Assembly befindet,
+und k&ouml;nnen nun sofort mit Hilfe des Ngen Tools ein Native Image erstellen, indem
+wir folgendes eingeben:
+</p>
+
+<pre style="background='silver';">
+ngen SimpleExample.dll
+</pre>
+
+<p>
+Und schon wird ein Native Image erstellt. 
+</p>
+
+<IMG SRC="Bilder/200111/20011114_2.png" width="668" height="138" alt="" border="0">
+
+
+<p>
+Wo ist jetzt das Native Image der Assembly? Sie finden es im GAC (\WinNT\assembly):
+</p>
+
+<IMG SRC="Bilder/200111/20011114_3.png" width="620" height="237" alt="" border="0">
+
+<p>
+Wie Sie sehen, hat unsere Assembly unter der Type-Bezeichnung den Eintrag "Native Images",
+zuvor war es "Application Extension". Hierzu sind einige Anmerkungen
+zu machen: Da ich der Einfachheit halber auf eine Assembly-Info Datei verzichtet habe,
+besteht die Versionsnummer aus einer GUID und die Culture Info ist auf <i>default</i>
+gesetzt. Weiters ist zu bemerken, da&szlig; ich das SN (Strong Name) Utility hier nicht
+verwendet habe, und somit auch kein Public Key angegeben ist. Im Anwendungsfall sollte
+dies aber nicht die Regel sein.
+</p>
+
+<p>
+Nat&uuml;rlich k&ouml;nnen Sie auch - falls erforderlich - einige Switches angeben. Allgemein sieht
+der Syntax f&uuml;r die Verwendung des Tools so aus:
+</p>
+
+<pre style="background='silver';">
+ngen [Optionen] AssemblyPfad AssemblyName
+</pre>
+
+<p>
+<i>AssemblyPfad</i> ist nat&uuml;rlich der Pfad wo sich die Assembly befindet. Da wir das
+Tool im gleichen Verzeichnis ausgef&uuml;hrt haben, wo sich unsere Assembly befindet, brauchen
+wir dies nicht angeben. <i>AssemblyName</i> ist nat&uuml;rlich der eigentliche Name der 
+Assembly. Falls erforderlich, k&ouml;nnen Sie auch mehr als nur eine Angabe zu einer Assembly machen.
+</p>
+
+<p>
+<i>Options</i> ist hier ein Platzhalter f&uuml;r die m&ouml;glichen Switches. Interessant sind:
+</p>
+
+<table>
+<tr>
+	<th align=left>Option</th>
+	<th align=left>Bedeutung</th>
+</tr>
+<tr>
+	<td valign=top>/debug</td>
+	<td valign=top>Erstellt ein f&uuml;r Debugger verwendbares Image</td>
+</tr>
+<tr>
+	<td valign=top>/delete</td>
+	<td valign=top>L&ouml;scht bei Angabe der Assembly diese aus dem GAC. Wenn Sie keine Angaben
+	&uuml;ber eine Assembly machen, werden alle von Ngen erzeugten Assemblies gel&ouml;scht.</td>
+</tr>
+<tr>
+	<td valign=top>/show</td>
+	<td valign=top>Zeigt bei Angabe der Assembly Infos &uuml;ber diese. Wenn Sie keine Angaben
+	&uuml;ber eine Assembly machen, werden alle von Ngen erzeugten Assemblies angezeigt</td>
+</tr>
+<tr>
+	<td valign=top>/prof</td>
+	<td valign=top>Erzeugt ein Image, das von einem Profiler verwendet werden kann, der
+	instrumented Code verwendet</td>
+</tr>
+</table>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Empfundene Geschwindigkeit ist bei vielen Anwendungen das wichtigste Performancekriterium.
+Gerade hier zeigen sich bei .NET Schw&auml;chen, sobald die Anwendung eine gewisse Gr&ouml;&szlig;e erreicht -
+das JITen fordert seine Zeit. Diesen Startnachteil kann man mit NGen mehr als ausgleichen -
+wird die Anwendung am Zielrechner "pre-JITed", dann passt NGen den Code auf die Zielprozessorarchitektur
+an. Und das kann sogar zu Geschwindigkeitsvorteilen gegen&uuml;ber Nicht-.NET Anwendungen f&uuml;hren.
+</p><h2>Verwandte Artikel</h2>
+<p>
+<a href="20011010.htm">Sprachenintegration in .NET</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20011114" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value=".NET auf Warp 9 beschleunigen: Ngen"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20011114.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Holm"><input type="hidden" name="AuthorEmail" value="office@holmcs.com"><input type="hidden" name="Artikel" value="20011114"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20011114.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

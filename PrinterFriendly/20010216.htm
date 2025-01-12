@@ -1,0 +1,247 @@
+<HTML>
+<HEAD>
+<TITLE>XML NodeType Enumeration</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Der heutige Artikel befa&szlig;t sich mit der XMLNodeType Enumeration. Sie erfahren, was sich hinter diesem Namen verbirgt, und wie man programmatisch den Typ eines XML Nodes mittels ASP.NET auslesen kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP.NET,XML,NodeType,Enumeration,XMLNodeType,XML Namespace">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>XML NodeType Enumeration</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010216"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Der heutige Artikel befa&szlig;t sich mit der XMLNodeType Enumeration. Sie erfahren, was sich hinter diesem Namen 
+verbirgt, und wie man programmatisch den Typ eines XML Nodes mittels ASP.NET auslesen kann. 
+</p>
+
+<p>
+Wie immer bei unseren ASP.NET Artikeln, ist zu beachten, da&szlig; Sie nur dann vom downloadbaren Sourcecode 
+profitieren k&ouml;nnen, wenn Sie das Microsoft .NET Framework SDK auf einem Webserver installiert haben.
+Der pr&auml;sentierte Sourcecode wurde mit der Version 1.0 des Microsoft .NET Framework SDK geschrieben.
+</p>
+
+<h2>XMLNodeType... - wie?</h2>
+
+<p>
+Bevor ich Ihnen die Typen, die ein Node annehmen kann, vorstelle, m&ouml;chte ich noch kurz erw&auml;hnen was ein
+<i>XML Node</i> ist. Mit Node meint man allgemein einen Knoten. Nicht einen, den man beim Schuhezubinden
+macht sondern eher geometrisch, wo z.B. Geraden zu einem Punkt zusammen laufen. Also bei einem W&uuml;rfel die Ecke.
+</p>
+
+<p>
+&Auml;hnlich wie bei einem Drahtgittermodell in FEM ist nun ein Node ein Knotenpunkt oder Eintrag im <i>Document tree</i>, also
+der XML Dokument-Struktur bzw. Dokument-Hierarchie. Dieser ist die Basisklasse f&uuml;r den Datenzugriff des
+XML Document Model.
+Einem Node kann man wie einer Variable einen Typ zuweisen. F&uuml;r <i>Nodes</i> g&uuml;ltige Typen sind entweder einfach
+nur Datentypen, Attribute, CDATA, Kommentare, Text oder sogar Namespaces oder auch DTD 
+(Document Type Definition).
+</p>
+
+<p>
+Die <b>XMLNodeType</b> Enumeration kann man quasi als Container f&uuml;r alle g&uuml;ltigen Nodetypen ansehen.
+Jedem Eintrag (Node) in einer XML Datei sollte man einen Typ zuweisen, um Fehler in der Darstellung zu vermeiden.
+Die Komplikationen ergeben sich meist wenn man Textpassagen eingibt, die Sonderzeichen enthalten. Diese w&uuml;rden
+ohne der Typdefintion <i>CDATA</i> f&auml;lschlicherweise als Teil des XML Sourcecodes interpretiert werden.
+</p>
+
+<p>
+Wie kann man jetzt aber von einem vorhandenen XML Dokument den Typ der einzelnen Nodes erhalten? Dies werde
+ich Ihnen anhand eines kleinen Beispiels demonstrieren. Sie werden sich jetzt sicher fragen wozu das Ganze?
+Wenn ich ein XML Dokument erstelle, wei&szlig; ich sowieso welchen Typ ich verwendet habe. Aber: 
+angenommen Sie wollen die Dateneingaben eines Clients in einem XML Dokument speichern, so k&ouml;nnen Sie
+nach der Eingabe den vorgegebenen Nodetype mit dem was der Client eingegeben hat, vergleichen, und so
+ung&uuml;ltige Eingaben vermeiden.
+</p>
+
+<p>
+Die Ausgabe der Nodetypen habe ich mit Hilfe von ASP.NET realisiert. Das .NET Framework stellt innerhalb des 
+XML Namespaces Methoden zur Verf&uuml;gung, die eine gro&szlig;e Hilfestellung sind. Das nun folgende Beispiel iteriert 
+durch die Nodes und gibt am Browser den Namen und den Typ des Nodes als HTML formatierte Tabelle zur&uuml;ck.
+</p>
+
+<h2>Erfassung der Node Typen aus einem XML Dokument</h2>
+
+<p>
+Da hierbei das .NET Framework eine gro&szlig;e Hilfestellung ist, ist nur wenig Sourcecode zur L&ouml;sung der Aufgabenstellung
+notwendig. Sehen wir uns also den ben&ouml;tigten Sourcecode schrittweise an (<b>XmlNType.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+String XmlFile = @"G:\LocalSites\TestRoot\ASPX\currentarticles.xml";
+</pre>
+
+<p>
+Zuerst m&uuml;ssen wir nat&uuml;rlich die XML Datei bekannt geben, aus der wir die Nodetypen erfassen m&ouml;chten.
+Den vollst&auml;ndigen Pfad samt Dateinamen mit Erweiterung speichern wir der Einfachheit halber in einer 
+Variable namens <i>XmlFile</i>, vom Datentyp <i>String</i>.
+</p>
+
+<p>
+Wenn Sie jedoch statt einem <i>lokalen</i> Pfad einen <i>URL</i> angeben wollen, so ist das auch kein Problem
+(die existiert, also probieren Sie es ruhig aus!):
+</p>
+
+<pre style="background='silver';">
+string XmlFile = @"http://www.aspheute.com/currentarticles.xml";
+</pre>
+
+<p>
+Wir geben also einfach den vollst&auml;ndigen URL an. Als n&auml;chstes m&uuml;ssen wir ein neues
+<i>XmlDocument</i> Objekt erstellen, dem wir dem Namen <b>MyXmlDoc</b> geben:
+</p>
+
+<pre style="background='silver';">
+XmlDocument MyXmlDoc = new XmlDocument();
+MyXmlDoc.Load(XmlFile);
+</pre>
+
+<p>
+Anschlie&szlig;end laden wir die XML Datei, deren Pfad bzw. URL wir vorher in der Variable <i>XmlFile</i>
+gespeichert haben.
+</p>
+
+<p>
+Nun wollen wir den Namen und Node Type ausgeben. Dies habe ich mit der selbst verfa&szlig;ten Methode
+<i>GetChildAttrib</i> realisiert. Um das Ergebnis leichter formatieren und lesbar zu machen, habe ich den
+Output wie schon erw&auml;hnt in einer HTML Tabelle verpackt. Das Grundger&uuml;st der Tabelle umgibt 
+den Call der Methode.
+</p>
+
+<pre style="background='silver';">
+Response.Write("&lt;table cellpadding=\"2\" cellspacing=\"2\" border=\"1\"&gt;");
+Response.Write("&lt;th&gt;Name&lt;/th&gt;&lt;th>NodeType&lt;/th&gt;");
+GetChildAttrib(MyXmlDoc.DocumentElement);
+Response.Write("&lt;/table&gt;");
+</pre>
+
+<p>
+Sehen wir uns nun die Methode <i>GetChildAttrib</i>, welche den Namen und den Type jedes im Dokument enthaltenen 
+Nodes zur&uuml;ckgibt, an:
+</p>
+
+<pre style="background='silver';">
+void GetChildAttrib(XmlNode node)
+{
+   for (int i = 0; i &lt; node.ChildNodes.Count; i++)
+   {
+        Response.Write("&lt;tr&gt;&lt;td&gt;" + node.ChildNodes[i].Name + "&lt;/td&gt;");
+        Response.Write("&lt;td&gt;" + node.ChildNodes[i].NodeType + "&lt;/td&gt;&lt;/tr&gt;");
+        GetChildAttrib(node.ChildNodes[i]);
+   }
+}
+</pre>
+
+<p>
+<i>GetChildAttrib</i> Methode iteriert mit einer <i>for</i>-Schleife durch die einzelnen Nodes bis
+sie beim letzten angelangt ist - der letzte Node ist die Anzahl in <i>node.ChildNodes.Count</i>
+und liefert den Namen und den Node Typ zur&uuml;ck.
+</p>
+
+<p>
+Den Namen des Nodes erh&auml;lt man durch die <i>Name</i> Property (Eigenschaft) der <i>XMLNode</i> Members:
+</p>
+
+<pre style="background='silver';">
+...
+node.ChildNodes[i].Name
+...
+</pre>
+
+<p>
+Den Node Typ als ausgeschriebenes Wort erh&auml;lt man durch die <i>NodeType</i> Property der <i>XMLNode</i>
+Members:
+</p>
+
+<pre style="background='silver';">
+...
+node.ChildNodes[i].NodeType
+...
+</pre>
+
+<p>
+So, nun ist der Sourcecode fertig. Wenn wir also die Datei <b>XmlNType.aspx</b> auf einem ASP.NET-ready Web Server
+ausf&uuml;hren und in einem Browser betrachten, sieht das dann so aus:
+</p>
+
+<p>
+<IMG SRC="/artikel/Bilder/200102/20010216_1.png" width="290" height="427" alt="" border="0">
+</p>
+
+<p>
+Die verwendete XML-Datei im Browser:
+</p>
+
+<p>
+<IMG SRC="/artikel/Bilder/200102/20010216_2.png" width="538" height="377" alt="" border="0">
+</p>
+
+<p>
+Der Vergleich unseres ASP.NET Codes mit der farbigen Darstellung des XSLT Stylesheets von Internet Explorer
+"hinkt" zwar etwas, aber: unser Code erlaubt es sehr einfach, ein XML Dokument auf korrekte Typen hin zu 
+debuggen. Und wer schon einmal Probleme mit XML Dokumenten hatte, wei&szlig;, da&szlig; diese Fehlersuche manchmal zum Haareraufen
+sein kann. Daher ist unsere "Type-Viewer" ein &auml;u&szlig;erst n&uuml;tzliches Tool f&uuml;r den beinahe-t&auml;glichen Gebrauch.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Dieser Artikel war ein (sehr) kurzer Einblick in den XML Namespace des .NET Frameworks, mit dessen Hilfe Sie
+unter anderem den Typ jedes Nodes eines XML Dokuments erhalten. Es gibt noch viel mehr zu entdecken - wir lesen
+uns wieder!
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010216.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010216.zip</span></p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,399 @@
+<HTML>
+<HEAD>
+<TITLE>Unknackbare Verschl&uuml;sselung mit Onetime Pads</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im Zuge der Terrorangriffe auf das World Trade Center ist - wieder einmal - eine Debatte zur Rolle von Verschl&uuml;sselungstechnologien in der Kommunikation von Terroristen ins Laufen gekommen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Vernam,one-time pad,onetime pad,cipher,algorithm,cryptography,Kryptographie,Verschlüsselung,Algorithmus,unknackbar,Debatte">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Unknackbare Verschl&uuml;sselung mit Onetime Pads</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010924"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Im Zuge der Terrorangriffe auf das World Trade Center ist - wieder einmal - eine Debatte zur Rolle
+von Verschl&uuml;sselungstechnologien in der Kommunikation von Terroristen ins Laufen gekommen. Hauptaugenmerk
+wird in solchen Debatten immer auf sogenannte Hintert&uuml;ren (Backdoors) f&uuml;r die Regierungsbeh&ouml;rden in
+Verschl&uuml;sselungsalgorithmen gelegt - also, wie Beh&ouml;rden ohne Zustimmung der Kommunizierenden den 
+(verschl&uuml;sselten) Datenverkehr abh&ouml;ren k&ouml;nnen.
+</p>
+<p>
+Es gibt verschiedenste Ans&auml;tze soetwas zu realisieren - dies reicht von klassischen Hintert&uuml;ren bis hin zu
+Key Escrow (Hinterlegung von Schl&uuml;sseln bei Regierungsbeh&ouml;rden). Allerdings entbehrt die gesamte Diskussion
+nicht einer gewissen L&auml;cherlichkeit: es gibt n&auml;mlich einen unknackbaren Verschl&uuml;sselungsalgorithmus, den
+Vernam Algorithmus, besser bekannt unter dem Namen One-time Pad, der speziell unter Spionen beliebt war oder
+ist. Jedem, der nur ein wenig von Verschl&uuml;sselungstechnik
+versteht, wird dessen mathematisch bewiesene Unknackbarkeit bekannt sein - also auch Terroristen, denen T&auml;tigkeiten der NSA,
+Carnivore und Echelon sicherlich ebensowenig unbekannt sein werden wie dem durchschnittlichen Netzwerkadministrator.
+</p>
+<p>
+Das Ziel des Artikels ist zu zeigen, wie l&auml;cherlich einfach und mit wie wenig Code man den Vernam Algorithmus
+in .NET implementieren kann (im engeren Sinne der Implementierung habe ich weniger als hundert Zeilen 
+ben&ouml;tigt). Was damit auch bewiesen ist, da&szlig; unknackbare Verschl&uuml;sselung in der Reichweite von jedermann ist,
+inklusive von Leuten, denen man Verschl&uuml;sselung eigentlich verbieten m&ouml;chte (und die gesamten vorgeschlagenen
+Einschr&auml;nkungen die Falschen treffen werden).
+</p>
+
+<h2>Funktionsweise des Vernam Algorithmus</h2>
+<p>
+Der Vernam Algorithmus ist in seiner Einfachheit absolut bestechend - man ben&ouml;tigt zur Verschl&uuml;sselung
+einer Datei A nur das sogenannte Onetime Pad, welches ebenfalls eine Datei ist. Dieses One-time Pad zeichnet
+sich durch einige wichtige Eigenschaften aus: es darf nur dem Sender und Empf&auml;nger der Nachricht bekannt
+sein, es sollte mittels eines Pseudo-Zufallszahlengenerator (PRNG - pseudo-random number generator) mit
+Daten bef&uuml;llt worden sein, und es d&uuml;rfen keine Sequenzen des Pads jemals zum Verschl&uuml;sseln doppelt verwendet
+werden.
+</p>
+<p>
+Wie funktioniert das oben erw&auml;hnte Verschl&uuml;sseln? Nun, ganz einfach: ein Byte der Ausgangsdatei wird mit je
+einem Byte des Pads per XOR verschl&uuml;sselt. Dann kommt das n&auml;chste Byte der Ausgangsdatei als auch des Pads
+an die Reihe. Jemand, der das Pad nicht in H&auml;nden hat, hat nicht die geringste Chance die Nachricht zu 
+entschl&uuml;sseln. F&uuml;r den Empf&auml;nger hingegen ist es ein Leichtes.
+</p>
+<p>
+Der einzige wirkliche Knackpunkt des Vernam Algorithmus ist der Austausch des One-time Pads zwischen Sender
+und Empf&auml;nger. Klarerweise sollte das Pad nicht per Email verschickt werden, aber eine CD per Post d&uuml;rfte
+nicht auff&auml;llig sein. Vor allem, wenn viele MP3 Dateien darauf sind (als Beispiel), und eine davon statt
+Musik ein Onetime Pad ist. Ich habe hier nicht vor, eine vollst&auml;ndige Anleitung zu geben.
+</p>
+<p>
+Wichtig ist, da&szlig; nach Verwendung des Pads dasselbe vernichtet werden mu&szlig;. Liegt das Pad auf der Festplatte,
+mu&szlig; die Datei sicher gel&ouml;scht (gewiped) werden. Ist es eine CD, reicht gr&uuml;ndliches Zerschneiden derselben aus.
+</p>
+
+<h2>Generieren eines Onetime Pads</h2>
+<p>
+Wie bereits bei der Beschreibung des Algorithmus erw&auml;hnt, soll das Onetime Pad wirklich zuf&auml;llig mit Zahlen
+gef&uuml;llt sein, und hier bieten sich PRNG's (pseudo-random number generators) an. Nat&uuml;rlich kann man selbst
+einen solchen entwickeln, aber warum sich selbst die Arbeit machen? Es gibt einige, darunter zum Beispiel
+<a href="http://www.counterpane.com/yarrow.html" target="_blank">Yarrow</a> von Bruce Schneier und John Kelsey.
+</p>
+<p>
+Ich war aber noch eine Spur fauler. Im WIN32 API gibt es die Funktion <b>CryptGenRandom</b>, die mir kryptographisch
+sichere Zufallszahlen liefert. Und im .NET Framework findet sich der <b>RNGCryptoServiceProvider</b>, der eben diesen 
+Service in .NET Applikationen zur Verf&uuml;gung stellt. Also brauche ich diese Klasse nur zu verwenden, um mir
+meine Funktion zu schreiben, die ein Onetime Pad einer bestimmten Gr&ouml;&szlig;e erzeugt (<b>otp.cs</b>):
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.IO;
+using System.Security.Cryptography;
+
+class Onetimepad
+{
+  public bool Generate(string strFilename, long nSize)
+  {
+    if (File.Exists(strFilename))
+    {
+      throw new ArgumentException("OTP file must not exist");
+    }
+    
+    FileStream theStream = File.Create(strFilename);
+
+    int nGenerateAtOnce = 1000;
+    int nWriteNow = nGenerateAtOnce;
+    byte[] abStrongRBytes = new Byte[nGenerateAtOnce];
+    RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+    
+    for (long nStart=0; nStart &lt;= nSize; nStart += nGenerateAtOnce)
+      {
+        rng.GetBytes(abStrongRBytes);
+        if ((nStart + nGenerateAtOnce) &gt; nSize) 
+                 nWriteNow = Convert.ToInt32(nSize - nStart);
+        theStream.Write(abStrongRBytes, 0, nWriteNow);
+      }
+    theStream.Close();
+    return true;
+  }
+</pre>
+
+<p>
+Damit kann ich ein Onetime Pad anlegen. Um die Verwendung zu erleichtern, habe ich eine Kommandozeilenapplikation
+erstellt, die diese Funktion wrapt:
+</p>
+
+<pre style="background='silver';">
+padgen.exe padfilename padfilesize
+</pre>
+
+<p>
+Der Sourcecode findet sich im Download zum Artikel in der Datei <b>padgen.cs</b>. Nach dem Aufruf dieser
+Applikation habe ich ein kryptographisch sicheres Onetime Pad in der Hand, in der Gr&ouml;&szlig;e, die ich ben&ouml;tige.
+Mit dieser Datei kann ich nun bereits verschl&uuml;sseln.
+</p>
+
+<h2>Verschl&uuml;sseln mit One-time Pads</h2>
+<p>
+Das Verschl&uuml;sseln ist im Prinzip ein einfacher XOR Algorithmus, die Implementierung entsprechend nicht besonders
+aufwendig. Ich habe in die Methode <i>XorFileWithPad</i> bereits etwas Fehlerbehandlungscode eingebaut, wichtiger
+hingegen sind die Parameter, hier vor allem <i>nPadStartPos</i>. Damit gebe ich an, wo im Pad er anfangen soll,
+Bytes zum verschl&uuml;sseln auszulesen. Dies ist vor allem dann interessant, wenn das Pad gro&szlig; im Vergleich zur
+Ausgangsdatei ist, und das Pad f&uuml;r mehrere Verschl&uuml;sselungen verwendet werden soll. Entsprechend liefert die Funktion
+auch das letzte Byte, das zur Verschl&uuml;sselung verwendet wurde. Beim n&auml;chsten Aufruf sollte man dann an dieser
+Position im Pad weitermachen (+1 klarerweise).
+</p>
+
+<pre style="background='silver';">
+  public long XorFileWithPad(string strInputFile, string strDestinationFile, 
+                             string strPad, long nPadStartPos)
+  {
+    if (! File.Exists(strPad))
+    {
+      throw new ArgumentException("OTP file does not exist");
+    }  
+    
+    if (! File.Exists(strInputFile))
+    {
+      throw new ArgumentException("Input file does not exist");
+    }  
+    
+    if (File.Exists(strDestinationFile))
+    {
+      throw new ArgumentException("Destination file must not exist");
+    }    
+    
+    FileInfo infoPad = new FileInfo(strPad);
+    FileInfo infoInputFile = new FileInfo(strInputFile);
+    long nInputFileLength = infoInputFile.Length;
+    long nPadLength = infoPad.Length;
+    if ((nPadLength - nPadStartPos) &lt; nInputFileLength)
+    {
+      throw new ArgumentException("Pad is not long enough to Xor file!");    
+    }
+    
+    FileStream fsOutput = File.Create(strDestinationFile);
+    FileStream fsPad = File.OpenRead(strPad);
+    FileStream fsInput = File.OpenRead(strInputFile);
+    
+    int nBufferSize = 1000, nInputSize, nPadSize, nXor;
+    byte[] abInput = new Byte[nBufferSize];
+    byte[] abPad = new Byte[nBufferSize];
+    byte[] abOutput = new Byte[nBufferSize];
+    
+    while (0 != (nInputSize = fsInput.Read(abInput, 0, nBufferSize)))
+    {
+      nPadSize = fsPad.Read(abPad, 0, nBufferSize);
+      for (nXor = 0; nXor &lt; nInputSize; nXor++) 
+        abOutput[nXor] = Convert.ToByte(abInput[nXor] ^ abPad[nXor]);
+      fsOutput.Write(abOutput, 0, nInputSize);
+    }
+    fsOutput.Close();
+    fsInput.Close();
+    fsPad.Close();
+    
+    // this method returns the last byte used of the onetime pad
+    // never re-use *any* portion of a onetime pad!!
+    return (nPadStartPos + nInputFileLength);
+  }
+</pre>
+
+<p>
+Die Verschl&uuml;sselung ist ein einfaches XOR, der Hauptteil der Funktion ist mit dem Einlesen und Schreiben
+von Dateien besch&auml;ftigt.
+Auch hier habe ich eine Wrapper-Kommandozeilenapplikation erstellt:
+</p>
+
+<pre style="background='silver';">
+padxor.exe inputfile padfile padstart outputfile
+</pre>
+
+<p>
+Der Sourcecode findet sich in <b>padxor.cs</b> (wie auch <b>padgen.cs</b> in der Benutzerfreundlichkeit 
+dringend zu verbessern).
+</p>
+<p>
+Jetzt kann man Verschl&uuml;sseln und Entschl&uuml;sseln (ja, die Implementierung ist nun komplett!). 
+Hier eine Beispielsbefehlssequenz:
+</p>
+
+<pre style="background='silver';">
+padgen mypad.bin 200000
+padxor otp.cs mypad.bin 0 otp.cs.enc.txt
+padxor otp.cs.enc.txt mypad.bin 0 otp.cs.dec.txt
+</pre>
+
+<p>
+Die Datei <b>otp.cs.enc.txt</b> schickt man an den Empf&auml;nger, dem man vorher <b>mypad.bin</b> auf anderem
+als elektronischem Wege zukommen lie&szlig;. Dieser kann dann <b>otp.cs.enc.txt</b> mittels des Pads wieder
+entschl&uuml;sseln, wie hier gezeigt in <b>otp.cs.dec.txt</b>. 
+</p>
+
+<h2>Ein Schritt weiter...</h2>
+<p>
+Obwohl unsere Datei jetzt v&ouml;llig unknackbar verschickt werden kann, hat dieses Versenden der Nachricht
+einen kleinen Haken - es kann nicht geknackt werden. Das klingt paradox, aber hier der Hintergrund:
+durch das Verschl&uuml;sseln mit Onetime Pads wird die Nachricht selbst beinahe zuf&auml;llig, und somit kaum
+komprimierbar - und dies ist ein ziemlich eindeutiges Indiz f&uuml;r die Verwendung eines Onetime Pads. Man
+k&ouml;nnte also gefragt werden, die Nachricht doch "h&ouml;flicherweise" zu entschl&uuml;sseln.
+</p>
+<p>
+Um dieser "h&ouml;flichen" Anfrage zu entgehen gibt es auch wieder einen Trick: man verschl&uuml;sselt die Originalnachricht
+mit Hilfe des Onetime Pads zu Ciphertext1. Diesen Ciphertext1 verschl&uuml;sselt man nun wieder per Vernam, 
+allerdings mit einer v&ouml;llig unverf&auml;nglichen Dummynachricht. Das ergibt dann Ciphertext2, welchen man
+an den Empf&auml;nger verschickt, und sofort das Onetime Pad l&ouml;scht. (eine detaillierte Beschreibung des Wie?
+und Warum? finden Sie in Bruce Schneier's Buch <a href="http://www.counterpane.com/applied.html" target="_blank">Applied Cryptography</a>)
+</p>
+<p>
+Was bringt das? Zwingt man uns Ciphertext2 zu entschl&uuml;sseln, verwenden wir Ciphertext1 zur
+Entschl&uuml;sselung: siehe da, bei dieser Entschl&uuml;sselung erhalten wir die Dummynachricht! Die Anwendung des
+Prinzips sieht mit den Kommandozeilenapplikationen wie folgt aus (siehe auch <b>fooleverybody.bat</b>
+im Download zum Artikel):
+</p>
+
+<pre style="background='silver';">
+padgen mysecret.pad 200000
+padxor 2encrypt.txt mysecret.pad 0 ciphertext1.txt
+padxor ciphertext1.txt dummymessage.txt 0 ciphertext2.txt
+
+padxor ciphertext2.txt ciphertext1.txt 0 plaindummy.txt
+</pre>
+
+<p>
+Bleibt noch die Vernichtung des One-time Pads, wenn es auf der Festplatte liegt. Auch dazu habe ich eine
+kleine Funktion geschrieben.
+</p>
+
+<h2>Sicheres L&ouml;schen der Onetime Pads</h2>
+<p>
+Da es eigentlich nicht zum Algorithmus geh&ouml;rt, habe ich kein korrektes Wipen des Onetime Pads implementiert
+(es sollte sicherheitshalber mehrmals &uuml;berschrieben werden, am besten wieder mit einem zuf&auml;lligen Pad). Die
+fehlenden Teile kann sicher jeder selbst hinzuf&uuml;gen:
+</p>
+
+<pre style="background='silver';">
+  // nTimes intentionally not yet implemented
+  public void WipeFile(string strFilename, int nTimes)
+  {
+    if (! File.Exists(strFilename))
+    {
+      throw new ArgumentException("The file does not exist");
+    }
+    
+    FileStream fsFile2Wipe = File.OpenWrite(strFilename);
+    long nBytesInFile = fsFile2Wipe.Length;
+    
+    int nBufferSize = 1000, nWritten = 0;
+    int nWriteNow = nBufferSize;
+    byte[] abBuffer = new Byte[nBufferSize];
+    for (int i=0; i &lt; nBufferSize; i++) abBuffer[i]=0;
+    
+    for (nWritten = 0; nWritten &lt;= nBytesInFile; nWritten += nBufferSize)
+    {
+      if ((nWritten + nBufferSize) &gt; nBytesInFile) 
+               nWriteNow = Convert.ToInt32(nBytesInFile - nWritten);
+      fsFile2Wipe.Write(abBuffer, 0, nWriteNow);
+    }
+    fsFile2Wipe.Close();
+  }
+</pre>
+
+<p>
+Die Implementierung des Wipens findet sich in der Kommandozeilenapplikation <b>wipe.exe</b>. Damit haben
+wir alle Funktionen an der Hand, sicher zu verschl&uuml;sseln, und alle Spuren zu verwischen.
+</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Mit diesem Artikel hoffe ich gezeigt zu haben, da&szlig; unknackbare Verschl&uuml;sselung in Griffweite des Programmierers
+liegt. Wenn ich wirklich Daten im Transit sch&uuml;tzen mu&szlig;, greife ich mit Sicherheit auf Vernam zur&uuml;ck, und nicht auf
+symmetrische oder Public Key Algorithmen. Das sollte jeder bei Debatten &uuml;ber &Uuml;berwachungsstaat und Key Escrow
+bedenken. Apropos: wu&szlig;ten Sie, da&szlig; Papier nicht so leicht abgeh&ouml;rt werden kann? &lt;g/&gt;
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010924.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010924.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010528.htm">Aber bitte mit Rijndael</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010528.htm</span><br>
+<a href="../artikel/20020115.htm">CAPICOM One</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020115.htm</span><br>
+<a href="../artikel/20010330.htm">Passw&ouml;rter mit SHA1 absichern</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010330.htm</span><br>
+<a href="../artikel/20040105.htm">Passw&ouml;rter speichern - aber richtig!</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040105.htm</span><br>
+<a href="../artikel/20000920.htm">PGP-Verschl&uuml;sselung bei Dateien</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000920.htm</span><br>
+<a href="../artikel/20000921.htm">Ver- und entschl&uuml;sseln von Texten mit PGP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000921.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ecounterpane%2Ecom%2Fapplied%2Ehtml">Applied Cryptography</a><br>
+<SPAN class="content">http://www.counterpane.com/applied.html</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ecryptopp%2Ecom">Crypto++</a><br>
+<SPAN class="content">http://www.cryptopp.com</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Earithmetica%2Ecom%2Fencrypt%2Fcrypfaq%2Ehtml">Cryptography FAQ</a><br>
+<SPAN class="content">http://www.arithmetica.com/encrypt/crypfaq.html</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fcryptome%2Eorg%2F">Cryptome</a><br>
+<SPAN class="content">http://cryptome.org/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ecryptool%2Ecom%2F">CrypTool</a><br>
+<SPAN class="content">http://www.cryptool.com/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Evidwest%2Ecom%2Fotp%2Findex%2Ehtm">One Time Pad Encryption</a><br>
+<SPAN class="content">http://www.vidwest.com/otp/index.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmembers%2Etripod%2Ecom%2F%7ERUDOLFABEL%2F">Rudolf Abel - legendary soviet spy</a><br>
+<SPAN class="content">http://members.tripod.com/~RUDOLFABEL/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eund%2Enodak%2Eedu%2Forg%2Fcrypto%2Fcrypto%2F">The Crypto Drop Box</a><br>
+<SPAN class="content">http://www.und.nodak.edu/org/crypto/crypto/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Efbi%2Egov%2Ffbinbrief%2Fhistoric%2Ffamcases%2Fabel%2Fabel%2Ehtm">The Hollow Nickel Espionage Case - Rudolf Ivanovich Abel - ...</a><br>
+<SPAN class="content">http://www.fbi.gov/fbinbrief/historic/famcases/abel/abel.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Epro%2Dtechnix%2Ecom%2Finformation%2Fcrypto%2Fpages%2Fvernam%5Fbase%2Ehtml">Vernam cipher explained</a><br>
+<SPAN class="content">http://www.pro-technix.com/information/crypto/pages/vernam_base.html</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ecounterpane%2Ecom%2Fyarrow%2Ehtml">Yarrow PRNG</a><br>
+<SPAN class="content">http://www.counterpane.com/yarrow.html</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

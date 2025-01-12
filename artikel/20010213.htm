@@ -1,0 +1,502 @@
+<HTML>
+<HEAD>
+<TITLE>Update und UpdateBatch zum Einf&uuml;gen von Datens&auml;tzen in Datenbanken</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Das Einf&uuml;gen von Daten in Datenbanktabellen ist eine Basisoperation von 
+Webapplikationen mit Datenbankanbindung. In einem ASP Skript hat man die folgenden M&ouml;glichkeiten um einen Datensatz in eine Datenbank zu schreiben...">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Update,UpdateBatch,client-side,Cursor,CursorType,LockType,Locking,Access,SQL Server">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Update und UpdateBatch zum Einf&uuml;gen von Datens&auml;tzen in Datenbanken</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010213"></SCRIPT>
+</p>
+<p>
+Das Einf&uuml;gen von Daten in Datenbanktabellen ist eine Basisoperation von 
+Webapplikationen mit Datenbankanbindung. In einem ASP Skript hat man die folgenden M&ouml;glichkeiten
+um einen Datensatz in eine Datenbank zu schreiben:
+</p>
+
+<ul>
+	<li><a href="20001107.htm">Einf&uuml;gen eines Datensatzes mit
+	dem INSERT Statement</a>: Dies habe ich bereits in einem fr&uuml;heren Artikel beschrieben.</li>
+	<li>Benutzen der ADO Methoden <i>Update</i> oder <i>UpdateBatch</i>: 
+	Dabei wird eine (leeres) ADO Recordset
+	ge&ouml;ffnet, mittels der <i>AddNew</i> Methode ein neuer Datensatz oder mehrere
+	Datens&auml;tze angef&uuml;gt, und das ge&auml;nderte Recordset dann durch Ausf&uuml;hren 
+	der <i>Update</i> (bzw. <i>UpdateBatch</i>) Methode wieder in die Datenbank geschrieben.</li>
+</ul>
+
+<p>Um einen einzelnen Datensatz in die Datenbank einzuf&uuml;gen, mu&szlig; man anders vorgehen als
+wenn man mehrere Datens&auml;tze gleichzeitig in die Datenbank schreiben will.</p>
+
+<p>Das Einf&uuml;gen eines Datensatzes in die Datenbank wird mittels Aufruf der <i>Update</i> Funktion 
+erreicht. Um mehrere Datens&auml;tze gleichzeitig in die Datenbank zu schreiben benutzt man die 
+<i>UpdateBatch</i> Methode.</p>
+
+<p>Um die <i>Update</i> bzw. <i>UpdateBatch</i> Methoden benutzen zu k&ouml;nnen, mu&szlig; das
+Recordset updatef&auml;hig sein.</p>
+
+<p>Ein updatef&auml;higes Recordset hat die folgende Konfiguration:</p>
+
+<ul>
+	<li>Ein Keyset Cursor: Dazu wird der <i>CursorType</i> des Recordsets vor &Ouml;ffnen 
+	des Recordsets auf <i>adOpenKeyset</i> gesetzt.</li>
+	<li>Optimistic Locking: Dies ist ein Datenbank-Locking, das ein Benutzen der <i>Update</i> bzw.
+	<i>UpdateBatch</i> Methoden erlaubt, dabei wird die <i>LockType</i> Eigenschaft auf
+	<i>adLockOptimistic</i> (f&uuml;r <i>Update</i>) bzw. auf <i>adLockBatchOptimistic</i>
+	(f&uuml;r <i>UpdateBatch</i>) gesetzt.</li>
+</ul>
+
+<p><b>Anmerkung:</b> <i>Datenbank-Locking</i> bedeutet, da&szlig; w&auml;hrend des 
+&Auml;nderns von Datens&auml;tzen bzw. w&auml;hrend dem Einf&uuml;gen oder L&ouml;schen 
+von Datens&auml;tzen in der Datenbank bestimmte Datens&auml;tze der Datenbanktabelle 
+f&uuml;r andere Zugriffe gesperrt werden. 
+Dies hat den Zweck, da&szlig; zum Beispiel nicht ein und der selbe Datensatz von zwei verschiedenen 
+ASP Seiten gleichzeitig ge&auml;ndert werden kann, was in einem nicht-vorhersagbaren Verhalten der
+Datenbank und einen nicht definiertem Zustsand der Datenbanktabelle enden w&uuml;rde.</p>
+
+<p>In den folgenden Unterkapiteln wird das Einf&uuml;gen eines bzw. mehrerer Datens&auml;tz in
+die Northwind Datenbank gezeigt. Die Northwind Datenbank ist eine Beispieldatenbank,
+die mit Access 2000 und SQL Server 7.0 mitgeliefert wird.</p>
+
+
+<h2>Einf&uuml;gen eines einzelnen Datensatzes in die Datenbank</h2>
+
+
+<p>Zum Einf&uuml;gen eines einzelnen Datensatzes stellt man eine Datenbankverbindung zur Datenbank
+her. Dann bereitet man ein <i>Recordset</i> Objekt vor, soda&szlig; es einen Keyset Cursor und 
+Optimistic Locking (<i>LockType</i> = <i>adLockOptimistic</i>) benutzt.</p>
+
+
+<p>Nun &ouml;ffnet man das Recordset und f&uuml;gt mittels <i>AddNew</i> einen neuen Datensatz hinzu.
+Neue Daten f&uuml;r diesen Datensatz kann man einfach in die Felder des Records schreiben.
+Schlie&szlig;lich schreibt man die &Auml;nderungen in die Datenbank, dies geschieht durch Aufruf
+der <i>Update</i> Methode des <i>Recordset</i> Objektes.</p>
+
+
+<p>Hier ist ein Active Server Pages Beispielskript, das den folgenden Datensatz in die Tabelle namens 
+<i>Customers</i> der Access Northwind Datenbank schreibt:</p>
+
+<div align="center"><table>
+<tr>
+	<td><b>CustomerID</b>:</td>
+	<td>'AAAAA'</td>
+</tr>
+<tr>
+	<td><b>CompanyName</b>:</td>
+	<td>Name der Firma</td>
+</tr>
+</table></div>
+
+
+<p>Die Northwind Access Datenbank hat den Namen <i>Northwind.mdb</i> und wird normalerweise mit 
+Access 2000 mitinstalliert.</p>
+
+<p>Das folgende Listing ist unter dem Namen <i>Update_Access.asp</i> im Download zu diesem Artikel
+enthalten.</p>
+
+
+<p><pre style="background='silver';">
+&lt;%
+   Const adOpenKeyset = 1
+   Const adLockOptimistic = 3
+   Const adLockBatchOptimistic = 4
+   Const adUseServer = 2
+   Const adUseClient = 3
+ 
+ <i>  ' Connection String fuer Access Datenbank  </i>
+   strDatebase = "C:\Program Files\Microsoft Office\Office\Samples\Northwind.mdb"       
+   strConnectionString="Provider=Microsoft.Jet.OLEDB.4.0;" &amp; _ 
+     "Data Source=" &amp; strDatebase
+   
+<i>   ' Oeffne Datenbankverbindung</i>
+   Set conn = Server.CreateObject("ADODB.Connection")
+   conn.open strConnectionString
+   
+<i>   ' Definiere SQL Statement fuer leeres Recordset</i>
+   strSQL = "SELECT CustomerID, CompanyName FROM Customers " &amp; _ 
+         "WHERE CustomerID=' '"
+
+   Set rs = Server.CreateObject("ADODB.Recordset")
+<i>   ' Oeffne Recordset:
+   ' CursorType = adOpenKeyset
+   ' LockType = adLockOptimistic
+   ' Cursorlocation = adUseServer (per default)</i>
+   rs.LockType = adLockOptimistic
+   rs.CursorType = adOpenKeyset
+   rs.open strSQL, conn
+   
+<i>   ' Neuen Datensatz hinzufuegen:</i>
+   rs.AddNew
+   rs("CustomerID") = "AAAAA"          
+   rs("CompanyName") = "Name der Firma"  
+   rs.Update
+   
+   rs.Close
+   conn.close
+   
+   Set rs = Nothing
+   Set conn = Nothing
+   
+   Response.Write("Datensatz in Datenbank geschrieben!")
+%&gt;
+</pre></p>
+
+<p>Analog funktioniert auch das Einf&uuml;gen eines Datensatzes in eine SQL Server 7.0 oder 
+SQL Server 2000 Datenbank. Das entsprechende Listing finden Sie unter dem Namen 
+<i>Update_Access.asp</i> im Download.</p>
+
+
+<p>Sie haben gesehen, wie man einen einzelnen Datensatz mittels <i>AddNew</i> und <i>Update</i> in eine 
+Datenbank schreiben kann. Was aber, wenn man mehrere Datens&auml;tze auf einmal in 
+eine Datenbanktabelle zu schreiben hat? Dann benutzt man <i>Addnew</i> und die <i>UpdateBatch</i> 
+Methode (statt der <i>Update</i> Methode), wie in der folgenden Sektion beschrieben.</p>
+
+
+<h2>Einf&uuml;gen mehrerer Datens&auml;tze in die Datenbank</h2>
+
+
+<p>Zum Einf&uuml;gen mehrerer Datens&auml;tze in eine Datenbank sind &auml;hnliche Schritte
+n&ouml;tig, wie beim Einf&uuml;gen eines Datensatzes.</p>
+
+
+<p>Das Recordset mu&szlig; allerdings durch Setzen der <i>LockingType</i> Eigenschaft auf
+<i>adLockBatchOptimistic</i> richtig auf die Verwendung der <i>UpdateBatch</i> Methode 
+vorbereitet werden. Den <i>CursorType</i> kann man wieder auf <i>adOpenKeyset</i>
+setzen.</p>
+
+<p>Da nicht alle Datenbanken das gleichzeitige Einf&uuml;gen mehrerer Datens&auml;tze
+verwalten k&ouml;nnen, mu&szlig; man oft einen client-side Cursor f&uuml;r das <i>Recordset</i>
+Objekt benutzen. Dabei werden die &Auml;nderungen der Datens&auml;tze vom ADO Provider verwaltet,
+bis sie schlie&szlig;lich mittels Aufruf der <i>UpdateBatch</i> Methode in die Datenbank geschrieben 
+werden.</p>
+
+<p>F&uuml;r eine Access 2000 Datenbank ben&ouml;tigt man unbedingt einen client-side Cursor,
+w&auml;hrend die SQL Server 7.0/2000 Datenbank das Einf&uuml;gen mittels <i>UpdateBatch</i> auch bei
+server-side Cursor (der default Cursor) des Recordsets unterst&uuml;tzt.</p>
+
+<p>Das nachfolgende Skript (mit Namen <i>UpdateBatch_Access.asp</i>) zeigt, wie man zwei
+neue Datens&auml;tze in die <i>Customers</i> Tabelle der Northwind Access Datenbank schreibt.</p>
+
+
+<p><pre style="background='silver';">
+&lt;%
+   Const adOpenKeyset = 1
+   Const adLockOptimistic = 3
+   Const adLockBatchOptimistic = 4
+   Const adUseServer = 2
+   Const adUseClient = 3
+ 
+   ' Connection String fuer Access Datenbank  
+   strDatebase = "C:\Program Files\Microsoft Office\Office\Samples\Northwind.mdb"       
+   strConnectionString="Provider=Microsoft.Jet.OLEDB.4.0;" &amp; _ 
+     "Data Source=" &amp; strDatebase
+   
+   ' Oeffne Datenbankverbindung
+   Set conn = Server.CreateObject("ADODB.Connection")
+   conn.open strConnectionString
+   
+   ' Definiere SQL Statement fuer leeres Recordset
+   strSQL = "SELECT CustomerID, CompanyName FROM Customers " &amp; _ 
+         "WHERE CustomerID=' '"
+
+   Set rs = Server.CreateObject("ADODB.Recordset")
+   ' Oeffne Recordset:
+   ' CursorType = adOpenKeyset
+   ' LockType = adLockBatchOptimistic
+   ' Cursorlocation = adUseServer (per default)
+   rs.CursorLocation = adUseClient
+   rs.LockType = adLockBatchOptimistic
+   rs.CursorType = adOpenKeyset
+   rs.open strSQL, conn
+   
+   ' Neue Datensaetze hinzufuegen:
+   rs.AddNew
+   rs("CustomerID") = "AAAAA"          
+   rs("CompanyName") = "Name der Firma"  
+   
+   rs.AddNew
+   rs("CustomerID") = "AAAAB"          
+   rs("CompanyName") = "Another Company"  
+   
+   ' Schreiben der Datensaetze in die Datenbank
+   rs.UpdateBatch
+
+   rs.Close
+   conn.close
+   
+   Set rs = Nothing
+   Set conn = Nothing
+   
+   Response.Write("Datensaetze in Datenbank geschrieben!")
+%&gt;
+</pre></p>
+
+
+<p>Das im Download enthaltene ASP Skript namens <i>UpdateBatch_SQL.asp</i> f&uuml;hrt die selben 
+Aktionen wie das vorhergehende Skript durch, wobei es die zwei Datens&auml;tze in
+die SQL Server 7.0/2000 Northwind Datenbank schreibt.</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>Das Benutzen der Recordset Methoden <i>AddNew</i> und <i>Update</i> (oder <i>UpdateBatch</i>)
+ist etwas komplizierter als das Einf&uuml;gen eines Datensatzes in eine Datenbank mittels 
+SQL INSERT Statement.
+Daf&uuml;r mu&szlig; man sich nicht mehr so genau um die Datentypen der einzelnen
+Felder k&uuml;mmern, da man die Feldwerte einfach den Feldern des Recordsets zuweist.</p>
+
+<p>Wichtig ist, da&szlig; man schon vor oder w&auml;hrend des &Ouml;ffnens des Recordsets
+die Recordset Parameter <i>LockType</i>, <i>CursorType</i> und gegebenenfalls <i>CursorLocation</i>
+auf spezielle Werte setzt, soda&szlig; das erhaltene Recordset updatef&auml;hig wird.</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010213.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="19990825.htm">ADO und ASP - Datenbanken einmal n&auml;her betrachtet</a><br>
+<a href="20001124.htm">Aktualisieren von Daten mit dem UPDATE Statement</a><br>
+<a href="20001127.htm">Datens&auml;tze mit dem DELETE Statement l&ouml;schen</a><br>
+<a href="20001107.htm">Einf&uuml;gen eines Datensatzes mit dem INSERT Statement</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20010213" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Update und UpdateBatch zum Einf&uuml;gen von Datens&auml;tzen in Datenbanken"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20010213.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Koller"><input type="hidden" name="AuthorEmail" value="christiank@aspexpert.com"><input type="hidden" name="Artikel" value="20010213"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20010213.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

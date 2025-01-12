@@ -1,0 +1,326 @@
+<HTML>
+<HEAD>
+<TITLE>Emails versenden mit ASPEmail</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Die Email Komponente AspEmail 4.5 von Persits Software bietet eine einfache M&ouml;glichkeit via ASP Emails zu versenden. Dieser Artikel zeigt Ihnen, wie man mit Hilfe dieser Komponente Emails als normalen Text oder als HTML formatierten  Text versendet.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Email,Komponente,Emailformular,Anfrageformular,ASPEmail,Webform">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Emails versenden mit ASPEmail</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Komponenten.htm">Komponenten</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010219"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<p>
+Die Email Komponente <a href="http://www.aspemail.com" target="_blank">AspEmail 4.5</a> von 
+<a href="http://www.persits.com" target="_blank">Persits Software</a> bietet eine einfache M&ouml;glichkeit
+via ASP Emails zu versenden. Dieser Artikel zeigt Ihnen, wie man mit Hilfe dieser Komponente
+Emails als <i>normalen Text</i> oder als <i>HTML formatierten  Text</i>
+versendet.
+</p>
+
+<p>
+<b>Beachte:</b> Da die <i>ASPEmail 4.5</i> Komponente von <a href="http://www.persits.com" target="_blank">Persits Software</a>
+erstellt wurde und u.a. kommerziell vertrieben wird, ist sie <b>nicht</b> im Download dieses Artikels
+enthalten. Dieser Artikel enth&auml;lt lediglich Sourcecode der auf dieser Komponente aufbaut.
+</p>
+
+<p>
+Daher m&uuml;ssen Sie, um den Sourcecode verwenden zu k&ouml;nnen, zuerst die <a href="http://www.aspemail.com" target="_blank">Komponente</a>
+downloaden, installieren bzw. auf einem IIS (ab Version 3.0) oder PWS (jede Version) die 
+mitgelieferte DLL-Datei registrieren. Um die Emails auch verschicken zu k&ouml;nnen, ben&ouml;tigen Sie nat&uuml;rlich
+zus&auml;tzlich einen Zugriff auf einen SMTP-Server.
+</p>
+
+<p>
+Bevor man sich zum Kauf der Vollversion entschlie&szlig;t, kann man die Komponente 30 Tage lang 
+uneingeschr&auml;nkt testen. Nach Anblauf der Frist sind nur mehr die grunds&auml;tzlichen Features verwendbar,
+die man aber sozusagen bis in die Ewigkeit gratis verwenden kann.
+</p>
+
+<p>
+Damit der Kaufreiz besteht - wie immer bei kommerziellen Dingen - bietet nach dem Kauf 
+die Vollversion unlimitierten Zugriff auf sogenannte "Premium"-Features. Die wichtigsten sind:
+</p>
+
+<ul>
+<li><b>AltBody:</b> Mit dieser Eigenschaft k&ouml;nnen Sie HTML-formatierten Emails eine Nur-Text Version "beilegen"</li>
+<li><b>Username und Password:</b> Diese Eigenschaften gew&auml;hrleisten einen <i>Authenticated Login</i> bei SMTP Servern,
+die diese Funktion ben&ouml;tigen</li>
+<li><b>CharSet:</b> Mit dieser Eigenschaft k&ouml;nnen Sie ein anderes Character Set als den US-ASCII angeben</li>
+<li><b>SendToNewsgroup:</b> Unterst&uuml;tzung des <i>NNTP Protokolls</i></li>
+<li><b>SendToQueue</b>: Bietet die M&ouml;glichkeit auf einem SMTP Server eine Email-Queue (Warteschlange) anzulegen</li>
+</ul>
+
+<p>
+<i>Premium</i> hat auch seinen Preis (zum Zeitpunkt des Erscheinens des Artikels):
+</p>
+
+<ul>
+<li><i>Single Server License:</i> G&uuml;ltig f&uuml;r <b>einen</b> Server - USD 99.95,-
+<li><i>Enterprise License:</i></li> G&uuml;ltig f&uuml;r beliebig viele Server innerhalb einer Firma oder Site - USD 299.95,-</li>
+</ul>
+
+<h2>Installation</h2>
+
+<p>
+Nach dem erfolgreichen Download einfach die <i>aspemail.exe</i> Datei ausf&uuml;hren und die Anweisungen befolgen.
+Nach der Registration mittels <i>regsvr32 LW:\AspEmailDir\AspEmail.dll</i> auf dem Web Server kann es 
+schon fast losgehen.
+</p>
+
+<p>
+Da das Verschicken von Attachments nicht Thema des heutigen Artikels ist, brauchen Sie f&uuml;r die Ausf&uuml;hrung der nun folgenden
+zwei Beispiel ASP Dateien die <i>ASPUpload</i> Komponente nicht unbedingt registrieren.
+</p>
+
+<h2>Plain Text Emails versenden</h2>
+
+<p>
+Das ist die einfachste Aufgabe f&uuml;r die Komponente, und wir wollen daher auch gleich mit der Sourcecode-Besprechung
+beginnen (<b>SendEmail.asp</b>):
+</p>
+
+<pre style="background='silver';">
+strSMTPHost = "192.168.3.33"
+strError=""
+
+If Request("Send") &lt;&gt; "" Then
+    Set Mail = Server.CreateObject("Persits.MailSender")
+    Mail.Host = strSMTPHost
+    
+    Mail.From = Request("From")
+    
+    Mail.AddAddress Request("To")
+    
+    Mail.Subject = Request("Subject")
+    
+    Mail.Body = Request("Body")
+        
+    On Error Resume Next
+    Mail.Send
+        
+    If Err &lt;&gt; 0 Then
+        strError = Err.Description
+    End If
+End If
+</pre>
+
+<p>
+Zuerst legen wir die Hostadresse des SMTP-Servers fest, die wir in der Variable <i>strSMTPHost</i> speichern.
+F&uuml;r den Fall, da&szlig; der Client nach dem Ausf&uuml;llen der Formularfelder (siehe sp&auml;ter) auf den "Send" Button
+klickt, wird dieser Sourcecode Block ausgef&uuml;hrt. Zuerst erstellen wir das f&uuml;r die ASPEmail Komponente 
+erforderliche Objekt namens <i>Persits.MailSender</i>.
+</p>
+
+<p>
+Danach holen wir uns die vom Client eingegebenen Informationen und k&ouml;nnen nun auch schon die Email als
+plain Text verschicken. Die primitive Fehlerbehandlung behandelt nur Ausf&uuml;hrungsfehler in Bezug auf die
+Emailversendung. Eine Client-Eingabevalidierung habe ich der Einfachheit weggelassen.
+</p>
+
+<p>
+Hier wird dann im Fall eines Fehlers im If-Block - der f&uuml;r die Fehlerbehandlung zust&auml;ndig ist - eine
+Fehlermeldung ausgegeben:
+</p>
+
+<pre style="background='silver';">
+&lt;% If strError &lt;&gt; "" Then %&gt;
+&lt;p&gt;Error: &lt;b&gt;&lt;% = strError %&gt;&lt;/b&gt;&lt;/p&gt;
+&lt;% End If %&gt;
+</pre>
+
+<p>
+Werfen wir noch einen raschen Blick auf das Formular:
+</p>
+
+<pre style="background='silver';">
+&lt;form method="POST" action="SendEmail.asp"&gt;
+
+&lt;table cellspacing="2" cellpadding="2" border="0"&gt;
+  &lt;tr&gt;
+    &lt;td colspan="2"&gt;SMTP Server Address: &lt;b&gt;&lt;% = strSMTPHost %&gt;&lt;/b&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;From:&lt;/td&gt;
+    &lt;td&gt;&lt;input type="text" name="From" size="53"&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;To:&lt;/td&gt;
+    &lt;td&gt;&lt;input type="text" name="To" size="53"&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;Subject:&lt;/td&gt;
+    &lt;td&gt;&lt;input type="text" name="Subject" size="53"&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td valign="top"&gt;Body:&lt;/td&gt;
+    &lt;td&gt;&lt;textarea cols="40" rows="10" name="Body"&gt;&lt;/textarea&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td colspan="2" align="right"&gt;&lt;input type="submit" name="Send" value="Send"&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+
+&lt;/table&gt;
+
+&lt;/form&gt;
+</pre>
+
+<p>
+Nun - vorausgesetzt die Komponente wurde erfolgreich installiert - k&ouml;nnen wir die Beispiel ASP Datei
+(<b>SendEmail.asp</b>) in einem Web Browser ausf&uuml;hren:
+</p>
+
+<p>
+<IMG SRC="/artikel/Bilder/200102/20010219_1.png" width="452" height="458" alt="" border="0">
+</p>
+
+<h2>HTML formatierte Emails versenden</h2>
+
+<p>
+Da die Komponente dieses Feature von Haus aus unterst&uuml;tzt, ist die Codierung sehr einfach.
+Daher erweitern wir den vorigen Sourcecode um diese Funktionalit&auml;t - dadurch werden zwar die Emails KB-m&auml;&szlig;ig 
+gr&ouml;&szlig;er, aber es ist nun mal nicht jeder SysAdmin.
+</p>
+
+<p>
+Wir erweitern also den bestehenden Sourcecode um die paar Zeilen (<b>SendEmailHTML.asp</b>):
+</p>
+
+<pre style="background='silver';">
+If Request(&quot;AsHTML&quot;) &lt;&gt; False Then
+    Mail.IsHTML = True
+    Mail.Body = &quot;&lt;html&gt;&lt;body&gt;&quot; &amp; strBody &amp; &quot;&lt;/body&gt;&lt;/html&gt;&quot;
+    Mail.Send
+    strMsg =&quot;Email sent as HTML&quot;
+Else
+    Mail.IsHTML = False
+    Mail.Body = strBody
+    Mail.Send
+    strMsg =&quot;Email sent as plain text&quot;
+End If
+</pre>
+
+<p>
+Die HTML-isierung &uuml;bernimmt wie gesagt die Komponente. Damit sie sich beim Parsen nicht verschluckt,
+setzen wir die <i>IsHTML</i> Property auf <b>True</b>.
+</p>
+
+<p>
+F&uuml;r den Fall, da&szlig; es noch HTML Enthusiasten gibt, die unbedingt Ihren Emails den pers&ouml;nlichen
+Touch geben wollen, erm&ouml;glicht die Checkbox <i>AsHTML</i> die HTML Formatierung. Daher auch die 
+&Auml;nderung im Formular:
+</p>
+
+<pre style="background='silver';">
+...
+&lt;tr&gt;
+    &lt;td&gt;Send as Html:&lt;/td&gt;
+    &lt;td&gt;&lt;input type=&quot;checkbox&quot; name=&quot;AsHTML&quot; value=&quot;0&quot;&gt;&lt;/td&gt;
+    &lt;td align=&quot;right&quot;&gt;&lt;input type=&quot;submit&quot; name=&quot;Send&quot; value=&quot;Send&quot;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+...
+</pre>
+
+<p>
+Die Variable <i>strMsg</i> dient lediglich zum Zwecke der Information. Ausgef&uuml;hrt in einem Browser sieht das
+Schreiben einer HTML formatierten Email So aus:
+</p>
+
+<p>
+<IMG SRC="/artikel/Bilder/200102/20010219_2.png" width="502" height="495" alt="" border="0">
+</p>
+
+<p>
+Wie gesagt nur was f&uuml;r Enthusiasten. Nat&uuml;rlich k&ouml;nnte man den Sourcecode erweitern und z.B. wie in Email 
+Client-Programmen oder in Textverarbeitungsprogrammen lustig-bunte Buttons integrieren damit sich die 
+Herrschaften austoben k&ouml;nnen - aber das ist eine andere Geschichte.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dieser Artikel pr&auml;sentierte Ihnen die <i>Send</i> Methode der <i>ASPEmail 4.5</i> Komponente von
+Persits Software. Die Einfachheit der Anwendung bzw. Integration in bestehenden Sourcecode ist verlockend und
+der Funktionsumfang ist erstaunlich - zumal ein Gutteil gratis verwendet werden kann.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010219.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010219.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20021028.htm">ACT MetaMailer - Mails verschicken leicht gemacht</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021028.htm</span><br>
+<a href="../artikel/19990809.htm">Email versenden mit AspMail</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990809.htm</span><br>
+<a href="../artikel/20010122.htm">Emails mit ASP.NET und VB.NET versenden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010122.htm</span><br>
+<a href="../artikel/20000918.htm">Emails mit ASP.NET versenden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000918.htm</span><br>
+<a href="../artikel/20000919.htm">Emails mittels CDOSYS versenden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000919.htm</span><br>
+<a href="../artikel/20000515.htm">Emails senden mit CDONTS</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000515.htm</span><br>
+<a href="../artikel/20010625.htm">Html Emails mit Dundas Mailer verschicken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010625.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpemail%2Ecom">ASPEmail 4.5</a><br>
+<SPAN class="content">http://www.aspemail.com</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Epersits%2Ecom">Persits Software</a><br>
+<SPAN class="content">http://www.persits.com</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

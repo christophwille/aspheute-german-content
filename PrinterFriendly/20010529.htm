@@ -1,0 +1,179 @@
+<HTML>
+<HEAD>
+<TITLE>Wieviele User sind online?</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Oftmals ist es bei einer Website interessant zu wissen, wieviele Benutzer gerade "gleichzeitig" auf der Site aktiv sind. Dies l&auml;&szlig;t sich unter Verwendung von Bordmitteln leicht und ohne gro&szlig;en Aufwand realisieren">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Session,Application,Usercounter,Counter,Zugriff,Zugriffszähler,Benutzeranzahl,aktive Benutzer">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Wieviele User sind online?</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010529"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Oftmals ist es bei einer Website interessant zu wissen, wieviele Benutzer gerade "gleichzeitig" auf der Site
+aktiv sind. Dies l&auml;&szlig;t sich unter Verwendung von Bordmitteln - Internet Information Services (Windows 2000) bzw.
+Internet Information Server (Windows NT) - leicht und ohne gro&szlig;en Aufwand
+realisieren. Dieser Artikel zeigt Ihnen anhand eines einfachen Beispiels einen L&ouml;sungsansatz.
+</p>
+
+<p>
+Da sich dieser Artikel nur mit einer L&ouml;sung besch&auml;ftigt, geht dieser nicht n&auml;her auf
+die verwendeten Technologien ein. Hintergrundinformationen zu diesen finden Sie in den (sehr ausf&uuml;hrlichen)
+Artikeln <a href="../artikel/20001018.htm">Global.asa: Verwendung, Events und Probleme</a> und
+<a href="../artikel/20000505.htm">Session Variablen - Verwendung und Stolpersteine</a>.
+</p>
+
+<p>
+Um die gleichzeitige Anzahl der Benutzer einer Website zu z&auml;hlen, m&uuml;ssen Sie zun&auml;chst die
+<b>global.asa</b> Datei editieren, beziehungsweise erst erstellen. Diese liegt (meist) im <i>Starting Point</i> einer Website, 
+also im Rootverzeichnis der Website. Da alle ASP Seiten einer Website in einer Application laufen,
+k&ouml;nnen diese somit auf eine gemeinsame global.asa zugreifen und die gleichen Application- als auch
+Sessionvariablen nutzen
+</p>
+
+<p>
+Die tats&auml;chliche Lage des <i>Starting Points</i> einer Website finden Sie im 
+Internet Services Manager, indem Sie auf die Eigenschaft der jeweiligen Website klicken.
+Im <i>Home Directory</i> Tab finden Sie unter <i>Application Settings</i> den Eintrag
+<i>Starting point</i>:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010529_1.png" width="461" height="205" alt="" border="0">
+
+<p>
+Genug Konfiguration(-stheorie). Zum ASP Sourcecode.
+F&uuml;r dieses Besipiel habe ich eine Minimalversion einer <b>global.asa</b> herangezogen. In dieser werden 
+wir nun die notwendigen &Auml;nderungen vornehmen, damit der Usercounter einsatzbereit wird:
+</p>
+
+<pre style="background='silver';">
+&lt;script language="VBScript" runat="SERVER"&gt;
+Sub Session_OnStart()
+   Application.Lock
+     Application("ConcurrentUsers") = Application("ConcurrentUsers") + 1
+   Application.Unlock 
+End Sub
+
+Sub Session_OnEnd()
+   Application.Lock
+     Application("ConcurrentUsers") = Application("ConcurrentUsers") - 1
+   Application.Unlock
+End Sub 
+&lt;/script&gt;
+</pre>
+
+<p>
+F&uuml;r das heutige Artikelbeispiel sind nur die beiden Prozeduren <i>Session_OnStart</i> und 
+<i>Session_OnEnd</i> von Interesse. Diese kommen zum Einsatz, wenn ein Benutzer die f&uuml;r ihn erste Seite der
+Website aufruft (<i>Session_OnStart</i>) bzw. sie entweder durch <i>Session.Abandon</i> verl&auml;&szlig;t 
+oder der voreingestelte Scripttimeout &uuml;berschritten wird.
+</p>
+
+<p>
+Mit Hilfe der Application Variable <i>ConcurrentUsers</i> speichern wir einfach die Anzahl der
+gleichzeitigen User. Die Anzahl wird immer dann erh&ouml;ht, wenn ein neuer Benutzer seine erste Seite
+auf unserer Site aufruft - und somit die <i>Session_OnStart</i> Prozedur aufgerufen wird.
+</p>
+
+<p>
+Die Prozedur <i>Session_OnEnd</i> wird dann aufgerufen, wenn ein Besucher die Site verl&auml;&szlig;t: entweder
+explizit per <i>Session.Abandon</i>, oder wenn das Scripttimeout &uuml;berschritten wird. Daher wird in 
+diesem Fall der Counter um Eins reduziert.
+</p>
+
+<p>
+Damit h&auml;tten wir eine immer aktuelle Applikationsvariable mit der Anzahl der Benutzer. Nun sollten wir
+diese Information auch unseren Benutzern zug&auml;nglich machen. Dies ist auch nicht weiters 
+schwer, und l&auml;&szlig;t sich mit einem <i>Response.Write</i> erledigen (<b>test.asp</b>):
+</p>
+
+<pre style="background='silver';">
+Response.Write "Online Users: &lt;b&gt;" &amp;  Application("ConcurrentUsers") &amp; "&lt;/b&gt;" 
+</pre>
+
+<p>
+Wenn Sie nun diese Testseite in einem Browser ausf&uuml;hren, und Sie der einzige Benutzer sind, 
+dann erhalten Sie folgendes Ergebnis:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010529_2.png" width="476" height="211" alt="" border="0">
+
+<p>
+Je mehr User auf diese Seite zugreifen, desto gr&ouml;&szlig;er wird klarerweise der Wert der 
+Applicationvariable. Um zu verhindern da&szlig; bei gro&szlig;em Andrang durch Concurrency Fehler in der Z&auml;hlung
+der Benutzer auftreten, verwende ich <i>Application.Lock</i> und <i>Application.Unlock</i>. Dadurch garantiere ich
+dem aktuellen ASP-Thread die Alleinrechte, die Applikationsvariablen zu ver&auml;ndern - und niemand anders
+kann dazwischenfunken.
+</p>
+
+<h2>Schlu&szlig;berkung</h2>
+<p>
+Dieser Artikel ist ein HowTo wie man einfach einen Online-Usercounter
+f&uuml;r Webseiten implementiert. Die vorgestellte L&ouml;sung ist zwar wirklich einfach, aber gibt ausreichend Aufschlu&szlig;
+&uuml;ber die Popularit&auml;t einer Website. Nat&uuml;rlich l&auml;&szlig;t sich der Sourcecode noch um einiges erweitern,
+so z.B., da&szlig; die Werte zwecks statistischer Auswertung in einer Datenbank gespeichert werden.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010529.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010529.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001018.htm">Global.asa: Verwendung, Events und Probleme</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001018.htm</span><br>
+<a href="../artikel/20000505.htm">Session Variablen - Verwendung und Stolpersteine</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000505.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

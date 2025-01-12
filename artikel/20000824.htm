@@ -1,0 +1,484 @@
+<HTML>
+<HEAD>
+<TITLE>Scrapen von Webseiten</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor, wie man mit Hilfe einiger weniger Klassen aus dem .NET Framework sehr schnell und einfach Webseiten von fremden Servern downloaden kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,AspTear,scraping,WebRequest,WebResponse,Create,Download,AspHttp">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Scrapen von Webseiten</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000824"></SCRIPT>
+</p>
+<p>
+In Webanwendungen ist es mittlerweile immer &ouml;fter n&ouml;tig, w&auml;hrend der Abarbeitung einer
+Seite auf Informationen von anderen Sites zuzugreifen: zum Beispiel f&uuml;r Kreditkartenautorisierung,
+aktuelle Wetterwerte abholen (und in das eigene Seitendesign einbauen), und vieles mehr. 
+</p>
+<p>
+In ASP war das nur mit Zusatzkomponenten m&ouml;glich (zB <a href="http://www.alphasierrapapa.com/componentcenter/asptear/" target="_blank">AspTear</a> 
+oder <a href="http://www.serverobjects.com" target="_blank">AspHTTP</a>). In ASP.NET im Gegensatz kann
+man mit den Bordmitteln des .NET Frameworks sehr wohl selbst Hand anlegen. In diesem Artikel zeige ich
+den ersten Schritt: das einfache Aufrufen und Auslesen eines URL's.
+</p>
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation des 
+Microsoft .NET Framework SDK's auf einem Webserver. Weiters setze ich voraus, da&szlig; der Leser die 
+Programmiersprache C# zu einem gewissen Grad beherrscht - es finden sich etliche Artikel auf diesem 
+Server, um das notwendige Wissen zu erlernen. 
+</p>
+
+<h2>Der schnelle Weg zu einem Ergebnis</h2>
+<p>
+Die Klassen, die wir ben&ouml;tigen, finden sich in drei verschiedenen Namespaces:
+</p>
+
+<ul>
+<li>System.Net
+<li>System.IO
+<li>System.Text
+</ul>
+
+<p>
+Der <i>System.Net</i> Namespace beinhaltet die Klassen, die die Web Requests (und deren Responses) 
+kapseln. Das Auslesen der Response wird &uuml;ber die verschiedenen Stream Klassen erledigt, die 
+sich im <i>System.IO</i> Namespace befinden. Und schlie&szlig;lich m&uuml;ssen wir uns auch noch um das
+Encoding des Contents (ASCII, ANSI, etc) annehmen - und dies wird uns durch Klassen
+im <i>System.Text</i> Namespace abgenommen.
+</p>
+<p>
+Da wir nun im Groben gekl&auml;rt haben was wir ungef&auml;hr brauchen, schauen wir uns den Sourcecode
+(<b>scrap.aspx</b>) an:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Net" %&gt;
+&lt;% @Import Namespace="System.Text" %&gt;
+&lt;% @Import Namespace="System.IO" %&gt;
+&lt;%
+WebRequest wrq = WebRequest.Create("http://www.aspheute.com../default.htm");
+WebResponse wrp = wrq.GetResponse();
+
+StreamReader sr = new StreamReader(wrp.GetResponseStream(), Encoding.ASCII);
+while (-1 != sr.Peek())
+{
+  Response.Write(sr.ReadLine());
+}
+%&gt;
+</pre>
+
+<p>
+Die "angedrohten" Namespace Imports stehen ganz oben in der ASP.NET Datei. Die erste Anwendung
+erh&auml;lt der <i>System.Net</i> Namespace in der ersten Zeile des Codes: dort verwende ich die 
+statische Methode <i>Create</i> um eine <i>WebRequest</i> Instanz f&uuml;r die angegebene URL
+zu erzeugen.
+</p>
+<p>
+Dieser URL-Request wird sofort durchgef&uuml;hrt, und ich kann mir den Response abholen (mittels
+dem <i>WebResponse</i> Objekt). Und jetzt kommen wir zum <i>System.IO</i> Namespace: die Methode
+<i>GetResponseStream</i> liefert uns ein <i>Stream</i> Objekt, das man zum Auslesen der Daten verwenden kann.
+Allerdings hat das <i>Stream</i> Objekt einen "Nachteil": man m&uuml;&szlig;te mit Byte Arrays arbeiten. Da mir
+das nicht wirklich zusagt, habe ich einen <i>StreamReader</i> herum"gewrapt".
+</p>
+<p>
+Der StreamReader hat noch weitere Vorteile: ich kann ihm sagen, wie die Daten umzuwandeln sind.
+Diese Umwandlung &uuml;bernimmt die <i>Encoding.ASCII</i> Klasse, die im <i>System.Text</i> Namespace zu Hause
+ist. Damit h&auml;tten wir alle Namespaces auch schon hinter uns gebracht. Apropos, noch einen weiteren
+Vorteil hat die <i>StreamReader</i> Klasse: man kann zeilenweise auslesen.
+</p>
+<p>
+Weil wir gerade beim Auslesen sind: wie wei&szlig; ich, da&szlig; keine Daten mehr abzuholen sind? Dazu
+kann man die <i>Peek</i> Methode verwenden - diese liefert -1, wenn keine Daten mehr da sind, l&ouml;scht
+aber w&auml;hrend des Vorgangs des "Peekens" das gepeekte Zeichen nicht aus dem Puffer. 
+</p>
+<p>
+Das Auslesen
+besorgt die <i>ReadLine</i> Methode - deren String Output ich aber sofort an Response.Write &uuml;bergebe,
+damit der User auch was sieht. Man bekommt als Output also wieder ein vollst&auml;ndiges HTML Dokument
+von der Gegenstelle, allerdings werden die abh&auml;ngigen Objekte - Style Sheets, Grafiken, etc. - nicht
+korrekt angezeigt, da die Relativpfade nicht mehr stimmen.
+</p>
+
+<h2>Der elegante Weg zum Ziel</h2>
+<p>
+Unser Beispiel funktioniert zwar, allerdings hat es so einige M&auml;kel: kein Userinterface in dem
+man die URL eingeben k&ouml;nnte, und ich schreibe den Response sofort zum Client. Das folgende Beispiel
+r&auml;umt mit beiden Punkten auf, und sieht wie folgt aus:
+</p>
+
+<IMG SRC="Bilder/200008/20000824.png" width="535" height="203" border="0" alt="">
+
+<p>
+Die Haupt&auml;nderungen am Sourcecode sind da&szlig; ich jetzt ein Web Form verwende, und das "Scrapen"
+der Seite in einer Funktion namens <i>ScrapPage</i> abarbeite. Sonst ist der Sourcecode im Grunde
+von der Funktion her gleich geblieben (<b>scrap2.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Net" %&gt;
+&lt;% @Import Namespace="System.Text" %&gt;
+&lt;% @Import Namespace="System.IO" %&gt;
+&lt;SCRIPT LANGUAGE="C#" RUNAT="SERVER"&gt;
+public void ScrapPage(String strPage, out String strContent)
+{
+  WebRequest wrq = WebRequest.Create(strPage);
+  WebResponse wrp = wrq.GetResponse();
+
+  StreamReader sr = new StreamReader(wrp.GetResponseStream(), Encoding.ASCII);
+  StringBuilder strBuildContent = new StringBuilder();  
+  while (-1 != sr.Peek())
+  {
+    strBuildContent.Append(sr.ReadLine());
+  }
+  strContent = strBuildContent.ToString();
+}
+
+void btnClick_Event(Object sender, EventArgs e)
+{
+  String strContent;
+  ScrapPage(theURL.Text, out strContent);
+  RetVal.Text = strContent;
+}
+&lt;/SCRIPT&gt;
+
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;Scraping Web Pages&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;form method="post" runat="server"&gt;
+Webadresse: &lt;asp:textbox id="theURL" size="40" 
+   runat="server" value="http://www.aspheute.com../default.htm" /&gt;
+&lt;asp:button id="btnSubmit" runat="server" text="Scrap it!" 
+   OnClick="btnClick_Event" /&gt;
+
+&lt;BR&gt;&lt;HR width="100%"&gt;&lt;BR&gt;
+
+&lt;asp:label id="RetVal" runat="server" /&gt;
+&lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Die Funktion <i>ScrapPage</i> nimmt 2 Parameter: den URL der Seite, die geholt werden soll, sowie
+einen <i>out</i> Parameter, &uuml;ber den der Inhalt der geholten Seite an den Aufrufer zur&uuml;ckgegeben
+wird. Eine weitere &Auml;nderung in der Funktion ist da&szlig; die Daten zuerst in einem <i>StringBuilder</i> Objekt
+zwischengespeichert werden, und erst zum Schlu&szlig; auf die <i>String</i> Variable zugewiesen wird. Der Grund ist,
+da&szlig; das <i>StringBuilder</i> Objekt speichereffizienter arbeitet, wenn man mehrere Zuweisungen durchf&uuml;hrt.
+</p>
+<p>
+Das Web Form hat eine TextBox (f&uuml;r die Eingabe der URL), einen Submit-Button (der am Server das
+Event <i>btnClick_Event</i> ausl&ouml;st), sowie eine Label Control. Diese Label Control dient mir in diesem
+Beispiel als Ausgabeplatz f&uuml;r das abgeholte HTML. Dies ist zwar nicht 100%ig korrekt (wegen der doppelten
+BODY und HTML Tags), funktioniert aber.
+</p>
+<p>
+Eine Sache geh&ouml;rt aber noch ge&auml;ndert - wenn die URL nicht existiert, oder beim Lesen der Daten Fehler
+auftreten, dann setzt es eine Exception. Man sollte den entsprechenden Code also in einen 
+<i>try-catch</i> Block einbauen:
+</p>
+
+<pre style="background='silver';">
+public void ScrapPage(String strPage, out String strContent)
+{
+ try
+ {
+  WebRequest wrq = WebRequest.Create(strPage);
+  WebResponse wrp = wrq.GetResponse();
+
+  StreamReader sr = new StreamReader(wrp.GetResponseStream(), Encoding.ASCII);
+  StringBuilder strBuildContent = new StringBuilder();  
+  while (-1 != sr.Peek())
+  {
+    strBuildContent.Append(sr.ReadLine());
+  }
+  strContent = strBuildContent.ToString();
+ }
+ catch(Exception e)
+ {
+  strContent = e.ToString();
+  return;
+ }
+}
+</pre>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+In diesem Artikel habe ich nur an der Oberfl&auml;che des Scrapings gekratzt - ich habe keine Daten
+gePOSTet, keine Bin&auml;rdaten abgeholt, keine Proxies &uuml;berwunden und schon gar nicht Inhalte aus
+den abgeholten Daten herausgeparst. Aber schlie&szlig;lich mu&szlig; mir ja noch Stoff f&uuml;r weitere Artikel
+&uuml;brigbleiben ;-).
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000824.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20020702.htm">.NET Komponenten in COM+ Clients einsetzen</a><br>
+<a href="20021029.htm">Amazon.com Web Services 2.0</a><br>
+<a href="20000508.htm">Erstellen eines HTTP Test Tools</a><br>
+<a href="20000724.htm">Exception Handling in C#</a><br>
+<a href="20000519.htm">Laden von Dateien aus dem Web mit ASP</a><br>
+<a href="20010912.htm">SMS versenden in .NET</a><br>
+<a href="20011113.htm">Sonderzeichen korrekt grabben mit XmlHttp</a><br>
+<a href="20010328.htm">Webpage-Grabbing mit dem XML Parser</a><br>
+<a href="20010910.htm">Webseiten automatisiert scrapen</a><br>
+<a href="20010911.htm">Webseiten automatisiert scrapen, Teil 2</a><br>
+<a href="20000825.htm">WHOIS Abfragen a la .NET</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eserverobjects%2Ecom%2F">AspHTTP</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2Fcomponentcenter%2Fasptear%2F">AspTear</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000824" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Scrapen von Webseiten"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000824.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20000824"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000824.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

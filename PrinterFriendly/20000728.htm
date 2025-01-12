@@ -1,0 +1,300 @@
+<HTML>
+<HEAD>
+<TITLE>On-the-fly Generierung von Graphiken</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Unter ASP.NET kann man mit einfachsten Bordmitteln dynamisch Graphiken erstellen, und an den Client schicken - mit maxmimaler Konfigurierbarkeit und Komfort.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP.NET,C#,Grafik,Graphik,GDI+,Bitmap,ClearContent,Graphics,MeasureString,DrawString,SizeF,Dispose,Pixelformat,FromImage,Graphics Device Interface">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>On-the-fly Generierung von Graphiken</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000728"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Etwas, das f&uuml;r ASP Programmierer ohne Unterst&uuml;tzung einer Komponente nicht machbar ist,
+ist das dynamische Erstellen von Graphiken - seien es Diagramme, Banner oder nur ein
+einfacher graphischer Counter. Dem ist unter ASP.NET gl&uuml;cklicherweise nicht mehr so - mit
+einfachsten Bordmitteln kann man dynamisch Graphiken erstellen, und an den Client
+schicken - mit maxmimaler Konfigurierbarkeit und Komfort.
+</p>
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation des <i>Microsoft .NET Framework SDK's</i> auf
+einem Webserver. Weiters setze ich voraus, da&szlig; der Leser die Programmiersprache C# zu einem gewissen Grad beherrscht -
+es finden sich etliche Artikel auf diesem Server, um das notwendige Wissen zu erlernen.
+</p>
+
+
+<h2>Generieren einer Graphik</h2>
+<p>
+Bevor wir uns jetzt mit all dem Ballast von ASP.NET belasten, machen wir eine Trocken&uuml;bung in einem
+simplen Kommandozeilenprogramm - und diesen Sourcecode verwenden wir dann als Ausgangsbasis f&uuml;r
+unser ASP.NET Script. Der Unterschied ist, da&szlig; das Kommandozeilenprogramm die Graphik in eine Datei
+speichert, wohingegen das ASP.NET Script die Graphik direkt an den Client schickt.
+</p>
+<p>
+Was soll also unser Beispielprogramm machen? Wie immer, starten wir mit dem allseits beliebten
+Programm "Hello World" - dieser Text soll in eine Grafikdatei geschrieben werden, und die Grafik
+soll exakt so gro&szlig; sein, wie die der Text "Hello World" in der aktuell gew&auml;hlten Schrift und
+Schriftgr&ouml;&szlig;e (also einfach ein zu gro&szlig;es Bitmap generieren gilt nicht!).
+</p>
+<p>
+Das folgende Script (<b>pagecounter.cs</b>) ist ein typisches, einfaches, Kommandozeilenprogramm:
+abgesehen von der Klasse rundherum (die mu&szlig; sein), gibt es nur die Funktion <i>Main</i>, die aufgerufen
+wird, wenn das Programm abl&auml;uft. Und dort ist auch unser Grafikgenerierungscode zu Hause.
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.IO;
+using System.Drawing;
+using System.Drawing.Imaging;
+
+public class CTestBitmapFunctionality
+{
+  public static void Main()
+  {
+    Bitmap newBitmap = null;
+    Graphics g = null ;
+
+    try 
+    {
+        Font fontCounter = new Font("Lucida Sans Unicode", 12);
+
+        // calculate size of the string.
+        newBitmap = new Bitmap(1,1,PixelFormat.Format32bppArgb);
+        g = Graphics.FromImage(newBitmap);
+        SizeF stringSize = g.MeasureString("Hello World", fontCounter);
+        int nWidth = (int)stringSize.Width;
+        int nHeight = (int)stringSize.Height;
+        g.Dispose();
+        newBitmap.Dispose();
+      
+        newBitmap = new Bitmap(nWidth,nHeight,PixelFormat.Format32bppArgb);
+        g = Graphics.FromImage(newBitmap);
+        g.FillRectangle(new SolidBrush(Color.White), new Rectangle(0,0,nWidth,nHeight));
+
+        g.DrawString("Hello World", fontCounter, new SolidBrush(Color.Black), 0, 0);
+        newBitmap.Save("c:\\test.png", ImageFormat.Png);
+    } 
+    catch (Exception e)
+    {
+        Console.WriteLine(e.ToString());
+    }
+    finally 
+    {
+        if (null != g) g.Dispose();
+        if (null != newBitmap) newBitmap.Dispose();
+    }
+  }
+}
+</pre>
+
+<p>
+Was macht dieser Sourcecode? Das Endergebnis ist auf alle F&auml;lle die Grafik <b>test.png</b> auf der 
+Platte c:
+</p>
+
+<IMG SRC="/artikel/Bilder/200007/20000728_1.png" width="97" height="24" border="0" alt="">
+
+<p>
+Und wie entsteht diese Grafik? Dazu m&uuml;ssen wir uns den Sourcecode etwas genauer ansehen. Unsere
+wichtigste Vorgabe war, da&szlig; die Grafik genau so gro&szlig; sein mu&szlig;, wie der Text "Hello World" in der
+Schrift, in der der Text gerendert werden soll. Daher mu&szlig; ich mir zuallererst die Gr&ouml;&szlig;e des 
+Textes ausrechnen, und dazu bediene ich mich einer Dummy-Grafik der Gr&ouml;&szlig;e 1x1, und wenn ich mit dem
+Berechnen fertig bin, l&ouml;sche ich die Grafik wieder - um mir danach eine Grafik in der richtigen
+Gr&ouml;&szlig;e zu erzeugen.
+</p>
+<p>
+Ein interessanter Punkt des Sourcecodes ist das Objekt <i>Graphics</i>. Wozu brauche ich das, wenn
+ich ein Bitmap erstellen will? Der Grund hierf&uuml;r ist, da&szlig; das mein Grafikkontext ist, in dem ich 
+zeichne - einen Grafikkontext kann ich auf dem Bildschirm, auf dem Drucker, und im Speicher - einem
+Bitmap eben - verwenden. Der Grafikkontext erlaubt mir die Zeichenoperationen auf beliebigsten
+Ger&auml;ten (auch wenn sie virtuell sind).
+</p>
+<p>
+Mit <i>DrawString</i> habe ich nun den Text "Hello World" auftragsgem&auml;&szlig; auf wei&szlig;em Hintergrund (mit
+<i>FillRectangle</i> erzeugt) ausgegeben. Die Grafik ist fertig. Nun mu&szlig; ich sie auf die Festplatte
+speichern. Wer einmal selbst Grafikformate programmiert hat, wei&szlig; wie m&uuml;hsam das sein kann.
+Nicht so mit GDI+ (Graphics Device Interface) - ein einfacher Befehl steht zur Verf&uuml;gung:
+</p>
+
+<pre style="background='silver';">
+newBitmap.Save(&quot;c:\\test.png&quot;, ImageFormat.Png);
+</pre>
+
+<p>
+Und das war's auch schon! Einfach das <i>ImageFormat.Png</i> auf <i>ImageFormat.Jpeg</i> ausgetauscht, und man
+bekommt eine JPEG Datei. Das ist genau das, worauf viele gewartet haben - einfachstes Arbeiten
+mit Grafiken.
+</p>
+<p>
+Es bleibt mir nun noch den Grund des Exception Handlings zu erkl&auml;ren: einige Funktionen k&ouml;nnen
+Exceptions liefern (zB zu wenig Speicher beim Erzeugen des Bitmaps, etc). Da man als guter 
+B&uuml;rger aber hinter sich aufr&auml;umen soll, mu&szlig; ich mich immer daraum k&uuml;mmern, da&szlig; <i>Graphics</i> und <i>Bitmap</i>
+freigegeben werden - und genau das mache ich f&uuml;r alle F&auml;lle im <i>finally</i> Block (weil der wird
+immer aufgerufen). Und hinter <i>finally</i> endet das Programm auch schon.
+</p>
+<p>
+"Theoretisch" funktioniert das Programm - allerdings nur in Sourcecodeform. Um es tats&auml;chlich
+zum Laufen zu bringen, mu&szlig; man es zuerst kompilieren:
+</p>
+
+<pre style="background='silver';">
+csc /R:System.DLL /R:System.Drawing.DLL pagecounter.cs
+</pre>
+
+<p>
+Damit erh&auml;lt man die EXE-Datei <b>pagecounter.exe</b>. Achtung: diese ist nur auf Systemen mit
+dem installierten Microsoft .NET Framework lauff&auml;hig!
+</p>
+
+
+<h2>Das Ganze am Webserver</h2>
+<p>
+Als Kommandozeilenapplikation hat es ja hervorragend funktioniert. Als ASP.NET Script soll es aber
+ein paar "St&uuml;ckeln" mehr spielen k&ouml;nnen:
+</p>
+
+<ul>
+	<li>Frei w&auml;hlbarer Text (zB ein Counter)
+	<li>Frei w&auml;hlbare Textfarbe
+	<li>Frei w&auml;hlbare Hintergrundfarbe
+	<li>Frei w&auml;hlbare Schriftart
+	<li>Frei w&auml;hlbare Schriftgr&ouml;&szlig;e
+</ul>
+
+<p>
+Wer jetzt sagt, das ist zu schwierig, der darf einen Blick auf den  
+<a href="../artikel/20000728_code1.htm" target="_blank">Sourcecode</a> des ASP.NET Scripts f&uuml;r die Grafik
+werfen (<b>pagecounter.aspx</b>). Alles, was ich tun mu&szlig;te, ist jede Menge Fehlerbehandlungscode einzuf&uuml;hren, der die &uuml;bergegebenen
+Parameter auf die G&uuml;ltigkeit &uuml;berpr&uuml;ft. Das war der Gro&szlig;teil der notwendigen &Auml;nderungen.
+</p>
+<p>
+Eine weitere Notwendigkeit war, die Grafik an den Client zu schicken, anstatt sie einfach in eine
+Datei zu schreiben. Dieser neue Teil sieht wie folgt aus:
+</p>
+
+<pre style="background='silver';">
+MemoryStream tempStream = new MemoryStream();
+newBitmap.Save(tempStream,ImageFormat.Png);
+
+Response.ClearContent();
+Response.ContentType = "image/png";
+Response.BinaryWrite(tempStream.ToArray());
+Response.End();
+</pre>
+
+<p>
+Ich habe die Grafik einfach im Speicher "zwischengelagert" (in einem Memory Stream), und dann
+als Array von Bytes an die allseits bekannte Funktion <i>BinaryWrite</i> &uuml;bergeben. &Uuml;brigens: die
+Funktion <i>ClearContent</i> brauche ich deswegen, weil im obersten Teil des Scripts <i>Import</i> Direktiven
+stehen, die als Leerzeilen an den Client geschickt w&uuml;rden - und somit die G&uuml;ltigkeit der PNG 
+Grafikdatei zerst&ouml;ren w&uuml;rden.
+</p>
+<p>
+Wer sich den <a href="../artikel/20000728_code1.htm" target="_blank">Sourcecode</a> genauer angeschaut hat,
+wird festgestellt haben, da&szlig; ich alle frei w&auml;hlbaren Attribute als QueryString Parameter &uuml;bergeben habe. Das
+kann zu einer ganz sch&ouml;n langen Wurst werden, und da ich ein fauler Mensch bin, habe ich mir
+ein bequemes Testformular gebastelt, in dem ich die verschiedenen Werte austesten kann:
+</p>
+
+<IMG SRC="/artikel/Bilder/200007/20000728_2.png" width="574" height="518" border="0" alt="">
+
+<p>
+Das sch&ouml;ne an dieser ASP.NET Seite (<b>pagecountertest.aspx</b>) ist, da&szlig; ich die Grafik sofort auf der gleichen 
+Seite pr&auml;sentiert bekomme.
+Der <a href="../artikel/20000728_code2.htm" target="_blank">Sourcecode</a> f&uuml;r dieses Formular
+beinhaltet bereits server-side ASP.NET Controls. Das sozusagen als Appetizer auf sp&auml;tere
+Artikel, wo wir genauer auf die Formularbehandlung (und Validierung) mit ASP.NET eingehen werden.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+In diesem Artikel haben wir im Eilzugstempo uns kurz die Features zur Grafikprogrammierung
+angeschaut. Mit ASP.NET und dem Framework steht uns Webseitenprogrammieren jetzt der volle
+Befehlsumfang der Windows-Grafikprogrammierung zur Verf&uuml;gung, um dies in unseren Webprojekten
+einzusetzen. Die Phrase "geht nicht" d&uuml;rfen wir also getrost aus unserem Wortschatz streichen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000728.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000728.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020702.htm">.NET Komponenten in COM+ Clients einsetzen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020702.htm</span><br>
+<a href="../artikel/20000929.htm">Dateien lesen in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000929.htm</span><br>
+<a href="../artikel/20000802.htm">Dateiupload mit ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000802.htm</span><br>
+<a href="../artikel/20000724.htm">Exception Handling in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000724.htm</span><br>
+<a href="../artikel/20020906.htm">On-the-fly Erstellung von vCard's</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020906.htm</span><br>
+<a href="../artikel/20020225.htm">Thumbnailgenerierung in .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020225.htm</span><br>
+<a href="../artikel/20000712.htm">Was ist neu in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000712.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Edotnetgerman%2Ecom%2Flisten%2FaspDEdotnet%2Easp">Die aspDEdotnet Liste</a><br>
+<SPAN class="content">http://www.dotnetgerman.com/listen/aspDEdotnet.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Edotnetgerman%2Ecom%2Flinks%2Fdl%5Fdotnetsdk%2Easp">Download .NET SDK</a><br>
+<SPAN class="content">http://www.dotnetgerman.com/links/dl_dotnetsdk.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Edotnetgerman%2Ecom%2Flinks%2Fdl%5Faspnet%2Easp">Download ASP.NET</a><br>
+<SPAN class="content">http://www.dotnetgerman.com/links/dl_aspnet.asp</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

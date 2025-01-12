@@ -1,0 +1,282 @@
+<HTML>
+<HEAD>
+<TITLE>SA ExcelWriter in Action</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Mit der ExcelWriter Komponente von Software Artisans k&ouml;nnen Sie programmatisch Dieser Artikel zeigt die wichtigsten Grundfunktionen der ExcelWriter Komponente.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Excel,Komponete,ASP,ExcelWriter,SA ExcelWriter">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>SA ExcelWriter in Action</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001207"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Nach der kurzen Vorstellung der <a href="http://www.softartisans.com/">Software Artisans</a> 
+<b>ExcelWriter</b> Komponete im Artikel <a href="../artikel/20001204.htm">Die SA Excel Writer Komponente</a>,
+kann die Komponente nun zeigen was sie kann. Anhand eines Beispiels wird gezeigt wie Werte in Zellen 
+programmatisch eingef&uuml;gt werden und eine Formatierung angewandt wird.
+</p>
+
+<p> 
+Um das Beispiel etwas interessanter zu machen, lesen wir Datens&auml;tze einer MS Access Datenbank ein und wenden
+zudem auch noch eine kleine Berechnugnsformel an.
+</p>
+
+<h2>Das Beispiel</h2>
+
+<p>
+<b>Wichtig:</b> Dem Artikel liegt die gratis downloadbare Evaluierungsversion zugrunde, die gegen&uuml;ber der 
+kostenpflichtigen Vollversion einen eingeschr&auml;nkten Funktionsumfang hat.
+</p>
+
+<p>
+Wir lesen aus der <i>Products</i> Tabelle der <i>Northwind</i> MS Access Datenbank die Spalten
+<i>ProductName</i>, <i>UnitPrice</i> und <i>UnitsInStock</i> aus. Danach werden wir uns aus dem Listenpreis (UnitPrice),
+der aus der Datenbank stammt, mithilfe einer kleinen Formel den Bruttopreis (also inklusive Mehrwertsteuer)
+ausrechnen. Damit die generierte Excel-Tabelle auch Spalten&uuml;berschriften bekommt, werden wir diese programmatisch
+erstellen und diese auch formatieren.
+</p>
+
+<p>
+Mit diesem Beispiel h&auml;tten wir dann alle wichtigen Grundfunktionen der Komponente abgedeckt. Schreiten wir nun
+zur Ausf&uuml;hrung (<i>XWri_Tab.asp</i>).
+</p>
+
+
+<p>
+<pre style="background='silver';">
+&lt;% @LANGUAGE = VBScript %&gt;
+&lt;!--METADATA TYPE="TypeLib" UUID="7BCD2133-64A0-4770-843C-090637114583" --&gt;
+&lt;%
+  Option Explicit
+  Dim objConn, objRS, HeadingStyle, objXlw, objWS
+  Dim strConn, strSQL, i, Rows, cell, n
+
+  Set objConn = Server.CreateObject("ADODB.Connection")
+
+  strConn = "DSN=Northwind;UID=sa; PWD=;"
+  
+  objConn.Open strConn
+
+  Set objRS = Server.CreateObject("ADODB.Recordset")
+  Set objRS.ActiveConnection = objConn
+
+  strSQL ="SELECT Products.ProductName, Products.UnitPrice,Products.UnitsInStock "
+  strSQL = strSQL &amp; "FROM Products"
+
+  objRS.Open strSQL 
+...
+</pre>
+</p>
+
+<p>
+Im ersten Teil des Sourcecodes eigentlich nichts Aufregendes. Zuerst die Angabe der Verwendeten Sprache, dann 
+die TypeLib Bindung, sowie die Variablendeklarationen - da ja <i>Option Explicit</i> verwendet wird. Es folgt die
+Erstellung des Connection Objekts (<i>objConn</i>), die Deklaration dessen und schlie&szlig;lich die &Ouml;ffung der Verbindung zur Datenbank.
+</p>
+
+<p>
+Nun die Erstellung des Recordset Objekts (<i>objRS</i>) und die Zuweisung des Connection Strings. Danach die Deklaration der
+SQL-String Variable (<i>strSQL</i>) und ihre Definition.
+</p> 
+
+
+<p>
+<pre style="background='silver';">
+Set objXlw = Server.CreateObject("Softartisans.ExcelWriter")
+Set objWS = objXlw.Worksheets(1).Cells
+
+set HeadingStyle = ObjXlw.CreateStyle
+	HeadingStyle.Font.Size = 12
+	HeadingStyle.Font.Bold = true
+
+for i = 1 to 4
+	objWS(1, i).Style = HeadingStyle
+
+next
+
+objWS("A1").Value = "Produktname"
+objWS("B1").Value = "Listenpreis"
+objWS("C1").Value = "Lagerbestand"
+objWS("D1").Value = "Preis inkl MwSt"
+</pre>
+</p>
+
+<p>
+Als n&auml;chstes erstellen wir das ExcelWriter Objekt <i>objXlw</i> und ein Worksheet, das die aus der
+Datenbank angeforderten Daten enthalten soll.
+</p>
+
+<p>
+Um die Spalten&uuml;berschriften der Tabelle formatieren zu k&ouml;nnen, erstellen wir uns einen Schriftstil
+(<i>HeadingStyle</i>) indem wir die <i>CreateStyle</i> Methode des ExcelWriter Objekts verwenden.
+Mit den beiden Eigenschaften <i>Font.Size</i> bzw. <i>Font.Bold</i> setzen wir die Schriftgr&ouml;&szlig;e bzw.
+den Fettdruck.
+</p>
+
+<p>
+Um den Schriftstil nun auch anzuwenden, verwenden wir einfach eine for-Schleife. Die Beschriftung der 
+Tabellenspalten erfolgt mit <i>Value</i>.
+</p>
+
+<p>
+<pre style="background='silver';">
+Rows = objWS.CopyFromRecordset(objRS, False, 2, 1)
+
+
+for n = 2 to Rows
+   objWS(n,4).Formula = "=b" &amp; n &amp; "*1.2"
+
+next
+
+objXlw.Save "database.xls", saOpenInPlace
+
+
+objRS.Close
+objConn.Close
+Set objRS = Nothing
+Set objConn = Nothing
+Set objXlw = Nothing
+
+%>
+</pre>
+</p>
+
+<p>
+Mit der <i>CopyFromRecordSet</i> Methode importieren wir die Datens&auml;tze in die Excel-Tabelle. Die Methode
+schreibt alle Datens&auml;tze, die das Recordset enth&auml;lt in die Tabelle. Die Methode hat folgende Parameter:
+</p>
+
+
+<p>
+<pre style="background='silver';">
+Rows = objWS.CopyFromRecordset(ADO-RecordSet, [ShowHeaders (True/False)]
+		[FirstRow], [FirstColumn], [MaxRows], [MaxColumns])
+</pre>
+</p>
+
+<p>
+Wenn Parameter nicht explizit angegeben werden, werden die Standardwerte des <i>Microsoft BIFF7 Formats</i>
+verwendet:
+</p>
+
+<p>
+<ul>
+<li>ShowHeaders - True
+<li>FirstRow, FirstColumn - 1
+<li>MaxRows - 16384
+<li>MaxColumns - 256
+</ul>
+</p>
+
+<p>
+Da wir ja unsere eigenen Spalten&uuml;berschriften verwenden wollen, setzten wir <i>ShowHeaders</i> auf "False".
+Damit sie nicht durch die Daten &uuml;berschrieben werden f&uuml;gen wir die Daten aus dem Recordset erst in der Spalte
+<i>A2</i> ein (FirstRow = 2, FirstColumn = 1)
+</p>
+
+<p>
+Nun erstellen wir uns noch eine kleine Formel um die Mehrwertsteuer zu berechnen. Dies geschieht einfach mit
+der Angabe von <i>Formula</i> und dem Formelausdruck, der wie in Excel &uuml;blich anzugeben ist.
+</p>
+
+<p>
+Um die Datei lokal abspeichern zu k&ouml;nnen, verwenden wir die <i>Save</i> Methode des ExcelWriter Objekts.
+</p>
+
+<p>
+Abschlie&szlig;end "r&auml;umen" wir noch den Speicher auf indem wir die ben&ouml;tigten Resourcen wieder freigeben bzw.
+die DB-Verbindung schlie&szlig;en und die verwendeten Objekte zerst&ouml;ren.
+</p>
+
+<p>
+Nachdem die Datei lokal abgespeichert wurde, k&ouml;nnen Sie diese in MS Excel &ouml;ffen, und falls n&ouml;tig sp&auml;ter 
+editieren. Das Ergebnis unseres Beispiels sieht dann so aus:
+</p>
+
+<p><IMG SRC="/artikel/Bilder/200012/20001207.png" width="573" height="385" alt="" border="0"></p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Mit der ExcelWriter Komponente von Software Artisans k&ouml;nnen Sie programmatisch editierbare Excel 
+Spreadsheets erstellen. Dieser Artikel zeigte Ihnen die wichtigsten Grundfunktionen der ExcelWriter
+Komponente. 
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001207.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20001207.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001204.htm">Die SA Excel Writer Komponente</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001204.htm</span><br>
+<a href="../artikel/20010307.htm">Ein Excel-Diagramm am Server generieren und zum Client schicken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010307.htm</span><br>
+<a href="../artikel/20010305.htm">Ein Excel-Sheet am Server generieren und zum Client schicken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010305.htm</span><br>
+<a href="../artikel/20020128.htm">Serverdaten clientseitig in Exceltemplates importieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020128.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fdemo%2Esoftartisans%2Ecom%2FExcelWriter%2Fdefault%2Easp">SA ExcelWriter Demoseite</a><br>
+<SPAN class="content">http://demo.softartisans.com/ExcelWriter../default.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Esoftartisans%2Ecom%2Fexcelwriter%2Ehtml">SA ExcelWriter Seite</a><br>
+<SPAN class="content">http://www.softartisans.com/excelwriter.html</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Esoftartisans%2Ecom%2F">SoftwareArtisans</a><br>
+<SPAN class="content">http://www.softartisans.com/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,258 @@
+<HTML>
+<HEAD>
+<TITLE>Dynamische Stylesheets</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Bei CSS verwendet man meist eine extern eingelinkte Datei mit der Endung .css, die die Definitionen f&uuml;r die Styles enth&auml;lt. Wer verbietet uns eigentlich, diese Endung auf .asp zu &auml;ndern?">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,CSS,Cascaded Stylesheet,stylesheet,Cookie,Personalisierung,Datenbank,Combobox,DropDown">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Dynamische Stylesheets</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010306"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Cascaded Stylesheets (CSS) erfreuen sich immer gr&ouml;&szlig;erer Beliebtheit f&uuml;r das Websitedesign. In den meisten
+F&auml;llen handelt es sich dabei um eine extern eingelinkte Datei mit der Endung .css, die die Definitionen
+f&uuml;r die Styles enth&auml;lt. Wer verbietet uns eigentlich, diese Endung auf .asp zu &auml;ndern?
+</p>
+
+<p>
+Niemand! Die Hauptsache ist, unsere ASP Seite liefert eine g&uuml;ltige CSS Datei - wie diese zustande kommt,
+ist dem Browser im Prinzip egal - also k&ouml;nnen wir diese auch personalisiert f&uuml;r den Benutzer erstellen.
+</p>
+
+<h2>Das Opfer unserer Experimente</h2>
+<p>
+Um es einfach und &uuml;berschaubar zu halten, "vergreifen" wir uns nur an einem einzigen Style - dem Style
+f&uuml;r die <i>H1</i> &Uuml;berschrift. Dazu habe ich eine wirklich einfache HTML Datei erstellt (<b>ShowPersonalizedCSS.asp</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;Personalisiertes CSS&lt;/title&gt;
+  &lt;link rel="stylesheet" type="text/css" href="personalizedCSS.asp"&gt;
+&lt;/head&gt;
+&lt;body bgcolor="#ffffff"&gt;
+
+&lt;h1&gt;Test&uuml;berschrift&lt;/h1&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Das Stylesheet (<b>personalizedCSS.asp</b>) wird extern &uuml;ber die <b>link</b> Direktive im Header eingebunden.
+Dies ist die Variante, die verwendet wird, wenn auf der gesamten Site dasselbe Stylesheet verwendet
+werden soll. Die Variante eines Inline-Stylesheets w&auml;re ja f&uuml;r den heutigen Artikel zu leicht zu 
+personalisieren - eine externe Datei macht da mehr Spa&szlig;.
+</p>
+
+<h2>Personalisieren des Stylesheets</h2>
+<p>
+F&uuml;r unseren <i>H1</i> Style wollen wir die Schriftart und die Schriftfarbe personalisieren - dies ist eine von mir
+willk&uuml;rlich getroffene &Uuml;bungsannahme, die man gerne &auml;ndern kann. Zum Speichern der Personalierungsdaten
+habe ich mich f&uuml;r einen Cookie entschieden - warum? Erstens: es ist leicht implementierbar, zweitens
+bekommt <b>personalizedCSS.asp</b> diesen Cookie auch geschickt. 
+</p>
+<p>
+Auf einen Nachteil m&ouml;chte ich auch gleich eingehen: Cookies werden am Client gespeichert, und somit
+immer vom Client zum Server geschickt (der Server schickt nur beim Setzen des Cookies). Wenn man viel
+im Cookie speichert, kann das schon in me&szlig;baren Traffic ausarten. Der skalierbarere Ansatz w&auml;re im Cookie
+nur eine "Erkennungs-ID" zu speichern, mit der man die personalisierten Daten in der Datenbank ansprechen
+kann.
+</p>
+<p>
+Nach diesem Ausflug in die Welt der gro&szlig;en Websites begeben wir uns wieder zu unserem einfachen Beispiel
+zur&uuml;ck - <b>SetCSSPreferences.asp</b>. Es verwendet Cookies, und stellt dem Benutzer zwei DropDown
+Boxen zur Auswahl von Schriftart und -farbe zur Verf&uuml;gung:
+</p>
+
+<pre style="background='silver';">
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;CSS definieren&lt;/title&gt;
+&lt;/head&gt;
+&lt;body bgcolor="#ffffff"&gt;
+&lt;%
+strFarbe = Request.Cookies("CSSCookie")("H1Color")
+strFont = Request.Cookies("CSSCookie")("H1Font")
+
+If (0 &lt;&gt; Request.ServerVariables("CONTENT_LENGTH")) Then
+  strFarbe = Request.Form("txtFarbe")
+  strFont = Request.Form("txtFont")
+  Response.Cookies("CSSCookie")("H1Color") = strFarbe
+  Response.Cookies("CSSCookie")("H1Font") = strFont
+End If
+%&gt;
+
+&lt;form method="post" action="&lt;%=Request.ServerVariables("SCRIPT_NAME")%&gt;"&gt;
+Farbe: 
+&lt;%
+  cString="Schwarz,Gr&uuml;n,Gelb,Blau,Rot"
+  cStringValue="black,green,yellow,blue,red"
+  GenerateComboBox "txtFarbe", strFarbe, cString, cStringValue
+%&gt;
+&lt;br&gt;
+Schriftart: 
+&lt;%
+  cString="Arial,Times New Roman,Tahoma"
+  cStringValue=cString
+  GenerateComboBox "txtFont", strFont, cString, cStringValue
+%&gt;
+&lt;br&gt;
+ 
+ &amp;nbsp;&lt;br&gt;
+&lt;input type=submit value="&Auml;nderung durchf&uuml;hren"&gt;
+&lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Das ist ein All-In-One Forumlar, das das Formular als auch den serverseitigen Auswertungscode
+beeinhaltet. Das Setzen der Cookiewerte ist einfachst implementiert (die Expiration setze ich nicht), interessant an diesem
+Formular ist die Funktion <i>GenerateComboBox</i>. Das ist eine von mir implementierte Funktion
+zur einfachen Generierung von DropDown Boxen: ich &uuml;bergebe den Namen der Box, die Standardauswahl
+und zwei Arrays - die die Werte und die sichtbaren Texte beinhalten:
+</p>
+
+<pre style="background='silver';">
+&lt;script language="vbscript" runat="server"&gt;
+Sub GenerateComboBox(strComboName, strDefaultValue, strDisplay, strValue)
+  arrDisplay = Split(strDisplay, ",")
+  arrValues = Split(strValue, ",")
+  nValues = UBound(arrDisplay)
+  If (nValues &lt;&gt; UBound(arrValues)) Then
+    Err.Raise 1, "GenerateComboBox: Display.Count != Values.Count!"
+  End If
+  Response.Write "&lt;SELECT NAME=""" &amp; strComboName &amp; """&gt;" &amp; vbCrlf
+  
+  For i=0 To nValues
+    If (0 = StrComp(arrValues(i), strDefaultValue)) Then
+      Response.Write "&lt;OPTION SELECTED VALUE=""" &amp; arrValues(i) &amp; _
+           """&gt;" &amp; arrDisplay(i) &amp; vbCrlf
+    Else
+      Response.Write "&lt;OPTION VALUE="""&amp; arrValues(i) &amp;"""&gt;" &amp; _
+           arrDisplay(i) &amp; vbCrlf
+    End If
+  Next
+  Response.Write "&lt;/SELECT&gt;"
+End Sub
+&lt;/script&gt;
+</pre>
+
+<p>
+Damit bekommt man eine DropDown Box, die einen bestimmten Wert bereits ausgew&auml;hlt hat - damit
+beim zweiten Aufruf des Formulars die vorhergehende Selektion auch wieder korrekt dargestellt
+wird. Das k&ouml;nnen Sie gleich testen, denn wir brauchen sowieso Testwerte im Cookie.
+</p>
+
+<h2>Das dynamische Stylesheet</h2>
+<p>
+Was uns noch fehlt, ist die Implementierung des dynamischen Stylesheets <b>personalizedCSS.asp</b>.
+Da ich mich ungerne darauf verlasse, da&szlig; alle Werte initialisiert sind, habe ich noch Standardwertabfragen
+in diese Datei eingebaut - und sei es nur um Benutzern, die Cookies deaktiviert haben, auch ein brauchbares
+Stylesheet zu pr&auml;sentieren.
+</p>
+
+<pre style="background='silver';">
+&lt;%
+strH1Color = Request.Cookies("CSSCookie")("H1Color")
+If ("" = strH1Color) Then strH1Color = "black"
+strH1Font = Request.Cookies("CSSCookie")("H1Font")
+If ("" = strH1Font) Then strH1Color = "Arial"
+%&gt;
+
+H1
+{
+color:'&lt;%=strH1Color%&gt;';
+font-family:'&lt;%=strH1Font%&gt;';
+font-weight:bold;
+}
+</pre>
+
+<p>
+Wenn man jetzt die Datei <b>ShowPersonalizedCSS.asp</b> aufruft, bekommt man je nach vorher
+eingestellten Werten sein eigenes pers&ouml;nliches CSS pr&auml;sentiert.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die heute pr&auml;sentierte L&ouml;sung kann verbessert werden - erstens sollten die Personalisierungen in
+die Datenbank gespeichert werden, und der Cookie nur noch die Erkennungs-ID enthalten. Zweitens sollte man sich ein
+gutes Caching f&uuml;r das CSS ausdenken - es ist keine gute Idee, bei jedem Seitenaufruf das CSS
+generieren zu m&uuml;ssen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010306.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010306.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000522.htm">&Uuml;berpr&uuml;fen von HTML-Formularen mit ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000522.htm</span><br>
+<a href="../artikel/20001003.htm">Einf&uuml;hrung in Stringoperationen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001003.htm</span><br>
+<a href="../artikel/20000907.htm">Einfacher Test, ob der Browser Cookies annimmt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000907.htm</span><br>
+<a href="../artikel/20010205.htm">GET oder POST, das ist hier die Frage</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010205.htm</span><br>
+<a href="../artikel/20010509.htm">Neue Inhalte einer Web Site f&uuml;r den Benutzer hervorheben</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010509.htm</span><br>
+<a href="../artikel/20000412.htm">Pr&uuml;fen ob ein Browser Cookies annimmt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000412.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

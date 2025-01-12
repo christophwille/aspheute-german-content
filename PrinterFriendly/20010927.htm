@@ -1,0 +1,307 @@
+<HTML>
+<HEAD>
+<TITLE>Schlu&szlig; mit lustig Teil 2 - das URLScan Tool</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Um Administratoren die Arbeit zu erleichtern hat Microsoft ein weiteres Sicherheitstool bereitgestellt - das URLScan Tool. Dieser Artikel zeigt Ihnen wie man das Tool je nach Firmen-Webseitencontent anpa&szlig;t.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,URLScan,Nimda,Virus,HTTP,Request,Deny,Sicherheit,Tool,HFCheck,Lockdown,Security,Konfiguration,Logfiles,logging">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Schlu&szlig; mit lustig Teil 2 - das URLScan Tool</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010927"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Von Tag zu Tag werden Viren immer agressiver, hartn&auml;ckiger und schwerer zu bek&auml;mpfen bzw. abzuwehren. Dies hat sich
+wieder einmal mit dem Auftauchen des aktuellen Nimda Virus gezeigt. Um Administratoren die Arbeit zu erleichtern und
+Firmen vor gro&szlig;em Schaden zu bewahren hat Microsoft ein weiteres Sicherheitstool bereitgestellt - das URLScan Tool.
+Dieses analysiert die Requests auf den IIS Web Server und je nach Konfiguration werden die Requests akzeptiert oder
+oder verweigert. Dieser Artikel zeigt Ihnen wie man das Tool je nach Firmen-Webseitencontent anpa&szlig;t und wie es 
+auf potentielle Attacken reagiert.
+</p>
+
+<p>
+Viren- oder Wurmattacken sind immer eine Gefahr f&uuml;r einen Web Server. Die letzten Ereignisse in denen der 
+Nimda Virus wieder einmal gro&szlig;en Schaden anrichten konnte, zeigen da&szlig; eine
+sicherheitsbewu&szlig;te Administration eines Web Servers unabdingbar ist. Die Vielseitigkeit der m&ouml;glichen Attacken
+sollten nicht nur aus dem Artikel <a href="../artikel/20010926.htm">Schlu&szlig; mit lustig - das IIS Lockdown Tool</a>
+bekannt sein. Und die Angreifer, die Viren als ihre "Waffe" verwenden werden leider immer einfallsreicher. Somit ist
+eine Absicherung eines Web Servers unbedingt notwendig um Ausf&auml;lle und ein hohes Schadensausma&szlig; zu vermeiden.
+</p>
+
+<p>
+Microsoft hat neben dem IIS Lockdown Tool, welches ich Ihnen im Artikel 
+<a href="../artikel/20010926.htm">Schlu&szlig; mit lustig - das IIS Lockdown Tool</a> vorgestellt habe, ein weiteres
+ver&ouml;ffentlicht - das URLScan Tool. Dieses scannt den einkommenden HTTP Request auf den IIS Web Server und je nach
+erstellter Konfiguration wird der Request akzeptiert oder f&uuml;r den Fall, da&szlig; es sich um einen verd&auml;chtigen
+oder gar um eine Attacke handelt verweigert. 
+</p>
+
+<h2>Wie sch&uuml;tzt das URLScan Tool?</h2>
+
+<p>
+Das URLScan Tool ist ein ISAPI Filter, der auf einem Web Server - registriert und ensprechend konfiguriert - 
+die eingehenden HTTP Requests analysiert. Die Analyse besteht aus einer
+Filterung bzw. Parsing des URLs. Dabei wird jeder URL auf folgendes gepr&uuml;ft:
+</p>
+
+<ul>
+<li>ob ASCII Zeichen vorhanden sind</li>
+<li>welche Headerinformationen vorliegen</li>
+<li>auf welche Dateierweiterung zugegriffen wird</li>
+<li>die Art des HTTP Requests (ersichtlich aus dem angegebenen Verb)</li>
+<li>welche URL Codierung vorliegt</li>
+<li>ob verd&auml;chtige Zeichenketten vorhanden sind</li>
+</ul>
+
+<p>
+Alle diese Listenpunkte lassen sich je nach Auflagen dementsprechend konfigurieren. Beginnen wir vorerst mit der 
+Installation.
+</p>
+
+<p>
+Nach dem Download des <a href="http://www.microsoft.com/Downloads/Release.asp?ReleaseID=32571" target="_blank">URLScan Tools</a>
+f&uuml;hren Sie die exe-Datei aus dem Verzeichnis aus, in dem Sie die Datei speichern haben lassen. Nach ein paar Klicks
+(EULA Akzeptierung, etc.) werden die Dateien in ein Standardverzeichnis kopiert - 
+<i>C:\WINNT\system32\inetsrv\urlscan</i>. Diesen Pfad sollten Sie sich merken, da das Tool nur einen Eintrag
+bei den installierten Programmen erstellt. In den meisten F&auml;llen wird diese Installationsprozedur erfolgreich sein.
+Falls nicht, k&ouml;nnen Sie das URLScan Tool auch manuell installieren.
+</p>
+
+<p>
+Hierf&uuml;r kopieren Sie die extrahierten Dateien 
+</p>
+
+<ul>
+<li><b>urlscan.dll</b> - DLL Datei, das URLScan Tool (ISAPI Filter)</li>
+<li><b>urlscan.inf</b> - Installationsinformationen</li>
+<li><b>urlscan.ini</b> - Konfigurationsdatei des URLScan Tools</li>
+<li><b>urlscan.txt</b> - Infos, Disclaimer, etc.</li>
+<li><b>urlscanr.dll</b> - DLL Datei</li>
+</ul>
+
+<p>
+in das <i>C:\WINNT\system32\inetsrv\urlscan</i> oder ein beliebiges Verzeichnis. Da es sich bei dem Tool um einen 
+ISAPI (Internet Server Application Programming Interface) Filter handelt, ist dieser im ISM (Internet Services Manager) 
+zu registrieren. &Ouml;ffnen Sie also den ISM und klicken Sie mit der rechten Maustaste auf einen gesamten <i>Server</i>, nicht
+auf die einzelnen <i>Web Sites</i>. Damit steht der ISAPI Filter f&uuml;r <i>alle</i> Sites zur Verf&uuml;gung. F&uuml;r den Fall,
+da&szlig; Sie im ISM mehrere Web Server registriert haben, m&uuml;ssen Sie die Registrierung f&uuml;r den Filter f&uuml;r jeden separat
+durchf&uuml;hren. Im Kontextmen&uuml; w&auml;hlen Sie den Eintrag Properties (Eigenschaften) aus und klicken in der Sektion
+<i>Master Properties</i> des WWW Services auf <i>Edit</i>. Im Tab <i>ISAPI Filters</i> klicken Sie auf <i>Add</i>.
+</p>
+
+<p>
+Im Add-Dialog geben Sie dann im Feld f&uuml;r den Filternamen <i>UrlScan</i> ein und mit <i>Browse</i> verweisen Sie
+auf den physikalischen Speicherort der <b>urlscan.dll</b> Datei:
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010927_1.png" width="461" height="585" alt="" border="0">
+
+<p>
+Alles mit <i>OK</i> best&auml;tigen, den IIS neu starten, damit der Filter aktiv wird und wir sind ready for rock n' roll.
+Nun kann es mit der Konfiguration losgehen. Die standardm&auml;&szlig;ige Konfiguration mag vielleicht f&uuml;r die meisten
+Web Server ausreichend sein, wir wollen aber selber &uuml;berpr&uuml;fen, ob die Einstellungen auch f&uuml;r unseren Web Server 
+zutreffen. Dazu sehen wir uns die <b>urlscan.ini</b> Datei etwas genauer an. Diese ist fein s&auml;uberlich in einzelne
+Untergruppen (gekennzeichnet durch eckige Klammern) unterteilt. Sehen wir uns zun&auml;chst die [options] Sektion an:
+</p>
+
+<pre style="background='silver';">
+[options]
+UseAllowVerbs=1                ; if 1, use [AllowVerbs] section, else use [DenyVerbs] section
+UseAllowExtensions=0           ; if 1, use [AllowExtensions] section, else use [DenyExtensions] section
+NormalizeUrlBeforeScan=1       ; if 1, canonicalize URL before processing
+VerifyNormalization=1          ; if 1, canonicalize URL twice and reject request if a change occurs
+AllowHighBitCharacters=1       ; if 1, allow high bit (ie. UTF8 or MBCS) characters in URL
+AllowDotInPath=0               ; if 1, allow dots that are not file extensions
+RemoveServerHeader=0           ; if 1, remove "Server" header from response
+EnableLogging=1                ; if 1, log UrlScan activity
+PerProcessLogging=0            ; if 1, the UrlScan.log filename will contain a PID (ie. UrlScan.123.log)
+AllowLateScanning=0  		   ; if 1, then UrlScan will load as a low priority filter.
+</pre>
+
+<p>
+Diese <i>Options</i> Sektion beinhaltet die Flags f&uuml;r die in der Datei nachfolgenden Sektionen. Je nach dem wie
+das Flag gesetzt wird (0 bzw. 1), werden die enthaltenen Eintr&auml;ge behandelt oder nicht. Praktischerweise stehen 
+die jeweiligen Erkl&auml;rungen f&uuml;r die Eintr&auml;ge daneben - ben&ouml;tigen also keine weitere Erkl&auml;rungen.
+</p>
+
+<p>
+Um Eintr&auml;ge in diesen nachfolgenden Untergruppen zu ver&auml;ndern, l&ouml;schen Sie Eintr&auml;ge oder f&uuml;gen neue (ohne vorgehenden
+Strichpunkt, da sonst Auskommentierung) hinzu. Sehen wir uns dies einmal anhand eines Beispiels an. Wenn Sie auf Ihrem
+Web Server z.B. die Ausf&uuml;hrung von ASP.NET (aspx) Dateien verbieten wollen, dann tragen Sie in der Sektion
+<i>[DenyExtensions]</i> die Endung <i>.aspx</i> ein:
+</p>
+
+<pre style="background='silver';">
+[DenyExtensions]
+.aspx ; Neuer Eintrag
+
+; Executables that run on the server
+.exe
+.bat
+.cmd
+.com
+...
+</pre>
+
+<p>
+Damit diese Einstellung auch &uuml;bernommen wird, m&uuml;ssen Sie nach dem Speichern der <b>urlscan.ini</b> Datei den
+Web Server neu starten, da aus Performancegr&uuml;nden die ini-Datei nur w&auml;hrend des Initialisierungsvorganges 
+eingelesen wird. Wenn jetzt ein User auf eine ASP.NET Datei zugreifen m&ouml;chte, erh&auml;lt er die simple
+Meldung:
+</p>
+
+<pre style="background='silver';">
+The system cannot find the file specified. 
+</pre>
+
+<p>
+Zwecks der &Uuml;berwachung des Web Servers kann optional die Aktivit&auml;t des <i>UrlScan Tools</i> mitgelogt werden.
+Hierf&uuml;r mu&szlig; aber in der <i>[options]</i> Sektion das Flag f&uuml;r <i>EnableLogging</i> auf "1" gesetzt sein.
+</p>
+
+<p>
+Da wir nun mit einem Request versucht haben eine ASP.NET Datei auszuf&uuml;hren, dies aber verweigert wurde, sehen wir uns
+einmal das Logfile (<b>urlscan.log</b>) an. Dieses enth&auml;lt neben einer umfangreichen Beschreibung aller eingehenden
+HTTP Requests auch die aktuellen Einstellungen aus der <b>urlscan.ini</b> Datei. Diese Informationen werden f&uuml;r jeden
+Initialisierungsvorgang des UrlScan Tools (IIS (Re)Start) eingetragen. Sehen wir uns also so ein Beispiellog f&uuml;r
+unseren verweigerten Request an:
+</p>
+
+<pre style="background='silver';">
+[Wed, Sep 26 2001 - 19:08:02] ---------- UrlScan.dll Initializing ----------
+[Wed, Sep 26 2001 - 19:08:02] URLs will be normalized before analysis.
+[Wed, Sep 26 2001 - 19:08:02] URL normalization will be verified.
+[Wed, Sep 26 2001 - 19:08:02] URLs may contain OEM, international and UTF-8 characters.
+[Wed, Sep 26 2001 - 19:08:02] URLs must not contain any dot except for the file extension.
+[Wed, Sep 26 2001 - 19:08:02] Only the following verbs will be allowed (case sensitive):
+[Wed, Sep 26 2001 - 19:08:02] 	'GET'
+[Wed, Sep 26 2001 - 19:08:02] 	'HEAD'
+[Wed, Sep 26 2001 - 19:08:02] 	'POST'
+[Wed, Sep 26 2001 - 19:08:02] Requests for following extensions will be rejected:
+[Wed, Sep 26 2001 - 19:08:02] 	'.exe'
+[Wed, Sep 26 2001 - 19:08:02] 	'.bat'
+[Wed, Sep 26 2001 - 19:08:02] 	'.cmd'
+[Wed, Sep 26 2001 - 19:08:02] 	'.com'
+[Wed, Sep 26 2001 - 19:08:02] 	'.htw'
+[Wed, Sep 26 2001 - 19:08:02] 	'.ida'
+[Wed, Sep 26 2001 - 19:08:02] 	'.idq'
+[Wed, Sep 26 2001 - 19:08:02] 	'.htr'
+[Wed, Sep 26 2001 - 19:08:02] 	'.idc'
+[Wed, Sep 26 2001 - 19:08:02] 	'.shtm'
+[Wed, Sep 26 2001 - 19:08:02] 	'.shtml'
+[Wed, Sep 26 2001 - 19:08:02] 	'.stm'
+[Wed, Sep 26 2001 - 19:08:02] 	'.printer'
+[Wed, Sep 26 2001 - 19:08:02] 	'.ini'
+[Wed, Sep 26 2001 - 19:08:02] 	'.log'
+[Wed, Sep 26 2001 - 19:08:02] 	'.pol'
+[Wed, Sep 26 2001 - 19:08:02] 	'.dat'
+[Wed, Sep 26 2001 - 19:08:02] Requests containing the following headers will be rejected:
+[Wed, Sep 26 2001 - 19:08:02] 	'translate:'
+[Wed, Sep 26 2001 - 19:08:02] 	'if:'
+[Wed, Sep 26 2001 - 19:08:02] 	'lock-token:'
+[Wed, Sep 26 2001 - 19:08:02] Requests containing the following character sequences will be rejected:
+[Wed, Sep 26 2001 - 19:08:02] 	'..'
+[Wed, Sep 26 2001 - 19:08:02] 	'./'
+[Wed, Sep 26 2001 - 19:08:02] 	'\'
+[Wed, Sep 26 2001 - 19:08:02] 	':'
+[Wed, Sep 26 2001 - 19:08:02] 	'%'
+[Wed, Sep 26 2001 - 19:08:02] 	'&amp;'
+<b>[Wed, Sep 26 2001 - 19:14:31] Client at 127.0.0.1: URL contains extension '.aspx', which is 
+disallowed. Request will be rejected.  Raw URL='/aspx/file.aspx'</b>
+</pre>
+
+<p>
+Somit w&auml;re eine eventuelle Gefahr abgewandt. Dies war nur ein sehr einfaches Beispiel - nat&uuml;rlich kann der ISAPI Filter
+auch mit richtig gef&auml;hrlichen URLs umgehen. Solche Eintr&auml;ge sehen dann so aus:
+</p>
+
+<pre style="background='silver';">
+[Wed, Sep 26 2001 - 19:15:01] Client at 127.0.0.1: URL normalization was
+not complete after one pass. Request will be rejected.  Raw
+URL='/_mem_bin/..%255c../..%255c../..%255c../winnt/system32/cmd.exe'
+[Wed, Sep 26 2001 - 19:15:18] Client at 127.0.0.1: URL normalization was
+not complete after one pass. Request will be rejected.  Raw
+URL='/msadc/..%255c../..%255c../..%255c/..%c1%1c../..%c1%1c../..%c1%1c../winnt/system32/cmd.exe'
+</pre>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Wie Sie aus diesem Artikel unschwer erkennen k&ouml;nnen ist das URLScan Tool sehr n&uuml;tzlich und l&auml;&szlig;t auch die
+sinnlosesten URLs au&szlig;envorne. Da Sie das Tool auch leicht konfigurieren k&ouml;nnen, kann es leicht an die 
+Firmenvorgaben angepa&szlig;t werden. Manche Einstellungen bed&uuml;rfen jedoch eines eingehenden Verst&auml;ndnisses und sollten
+nur von erfahrenen Administratoren ge&auml;ndert werden. Da&szlig; sich dieses Tool sp&auml;testens jetzt auf Ihrem Web Server
+befinden sollte (es ist kostenlos downloadbar und sicher) brauche ich wohl nicht zu erw&auml;hnen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020412.htm">Der Microsoft Baseline Security Analyzer (MBSA) 1.0</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020412.htm</span><br>
+<a href="../artikel/20011207.htm">On Demand Zugriffsrechte f&uuml;r Web Sites vergeben</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011207.htm</span><br>
+<a href="../artikel/20010926.htm">Schlu&szlig; mit lustig - das IIS Lockdown Tool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010926.htm</span><br>
+<a href="../artikel/20010928.htm">Schlu&szlig; mit lustig Teil 3 - das Hfnetchk Tool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010928.htm</span><br>
+<a href="../artikel/20011119.htm">Schritt-f&uuml;r-Schritt Debuggen von Sicherheitsproblemen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011119.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2FDownloads%2FRelease%2Easp%3FReleaseID%3D32571">URLScan Download</a><br>
+<SPAN class="content">http://www.microsoft.com/Downloads/Release.asp?ReleaseID=32571</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

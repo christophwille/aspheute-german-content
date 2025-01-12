@@ -1,0 +1,342 @@
+<HTML>
+<HEAD>
+<TITLE>Die Hashtable Klasse</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor, wie man die Hashtable Klasse in ASP.NET einsetzt. Die Hashtable Klasse funktioniert wie die Dictionary Komponente in ASP.NET, allerdings ist sie deutlich leistungsf&auml;higer.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Hashtable,ICollection,Collection,Dictionary,Hash,Provider,.NET,C#,ASP.NET,System.Collections">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Die Hashtable Klasse</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000823"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Neben Arrays f&uuml;r Elementzugriff via Index konnte man in VBScript mit Hilfe der Dictionary 
+Komponente den Elementzugriff mittels Schl&uuml;ssels (Key) bewerkstelligen. Obwohl die Komponente
+ihren Zweck erf&uuml;llte, hatte sie einen gro&szlig;en Nachteil - sie war nicht f&uuml;r den Serverbetrieb
+entwickelt worden, und konnte schnell mal einen ASP Server in die Knie zwingen.
+</p>
+<p>
+Mit ASP.NET und dem .NET Framework kommen etliche neue Collection Klassen (diese sind
+freundlicherweise im <i>System.Collections</i> Namespace beheimatet). Unter anderem mit dabei ist
+die <i>Hashtable</i> Klasse, die einige neue (hilfreiche) Funktionen mitbringt, die ich Ihnen
+heute anhand von Beispielen n&auml;herbringen m&ouml;chte.
+</p>
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation des 
+Microsoft .NET Framework SDK's auf einem Webserver. Weiters setze ich voraus, da&szlig; der Leser die 
+Programmiersprache C# zu einem gewissen Grad beherrscht - es finden sich etliche Artikel auf diesem 
+Server, um das notwendige Wissen zu erlernen. 
+</p>
+
+<h2>Bef&uuml;llen und Auslesen</h2>
+<p>
+Starten wir mit den einfachen Dingen des Lebens - dem Bef&uuml;llen eines Hashtables sowie dem
+darauffolgenden Auslesen und Ausgeben der Schl&uuml;ssel/Wert Paare. Der folgende Sourcecode ist
+als Datei <b>dumptable.aspx</b> im Download des heutigen Artikels enthalten.
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Collections&quot; %&gt;
+&lt;%
+Hashtable table = new Hashtable();
+table.Add(&quot;aspgerman@ls.asplists.com&quot;,&quot;AspGerman&quot;);
+table.Add(&quot;aspdedotnet@ls.asplists.com&quot;,&quot;aspDEdotnet&quot;);
+table.Add(&quot;aspdedatabase@ls.asplists.com&quot;,&quot;aspDEdatabase&quot;);
+table.Add(&quot;aspdebeginners@ls.asplists.com&quot;,&quot;aspDEbeginners&quot;);
+
+Response.Write(&quot;&lt;table&gt;&lt;tr&gt;&lt;th&gt;Key&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;/tr&gt;&quot;);
+foreach (DictionaryEntry de in table)
+{
+	Response.Write(&quot;&lt;tr&gt;&lt;td&gt;&quot; + de.Key + 
+	   &quot;&lt;/td&gt;&lt;td&gt;&quot; + de.Value + 
+	   &quot;&lt;/td&gt;&lt;/tr&gt;&quot;);
+}
+Response.Write(&quot;&lt;/table&gt;&quot;);
+%&gt;
+</pre>
+
+<p>
+Zuerst importiere ich den <i>System.Collections</i> Namespace um die <i>Hashtable</i> Klasse verwenden zu k&ouml;nnen.
+In der ersten Zeile des tats&auml;chlichen Codes erzeuge ich eine Instanz der Klasse, und beginne danach
+den Hashtable mit Schl&uuml;ssel/Wert Paaren aufzuf&uuml;llen. Insgesamt speichere ich vier Eintr&auml;ge vom Typ
+<i>String</i>, allerdings nehmen alle Funktionen der Hashtable Klasse den Typ <i>object</i> entgegen - also man
+kann wirklich alles darin speichern.
+</p>
+<p>
+Das Auslesen funktioniert &uuml;ber das <i>ICollection</i> Interface der Hashtable Klasse. F&uuml;r jeden Eintrag
+bekomme ich eine <i>DictionaryEntry</i> Struktur geliefert, die zwei Eigenschaften f&uuml;r mich bereitstellt:
+<i>Key</i> und <i>Value</i>. Das reicht mir, um eine sch&ouml;ne Tabelle auszugeben.
+</p>
+<p>
+Es hei&szlig;t ja, da&szlig; viele Wege nach Rom f&uuml;hren. Stimmt. Also mu&szlig; es auch einen anderen Weg geben,
+um den Inhalt des Hashtables auszugeben. Dieser ist zwar etwas "steiniger", aber manchmal vielleicht
+sogar leistungsf&auml;higer (<b>dumptableviacoll.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Collections&quot; %&gt;
+&lt;%
+Hashtable table = new Hashtable();
+// bef&uuml;llen des hash tables - exkludiert
+
+ICollection iKeys = table.Keys;
+
+object[] arrValues = new object[table.Values.Count];
+table.Values.CopyTo(arrValues,0);
+
+int nElement = 0;
+Response.Write(&quot;&lt;table&gt;&lt;tr&gt;&lt;th&gt;Key&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;/tr&gt;&quot;);
+foreach(object theKey in iKeys)
+{
+	Response.Write(&quot;&lt;tr&gt;&lt;td&gt;&quot; + theKey + 
+	     &quot;&lt;/td&gt;&lt;td&gt;&quot; + arrValues[nElement++] + 
+		 &quot;&lt;/td&gt;&lt;/tr&gt;&quot;);
+}
+Response.Write(&quot;&lt;/table&gt;&quot;);
+%&gt;
+</pre>
+
+<p>
+Den Code f&uuml;r das Bef&uuml;llen habe ich in diesem Listing ausgelassen (ebenso in den folgenden, um 
+die &Uuml;bersichtlichkeit zu erh&ouml;hen). Das Hauptaugenmerk m&ouml;chte ich auf die Eigenschaften
+<i>Keys</i> und <i>Values</i> der Hashtable Klasse legen, welche mir beide ein ICollection Interface liefern,
+&uuml;ber das ich <i>object</i> Daten auslesen kann.
+</p>
+<p>
+Mit einer ICollection kann ich das foreach Statement ja locker verwenden, allerdings was ist, wenn
+ich 2 Collections gleichzeitig auslesen mu&szlig;? So einfach geht das dann nicht mehr.
+</p>
+<p>
+Es sind zwar beide Collections nicht sortiert, aber die zugeh&ouml;rigen Schl&uuml;ssel und Werte sind 
+immer an den gleichen Positionen. Und wenn ich eine Collection in ein Array umwandle, dann kann
+ich mir ja zum aktuellen Element der einen Collection das dazupassende aus dem Array der anderen
+holen. Und genau das macht mein Sourcecode (Kurzversion):
+</p>
+
+<pre style="background='silver';">
+ICollection iKeys = table.Keys;
+object[] arrValues = new object[table.Values.Count];
+table.Values.CopyTo(arrValues,0);
+
+int nElement = 0;
+foreach(object theKey in iKeys)
+{
+	Response.Write(theKey)
+	Response.Write(arrValues[nElement]);
+	nElement++;
+}
+</pre>
+
+<p>
+Die <i>CopyTo</i> Methode erwartet ein Array sowie den Index, ab dem aus der Collection kopiert werden
+soll. Ab dann ist es "nur" mehr ein etwas verwinkelter Code, aber mit dem Dictionary unter
+ASP mu&szlig;te man &auml;hnlich tricksen. Apropos: ich h&auml;tte auch beide Collections in Arrays umwandeln
+k&ouml;nnen, allerdings w&auml;re dann der Lerneffekt des Koppelns von Collection und Array ausgeblieben.
+</p>
+
+<h2>Suchen im Hashtable</h2>
+<p>
+Das simple Auslesen (aka Dumpen) habe ich jetzt gen&uuml;gend breitgetreten soda&szlig; wir uns nun
+dem Suchen von Werten in einem Hashtable widmen k&ouml;nnen. Das Besondere an Dictionaries bzw
+der Hashtable Klasse ist ja der, da&szlig; die Schl&uuml;ssel durch einen Hash repr&auml;sentiert werden, der
+extrem schnell auffindbar ist. Und genau das machen sich die nun vorgestellten Methoden
+zu Nutze (<b>lookups.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Collections&quot; %&gt;
+&lt;%
+Hashtable table = new Hashtable();
+// bef&uuml;llen des hash tables - exkludiert
+
+// Anzahl der Element in der Collection
+int nElementCount = table.Count;
+
+// existiert der Schl&uuml;ssel?
+bool bKeyCont = table.ContainsKey(&quot;aspgerman@ls.asplists.com&quot;);
+
+// existiert der Wert?
+bool bValueCont = table.ContainsValue(&quot;aspDEdotnet&quot;);
+
+// Element korrekt suchen
+if (true == bKeyCont)
+{
+  Response.Write(table[&quot;aspgerman@ls.asplists.com&quot;].ToString());
+}
+%&gt;
+</pre>
+
+<p>
+Zu Demonstrationszwecken lese ich in diesem Beispiel auch die Anzahl der Elemente aus - 
+mit Hilfe der <i>Count</i> Eigenschaft. Dann geht es aber schon zum Business: die Funktion
+<i>ContainsKey</i> liefert einen boolschen R&uuml;ckgabewert, der angibt, ob ein bestimmter Schl&uuml;ssel
+existiert. Diese Funktion sollte man unbedingt immer dann aufrufen, wenn man ein Element
+auslesen, l&ouml;schen oder updaten m&ouml;chte. Sonst droht eine Exception, falls das Element nicht
+da sein sollte (und sei es nur, weil man ein <i>null</i> Objekt dereferenziert).
+</p>
+<p>
+Eine Funktion, die hin und wieder auch ganz n&uuml;tzlich sein wird, ist <i>ContainsValue</i>. Damit kann
+man nach einem Wert suchen lassen, und anhand des R&uuml;ckgabewerts entscheiden, ob man ein Element
+schon im Hashtable hat oder nicht.
+</p>
+<p>
+Der interessante Part ist aber das Auslesen des Werts:
+<pre style="background='silver';">
+object var = table[key];
+</pre>
+</p>
+<p>
+Man geht einfach mit dem Schl&uuml;sselwert in den <i>Item</i> Indexer der Hashtable Klasse und bekommt den
+Wert oder eine Exception. Mit diesem Indexer kann man sowohl Werte auslesen als auch updaten -
+und damit kommen wir auch schon zur n&auml;chsten Sektion.
+</p>
+
+<h2>Updaten und L&ouml;schen</h2>
+<p>
+&Uuml;blicherweise bef&uuml;llt man eine Collection nicht nur, sondern man m&ouml;chte auch Werte &auml;ndern und
+sogar l&ouml;schen k&ouml;nnen. Das kann die Hashtable Klasse nat&uuml;rlich auch - wie im folgenden 
+Beispiel gezeigt (<b>various.aspx</b>).
+</p>
+<p>
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Collections&quot; %&gt;
+&lt;%
+Hashtable table = new Hashtable();
+// bef&uuml;llen des hash tables - exkludiert
+
+// existiert der Schl&uuml;ssel?
+bool bKeyCont = table.ContainsKey(&quot;aspgerman@ls.asplists.com&quot;);
+
+// Element korrekt updaten
+if (true == bKeyCont)
+{
+  table[&quot;aspgerman@ls.asplists.com&quot;] = &quot;Hot Topics&quot;;
+}
+
+// Element l&ouml;schen; existiert es nicht --&gt; Exception
+table.Remove(&quot;aspgerman@ls.asplists.com&quot;);
+
+// und jetzt l&ouml;schen wir alles
+table.Clear();
+%&gt;
+</pre>
+</p>
+<p>
+Die Methode <i>ContainsKey</i> ist bereits ein alter Bekannter, ebenso wie der Indexer - nur da&szlig; ich
+ihn hier zum &Auml;ndern des Wertes verwende. Ebenso einfach ist die Verwendung der <i>Remove</i> Methode,
+die ein einzelnes Element anhand des Schl&uuml;ssels aus dem Hashtable entfernt. Last but not least 
+bleibt mir die <i>Clear</i> Methode zu erkl&auml;ren: diese l&ouml;scht s&auml;mtliche Elemente aus dem Hashtable.
+</p>
+
+<h2>Ein Blick auf die Konstruktoren</h2>
+<p>
+Eigentlich sollte man Konstruktoren am Anfang erkl&auml;ren, da sie ja als erstes aufgerufen werden,
+wenn man eine Instanz einer Klasse erstellt. Im Falle der Hashtable Komponente sind diese aber
+etwas komplexer, und man wird au&szlig;er dem Standardkonstruktor die anderen im normalen Alltagsgebrauch
+nicht einsetzen - deshalb die Erkl&auml;rung sozusagen als Anhang.
+</p>
+<p>
+Die Hashtable Komponente hat im Moment elf verschiedene Konstruktoren. Die wichtigsten Merkmale
+dieser sind wie folgt:
+<ul>
+	<li>Man kann die anf&auml;ngliche Kapazit&auml;t definieren (um den Speicher besser zu nutzen)
+	<li>Der Load Factor kann definiert werden (balanciert Suchgeschwindigkeit und Speicherkonsumation)
+	<li>Der Hash Code Provider kann gew&auml;hlt werden (die Art und Weise, wie der Hash des Schl&uuml;ssels gerechnet wird)
+	<li>Der Vergleichsprovider kann gew&auml;hlt werden (f&uuml;r Zugriffe auf Elemente)
+	<li>Daten aus Dictionaries k&ouml;nnen &uuml;bernommen werden (aus Datenbankzugriffen, zB)
+</ul>
+</p>
+<p>
+Wie gesagt, diese Konstruktoren sind bei zu erwartender gr&ouml;&szlig;erer Auslastung des Hashtables
+auf alle F&auml;lle einen Blick wert.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Der heutige Artikel hat sich mit den Grundlagen einer der wichtigsten Collections unter dem
+.NET Framework gewidmet: der Hashtable Klasse. Diese wird immer dann zum Einsatz kommen,
+wenn man auf Elemente per Schl&uuml;ssel und nicht per Index zugreifen mu&szlig; - und das m&ouml;glichst
+schnell.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000823.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000823.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020124.htm">Arrays mit Index und Schl&uuml;ssel</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020124.htm</span><br>
+<a href="../artikel/20000926.htm">Collections einmal anders: Stacks und Queues</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000926.htm</span><br>
+<a href="../artikel/20000720.htm">Das foreach Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000720.htm</span><br>
+<a href="../artikel/20000726.htm">Datentypen in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000726.htm</span><br>
+<a href="../artikel/20020401.htm">Debugging in der Tiefe</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020401.htm</span><br>
+<a href="../artikel/20000724.htm">Exception Handling in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000724.htm</span><br>
+<a href="../artikel/20020906.htm">On-the-fly Erstellung von vCard's</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020906.htm</span><br>
+<a href="../artikel/20000731.htm">Verwendung von Arrays in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000731.htm</span><br>
+<a href="../artikel/20000825.htm">WHOIS Abfragen a la .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000825.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

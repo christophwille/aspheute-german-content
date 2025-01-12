@@ -1,0 +1,1044 @@
+<HTML>
+<HEAD>
+<TITLE>Highspeed-Abfragen einer SQL Server Datenbank</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel handelt &uuml;ber High-Speed Abfragen aus einer SQL Server 7.0 Datenbank">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Stored Procedures,Prepared Statements,ADO,ASP,SQL,Optimierung,Datenbank,Output Parameters">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Highspeed-Abfragen einer SQL Server Datenbank</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001013"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Heute geht es ans Eingemachte: High-Speed Abfragen aus einer SQL Server 7.0 Datenbank steht am Programm.
+Das ist nichts f&uuml;r Leute, die kleine ASP Sites erstellen, sonderen mehr etwas f&uuml;r den
+Hardcore-Datenbankfreak. Aber auch f&uuml;r ASP-Programmierer, die in Performance-Tuning von 
+Datenbankabfragen Einblick gewinnen m&ouml;chten, 
+oder Leute deren t&auml;gliches Brot das Erstellen von ASP-Websites 
+mit Datenbankunterst&uuml;tzung f&uuml;r tausende Zugriffen pro Tag ist, 
+werden in diesem Artikel einige interessante Anregungen finden.
+</p>
+<p>
+Ganz nebenbei m&ouml;chte ich eine kurze Einf&uuml;hrung in die wirklich spezielle
+Stored Procedure des SQL Server Namens <i>sp_executesql</i> geben, die 
+das extrem schnelle Ausf&uuml;hren von parametrisierten Abfragen erlaubt,
+ohne f&uuml;r jede Abfrage eine neue Stored Procedure erstellen zu m&uuml;ssen.
+Das Verwenden dieser Stored Procedure ist noch wesentlich schneller als das Verwenden
+sogenannter "Prepared Statements" in ADO alleine. Daneben m&ouml;chte ich
+betonen, da&szlig; in diesem Artikel die wahrscheinlich weltweit erste Verwendung der 
+<i>sp_executesql</i> Stored Procedure beschrieben ist, die parametrisierte 
+SQL Statements mit R&uuml;ckgabewerten (Output Parameters) verbindet!
+</p>
+<p>
+Das einzig effektive Mittel um zu erkennen, ob eine bestimmte Art der Datenbankabfrage
+schneller ist als eine andere, ist die Stoppuhr. 
+Datenbankabfragen unter ASP und SQL Server 7.0 ben&ouml;tigen jedoch nur wenige Millisekunden,
+daher ist unter ASP der Einsatz einer Komponente zur Zeitmessung angebracht.
+Ich habe f&uuml;r alle Messungen dieses Artikels wieder die 
+<a href="http://www.alphasierrapapa.com/IisDev/Components/Profiler/">ASP Profiling Component</a>
+meines gesch&auml;tzten Kollegen 
+<a href="http://www.aspheute.com/autoren/christophwille.htm">Christoph Wille</a> benutzt
+um die Ausf&uuml;hrungsgeschwindigkeit der einzelnen Skripts und Abfragen zu ermitteln.
+Au&szlig;erdem war das unbestechliche "Ticken" dieser elektronischen Stoppuhr eine wertvolle 
+Hilfe beim Tuning einzelner Abfrageteile.
+</p>
+<p>
+Alle gemessenen Abfragen in diesem Artikel sind hochoptimiert. 
+So verschieden auch die Ans&auml;tze der Abfragen sein m&ouml;gen, jede einzelne Abfrage
+wurde so programmiert, da&szlig; sie so schnell als m&ouml;glich ausgef&uuml;hrt wird.
+Stets wurden die schnellsten Recordset Cursortypes oder die schnellsten Abfragen 
+von Feld- und Parameterwerten benutzt.
+</p>
+<p>
+Alle Messungen erfolgten auf einem Webserver der folgenden Konfiguration:
+</p>
+<p>
+<ul>
+<li>Prozessor: AMD Athlon 750 Mhz</li>
+<li>Motherboard: Asus K7M/A</li>
+<li>Ram: 256 MB (Cycle 322, 7ns)</li>
+<li>RAID 0 (Promise Fasttrak 66 mit 2x IBM 20.5 GB 7200 U/min)</li>
+<li>Microsoft Windows 2000 Server</li>
+<li>Microsoft SQL Server 7.0</li>
+<li>Microsoft Internet Explorer 5.5</li>
+</ul>
+</p>
+<p>
+Genug der vielen Worte, zuerst eine kleine Einf&uuml;hrung in Performance Tuning f&uuml;r ADO.
+</p>
+<h2>Recordset und Connection Performance Tuning</h2>
+<p>
+Um die Geschwindigkeit einer Datenbankabfrage in einem ASP Skripts zu erh&ouml;hen, 
+gilt es das verwendete Recordset optimal zu konfigurieren und einzusetzen.
+</p>
+<h3><i>Server.CreateObject</i> statt <i>CreateObject</i></h3>
+<p>
+F&uuml;hren wir doch einmal eine Datenbankabfrage in ASP aus,
+die Daten aus der Orders Tabelle der SQL Server 7.0 Northwind Datenbank liest.
+</p>
+<p>
+Hier die einfache Version, bei der ein Recordset ge&ouml;ffnet und die Werte
+gelesen werden (Datei <i>20001013_RecordsetEinfach.asp</i> im Download):
+</p>
+<p>
+<pre style="background='silver';">
+&lt;%
+   strServer = "Thunder"
+   strDatabase = "Northwind"
+   strUserName = "sa"
+   strPassword = ""
+   
+   strConnection = "Provider=SQLOLEDB;Data Source=" &amp; strServer &amp; _
+   ";" &amp; "Initial Catalog=" &amp; strDatabase &amp; ";User ID=" &amp; _
+   strUserName &amp; ";" &amp; "Password=" &amp; strPassword &amp; ";"
+
+   ' Definiere SQL Statement:
+   strSQL = "SELECT CustomerID, EmployeeID, OrderDate, " &amp; _
+            "ShipName, ShipCountry FROM Orders " &amp; _ 
+          "WHERE OrderID=10555"
+
+   Set rs = CreateObject("ADODB.Recordset")
+   rs.open strSQL, strConnection
+   Response.Write("CustomerID: "  &amp; rs("CustomerID") &amp; "&lt;BR>")
+   Response.Write("EmployeeID: "  &amp; rs("EmployeeID") &amp; "&lt;BR>")
+   Response.Write("OrderDate: "   &amp; rs("OrderDate") &amp; "&lt;BR>")
+   Response.Write("ShipName: "    &amp; rs("ShipName") &amp; "&lt;BR>")
+   Response.Write("ShipCountry: " &amp; rs("ShipCountry") &amp; "&lt;BR&gt;")
+   rs.close   
+   Set rs = Nothing
+%&gt;
+</pre>
+</p>
+<p>
+Dieses Listing ben&ouml;tigt auf meinem Server im Mittel etwa 2.6 ms zum Ausf&uuml;hren.
+</p>
+<p>
+Hier die optimierte Version (Datei <i>20001013_RecordsetOptimiert.asp</i>):
+</p>
+<p>
+<pre style="background='silver';">
+&lt;%
+   strServer = "Thunder"
+   strDatabase = "Northwind"
+   strUserName = "sa"
+   strPassword = ""
+   
+   strConnection = "Provider=SQLOLEDB;Data Source=" &amp; strServer &amp; _
+      ";" &amp; "Initial Catalog=" &amp; strDatabase &amp; ";User ID=" &amp; _
+      strUserName &amp; ";" &amp; "Password=" &amp; strPassword &amp; ";"
+
+   ' Definiere SQL Statement:
+   strSQL = "SELECT CustomerID, EmployeeID, OrderDate, " &amp; _
+      "ShipName, ShipCountry FROM Orders " &amp; _ 
+      "WHERE OrderID=10555"
+
+   Set rs = <font face="" color="Red">Server.CreateObject("ADODB.Recordset")</font>
+   rs.open strSQL, strConnection
+   Response.Write("CustomerID: "  &amp; <font face="" color="Red">rs(0)</font> &amp; "&lt;BR>")
+   Response.Write("EmployeeID: "  &amp; <font face="" color="Red">rs(1)</font> &amp; "&lt;BR>")
+   Response.Write("OrderDate: "   &amp; <font face="" color="Red">rs(2)</font> &amp; "&lt;BR>")
+   Response.Write("ShipName: "    &amp; <font face="" color="Red">rs(3)</font> &amp; "&lt;BR>")
+   Response.Write("ShipCountry: " &amp; <font face="" color="Red">rs(4)</font> &amp; "&lt;BR&gt;")
+   rs.close   
+   Set rs = Nothing
+%&gt;
+</pre>
+</p>
+<p>
+Der  gr&ouml;&szlig;te Gewinn ist dadurch zu verzeichnen, da&szlig; anstatt 
+<i>CreateObject("ADODB.Recordset")</i> nun <i>Server.CreateObject("ADODB.Recordset")</i> verwendet wird.
+Daneben ist die Abfrage von Feldwerten mittels Index wie in <i>rs(0)</i> schneller als mittels Feldnamen.
+Die Zeiten zum instanzieren und verwerfen (mittels <i><nobr>Set Object = Nothing</nobr></i>)
+des <i>Recordset</i> Objektes sind wie folgt:
+</p>
+<p>
+<table>
+<tr>
+  <td><i>Server.CreateObject("ADODB.Recordset")</i>:</td>
+  <td>0.363 ms</td>
+</tr>
+<tr>
+  <td><i>CreateObject("ADODB.Recordset")</i>:</td>
+  <td>0.693 ms</td>
+</tr>
+</table>
+</p>
+<p>
+Empfehlung zur Verwendung von <i>Server.CreateObject()</i> anstatt von <i>CreateObject()</i> 
+in ASP Seiten siehe auch Microsoft Webworkshop Artikel 
+"<a href="http://msdn.microsoft.com/workshop/server/asp/server122799.asp">ASP Guidelines</a>".
+</p>
+<p>
+Im vorhergehenden Beispielskript wird kein extra <i>Connection</i> Objekt zum Herstellen der 
+Datenbank-Verbindung instanziert. Genauer gesagt, das Skript instanziert kein Connection Object,
+intern erstellt ASP sehr wohl ein Connection Objekt beim Aufruf des Befehles
+<i>rs.open strSQL, strConnection</i>. Meinen Messungen zufolge ist das explizite
+Instanzieren und &ouml;ffnen einer Datenbankverbindung mittels <i>Connection</i>
+Objekt nur dann sinnvoll, wenn die Verbindung f&uuml;r mehr als ein Recordset ben&ouml;tigt wird.
+Das einfache Skript zum Auslesen eines Recordsets wird zum Beispiel durch das explizite 
+Instanzieren und &Ouml;ffnen einer <i>Connection</i> um etwa 10% langsamer (2.95 ms zu 2.72 ms).
+</p>
+<h3>Parameter des Recordset Objektes</h3>
+<p>
+Speziell beim Auslesen gro&szlig;er Datenmengen ist es wichtig, 
+da&szlig; die Recordsetparameter den Anforderungen gem&auml;&szlig; 
+gesetzt werden. 
+Will man zum Beispiel eine gro&szlig;e Anzahl von Datens&auml;tzen aus 
+einer SQL Server Datenbank nur lesen und direkt zum Browser schreiben,
+so empfehlen sich die folgenden Recordset Einstellungen:
+</p>
+<p>
+<pre style="background='silver';">
+ CursorLocation = adUseServer
+ CursorType     = adOpenForwardOnly 
+ LockType       = adLockReadOnly
+ CursorLocation = adUseServer
+ CacheSize      = Je nach Webserver und Datenbank-Verbindung
+</pre>
+</p>
+<p>
+Wenn man einige dutzende Datens&auml;tze aus einem Recordset ausliest, sollte
+die Performancesteigerung dadurch bei etwa 10% liegen.
+</p>
+<h3><i>adExecuteNoRecords</i> Parameter einsetzen</h3>
+<p>
+F&uuml;hrt man Datenbankoperationen aus, bei denen kein Recordset ben&ouml;tigt wird,
+so empfiehlt sich bei Verwendung der <i>Connection.Execute</i> Methode der Einsatz
+des Parameters <i>adExecuteNoRecords</i> (Wert 128). Einsatzm&ouml;glichkeiten sind
+das Ausf&uuml;hren eines <i>UPDATE</i> oder <i>INSERT</i> Statements, oder die Ausf&uuml;hrung
+der <i>Command.Execute</i> Methode bei einem <i>Command</i> Objekt
+das kein <i>Recordset</i> zur&uuml;ckgibt.
+</p>
+<p>
+<pre style="background='silver';">
+<i>connection</i>.Execute <i>strSQL</i>, , adExecuteNoRecords
+
+<i>command</i>.Execute <i>strSQL</i>, , adExecuteNoRecords
+</pre>
+</p>
+<p>
+Durch den Einsatz des <i>adExecuteNoRecords</i> Parameters werden Aktionen
+bis zu 30% schneller ausgef&uuml;hrt, das ADO kein tempor&auml;res 
+<i>Recordset</i> Objekt instanziert.
+</p>
+<p>
+Den <i>adExecuteNoRecords</i> Parameter kann man bei den folgenden Methoden benutzen:
+<i>Connection.Execute</i>, <i>Command.Execute</i>.
+</p>
+<p>
+Ein direktes Zuweisen des <i>adExecuteNoRecords</i> Parameters zur
+<i>CommandType</i> Eigenschaft des Command Objektes ist nicht m&ouml;glich 
+und wird von ADO mit einem Laufzeitfehler quittiert.
+</p>
+<p>
+Wenden wir uns jetzt den Bereichen zu, die den gr&ouml;&szlig;ten Einflu&szlig;
+auf die Geschwindigkeit und Performance einer Datenbankabfrage haben: 
+Die unterschiedlichen M&ouml;glichkeiten einer Abfrage.
+</p>
+<h2>Unterschiedliche Ans&auml;tze von Datenbankabfragen</h2>
+<p>
+Ich m&ouml;chte hier an Hand des folgenden Beispiels unterschiedliche Arten
+von Datenbankabfragen und die jeweilige Performance diskutieren:
+Es soll aus der SQL Server 7.0 Northwind Datenbank ein einzelner Datensatz
+aus der Orders Tabelle zur&uuml;ckgegeben werden.
+</p>
+<p>
+Unter ADO und SQL Server hat man die unterschiedlichsten M&ouml;glichkeiten,
+eine Datenbankabfrage durchzuf&uuml;hren, die als Ergebnis einen einzelnen Datensatz
+zur&uuml;ckliefert:
+</p>
+<p>
+<ul>
+<li><b>Ausf&uuml;hren eines SELECT Statements</b>: Dabei wird beim &Ouml;ffnen eines
+Recordsets ein SQL SELECT Statement ausgef&uuml;hrt und die Werte des zur&uuml;ckgelieferten
+Datensatzes aus den Feldern des Recordset Objektes ausgelesen.</li>
+<li><b>Verwenden einer STORED PROCEDURE und R&uuml;ckgabe als Recordset</b>: 
+Mittels <i>Command</i> Object wird eine (am SQL Server definierte) STORED PROCEDURE ausgef&uuml;hrt.
+Der Ergebnisdatensatz wird an ein <i>Recordset</i> &uuml;bergeben und von dort ausgelesen.</li>
+<li><b>Einsatz einer STORED PROCEDURE mit OUPUT Parameter</b>: Der Datensatz wird nicht als 
+Recordset sondern in Form von OUTPUT Parameter &uuml;ber das Command Objekt 
+zur&uuml;ckgeliefert.</li>
+<li><b>Aufrufen der vordefinierten STORED PROCEDURE <i>sp_executesql</i></b>:
+Es wird ein parametrisiertes SQL Statement sowie eine Parameterliste 
+an die Stored Prodcedure <i>sp_executesql</i> &uuml;bergeben. Die zur&uuml;ckgelieferten Werte
+werden wieder &uuml;ber OUTPUT Parameter des <i>Command</i> Objektes ausgelesen.</li>
+</ul>
+</p>
+<p>
+Daneben gibt es noch andere M&ouml;glichkeiten, die haupts&auml;chlich aus 
+dem Kombinieren dieser Ans&auml;tze bestehen.
+</p>
+<p>
+Untersuchen wir die einzelnen Ans&auml;tze einmal etwas genauer.
+</p>
+<h3>Ausf&uuml;hren eines SELECT Statements</h3>
+<p>
+Um einen einzelnen Datensatz aus der Orders Tabelle zu erhalten,
+wird einfach das folgende SQL SELECT Statement durchgef&uuml;hrt:
+</p>
+<p>
+<pre style="background='silver';">
+SELECT CustomerID, EmployeeID, OrderDate, ShipName, ShipCountry
+FROM Orders WHERE OrderID = 10555
+</pre>
+</p>
+<p>
+Das vollst&auml;ndige Listing finden Sie im Download zum Artikel 
+unter dem Namen <i>20001013_SELECT.asp</i>.
+</p>
+<p>
+Ich habe dieses Listing noch leicht optimiert und mit Hilfe der 
+<a href="http://www.alphasierrapapa.com/IisDev/Components/Profiler">Profiler Komponente</a> 
+durchgemessen. Das Listing, welches ich zum Messen benutzt habe, ist dem Download
+unter dem Namen <i>20001013_Speed_SELECT.asp</i> beigef&uuml;gt.
+</p>
+<p>
+Die Messergebnisse dieses Listings f&uuml;r die einzelnen Schritte der Datenbankoperation
+sind wie folgt:
+</p>
+<p>
+<table>
+<tr>
+  <td><b>Erster Start:</b></td>
+  <td>&nbsp;</td>
+</tr>
+<tr>
+  <td>Connection &Ouml;ffnen:</td>
+  <td>1.50 ms</td>
+</tr>
+<tr>
+  <td>Erstellen des Recordsets:</td>
+  <td>0.35 ms</td>
+</tr>
+<tr>
+  <td>&Ouml;ffnen des Recordsets:</td>
+  <td>1.70 ms</td>
+</tr>
+<tr>
+  <td>Auslesen der Werte des Recordsets:</td>
+  <td>0.050 ms</td>
+</tr>
+<tr>
+  <td><b>Gesamt:</b></td>
+  <td><b>3.60 ms</b></td>
+</tr>
+</table>
+</p>
+<p>
+<table>
+<tr>
+  <td><b>Durchschnitt:</b></td>
+  <td>&nbsp;</td>
+</tr>
+<tr>
+  <td>Connection &Ouml;ffnen:</td>
+  <td>0.70 ms</td>
+</tr>
+<tr>
+  <td>Erstellen des Recordsets:</td>
+  <td>0.08 ms</td>
+</tr>
+<tr>
+  <td>&Ouml;ffnen des Recordsets:</td>
+  <td>0.83 ms</td>
+</tr>
+<tr>
+  <td>Auslesen der Werte des Recordsets:</td>
+  <td>0.044 ms</td>
+</tr>
+<tr>
+  <td><b>Gesamt:</b></td>
+  <td><b>1.65 ms</b></td>
+</tr>
+</table>
+</p>
+<p>
+Die Unterschiede zwischen dem allerersten Aufruf und den folgenden Aufrufen,
+immerhin ein Faktor 2, ergibt sich daraus, da&szlig; erst ein <i>Connection</i> Objekt 
+angelegt werden mu&szlig; und der SQL Server f&uuml;r das SELECT Kommando einen sogenannten 
+"Execution Plan" (Ausf&uuml;hrungsplan) erstellt.
+Bei den weiteren Ausf&uuml;hrungen des Skripts greift das ASP Skript auf den Connection Pool zur&uuml;ck,
+der die Wiederverwendung von ADO Connections erlaubt. Am SQL Server kann das SELECT Statement
+schneller ausgef&uuml;hrt werden, da im Execution Plan bereits gespeichert ist, wie 
+die Tabellen und Felder abzufragen sind um das Abfrageergebnis so rasch als m&ouml;glich
+zu erhalten.
+</p>
+<p>
+Sehen wir uns zum Vergleich ein Skript an, das die selbe Abfrage &uuml;ber eine 
+Stored Procedure ausf&uuml;hrt.
+</p>
+<h3>Stored Procedure</h3>
+<p>
+Eine Stored Procedure einer SQL Server Datenbank ist ein Programm, 
+das eine vordefinierte Datenbankabfrage durchf&uuml;hrt. Die 
+f&uuml;r die Stored Procedure verwendete Programmiersprache ist T-SQL, der
+Microsoft SQL Server Dialekt f&uuml;r SQL (Structured Query Language).
+</p>
+<p>
+Ich habe die folgende Stored Procedure namens <i>sp_TEST_SELECT</i> erstellt, 
+die nichts anderes tut als das SELECT Statement auszuf&uuml;hren und das Ergebnis 
+als <i>Recordset</i> zur&uuml;ckzuliefern. Die Stored Procedure ist unter 
+<i>sp_TEST_SELECT.sql</i> im Download zu finden.
+</p>
+<p>
+<IMG SRC="/artikel/Bilder/200010/sp_TEST_SELECT.png" width=619 height=241 alt="" border="0">
+<br>
+<i>Bild 1: Stored Procedure sp_TEST_SELECT</i>
+</p>
+<p>Sobald die Stored Procedure <i>sp_TEST_SELECT</i> zur Northwind Datenbank
+mittels SQL Server 7.0 Enterprise Manager hinzugef&uuml;gt worden ist,
+kann man die Stored Procedure mittels ADO aus einer ASP Seite heraus aufrufen.
+</p>
+<p>
+Das Skript <i>20001013_StoredProcedure.asp</i> benutzt ein <i>Command</i> Objekt als
+Schnittstelle zur Stored Procedure. Da die Stored Procedure einen Eingangsparameter
+(<i>@paramOrderID</i> vom SQL Server Datentyp <i>INT</i>) erwartet, wird
+dieser auch im Command Objekt definiert.
+</p>
+<p>
+Hier ist der wichtigste Teil des ASP Skripts:
+</p>
+<p>
+<pre style="background='silver';">
+   ...
+   Set cmd = Server.CreateObject("ADODB.Command")
+   ' Stored Procedure des SQL Server 7.0
+   cmd.CommandText = "sp_TEST_SELECT"
+   cmd.CommandType = adCmdStoredProc 
+   Set cmd.ActiveConnection = conn
+   
+   ' Werte des InputParameter:
+   lngParamOrderID = 10555
+
+   ' Input Parameter uebergeben:
+   Set tmpParam = cmd.CreateParameter("@paramOrderID", adInteger, adParamInput, _
+                                     4, lngParamOrderID)
+   cmd.Parameters.Append tmpParam
+   
+   ' Fuehre Command Objekt aus
+   Set rs = cmd.Execute
+   ...
+</pre>
+</p>
+<p>
+Das Command Objekt wird mittels <i>Server.CreateObject</i>
+und der ProgID <i>ADODB.Command</i> instanziert. 
+Der Name der aufzurufenenden Stored Procedure wird der <i>CommandText</i>
+Eigenschaft zugewiesen. Als "<i>CommandType</i>" wird eine 
+Stored Procedure (<i>adCmdStoredProc</i>) angegeben.
+</p>
+<p>
+Mittels der Anweisung <i>Set cmd.ActiveConnection = conn</i> wird
+eine ge&ouml;ffnete Datenbankverbindung in Form eines <i>Connection</i> Objektes
+an das <i>Command</i> Objekt &uuml;bergeben. Der Input Parameter wird
+als <i>Parameter</i> Objekt mittels <i>CreateParameter</i> Methode erzeugt
+und dem <i>Command</i> Objekt mittels <i>Append</i> hinzugef&uuml;gt.
+</p>
+<p>
+Das Ausf&uuml;hren der Stored Procedure erfolgt schlie&szlig;lich durch
+aufrufen der <i>Execute</i> Methode des <i>Command</i> Objektes. 
+Das in der Stored Procedure erzeugte <i>Recordset</i> 
+wird als R&uuml;ckgabewert der <i>Execute</i> Methode der Variable <i>rs</i>
+&uuml;bergeben.
+</p>
+<p>
+Aus dem Recordset <i>rs</i> kann man dann die Werte des mittels
+SELECT Abfrage in der Stored Procedure ausgelesenen Datensatzes abfragen.
+</p>
+<p>
+Die Geschwindigkeitsmessung der optimierten Fassung dieses Listings 
+(<i>20001013_Speed_StoredProcedure.asp</i>) mittels Profiler Komponente 
+hat die folgenden Werte ergeben:
+</p>
+<p>
+<table>
+<tr>
+   <td><b>Erster Start:</b></td>
+   <td>&nbsp;</td>
+</tr>
+<tr>
+  <td>Connection &Ouml;ffnen:</td>
+  <td>1.50 ms</td>
+</tr>
+<tr>
+  <td>Erstellen des Command Objektes:</td>
+  <td>0.78 ms</td>
+</tr>
+<tr>
+  <td>&Ouml;ffnen des Recordsets mit Command als Source:</td>
+  <td>1.48 ms</td>
+</tr>
+<tr>
+  <td>Auslesen der Werte des Recordsets:</td>
+  <td>0.050 ms</td>
+</tr>
+<tr>
+  <td><b>Gesamt:</b></td>
+  <td><b>3.81 ms</b></td>
+</tr>
+</table>
+</p>
+<p>
+<table>
+<tr>
+  <td><b>Durchschnitt:</b></td>
+  <td>&nbsp;</td>
+</tr>
+<tr>
+  <td>Connection &Ouml;ffnen:</td>
+  <td>0.70 ms</td>
+</tr>
+<tr>
+  <td>Erstellen des Command Objektes:</td>
+  <td>0.62 ms</td>
+</tr>
+<tr>
+  <td>&Ouml;ffnen des Recordsets mit Command als Source:</td>
+  <td>0.93 ms</td>
+</tr>
+<tr>
+  <td>Auslesen der Werte des Recordsets:</td>
+  <td>0.044 ms</td>
+</tr>
+<tr>
+  <td><b>Gesamt:</b></td>
+  <td><b>2.29 ms</b></td>
+</tr>
+</table>
+</p>
+<p>
+Bei einem Vergleich der Zeiten der Stored Procedure mit dem einfachen
+Ausf&uuml;hren eines SELECT Statements f&auml;llt auf, 
+da&szlig; es durch die Bank langsamer ist. 
+Sowohl das Erstellen des <i>Command</i> Objektes als auch die &Uuml;bergabe des 
+<i>Command</i> Objektes an das Recordsets beim Ausf&uuml;hren von 
+<i>Recordset.Open</i> kosten Zeit.
+</p>
+<p>
+Im Allgemeinen kann man sagen, da&szlig; das einfache Ausf&uuml;hren einer 
+Stored Procedure nur dann schneller ist als die direkte Ausf&uuml;hren des SQL Kommandos,
+wenn eine komplexe Abfrage (SELECT mit Subqueries) oder 
+viele &Auml;hnliche Abfragen hintereinander auszuf&uuml;hren sind.
+Beim Ausf&uuml;hren von &auml;hnlichen Abfragen sollte man nicht vergessen
+die <i>Prepared</i> Eigenschaft des <i>Command</i> Objektes auf <i>True</i> zu setzen, 
+andernfalls wird das Ausf&uuml;hren der Stored Procedure kaum schneller sein
+als ein mittels Connection.Execute ausgef&uuml;hrtes <i>SELECT</i>, <i>INSERT</i> oder 
+<i>UPDATE</i> Kommando.
+</p>
+<h3>Stored Procedure mit Output Parameter</h3>
+<p>
+Wenn man nur einen Datensatz von der Stored Procedure zur&uuml;ck bekommt,
+so kann man einiges an Performance gewinnen, indem man die Werte des 
+Datensatzes nicht als Recordset, sondern in OUTPUT Parameter der Stored Procedure
+an das Command Objekt &uuml;bergibt. Dadurch erspart man sich das instanzieren
+und die Verwendung des Recordset Objektes.
+</p>
+<p>
+Eine Stored Procedure mit Output Parameter definiert 
+man zum Beispiel wie folgt (<i>sp_TEST_SELECT_OUTPUTPARAMETERS.sql</i>):
+</p>
+<p>
+<IMG SRC="/artikel/Bilder/200010/sp_TEST_SELECT_OUT.png" width=619 height=344 alt="" border="0">
+<br>
+<i>Bild 2: Stored Procedure sp_TEST_SELECT_OUTPUTPARAMETERS</i>
+</p>
+<p>
+Die Outputparameter in der Stored Procedure m&uuml;ssen mit dem Keyword 
+<i>OUTPUT</i> gekennzeichnet werden. 
+Um die R&uuml;ckgabewerte des SELECT Statements in die OUTPUT Parameter zu 
+&uuml;bergeben, mu&szlig; man im SELECT Statement die Spaltennamen 
+den Parameternamen zuweisen:
+</p>
+<p>
+<pre style="background='silver';">
+ SELECT <b>@CustomerID = CustomerID</b>, <b>@EmployeeID = EmployeeID</b>, ...
+</pre>
+</p>
+<p>
+Um nun die Stored Procedure auszuf&uuml;hren und die von der Stored Procedure 
+gelieferten Output Parameter &uuml;ber das <i>Command</i> Objekt abzufragen, 
+geht man wie folgt vor (siehe auch <i>20001013_OutputParameter.asp</i> im Download):
+</p>
+<p>
+<pre style="background='silver';">
+   ...
+   Set cmd = CreateObject("ADODB.Command")
+   ' Spezielle Stored Procedure des SQL Server 7.0
+   cmd.CommandText = "sp_TEST_SELECT_OUTPUTPARAMETERS"
+   cmd.CommandType = adCmdStoredProc 
+   Set cmd.ActiveConnection = conn
+   
+   ' Werte des InputParameter:
+   lngParamOrderID = 10555
+
+
+   ' Definiere ADO Parameter Objekte und fuege Sie zu Command Objekt hinzu
+   ' Input Parameter uebergeben:
+   Set tmpParam = cmd.CreateParameter("@paramOrderID", adInteger, _
+                                      adParamInput, 4, lngParamOrderID)
+   cmd.Parameters.Append tmpParam
+   
+   ' Output Parameter definieren:
+   Set tmpParam = cmd.CreateParameter("@CustomerID", adWChar, adParamOutput, 5)
+   cmd.Parameters.Append tmpParam
+
+   Set tmpParam = cmd.CreateParameter("@EmployeeID", adInteger, adParamOutput, 4)
+   cmd.Parameters.Append tmpParam
+   
+   Set tmpParam = cmd.CreateParameter("@OrderDate", adDate, adParamOutput, 8)
+   cmd.Parameters.Append tmpParam
+
+   Set tmpParam = cmd.CreateParameter("@ShipName", adWChar, adParamOutput, 40)
+   cmd.Parameters.Append tmpParam
+   
+   Set tmpParam = cmd.CreateParameter("@ShipCountry", adWChar, adParamOutput, 15)
+   cmd.Parameters.Append tmpParam
+   
+   ' Command ausfuehren
+   cmd.Execute
+
+   ' Output Parameter auslesen
+   strCustomerID = cmd.Parameters("@CustomerID").Value 
+   intEmployeeID = cmd.Parameters("@EmployeeID").Value 
+   dateOrderDate = cmd.Parameters("@OrderDate").Value 
+   strShipName = cmd.Parameters("@ShipName").Value
+   strShipCountry = cmd.Parameters("@ShipCountry").Value
+   ...   
+</pre>
+</p>
+<p>
+OUTPUT Parameter f&uuml;r das Command Object werden &ouml&auml;hnlich wie
+INPUT Parameter definiert. Jedoch wird als "Direction" (&Uuml;bergaberichtung)
+<i>adParamOutput</i> anstatt <i>adParamInput</i> angegeben.
+</p>
+<p>
+Der Syntax der CreateParameter Anweisung ist wie folgt:
+</p>
+<p>
+<pre style="background='silver';">
+<i>command</i>.CreateParameter(<i>Name</i>, <i>Type</i>, <i>Direction</i>, <i>Size</i>, <i>Value</i>)
+</pre>
+</p>
+<p>
+<i>Name</i> bezeichnet dabei den Namen, unter dem man den Parameter in der Parameters 
+Collection des Command Objektes ansprechen kann. Er mu&szlig; nicht zwangsl&auml;ufig mit dem echten Namen des 
+Parameters in der Stored Procedure ident sein.
+</p>
+<p>
+<i>Type</i> gibt den Datentyp des Output Parameters an. F&uuml;r eine volls&auml;ndige
+Liste konsultieren Sie bitte das Dokument 
+<a href="http://msdn.microsoft.com/library/psdk/dasdk/mdae8o19.htm">DataTypeEnum der MSDN</a>.
+</p>
+<p>
+<i>Direction</i> ist je nach &Uuml;bergaberichtung des Parameters 
+entweder <i>adParamInput</i>, <i>adParamOutput</i> oder <i>adParamInputOutput</i>.
+</p>
+<p>
+<i>Size</i> schlie&szlig;lich gibt die Gr&ouml;&szlig;e des Datentyps bzw. des
+&uuml;bergebenen Wertes an.
+</p>
+<p>
+Nachdem das <i>Command</i> mittels Execute Methode ausgef&uuml;hrt wurde, kann
+man die Output Parameter auslesen: <i>cmd.Parameters(Name).Value</i> oder
+kurz <i>cmd(Name)</i>.
+</p>
+<p>
+Die Messung der Verarbeitungszeiten hat f&uuml;r das ASP Skript 
+(mit <i>20001013_Speed_OutputParameter.asp</i>)
+bei &Uuml;bergabe der Werte in Output Parametern (statt in einem Recordset)
+die folgenden Zeiten ergeben:
+</p>
+<p>
+<table>
+<tr>
+  <td><b>Erster Start:</b></td>
+  <td>&nbsp;</td>
+</tr>
+<tr>
+  <td>Connection &Ouml;ffnen:</td>
+  <td>1.50 ms</td>
+</tr>
+<tr>
+  <td>Erstellen des Command Objektes:</td>
+  <td>0.78 ms</td>
+</tr>
+<tr>
+  <td>Ausf&uuml;hren des Commands:</td>
+  <td>0.91 ms</td>
+</tr>
+<tr>
+  <td>Auslesen der Werte des Recordsets:</td>
+  <td>0.050 ms</td>
+</tr>
+<tr>
+  <td><b>Gesamt:</b></td>
+  <td><b>3.24 ms</b></td>
+</tr>
+</table>
+</p>
+<p>
+<table>
+<tr>
+  <td><b>Durchschnitt:</b></td>
+  <td>&nbsp;</td>
+</tr>
+<tr>
+  <td>Connection &Ouml;ffnen:</td>
+  <td>0.70 ms</td>
+</tr>
+<tr>
+  <td>Erstellen des Command Objektes:</td>
+  <td>0.62 ms</td>
+</tr>
+<tr>
+  <td>Ausf&uuml;hren des Commands:</td>
+  <td>0.64 ms</td>
+</tr>
+<tr>
+  <td>Auslesen der Werte des Recordsets:</td>
+  <td>0.035 ms</td>
+</tr>
+<tr>
+  <td><b>Gesamt:</b></td>
+  <td><b>1.99 ms</b></td>
+</tr>
+</table>
+</p>
+<p>
+Im Vergleich zum Ausf&uuml;hren eines SQL Statements mittels <i>Connection.Execute</i>
+ist die Verwendung einer Stored Procedure mit Output Parameter dann
+zu empfehlen, wenn das Command Object f&uuml;r mehrere Abfragen verwendet wird.
+Ansonsten kommt die Methode mit der Stored Procedure und den Ouput Parametern 
+bei einer einzelnen Abfrage zeitlich in die N&auml;he der Ausf&uuml;hrung 
+eines einfachen SELECT Statements. Speziell bei komplexeren 
+Abfragen mit mehreren Input Parametern sollte die Verwendung einer
+Stored Procedure mit Input- und Output Parametern schon
+bei einer einzelnen Ausf&uuml;hrung ohne Wiederverwendung des <i>Command</i>
+Objektes signifikant schneller sein.
+</p>
+<p>
+Schlie&szlig;lich m&ouml;chte ich noch eine etwas abgehobene Methode aufzeigen,
+wie man die System Stored Procedure <i>sp_executesql</i> des SQL Server 7.0
+dazu benutzen kann, um eine parametrisierte Abfrage mit Input und Output 
+Parametern bei nahezu unglaublicher Geschwindigkeit auszuf&uuml;hren.
+</p>
+<h3><b>sp_executesql</b> mit Ouput Parameter</h3>
+<p>
+Die Stored Procedure <i>sp_executesql</i> kann man wie folgt einsetzen um beliebige parametrisierte Abfragen
+zu berechnen:
+</p>
+<p>
+<pre style="background='silver';">
+sp_executesql @stmt = <i>SQL_Statement</i> 
+    @params =  N'<i>@parameter_name1  data_type, @parameter_name2  data_type... </i>',
+<i>@parameter_name1 </i> = <i>'value1'</i>,
+<i>@parameter_name2 </i> = <i>'value2'</i>,
+    ...
+</pre>
+</p>
+<p>
+Die Stored Procedure sp_executesql erwartet also 3 verschiedene Arten von Eingaben:
+</p>
+<p>
+<ul>
+<li><b>Das eigentliche SQL Statement</b>: Dies wird an die Variable @stmt &uuml;bergeben
+und kann beliebige Input und Output Parameter 
+(wie @parameter_name1 oder @parameter_name2) enthalten.</li>
+<li><i>Die Parameter Liste</i>: Diese enth&auml;lt alle Parameter die
+im SQL Statement verwendet werden inklusive Datentyp und optionaler
+Kennzeichnung als Output Parameter mittels Keyword <i>OUTPUT</i>.</li>
+<li><i>Die einzelnen Parameter und ihre Werte</i>: Jedem Parameter des SQL Statements
+ kann so vor der Ausf&uuml;hrung des SQL Statements ein Wert zugewiesen werden.
+Au&szlig;erdem kann man auf diese Weise auch die Werte der Ouput Parameter &uuml;bergeben.
+</li>
+</ul>
+</p>
+<p>
+Zum Auslesen eines Datensatzes aus der <i>Orders</i> Tabelle der Northwind Datenbank
+k&ouml;nnte man zum Beispiel eine Abfrage wie folgt verwenden
+(Auszug aus <i>20001013_test_sp_executesql.sql</i>):
+</p>
+<p>
+<pre style="background='silver';">
+/* Auszufuehrendes SQL Statement mit Parametern */
+SELECT @SQLStatement = N'SELECT @paramCustomerID=CustomerID, ' +
+   '@paramEmployeeID=EmployeeID, @paramOrderDate=OrderDate, ' +
+   '@paramShipName=ShipName, @paramShipCountry=ShipCountry ' +
+   'FROM Northwind.dbo.Orders WHERE OrderID=@paramOrderID'
+
+/* Parameterdefinition */
+SELECT @ParameterDefinition = N'@paramOrderID INT, ' +
+   '@paramCustomerID NCHAR(5) OUTPUT, @paramEmployeeID INT OUTPUT, ' +
+   '@paramOrderDate DATETIME OUTPUT, @paramShipName NVARCHAR(40) OUTPUT, ' +
+   '@paramShipCountry NVARCHAR(15) OUTPUT'
+
+/* Werte der Inputparameter: */
+SELECT @OrderID = 10555
+
+/* Ausfuehren des parametrisierten SQL Kommandos 
+   mit Hilfe der System Stored Procedure sp_executesql */
+EXECUTE sp_executesql 
+   @stmt             = @SQLStatement, 
+   @params           = @ParameterDefinition, 
+   @paramOrderID     = @OrderID,
+   @paramCustomerID  = @CustomerID  OUTPUT, 
+   @paramEmployeeID  = @EmployeeID  OUTPUT,
+   @paramOrderDate   = @OrderDate   OUTPUT,
+   @paramShipName    = @ShipName    OUTPUT,
+   @paramShipCountry = @ShipCountry OUTPUT
+</pre>
+</p>
+<p>
+Die Verwendung der sp_executesql Stored Procedure zur
+Durchf&uuml;hrung einer parametrisierten SQL Abfrage 
+gestaltet sich in ASP mittels <i>Command</i> Objekt wie folgt
+(Auszug aus <i>20001013_sp_executesql.asp</i>):
+</p>
+<p>
+<pre style="background='silver';">
+  Set cmd = CreateObject("ADODB.Command")
+  ' Spezielle Stored Procedure des SQL Server 7.0
+  cmd.CommandText = "sp_executesql"
+  cmd.CommandType = adCmdStoredProc 
+  Set cmd.ActiveConnection = conn
+  
+  ' Definiere SQL Statement:
+  strSQL = "SELECT " &amp; _
+  "@CustomerID=CustomerID, @EmployeeID=EmployeeID, " &amp; _
+  "@OrderDate=OrderDate, @ShipName=ShipName, @ShipCountry=ShipCountry "  &amp; _
+  "FROM Orders WHERE OrderID=@paramOrderID"
+  
+  ' Parameterdefinition zur Verwendung in der Stored Procedure
+  ' Input Parameter, werden an Stored Procedure uebergeben
+  ' Jeweils Name, SQL Datentyp
+  strInputParams = "@paramOrderID INT"
+
+  ' Werte des InputParameter:
+  lngParamOrderID = 10555
+
+  ' Ouput Parameter, werden von der Stored Procedure geliefert
+  strOuputParams = "@CustomerID NCHAR(5) OUTPUT, @EmployeeID INT OUTPUT, " &amp; _
+     "@OrderDate DATETIME OUTPUT, @ShipName NVARCHAR(40) OUTPUT, " &amp; _
+     "@ShipCountry NVARCHAR(15) OUTPUT"
+  
+  ' Parameter Liste: Wird an die Stored Procedure uebergeben
+  strParams = strInputParams 
+  If Len (strInputParams) &gt; 0 Then strParams = strParams &amp; ", "
+  strParams = strParams &amp; strOuputParams
+  
+  ' Definiere ADO Parameter Objekte und fuege Sie zu Command Objekt hinzu
+  
+  ' SQL Statement als Parameter an sp_executesql uebergeben:
+  Set tmpParam = cmd.CreateParameter("@stmt", adVarWChar, adParamInput, 1024, strSQL)
+  cmd.Parameters.Append tmpParam
+  
+  ' Parameter Liste uebergeben:
+  
+  cmd.Parameters.Append cmd.CreateParameter("@params", adVarWChar, _
+                              adParamInput, 500, strParams)
+  
+  ' Input Parameter uebergeben:
+  cmd.Parameters.Append cmd.CreateParameter("@paramOrderID", adInteger, _
+                            adParamInput, 4, lngParamOrderID)
+  
+  ' Output Parameter definieren:
+  cmd.Parameters.Append cmd.CreateParameter("@CustomerID", adWChar, adParamOutput, 5)
+  cmd.Parameters.Append cmd.CreateParameter("@EmployeeID", adInteger, adParamOutput, 4)
+  cmd.Parameters.Append cmd.CreateParameter("@OrderDate", adDate, adParamOutput, 8)
+  cmd.Parameters.Append cmd.CreateParameter("@ShipName", adWChar, adParamOutput, 40)
+  cmd.Parameters.Append cmd.CreateParameter("@ShipCountry", adWChar, adParamOutput, 15)
+  
+  ' Fuehre Command Objekt aus
+  cmd.Execute
+
+   ' Lese Output Parameter aus:
+   strCustomerID = cmd.Parameters("@CustomerID").Value 
+   intEmployeeID = cmd.Parameters("@EmployeeID").Value 
+   dateOrderDate = cmd.Parameters("@OrderDate").Value 
+   strShipName = cmd.Parameters("@ShipName").Value
+   strShipCountry = cmd.Parameters("@ShipCountry").Value
+</pre>
+</p>
+<p>
+Schlie&szlig;lich bleibt mir noch, die gemessene Geschwindigkeit dieses Ansatzes zu 
+liefern. Die Performance Messung (siehe Datei <i>20001013_Speed_sp_executesql.asp</i>)
+hat die folgenden Werte ergeben:
+</p>
+<p>
+<table>
+<tr>
+  <td><b>Erster Start:</b></td>
+  <td>&nbsp;</td>
+</tr>
+<tr>
+  <td>Connection &Ouml;ffnen:</td>
+  <td>1.50 ms</td>
+</tr>
+<tr>
+  <td>Erstellen des Command Objektes:</td>
+  <td>0.78 ms</td>
+</tr>
+<tr>
+  <td>Ausf&uuml;hren des Commands:</td>
+  <td>1.24 ms</td>
+</tr>
+<tr>
+  <td>Auslesen der Werte des Recordsets:</td>
+  <td>0.050 ms</td>
+</tr>
+<tr>
+  <td><b>Gesamt:</b></td>
+  <td><b>3.57 ms</b></td>
+</tr>
+</table>
+</p>
+<p>
+<table>
+<tr>
+  <td><b>Durchschnitt:</b></td>
+  <td>&nbsp;</td>
+</tr>
+<tr>
+  <td>Connection &Ouml;ffnen:</td>
+  <td>0.70 ms</td>
+</tr>
+<tr>
+  <td>Erstellen des Command Objektes:</td>
+  <td>0.62 ms</td>
+</tr>
+<tr>
+  <td>Ausf&uuml;hren des Commands:</td>
+  <td>0.72 ms</td>
+</tr>
+<tr>
+  <td>Auslesen der Werte des Recordsets:</td>
+  <td>0.035 ms</td>
+</tr>
+<tr>
+  <td><b>Gesamt:</b></td>
+  <td><b>2.07 ms</b></td>
+</tr>
+</table>
+</p>
+<p>
+Die Geschwindigkeit ist damit fast so schnell wie der Aufruf einer 
+in der Datenbank selbst vorliegenden Stored Procedure!
+</p>
+<p>
+Noch eine Anmerkung zur Datei <i>20001013_sp_executesql.asp</i>:
+Wollte man das ganze Statement als <i>Command.Prepared = True</i> kennzeichen,
+um so die Verarbeitung bei mehrmaligem Aufruf zu Beschleunigen,
+so wird man mit folgender Fehlermeldung daran gehindert:
+</p>
+<p>
+<pre style="background='silver';">
+Microsoft OLE DB Provider for SQL Server error '80004005' 
+Syntax error or access violation
+</pre>
+</p>
+<p>
+Nobody is perfect ...<br>
+Siehe auch MSDN Artikel 
+"<a href="http://support.microsoft.com/support/kb/articles/Q235/0/53.ASP">PRB: E_FAIL Returned from Prepare() When SQL Statement Contains a Parameter in a Subquery</a>"
+</p>
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Will man eine Datenbankabfrage einer Webseite optimieren, so hilft oft nur 
+mehrere Ans&auml;tze durchzutesten und gewissenhaft zu optimieren, bis man 
+schlie&szlig;lich aufgrund der gemessenen Verarbeitungszeiten die beste
+L&ouml;sung einsetzt.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001013.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20001013.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000418.htm">ADO Feld-Abfragen Optimierung</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000418.htm</span><br>
+<a href="../artikel/20000518.htm">ADO Konstanten und die Datei Adovbs.inc</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000518.htm</span><br>
+<a href="../artikel/19990825.htm">ADO und ASP - Datenbanken einmal n&auml;her betrachtet</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990825.htm</span><br>
+<a href="../artikel/20010308.htm">Der ADO Command Code Generator</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010308.htm</span><br>
+<a href="../artikel/20010522.htm">Die SQL2Table Komponente</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010522.htm</span><br>
+<a href="../artikel/20011031.htm">Gegengifte f&uuml;r SQL Injection</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011031.htm</span><br>
+<a href="../artikel/19990919.htm">Geschwindigkeitsmessungen in ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990919.htm</span><br>
+<a href="../artikel/20040901.htm">Optimiertes Erstellen von DropDowns</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040901.htm</span><br>
+<a href="../artikel/20010326.htm">Records z&auml;hlen mit Stored Procedures</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010326.htm</span><br>
+<a href="../artikel/20010426.htm">Seitenzugriffscounter f&uuml;r HTML Dokumente in ASP realisieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010426.htm</span><br>
+<a href="../artikel/20020903.htm">Stored Procedures einfach erstellt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020903.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3FURL%3D%2Flibrary%2Fpsdk%2Fsql%2Fadoprg01%5F16%2Ehtm">ADO Programming Considerations (SQL Server 7.0)</a><br>
+<SPAN class="content">http://msdn.microsoft.com/library../default.htm?URL=/library/psdk/sql/adoprg01_16.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3FURL%3D%2Flibrary%2Fpsdk%2Fsql%2Ftsqlcon%2Ehtm">Getting Started with Transact-SQL</a><br>
+<SPAN class="content">http://msdn.microsoft.com/library../default.htm?URL=/library/psdk/sql/tsqlcon.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsupport%2Emicrosoft%2Ecom%2Fsupport%2Fkb%2Farticles%2FQ235%2F0%2F53%2EASP">PRB: E_FAIL Returned from Prepare() When SQL Statement Contains a Parameter in a Subquery</a><br>
+<SPAN class="content">http://support.microsoft.com/support/kb/articles/Q235/0/53.ASP</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3FURL%3D%2Flibrary%2Fpartbook%2Fasp%2Fusingstoredprocedures%2Ehtm">Using Stored Procedures</a><br>
+<SPAN class="content">http://msdn.microsoft.com/library../default.htm?URL=/library/partbook/asp/usingstoredprocedures.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

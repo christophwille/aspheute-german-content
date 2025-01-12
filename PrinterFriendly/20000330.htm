@@ -1,0 +1,186 @@
+<HTML>
+<HEAD>
+<TITLE>Downloads per Email verschicken</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wenn eine Firma Downloads anbietet, dann tut Sie dies f&uuml;r Benutzer, die sich die Datei lokal abspeichern k&ouml;nnen. Nur wenige bieten an, daß sich der Kunde das Programm emailen kann (zB weil er gerade an einem &ouml;ffentlichen Terminal sitzt).">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SMTP,Email,Download,Emailversand,Softartisans,Software Artisans,SA SMTPmail,SMTPmail">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Downloads per Email verschicken</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Komponenten.htm">Komponenten</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000330"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Gerade durch das Internet ist es f&uuml;r viele Softwareunternehmen leicht geworden, Testversionen f&uuml;r 
+potentielle Kunden zur Verf&uuml;gung zu stellen - vor allem, ohne f&uuml;r die Verteilung und
+den Versand Personal bereitstellen zu m&uuml;ssen. Nat&uuml;rlich ist diese Bereitstellung von digitaler Information (und
+eine Software ist nichts anderes) nicht auf Testversionen beschr&auml;nkt; es k&ouml;nnten genauso gut Dokumente sein.
+</p>
+
+<p>
+Bei der Distribution von digitalen Informationen &uuml;ber Websites bedienen sich die Firmen verschiedenster 
+Methoden:
+<ul>
+<li><b>Downloadlink</b> Das ist die einfachste Variante. Der Benutzer klickt auf einen normalen
+	Hyperlink, und der Download beginnt.
+<li><b>Registrieren, dann downloaden</b> Dies ist die weitestverbreitete Vorgangsweise. Bevor ein 
+	Kunde die Testversion downloaden kann, mu&szlig; er bestimmte Daten (Name, Emailadresse, etc) eingeben.
+	Der Download erfolgt dann &uuml;ber einen Redirect.
+<li><b>Versand per Email</b> Dies ist meist ein Zusatz zu obiger Variante - die downzuloadende Datei
+	wird per Email an den Empf&auml;nger versandt. F&uuml;r jemanden, der gerade an einem &ouml;ffentlichen Terminal
+	eine interessante Software gefunden hat, ist es ein hervorragendes Feature, sich die Software nach
+	Hause emailen zu lassen.
+</ul>
+</p>
+
+<p>
+In diesem Artikel werde ich auf dieses letzte Feature eingehen, weil man es viel zu selten auf Websites findet. Da man, um
+Email versenden zu k&ouml;nnen eine entsprechende SMTP-Email-f&auml;hige Komponente braucht, mu&szlig; zuerst am 
+Webserver eine solche installiert sein. Ich habe mich f&uuml;r SA SMTPmail entschieden,
+da man diese Komponente gratis einsetzen kann (Link am Ende des Artikels). Als zus&auml;tzlicher Bonus ist
+diese Komponente Feature-kompatibel zu AspMail von ServerObjects - man kann den alten Sourcecode
+ohne &Auml;nderung &uuml;bernehmen, und mu&szlig; nur im <i>CreateObject</i> Statement die ProgId austauschen.
+</p>
+
+<p>
+Was alles sollte man f&uuml;r den Download von Dateien vorsehen? Mir w&uuml;rden zum Beispiel folgende Topics
+einfallen (ohne Anspruch auf Vollst&auml;ndigkeit oder Reihung nach Wichtigkeit):
+<ul>
+<li>Geschwindigkeit
+<li>Flexibilit&auml;t
+<li>Sicherheit
+</ul>
+</p>
+
+<p>
+Zur <i>Geschwindigkeit</i> gibt es eigentlich nur zu sagen, da&szlig; f&uuml;r den Download per Email der SMTP Server &uuml;ber
+eine schnelle Anbindung (lokales Netzwerk) verf&uuml;gbar sein mu&szlig;. <i>Flexibilit&auml;t</i> hei&szlig;t f&uuml;r mich, da&szlig; mein 
+Downloadskript einmal geschrieben wird, und dann nicht mehr modifiziert werden mu&szlig; - egal, wie viele
+verschiedene Dateien zum Download verf&uuml;gbar gemacht werden. Und last but not least, <i>Sicherheit</i>: man sollte
+sich davor h&uuml;ten, den Namen der Datei im Querystring zu &uuml;bergeben - f&uuml;r den Kunden ist es fr&uuml;h genug, wenn
+er den Namen der Datei im Posteingang das erste Mal sieht.
+</p>
+
+<p>
+F&uuml;r das Beispiel (<a href="../artikel/20000330_code1.htm" target="_blank">Link zum Code</a>) mu&szlig;te ich leider etwas bei der Flexibilit&auml;t
+einschr&auml;nken, da ich sonst noch eine Menge Datenbankcode h&auml;tte einf&uuml;gen m&uuml;ssen (statt der Zeilen 005 und 006).
+Im Sicherheitsansatz stimmt das Skript allerdings: der Pfad der Datei wird nicht mitgegeben, sondern nur
+eine Programmnummer (<i>?program=1</i>):
+</p>
+<p>
+<IMG SRC="/artikel/Bilder/200003/20000330_1.png" width="503" height="233" border="0" alt="Download">
+</p>
+
+<p>
+Aus dieser Programmnummer (mit einigen Sicherheitschecks in den Zeilen 008 bis 018) kann sowohl der Programmname
+und die zu verschickende Datei ermittelt werden (Zeile 027, TITLE Element). Das Formular, in dem der Benutzer
+seine Emailadresse eingeben kann, wird in den Zeilen 035 bis 047 generiert - allerdings nur, wenn der Benutzer nicht
+schon die <i>Send Download</i> Schaltfl&auml;che gedr&uuml;ckt hat (dies wird mit dem versteckten Feld der Zeile 041 ermittelt).
+</p>
+
+<p>
+Da das Formular auf sich selbst abschickt (<i>Request.ServerVariables("SCRIPT_NAME")</i> in Zeile 035), ist der Downloadversand
+auch in dieser ASP Seite integriert. Zuallererst wird in Zeile 052 ein wirklich bescheidener Check der Emailadresse
+vorgenommen, und danach der Emailversand &uuml;ber SA SMTPmail vorbereitet. F&uuml;r
+<pre>
+056  		Mailer.FromName = strSenderDisplayName
+057  		Mailer.FromAddress = strSenderEmail
+058  		Mailer.RemoteHost = strSMTPHost
+</pre>
+sind die Variablenwerte in den Zeilen 21, 22 und 23 definiert - &uuml;blicherweise w&uuml;rde man diese Werte &uuml;ber eine
+zentrale Includedatei (zB: <i>maileinstellungen.asp</i>) einbinden.
+</p>
+
+<p>
+Der interessanteste Teil dieser Email ist das Attachment:
+<pre>Mailer.AddAttachment Server.MapPath(aDLUrls(strProgram))</pre>
+Man mu&szlig; nur den physikalischen Pfad angeben, und schon kann man mit <i>Mailer.SendMail</i> den Download zum Kunden
+abschicken! Da beim Versand der Email Fehler auftreten k&ouml;nnen, habe ich noch den notwendigen Fehlerbehandlungscode
+eingef&uuml;gt (man k&ouml;nnte es erweitern, indem man mit <i>Response.AppendToLog</i> den Fehler in das Log des Web Servers
+schreibt)
+</p>
+<P>
+Die generierte Email, die der Kunde erh&auml;lt, sieht wie folgt aus:
+</p>
+<p>
+<IMG SRC="/artikel/Bilder/200003/20000330_2.png" width="524" height="356" border="0" alt="Email">
+</p>
+
+<p>
+Nat&uuml;rlich kann man diesem Sourcecode erweitern: bei gr&ouml;&szlig;erer Anzahl an downloadbaren Dateien (&gt;10) mu&szlig; man auf alle F&auml;lle 
+die Zeilen 005 und 006 durch Datenbankabfragen ersetzen, um die gew&uuml;nschte Flexibilit&auml;t zu erreichen. Ansonsten kann der
+Emaildownload sofort in die bestehende Sitestruktur eingebaut werden.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000330.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000330.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20021028.htm">ACT MetaMailer - Mails verschicken leicht gemacht</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021028.htm</span><br>
+<a href="../artikel/20000515.htm">Emails senden mit CDONTS</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000515.htm</span><br>
+<a href="../artikel/20010625.htm">Html Emails mit Dundas Mailer verschicken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010625.htm</span><br>
+<a href="../artikel/20000912.htm">Mit PGP verschl&uuml;sselte e-Mails senden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000912.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Esoftartisans%2Ecom%2Fsmtpmail%2Ehtml">SA SMTPmail Download</a><br>
+<SPAN class="content">http://www.softartisans.com/smtpmail.html</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,248 @@
+<HTML>
+<HEAD>
+<TITLE>Plagiat oder nicht?</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Ob das Aussehen einer Website, die Funktionalit&auml;t eines Programmes, &uuml;berall steht Sourcecode dahinter - von HTML bis C#. Wie weist man nach da&szlig; geklaut wurde?">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,LCS,longest common substring,Plagiat,Plagiarmus,Erkennung,Wahrscheinlichkeit,entdecken,nachweisen,Analyse">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Plagiat oder nicht?</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20030910"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Ob das Aussehen einer Website, die Funktionalit&auml;t eines Programmes, &uuml;berall steht Sourcecode dahinter - von HTML bis C#.
+Stellen Sie sich vor, es kommt Ihnen zuf&auml;llig ein Sourcecode unter, der Sie ganz stark an Ihren eigenen aus einem Projekt
+erinnert... so ist es uns, dem 
+<a href="http://www.icsharpcode.net/opensource/sd/" target="_blank">SharpDevelop</a> Team, passiert. Die Frage die sich nun stellt, wie weist man nach da&szlig; geklaut
+wurde?
+</p>
+<p>
+Ein Weg ist, m&uuml;hsam jedes Sourcecodefile h&auml;ndisch zu vergleichen, das verbietet sich allerdings ab einer gewissen Zahl an 
+Sourcecodezeilen - die Stellen des Plagiarismus wollen eingegrenzt werden, bevor man sich die M&uuml;he des h&auml;ndischen Vergleichens
+macht. Ein sehr robuster Weg um Plagiarismus aufzudecken ist die Verwendung des
+<a href="http://www.cs.sunysb.edu/~algorith/files/longest-common-substring.shtml" target="_blank">Longest Common Substring</a>
+Algorithmus, der f&uuml;r die Erkennung von Gleichheiten in DNA Sequenzen verwendet wird. Dieser Algorithmus ist nicht ganz ohne
+Seitenhieb auf unser Problem: wir lernen, was im Laufe der Evolution an Genen erhalten geblieben ist.
+</p>
+
+<h2>Das LCS Tool</h2>
+<p>
+Im Download f&uuml;r diesen Artikel mit dabei ist das LCS Tool als Kommandozeilenversion. Als Wort der Warnung: die Pfade f&uuml;r die
+zu vergleichenden Dateien sind hardcodiert, aber da der Sourcecode mitgeliefert wird, ist die Anpassung eine Kleinigkeit. 
+</p>
+<p>
+Die gesamte LCS Funktionalit&auml;t ist in einer passend <i>LCS</i> genannten Klasse verpackt:
+</p>
+
+<pre style="background='silver';">
+namespace Algorithms
+{
+  public class LCS
+  {
+    private string ReadFile(string fileName);
+    private int Compute(ref string src, ref string dst, int srcOffset, int dstOffset);
+    public void Compare(string srcFile, string dstFile);
+    public void CompareSet(string[] src, string[] dst);
+  }
+}
+</pre>
+
+<p>
+Bevor wir uns Sourcecode f&uuml;r die Klasse selbst ansehen, wie verwendet man die Klasse? Hier ein Beispiel:
+</p>
+
+<pre style="background='silver';">
+string[] sourceFiles = new string[] { @"AssemblyInfo1.cs" };
+string[] destinationFiles = new string[] { @"AssemblyInfo2.cs" };
+
+LCS lcs = new LCS();
+lcs.CompareSet(sourceFiles, destinationFiles);
+</pre>
+
+<p>
+Die Methode <i>CompareSet</i> kann mehrere Dateien vergleichen, die per Array &uuml;bergeben werden. Intern ruft sie die Methode
+<i>Compare</i> f&uuml;r jedes Set von Dateien (Source und potentielles Plagiat) auf - diese liest dann die Dateien aus 
+(<i>ReadFile</i> l&ouml;scht zus&auml;tzlich die Whitespaces) und errechnet den LCS Wert (<i>Compute</i>): den l&auml;ngsten gefundenen 
+Substring, und daraus die Wahrscheinlichkeit, da&szlig; es sich tats&auml;chlich um ein Plagiat handelt:
+</p>
+
+<pre style="background='silver';">
+    public void Compare(string srcFile, string dstFile)
+    {
+      string src = ReadFile(srcFile);
+      string dst = ReadFile(dstFile);
+    
+      table = new int[src.Length, dst.Length];
+      for (int i =0; i &lt; src.Length; ++i) 
+      {
+        for (int j =0; j &lt; dst.Length; ++j) 
+        {
+          table[i, j] = -1;
+        }
+      }
+      Console.WriteLine("source: {0}, destination: {1}", Path.GetFileName(srcFile), Path.GetFileName(dstFile));
+      Console.WriteLine("source length: {0}, destination length: {1}", src.Length, dst.Length);
+      int lcs = Compute(ref src, ref dst, 0, 0);
+      Console.WriteLine("LCS match: {0}/{1}%", lcs, (lcs * 100) / dst.Length);
+    }
+</pre>
+
+<p>
+In unserem Drill-Down in die Berechnung des LCS fehlt uns jetzt nur noch die <i>Compute</i> Methode:
+</p>
+
+<pre style="background='silver';">
+    private int Compute(ref string src, ref string dst, int srcOffset, int dstOffset)
+    {
+      if (srcOffset >= src.Length || dstOffset >= dst.Length) 
+      {
+        return 0;
+      }
+    
+      if (table[srcOffset, dstOffset] == -1) 
+      {
+        if (Char.ToUpper(src[srcOffset]) == Char.ToUpper(dst[dstOffset])) 
+        {
+          table[srcOffset, dstOffset] = 1 + Compute(ref src, ref dst, srcOffset + 1, dstOffset + 1);
+        } 
+        else 
+        {
+          table[srcOffset, dstOffset] =  Math.Max(Compute(ref src, ref dst, srcOffset, dstOffset + 1), 
+            Compute(ref src, ref dst, srcOffset + 1, dstOffset));
+        }
+      }
+    
+      return table[srcOffset, dstOffset];
+    }
+</pre>
+
+<p>
+Es wird die private Variable <i>table</i> verwendet, die zuvor in der <i>Compare</i> Methode mit -1en gef&uuml;llt wurde. Was wird
+hier berechnet? Der l&auml;ngste zusammenh&auml;ngende Substring. Und das passiert indem man die beiden Dateien (mittlerweile sind es Strings)
+Zeichen f&uuml;r Zeichen durchgeht, und mit &Uuml;berspringen von Abweichungen den l&auml;ngsten gemeinsamen String herausrechnet (mathematische
+Details in <a href="http://www.cs.sunysb.edu/~algorith/files/longest-common-substring.shtml" target="_blank">Longest Common Substring</a>).
+</p>
+<p>
+Damit hat man dann eine Wahrscheinlichkeit an der Hand, mit der man eine sehr gute Aussage treffen kann, ob ein Sourcecode von einem
+anderen "inspiriert" wurde (die ber&uuml;hmte Blaupause).
+</p>
+
+<h2>Anwendung</h2>
+<p>
+Um zu demonstrieren wie das Programm arbeitet, habe ich eine von VS.NET generierte AssemblyInfo.cs Datei genommen, und diese
+Datei zweimal kopiert. Eine Datei (AssemblyInfo1.cs) wurde nicht ver&auml;ndert, und in der zweiten (AssemblyInfo2.cs) 
+nur das AssemblyCompany Attribut mit einem Wert bef&uuml;llt:
+</p>
+
+<pre style="background='silver';">
+C:\lcs\bin\Debug>lcs
+source: AssemblyInfo1.cs, destination: AssemblyInfo2.cs
+source length: 1908, destination length: 1923
+LCS match: 1908/99%
+</pre>
+
+<p>
+Tja, ich w&uuml;rde sagen da hat wer mein AssemblyInfo1.cs genommen und nur einen String eingef&uuml;gt. Plagiat.
+</p>
+<p>
+Als n&auml;chstes habe ich aus AssemblyInfo2.cs alle Kommentare gel&ouml;scht, und das Tool nochmals gestartet:
+</p>
+
+<pre style="background='silver';">
+C:\lcs\bin\Debug>lcs
+source: AssemblyInfo1.cs, destination: AssemblyInfo2.cs
+source length: 1908, destination length: 457
+LCS match: 442/96%
+</pre>
+
+<p>
+So ein Pech aber auch, eine einfache Kommentarkosmetik wird immer noch durch das Tool entlarvt.
+</p>
+<p>
+Ich erspare mir jetzt weitere Demonstrationen, Sie sehen ja schon in welche Richtung das l&auml;uft - man hat mit LCS eine sehr
+gute M&ouml;glichkeit, Plagiatskandidaten zu erforschen. Aus unserer Erfahrung sollte man sich alles ab 60% Wahrscheinlichkeit 
+anschauen, allerdings Vorsicht bei Dateien die kaum mehr als eine Zeile Code pro Methode beinhalten: hier l&auml;uft man Gefahr,
+Implementierungen von Interfaces die einfach nicht anders bewerkstelligt werden k&ouml;nnen als Plagiate mi&szlig;zuinterpretieren.
+Gleiches gilt f&uuml;r durch Wizards autogenerierte Klassenstubs und dergleichen.
+</p>
+<p>
+Hat man Plagiatskandidaten gefunden, mu&szlig; man den Code aber dennoch durchsehen - und da findet man schon die eine oder
+andere Eigenheit des Programmierers, die der Kopierer "miteingeschleppt" hat. Bei uns waren das Bugs spezifisch zum 
+Framework das bei uns rund um den geklauten Code verwendet wurde, etliche Eigenheiten des Programmierers und andere
+Kleinigkeiten.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Hat man den Code analysiert kommt dann der eigentlich nervenaufreibende Teil: denjenigen zu kontaktieren, der den Code geklaut hat,
+es aber sicher nicht sofort zugeben wird. Hat man aber eine solide Analyse (und LCS mit seinen harten Wahrscheinlichkeiten tut mehr "weh"
+als die Fakten die man durch h&auml;ndische Nachanalyse gefunden hat), dann bringt man den 
+<a href="http://www.icsharpcode.net/pub/relations/amatterofinspiration.aspx" target="_blank">Inspirierten</a> auch dazu,
+den Code zu &auml;ndern.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20030910.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20030910.zip</span></p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eicsharpcode%2Enet%2Fpub%2Frelations%2Famatterofinspiration%2Easpx">A matter of inspiration</a><br>
+<SPAN class="content">http://www.icsharpcode.net/pub/relations/amatterofinspiration.aspx</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ecs%2Esunysb%2Eedu%2F%7Ealgorith%2Ffiles%2Flongest%2Dcommon%2Dsubstring%2Eshtml">Longest Common Substring Algorithmus</a><br>
+<SPAN class="content">http://www.cs.sunysb.edu/~algorith/files/longest-common-substring.shtml</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eicsharpcode%2Enet%2Fopensource%2Fsd%2F">SharpDevelop</a><br>
+<SPAN class="content">http://www.icsharpcode.net/opensource/sd/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

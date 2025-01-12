@@ -1,0 +1,295 @@
+<HTML>
+<HEAD>
+<TITLE>Session Variablen - Verwendung und Stolpersteine</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Session Variablen kommen dort zur Anwendung, wo man f&uuml;r einen einzelnen
+Benutzer w&auml;hrend seines Besuches der Website Werte speichern will. So zum Beispiel im eCommerce oder Registered-Users-Only Bereichen einer Website.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Session,Session Variable,Cookie,Abandon,EnableSessionState,Login,Security,Browser,BrowserHawk">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Session Variablen - Verwendung und Stolpersteine</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000505"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>Session Variablen kommen dort zur Anwendung, wo man f&uuml;r einen einzelnen
+Benutzer w&auml;hrend seines Besuches der Website (=<i>Session</i>) Werte speichern will.
+So kann man zum Beispiel einen sogenannten Warenkorb einer E-Commerce Applikation,
+mit allen Waren (Produkt, Menge und Preis) in einer oder mehreren <i>Session Variablen</i> 
+speichern. Der Warenkorb bleibt so erhalten und kann in jeder ASP-Seite abgefragt werden, 
+egal &uuml;ber wieviele Seiten der User surft.</p>
+
+<p>Personalisierte Seiten sind ein weiteres Anwendungsgebiet. Dabei kann der User, 
+je nach implementierten M&ouml;glichkeiten, vom Hintergrundbild, der Schriftfarbe
+bis zu Ihm genehmen Inhalten einer ASP Applikation (und der darin befindlichen ASP-Seiten) 
+alles einstellen. Die Einstellungen werden oft der Einfachheit halber in
+<i>Session Variablen</i> gespeichert, um von jeder besuchten ASP-Seite des
+Webservers aus lesbar zu sein. Somit kann jede ASP-Seite auf die W&uuml;nsche des Users 
+reagieren und entsprechend ausgegeben werden.</p>
+
+<p>Eine weitere und sehr wichtige Verwendung von <i>Session Variablen</i> 
+ist die Absicherung von ASP-Seiten, die nur befugten Usern (oder Mitgliedern) 
+nach einer Authentifizierung (mittels Usernamen und Passwort) zug&auml;nglich 
+gemacht werden.</p>
+
+<h2>Was sind Session Variablen?</h2>
+<p>
+Wenn ein bestimmter User ASP-Seiten besucht, so bekommt sein Browser f&uuml;r die Dauer
+des Besuches vom Webserver (Internet Information Server oder Personal Web Server) einen 
+sogenannten <i>Session-Cookie</i> zugeschickt, der f&uuml;r die Dauer
+des Besuches im Speicher des Browsers verbleibt (wird nach dem Schlie&szlig;en des Browser gel&ouml;scht). 
+Unter diesem <i>Cookie</i> kann man 
+sich eine kleine Textinformation vorstellen, die aus dem <i>Cookie-Namen</i> und
+dem <i>Cookie-Wert</i> besteht. Der <i>Cookie-Name</i> eines <i>Session Cookies</i> 
+beginnt dabei f&uuml;r gew&ouml;hnlich mit <i>ASPSESSIONID</i>.</p>
+
+<p>
+Dieser Cookie wird in den HTTP Headers mitgeschickt, und kann wie folgt aussehen (IIS5):
+<pre style="background='silver';">
+Set-Cookie: ASPSESSIONIDQQGGQRAE=NBDPJLDAEHJFAOCHDGDFKFIL; path=/
+</pre>
+</p>
+
+<p>Zu diesem <u><i>Session Cookie</i></u> wird analog f&uuml;r jeden User am Webserver
+ein eigenes <i>Session Objekt</i> angelegt. Dieses <i>Session Objekt</i> speichert
+unter anderem alle <i>Session Variablen</i>, die von ASP-Seiten w&auml;hrend des 
+Besuches des Users gesetzt und gelesen werden k&ouml;nnen. 
+Jedesmal wenn der User eine ASP Seite des Webservers besucht, liest der Webserver den 
+<i>Session Cookie</i>, um den User identifizieren zu k&ouml;nnen.
+Ist kein <i>Session Cookie</i> gesetzt, so wird ein neuer <i>Cookie</i> zum Browser geschickt und
+das zugeh&ouml;rige <i>Session Objekt</i> am Webserver angelegt.</p>
+
+<p>Wenn der User f&uuml;r eine bestimmte Zeitspanne (<u><i>Session Timeout</i></u> genannt) 
+keine ASP-Seite des Webservers besucht, dann wird sein <i>Session Objekt</i> und alle 
+darin gespeicherten <i>Session Variablen</i> gel&ouml;scht. Das L&ouml;schen des
+<i>Session Objektes</i> kann nat&uuml;rlich auch explizit in einer ASP-Seite
+durch Aufruf des Befehles <i>Session.Abandon</i> erfolgen.</p>
+
+<p>Nat&uuml;rlich hat dieses Verfahren einen gro&szlig;en Nachteil: Einige 
+Browser lassen sich so konfigurieren, da&szlig; sie keine <i>Cookies</i> annehmen.
+Dann verweigern sie nat&uuml;rlich auch das Speichern des <i>Session Cookies</i>. 
+Das bedeutet aber, da&szlig; der Browser vom Webserver nicht identifiziert werden kann
+und mit dem Aufruf jeder ASP Seite ein neues <i>Session Objekt</i> angelegt wird. 
+Daher steht beim Besuch der n&auml;chsten ASP Seite ein fr&uuml;her angelegtes 
+<i>Session Objekt</i> f&uuml;r diesen Besucher nicht mehr zur Verf&uuml;gung.</p>
+
+<h2>Verwendung von Session Variablen</h2>
+<p>Die Verwendung m&ouml;chte ich zuerst
+anhand des Syntax, und sp&auml;ter mit Hilfe eines Beispieles erkl&auml;ren.</p>
+
+<p>Prinzipiell setzt man den Wert einen <i>Session Variablen</i> auf folgende Weise:
+<pre style="background='silver';">
+<b>Session("<i>Session_Variable_Name</i>")</b> = <i>Wert</i></pre>
+</p>
+
+<p>Der <u><i>Wert</i></u> kann ein einfacher Wert (Zahl, String, Text, Datum) aber auch
+ein Array oder sogar ein Objekt sein. Als <u>Namen</u> f&uuml;r die <i>Session Variable</i> 
+(<i>Session_Variable_Name</i>) k&ouml;nnen Sie jeden zusammenh&auml;ngenden String 
+ohne Sonderzeichen benutzen.</p>
+
+<p>Um den Wert wieder aus der Session Variable auszulesen verwendet man den folgenden
+Syntax:
+<pre style="background='silver';">
+<i>Variable</i> = <b>Session("<i>Session_Variablen_Namen</i>")</b></pre>
+</p>
+
+<p>Nun zu einem Beispiel, in dem wir einen Passwortschutz
+f&uuml;r ASP-Seiten mittels <i>Session Variablen</i> implementieren.</p>
+
+<h2>Passwortgesch&uuml;tzte Bereiche implementieren</h2>
+
+<p>Um einige ASP Seiten vor unbefugtem Zugriff zu sch&uuml;tzen,
+mu&szlig; sich jeder User mit Benutzernamen und Passwort identifizieren.</p>
+
+<p>Wenn der Benutzter sich erfolgreich eingeloggt hat, so wird eine 
+<i>Session Variable</i> gesetzt, die den Benutzernamen des Users enth&auml;lt.
+Wenn der User nun eine gesch&uuml;tzte ASP-Seite aufruft, so wird
+gepr&uuml;ft, ob die Session Variable einen Benutzernamen enth&auml;lt.
+Falls kein Benutzername in der <i>Session Variablen</i> gespeichert ist 
+(weil der User sich nicht eingeloggt hat), so wird er zur Login Seite umgeleitet.</p> 
+
+<p><b>Folgende Scripts sind an der Implementierung des Pa&szlig;wortschutzes beteiligt</b>:</p>
+
+<p>
+<ul>
+	<li><u>Login Script</u>: Dient auf der Login-Seite dazu den Benutzernamen und das Pa&szlig;wort 
+		des Users abzufragen, auf G&uuml;ltigkeit zu pr&uuml;fen, und gegebenenfalls die 
+		<i>Session Variable</i> <b>Benutzername</b> zu setzen.</li>
+	<li><u>Schutz-Script</u>: Wird am Beginn jeder Pa&szlig;wort gesch&uuml;tzten Seite inkludiert (eingebaut)
+	 	um zu pr&uuml;fen, ob die <i>Session Variable</i> <b>Benutzername</b> 
+		einen Wert enth&auml;lt oder nicht. Sollte die <i>Session Variable</i> keinen Wert enthalten,
+		so ist der User nicht eingeloggt und somit nicht berechtigt, die Seite zu sehen. 
+		Er wird zur Login-Seite umgeleitet.</li>
+</ul>
+</p>
+
+<h3>Login Script (login.asp)</h3>
+<p>
+Das Login-Script besteht aus einem HTML-Formular, in das der User
+seinen Benutzernamen und sein Passwort eingibt, und dem Script, das pr&uuml;ft,
+ob die Kombination Benutzername/Pa&szlig;wort g&uuml;tlig ist und dann entsprechend
+in <i>Session("Benutzername")</i> den Usernamen speichert oder nicht.
+</p>
+<p>
+<pre style="background='silver';">
+&lt;%
+' Pruefen, ob der Benutzer das HTML-Formular abgesendet hat
+If Request.Form("Absenden") = "" Then
+   ' HTML-Formular nicht abgesendet, daher Formular anzeigen
+   %&gt;
+&lt;form action="&lt;%= Request.ServerVariables("SCRIPT_NAME") %&gt;" method="POST"&gt;
+Benutzername:  
+	&lt;input type="Text" name="Benutzername" size="20" maxlength="20"&gt;&lt;br&gt;
+Pa&szlig;wort: 
+	&lt;input type="Password" name="Passwort" size="20" maxlength="20"&gt;&lt;br&gt;
+	&lt;input type="Submit" name="Absenden" value="Einloggen"&gt;
+&lt;/form&gt;
+	&lt;%
+Else
+   strBenutzername = Trim(Request.Form("Benutzername"))
+   strPasswort = Trim(Request.Form("Passwort"))
+   ' Identifizierung des Users, hier nur als If Abfrage implementiert
+   If strBenutzername = "Benutzer" And strPasswort = "ASP4you&amp;me" Then
+      ' Benutzernamen und Passwort gueltig, daher User einloggen
+      <b>Session("Benutzername")</b> = strBenutzername
+	  Response.Write "Login erfolgreich.&lt;br&gt;&lt;br&gt;"
+	  Response.Write "&lt;a href=""seite1.asp""&gt;Zur ersten Seite&lt;/a&gt;"
+   Else
+      ' Benutzername und Passwort nicht gueltig, daher kein Einloggen
+      Response.Write  strBenutzername &amp; " " &amp; strPasswort &amp; "&lt;br&gt;"
+      Response.Write "Sie konnten nicht eingeloggt werden!"
+   End If
+End If
+%&gt;</pre>
+</p>
+
+<p>
+Das hier vorliegende Loginscript ist simpel gehalten, es gibt nur einen Benutzernamen: Benutzer (Passwort ASP4you).
+F&uuml;r eine Real-World L&ouml;sung w&uuml;rde man eine Datenbanktabelle mit Logins verwenden.
+</p>
+
+<h3>Schutz-Script (security.asp)</h3>
+<p>
+In jeder ASP-Seite des gesch&uuml;tzen Bereiches wird dann mit Hilfe des <b>Schutz-Scripts</b>
+gepr&uuml;ft, ob der User eingeloggt ist. Diese Datei mu&szlig; am Seitenanfang jeder zu sch&uuml;tzenden
+Seite inkludiert werden.
+</p>
+<p>
+<pre style="background='silver';">
+&lt;%
+' Pruefen, ob der User eingeloggt ist
+If <b>Session("Benutzername")</b> = "" Then
+   ' User ist nicht eingeloggt, daher zur Login Seite names <i>login.asp</i> schicken
+   Response.Redirect "<i>login.asp</i>"
+   Response.End
+End If
+
+' Ab hier nur fuer eingeloggte User sichtbar:
+Response.Write "Willkommen im pa&szlig;wortgesch&uuml;tzten Bereich!&lt;br&gt;" & VbCrLf
+%&gt;
+
+...</pre>
+</p>
+
+<p>
+Ich habe bereits fr&uuml;her erw&auml;hnt, da&szlig;, wenn der Benutzer im Browser keine Cookies akzeptiert, je Zugriff eine neue
+Session gestartet wird, also nach login.asp der Wert von <b>Benutzername</b> wieder verloren ist. Damit kann sich 
+der Benutzer niemals erfolgreich einloggen - also sollte man ihm sagen, da&szlig; er Cookies einschalten mu&szlig;.
+Wie man pr&uuml;fen kann, ob der Browser (<i>Session</i>) <i>Cookies</i> akzeptiert, ist ausf&uuml;hrlich im
+Artikel "<a href="../artikel/20000412.htm">Pr&uuml;fen ob ein Browser Cookies annimmt</a>" erkl&auml;rt.</p>
+
+<h2>Zu guter letzt</h2>
+
+<p>Auch um sich mit dem <i>Session Objekt</i> vertraut zu machen gilt:
+&nbsp;&nbsp;Je &ouml;fter man es benutzt und einsetzt, desto vertrauter wird man mit der Materie 
+und den Problemen oder Fehlern die auftreten k&ouml;nnen.</p>
+
+<p>Auf ASP-Seiten, die auf das <i>Session Objekt</i> und <i>Session Variablen</i> verzichten k&ouml;nnen, 
+ist es ratsam, den sogenannten <i>Session State</i> au&szlig;er Funktion zu setzen. 
+Dies entlastet den Webserver und geschieht f&uuml;r jede ASP-Seite einzeln mit Hilfe der 
+folgenden @-Direktive, die ganz am Anfang der ASP-Seite stehen mu&szlig;:</p>
+
+<p>
+<pre style="background='silver';">
+&lt;% @ ENABLESESSIONSTATE = False %&gt;</pre>
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000505.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000505.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000529.htm">&Uuml;bergeben von Informationen von einer ASP-Seite zur n&auml;chsten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000529.htm</span><br>
+<a href="../artikel/20000405.htm">@-Direktiven auf ASP Seiten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000405.htm</span><br>
+<a href="../artikel/20000406.htm">Auswertung von HTML Formularen mit ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000406.htm</span><br>
+<a href="../artikel/20020429.htm">Benutzerverwaltung leicht gemacht: Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020429.htm</span><br>
+<a href="../artikel/20010918.htm">Erstellung eines Intranets in ASP (Teil 2) - Setup</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010918.htm</span><br>
+<a href="../artikel/20001018.htm">Global.asa: Verwendung, Events und Probleme</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001018.htm</span><br>
+<a href="../artikel/20000412.htm">Pr&uuml;fen ob ein Browser Cookies annimmt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000412.htm</span><br>
+<a href="../artikel/20000830.htm">Session State bei parallelen Browser-Frames und Fenstern</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000830.htm</span><br>
+<a href="../artikel/20010601.htm">Sicherheitsaspekte bei der Gestaltung von ASP Sites ohne Cookies</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010601.htm</span><br>
+<a href="../artikel/20011112.htm">Strukturierter Aufbau in der ASP-Programmierung</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011112.htm</span><br>
+<a href="../artikel/20010529.htm">Wieviele User sind online?</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010529.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

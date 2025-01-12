@@ -1,0 +1,228 @@
+<HTML>
+<HEAD>
+<TITLE>Ein Touch-Utility in C#</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Das Touch Utility war immer eines meiner Lieblingstools. Heute werden wir ein einfaches Touch Utility in C# schreiben, das jeder leicht an seine Pr&auml;ferenzen anpassen kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Touch,Utility,Tool,DateTime.Now,DirectoryInfo,TouchDirectory,CreationTime,LastAccessTime,LastWriteTime">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Ein Touch-Utility in C#</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020226"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Das Touch Utility war immer eines meiner Lieblingstools, weil man mit ihm das Datum
+auf einer Anzahl von Dateien vereinheitlichen kann - zB in einem Downloadarchiv oder 
+bevor man eine Applikation ausliefert. Heute werden wir ein einfaches Touch Utility in C#
+schreiben, das jeder leicht an seine Pr&auml;ferenzen anpassen kann.
+</p>
+<p>
+Die Aufgabenstellung habe ich bewu&szlig;t einfach gehalten: alle Dateien in einem bestimmten 
+Unterverzeichnis sollen mit dem aktuellen Datum und Uhrzeit getoucht werden, inklusive
+Unterverzeichnissen und deren Inhalt (also rekursiv). Daher sieht das Hauptprogramm auch
+sehr einfach aus:
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.IO;
+using System.Text;
+
+class MainClass
+{
+  public static void Main(string[] args)
+  {
+    string strDir2Touch = Directory.GetCurrentDirectory();
+    Touch myTouch = new Touch();
+    myTouch.TouchDirectory(strDir2Touch);
+    Console.WriteLine(myTouch.Errors);
+  }
+}
+</pre>
+
+<p>
+Die gesamte Funktionalit&auml;t habe ich in die Klasse <i>Touch</i> gekapselt, nur der Aufruf ist im
+eigentlichen Hauptprogramm zu finden. Wer &uuml;brigens mit dem hardcodierten Verzeichnis nicht zufrieden
+sein sollte: der Parameter <i>args</i> beinhaltet die Kommandozeilenparameter, man kann das Utility
+also um explizite Pfadangabe, Wildcards und Datumsvorgabe erweitern (nur drei Beispiele).
+</p>
+<p>
+Bevor wir uns die Funktion <i>TouchDirectory</i> ansehen, werfen wir einen Blick auf die Membervariablen
+der Klasse <i>Touch</i>, eine Property und den Konstruktor:
+</p>
+
+<pre style="background='silver';">
+class Touch
+{
+  protected DateTime m_Touch2CurrentTime;
+  protected StringBuilder m_strExceptionStack;
+  
+  public string Errors
+  {
+    get { return m_strExceptionStack.ToString(); }
+  }
+  
+  public Touch()
+  {
+    m_Touch2CurrentTime = DateTime.Now;
+    m_strExceptionStack = new StringBuilder();
+  }
+</pre>
+
+<p>
+Die <i>Errors</i> Property (zusammen mit <i>m_strExceptionStack</i>) erlaubt es mir, am Ende des Touchvorganges
+gesammelt die aufgetretenen Fehler zu listen - meist ein Zugriff verweigert, entweder weil die Datei ge&ouml;ffnet ist,
+oder man nicht genug Rechte hat. Warum gebe ich nicht gleich alle Fehlermeldungen in die Konsole aus? Nun, 
+auf diese Art ist die Klasse auch in Windowsanwendungen leicht einsetzbar.
+</p>
+<p>
+Zum Konstruktor ist zu sagen, da&szlig; er die Dateizeit auf <i>DateTime.Now</i> setzt. Man k&ouml;nnte ohne weiteres
+einen zweiten definieren, dem man die Zeit explizit mit&uuml;bergibt und dann auf <i>m_Touch2CurrentTime</i> zuweist.
+</p>
+<p>
+Nun aber zum Arbeitstier der Klasse, der Funktion <i>TouchDirectory</i>:
+</p>
+
+<pre style="background='silver';">
+  public void TouchDirectory(string strDirectory)
+  {
+    DirectoryInfo diThis = null;
+    diThis = new DirectoryInfo(strDirectory);
+    
+    DirectoryInfo[] subDirectories = diThis.GetDirectories();
+
+    for (int i=0; i &lt; subDirectories.Length; i++)
+      {
+        // only the time setting is done in an exception block
+        try
+        {
+          subDirectories[i].CreationTime = m_Touch2CurrentTime;
+          subDirectories[i].LastAccessTime = m_Touch2CurrentTime;
+          subDirectories[i].LastWriteTime = m_Touch2CurrentTime;
+        }
+        catch(Exception e)
+        {
+          m_strExceptionStack.Append(e.GetType());
+          m_strExceptionStack.Append(": ");
+          m_strExceptionStack.Append(subDirectories[i].FullName);
+          m_strExceptionStack.Append("\r\n");
+        }
+        
+        TouchDirectory(subDirectories[i].FullName);
+      }
+
+    FileInfo[] theFiles = diThis.GetFiles();
+
+    for (int i=0; i &lt; theFiles.Length; i++)
+    {
+      try
+        {
+            theFiles[i].CreationTime = m_Touch2CurrentTime;
+            theFiles[i].LastAccessTime = m_Touch2CurrentTime;
+            theFiles[i].LastWriteTime  = m_Touch2CurrentTime;   
+        }
+        catch(Exception e)
+        {
+            m_strExceptionStack.Append(e.GetType());
+            m_strExceptionStack.Append(": ");
+            m_strExceptionStack.Append(theFiles[i].FullName);
+            m_strExceptionStack.Append("\r\n");
+        }
+    }
+  }
+</pre>
+
+<p>
+Der Grund f&uuml;r die L&auml;nge des Listings ist in der Hauptsache der Exception Handling Code, der sowohl
+f&uuml;r Dateien (reiner Touchvorgang), als auch f&uuml;r Verzeichnisse (touchen und rekursiv auflisten) notwendig
+ist. Im Prinzip ist der Code zu <a href="../artikel/20000804.htm">Directory Browsing a la .NET</a>
+&auml;hnlich, wer mehr &uuml;ber <i>System.IO</i> f&uuml;r Verzeichnisauflistung erfahren m&ouml;chte, sollte sich diesen Artikel
+durchlesen.
+</p>
+<p>
+Damit ist unser Touch Utility auch schon fertig - in ein Verzeichnis im Pfad kopieren, in das zu touchende
+Verzeichnis wechseln, touch.exe aufrufen, und schon haben alle Dateien die aktuelle (idente) Zeit gesetzt.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dieser Artikel hat den Grundstein f&uuml;r ein n&uuml;tzliches Kommandozeilenutility gelegt, das &uuml;ber viele Jahre
+dem Autor (in anderen Implementierungen) gute Dienste erwiesen hat.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020226.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020226.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020409.htm">Dateien umbenennen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020409.htm</span><br>
+<a href="../artikel/20020201.htm">Dateityp-Ermittlung in Managed C++</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020201.htm</span><br>
+<a href="../artikel/20000804.htm">Directory Browsing a la .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000804.htm</span><br>
+<a href="../artikel/20000724.htm">Exception Handling in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000724.htm</span><br>
+<a href="../artikel/20021031.htm">Online File Management System mit ASP.NET und C# - Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021031.htm</span><br>
+<a href="../artikel/20021105.htm">Online File Management System mit ASP.NET und C# - Teil 2</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021105.htm</span><br>
+<a href="../artikel/20000717.htm">Schleifenbefehle in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000717.htm</span><br>
+<a href="../artikel/20000731.htm">Verwendung von Arrays in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000731.htm</span><br>
+<a href="../artikel/20020905.htm">Wochenberechnung mit .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020905.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

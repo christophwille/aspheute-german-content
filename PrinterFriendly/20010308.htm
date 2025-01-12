@@ -1,0 +1,280 @@
+<HTML>
+<HEAD>
+<TITLE>Der ADO Command Code Generator</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Heute werden wir uns ein n&uuml;tzliches Tool f&uuml;r ASP in ASP selbst basteln - eine Page, die uns anhand eines Connection Strings und dem Namen einer Stored Procedure den notwendigen ADO/ASP VBScript Code zum Aufruf automatisch generiert.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Connection String,Stored Procedure,SQL Server,Command,ADODB,Generator,VBScript,Code Generator">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Der ADO Command Code Generator</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010308"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Heute werden wir uns ein n&uuml;tzliches Tool f&uuml;r ASP in ASP selbst basteln - eine Page, die
+uns anhand eines Connection Strings und dem Namen einer Stored Procedure den notwendigen
+ADO/ASP VBScript Code zum Aufruf automatisch generiert - den man dann nur noch kopieren, und in die 
+eigene Seite einbauen mu&szlig;. Nat&uuml;rlich ist der generierte Code so schnell als m&ouml;glich.
+</p>
+<p>
+Einige werden bei dieser Funktionsbeschreibung an Features von Visual InterDev oder diversen
+Add-Ons f&uuml;r ebenso diverse Editoren denken. Wozu aber Geld ausgeben, wenn man es selbst programmieren
+kann?
+</p>
+
+<h2>Unser Codegenerator</h2>
+<p>
+Unsere Aufgabe besteht darin, aus den Inputs Connection String und Name der Stored Procedure den
+f&uuml;r den Aufruf notwendigen Code zu erstellen. F&uuml;r den Aufruf einer Stored Procedure sind besonders
+die Parameter wichtig, die Pseudocode-m&auml;&szlig;ig wie folgt erzeugt werden:
+</p>
+
+<pre style="background='silver';">
+Set adoParam = cmd.CreateParameter(Name, Datatype, Direction, Size, Value)
+cmd.Parameters.Append adoParam
+</pre>
+
+<p>
+Wie kommt man also an die Liste der Parameter? Das erledigt man mit der <i>Refresh</i> Methode:
+</p>
+
+<pre style="background='silver';">
+Set cmd = Server.CreateObject("ADODB.Command")
+cmd.ActiveConnection = #Connection String#
+cmd.CommandText = #Name der Stored Procedure#
+cmd.CommandType = 4 ' adCmdStoredProc
+    
+cmd.Parameters.Refresh
+</pre>
+
+<p>
+Grunds&auml;tzlich erh&auml;lt man mit <i>Refresh</i> immer eine gef&uuml;llte <i>Parameters</i> Collection. Der Nachteil
+ist, da&szlig; dies Zeit und Netzwerktraffic "kostet" - ADO fr&auml;gt den SQL Server um die notwendigen Informationen,
+und dies ist leider aufwendig und mit Roundtrips verbunden - und daher soll man ja auch die Parameter 
+selbst generieren (mit dem Zweizeiler von weiter oben).
+</p>
+
+<p>
+Da wir aber nicht auf Runtime Performance achten m&uuml;ssen, haben wir mit <i>Refresh</i> f&uuml;r unseren Zweck
+eigentlich schon gewonnen - und man k&ouml;nnte den ADO Code generieren (wie, das folgt sogleich). Aber,
+der Sch&ouml;nheitsfehler w&auml;re, da&szlig; man die Konstantenwerte anstatt der symbolischen Konstantennamen generieren
+w&uuml;rde - wie im obigen Beispiel f&uuml;r <i>adCmdStoredProc</i> (der symbolische Name) und dem Konstantenwert <i>4</i> gezeigt.
+Diese sogenannten "magic values" erschweren das Lesen des Sourcecodes enorm.
+</p>
+
+<p>
+Um das zu vermeiden, habe ich in den Code zur Generierung des ADO Codes zwei Hilfsfunktionen eingebaut:
+</p>
+
+<pre style="background='silver';">
+Function GenerateADOStatement(ByVal strConnStr, ByVal strSP)
+    Dim cmd, param, strParamAdd, strADOStatement
+    
+    Set cmd = Server.CreateObject("ADODB.Command")
+    cmd.ActiveConnection = strConnStr
+    cmd.CommandText = strSP
+    cmd.CommandType = 4
+    
+    cmd.Parameters.Refresh
+    
+    strADOStatement = "Set cmd = Server.CreateObject(""ADODB.Command"")" &amp; vbCrLf
+    strADOStatement = strADOStatement &amp; "cmd.ActiveConnection = """ &amp; strConnStr &amp; """" &amp; vbCrlf
+    strADOStatement = strADOStatement &amp; "cmd.CommandText = """ &amp; strSP &amp; """" &amp; vbCrlf
+    strADOStatement = strADOStatement &amp; "cmd.CommandType = 4" &amp; vbCrlf &amp; vbCrlf
+    
+    For Each param In cmd.Parameters
+        strParamAdd = "Set adoParam = cmd.CreateParameter("""
+        strParamAdd = strParamAdd &amp; param.Name &amp; """, "
+        strParamAdd = strParamAdd &amp; GetDataType(param.Type) &amp; ", "
+        strParamAdd = strParamAdd &amp; GetDirection(param.Direction) &amp; ", "
+        strParamAdd = strParamAdd &amp; param.Size &amp; ", #enter value here#)" &amp; vbCrlf
+        strParamAdd = strParamAdd &amp; "cmd.Parameters.Append adoParam" &amp; vbCrlf
+        strADOStatement = strADOStatement &amp; strParamAdd
+    Next
+    Set cmd = Nothing
+    strADOStatement = strADOStatement &amp; vbCrlf &amp; "' !! remove return value param !! " &amp; vbCrlf
+    strADOStatement = strADOStatement &amp; "Set rs = cmd.Execute"
+    GenerateADOStatement = strADOStatement
+End Function
+</pre>
+
+<p>
+Die fraglichen Funktionen sind <b>GetDataType</b> und <b>GetDirection</b>. Diesen &uuml;bergebe ich den Konstantenwert,
+und bekomme als String den Namen der Konstanten zur&uuml;ck. Hier der Code f&uuml;r <i>GetDirection</i>, da <i>GetDataType</i>
+aufgrund der vielen m&ouml;glichen Werte enorm lang ist:
+</p>
+
+<pre style="background='silver';">
+Function GetDirection(ByVal nDirection)
+    Dim strDirection
+    Select Case nDirection
+        Case 1
+            strDirection = "adParamInput"
+        Case 3
+            strDirection = "adParamInputOutput"
+        Case 2
+            strDirection = "adParamOutput"
+        Case 4
+            strDirection = "adParamReturnValue"
+        Case 0
+            strDirection = "adParamUnknown"                                                
+        Case Else
+            strDirection = CStr(nDirection)
+    End Select
+    
+    GetDirection = strDirection
+End Function 
+</pre>
+
+<p>
+Der Sinn und Zweck des <i>Case Else</i> ist der, falls Microsoft neue Konstantennamen einfallen, das Skript
+f&uuml;r diese dann einfach den unbekannten Zahlenwert als String zur&uuml;ckliefert. Ich habe zwar dann einen "magic
+value" eingebaut, aber zumindest ist der Aufruf dennoch korrekt.
+</p>
+
+<p>
+Nat&uuml;rlich habe ich rund um diese Funktionen ein harmloses, aber funktionelles Formular gebastelt. Nach
+einem Aufruf sieht das dann wie nachfolgender Screenshot aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200103/20010308.png" width="675" height="524" alt="" border="0">
+
+<p>
+Einfach den Namen der Stored Procedure und den Connection String eingeben, ADO Statements genieren klicken,
+und schon erh&auml;lt man automatisch den gew&uuml;nschten ADO Code.
+</p>
+
+<h2>Der generierte Code</h2>
+<p>
+Damit der generierte Code einfach allen Zwecken gerecht werden kann, mu&szlig; man je nach Anwendungsfall
+etwas &auml;ndern. Generell mu&szlig; man die <b>#enter value here#</b> Statements gegen die allf&auml;lligen Inputwerte
+an die Stored Procedure austauschen.
+</p>
+<p>
+Und dann teilen sich die Wege der Anwendung - liefert die Stored Procedure als R&uuml;ckgabewert ein Recordset
+oder einen Return Value? Hier die "Kochrezepte" f&uuml;r die einzelnen F&auml;lle:
+</p>
+
+<ul>
+<li><b>Recordset</b>: f&uuml;r diesen Fall m&uuml;ssen die beiden Zeilen f&uuml;r den Parameter <b>RETURN_VALUE</b> gel&ouml;scht
+    werden.
+<li><b>Return Value</b>: hier passen die generierten Parameter, aber <b>Set rs=</b> beim Aufruf von 
+    <b>Execute</b> mu&szlig; gel&ouml;scht werden.
+</ul>
+
+<p>
+F&uuml;r den Beispielfall der <b>CustOrderHist</b> Stored Procedure der Northwind Datenbank sehen die
+&Auml;nderungen dann wie folgt aus:
+</p>
+
+<pre style="background='silver';">
+&lt;!--METADATA NAME=&quot;Microsoft ActiveX Data Objects 2.5 Library&quot; 
+  TYPE=&quot;TypeLib&quot; 
+  UUID=&quot;{00000205-0000-0010-8000-00AA006D2EA4}&quot;
+--&gt;
+&lt;%
+Set cmd = Server.CreateObject(&quot;ADODB.Command&quot;)
+cmd.ActiveConnection = &quot;Provider=SQLOLEDB;Data Source=strangelove;...&quot;
+
+cmd.CommandText = &quot;CustOrderHist&quot;
+cmd.CommandType = 4
+
+' Der Return Parameter ist gel&ouml;scht - wir erhalten ein Recordset!
+Set adoParam = cmd.CreateParameter(&quot;@CustomerID&quot;, adVarWChar, adParamInput, 5, &quot;ALFKI&quot;)
+cmd.Parameters.Append adoParam
+
+Set rs = cmd.Execute
+
+' Unser Code beginnt hier
+While Not rs.EOF
+    Response.Write rs(0) &amp; &quot;&lt;br&gt;&quot;
+    rs.MoveNext
+Wend
+%&gt;
+</pre>
+
+<p>
+Die ADO Konstanten kann man entweder &uuml;ber <b>adovbs.inc</b> oder &uuml;ber ein <b>METADATA</b> Statement einbinden.
+Ich pers&ouml;nlich bevorzuge letzteres, da damit immer die aktuellste ADO Version geladen wird.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Mit ein wenig Aufwand kann man sich ADO Code f&uuml;r Stored Procedures automatisch generieren lassen. Es ist
+jeder eingeladen, den heute vorgestellten Code an seine Bed&uuml;rfnisse anzupassen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010308.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010308.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000329.htm">ADO Component Checker Tool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000329.htm</span><br>
+<a href="../artikel/20000327.htm">ADO und MDAC Versionen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000327.htm</span><br>
+<a href="../artikel/20010329.htm">Auto-Generierung von performantem Abfragecode</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010329.htm</span><br>
+<a href="../artikel/20010327.htm">Code Generator f&uuml;r die AddNew Methode</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010327.htm</span><br>
+<a href="../artikel/20011031.htm">Gegengifte f&uuml;r SQL Injection</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011031.htm</span><br>
+<a href="../artikel/20001013.htm">Highspeed-Abfragen einer SQL Server Datenbank</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001013.htm</span><br>
+<a href="../artikel/20010326.htm">Records z&auml;hlen mit Stored Procedures</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010326.htm</span><br>
+<a href="../artikel/20020903.htm">Stored Procedures einfach erstellt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020903.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

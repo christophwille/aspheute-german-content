@@ -1,0 +1,333 @@
+<HTML>
+<HEAD>
+<TITLE>Schlu&szlig; mit lustig - das IIS Lockdown Tool</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel soll unter anderem die Risken und Nebenwirkungen des von Microsoft downloadbaren "IIS Lockdown Tool" besprechen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,IIS,Lockdown,Nimda,Virus,Utility,Tool,Anleitung,Hilfestellung,Security,Sicherheit,IDC,IDQ,Index Server,HTR,HTX">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Schlu&szlig; mit lustig - das IIS Lockdown Tool</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010926"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Das Leben eines Administators ist von st&auml;ndigen Herausforderungen und gro&szlig;er Verantwortung gepr&auml;gt. Besonders wenn
+dieser neben der Wartung des Firmennetzwerkes (und den damit verbundenen Problemen) zus&auml;tzlich f&uuml;r die Wartung der 
+Firmen-Webserver verantwortlich ist. Hinzu kommt, da&szlig; der oder die Web Server st&auml;ndig up-to-date sein m&uuml;ssen um diverse
+DDoS- und Viren-Attacken stand zu halten. Im Moment ist der Nimda Virus aktuell, der den Administratoren wieder 
+einiges an Arbeit beschert, damit diese einen eventuellen Schaden gering halten. Dieser Artikel soll u.a.
+die Risken und Nebenwirkungen des von Microsoft downloadbaren "IIS Lockdown Tool" besprechen.
+</p>
+
+<h2>Die Gefahr</h2>
+
+<p>
+Der Nimda ("Admin" r&uuml;ckw&auml;rts geschrieben) mitsamt seinen bis jetzt erschienenen Derivaten ist ein Wurm der 
+intelligenteren Art. Er ben&uuml;tzt mehrere Sicherheitsl&uuml;cken und Wege um in ein System einzudringen bzw. sich zu 
+verbreiten. M&uuml;hseligerweise ist wieder einmal der IIS die Zielscheibe seines Angriffs. Bei IIS 
+(Version 4 bzw. 5) basierenden Web Servern
+versucht er sich durch die Sicherheitsl&uuml;cken bzw. auch jene die durch Code Red II Virus entstandenen 
+einzuschmuggeln. Dabei nutzt er die "Unicode Web Traversal" Sicherheitsl&uuml;cke, die es dem Angreifer erlaubt
+mit einem konstruierten URL die Web- und alle anderen Verzeichnisse auf jedem beliebigen physikalischen Laufwerk 
+einzusehen sowie auf die enthaltenen Dateien zuzugreifen. Damit es sich auch auszahlt, k&ouml;nnen auch Dateien auf den Web 
+Server &uuml;bertragen werden, diese ausgef&uuml;hrt oder auch einfach vorhandene Dateien gel&ouml;scht oder ver&auml;ndert werden.
+</p>
+
+<p>
+Eine "verbessertes" Derivat des Wurms, namens "Nimda.A@mm" sucht nach IIS Servern durch eine zuf&auml;llig erstellte
+IP Adresse und erstellt bei einem ungepatchten IIS Server ein Konto mit Admin Rechten. Danach erstellt er frei zug&auml;ngliche
+Netzwerk Shares und hat damit gesamten Zugriff auf alle vorhandenen Daten.
+</p>
+
+<p>
+Mit Hilfe der "Directory Traversal Techniken" kann er die lokale cmd.exe (Kommando Prompt) aufrufen und Befehle 
+ausf&uuml;hren. Mit Hilfe der "Unicode Web Traversal" erstellt er via TFTP eine Datei namens "admin.dll" 
+auf dem Zielrechner. Somit wird ein TFTP Server im Verzeichnis <i>inetpub/scripts</i> erstellt, um den Wurm  
+auf dem System zu verbreiten.
+</p>
+
+<p>
+Damit sich der Wurm unbemerkt einnisten kann, wird die <i>mmc.exe</i> Datei modifiziert und bindet sich in der 
+<b>System.ini</b> ein um bei jedem Start wieder aufgerufen zu werden. Weiters wird die <b>Riched20.dll</b> Datei
+ver&auml;ndert, die von Programmen wie MS Office verwendet wird. Wenn eine MS Office Applikation gestartet
+wird, wird auch der Wurm aktiv. Der Wurm kann sich auch als Service (Dienst)
+registrieren oder sich als Thread an den Explorer anbinden.
+</p>
+
+<p>
+Damit alle, die auf den infizierten Web Server zugreifen was vom Wurm haben, ver&auml;ndert er alle Web Dokumente
+mit der Erweiterung htm, html oder asp indem er ein JavaScript einbindet, das den unbedarften User auffordert
+eine eml-Datei (meist <b>readme.eml</b>) downzuloaden. F&uuml;r einen Outlook User ist dies nichts Neues, da dies eine
+Outlook-Email darstellt. Diese Email enth&auml;lt den Wurm als Attachment.
+</p>
+
+<p>
+Da der Wurm auch die MIME-Type Sicherheitsl&uuml;cke ausnutzt, kann ein ungepatchter Browser helfen den Wurm
+bereits beim simplen Zugriff auf die Web Seite zu verbreiten, da der Wurm auf einem infizierten Web Server
+die Contentdateien des Servers ver&auml;ndert.
+</p>
+
+<p>
+Um infizierte Massenemails verschicken zu k&ouml;nnen, sucht er am lokalen Rechner und in der Netzwerkumgebung 
+nach MAPI kompatiblen Emailprogrammen (z.B. Outlook oder Outlook Express). Dort iteriert er durch alle Adressen, und
+verschickt sich selbst, wobei er den Emailadresseneintrag im Adressbuch sowohl in das Absender- und Empf&auml;ngeradressefeld
+eintr&auml;gt um den Ursprung des &Uuml;bels zu verschleiern.
+</p>
+
+<p>
+Die verd&auml;chtigen Dateien hei&szlig;en <b>admin.dll</b>, <b>root.exe</b> sowie Dateien die im Namen <i>TFTP</i> und eine
+Zahl beinhalten. Letztere sind meistens im Web Server Verzeichnis <i>inetpub/scripts</i> zu finden.
+Da der Wurm die Einstellungen <i>Dateien mit bekannten Dateierweiterungen ausblenden</i> und 
+<i>System Dateien verstecken</i> unbemerkt aktiviert sind diese f&uuml;r das unge&uuml;bte Auge leicht zu &uuml;bersehen.
+</p>
+
+<h2>Schadenspotential</h2>
+
+<ul>
+<li>Ver&auml;nderung von Dateien</li>
+<li>Aufheben der Sicherheitsrichtlinien</li>
+<li>Systemperformancebeeintr&auml;chtigung durch Versendung von Massenemails</li>
+<li>M&ouml;gliche Installierung von diversen gef&auml;hrlichen Tools wie Trojaner, KeyLogs, etc.</li>
+</ul>
+
+<p>
+Diese kurze Zusammenfassung des Schadenspotentials sollte als Warnung ausreichen. Zum Gl&uuml;ck wurde nach
+relativ kurzer Zeit seitens Microsoft und der Antivirensoftwarehersteller Patches f&uuml;r Web Server und 
+aktualisierte Virendefinitionen bereit gestellt. Links zu den Microsoft Security Bulletins finden Sie im 
+Anhang des Artikels.
+</p>
+
+<p>
+Nun ist es aber nicht nur wichtig eine Gefahr zu erkennen, sondern auch rasch Gegenma&szlig;nahmen durchzuf&uuml;hren.
+Um den Administratoren die Arbeit etwas zu erleichtern hat Microsoft das 
+<a href="http://www.microsoft.com/Downloads/Release.asp?ReleaseID=32362" target="_blank"><i>IIS Lockdown Tool</i></a> bereitgestellt,
+welches sowohl IIS 4 als auch IIS 5 Versionen absichern kann. Es h&auml;lt auch was es verspricht - eine totale Abriegelung
+und somit Unsch&auml;dlichmachung aller bekannten IIS Exploits.
+Damit ist aber der abgesicherte Web Server so n&uuml;tzlich wie wenn er gar nicht installiert w&auml;re, weil er nur
+Html Seiten serven kann. 
+</p>
+
+<p>
+Damit man in das Geschehen etwas eingreifen kann, gibt es neben dem <i>Express</i> Modus der keine benutzerdefinierten 
+Einstellungen erlaubt, auch einen <i>Advanced</i> Modus. Diesen wollen wir in vielen bunten Bildern
+nun besprechen.
+</p>
+
+<h2>Was macht das Tool</h2>
+
+<p>
+Um den Web Server abzuriegeln, k&ouml;nnen im <i>Advanced Lockdown</i> Modus optional folgende Ma&szlig;nahmen getroffen
+werden:
+</p>
+
+<ul>
+<li>Sperrung der Ausf&uuml;hrung von ASP Seiten</li>
+<li>Sperrung der Unterst&uuml;tzung von Index Server Web Interfaces</li>
+<li>Sperrung der Unterst&uuml;tzung von serverseitigen Includes</li>
+<li>Sperrung der Unterst&uuml;tzung des Internet Database Connectors</li>
+<li>Sperrung der Unterst&uuml;tzung f&uuml;r die Internetseiten Ausdrucke</li>
+<li>Sperrung der Unterst&uuml;tzung f&uuml;r .HTR Scripting</li>
+<li>L&ouml;schung aller IIS Beispieldateien</li>
+<li>L&ouml;schung aller Scripte in virtuellen Verzeichnissen</li>
+<li>L&ouml;schung des MSADC (Microsoft Advanced Data Connector and Remote Data Services) virtuellen Verzeichnisses</li>
+<li>Unterbindet WebDAV (Distributed Authoring and Versioning)</li>
+<li>Unterbindet die Ausf&uuml;hrung von System Utilities durch einen anonymen Benutzer</li>
+<li>Unterbindet die Schreibrechte in Web Verzeichnissen f&uuml;r einen anonymen Benutzer</li>
+</ul>
+
+<p>
+Damit sollte der Web Server gegen weitere Attacken sicher sein. Die Bedienung des Tools ist sehr einfach, da
+es sich um einen Wizard handelt. Dennoch sollte man auf einiges achtgeben und nicht voreilig alle Schotten dichtmachen,
+da dann der IIS zwar abgesichert ist, jedoch nur mehr eingeschr&auml;nkt seinen Dienst tut.
+<p>
+Nach dem Download des <a href="http://www.microsoft.com/Downloads/Release.asp?ReleaseID=32362" target="_blank"><i>IIS Lockdown Tools</i></a>
+m&uuml;ssen die Dateien in ein beliebiges Verzeichnis kopiert werden. Das Tool wird mit einem Doppelklick auf
+die <b>IISLockd.exe</b> ausgef&uuml;hrt.
+</p>
+
+<p>
+<b>Beachte:</b> Zur Zeit des Artikels war die Version 1.0 des IIS Lockdown Tools erh&auml;ltlich. Wie eine Version 1.0
+schon suggeriert sind einige Unstimmigkeiten vorhanden. Und zwar wenn auf dem Web Server das .NET Framework Beta 2
+installiert sein sollte (was bei Mission Critical Servern eigentlich nicht der Fall sein sollte) gibt das Tool
+auf, und gibt noch dazu gleich zwei Fehlermeldungen zur&uuml;ck. Aus irgendwelchen Gr&uuml;nden kann es die
+Festplattengr&ouml;&szlig;e nicht bestimmen und einen Pfad nicht finden, der sehr wohl vorhanden ist:
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010926_1.png" width="503" height="387" alt="" border="0">
+
+<p>
+Es bleibt dem .NET Fanatiker im Moment nichts anderes &uuml;brig als auf diesen guten Schutz zu verzichten. 
+</p>
+<p>
+Befassen wir uns aber nun mit dem Tool auf einem "normalen" Server. Nach einem Willkommens- und Informationsfenster des sich &ouml;ffnenden Wizards bei
+Ausf&uuml;hrung des Tools, erhalten wir bei einem Klick auf <i>Next</i> die Auswahl des jeweils gew&uuml;nschten Modus - 
+<i>Express</i> oder <i>Advanced</i>. Wie oben schon erw&auml;hnt, w&auml;hlen wir den <i>Advanced Lockdown</i> Modus und
+gehen einen Schritt weiter mit <i>Next</i>:
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010926_3.png" width="503" height="387" alt="" border="0">
+
+<p>
+In diesem Screen k&ouml;nnen Sie nach Ihrem Ermessen die n&ouml;tigen Einstellungen treffen. Beim ersten Eintrag
+<i>Disable support for Active Server Pages (.asp)</i> sollten Sie &uuml;berlegen, ob es nicht doch sinnvoll w&auml;re,
+diese auszuhaken. Zwar ist dies ein potentielles Risiko, da sich der Wurm in die ASP Dateien einnisten kann, 
+aber nach einem Ersetzen der vorhandenen Dateien durch ein letztes Backup und Einspielung der downloadbaren
+Security Patches bleibt die Grundfunktionalit&auml;t des IIS erhalten.
+</p>
+
+<p>
+Ebenso ist es bei der Verwendung des Index Server Web Interfaces, serverseitigen Includes und den anderen Optionen.
+F&uuml;r den Fall, da&szlig; Sie diese nicht ben&ouml;tigen, Checkbox angehakt lassen. Ein Klick auf <i>Next</i> und wir sehen
+den n&auml;chsten Screen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010926_2.png" width="503" height="387" alt="" border="0">
+
+<p>
+Die Beispieldateien sollten auf jeden Fall gel&ouml;scht werden, da diese auf einem Mission Critical Web Server nichts 
+zu suchen haben.
+Wenn Sie die MSADC und WebDAV Unterst&uuml;tzungen nicht ben&ouml;tigen, lassen Sie die Checkboxen angehakt. Die Checkboxen f&uuml;r 
+die Unterbindung des Zugriffs f&uuml;r anonyme User sollte auf jeden Fall gesetzt werden um gr&ouml;&szlig;eren Schaden zu 
+vermeiden. Nun folgt der letzte Klick auf <i>Next</i>. Sie erhalten nun eine Messagebox die Sie dar&uuml;ber informiert,
+da&szlig; alle n&ouml;tigen Informationen &uuml;bergeben wurden um den IIS abzusichern. Mit einem Klick auf <i>Yes</i> wird der
+IIS abgeriegelt. Falls Sie zur&uuml;ckgehen und Ihre &Auml;nderungen &uuml;berdenken wollen, klicken Sie auf <i>No</i>.
+</p>
+
+<p>
+Nach dem Abriegelungsvorgang hat sich einiges bei den Application Mappings ge&auml;ndert. Waren die
+betroffen Dateiendungen vor dem Lockdown auf die entsprechenden DLL Dateien verlinkt, so werden diese nun auf
+die <b>404.DLL</b> Datei gelinkt. Dies ersehen wir im <i>Internet Services Manager</i>, entweder
+in den Master Properties f&uuml;r den gesamten IIS oder in den individuellen Web Site Properties im 
+<i>Home Directory</i> Tab in der Sektion <i>Application Settings</i> wobei wir auf den <i>Configure</i>
+Button klicken:
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010926_4.png" width="522" height="517" alt="" border="0">
+
+<p>
+Wie Sie sehen wurden alle Dateiendungen bis auf die ASP Dateien auf die <i>404.DLL</i> verlinkt. Was passiert
+jetzt also? Nun wenn Sie z.B. in Ihrem Intranet auf eine ASP Seite zugreifen wollen geschieht folgendes:
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010926_5.png" width="484" height="345" alt="" border="0">
+
+<p>
+Da nun auf diesem Web Server anonyme Benutzer drau&szlig;en bleiben m&uuml;ssen erhalten Sie obige Logonbox.
+Falls Sie keine g&uuml;ltigen Credentials haben passiert dies - drau&szlig;en bleiben oder bel&auml;stigen Sie Ihren 
+Andministrator!:
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010926_6.png" width="501" height="321" alt="" border="0">
+
+<p>
+Da wir uns aber einloggen durften pobieren wir mal den Zugriff auf verbotenes und wir erhalten diesen
+- zugegeben etwas spartanischen aber unmi&szlig;verst&auml;ndlichen Screen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010926_7.png" width="386" height="224" alt="" border="0">
+
+<p>
+Dies sollte als erste Gegenma&szlig;nahme gen&uuml;gen. Ein gutes Tool l&auml;&szlig;t sich auch wieder spurenlos entfernen
+bzw. die getroffenen &Auml;nderungen wiederherstellen - so auch dieses. Mit einem abermaligen Klick auf das 
+IIS Lockdown Tool erhalten Sie folgenden Management Screen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200109/20010926_8.png" width="446" height="202" alt="" border="0">
+
+<p>
+Sie k&ouml;nnen entweder mit einem Klick auf <i>Undo</i> alle &Auml;nderungen r&uuml;ckg&auml;ngig machen und den IIS wieder entsperren
+oder Ihre Einstellungen korrigieren indem Sie auf <i>Lockdown Again</i> klicken.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Die Informationen &uuml;ber den Nimda Wurm und sein Schadensausma&szlig; sollte Warnung genug f&uuml;r Administratoren sein,
+um regelm&auml;&szlig;ig die Microsoft Security Bulletins, <i>NTBugtraq.com</i> oder die <i>IISFAQ.com</i> zu besuchen.
+Diese H&auml;ufigkeit ist auch deshalb notwendig, da im Gegesatz zu den Indianern und anderen Web Servern jene auf
+Windows NT basierende leider zu den beliebtesten Zielscheiben geh&ouml;ren.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020412.htm">Der Microsoft Baseline Security Analyzer (MBSA) 1.0</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020412.htm</span><br>
+<a href="../artikel/20010927.htm">Schlu&szlig; mit lustig Teil 2 - das URLScan Tool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010927.htm</span><br>
+<a href="../artikel/20010928.htm">Schlu&szlig; mit lustig Teil 3 - das Hfnetchk Tool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010928.htm</span><br>
+<a href="../artikel/20011119.htm">Schritt-f&uuml;r-Schritt Debuggen von Sicherheitsproblemen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011119.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eiisfaq%2Ecom%2F">IIS FAQ</a><br>
+<SPAN class="content">http://www.iisfaq.com/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2FDownloads%2FRelease%2Easp%3FReleaseID%3D32362">IIS Lockdown Tool</a><br>
+<SPAN class="content">http://www.microsoft.com/Downloads/Release.asp?ReleaseID=32362</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2Ftechnet%2Fsecurity%2Fbulletin%2Fms00%2D078%2Easp">Microsoft Security Bulletin (MS00-078)</a><br>
+<SPAN class="content">http://www.microsoft.com/technet/security/bulletin/ms00-078.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2Ftechnet%2Fsecurity%2Fbulletin%2FMS01%2D020%2Easp">Microsoft Security Bulletin (MS01-020)</a><br>
+<SPAN class="content">http://www.microsoft.com/technet/security/bulletin/MS01-020.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2Ftechnet%2Ftreeview%2Fdefault%2Easp%3Furl%3D%2Ftechnet%2Fsecurity%2Fbulletin%2FMS01%2D044%2Easp">Microsoft Security Bulletin (MS01-044)</a><br>
+<SPAN class="content">http://www.microsoft.com/technet/treeview../default.htm?url=/technet/security/bulletin/MS01-044.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2Ftechnet%2F">Microsoft TechNet</a><br>
+<SPAN class="content">http://www.microsoft.com/technet/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2ENTBugtraq%2Ecom">NTBugTraq</a><br>
+<SPAN class="content">http://www.NTBugtraq.com</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsecurityresponse%2Esymantec%2Ecom%2Favcenter%2Fvenc%2Fdata%2Fw32%2Enimda%2Ea%40mm%2Eremoval%2Etool%2Ehtml">Symantec Nimda Removal Tool</a><br>
+<SPAN class="content">http://securityresponse.symantec.com/avcenter/venc/data/w32.nimda.a@mm.removal.tool.html</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

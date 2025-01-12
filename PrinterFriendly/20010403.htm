@@ -1,0 +1,181 @@
+<HTML>
+<HEAD>
+<TITLE>Objektbasierte Index Server Suche</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im heutigen Artikel stellt der Autor die Index Server Search Objects (IXSSO) vor, mit denen man bequem von ASP aus die Suche starten, und die Resultate als Recordsets geliefert bekommen kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,IXSSO,IXSSO.Query,IXSSO.Query,Index Server,IDQ,HTX,Catalog,Suchformular,Suche">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Objektbasierte Index Server Suche</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010403"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Das Abfragen von Index Server Katalogen mit den ber&uuml;hmt-ber&uuml;chtigten IDQ und HTX Dateien ist nicht
+unbedingt jedermann's Sache. Im heutigen Artikel stelle ich die Index Server Search Objects (IXSSO)
+vor, mit denen man bequem von ASP aus die Suche starten, und die Resultate als Recordsets geliefert
+bekommen kann.
+</p>
+
+<h2>Unser Suchformular</h2>
+<p>
+Nat&uuml;rlich ben&ouml;tigen wir ein Formular, in dem der Benutzer seine Suchanfrage eintippen kann. Der 
+Einfachheit halber habe ich nur die M&ouml;glichkeit geschaffen, ein Schl&uuml;sselwort anzugeben - dies
+entspricht der einfachen Abfrage, die man auf den meisten Websites findet.
+</p>
+<pre style="background='silver';">
+&lt;form method="post" action="&lt;%=Request.ServerVariables("SCRIPT_NAME")%&gt;"&gt;
+Search 4: &lt;input type="text" name="SearchKeyword" value=""&gt;&amp;nbsp;
+&lt;input type="submit" value="Suche starten!"&gt;
+&lt;/form&gt;
+</pre>
+<p>
+Das Formular postet auf sich selbst zur&uuml;ck - das hei&szlig;t, ich habe auch den Suchcode in der gleichen
+ASP Datei eingebaut.
+</p>
+
+<h2>Der Suchcode</h2>
+<p>
+F&uuml;r das Suchen bediene ich mich diesmal zweier Objekte - dem IXSSO <i>Query</i> und <i>Util</i> Objekt.
+Im heute gezeigten Beispiel &uuml;bernimmt das Query Objekt die meiste Arbeit, in vielen anderen Beispielen
+kommt Util zu mehr Ehren - zur Auswahl von Scopes. Das machen wir heute &uuml;ber die Abfrage im Query Objekt.
+</p>
+<p>
+Ich habe versucht, den Code leicht anpassbar zu halten - daher sind am Anfang drei Konstanten definiert,
+deren wichtigste der Name des Catalogs ist, den man durchsuchen will. Den Namen findet man im Index Server
+Snap-In heraus (bei IDQ/HTX gibt man den Pfad zum Catalog an!).
+</p>
+<pre style="background='silver';">
+&lt;%
+Const cstrCatalog = "Web"
+Const cMinKeywordLength = 3
+Const cMaxRecords = 50
+
+strKeyword = Trim(Request.Form("SearchKeyword"))
+If Len(strKeyword) &gt;= cMinKeywordLength Then
+    strIXQuery = "$CONTENTS " &amp; strKeyword
+    strIXQuery = strIXQuery &amp; " AND NOT #VPath = *\includes* "
+    strIXQuery = strIXQuery &amp; " AND NOT #filename login.asp "
+    strIXQuery = strIXQuery &amp; " AND NOT #filename *.|(txt|,inc|,udl|,doc|)"
+    
+    Set objQuery = Server.CreateObject("IXSSO.Query")
+    Set objUtil = Server.CreateObject("IXSSO.Util")
+    
+    objQuery.Query = strIXQuery
+    objQuery.Columns = "Vpath,DocTitle,Filename,Characterization,Contents,Rank"
+    objQuery.SortBy = "Rank[d]"
+    objQuery.MaxRecords = cMaxRecords
+    objquery.Catalog = cstrCatalog
+    objquery.LocaleID = objutil.ISOToLocaleID("EN-US")
+
+    Set rsIX = objQuery.CreateRecordset("nonsequential")
+    While Not rsIX.EOF
+        Response.Write "&lt;p&gt;&lt;a href=""" &amp; rsIX("vpath") &amp; """&gt;"
+        Response.Write rsIX("DocTitle") &amp; "&lt;/a&gt;&lt;br&gt;" &amp; vbCrlf
+        Response.Write "&lt;i&gt;" &amp; rsIX("Characterization") &amp; "&lt;/i&gt;&lt;/p&gt;"
+        rsIX.MoveNext
+    Wend
+    rsIX.Close
+    Set rsIX = Nothing
+    Set objUtil = Nothing
+    Set objQuery = Nothing
+End If
+%&gt;
+</pre>
+<p>
+Im Prinzip haben wir es bei den Eigenschaften des Query Objektes mit alten Bekannten zu tun: den
+gew&uuml;nschten Spalten, der Sortierordnung, der Anzahl der Records, dem Namen des Catalogs und der Locale
+ID. Viel interessanter ist aber der Aufbau des Suchstrings:
+</p>
+<pre style="background='silver';">
+strIXQuery = "$CONTENTS " &amp; strKeyword
+strIXQuery = strIXQuery &amp; " AND NOT #VPath = *\includes* "
+strIXQuery = strIXQuery &amp; " AND NOT #filename login.asp "
+strIXQuery = strIXQuery &amp; " AND NOT #filename *.|(txt|,inc|,udl|,doc|)"
+</pre>
+<p>
+Die erste Zeile definiert, wonach wir suchen wollen. Und dann folgt einiges an Information, was wir von
+Index Server nicht geliefert bekommen wollen: Dateien im Verzeichnis Includes, Dateien mit dem Namen login.asp,
+sowie alle Dateien mit den gezeigten Dateiendungen. Klarerweise kann man noch weitere Dateien exkludieren,
+ebenso wie Verzeichnisse oder weitere Dateiendungen.
+</p>
+<p>
+<i>Hinweis</i> Die gezeigten Befehle f&uuml;r die Abfrage sind nur ein Teil der Syntax, die von Index Server zur
+Verf&uuml;gung gestellt wird. Ein Besuch der Hilfe zum Thema IXSSO ist dringend empfohlen!
+</p>
+<p>
+F&uuml;hrt man die Abfrage aus, bekommt man ein etwas spartanisch formatiertes Ergebnis (siehe Screenshot). Ein
+wenig optischer Aufputz, und man hat ein perfektes Suchresultat!
+</p>
+<IMG SRC="/artikel/Bilder/200104/20010403.png" width="711" height="583" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die Funktion <i>CreateRecordset</i> liefert ein richtiges Recordset - man kann also ohne weiteres auch
+Paging einbauen, wie man es bereits aus den "normalen" Datenbankszenarien gewohnt ist.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010403.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010403.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000524.htm">Arbeiten mit Index Server Catalogs</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000524.htm</span><br>
+<a href="../artikel/20021107.htm">Index Server Abfragen per Web Service</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021107.htm</span><br>
+<a href="../artikel/20010914.htm">PDF Dokumente suchbar machen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010914.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

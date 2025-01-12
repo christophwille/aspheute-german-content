@@ -1,0 +1,488 @@
+<HTML>
+<HEAD>
+<TITLE>Collections einmal anders: Stacks und Queues</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor, da&szlig; es unter ASP+ einiges mehr an Collections gibt, als unter ASP. Heute besch&auml;ftigt er sich mit Stacks und Queues.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,FIFO,Stack,Queue,Push,Pop,Enqueue,Dequeue,foreach,GetEnumerator,C#,CSharp,C Sharp,ASP.NET,Framework,Classes">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Collections einmal anders: Stacks und Queues</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000926"></SCRIPT>
+</p>
+<p>
+Unter ASP wurden wir mit Collections ziemlich kurz gehalten - es gab nur das Scripting.Dictionary. 
+Die Zeiten haben sich allerdings ge&auml;ndert, und ASP.NET bietet uns Implementationen f&uuml;r first in, first out
+Collections als auch first in, last out Collections: Queues (FIFO) und Stacks.
+</p>
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation des Microsoft 
+.NET Framework SDK's auf einem Webserver. Weiters setze ich voraus, da&szlig; der Leser die Programmiersprache 
+C# zu einem gewissen Grad beherrscht - es finden sich etliche Artikel auf diesem Server, um das notwendige 
+Wissen zu erlernen 
+</p>
+
+<h2>Die Stack Klasse</h2>
+<p>
+Der Stack sollte allen eingefleischten Assembler Programmierern bekannt sein - f&uuml;r alle anderen, in K&uuml;rze,
+was ist ein Stack: ein Stack ist ein Stapel, auf den ich Elemente legen kann ("push"), und dann in der 
+umgekehrten Reihenfolge wieder auslesen kann ("pop"). Um es in einem angreifbaren Bild zu bringen: ich
+habe ein Stapel von Hemden, auf den ich ein weiteres lege - und dieses ist dann auch wieder das Erste,
+das ich herunternehme.
+</p>
+
+<h3>Bef&uuml;llen eines Stacks</h3>
+<p>
+Die erste Aufgabe ist es nat&uuml;rlich, den Stack mit Elementen zu bef&uuml;llen. Dazu bedient man sich der
+<i>Push</i> Methode, die ein <i>object</i> als Parameter annimmt. Das habe ich nat&uuml;rlich im folgenden Beispiel
+entsprechend ausgenutzt (<b>stack.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Collections&quot; %&gt;
+&lt;%
+Stack myStack = new Stack();
+myStack.Push(&quot;Christoph&quot;);
+myStack.Push(Request.ServerVariables.Get(&quot;SCRIPT_NAME&quot;));
+myStack.Push(new DateTime(2000,7,29));
+myStack.Push(Math.PI);
+myStack.Push(2000.0 / 10.5);
+
+Response.Write(myStack.Count.ToString());
+%&gt;
+</pre>
+
+<p>
+Im gezeigten Beispiel lege ich zuerst ein Stack Objekt an, und f&uuml;lle dann Strings, DateTime Werte und Zahlen
+ein. Als Beweis gebe ich dann die Anzahl der Elemente aus, die man vom Stack wieder herunternehmen k&ouml;nnte.
+</p>
+
+<h3>Auslesen eines Stacks</h3>
+<p>
+Interessanter wird da schon das Auslesen - weil es f&uuml;hren viele Wege nach Rom. Der erste ist das Auslesen
+mittels eines <i>foreach</i> Statements (<b>stack_show.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Collections&quot; %&gt;
+&lt;%
+Stack myStack = new Stack(5);
+myStack.Push(&quot;Christoph&quot;);
+myStack.Push(Request.ServerVariables.Get(&quot;SCRIPT_NAME&quot;));
+myStack.Push(new DateTime(2000,7,29));
+myStack.Push(Math.PI);
+myStack.Push(2000.0 / 10.5);
+
+foreach (object objElement in myStack)
+{
+  Response.Write(objElement.ToString() + &quot;&lt;br&gt;\r\n&quot;);
+}
+%&gt;
+</pre>
+
+<p>
+Da die Stack Klasse die <i>GetEnumerator</i> Methode unterst&uuml;tzt (liefert das IEnumerator Interface), kann ich
+die <i>foreach</i> Schleife einsetzen. Bei Verwendung dieses Loops werden keine Elemente vom Stack heruntergenommen.
+</p>
+<p>
+Anders sieht es aus, wenn man sich der <i>Pop</i> Methode des Stacks bedient - das Element wird heruntergenommen und
+vom Stack gel&ouml;scht. Deshalb kann man sich mit <i>Peek</i> eine kleine "Vorschau" auf das n&auml;chste Element holen,
+ohne es aber vom Stack herunterzunehmen (<b>stack_read.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language="C#" %&gt;
+&lt;% @Import Namespace="System.Collections" %&gt;
+&lt;%
+Stack myStack = new Stack(5);
+myStack.Push("Christoph");
+myStack.Push(Request.ServerVariables.Get("SCRIPT_NAME"));
+myStack.Push(new DateTime(2000,7,29));
+myStack.Push(Math.PI);
+myStack.Push(2000.0 / 10.5);
+
+// peek at the first element
+object objHead = myStack.Peek();
+Response.Write("Peeked at " + objHead.ToString() + "&lt;br&gt;\r\n");
+
+int nCount = myStack.Count;
+for (int i = 0; i &lt; nCount; i++)
+{
+   object objCurrent = myStack.Pop();
+   Response.Write("Popped " + objCurrent.ToString() + "&lt;br&gt;\r\n");
+}
+%&gt;
+</pre>
+
+<p>
+Ich habe behauptet, da&szlig; <i>Peek</i> das Element nicht l&ouml;scht - der folgende Screenshot beweist es, weil
+das Element zweimal in der Liste aufscheint.
+</p>
+
+<IMG SRC="Bilder/200009/20000926.png" width="464" height="324" alt="" border="0">
+
+<h2>Die Queue Klasse</h2>
+<p>
+Im Gegensatz zum Stack wird in einer Queue das zuerst eingef&uuml;gte Element auch als erstes wieder
+ausgelesen. Die Anwendung wird daher eine normale "Arbeitsqueue" sein, bei der ich auf der einen Seite
+Elemente einf&uuml;ge, und am anderen Ende wieder herausnehme.
+</p>
+
+<h3>Bef&uuml;llen einer Queue</h3>
+<p>
+Auch f&uuml;r die Queue Klasse werden wir uns zuerst ansehen, wie man Elemente einf&uuml;gt (<b>queue.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Collections&quot; %&gt;
+&lt;%
+Queue myQueue = new Queue(5);
+myQueue.Enqueue(&quot;Christoph&quot;);
+myQueue.Enqueue(Request.ServerVariables.Get(&quot;SCRIPT_NAME&quot;));
+myQueue.Enqueue(new DateTime(2000,7,29));
+myQueue.Enqueue(Math.PI);
+myQueue.Enqueue(2000.0 / 10.5);
+
+Response.Write(myQueue.Count.ToString());
+%&gt;
+</pre>
+
+<p>
+Der einzige Unterschied zum Stack ist der, da&szlig; die Methode jetzt <i>Enqueue</i> hei&szlig;t. Sonst hat sich
+nichts ge&auml;ndert, was ja f&uuml;r das Erlernen nur von Vorteil ist.
+</p>
+<p>
+Zum Konstruktor m&ouml;chte ich noch ein Wort loswerden: dort steht in den Klammern der Wert f&uuml;nf. Dies gibt
+die anf&auml;ngliche Gr&ouml;&szlig;e an. Weitere Overloads des Konstruktors lassen auch zu, den Wachstumsfaktor f&uuml;r
+die Queue zu definieren. Der Vorteil: die Speicherallokierung f&uuml;r die Elemente geht deutlich effizienter
+von statten, was sich speziell bei einer gr&ouml;&szlig;eren Anzahl von Elementen deutlich auswirkt.
+</p>
+
+<h3>Auslesen einer Queue</h3>
+<p>
+Das Auslesen einer Queue funktioniert ebenfalls mit <i>GetEnumerator</i> und <i>foreach</i>. Deshalb m&ouml;chte ich einen
+anderen Weg demonstrieren, der auch das gew&uuml;nschte Ergebnis liefert (<b>queue_show.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Collections&quot; %&gt;
+&lt;%
+Queue myQueue = new Queue(5);
+myQueue.Enqueue(&quot;Christoph&quot;);
+myQueue.Enqueue(Request.ServerVariables.Get(&quot;SCRIPT_NAME&quot;));
+myQueue.Enqueue(new DateTime(2000,7,29));
+myQueue.Enqueue(Math.PI);
+myQueue.Enqueue(2000.0 / 10.5);
+
+object[] arrElements = myQueue.ToArray();
+foreach (object objElement in arrElements)
+{
+  Response.Write(objElement.ToString() + &quot;&lt;br&gt;\r\n&quot;);
+}
+%&gt;
+</pre>
+
+<p>
+In diesem Beispiel habe ich die <i>ToArray</i> Methode verwendet, um die Daten der Queue in ein Array zu 
+kopieren. Dieses enumiere ich dann mit <i>foreach</i>. Apropos: dieser Ansatz funktioniert 1:1 auch f&uuml;r einen
+Stack.
+</p>
+<p>
+Um nun ein Element zu lesen und gleichzeitig aus der Queue zu entfernen, sollte man die <i>Dequeue</i> Methode
+verwenden. Will man nur das erste Element lesen ohne es zu entfernen, dann bietet sich wieder die
+<i>Peek</i> Methode an (<b>queue_read.aspx</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Collections&quot; %&gt;
+&lt;%
+Queue myQueue = new Queue(5);
+myQueue.Enqueue(&quot;Christoph&quot;);
+myQueue.Enqueue(Request.ServerVariables.Get(&quot;SCRIPT_NAME&quot;));
+myQueue.Enqueue(new DateTime(2000,7,29));
+myQueue.Enqueue(Math.PI);
+myQueue.Enqueue(2000.0 / 10.5);
+
+// peek at the first element
+object objHead = myQueue.Peek();
+Response.Write(&quot;Peeked at &quot; + objHead.ToString() + &quot;&lt;br&gt;\r\n&quot;);
+
+int nCount = myQueue.Count;
+for (int i = 0; i &lt; nCount; i++)
+{
+   object objCurrent = myQueue.Dequeue();
+   Response.Write(&quot;Dequeud &quot; + objCurrent.ToString() + &quot;&lt;br&gt;\r\n&quot;);
+}
+%&gt;
+</pre>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Heute haben wir zwei weitere Collections aus dem <i>System.Collections</i> Namespace kennengelernt, n&auml;mlich
+<i>Queue</i> und <i>Stack</i>. Die Verwendung einer Queue bietet sich dann an, wenn man Elemente in der
+Reihenfolge des Bef&uuml;llens abarbeiten m&ouml;chte. Der Stack hingegen kommt dann zum Einsatz, wenn Elemente
+nach dem last in, first out Prinzip bearbeitet werden sollen.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000926.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20020124.htm">Arrays mit Index und Schl&uuml;ssel</a><br>
+<a href="19990806.htm">Das Dictionary Objekt - Dein Feind und Helfer</a><br>
+<a href="20000720.htm">Das foreach Statement</a><br>
+<a href="20020401.htm">Debugging in der Tiefe</a><br>
+<a href="20000823.htm">Die Hashtable Klasse</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000926" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Collections einmal anders: Stacks und Queues"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000926.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20000926"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000926.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

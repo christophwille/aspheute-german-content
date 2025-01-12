@@ -1,0 +1,514 @@
+<HTML>
+<HEAD>
+<TITLE>.NET Komponenten in COM+ Clients einsetzen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Mit dem .NET Framework sind Funktionen in die Griffweite eines jeden Programmierers ger&uuml;ckt, von denen man noch vor nicht allzu langer Zeit nur tr&auml;umen durfte. Dieser Artikel zeigt, wie man .NET in existierenden Anwendungen einsetzen kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,CCW,RCW,COM Callable Wrapper,Runtime Callable Wrapper,Dispose,Dispose Pattern,Deterministic Finalization,DF,ComVisible,regasm,gacutil,csharp">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>.NET Komponenten in COM+ Clients einsetzen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020702"></SCRIPT>
+</p>
+<p>
+Mit dem .NET Framework sind Funktionen in die Griffweite eines jeden Programmierers ger&uuml;ckt, von denen man noch vor nicht
+allzu langer Zeit nur tr&auml;umen durfte. Trotz all dieser neuen Features kann man meist seine alten Applikationen nicht einfach
+wegwerfen und in .NET neu schreiben, sondern man mu&szlig; sie weiterwarten. Dieser Artikel zeigt, wie man seine existierende 
+Applikation mit in .NET geschriebenen Komponenten verbinden kann.
+</p>
+
+<p>
+Viele existierende VB6 oder ASP Applikationen werden uns noch Jahre begleiten, doch sind in diesen Programmiersprachen bestimmte
+Dinge nur schwer oder gar nicht realisierbar. Diese gleichen Aufgaben sind jedoch in .NET in wenigen Zeilen erledigt; wie kann man
+also neuen .NET Code in seine existierende Anwendung bringen? Die Antwort sind COM Callable Wrapper, kurz CCW.
+</p>
+
+<h2>COM Callable Wrapper</h2>
+<p>
+Der Name ist Programm: der COM Callable Wrapper ist nichts anderes als ein Wrapper rund um unsere .NET Komponente, damit sie
+von VB6 und anderen COM Clients aus angesprochen werden. Ein CCW ist das Gegenst&uuml;ck zum Runtime Callable Wrapper (RCW), den wir
+bereits im Artikel <a href="20000828.htm">Verwenden von COM Komponenten in ASP.NET </a> n&auml;her betrachtet haben.
+</p>
+<p>
+Was alles mu&szlig; man f&uuml;r CCW's beachten? Nun, es gibt einige wichtige Punkte:
+</p>
+
+<ul>
+	<li>Die Klasse mu&szlig; einen &ouml;ffentlichen (<b>public</b>) Konstruktor haben.
+	<li>Nur &ouml;ffentliche Instanzmethoden k&ouml;nnen von au&szlig;en angesprochen werden.
+	<li>Statische Methoden oder Eigenschaften sind prinzipiell nicht ansprechbar.
+</ul>
+
+<p>
+Weiters sollte die Assembly, in der die .NET Komponente lebt mit einem Strong Name versehen sein, und der Einfachheit halber im
+Global Assembly Cache (GAC) abgelegt sein.
+</p>
+
+<h2>Beispiel</h2>
+<p>
+Als Beispiel verwenden wir die ImageInfo Klasse aus dem Artikel <a href="20001130.htm">Bildinformationen selbst ermitteln</a>,
+die wir um einige Best Practices f&uuml;r CCW's erweitern werden. Beginnen wir mit dem erw&auml;hnten Strong Name. Dieser legt die Identit&auml;t
+der Assembly kryptographisch fest, und f&uuml;r diese Prozedur ben&ouml;tigen wir ein Schl&uuml;sselpaar, das man mit dem <b>sn</b> Utility erzeugen
+kann:
+</p>
+
+<pre style="background='silver';">
+F:\Inetpub\wwwroot\AspHeute\dotnetccw>sn -k ImageInfo.key
+
+Microsoft (R) .NET Framework Strong Name Utility  Version 1.0.3705.0
+Copyright (C) Microsoft Corporation 1998-2001. All rights reserved.
+
+Key pair written to ImageInfo.key
+</pre>
+
+<p>
+Der weitere Teil der Prozedur ist einfach, weil den Gro&szlig;teil der Compiler erledigt - man mu&szlig; dem Compiler nur mitteilen, da&szlig; er
+das Schl&uuml;sselpaar zur Erzeugung des Strong Names verwenden soll. Dies geschieht am besten in einer separaten Datei (der &Uuml;bersichtlichkeit
+halber), die man <b>AssemblyInfo.cs</b> nennen sollte:
+</p>
+
+<pre style="background='silver';">
+using System.Reflection;
+using System.Runtime.CompilerServices;
+
+[assembly: AssemblyTitle("ImageInfo")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("AlphaSierraPapa")]
+[assembly: AssemblyProduct("")]
+[assembly: AssemblyCopyright("(c) 2002 Christoph Wille")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+
+[assembly: AssemblyVersion("1.0.0.0")]
+
+[assembly: AssemblyDelaySign(false)]
+[assembly: AssemblyKeyFile("ImageInfo.key")]
+</pre>
+
+<p>
+Die letzte Zeile sorgt daf&uuml;r, da&szlig; der Compiler automatisch den Strong Name anlegt. Damit, und mit einer korrekten Versionsnummer, ist
+man dann sp&auml;ter in der Lage, die Assembly in den GAC (Global Assembly Cache) zu installieren. So weit sind wir aber noch nicht, wir
+m&uuml;ssen die Komponente noch ein wenig anpassen.
+</p>
+<p>
+Die im Artikel <a href="20001130.htm">Bildinformationen selbst ermitteln</a> vorgestellte ImageInfo Komponente entspricht
+noch nicht ganz unseren Vorgaben. Wir sollten f&uuml;r eine schnelle Zerst&ouml;rung der "teuren" Bitmapresource sorgen (mittels Dispose
+Pattern), einen Konstruktor anlegen, und auch die Methoden explizit f&uuml;r COM markieren. Beginnen wir bei den leichten Dingen, dem
+Konstruktor (<b>ImageInfo.cs</b>):
+</p>
+
+<pre style="background='silver';">
+   // Ein &ouml;ffentlicher Konstruktor mu&szlig; vorhanden sein
+   public ImageInfo()
+   {
+    m_bmpRepresentation = null;
+   }
+</pre>
+
+<p>
+Nun markieren wir alle Methoden mit dem <b>ComVisible</b> Attribut. Da wir keine Methode verstecken wollen, k&ouml;nnte man argumentieren,
+da&szlig; dieser Schritt unnotwendig ist. Er hat aber einen guten Grund: jeder, der den Code sp&auml;ter liest wei&szlig;, da&szlig; diese Komponente f&uuml;r 
+die Verwendung in COM Applikationen vorgesehen ist, und er keine &Auml;nderungen machen sollte, die diese Verwendung verhindert. Au&szlig;erdem
+kann man mit externen Tools die Attribute auslesen, was zB f&uuml;r die Dokumentation wichtig sein kann. F&uuml;r die beiden Eigenschaften sieht
+unser Code dann so aus:
+</p>
+
+<pre style="background='silver';">
+   [ComVisible(true)]
+   public int Height
+   {
+     get { return m_bmpRepresentation.Height; }
+   }
+   
+   [ComVisible(true)]
+   public int Width
+   {
+     get { return m_bmpRepresentation.Height; }
+   }  
+</pre>
+
+<p>
+Es ist kein gro&szlig;er Aufwand, dokumentiert aber die Absicht des Programmierers. Klarerweise kann man mit <i>false</i> als Argument
+zum Attribut eine Methode verstecken (zB falls diese f&uuml;r COM Applikationen keinen Sinn machen w&uuml;rde).
+</p>
+<p>
+Kommen wir zum letzten Punkt, dem Dispose Pattern. Ein <i>Bitmap</i> Objekt ist teuer, weil es viele Resourcen verbraucht. Daher sollte man
+es nach Verwendung wieder freigeben, und hier setzt der Dispose Pattern an - er definiert, was man in seine Klasse einbauen mu&szlig;, damit
+jeder das Objekt deterministisch zerst&ouml;ren kann (der Dispose Pattern wird auch gerne als DF, Deterministic Finalization, bezeichnet).
+Ich habe die einfachste Variante gew&auml;hlt, indem ich von der <i>Component</i> Klasse abgeleitet habe, und deren <i>Dispose</i> Methode &uuml;berlade:
+</p>
+
+<pre style="background='silver';">
+ using System.ComponentModel; // f&uuml;r Component Basisklasse
+
+ public class ImageInfo : Component
+ {
+   protected override void Dispose(bool disposing)
+   {
+    if (disposing) {
+      // explizit aufgerufen, wir k&ouml;nnen das Bitmap weggeben
+      if (null != m_bmpRepresentation) m_bmpRepresentation.Dispose();
+      // Dispose k&ouml;nnte mehr als einmal aufgerufen werden, daher setzen
+      // wir die zerst&ouml;rte Referenz auf null
+      m_bmpRepresentation = null;
+    }
+    base.Dispose(disposing);
+   }
+   
+   [ComVisible(true)]
+   public void Close()
+   {
+     Dispose();  // Close ruft nur Dispose auf
+   }
+</pre>
+
+<p>
+F&uuml;r einige Programmierer ist es ein "Problem", ein Objekt "wegzuwerfen". F&uuml;r viele ist es nat&uuml;rlicher, ein Objekt zu schlie&szlig;en,
+was speziell f&uuml;r Dateien oder Datenbankverbindungen zutrifft. Deshalb kann man - man mu&szlig; nicht - zus&auml;tzlich zu <i>Dispose</i> weitere
+synonyme Methoden anbieten (hier <i>Close</i>).
+</p>
+<p>
+Damit sind die &Auml;nderungen beendet, wir m&uuml;ssen die Komponente nun kompilieren:
+</p>
+
+<pre style="background='silver';">
+csc /out:ImageInfo.dll /target:library ImageInfo.cs AssemblyInfo.cs /r:System.Drawing.dll /r:System.dll
+</pre>
+
+<p>
+Dadurch erhalten wir die Assembly mit einem Strong Name, die wir nun f&uuml;r COM registrieren k&ouml;nnen.
+</p>
+
+<h3>CCW erstellen und registrieren</h3>
+<p>
+Die Schritte zum CCW sind bestechend einfach - prinzipiell ist es nur der Aufruf des <b>regasm</b> Tools:
+</p>
+
+<pre style="background='silver';">
+F:\Inetpub\wwwroot\AspHeute\dotnetccw>regasm ImageInfo.dll /tlb:ImageInfo.tlb
+Microsoft (R) .NET Framework Assembly Registration Utility 1.0.3705.0
+Copyright (C) Microsoft Corporation 1998-2001.  All rights reserved.
+
+Types registered successfully
+Assembly exported to 'F:\Inetpub\wwwroot\AspHeute\dotnetccw\ImageInfo.tlb', and
+the type library was registered successfully
+</pre>
+
+<p>
+Allerdings kann man leicht in Probleme laufen, wenn man die Assembly dann nicht in den GAC installiert (Pfade). Deshalb
+sollte man noch
+</p>
+
+<pre style="background='silver';">
+F:\Inetpub\wwwroot\AspHeute\dotnetccw>gacutil /i ImageInfo.dll
+
+Microsoft (R) .NET Global Assembly Cache Utility.  Version 1.0.3705.0
+Copyright (C) Microsoft Corporation 1998-2001. All rights reserved.
+
+Assembly successfully added to the cache
+</pre>
+
+
+<p>
+ausf&uuml;hren. Damit ist die Assembly von allen Applikationen aus verwendbar, und ein potentielles Problem ausger&auml;umt, das einem
+stundenlange Fehlersuche bereiten kann.
+</p>
+
+<h3>.NET Komponente verwenden</h3>
+<p>
+Als Beispiel habe ich die .NET Komponente im Windows Scripting Host verwendet (es soll ja so einfach wie m&ouml;glich sein). Die
+ProgId einer .NET Komponente ist <i>Namespacename.Classname</i>, also in unserem Falle <i>AspHeute.ImageInfo</i>. Damit sieht
+der Sourcecode in <b>demo.vbs</b> so aus:
+</p>
+
+<pre style="background='silver';">
+strImageFile = "myImage.jpg"
+bLoadedOK = True
+Set imgInfo = WScript.CreateObject("AspHeute.ImageInfo")
+
+On Error Resume Next
+imgInfo.Load strImageFile
+
+If Err.Number &lt;&gt; 0 Then
+  Wscript.Echo Err.Description
+  bLoadedOK = False
+End If
+
+If (bLoadedOK) Then
+  Wscript.Echo "Breite: " &amp; imgInfo.Width &amp; ", H&ouml;he: " &amp; imgInfo.Height &amp; ", Bildformat: " &amp; imgInfo.Format
+End If
+
+imgInfo.Close
+Set imgInfo = Nothing
+</pre>
+
+<p>
+Dieser Code kann auch in VB6 oder Office Applikationen eingesetzt werden. Und schon hat man Funktionalit&auml;t in seiner alten Applikation,
+von der man ohne externe Komponente nur tr&auml;umen konnte.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dieser Artikel soll als Kochrezept und Ermunterung dazu dienen, existierende Anwendungen mit in .NET geschriebenen Komponenten zu
+erweitern und zu verbessern. Der Nutzen steht einem sehr geringem Aufwand gegen&uuml;ber.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020702.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20001130.htm">Bildinformationen selbst ermitteln</a><br>
+<a href="20020703.htm">Eine kleine Bilddatenbank, Teil 1</a><br>
+<a href="20000728.htm">On-the-fly Generierung von Graphiken</a><br>
+<a href="20000824.htm">Scrapen von Webseiten</a><br>
+<a href="20020225.htm">Thumbnailgenerierung in .NET</a><br>
+<a href="20000828.htm">Verwenden von COM Komponenten in ASP.NET</a><br>
+<a href="20000825.htm">WHOIS Abfragen a la .NET</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20020702" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value=".NET Komponenten in COM+ Clients einsetzen"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20020702.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20020702"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20020702.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

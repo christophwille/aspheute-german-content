@@ -1,0 +1,496 @@
+<HTML>
+<HEAD>
+<TITLE>On-the-fly Erstellung von vCard's</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Die virtuellen Businesskarten - die vCards - werden vielen von uns schon einmal untergekommen sein. Einigen wird es dabei schon in den Sinn gekommen sein,
+f&uuml;r das eigene Communityportal solche vCards dynamisch f&uuml;r die Mitglieder zu generieren.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,vCard,vCalendar,Hashtable,Generierung,on the fly,automatisch,dynamisch,Businesskarte,Visitenkarte,elektronisch">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>On-the-fly Erstellung von vCard's</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020906"></SCRIPT>
+</p>
+<p>
+Die virtuellen Businesskarten - die vCards - werden vielen von uns schon einmal untergekommen sein. Entweder als
+Attachment bei einer Email, oder als Download von einer Website. Einigen wird es dabei schon in den Sinn gekommen sein,
+f&uuml;r das eigene Communityportal solche vCards dynamisch f&uuml;r die Mitglieder zu generieren. Dieser Artikel zeigt, wie's geht.
+</p>
+<p>
+Als ersten Schritt erzeugen wir uns eine vCard mittels Outlook Express, und sehen uns die Datenstrukturen an. Danach
+werden wir mit diesen Informationen an die Arbeit gehen, und uns eine Klasse programmieren, die Daten f&uuml;r die Erstellung
+der vCard annimmt, und als letzten Schritt aus diesen Daten eine vCard dynamisch erstellt.
+</p>
+
+<h2>Mit Outlook Express zur vCard</h2>
+<p>
+Der einfachste und schnellste Weg zu einer vCard ist mittels Outlook Express. Dazu geht man zu den Adressen:
+</p>
+
+<IMG SRC="Bilder/200209/20020906_1.png" width="602" height="380" alt="" border="0">
+
+<p>
+Und exportiert dort eine der Adressen in das vCard Format:
+</p>
+
+<IMG SRC="Bilder/200209/20020906_2.png" width="602" height="380" alt="" border="0">
+
+<p>
+Dann kann man auf die neu erstellte vCard (<b>Prefect, Ford.vcf</b>) doppelklicken, und bekommt personenbezogene Informationen aus der vCard
+angezeigt:
+</p>
+
+<IMG SRC="Bilder/200209/20020906_3.png" width="503" height="424" alt="" border="0">
+
+<p>
+Was steckt nun in so einer .vcf Datei drinnen? Es ist ein ganz normales Textfile mit "Feldern":
+</p>
+
+<pre style="background='silver';">
+BEGIN:VCARD
+VERSION:2.1
+N:Prefect;Ford
+FN:Ford Prefect
+ADR;HOME:;;Vordernbergerstrasse 27/8;Leoben;AT;8700;Austria
+LABEL;HOME:Vordernbergerstrasse 27/8;Leoben;AT;8700;Austria
+EMAIL;PREF;INTERNET:ford@theGuide.net
+REV:20020905T163340Z
+END:VCARD
+</pre>
+
+<p>
+Details zu den einzelnen Feldern erf&auml;hrt man auf der Seite <a href="http://www.imc.org/pdi/" target="_blank">Personal Data Interchange
+- vCard and vCalendar</a>. Allerdings kann man sich aus einem vollausgef&uuml;llten Outlook-Adresseintrag nach dem Export alles
+selbst zusammenreimen - f&uuml;r die Generierung einer vCard.
+</p>
+
+<h2>Die <i>vCardGenerator</i> Klasse</h2>
+<p>
+Damit man den Code m&ouml;glichst in allen Anwendungen einsetzen kann - von Windows Forms bis hin zu ASP.NET - habe ich eine
+Klasse <i>vCardGenerator</i> designed, die das Erstellen einer vCard kapselt. Der Input sind die vCard-Felder, heraus
+kommt eine fertig korrekt formatierte elektronische Visitenkarte.
+</p>
+<p>
+Die einzelnen Elemente der vCard werden in der Klasse in einer Hashtable verwaltet. Um den Eigenschaften den Direktzugriff
+(und somit Fehlerbehandlung) zu ersparen, werden die Zugriffe in einer <i>GetProperty</i> sowie <i>SetProperty</i> Methode abgewickelt:
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.Collections;
+using System.Text;
+
+namespace AspHeute.Utilities {
+public class vCardGenerator {
+  Hashtable Elements;
+  
+  public vCardGenerator() {
+    Elements = new Hashtable();
+  }
+  
+  private void SetProperty(string strElement, string strValue) {
+    if (Elements.ContainsKey(strElement)) {
+      Elements[strElement] = strValue;
+    } else {
+      Elements.Add(strElement, strValue);
+    }
+  }
+  
+  private string GetProperty(string strElement) {
+    if (Elements.ContainsKey(strElement)) {
+      return Elements[strElement].ToString();
+    }
+    
+    return "";
+  }
+</pre>
+
+<p>
+Details zur Verwendung der Hashtable Klasse finden Sie im Artikel <a href="20000823.htm">Die Hashtable Klasse</a>.
+</p>
+<p>
+Die Eigenschaften k&ouml;nnen diese Methoden nun einsetzen, um die Werte bequem zu speichern - und zu holen (in der Klasse
+sind nicht alle m&ouml;glichen Felder einer vCard implementiert, man kann das aber leicht nachholen):
+</p>
+
+<pre style="background='silver';">
+  public string FullName {
+    get { return GetProperty("FN:"); }
+    set { SetProperty("FN:", value); }
+  }
+  
+  public string HomeTelVoice {
+    get { return GetProperty("TEL;HOME;VOICE:"); }
+    set { SetProperty("TEL;HOME;VOICE:", value); }
+  }
+  
+  public string HomeTelFax {
+    get { return GetProperty("TEL;HOME;FAX:"); }
+    set { SetProperty("TEL;HOME;FAX:", value); }
+  }
+  
+  public string CellTelVoice {
+    get { return GetProperty("TEL;CELL;VOICE:"); }
+    set { SetProperty("TEL;CELL;VOICE:", value); }
+  }
+  
+  public string HomeAddress {
+    get { return GetProperty("ADR;HOME:;;:"); }
+    set { SetProperty("ADR;HOME:;;", value); }
+  }
+  
+  public string PreferedInternetEmailAddress {
+    get { return GetProperty("EMAIL;PREF;INTERNET:"); }
+    set { SetProperty("EMAIL;PREF;INTERNET:", value); }
+  }
+</pre>
+
+<p>
+Wie Sie sehen, verwende ich als Key f&uuml;r den Hashtable den linken Teil einer Zeile in der vCard, und als Wert das, was
+auch als Wert in der vCard rechts in der Zeile steht. Auf diese Art und Weise wird n&auml;mlich das Erstellen der vCard
+ein Leichtes:
+</p>
+
+<pre style="background='silver';">
+  public string Generate() {
+    StringBuilder stb = new StringBuilder();
+    stb.Append("BEGIN:VCARD\r\n");
+    stb.Append("VERSION:2.1\r\n");
+    
+    foreach (DictionaryEntry de in Elements)
+    {
+      stb.Append(de.Key);
+      stb.Append(de.Value);
+      stb.Append("\r\n");
+    }
+    
+    stb.Append("END:VCARD\r\n");
+    return stb.ToString();
+  }
+</pre>
+
+<p>
+Ein Vorspann und Ende fix in den <a href="20000803.htm">StringBuilder</a> einf&uuml;gen, und die Datenpaare danach mit dem <a href="20000720.htm">foreach Statement</a> auslesen
+und schreiben. Die Klasse sieht im Class Scout von <a href="http://www.icsharpcode.net/opensource/sd/" target="_blank">#develop</a> dann so aus:
+</p>
+
+<IMG SRC="Bilder/200209/20020906_4.png" width="325" height="321" alt="" border="0">
+
+<h2>Generieren einer Beispiel-vCard</h2>
+<p>
+In der Beispielapplikation <b>vCardGenerator</b> ist neben der Klasse <i>vCardGenerator</i> auch noch ein Hauptprogramm
+mit dabei, das die Verwendung zeigt (<b>SampleApp.cs</b>):
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.IO;
+using AspHeute.Utilities;
+
+public class SampleApp {
+  public static void Main() {
+    vCardGenerator vcg = new vCardGenerator();
+    vcg.FullName = "Christoph Wille";
+    vcg.HomeAddress = "Vordernbergerstrasse 27/8;Leoben;AT;8700;Austria";
+    vcg.PreferedInternetEmailAddress = "christophw@icsharpcode.net";
+    vcg.CellTelVoice = "+43 4711 42";
+    
+    string strVCard = vcg.Generate();
+    FileInfo fi = new FileInfo("sample.vcf");
+    StreamWriter sw = fi.CreateText();
+    sw.Write(strVCard);
+    sw.Flush();
+    sw.Close();
+  }
+}
+</pre>
+
+<p>
+Heraus kommt ein perfekt g&uuml;ltiges <b>sample.vcf</b> (&uuml;berpr&uuml;fbar per Doppelklick): 
+</p>
+
+<pre style="background='silver';">
+BEGIN:VCARD
+VERSION:2.1
+TEL;CELL;VOICE:+43 4711 42
+EMAIL;PREF;INTERNET:christophw@icsharpcode.net
+ADR;HOME:;;Vordernbergerstrasse 27/8;Leoben;AT;8700;Austria
+FN:Christoph Wille
+END:VCARD
+</pre>
+
+<p>
+Nat&uuml;rlich kann das so generierte vCard per ASP.NET Downloadlink auch verschickt werden (zB interessant f&uuml;r die Mitglieder
+einer Community). Alles was zu tun ist, ist den entsprechenden MIME Type beim Download mitzuschicken - schon &ouml;ffnet Outlook
+die vCard.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die heute vorgestellte Klasse implementiert nur einige wichtige Elemente einer vCard, allerdings bin ich mir sicher,
+da&szlig; Sie die von Ihnen ben&ouml;tigten schnell mit Copy&amp;Paste Programmierung einbauen werden k&ouml;nnen.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020906.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20001121.htm">AutoCompletion f&uuml;r Web Formulare</a><br>
+<a href="20000720.htm">Das foreach Statement</a><br>
+<a href="20020318.htm">Das using Schl&uuml;sselwort</a><br>
+<a href="20000823.htm">Die Hashtable Klasse</a><br>
+<a href="20000803.htm">Die String Klasse in C#</a><br>
+<a href="20000728.htm">On-the-fly Generierung von Graphiken</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eicsharpcode%2Enet%2Fopensource%2Fsd%2F">#develop (SharpDevelop)</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eimc%2Eorg%2Fpdi%2F">Personal Data Interchange - vCard and vCalendar</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20020906" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="On-the-fly Erstellung von vCard's"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20020906.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20020906"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20020906.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

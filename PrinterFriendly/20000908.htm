@@ -1,0 +1,351 @@
+<HTML>
+<HEAD>
+<TITLE>Cookies in Flash mittels ASP manipulieren</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Macromedia Flash unterst&uuml;tzt leider kein direktes Setzen oder Lesen von Cookies. Daher mu&szlig; man entweder den vielfach beschriebenen Umweg &uuml;ber JavaScript gehen, oder man benutzt einfach ASP Skripts, um Cookies zu setzen und zu lesen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Flash, Cookies, ActionScript, ASP, Cookies setzen, Cookies auslesen">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Cookies in Flash mittels ASP manipulieren</H1>
+<p>
+Geschrieben von: <a href="../autoren/guenterhoffellner.htm">Günter Hoffellner</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000908"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Das Setzen oder Auslesen von Cookies in Flash kann n&ouml;tig sein, um zum Beispiel 
+die Personalisierung einer Website auch auf die Flash Datei ausdehnen zu k&ouml;nnen.
+</p>
+<p>
+Flash unterst&uuml;tzt leider kein direktes Setzen oder Lesen von Cookies. Daher mu&szlig; man 
+entweder den vielfach beschriebenen Umweg &uuml;ber JavaScript gehen, oder man benutzt einfach ASP 
+Skripts, um Cookies zu setzen und zu lesen. Dies hat unter anderem den Vorteil, da&szlig; Flash 
+auf Cookies auch bei ausgeschaltetem JavaScript zugreifen kann.
+</p>
+<p>
+Flash Anf&auml;nger, die mit ActionScript in Flash noch nicht vertraut sind, sollten zuerst den 
+Artikel 
+<a href="../artikel/20000719.htm">Datenaustausch zwischen Macromedia Flash und ASP</a>
+lesen, um einen Einblick in die Grundlagen des Zusammenspieles von Flash und ASP zu bekommen.
+</p>
+<h2>Das Flashfile</h2>
+<p>
+Im folgenden wird die Flash Datei beschrieben, die beim Client Cookies lesen und setzen kann. 
+Die Datei ruft dabei die ASP Skripts <i>testCookies.asp</i>, <i>setCookies.asp</i> und 
+<i>getCookies.asp</i> auf, um mittels ASP Zugriff auf die Cookies des Browsers zu bekommen.
+</p>
+<p>
+Die Flash Datei &uuml;berpr&uuml;ft, ob Cookies beim Client zugelassen sind und erlaubt die 
+Eingabe von Daten, die in einem Cookie gespeichert werden sollen. Ausserdem liest die Datei den 
+Inhalt der Cookies aus und stellt ihn am Bildschirm dar.
+</p>
+<h3>Das Userinterface</h3>
+<p>
+Das Userinterface gliedert sich in drei Teile die im Folgenden n&auml;her beschrieben 
+werden.
+</p>
+<p>
+<IMG SRC="/artikel/Bilder/200009/20000908_userinterface.png" width=551 height=401 alt="" border="0"><br>
+<i>Bild 1: Userinterface in Flash</i>
+</p>
+<h4>Schritt 1:</h4>
+<p>
+Der Benutzer klickt auf  den "START TEST" Button um am Server die &Uuml;berpr&uuml;fung 
+auszul&ouml;sen, ob der Internetbrowser des Seitenbesuchers Cookies akzeptiert. In der 
+Statusmeldung wird ausgegeben, ob der Browser Cookies annimmt oder nicht.
+</p>
+<h4>Schritt2:</h4>
+<p>
+Im Falle da&szlig; Cookies akzeptiert werden l&auml;uft der Flash Film weiter zum zweiten Teil 
+und erwartet die Eingabe von Daten, die in einem Cookie gespeichert werden sollen. Mit einem Click 
+auf  den "DATEN SENDEN" Button werden die Daten an den Server geschickt.
+</p>
+<h4>Schritt3:</h4>
+<p>
+Im letzten Teil werden vom Server die Cookiedaten zur&uuml;ck in die Flash Datei geholt und in 
+die Textausgabefelder geschrieben.
+</p>
+<h3>Die Scripts des Flash Files</h3>
+<p>
+Der grafische Teil des Flashfiles ist standardm&auml;&szlig;ig aufgebaut und soll deshalb hier 
+nicht weiter beschrieben werden.
+</p>
+<p>
+Wichtig ist der Layer mit dem Namen "<i>code</i>", der den Sourcecode des Flashfiles 
+enth&auml;lt. Auf diesen soll jetzt n&auml;her eingegangen werden.
+</p>
+<p>
+<IMG SRC="/artikel/Bilder/200009/20000908_Timeline.png" width=549 height=192 alt="" border="0"><br>
+<i>Bild 2: Userinterface in Flash</i>
+</p>
+<p>
+<pre style="background='silver';">
+//Frame 1
+Set Variable: "cookies" = "false"
+stop
+</pre>
+</p>
+<p>
+Die Variable "<i>cookies</i>" wird mit dem String "<i>false</i>" initialisiert. "<i>false</i>" 
+deshalb, weil vom Server nicht die boolschen Werte <i>true</i> und <i>false</i> zur&uuml;ckkommen 
+sondern ein Strings mit den Wert "<i>true</i>" und "<i>false</i>". Flash wartet auf den 
+Buttonklick um den Cookie-Test zu starten.
+</p>
+<p>
+<pre style="background='silver';">
+//Frame 2, Label Schritt1
+Load Variables ("/testcookies.asp", 0)
+</pre>
+</p>
+<p>
+Die Datei "<i>testcookies.asp</i>" wird aufgerufen und liefert "<i>true</i>" oder 
+"<i>false</i>" (Cookies akzeptiert - Cookies nicht akzeptiert) zur&uuml;ck.
+</p>
+<p>
+<pre style="background='silver';">
+//Frame10 
+If (cookies eq "true")
+      Set Variable: "cookietest" = "Cookies k&ouml;nnen gesetzt werden"
+Stop 
+Else
+      Set Variable: "cookietest" = "Cookies nicht erlaubt. Bitte einschalten"
+      Go to and Stop ("keinecookies")
+End If
+</pre>
+</p>
+<p>
+In Frame 10 wird je nach dem Ergebnis des Cookie-Tests eine andere Meldung in die Statuszeile 
+ausgegeben.
+</p>
+<p>
+Werden Cookies vom Browser nicht angenommen, so springt Flash auf den Label 
+"<i>keinecookies</i>", bleibt dort stehen und l&auml;&szlig;t keine weiteren Eingaben au&szlig;er 
+einen weiteren Cookie-Test zu. In der <i>if</i>-Kondition ist <i>cookies eq "true"</i> in 
+Anf&uuml;hrungszeichen gesetzt, da der Server nicht wirklich den boolschen Wert <i>true</i> oder 
+<i>false</i> zur&uuml;ckgibt, sondern einen String der dann auch gleich als solcher abgefragt 
+wird. Man achte auch darauf, da&szlig; der Stringvergleich auch anstatt des "<i>=</i>" ein 
+"<i>eq</i>" verlangt.
+</p>
+<p>
+Durch den "Stop" Befehl wird Flash gezwungen auf einen Klickevent des "SENDE DATEN" Button zu 
+warten. Das Senden der Cookiesdaten zum Server geschieht wie folgt:
+</p>
+<p>
+<pre style="background='silver';">
+//Frame11, Label Schritt2
+Load Variables ("/setcookies.asp?cookiename="&amp;name&amp;"&amp;"&amp;
+"cookiemail="&amp;email&amp;"&amp;"&amp;"cookietelefon="&amp;telefon, 0)
+</pre>
+</p>
+<p>
+In diesem Skript wird ein Querystring, der die Usereingaben enth&auml;lt, an das File "<i>	
+</i>" geschickt. F&uuml;r den Aufbau des Querystrings sei auf den Artikel "Datenaustausch zwischen 
+Macromedia Flash und ASP" verwiesen.
+</p>
+<p>
+<pre style="background='silver';">
+//Frame19, Label Schritt3
+Load Variables ("/getcookies.asp", 0)
+Die Daten eines via ASP ausgelesenen Cookies werden in das Flash File eingelesen.
+//Frame 28
+Stop
+</pre>
+</p>
+<p>
+Die eingelesenen Daten werden nach der kurzen Animation einer Linie in die danach erscheinenden 
+Ausgabefelder ausgegeben.
+</p>
+<p>
+<pre style="background='silver';">
+//Frame 35, Label keinecookies
+stop
+</pre>
+</p>
+<p>
+Wird durch den Test in Frame 10 festgestellt, da&szlig; keine Cookies zugelassen sind, wird 
+innerhalb der Flash Timeline in diesen Frame verzweigt und die dem User die Gelegenheit gegeben, 
+den Cookie-Test noch einmal durchzuf&uuml;hren.
+</p>
+<h2>Die Scripts der ASP Dateien</h2>
+<p>
+Die 3 Dateien <i>testcookies.asp</i>, <i>setcookies.asp</i> und <i>getcookies.asp</i> werden 
+vom Flash File f&uuml;r die folgenden Aktionen aufgerufen: Pr&uuml;fen ob der Browser Cookies 
+annimmt (<i>testcookies.asp</i>), Cookies setzen (<i>setcookies.asp</i>), Cookies auslesen 
+(<i>getcookies.asp</i>).
+</p>
+<h3>Pr&uuml;fen ob der Browser Cookies annimmt</h3>
+<p>
+Die Datei testcookies.asp pr&uuml;ft, ob der Browser Cookies annimmt. Die Technik ist dabei die 
+selbe wie im Artikel 
+<a href="../artikel/20000907.htm">Einfacher Test, ob der Browser Cookies annimmt</a>. 
+Die Variante des Scripts, die hier zur Anwendung kommt, sieht wie folgt aus:
+</p>
+<p>
+<pre style="background='silver';">
+&lt;%
+strTest = Request.QueryString("CookieTest")
+
+If UCase(strTest) &lt;&gt; Ucase("true") Then
+   ' Erster Aufruf
+   ' Sessionvariable setzen
+   Session("__FlashCookieTest") = True
+   ' Redirect mit QueryString
+   strURL = Request.ServerVariables("SCRIPT_NAME")
+   strQueryString = "?CookieTest=true"
+   Response.Redirect(strURL &amp; strQueryString)
+   Response.End
+Else
+   ' Redirect ist bereits erfolgt
+   ' Pruefen, ob Sessionvariable den Wert enthaelt
+   If Session("__FlashCookieTest") = True Then
+      ' Session Variable enthaelt Wert
+      ' Daher akzeptiert Browser Cookies
+      strOut = "Cookies=true"   
+   Else
+      ' Session Variable enthaelt keinen Wert
+      ' Daher akzeptiert Browser keine Cookies
+      strOut = "Cookies=false"   
+   End If
+End If
+' Output zu Flash:
+Response.Write(strOut)
+%&gt;
+</pre>
+</p>
+<p>
+Vereinfacht gesagt setzt das Skript eine Session Variable, macht einen Redirect auf sich 
+selbst, und pr&uuml;ft anschlie&szlig;end, ob der Wert immer noch in der Session Variablen 
+gespeichert ist. Damit der Wert gespeichert bleibt mu&szlig; der Browser den Session Cookies des 
+Internet Information Servers (IIS) angenommen haben, der von ASP automatisch zum Browser gesendet 
+wird. Dies bedeutet, da&szlig; der Browser Cookies annimmt wenn der Wert in der Session Variable 
+nach einem Redirect immer noch vorhanden ist.
+</p>
+<p>
+Die Datei gibt den Text "<i>Cookies=true</i>" zur&uuml;ck, wenn der Browser Cookies annimmt, 
+oder "<i>Cookies=false</i>" wenn der Browser keine Cookies akzeptiert.
+</p>
+<p>
+Wenn das Flash nun die ASP Datei <i>testcookies.asp</i> mittels Flashkommando <i>Load 
+Variables</i> aufruft, so gibt die ASP Datei entweder die Zeichenkette "<i>Cookies=true</i>" 
+oder "<i>Cookies=false</i>" zum Flash File retour, wo dadurch automatisch die Variable 
+<i>Cookies</i> auf "<i>true</i>" oder "<i>false</i>" in Flash gesetzt wird.
+</p>
+<h3>Cookies setzen</h3>
+<p>
+Mittels ASP kann man einfach Cookies setzen, indem man die <i>Response.Cookies</i> Collection 
+benutzt. In unserem Beispiel ruft das Flash File die Datei <i>setcookies.asp</i> auf und 
+&uuml;bergibt die Variablen f&uuml;r die Cookies (Namen und Werte) im Querystring an das ASP 
+Skript.
+</p>
+<p>
+Das ASP Skript liest alle Wert aus der Querystring Collection aus und sendet, mittels 
+<i>Response.Cookies</i>, die entsprechenden Cookies zum Browser. Das vollst&auml;ndige ASP Skript 
+umfasst dabei nur 3 Zeilen:
+</p>
+<p>
+<pre style="background='silver';">
+&lt;%
+For each item in Request.QueryString
+	Response.Cookies(item) = Request.Querystring(item) 	
+Next
+%&gt;
+</pre>
+</p>
+<h3>Cookies auslesen</h3>
+<p>
+Das Auslesen der Cookies und das Schreiben zum Flash File gestaltet sich &auml;hnlich einfach 
+wie das Setzen der Cookies. Ruft das Flash File die Datei <i>getcookies.asp</i> auf, so liefert 
+diese alle Namen und Werte der Cookies als URL-encoded Text zur&uuml;ck. Dadurch werden die Werte 
+der Cookies einfach in Variablen mit den selben Namen in Flash gespeichert wenn Flash die Datei 
+<i>getcookies.asp</i> aufruft. Die ASP Datei <i>getcookies.asp</i> lautet wie folgt:
+</p>
+<p>
+<pre style="background='silver';">
+&lt;%
+For each cookie in Request.Cookies
+   strOut = strOut &amp; Server.URLEncode(cookie) &amp; "="
+   strOut = strOut &amp; Server.URLEncode(Request.Cookies(cookie))
+   strOut = strOut &amp; "&amp;"
+Next
+Response.Write strOut
+%&gt;
+</pre>
+</p>
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Der Flashbasierende Teil dieses Artikels wurde in Flash 4 erzeugt. Die Systematik ist aber auch 
+in der neu erschienenen Version 5 der Macromedia Software gleich.
+</p>
+<p>
+Der ASP Teil l&auml;uft sowohl auf IIS 4.0 als auch auf IIS 5.0, und mit leichten 
+&Auml;nderungen auch unter ASP+.
+</p>
+<p>
+Nachdem in diesem Artikel das Setzen und Auslesen von Cookies mit Flash in Verbindung mit ASP 
+beschrieben wurde soll dies in einem der n&auml;chsten Artikel vertieft werden indem auf der 
+vorliegenden Basis eine einfache Personalisierung einer Flash Datei mittels Cookies beschrieben 
+wird.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000908.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000908.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000719.htm">Datenaustausch zwischen Macromedia Flash und ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000719.htm</span><br>
+<a href="../artikel/20000907.htm">Einfacher Test, ob der Browser Cookies annimmt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000907.htm</span><br>
+<a href="../artikel/20020320.htm">Flash Detection ohne Komponente</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020320.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

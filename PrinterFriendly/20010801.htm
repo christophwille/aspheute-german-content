@@ -1,0 +1,272 @@
+<HTML>
+<HEAD>
+<TITLE>Smart Tags auf die Finger geschaut</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Heute sehen wir uns genauer an, was Smart Tags sind, wie man sie verwendet, wie man sie abschaltet, und wie man eigene programmieren kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Smart Tag,IE,Internet Explorer,MSSmartTagsPreventParsing,META,Tag,disable,abschalten,parse">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Smart Tags auf die Finger geschaut</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010801"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Das Smart Tags Feature des Internet Explorer 6 lie&szlig; die Wogen hoch gehen, vor allem, da dadurch 
+"hinterr&uuml;cks" am Content einer Web Site herumgebastelt werden kann. Da nun einige Zeit seit
+dieser Debatte ins Land gegangen ist, sehen wir uns nun einmal genauer an, was Smart Tags sind,
+wie man sie verwendet, wie man sie abschaltet, und wie man eigene programmieren kann.
+</p>
+<p>
+Was sind Smart Tags? Im Falle von Internet Explorer sieht das (vereinfacht) so aus: eine Webseite wird geladen
+und gerendert. W&auml;hrend des Renderings werden diverse Smart Tag Libraries aufgerufen, die den Inhalt
+nach ihnen bekannten Termini durchsuchen - und dann Internet Explorer anweisen, diese durch eine
+gewellte Linie darzustellen. F&auml;hrt man &uuml;ber diesen "Hyperlink", wird eine Infobox mit diversen
+Links ge&ouml;ffnet, die vom Hersteller der Smart Tag Library als dem Kontext entsprechend gew&auml;hlt
+wurden.
+</p>
+<p>
+Genau das ist der Kritikpunkt an Smart Tags: sie ver&auml;ndern die Informationen einer Site. Ein
+krasses Beispiel gef&auml;llig? Eine Finanzsite A, die Informationen &uuml;ber Firmen anbietet. Eine Smart Tag
+Library, die auf Firmennamen reagiert, und dem Benutzer Links zu anderen Finanzsites vorschl&auml;gt -
+ob das den Betreibern der Finanzsite A gef&auml;llt sei dahingestellt.
+</p>
+<p>
+Allerdings k&ouml;nnen Smart Tags auch durchwegs n&uuml;tzlich sein - im Falle einer Firma, die ihren
+Benutzern eigene Smart Tags zur Verf&uuml;gung stellen will. Und andererseits - man kann Smart Tags
+als Website Betreiber auch ausschalten (siehe sp&auml;ter im Artikel). K&uuml;mmern wir uns aber zuerst 
+um die Userperspektive.
+</p>
+
+<h2>Smart Tags in Action</h2>
+<p>
+Beginnen wir damit, uns anzusehen wie sich Smart Tags beim t&auml;glichen Surfen bemerkbar machen. Dazu mu&szlig;
+man allerdings zuerst zwei Schritte setzen: die Smart Tags generell erlauben, und sich eine 
+Smart Tag Library downloaden &amp; installieren. Das Erlauben von Smart Tags geht in der <i>Tools/Internet
+Options...</i> Dialogbox von statten:
+</p>
+
+<IMG SRC="/artikel/Bilder/200108/20010801_1.png" width="406" height="452" alt="" border="0">
+
+<p>
+Das war Teil Eins, nun folgt der interessantere Teil - wo bekommt man Smart Tag Libraries her? Einerseits
+bietet MS eine kleine Demolibrary an, andererseits finden sich bei
+<a href="http://www.officesmarttags.com" target="_blank">Microsoft Office eServices</a> etliche
+Libraries, die man einsetzen kann. Nach der (meist automatisierten) Installation ist man dann ready
+to rock and roll.
+</p>
+<p>
+Als Opfer meiner Versuche habe ich mir die <a href="http://msdn.microsoft.com/" target="_blank">MSDN</a>
+Site ausgesucht. Generell sind Smart Tags nicht sehr aufdringlich - sie werden nur unterwellt 
+dargestellt, wie in diesem Fall der Terminus <i>Microsoft</i>:
+</p>
+
+<IMG SRC="/artikel/Bilder/200108/20010801_2.png" width="748" height="476" alt="" border="0">
+
+<p>
+F&auml;hrt man mit der Maus auf das Smart Tag, erh&auml;lt man ein Info-Icon, mit dem man das eigentliche
+Smart Tag Men&uuml; &ouml;ffnen kann:
+</p>
+
+<IMG SRC="/artikel/Bilder/200108/20010801_3.png" width="339" height="231" alt="" border="0">
+
+<p>
+Hier besteht es "nur" aus Links - aber da Smart Tags als COM Komponenten implementiert werden
+k&ouml;nnen, gibt es hier einen gewissen "Spielraum".
+</p>
+
+<h2>Smart Tags verhindern</h2>
+<p>
+Den Web Site Betreiber interessiert klarerweise, wie man verhindern kann, da&szlig; Smart Tags in die
+eigenen Seiten "hineingedoktert" werden - weil hin und wieder kann das st&ouml;rend sein, und seien
+es "nur" firmenpolitische Entscheidungen. Und man will sich ja nicht gerade darauf verlassen, da&szlig;
+der User die Smart Tags im Browser ausgeschaltet hat...
+</p>
+<p>
+Nehmen wir folgendes einfaches Dokument (<b>tagdocument.asp</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;SmartTags sind erlaubt&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;Der Terminus Microsoft erscheint mit SmartTag.&lt;/p&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Dieses wird bei eingeschalteten Smart Tags so dargestellt:
+</p>
+
+<IMG SRC="/artikel/Bilder/200108/20010801_4.png" width="414" height="215" alt="" border="0">
+
+<p>
+Um zu verhindern, da&szlig; Smart Tags eingef&uuml;gt werden, mu&szlig; man in das Dokument ein 
+zus&auml;tzliches META Tag einbauen (<b>tagsdisabled.asp</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;No SmartTags, please&lt;/title&gt;
+<strong>&lt;meta name="MSSmartTagsPreventParsing" content="TRUE"&gt;</strong>
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;
+Der Terminus Microsoft wird ohne SmartTag
+angezeigt, weil wir das META Tag gesetzt haben.
+&lt;/p&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Der Erfolg gibt uns Recht:
+</p>
+
+<IMG SRC="/artikel/Bilder/200108/20010801_5.png" width="464" height="220" alt="" border="0">
+
+
+<h2>Eigene Smart Tags programmieren</h2>
+<p>
+Das Selbstprogrammieren von Smart Tags kann auf 2 Arten angegangen werden: die harte Tour
+&uuml;ber COM (sehr leistungsf&auml;hig), oder &uuml;ber Smart Tag XML Libraries.
+An dieser Stelle m&ouml;chte ich einige MSDN Artikel empfehlen:
+</p>
+
+<ul>
+    <li><a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/dnsmarttag/html/odc_smarttags.asp" target="_blank">Developing Smart Tag DLLs</a>
+    <li><a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/dnsmarttag/html/odc_stxml.asp?frame=true" target="_blank">Developing Simple Smart Tags</a>
+</ul>
+
+<p>
+Auf die erstere Variante kann ich zeit- und platzm&auml;&szlig;ig nicht eingehen, aber f&uuml;r die zweitere kann ich
+ein kleines Beispiel pr&auml;sentieren. Alles, was man braucht, ist eine XML Datei (<b>aspheutetags.xml</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;FL:smarttaglist xmlns:FL="urn:schemas-microsoft-com:smarttags:list"&gt;
+&lt;FL:name&gt;AspHeute Demo Tags&lt;/FL:name&gt; 
+&lt;FL:lcid&gt;1033&lt;/FL:lcid&gt;
+&lt;FL:description&gt;Simple SmartTags von AspHeute&lt;/FL:description&gt;
+&lt;FL:moreinfourl&gt;http://www.aspheute.com/&lt;/FL:moreinfourl&gt;
+&lt;FL:smarttag type="urn:schemas-microsoft-com:smarttags#generalterms"&gt;
+    &lt;FL:caption&gt;ASP bezogene Termini&lt;/FL:caption&gt;
+    &lt;FL:terms&gt;
+        &lt;FL:termlist&gt;upload,datenbank,performance&lt;/FL:termlist&gt;
+    &lt;/FL:terms&gt;
+    &lt;FL:actions&gt;
+        &lt;FL:action id="AHDbCat"&gt; 
+            &lt;FL:caption&gt;Daten&amp;amp;bank Artikel&lt;/FL:caption&gt;
+            &lt;FL:url&gt;http://www.aspheute.com/kategorien/Datenbank.htm&lt;/FL:url&gt;
+        &lt;/FL:action&gt;
+        &lt;FL:action id="AHTipsCat"&gt;
+            &lt;FL:caption&gt;&amp;amp;Tips und Tricks&lt;/FL:caption&gt;
+            &lt;FL:url&gt;http://www.aspheute.com/kategorien/ASP%20Tricks.htm&lt;/FL:url&gt;
+        &lt;/FL:action&gt;
+    &lt;/FL:actions&gt;
+&lt;/FL:smarttag&gt;
+&lt;/FL:smarttaglist&gt;
+</pre>
+
+<p>
+Der Artikel <a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/dnsmarttag/html/odc_stxml.asp?frame=true" target="_blank">Developing Simple Smart Tags</a>
+geht auf die einzelnen XML Tags genau ein, von meiner Seite nur so viel: jedes Wort in
+<i>FL:termlist</i> wird mit einem Smart Tag ausgestattet, der die Links aus der Sektion
+<i>FL:actions</i> enth&auml;lt.
+</p>
+
+<p>
+Die Installation ist denkbar einfach - einfach in das folgende Verzeichnis kopieren:
+</p>
+
+<IMG SRC="/artikel/Bilder/200108/20010801_6.png" width="507" height="259" alt="" border="0">
+
+<p>
+Der Anwendungsfall? Eine firmeninterne Smart Tag Library, die den Mitarbeitern helfen soll,
+w&auml;hrend des Surfens f&uuml;r bestimmte Termini firmenspezifische Informationen abrufen zu k&ouml;nnen.
+Der Artikel <a href="http://msdn.microsoft.com/library../default.htm?url=/library/en-us/dnsmarttag/html/odc_stxml.asp?frame=true" target="_blank">Developing Simple Smart Tags</a>
+zeigt genauer, wie man die Library deployed (zum Client bringt), und wie man diese automatisch
+&uuml;ber den firmeninternen Webserver updaten kann.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+In bestimmten Situationen - speziell der Intranetanwendungsfall der selbstgeschriebenen Smart Tags -
+k&ouml;nnen Smart Tags durchaus n&uuml;tzlich sein. Will man sie auf seiner Site allerdings unterbinden, mu&szlig;
+man ein zus&auml;tzliches META Tag einf&uuml;gen. W&auml;re es anders herum gewesen, h&auml;tte es keinen Aufschrei
+gegeben - allerdings wer h&auml;tte dann das META Tag zum Einschalten von Smart Tags eingebaut?
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010801.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010801.zip</span></p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fen%2Dus%2Fdnsmarttag%2Fhtml%2Fodc%5Fdeployst%2Easp">Deploying Smart Tag DLLs by Using the Visual Studio Installer</a><br>
+<SPAN class="content">http://msdn.microsoft.com/library/en-us/dnsmarttag/html/odc_deployst.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3Furl%3D%2Flibrary%2Fen%2Dus%2Fdnsmarttag%2Fhtml%2Fodc%5Fstxml%2Easp%3Fframe%3Dtrue">Developing Simple Smart Tags</a><br>
+<SPAN class="content">http://msdn.microsoft.com/library../default.htm?url=/library/en-us/dnsmarttag/html/odc_stxml.asp?frame=true</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3Furl%3D%2Flibrary%2Fen%2Dus%2Fdnsmarttag%2Fhtml%2Fodc%5Fsmarttags%2Easp">Developing Smart Tag DLLs</a><br>
+<SPAN class="content">http://msdn.microsoft.com/library../default.htm?url=/library/en-us/dnsmarttag/html/odc_smarttags.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fen%2Dus%2Fdnsmarttag%2Fhtml%2Fodc%5Fstfaq%2Easp">Smart Tags Frequently Asked Questions</a><br>
+<SPAN class="content">http://msdn.microsoft.com/library/en-us/dnsmarttag/html/odc_stfaq.asp</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

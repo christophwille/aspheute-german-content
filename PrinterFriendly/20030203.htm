@@ -1,0 +1,208 @@
+<HTML>
+<HEAD>
+<TITLE>Web Folders mit IIS</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Bei der Verwendung eines Intranets kam mir ein interessantes Feature unter - durch einen Klick auf einen Hyperlink auf einer Seite &ouml;ffnete sich der Windows Explorer, und ich konnte wie vom Explorer gewohnt am Web Server arbeiten.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Web Folder,WebDAV,Authoring,Versioning,Distributed,Network Places,IE Behavior,Behavior,httpFolder,anchorClick,IIS,link">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Web Folders mit IIS</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Server.htm">Server</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20030203"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Bei der Verwendung eines Intranets kam mir ein interessantes Feature unter - durch einen Klick auf einen Hyperlink auf einer Seite
+&ouml;ffnete sich der Windows Explorer, und ich konnte wie vom Explorer gewohnt, Dateien auf den Webserver kopieren oder auf lokale
+Datentr&auml;ger schreiben. Mein Interesse war geweckt, und ich wollte wissen, wie denn das funktioniert.
+</p>
+
+<p>
+Die Technik im Hintergrund, mit der wir uns heute besch&auml;ftigen, nennt sich WebDAV (distributed authoring and versioning). Dieses WebDAV
+findet sich in IIS seit der Version 5, und ebenso in Internet Explorer der Version 5 (und nat&uuml;rlich in vielen anderen Server bzw Clientprodukten
+anderer Hersteller, da es sich um einen offenen Standard handelt). Wie der Name bereits andeutet, dient es dazu, Dokumente am Webserver
+editieren und versionieren zu k&ouml;nnen. Mit dem "Authoring" Teil werden wir uns heute besch&auml;ftigen, beginnend auf der Serverseite.
+</p>
+
+<h2>Web Folder einrichten</h2>
+<p>
+Ohne Konfiguration des Server geht nichts, aber zumindest ist diese sehr leicht erledigt mit Hilfe des Internet Services Manager.
+</p>
+
+<IMG SRC="/artikel/Bilder/200302/20030203_1.png" width="589" height="328" alt="" border="0">
+
+<p>
+<b>Tip</b> Ein Web Folder Verzeichnis sollte immer nur als solches dienen, nicht auch "normale" Webinhalte serven. Wenn man ein solches
+physikalisch eingerichtet hat, w&auml;hlt man <i>Eigenschaften</i> aus dem Kontextmen&uuml;:
+</p>
+
+<IMG SRC="/artikel/Bilder/200302/20030203_2.png" width="461" height="435" alt="" border="0">
+
+<p>
+Standardm&auml;&szlig;ig ist Lesezugriff erlaubt, das wird in den meisten aller F&auml;lle nicht ausreichen. Deshalb ist zus&auml;tzlich Schreibzugriff und
+Verzeichnisauflistung erlaubt (auch schon, um anderen Browser-Clients als Internet Explorer zumindest gewissen Zugriff zu erlauben).
+</p>
+<p>
+<b>Tip</b> Vernachl&auml;ssigen Sie niemals die Sicherheit Ihrer Web Folder. Gehen Sie dazu auf den Directory Security Tab:
+</p>
+
+<IMG SRC="/artikel/Bilder/200302/20030203_3.png" width="461" height="435" alt="" border="0">
+
+<p>
+F&uuml;r Transportsicherheit der Daten empfiehlt sich SSL, was manches Mal durchwegs erw&uuml;nscht sein kann. Wichtiger ist aber die Zugriffskontrolle.
+Das, was Sie hier einstellen wirkt sich darauf aus, wer mit welchem WebDAV Client zugreifen kann. Wenn nur NTLM aktiviert ist, kann auch
+nur der Windows Explorer zugreifen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200302/20030203_4.png" width="371" height="334" alt="" border="0">
+
+<p>
+Damit ist unser Server fertigkonfiguriert - f&uuml;r das Testen. Im Echtbetrieb vergessen Sie bitte nicht, auf das Verzeichnis entsprechende
+NTFS Rechte zu vergeben!
+</p>
+
+<h2>Manuelle Verbindung zu einem Web Folder</h2>
+<p>
+Wenn man die Adresse eines Web Folders kennt, kann man diesen mittels "My Network Places" in Windows einrichten:
+</p>
+
+<IMG SRC="/artikel/Bilder/200302/20030203_5.png" width="499" height="347" alt="" border="0">
+
+<p>
+Einfach "Add Network Place" doppelklicken, und in dem sich &ouml;ffnenden Wizard die Adresse eintippen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200302/20030203_6.png" width="447" height="322" alt="" border="0">
+
+<p>
+Zuletzt wird noch ein Name f&uuml;r den Network Place f&auml;llig - suchen Sie sich einen Namen aus, der leicht wiedererkennbar ist!
+</p>
+
+<IMG SRC="/artikel/Bilder/200302/20030203_7.png" width="447" height="322" alt="" border="0">
+
+<p>
+Damit ist man fertig, und kann Dateien via Windows Explorer up- und downloaden:
+</p>
+
+<IMG SRC="/artikel/Bilder/200302/20030203_8.png" width="696" height="505" alt="" border="0">
+
+
+<h2>Web Folders in Webseiten einbetten</h2>
+<p>
+Die interessante Frage ist jetzt, wie man diesen manuellen Vorgang ausschalten kann - wie also ein Benutzer einer (Intranet)Website
+direkt zu einem Web Folder Verzeichnis gef&uuml;hrt werden kann, von dem er bis dato nichts gewu&szlig;t hat (oder f&uuml;r User, die ohne Anleitung
+dazu technisch nicht in der Lage w&auml;ren).
+</p>
+<p>
+Vorweg: der gezeigte Ansatz funktioniert nur mit Internet Explorer, denn nur dieser bietet sogenannte Behaviors an. Im speziellen kann man mit zwei
+Behaviors arbeiten: <b>anchorClick</b> und <b>httpFolder</b>. Das <b>anchorClick</b> Behavior eignet sich f&uuml;r statische Links, wohingegen
+<b>httpFolder</b> bei JavaScript-L&ouml;sungen zum Einsatz kommen wird.
+</p>
+<p>
+Der folgende Code zeigt den Einsatz des <b>anchorClick</b> Behaviors f&uuml;r den schon bekannten Web Folder:
+</p>
+
+<pre style="background='silver';">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Web Folder Sample Site&lt;/title&gt;
+&lt;STYLE&gt;
+A {behavior: url(#default#AnchorClick);}
+&lt;/STYLE&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;a href="http://www.aspheute.com/"&gt;AspHeute&lt;/a&gt; (normaler Link) &lt;br&gt;
+&lt;a href="" FOLDER="http://localhost/Christoph/"&gt;Christoph's Verzeichnis&lt;/a&gt; (Web Folder Link)
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Man ben&ouml;tigt einen Eintrag im Stylesheet, und jeder Web Folder Link mu&szlig; mit einem <i>FOLDER</i> Attribut versehen werden. Von "au&szlig;en"
+ist der Unterschied nicht ersichtlich:
+</p>
+
+<IMG SRC="/artikel/Bilder/200302/20030203_9.png" width="477" height="217" alt="" border="0">
+
+<p>
+Ein Klick auf den Web Folder Link aber verwandelt den Internet Explorer in einen Windows Explorer der uns den Web Folder anzeigt:
+</p>
+
+<IMG SRC="/artikel/Bilder/200302/20030203_10.png" width="495" height="347" alt="" border="0">
+
+<p>
+Auf das <b>httpFolder</b> Behavior werde ich nicht eingehen, dieses ist im MSDN Artikel
+<a href="http://msdn.microsoft.com/library../default.htm?url=/workshop/author/behaviors/overview/WebFolder.asp" target="_blank">About Web Folder Behaviors</a> 
+ausf&uuml;hrlich mit Beispiel beschrieben.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+F&uuml;r eine Intranetanwendung sind Web Folders eine praktische M&ouml;glichkeit, den Dateiupload einmal anders zu l&ouml;sen. Vor allem Enduser
+werden damit leichter umgehen k&ouml;nnen, da ihnen der Windows Explorer bereits bekannt ist.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20030911.htm">Virtuelle Verzeichnisse umbenennen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20030911.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3Furl%3D%2Fworkshop%2Fauthor%2Fbehaviors%2Foverview%2FWebFolder%2Easp">About Web Folder Behaviors</a><br>
+<SPAN class="content">http://msdn.microsoft.com/library../default.htm?url=/workshop/author/behaviors/overview/WebFolder.asp</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,207 @@
+<HTML>
+<HEAD>
+<TITLE>Gro&szlig;e Datenmengen in Formularfeldern erfolgreich auslesen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Das Gr&ouml;&szlig;enlimit f&uuml;r ein mit ASP auslesbares Formularfeld ist genau
+102,399 Bytes ist. Wer &uuml;ber dieses Limit kommt, den erwartet eine Fehlermeldung - der heutige Artikel zeigt, wie man sich diese ersparen kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,stack overflow,size limit,Stream,ADODB,enctype,Formularfeld,Limit,Postback,Formularklasse,Dictionary,Collection">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Gro&szlig;e Datenmengen in Formularfeldern erfolgreich auslesen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020430"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wer lange genug mit ASP arbeitet, lernt die interessantesten Designentscheidungen des Active Server Pages
+Teams kennen. Eine davon ist, da&szlig; das Gr&ouml;&szlig;enlimit f&uuml;r ein mit ASP auslesbares Formularfeld genau
+102,399 Bytes ist. Wer &uuml;ber dieses Limit kommt, den erwartet eine Fehlermeldung - der heutige Artikel zeigt,
+wie man sich diese ersparen kann.
+</p>
+
+<h2>Der Fehler</h2>
+<p>
+Nat&uuml;rlich wollen wir uns den Fehler einmal zuerst "in freier Wildbahn" ansehen. Dazu habe ich ein sehr einfaches
+Formular erstellt:
+</p>
+
+<pre style="background='silver';">
+&lt;form method="post" action="Postback.asp"&gt;
+	&lt;textarea name="SampleData" ROWS="10" COLS="60"&gt;&lt;/textarea&gt;&lt;br /&gt;
+	&lt;input type="submit" value="Abschicken" /&gt;
+&lt;/form&gt;
+</pre>
+
+<p>
+Ausgelesen wird die Textarea in der Datei <b>postback.asp</b>, die ebenso minimalistisch gehalten ist:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+strData = Request.Form("SampleData")
+Response.Write Server.HtmlEncode(strData)
+%&gt;
+</pre>
+
+<p>
+Unter normalen Umst&auml;nden funktioniert alles perfekt, allerdings, sobald die Datenmenge zu gro&szlig; wird (Beispieldaten
+sind in der Datei <b>SharpDevelopGerman.xml</b> im Download mit dabei), kommt folgende Fehlermeldung:
+</p>
+
+<pre style="background='silver';">
+Request object, ASP 0107 (0x80004005)
+The data being processed is over the allowed limit.
+/aspheute/Bigforms/Postback.asp, line 2
+</pre>
+
+<p>
+Wer also gr&ouml;&szlig;ere Datenmengen per Formularfeld erwartet, der mu&szlig; vorbauen.
+</p>
+
+<h2>Umgehen des Limits</h2>
+<p>
+Es gibt zwei Wege, das Limit zu umgehen: am Client oder am Server. Der Weg am Client f&uuml;hrt &uuml;ber JavaScript, und wird
+im KB Artikel <a href="http://support.microsoft.com../default.htmx?scid=kb;EN;q273482" target="_blank">PRB: Error "Request Object, ASP 0107 (0x80004005)" When You Post a Form (Q273482)</a> beschrieben.
+Diese L&ouml;sung hat den Nachteil, da&szlig; wenn der User JavaScript ausgeschaltet hat, sie nicht funktioniert. Der universellere Ansatz 
+ist daher der serverseitige.
+</p>
+<p>
+Vorweg - der L&ouml;sungsansatz stammt nicht von mir, sondern von Antonin Foller, und der originale Sourcecode mit Beschreibung kann
+von <a href="http://www.pstruh.cz/tips/detpg_largepost.htm" target="_blank">Request.Form and stack overflow?</a> downgeloadet werden.
+Ich habe den vorhandenen Code in folgenden Punkten angepasst: alle Funktionen sind in einer VBScript Klasse <b>EnhancedFormClass</b>
+gekapselt, und ich habe hier und da an der Performance optimiert.
+</p>
+<p>
+Die Klasse hat folgende Struktur:
+</p>
+
+<pre style="background='silver';">
+Class EnhancedFormClass
+ Public Function GetFormCollection()
+ End Function
+ 
+ Private Function DecodeUrlData(ByVal Data)
+ End Function
+ 
+ Private Function RSBinaryToString(BinaryData)
+ End Function
+End Class
+</pre>
+
+<p>
+Einzig und allein die Methode <i>GetFormCollection</i> ist von au&szlig;en angreifbar: diese liefert ein <i>Dictionary</i> Objekt zur&uuml;ck,
+mit dessen Hilfe man auf die dekodierten Daten zugreifen kann - genauso wie mit <i>Request.Form</i>. Intern wird mit Hilfe des
+ADO Stream Objekts die Dekodierung vorgenommen, die Implementierungsdetails kann man in <b>EnhancedFormClass.asp</b> nachlesen.
+</p>
+<p>
+Wie sieht die Verwendung aus? Zuerst ein kurzer Blick auf das Formular, das die Daten postet:
+</p>
+
+<pre style="background='silver';">
+&lt;form method="post" action="PostbackEnhanced.asp" enctype="application/x-www-form-urlencoded"&gt;
+	&lt;textarea name="SampleData" ROWS="10" COLS="60"&gt;&lt;/textarea&gt;&lt;br /&gt;
+	&lt;input type="submit" value="Abschicken" /&gt;
+&lt;/form&gt;
+</pre>
+
+<p>
+Die Dekodierroutinen erwarten den Encoding Type (<i>enctype</i>) <i>application/x-www-form-urlencoded</i>, deshalb wird dieser
+sicherheitshalber explizit mitgegeben. Sonst sind keine &Auml;nderungen am Formular vorgenommen, das meiste hat sich in der Datei
+<b>PostbackEnhanced.asp</b> getan:
+</p>
+
+<pre style="background='silver';">
+&lt;!--#include file="EnhancedFormClass.asp"--&gt;
+&lt;%
+Set Form = New EnhancedFormClass
+Set FormFields = Form.GetFormCollection()
+
+strData = FormFields("SampleData")
+Response.Write Server.HtmlEncode(strData)
+%&gt;
+</pre>
+
+<p>
+Zuallererst wird <b>EnhancedFormClass.asp</b> inkludiert, die unsere erweiterte Formularklasse beinhaltet. Danach wird 
+eine Instanz von <i>EnhancedFormClass</i> erstellt, gefolgt vom Zugriff auf die Methode <i>GetFormCollection</i>. Damit
+haben wir die Collection (Dictionary) der Formularfelder in der Hand, und k&ouml;nnen auf beliebige Elemente zugreifen. Durch
+die selbstprogrammierte Dekodierung der Rohdaten tritt der Stack Overflow Fehler nun nie wieder auf.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Das Formularfeldgr&ouml;&szlig;enlimit ist l&auml;stig, kann aber mit Hilfe der vorgestellten Klasse umgangen werden. Einzig die Vorausplanung,
+ob man mit solchen Datenmengen planen mu&szlig; (und somit auf diese Klasse umsteigen sollte), bleibt dem Programmierer &uuml;berlassen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020430.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020430.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/19990806.htm">Das Dictionary Objekt - Dein Feind und Helfer</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990806.htm</span><br>
+<a href="../artikel/20000526.htm">Klassen in VBScript</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000526.htm</span><br>
+<a href="../artikel/20020408.htm">Klassenauflistungen mit dem Dictionary-Objekt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020408.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsupport%2Emicrosoft%2Ecom%2Fdefault%2Easpx%3Fscid%3Dkb%3BEN%3Bq273482">PRB: Error "Request Object, ASP 0107 (0x80004005)" When You Post a Form (Q273482)</a><br>
+<SPAN class="content">http://support.microsoft.com../default.htmx?scid=kb;EN;q273482</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Epstruh%2Ecz%2Ftips%2Fdetpg%5Flargepost%2Ehtm">Request.Form and stack overflow?</a><br>
+<SPAN class="content">http://www.pstruh.cz/tips/detpg_largepost.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

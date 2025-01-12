@@ -1,0 +1,346 @@
+<HTML>
+<HEAD>
+<TITLE>Directory Browsing a la .NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel zeigt, wie man mit den .NET Klassen Directory, DirectoryInfo und FileInfo Verzeichnisse auflisten, sowie Eigenschaften und Inhalte anzeigen kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Directory,File,System.IO,Namespace,Dateibearbeitung,Datei,GetFiles,GetDirectories,StreamReader,Stream,OpenText,GetLogicalDrives,FileInfo,DirectoryInfo">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Directory Browsing a la .NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000804"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Aus den "guten alten Zeiten" des ASP Programmierens d&uuml;rfte sehr vielen das <i>FileSystemObject</i> Objekt
+in Erinnerung sein. Es erlaubt Zugriff auf das Dateisystem f&uuml;r Lesen, Schreiben und Directory
+Browsing. Allerdings ist Objektmodell alles andere als optimal, und bei bin&auml;ren Dateien
+ist das Ende der Fahnenstange erreicht, bevor man am Ziel ist - es geht schlicht und 
+ergreifend nicht.
+</p>
+<p>
+Auch sonst gibt es einige Funktionen und Eigenschaften, die ich sehr gerne gehabt h&auml;tte. Es scheint
+so, als w&uuml;rden diese W&uuml;nsche mit den .NET Framework Klassen im <i>System.IO</i> Namespace in Erf&uuml;llung gehen. 
+Die Dateiverarbeitung war nie einfacher, und vor allem nie leistungsf&auml;higer.
+</p>
+<p>
+F&uuml;r diesen Artikel habe ich einen Teil der Dateiverarbeitung herausgepickt: das Auflisten von
+Dateien und Ordnern. Ich habe einige nette Scripts gebastelt, die man sp&auml;ter in eigenen 
+Applikationen einsetzen kann. Weitere Artikel werden sich mit dem Lesen und Schreiben von Dateien
+befassen.
+</p>
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation des <i>Microsoft .NET Framework SDK's</i> auf
+einem Webserver. Weiters setze ich voraus, da&szlig; der Leser die Programmiersprache C# zu einem gewissen Grad beherrscht -
+es finden sich etliche Artikel auf diesem Server, um das notwendige Wissen zu erlernen.
+</p>
+
+
+<h2>Laufwerke aufz&auml;hlen</h2>
+<p>
+Das Erste, was wir herausfinden sollten ist, welche Laufwerke eigentlich so am Rechner f&uuml;r uns
+zum Herumst&ouml;bern verf&uuml;gbar sind (<b>listdrives.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.IO&quot; %&gt;
+&lt;%
+string[] achDrives = Directory.GetLogicalDrives();
+int nNumOfDrives = achDrives.Length;
+
+Response.Write(&quot;&lt;ul&gt;&quot;);
+for (int i=0; i &lt; nNumOfDrives; i++)
+{
+ Response.Write(&quot;&lt;li&gt;&lt;a href=\&quot;listdir.aspx?dir=&quot;);
+ Response.Write(Server.UrlEncode(achDrives[i]));
+ Response.Write(&quot;\&quot;&gt;&quot; + achDrives[i]);
+ Response.Write(&quot;&lt;/a&gt;&lt;br&gt;&quot;);
+}
+Response.Write(&quot;&lt;/ul&gt;&quot;);
+%&gt;
+</pre>
+
+<p>
+Im <i>System.IO</i> Namespace (mit der <i>@Import Namespace</i> Anweisung eingebunden) gibt es eine Klasse namens
+<i>Directory</i>. Dieses repr&auml;sentiert Funktionalit&auml;ten die man mit einem Verzeichnis brauchen kann, und die
+Klasse enth&auml;lt auch die statische (ohne Objektinstanz aufrufbare) Methode <i>GetLogicalDrives</i>. Diese
+liefert uns ein Array von Strings, die die Laufwerksbuchstaben enthalten.
+</p>
+<p>
+Nat&uuml;rlich habe ich es nicht bei einer einfachen Auflistung der &uuml;ber <i>GetLogicalDrives</i> erhaltenen Laufwerke
+belassen - ich habe gleich einen Link auf eine weiterf&uuml;hrende Seite eingebaut, die dann
+Aufschlu&szlig; &uuml;ber den Inhalt des Root-Verzeichnisses des Laufwerks gibt.
+</p>
+
+<h2>Verzeichnisse und Dateien auflisten</h2>
+<p>
+Jetzt sind wir in einem Verzeichnis. Was interessiert uns dort? Zum Beispiel die Unterverzeichnisse
+und Dateien, als auch Eigenschaften des Verzeichnisses selbst (Erstellungsdatum, etc). Das folgende
+Sourcodelisting der Datei <b>listdir.aspx</b> zeigt, wie man die geforderte Funktionalit&auml;t 
+implementieren k&ouml;nnte:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.IO&quot; %&gt;
+&lt;%
+string strDir2List = Request.QueryString.Get(&quot;dir&quot;);
+DirectoryInfo thisOne = null;
+
+try
+{
+  thisOne = new DirectoryInfo(strDir2List);
+  // Auslesen der Eigenschaften der Verzeichnisses
+  Response.Write(&quot;&lt;p&gt;Erzeugung: &quot; + 
+     thisOne.CreationTime.ToString() + &quot;&lt;/p&gt;&quot;);
+
+  DirectoryInfo[] subDirectories = thisOne.GetDirectories();
+  Response.Write(&quot;&lt;ul&gt;&quot;);
+  for (int i=0; i &lt; subDirectories.Length; i++)
+  {
+    Response.Write(&quot;&lt;li&gt;&lt;a href=\&quot;listdir.aspx?dir=&quot;);
+    Response.Write(Server.UrlEncode(subDirectories[i].FullName));
+    Response.Write(&quot;\&quot;&gt;&quot; + subDirectories[i].Name);
+    Response.Write(&quot;&lt;/a&gt;&lt;br&gt;&quot;);
+  }
+  Response.Write(&quot;&lt;/ul&gt;&quot;);
+  
+  FileInfo[] theFiles = thisOne.GetFiles();
+  Response.Write(&quot;&lt;ul&gt;&quot;);
+  for (int i=0; i &lt; theFiles.Length; i++)
+  {
+    Response.Write(&quot;&lt;li&gt;&lt;a href=\&quot;showfile.aspx?file=&quot;);
+    Response.Write(Server.UrlEncode(theFiles[i].FullName));
+    Response.Write(&quot;\&quot;&gt;&quot; + theFiles[i].Name);
+    Response.Write(&quot;&lt;/a&gt;&lt;br&gt;&quot;);
+  }
+  Response.Write(&quot;&lt;/ul&gt;&quot;);
+}
+catch (Exception e)
+{
+  Response.Write(&quot;Zugriff nicht m&ouml;glich, Fehler: &lt;i&gt;&quot;);
+  Response.Write(e.ToString() + &quot;&lt;/i&gt;&quot;);
+  Response.End();
+}
+%&gt;
+</pre>
+
+<p>
+Das Auslesen der Verzeichnisse funktioniert mittels der <i>GetDirectories</i> Methode, die mir ein Array
+von <i>DirectoryInfo</i> Objekten liefert, mit denen ich dann meine gew&uuml;nschte Funktionalit&auml;t aufbauen kann
+(zB wie hier ein weiterer Link f&uuml;r den Drill-Down). Gleiches gilt f&uuml;r die <i>GetFiles</i> Methode, die ein Array
+von <i>FileInfo</i> Objekten liefert. Mehr zu diesem in der n&auml;chsten Sektion.
+</p>
+<p>
+Wozu brauche ich bitte sch&ouml;n das Exception Handling? Nun, es k&ouml;nnte ja sein, da&szlig; ich auf etwas
+zugreife, wo ich nicht hingreifen darf, und dann bekommt man eine auf die Finger (dieser Fall 
+d&uuml;rfte auch dem Real-Life bekannt sein...). Im Ernst: es k&ouml;nnten zum Beispiel die NTFS Rechte
+f&uuml;r den aktuellen Benutzer nicht ausreichend sein (Listen verboten).
+</p>
+
+
+<h2>Dateiinformationen ausgeben</h2>
+<p>
+Jetzt sind wir auf der Dateiebene. Nat&uuml;rlich hat eine Datei eine Menge von Eigenschaften, und das
+folgende Beispiel <b>showfile.aspx</b> pr&auml;sentiert nur eine Untermenge. Ein Blick in die Dokumentation
+enth&uuml;llt den Rest dessen, was ich zur K&uuml;rzung des Scripts ausgelassen habe.
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.IO&quot; %&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;File Info&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;%
+string strFile2Show = Request.QueryString.Get(&quot;file&quot;);
+FileInfo thisOne = new FileInfo(strFile2Show);
+%&gt;
+&lt;table&gt;
+&lt;tr&gt;&lt;td&gt;Name:&lt;/td&gt;&lt;td&gt;&lt;%=thisOne.Name%&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Pfad:&lt;/td&gt;&lt;td&gt;&lt;%=thisOne.FullName%&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Verzeichnis:&lt;/td&gt;&lt;td&gt;&lt;%=thisOne.DirectoryName%&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td&gt;Erstellung:&lt;/td&gt;
+  &lt;td&gt;&lt;%=thisOne.CreationTime.ToString()%&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td&gt;L&auml;nge:&lt;/td&gt;
+  &lt;td&gt;&lt;%=thisOne.Length.ToString()%&gt; Bytes&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td&gt;Letzter Zugriff:&lt;/td&gt;
+  &lt;td&gt;&lt;%=thisOne.LastAccessTime.ToString()%&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td&gt;Letzte Modifikation:&lt;/td&gt;
+  &lt;td&gt;&lt;%=thisOne.LastWriteTime.ToString()%&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;%
+StreamReader theReader = thisOne.OpenText();
+char[] theBuffer = new char[255];
+int nRead = theReader.ReadBlock(theBuffer, 0, 255);
+Response.Write(&quot;&lt;pre&gt;&quot;);
+Response.Write(Server.HtmlEncode(new String(theBuffer,0,nRead)));
+Response.Write(&quot;&lt;/pre&gt;&quot;);
+%&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Am Ende des Scripts habe ich einen kurzen Ausflug in Richtung Dateiauslesen unternommen, um zu 
+demonstrieren, wie einfach das ist. Zuerst &ouml;ffne ich ein <i>StreamReader</i> Objekt, lege einen Puffer
+an, f&uuml;lle den Puffer mit der <i>ReadBlock</i> Methode und gebe den eingelesenen Block dann HTML-encoded
+mit an den Client aus. Und schon hat man eine kleine "Dateivorschau". Nicht gerade weltbewegend, aber
+es demonstriert bereits, wie einfach auch das Arbeiten mit den Inhalten von Dateien ist.
+</p>
+
+<h2>Rekursives Auflisten eines Verzeichnisses</h2>
+<p>
+Zu guter Letzt habe ich noch ein kleines Programm zum Erzeugen eines Verzeichnisbaums in Petto.
+Wie die &Uuml;berschrift schon verr&auml;t, wird der Baum rekursiv erzeugt - man braucht also eine Funktion,
+die rekursiv aufgerufen werden kann. Im Beispiel <b>recursivelisting.aspx</b> hei&szlig;t diese 
+<i>RecursiveDump</i>:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.IO&quot; %&gt;
+&lt;%
+string strDir2List = Request.QueryString.Get(&quot;dir&quot;);
+DirectoryInfo thisOne = new DirectoryInfo(strDir2List);
+
+Response.Write(&quot;&lt;pre&gt;&quot;);
+RecursiveDump(thisOne, 0);
+Response.Write(&quot;&lt;/pre&gt;&quot;);
+%&gt;
+
+&lt;script language=&quot;C#&quot; runat=&quot;server&quot;&gt;
+void RecursiveDump(DirectoryInfo theDir, int nLevel)
+{
+  DirectoryInfo[] subDirectories = theDir.GetDirectories();
+  for (int i=0; i &lt; subDirectories.Length; i++)
+  {
+    Response.Write(new String(' ',nLevel));
+    Response.Write(subDirectories[i].Name + &quot;\r\n&quot;);
+    RecursiveDump(subDirectories[i], nLevel+1);
+  }
+}
+&lt;/script&gt;
+</pre>
+
+<p>
+Wie immer habe ich es mir besonders einfach gemacht, und verwende einfach Leerzeichen um den
+Baum zu generieren. Damit man's in HTML auch sieht, mu&szlig; man daher ein &lt;PRE&gt; Tag verwenden -
+sonst werden die Leerzeichen geschluckt.
+</p>
+<p>
+Die Funktion selbst hat 2 Parameter: ein <i>DirectoryInfo</i> Objekt, und eine Integervariable, die die 
+aktuelle Ebene bezeichnet. Es werden f&uuml;r die aktuelle Ebene die Unterverzeichnisse ausgelesen
+(mit <i>GetDirectories</i>), und dann mit einer <i>for</i> Schleife ausgegeben. F&uuml;r jedes <i>DirectoryInfo</i>
+Objekt wird die Funktion <i>RecursiveDump</i> aufgerufen, und die Ebene um 1 erh&ouml;ht.
+</p>
+<p>
+Das Ergebnis kann dann so aussehen (Achtung: wenn man ein ganzes Laufwerk aufbauen l&auml;&szlig;t, so kann
+dies schon einige Zeit in Anspruch nehmen!):
+</p>
+
+<IMG SRC="/artikel/Bilder/200008/20000804.png" width="590" height="424" border="0" alt="">
+
+
+<h2>Schlu&szlig;bemerkung:</h2>
+<p>
+In diesem Artikel habe ich drei Objekte aus dem <i>System.IO</i> Namespace pr&auml;sentiert: <i>Directory</i>, <i>DirectoryInfo</i> und
+<i>FileInfo</i>. Obwohl ich sie "nur" zum Ausgeben einfacher Verzeichnis- und Dateiinformationen verwendet
+habe, sind diese Objekte die Basis zur Dateiverarbeitung wie Lesen und Schreiben. Dazu aber
+mehr in einem sp&auml;teren Artikel.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000804.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000804.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000929.htm">Dateien lesen in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000929.htm</span><br>
+<a href="../artikel/20020409.htm">Dateien umbenennen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020409.htm</span><br>
+<a href="../artikel/20020226.htm">Ein Touch-Utility in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020226.htm</span><br>
+<a href="../artikel/20011115.htm">Eine Klasse f&uuml;r sich - die .NET Zip Library</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011115.htm</span><br>
+<a href="../artikel/20000724.htm">Exception Handling in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000724.htm</span><br>
+<a href="../artikel/20021031.htm">Online File Management System mit ASP.NET und C# - Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021031.htm</span><br>
+<a href="../artikel/20021105.htm">Online File Management System mit ASP.NET und C# - Teil 2</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021105.htm</span><br>
+<a href="../artikel/20000731.htm">Verwendung von Arrays in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000731.htm</span><br>
+<a href="../artikel/20011016.htm">Verzeichnisb&auml;ume rekursiv generieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011016.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Edotnetgerman%2Ecom%2Flisten%2FaspDEdotnet%2Easp">Die aspDEdotnet Diskussionsliste</a><br>
+<SPAN class="content">http://www.dotnetgerman.com/listen/aspDEdotnet.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Edotnetgerman%2Ecom%2Flinks%2Fdl%5Faspnet%2Easp">Download ASP.NET</a><br>
+<SPAN class="content">http://www.dotnetgerman.com/links/dl_aspnet.asp</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

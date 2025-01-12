@@ -1,0 +1,192 @@
+<HTML>
+<HEAD>
+<TITLE>Flash Movies einbetten einfach gemacht</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="W&auml;re es nicht bequem, die Eigenschaften f&uuml;r ein Flash Movie nur einmal zu setzen, und den clientseitigen Code automatisch erzeugen zu lassen? Die L&ouml;sung dazu ist eine serverseitige WebControl.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,WebControl,FlashObject,Designer,control,serverseitig,clientseitig,Code Generierung,automatisch,Flash,einbetten,OBJECT,EMBED">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Flash Movies einbetten einfach gemacht</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020321"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wer hat das nicht schon selbst erlebt: man bettet ein Flash Movie in eine Webseite ein, und macht sp&auml;ter
+eine kleine &Auml;nderung und vergisst, die &Auml;nderung sowohl im OBJECT als auch im EMBED Tag einzutragen. W&auml;re
+es nicht bequemer, die Eigenschaften f&uuml;r ein Flash Movie nur einmal zu setzen, und den clientseitigen Code
+automatisch erzeugen zu lassen? Die L&ouml;sung dazu ist eine serverseitige WebControl.
+</p>
+<p>
+Die heute vorgestellte FlashObject <i>WebControl</i> stammt von Paul D. Murphy, und wurde von ihm &uuml;ber die 
+<a href="http://www.aspfriends.com/aspfriends/aspngcodegiveawayswap.asp" target="_blank">ASPnG Code Give Away / Swap</a>
+Liste der ASP.NET Community zur Verf&uuml;gung gestellt. Im Archiv st&ouml;bern oder subscriben kann sich auszahlen - m&ouml;glicherweise
+findet man genau die L&ouml;sung die man sucht, kann nach fertigen Snippets fragen, oder sogar selbst seine Snippets anderen
+zur Verf&uuml;gung stellen.
+</p>
+
+<h2>Die FlashObject WebControl</h2>
+<p>
+Der C# Sourcecode f&uuml;r die WebControl ist als <b>Control\FlashObject.cs</b> im heutigen Download mit dabei, aber ich werde
+nicht detailliert darauf eingehen (der Leser ist aber eingeladen, den Sourcecode selbst zu lesen). Kompiliert habe ich die WebControl mit Hilfe von 
+<a href="http://www.icsharpcode.net/OpenSource/SD/">SharpDevelop</a>, weil SharpDevelop sehr gut mit 
+<a href="http://ndoc.sourceforge.net/" target="_blank">NDoc</a> integriert ist - der
+Autor der WebControl hat mit C# XML Kommentaren nicht gegeizt, was uns dank NDoc eine tolle Hilfedatei (<b>Documentation.chm</b>)
+beschert:
+</p>
+
+<IMG SRC="/artikel/Bilder/200203/20020321_1.png" width="782" height="551" alt="" border="0">
+
+<p>
+Mit den Informationen aus der Hilfedatei kann man dann, genau wie bei den bei ASP.NET gelieferten Web Controls diese auf den eigenen
+Webseiten einsetzen. Voraussetzung ist, da&szlig; <b>FlashWebControl.dll</b> in das <b>bin</b> Verzeichnis der Web Applikation kopiert 
+wurde.
+</p>
+<p>
+Die Implemenation in einer .aspx Seite sieht dann so aus:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Page language="C#" %&gt;
+&lt;%@ Register TagPrefix="dwc" Namespace="Dots.WebControls" Assembly="FlashWebControl" %&gt;
+&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" &gt;
+&lt;HTML&gt;
+&lt;HEAD&gt;
+ &lt;title&gt;WebForm1&lt;/title&gt;
+&lt;/HEAD&gt;
+&lt;body&gt;
+
+&lt;form runat="server"&gt;
+ &lt;dwc:FlashObject id="flashDemo" runat="server" 
+      Width="550px" 
+      Height="400px" 
+      FileSource="movie.swf" /&gt;
+&lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/HTML&gt;
+</pre>
+
+<p>
+Es mu&szlig; nur ein TagPrefix f&uuml;r den Namespace aus der Assembly definiert werden, und schon kann die Control beliebig auf der
+Seite platziert werden. Die Eigenschaften (siehe Hilfedatei) k&ouml;nnen entweder fix eingetragen werden wie in diesem Beispiel,
+oder vom Code aus Event Handlern auf der Seite dynamisch gesetzt werden (zB im Page Load Event).
+</p>
+<p>
+Wer der oben gezeigten h&auml;ndischen Methode nichts abgewinnen kann, dem sei Visual Studio.NET ans Herz gelegt.
+</p>
+
+<h2>Im Designer von Visual Studio.NET</h2>
+<p>
+Wer den WebControl Sourcecode schon betrachtet hat, wird gesehen haben, da&szlig; sehr viele Attribute eingetragen sind. Diese kann
+der Visual Studio.NET Designer auswerten, um die Control anzuzeigen und die Eigenschaften bequem im Properties Grid anzuzeigen.
+Um das zu erm&ouml;glichen, mu&szlig; man die Control aber zuerst in der Toolbox registrieren (mit Browse einbinden):
+</p>
+
+<IMG SRC="/artikel/Bilder/200203/20020321_2.png" width="571" height="396" alt="" border="0">
+
+<p>
+Die WebControl taucht dann in der Toolbox im aktuellen Tab auf:
+</p>
+
+<IMG SRC="/artikel/Bilder/200203/20020321_3.png" width="645" height="381" alt="" border="0">
+
+<p>
+Und jetzt geht alles den gewohnten Gang - Control selektieren, und auf die Seite ziehen, fertig. Die Eigenschaften sind nun
+bequem im Properties Grid zu bearbeiten:
+</p>
+
+<IMG SRC="/artikel/Bilder/200203/20020321_4.png" width="346" height="562" alt="" border="0">
+
+<p>
+Der Sourcecode, der herauskommt ist am Ende genau der gleiche, den man auch von Hand erzeugt h&auml;tte. Es ist aber eindeutig bequemer.
+</p>
+<p>
+Das hier gezeigte Projekt ist im heutigen Download im Verzeichnis <b>FlashObjectTest</b> mit dabei.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Ab sofort ist das Verwenden von Flash Movies ein Leichtes: ein einziges Mal definiert, die Tags immer korrekt up to date. Und
+man bekommt sogar den Designer Support, wenn man Visual Studio.NET verwendet.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020321.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020321.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001114.htm">ASP.NET User Controls im Einsatz</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001114.htm</span><br>
+<a href="../artikel/20000808.htm">Einf&uuml;hrung in ASP.NET Web Forms</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000808.htm</span><br>
+<a href="../artikel/20020320.htm">Flash Detection ohne Komponente</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020320.htm</span><br>
+<a href="../artikel/20000411.htm">Flash Plug-In Erkennung</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000411.htm</span><br>
+<a href="../artikel/20040303.htm">Vergleich von DataGrid, DataList und Repeater-Control - was verwende ich wann?</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040303.htm</span><br>
+<a href="../artikel/20010802.htm">Web.Config 101</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010802.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpfriends%2Ecom%2Faspfriends%2Faspngcodegiveawayswap%2Easp">ASPnG Code Give Away / Swap</a><br>
+<SPAN class="content">http://www.aspfriends.com/aspfriends/aspngcodegiveawayswap.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fndoc%2Esourceforge%2Enet%2F">Ndoc</a><br>
+<SPAN class="content">http://ndoc.sourceforge.net/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eicsharpcode%2Enet%2FOpenSource%2FSD%2F">SharpDevelop</a><br>
+<SPAN class="content">http://www.icsharpcode.net/OpenSource/SD/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

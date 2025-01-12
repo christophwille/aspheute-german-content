@@ -1,0 +1,463 @@
+<HTML>
+<HEAD>
+<TITLE>Einf&uuml;hrung in ASP.NET Web Forms</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel erl&auml;utert der Autor die Grundlagen der Web Forms Programmierung, und welche einfachen Web Controls es gibt, die eingesetzt werde k&ouml;nnen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP.NET,ASP+,Web Forms,HTML Controls,Web Controls,namespace,runat,Validierung,validation,.NET,Framework">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Einf&uuml;hrung in ASP.NET Web Forms</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000808"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wenn Sie mit ASP gearbeitet haben, dann sind Ihnen sicherlich Formulare ein Begriff. Die FORM, INPUT, SELECT usw.
+HTML Elemente f&uuml;r Formulare sind Ihnen ebenso gel&auml;ufig, und Sie haben auch mit gePOSTeten Daten gearbeitet - &uuml;ber
+die Request.Forms Collection, dem Weg zum Auslesen der Werte der Felder. Was es nicht gab, ist ein einheitliches
+serverseitiges Controlmodell, das Ihnen das Arbeiten mit Werbformularen wie mit Visual Basic Formularen erlaubt - 
+mit Eigenschaften und Methoden der jeweiligen Formularelemente.
+</p>
+<p>
+Mit ASP.NET haben Sie genau diese Funktionalit&auml;t - jedes Element eines Formulars ist auch am Server in ASP.NET als "echtes"
+Objekt - eine Control - ansprechbar. Damit er&ouml;ffnen sich v&ouml;llig neue Perspektiven der Formularabarbeitung, wie sie 
+unter ASP nicht oder nur sehr schwer realisierbar war. Das Feature nennt sich ASP.NET Web Forms, und man kann die Controls
+in zwei Varianten, einer r&uuml;ckw&auml;rtskompatiblen als auch einer v&ouml;llig neuen Variante verwenden:
+<ul>
+	<li><b>HTML Controls</b>: das ist die server-seitige Repr&auml;sentation von HTML Formularelementen, wie wir sie bereits
+	kennen. Die Funktionalit&auml;t ist sehr stark an die tats&auml;chliche HTML Funktionalit&auml;t angelehnt, was dazu f&uuml;hrt, da&szlig; die
+	Programmierung der einzelnen Elemente nicht vollst&auml;ndig konsistent ist. Mit diesem Modell kann man existierende 
+	Formulare 1:1 &uuml;bernehmen.
+	<li><b>Web Controls</b>: Diese Controls haben mehr Features als HTML Controls, und lehnen sich nicht so stark daran an,
+	wie sie am Client gerendert werden.  Diese Controls umfassen nicht nur Formularelemente, sondern auch Spezialcontrols
+	wie zum Beispiel einen Kalender. Dies ist der Weg, den man gehen sollte, wenn man ASP.NET Seiten von Grund auf neu
+	programmiert.
+</ul>
+</p>
+<p>
+In diesem Artikel werden wir uns mit den Web Controls besch&auml;ftigen, da diese f&uuml;r alle von uns Neuland darstellen.
+Da wir uns haupts&auml;chlich mit den Controls selbst - und nicht mit Formularprogrammierung besch&auml;ftigen, m&ouml;chte ich bereits
+hier auf die noch folgenden Artikel hinweisen. In diesen geht es dann um Auswertung, Validierung von Inhalten und auch
+Ereignisprogrammierung.
+</p>
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation des Microsoft .NET Framework SDK's
+auf einem Webserver. Weiters ist es von Vorteil, da&szlig; der Leser schon Grundkenntnisse bzw. Erfahrung in
+Programmiertechniken besitzt - es finden sich etliche Artikel auf diesem Server, um das notwendige Wissen von Grund auf zu erlernen. 
+</p>
+
+<h2>Warum ASP.NET Web Forms?</h2>
+<p>
+Zur Beanwortung m&ouml;chte ich Ihnen die Keyfeatures aufz&auml;hlen (und Ihnen somit den Mund w&auml;&szlig;rig machen...):
+</p>
+<p>
+<b>Rapid Development</b>
+	<ul>
+	<li>Web Forms - Grundfunktionalit&auml;t f&uuml;r alle Browser (HTML Formularelemente)
+	<li>Nur 1 Sourcecode f&uuml;r alle Browser, die Controls passen sich an den Browser an
+	<li>Der verwendete Code ist kompatibel zu Ihren bisherigen ASP Seiten (HTML Controls)
+	</ul>
+<b>Einheitliches Objektmodell</b>
+	<ul>
+	<li>modularer Aufbau der Web Forms
+	<li>ereignisbasierendes Programmiermodell f&uuml;r serverseitig dynamisch generierte Webseiten
+	<li>der View State bleibt erhalten (nach einem POST stehen die eingegebenen Werte automatisch wieder in 
+	den Controls)
+	</ul>
+<b>&Uuml;berzeugendes optisches Design</b>
+	<ul>
+	<li>einfache Integration in HTML, jedoch &uuml;bersichtliche Trennung von HTML-Design und ASP.NET Code
+	<li>ASP.NET Web Forms bieten WYSIWYG Designunterst&uuml;tzung, d.h. Visual Studio.net kann die Eigenschaften
+	setzen, beziehungsweise einen Designer anbieten (f&uuml;r kompliziertere Controls).
+	</ul>
+
+</p>
+<p>
+Bevor wir die Controls besprechen, m&ouml;chte ich noch 2 wesentliche Punkte besprechen, die f&uuml;r das Verst&auml;ndnis
+der Controls in Web Forms unerl&auml;sslich sind:
+<ul>
+	<li>Parsing eines Web Forms
+	<li>Das State Management
+</ul>
+
+<h3>Parsing eines Web Forms</h3>
+<p>
+Fr&uuml;her war es in ASP so, da&szlig; HTML- und ASP-Code miteinander "vermischt" waren. Die ASP-Engine filterte
+den ASP-Code aus dem HTML heraus, interpretierte diesen dann und gab diesen in Form von statischen HTML an den Client
+zur&uuml;ck. Bei jedem Page-Request der gleichen Seite wieder die gleichen Schritte.
+</p>
+<p>
+Grunds&auml;tzlich besteht ein Web Form auch aus zwei Bestandteilen - dem Design- und dem Anweisungs-Code. 
+Der gr&ouml;&szlig;te Unterschied ist, da&szlig; eine ASP.NET Seite
+und somit auch die <i>Web Forms</i> kompiliert anstatt interpretiert wird und erst als Ergebnis HTML ausgegeben wird.
+</p>
+<p>
+Im Prinzip l&auml;uft folgendes ab:
+Der Browser des Clients schickt einen Request, der zu einer ASP.NET Seite weist, an den Server und die ASP.NET Runtime kompiliert 
+die Datei bei ihrem erstmaligen Aufruf in eine .Net Klasse. Die kompilierte Klasse steht dann auch f&uuml;r weitere Requests 
+zur Verf&uuml;gung, d.h. sie mu&szlig; also nur einmal kompiliert werden. Dies und die Tatsache, da&szlig; der Code
+an sich kompiliert wird und trotzdem dynamisch verwendbar ist bringt enorme Geschwindigkeitsvorteile.
+</p>
+
+<h3>Das State Management</h3>
+<p>
+Web Forms speichern selbstt&auml;tig den sogenannte View State. Dieser beinhaltet Informationen &uuml;ber die im Formular
+enthaltenen Controls, ihre Werte, ihre Eigenschaften, usw. Dadurch hat man, auch wenn das Formular mehrfach gepostet
+wird, immer die Einstellungen der Controls konsistent zur Verf&uuml;gung.
+</p>
+<p>
+Der Grund, warum ich den View State vorab erw&auml;hne ist da&szlig; sich dieser als zus&auml;tzliches verstecktes Feld f&uuml;r jedes
+Formular auf einer Seite manifestiert. Wer also den HTML Code ansieht, wei&szlig; nun wozu dieses zus&auml;tzliche Feld dient.
+</p>
+
+<h2>Einsatz der ASP.NET Web Form Controls</h2>
+<p>
+Wie eingangs schon erw&auml;hnt m&ouml;chte ich Ihnen mit diesem Artikel nur die Grundprinzipien der Web Form Controls pr&auml;sentieren.
+Die Validierung der Controls und die Ereignisbehandlung werde ich in den n&auml;chsten Artikeln zu diesem Thema besprechen.
+</p>
+
+<h3>Die Control Elemente</h3>
+<p>
+Die folgenden Sektionen demonstrieren die am h&auml;ufigsten verwendeten Grund-Controls der ASP.NET Web Forms:
+<ul>
+<li>Statischer Text: &lt;asp:Label&gt;
+<li>Eingabefeld: &lt;asp:TextBox&gt;
+<li>Listenauswahl: &lt;asp:DropDownList&gt;
+<li>Auswahlfeld: &lt;asp:CheckBox&gt;
+<li>Einfache Schaltfl&auml;che: &lt;asp:Button&gt;
+<li>Radiobutton: &lt;asp:RadioButton&gt;
+<li>Hyperlink: &lt;asp:Hyperlink&gt;
+</ul>
+</p>
+<p>
+<b>Beachte:</b> Wenn Sie die Beispiele ausprobieren und auf die Controls klicken und z.B. bei der Dropdown Liste eine
+Auswahl treffen, werden Sie feststellen, da&szlig; eigentlich fast nichts passiert. Was Sie allerdings sehen, ist da&szlig; die 
+Controls den State (also das Aussehen) als auch die eingegebenen Werte behalten - wenn das Formular an den Server
+zur&uuml;ckgepostet wird. 
+</p>
+<p>
+Beginnen wir nun mit Beispielen im Detail.
+</p>
+
+<h2>Statischer Text - Die Label Control</h2>
+<p>
+Die <i>Label</i>-Control erlaubt Ihnen statischen Text anzuzeigen, z.B. f&uuml;r einen Anweisungstext (<b>label.aspx</b>).
+<pre style="background='silver';">
+&lt;%@ Page Language="C#" %&gt;
+&lt;html&gt;
+&lt;body&gt;
+
+&lt;h2&gt;ASP.NET Web Forms Demo&lt;/h2&gt;
+&lt;p&gt;&lt;b&gt;Label-Control:&lt;/b&gt;&lt;/p&gt;
+   &lt;form method="post" runat="server"&gt;
+	&lt;asp:Label id="text" runat="server" 
+	    Text="Das ist statischer Text"/&gt;
+   &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</p>
+<p>
+Wie Sie sehen, haben alle Controls inklusive des form Tags den Zusatz <i>runat="server"</i>. Damit werden Controls definiert,
+die eine Repr&auml;sentation als Objekt f&uuml;r den Code der Seite haben sollen. Vergessen Sie dieses Tag, dann k&ouml;nnen Sie diese
+Controls aus dem Code heraus nicht ansprechen. Ach ja, das Action Attribut wird automatisch mit dem Namen des Scripts
+eingef&uuml;gt.
+</p>
+
+<h2>Das Eingabefeld</h2>
+<p>
+In der <i>Textbox</i>-Control k&ouml;nnen Sie einen beliebigen String (Buchstaben, Ziffern) eingeben. Diese ist &auml;hnlich
+zu <nobr><i>INPUT TYPE="TEXT"</i></nobr>, und wird am Client auch als solche repr&auml;sentiert (<b>textbox.aspx</b>). 
+<pre style="background='silver';">
+&lt;%@ Page Language="C#" %&gt;
+&lt;html&gt;
+&lt;body&gt;
+
+&lt;h2&gt;ASP.NET Web Forms Demo&lt;/h2&gt;
+&lt;p&gt;&lt;b&gt;Eingabefeld:&lt;/b&gt;&lt;/p&gt;
+	 &lt;form method="post" runat="server"&gt;
+		Eingabetext: &lt;asp:textbox id="input" runat="server"/&gt;
+	&lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</p>
+<p>
+Dieser Sourcecode (inklusive eines Submit Buttons) produziert folgendes Eingabeformular:
+</p>
+<p><IMG SRC="/artikel/Bilder/200008/20000808.png" width="426" height="259" alt="" border="0"></p>
+<p>
+Posten Sie das Formular mit eingegeben Daten gegen den Server, und schauen Sie sich den HTML Sourcecode an -
+der Wert, den Sie vorher eingegeben haben, steht nun als Vorgabewerte in der Textbox. Und das, ohne da&szlig; Sie eine
+Zeile Code schreiben mu&szlig;ten. Im Artikel &uuml;ber Validation Controls zeige ich Ihnen dann, wie man sehr einfach 
+die Eingabe des Users auch &uuml;berpr&uuml;fen kann - wieder ohne Code schreiben zu m&uuml;ssen.
+</p>
+
+<h2>Die Listenauswahl</h2>
+<p>
+Die <i>DropDownList</i>-Control &ouml;ffnet beim Anklicken auf den Pfeil nach unten eine Liste, in der Sie eines der
+angezeigten Listenelemente ausw&auml;hlen k&ouml;nnen. Auch hier wird der Wert zwischen POST's erhalten (<b>dropdownlist.aspx</b>).
+<pre style="background='silver';">
+&lt;%@ Page Language="C#" %&gt;
+&lt;html&gt;
+&lt;body&gt;
+
+&lt;h2&gt;ASP.NET Web Forms Demo&lt;/h2&gt;
+&lt;p&gt;&lt;b&gt;DropDownList-Control:&lt;/b&gt;&lt;/p&gt;
+	&lt;form method="post" runat="server"&gt;
+	
+	Auswahl:  &lt;asp:dropdownlist id="Auswahl" runat="server"&gt;
+                          &lt;asp:listitem>gestern&lt;/asp:listitem&gt;
+                          &lt;asp:listitem>heute&lt;/asp:listitem&gt;
+                          &lt;asp:listitem>morgen&lt;/asp:listitem&gt;
+                  &lt;/asp:dropdownlist&gt;	   
+   &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</p>
+
+<h2>Das Auswahlfeld</h2>
+<p>
+Mit der <i>CheckBox</i>-Control k&ouml;nnen Sie durch Ausw&auml;hlen des K&auml;stchens eine Option aktivieren oder deaktivieren.
+Diese wird meist f&uuml;r Ja/Nein Entscheidungen auf Formularen verwendet (<b>checkbox.aspx</b>):
+<pre style="background='silver';">
+&lt;%@ Page Language="C#" %&gt;
+&lt;html&gt;
+&lt;body&gt;
+
+&lt;h2&gt;ASP.NET Web Forms Demo&lt;/h2&gt;
+&lt;p&gt;&lt;b&gt;CheckBox-Control:&lt;/b&gt;&lt;/p&gt;
+   	
+ &lt;form method="post" runat="server"&gt;
+   &lt;asp:CheckBox id="Auswahlfeld" runat="server" Text="Auswahloption"/&gt;
+ &lt;/form&gt;
+ 
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</p>
+
+<h2>Der einfache Button</h2>
+<p>
+Die <i>Button</i>-Control funktioniert vom Prinzip her wie ein in HTML definierter Button. Sie k&ouml;nnen damit Befehle
+ausf&uuml;hren lassen, und damit z.B. einen "Submit"-Button oder "Login"-Button generieren (<b>button.aspx</b>):
+<pre style="background='silver';">
+&lt;%@ Page Language="C#" %&gt;
+&lt;html&gt;
+&lt;body&gt;
+
+&lt;h2&gt;ASP.NET Web Forms Demo&lt;/h2&gt;
+&lt;p&gt;&lt;b>Button:&lt;/b&gt;&lt;/p&gt;
+
+	 &lt;form method="post" runat="server"&gt;
+		&lt;asp:button text="Hier Klicken" runat="server"/&gt;
+		&lt;%-- Das in der Control enthaltene 'Command="command"' --%&gt;
+		&lt;%-- Statement fehlt hier bewu&szlig;t, da nur Demo --%&gt;
+	 &lt;/form&gt;
+	 
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</p>
+<p>
+Nat&uuml;rlich k&ouml;nnen Sie statt dem langweiligen 08/15 Button, der standardm&auml;&szlig;ig verf&uuml;gbar ist, eine Graphik verwenden.
+Alles, was am Client an Formaten dargestellt werden kann, darf als Button-Image verwendet werden (<b>ibutton.aspx</b>).
+<pre style="background='silver';">
+&lt;%@ Page Language="C#" %&gt;
+&lt;html&gt;
+&lt;body&gt;
+
+&lt;h2&gt;ASP.NET Web Forms Demo&lt;/h2&gt;
+&lt;p&gt;&lt;b&gt;Graphik-Button:&lt;/b&gt;&lt;/p&gt;
+
+	&lt;form method="post" runat="server"&gt;
+	 	&lt;asp:ImageButton id="ImageButton" runat="server"
+			ImageUrl="ibutton.png"/&gt;
+	&lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</p>
+
+<h2>Der Radiobutton</h2>
+<p>
+Die <i>Radiobutton</i>-Control erm&ouml;glicht Ihnen die Auswahl eines Elements aus einer 
+Gruppe von Elementen (<b>rbutton.aspx</b>). 
+<pre style="background='silver';">
+&lt;%@ Page Language="C#" %&gt;
+&lt;html&gt;
+&lt;body&gt;
+
+&lt;h2&gt;ASP.NET Web Forms Demo&lt;/h2&gt;
+&lt;p&gt;&lt;b&gt;Radiobutton:&lt;/b&gt;&lt;/p&gt;
+
+  &lt;form method="post" runat="server"&gt;
+	
+  Optionen:&lt;br&gt;
+    &lt;asp:RadioButton id="RadioButton1" text="gestern" 
+       Checked="True" GroupName="RadioAuswahl" 
+       runat="server"/&gt;&lt;br&gt;
+    &lt;asp:RadioButton id="RadioButton2" text="heute" 
+       GroupName="RadioAuswahl" 
+       runat="server"/&gt;&lt;br&gt;	     
+    &lt;asp:RadioButton id="RadioButton3" text="morgen" 
+       GroupName="RadioAuswahl" 
+       runat="server"/&gt;
+  &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</p>
+<p>
+<b>Beachte:</b> Um eine <i>Exklusivauswahl</i> zu erm&ouml;glichen m&uuml;ssen Sie in allen Statements der Radiobutton-Control
+denselben <i>Gruppennamen</i> verwenden (z.B. im vorigen Beispiel: <i>GroupName="RadioAuswahl"</i>).
+</p>
+<p>
+Mit dem <i>Checked="True"</i> Statement k&ouml;nnen Sie die standardm&auml;&szlig;ig ausgew&auml;hlte Option angeben. Wenn das Formular mit
+einem anderen Wert gePOSTet wird, dann wird der Standardwert nat&uuml;rlich nicht gesetzt, sondern die Auswahl des Benutzers.
+</p>
+
+<h2>Der Hyperlink</h2>
+<p>
+Die <i>Hyperlink</i>-Control erstellt einen Hyperlink zu der Webseite, die im <i>NavigateUrl</i> Attribut eingetragen
+ist. F&uuml;r die Beispieldatei hyperlink.aspx ist dies http://www.aspheute.com (<b>hyperlink.aspx</b>).
+<pre style="background='silver';">
+&lt;%@ Page Language="C#" %&gt;
+&lt;html&gt;
+&lt;body&gt;
+
+&lt;h2&gt;ASP.NET Web Forms Demo&lt;/h2&gt;
+&lt;p&gt;&lt;b&gt;Hyperlink:&lt;/b&gt;&lt;/p&gt;
+
+	&lt;form action="hyperlink.aspx" method="post" runat="server"&gt;
+	
+		&lt;asp:Hyperlink id="hyperlink" runat="server"
+   			NavigateUrl="http://www.aspheute.com"
+   			Text="ASPHeute"
+		/&gt;
+	&lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</p>
+<p>
+&Auml;hnlich wie beim Graphik-Button k&ouml;nnen Sie statt dem trivialen Text-Link auch eine Graphik verwenden, indem Sie
+der Control das Attribut <i>ImageUrl="url"</i> zuweisen. Falls Sie dieses definieren, hat das 
+<i>ImageUrl="url"</i>-Statement Vorrang gegen&uuml;ber dem Text, d.h. der Text wird nur angezeigt wenn die Graphik nicht
+gefunden wird oder der Browser keine Graphiken unterst&uuml;tzt (soll ja bei manchen Browsern vorkommen!).
+</p>
+<p>
+Sie k&ouml;nnen dem Hyperlink-Control auch das Target-Fenster vorgeben, in dem der Hyperlink die URL anzeigen soll.
+Dies geschieht mit Hilfe des <i>Target="window"</i> Attributs. Das Attribut kann den Namen des Fensters oder die 
+Frame-Reference (z.B.: <i>_TOP</i>) enthalten. 
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+ASP.NET Web Forms und die Controls stellen ein sehr m&auml;chtiges Werkzeug f&uuml;r die Programmierung von Websites dar.
+Obwohl der ASP.NET Code nicht wie HTML aussieht, wird f&uuml;r den Browser passendes HTML generiert. Der Sourcecode 
+der Controls beschr&auml;nkt sich auf ein paar wenige Zeilen, die State-Erhaltung erfolgt automatisch. In reinem HTML
+und nur mit ASP war diese einfache Aufgabenstellung bereits sehr aufwendig - und erforderte Programmierung.
+</p>
+<p>
+Ebenso wenig (bis gar keine) Programmierung erfordert die Validierung von eingegebenen Daten. Die Validierung
+wird das Thema eines kommenden Artikels. Bis bald!
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000808.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000808.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001114.htm">ASP.NET User Controls im Einsatz</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001114.htm</span><br>
+<a href="../artikel/20020206.htm">Der ODBC .NET Data Provider</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020206.htm</span><br>
+<a href="../artikel/20031128.htm">Die ersten Schritte in Visual Basic .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20031128.htm</span><br>
+<a href="../artikel/20000816.htm">Die Kalender-Komponente in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000816.htm</span><br>
+<a href="../artikel/20001123.htm">DropDown Listen bef&uuml;llen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001123.htm</span><br>
+<a href="../artikel/20000911.htm">Einf&uuml;hrung in ASP.NET Validation Controls (Teil 1)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000911.htm</span><br>
+<a href="../artikel/20000913.htm">Einf&uuml;hrung in ASP.NET Validation Controls (Teil 2)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000913.htm</span><br>
+<a href="../artikel/20031010.htm">Einstieg in Visual Studio.NET - die erste Webanwendung mit Visual C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20031010.htm</span><br>
+<a href="../artikel/20000922.htm">Eventbehandlung bei ASP.NET WebForms</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000922.htm</span><br>
+<a href="../artikel/20020321.htm">Flash Movies einbetten einfach gemacht</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020321.htm</span><br>
+<a href="../artikel/20020705.htm">Formularbasierte Authentifizierung in f&uuml;nf Minuten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020705.htm</span><br>
+<a href="../artikel/20020117.htm">Last but not least - .NET 1.0 ist da!</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020117.htm</span><br>
+<a href="../artikel/20020801.htm">MS IE WebControls 101</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020801.htm</span><br>
+<a href="../artikel/20000809.htm">Performance Monitoring a la .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000809.htm</span><br>
+<a href="../artikel/20000712.htm">Was ist neu in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000712.htm</span><br>
+<a href="../artikel/20020704.htm">Zahl, Datum und W&auml;hrung korrekt formatiert ausgeben</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020704.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpgerman%2Ecom%2Faspgerman%2Flisten%2Fanmelden%2Faspdedotnet%2Easpx">Die aspDEdotnet Liste</a><br>
+<SPAN class="content">http://www.aspgerman.com/aspgerman/listen/anmelden/aspdedotnet.aspx</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,166 @@
+<HTML>
+<HEAD>
+<TITLE>Aktualisieren von Daten mit dem UPDATE Statement</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Daten in einer Datenbank kann man mit ADO auf zweierlei Arten ver&auml;ndern - einerseits durch Verwendung eines Recordsets mit der Update Methode, als auch mit dem UPDATE Statement und dem Execute Befehl des Connection Objekts.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,UPDATE,ADO,SQL,INSERT,Batch Update,UPDATE Statement,Recordset">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Aktualisieren von Daten mit dem UPDATE Statement</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001124"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Daten in einer Datenbank kann man mit ADO auf zweierlei Arten ver&auml;ndern - einerseits durch
+Verwendung eines Recordsets mit der Update Methode, als auch mit dem UPDATE Statement und dem
+Execute Befehl des Connection Objekts. Meist ist UPDATE die schnellere Wahl, und was noch hinzukommt, die flexiblere
+L&ouml;sung.
+</p>
+<p>
+Dieser Artikel ist ein Folgeartikel zu <a href="../artikel/20001107.htm">Einf&uuml;gen eines Datensatzes mit dem INSERT Statement</a>.
+Es gelten f&uuml;r das UPDATE Statement die gleichen Voraussetzungen f&uuml;r Textwerte, Datumswerte und Zahlenwerte
+wie f&uuml;r das INSERT Statement.
+</p>
+
+<h2>&Auml;nderungen an einzelnen Datens&auml;tzen</h2>
+<p>
+Generell sieht die Syntax des UPDATE Statement vereinfacht wie folgt aus:
+<pre style="background='silver';">
+UPDATE <i>Tabelle</i> SET <i>Feld1</i> = 'neuer Wert', <i>Feld2</i> = 'neuer Wert'
+   WHERE <i>Schl&uuml;sselFeld</i> = Schl&uuml;sselwert
+</pre>
+</p>
+<p>
+Um also beispielweise den Nachnamen in einer Personentabelle zu &auml;ndern, k&ouml;nnte ein UPDATE
+Statement wie folgt aussehen:
+<pre style="background='silver';">
+UPDATE tPersonendaten SET Nachname = 'Wille'
+  WHERE SozVersNummer = 4711010100
+</pre>
+</p>
+<p>
+In diesem Beispiel wird - so die Spalte <i>SozVersNummer</i> ein Prim&auml;rschl&uuml;sselfeld ist - nur dieser
+eine Datensatz ver&auml;ndert. Wenn mehrere Zeilen das Einschr&auml;nkungskriterium erf&uuml;llen, so wird jede
+einzelne Zeile aktualisiert.
+</p>
+<p>
+Um gleich auf eine Gefahr hinzuweisen - was passiert, wenn man auf die WHERE Clause vergisst, und folgendes
+Statement ausf&uuml;hrt?
+<pre style="background='silver';">
+UPDATE tPersonendaten SET Nachname = 'Wille'
+</pre>
+</p>
+<p>
+Nun, es fehlt die Einschr&auml;nkung auf die Zeile, die ver&auml;ndert werden soll - und wenn es keine
+Einschr&auml;nkung gibt, dann gilt das UPDATE f&uuml;r alle Zeilen! Und dann sollte man ein m&ouml;glichst 
+aktuelles Backup haben, um die Daten wieder in den Originalzustand versetzen zu k&ouml;nnen. Ergo - 
+Vorsicht, immer das UPDATE Statement doppelt kontrollieren!
+</p>
+
+<h2>UPDATE's an mehreren Zeilen</h2>
+<p>
+Warum widme ich dieser Thematik eine eigene &Uuml;berschrift? Der Grund ist, da&szlig; man mit dem UPDATE
+Statement elegant und schnell Code dieser Art beschleunigen kann:
+<pre style="background='silver';">
+' rs mit "SELECT * from tProducts" ge&ouml;ffnet
+While Not rs.EOF
+  rs("Preis") = rs("Preis") * 0.02
+  rs.Update
+  rs.MoveNext
+Wend
+rs.Close
+</pre>
+</p>
+<p>
+Das Problem ist hier, da&szlig; ich &uuml;ber eine potentiell sehr gro&szlig;e Anzahl von Zeilen iteriere, und mit 
+den einzelnen Aufrufen von Update die Performance meiner Applikation zerst&ouml;re. Man k&ouml;nnte es zwar
+mit Tricks (client-side Cursor, etc) ertr&auml;glich machen, aber es gibt eine bessere L&ouml;sung:
+<pre style="background='silver';">
+conn.Execute "UPDATE tProducts SET Preis=Preis*0.02"
+</pre>
+</p>
+<p>
+Der Code reduziert sich auf eine Zeile, und die Arbeit des &Auml;nderns wird von der Software durchgef&uuml;hrt,
+die es am besten kann: die Datenbank.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Im heutigen Artikel habe ich mich auf die h&auml;ufigsten Anwendungsf&auml;lle beschr&auml;nkt. Die vollst&auml;ndige
+Syntax des UPDATE Statements erlaubt es unter anderen auch Berechnungen f&uuml;r Updates &uuml;ber mehrere
+Tabellen hinweg durchzuf&uuml;hren, und einiges an spannenden Dingen mehr.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020429.htm">Benutzerverwaltung leicht gemacht: Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020429.htm</span><br>
+<a href="../artikel/20001127.htm">Datens&auml;tze mit dem DELETE Statement l&ouml;schen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001127.htm</span><br>
+<a href="../artikel/20011015.htm">Der SQL UNION Operator</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011015.htm</span><br>
+<a href="../artikel/20010420.htm">Ein einfacher Query Analyzer</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010420.htm</span><br>
+<a href="../artikel/20001107.htm">Einf&uuml;gen eines Datensatzes mit dem INSERT Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001107.htm</span><br>
+<a href="../artikel/20010426.htm">Seitenzugriffscounter f&uuml;r HTML Dokumente in ASP realisieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010426.htm</span><br>
+<a href="../artikel/20020903.htm">Stored Procedures einfach erstellt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020903.htm</span><br>
+<a href="../artikel/20011017.htm">T-SQL Clauses: GROUP BY und HAVING</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011017.htm</span><br>
+<a href="../artikel/20010213.htm">Update und UpdateBatch zum Einf&uuml;gen von Datens&auml;tzen in Datenbanken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010213.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,662 @@
+<HTML>
+<HEAD>
+<TITLE>Regul&auml;re Ausdr&uuml;cke / Regular Expressions</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor, wie man mit Hilfe des RegExp Objekts in Strings effizient nach Zeichenketten suchen kann, oder diese auch austauschen kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,RegExp,regular expression,pattern,matching,stringsuche,ersetzen,suchen,replace,matches,collection">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Regul&auml;re Ausdr&uuml;cke / Regular Expressions</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000829"></SCRIPT>
+</p>
+<p>
+Der Begriff "regul&auml;rer Ausdruck" ist Ihnen vielleicht schon einmal untergekommen.
+Regul&auml;re Ausdr&uuml;cke benutzt man um festzustellen,
+ob eine Zeichenkette einer bestimmten Form gen&uuml;gt, oder ob eine
+"passende" Zeichenkette in einer anderen Zeichenkette enthalten ist. 
+Ob man nun pr&uuml;fen will, ob eine Zeichenkette ihrer Form nach 
+wirklich eine Email Adresse sein kann, oder ob man bestimmte Zeichenfolgen
+in einer langen Zeichenkette suchen oder gar ersetzen will - 
+Regul&auml;re Ausdr&uuml;cke sind ein effizienter und intelligenter Weg
+um in einem ASP Skript diese Zeichenkettenoperationen durchf&uuml;hren zu lassen.
+</p>
+<p>
+Wie setzt man nun "Regul&auml;re Asudr&uuml;cke" in VBScript (und ASP)
+ein?
+</p>
+<p>
+Um Regul&auml;re Ausdr&uuml;cke in ASP Seiten &uuml;berhaupt einsetzen 
+zu k&ouml;nnen ben&ouml;tigen Sie am Webserver (IIS 4.0 oder IIS 5.0) 
+die Version 5.0 (oder h&ouml;her) der Scripting Engine.
+</p>
+<p>
+Die Version der Scripting Engine, die am Webserver installiert ist,
+k&ouml;nnen Sie mit folgendem ASP Skript &uuml;berpr&uuml;fen:
+</p>
+<p>
+<pre style="background='silver';">
+&lt;%
+Function GetScriptEngine()
+   Dim strSE
+   strSE = ScriptEngine &amp; " " 
+   strSE = strSE &amp; ScriptEngineMajorVersion &amp; "."
+   strSE = strSE &amp; ScriptEngineMinorVersion &amp; "."
+   strSE = strSE &amp; ScriptEngineBuildVersion
+   GetScriptEngine = strSE
+End Function
+
+Response.Write GetScriptEngine()
+%&gt;</pre>
+</p>
+<p>
+Um dieses Script auf unserem Webserver auszuf&uuml;hren klicken Sie auf
+<a href="20000706_listing1.asp" target="_blank"> VBScript Version testen</a>.
+</p>
+<p>
+Die neueste Version der VBscript.dll k&ouml;nnen Sie bei Microsoft downloaden - die Links
+dazu finden Sie am Ende des Artikels.
+</p>
+
+<h2>Einsatz von regul&auml;ren Ausdr&uuml;cken in VBScript 5</h2>
+<p>
+Unter VBScript 5 geht man wie folgt vor, um mit Hilfe von 
+regul&auml;ren Ausdr&uuml;cke spezifische Textstellen in einer Zeichenkette 
+zu finden:
+</p>
+<p>
+<ul>
+	<li>Generieren des RegExp (Regular Expression) Objektes</li>
+	<li>Pattern-Zuweisung (engl. Modell, Muster) zum RegExp Objekt.
+	Dieser Schritt definiert das "Wortmuster" nach dem in einer Zeichenkette 
+	gesucht werden kann.</li>
+	<li>Setzen von Parametern wie "Gro&szlig;schreibung beachten" ...</li>
+	<li>Eine Zeichenkette nach dem definierten "Wortmuster" (Pattern) durchsuchen.</li>
+	<li>Optional: Auswertung der passenden Textstellen in der Zeichenkette.
+	Feststellen der Position der Fundstelle und des Textes, der dem Wortmuster entspricht.</li>
+</ul>
+</p>
+
+<p>Ein einfaches ASP Skript, das diese Schritte ausf&uuml;hrt, 
+sieht zum Beispiel wie folgt aus:
+<pre style="background='silver';">
+&lt;%
+TestEmail "webmaster@aspheute.de"
+TestEmail "a@b.c"
+TestEmail "master@the.universe"
+
+Function TestEmail(strEmail)
+  ' ### Generieren des RegExp Objectes
+  Set objRegAusdr = New RegExp
+  ' ### Pattern-Zuweisung zum Testen
+  ' ### auf Email der Form Name@Domain.com
+  strPattern = "^.+@.+\...+$"
+  objRegAusdr.Pattern = strPattern
+  ' ### Setzen: Gross/Kleinschreibung nicht beachten
+  objRegAusdr.IgnoreCase = True
+
+  ' ### Zeichenkette strEmail nach Pattern durchsuchen
+  Set Matches = objRegAusdr.Execute(strEmail)	
+
+  If Matches.Count = 1 Then
+    ' ### Ein Treffer 
+    ' ### (Count der Matches Collection ist 1)
+    ' ### Muster in Pattern passt genau zu 
+    ' ### Inhalt von strTest:
+    Response.Write(strEmail &amp; " = Email Adresse!")
+  Else
+    ' ### Muster in Pattern passt nicht 
+    ' ### zu Inhalt von strTest 
+    Response.Write (strEmail &amp; " = Keine Email Adresse!")
+  End If
+  Response.Write("&lt;br&gt;" &amp; vbcrlf)
+End Function
+%&gt;
+</pre>
+</p>
+<p>
+Das Ergebnis dieses Scripts ist wie folgt:
+<pre style="background='silver';">
+webmaster@aspheute.de = Email Adresse!
+a@b.c = Keine Email Adresse!
+master@the.universe = Email Adresse!
+</pre>
+</p>
+<p>
+Das <i>RegExp</i> Objekt ist sozusagen das Werkzeug,
+mit dessen Hilfe man eine Zeichenkette auf die &Uuml;bereinstimmung
+mit einem bestimmten Textmuster (Pattern) durchsuchen kann.
+</p>
+<p>
+Das Textmuster setzt man, indem man der <i>Pattern</i> Eigenschaft
+des <i>RegExp</i> Objektes einen regul&auml;ren Ausdruck zuweist.
+</p>
+<p>
+Dieser Ausdruck (im Beispiel <i>"^.+@.+\...+$"</i>) 
+enth&auml;lt (auf den ersten Blick schwer lesbar) 
+eine Beschreibung (Muster), wie eine "zutreffende" Textstelle
+auszusehen hat. Ein ausf&uuml;hrliche Beschreibung von Pattern
+finden Sie unter <a href="20000829.htm#pattern">Suchmuster (Pattern)</a>
+</p>
+<p>
+Um nun eine Zeichenkette nach Textstellen zu durchsuchen
+die zum Suchmuster (Pattern) passen, kann man die 
+<i>Execute</i> Methode des <i>RegExp</i> Objekts benutzen. 
+</p>
+<p>
+<i>Execute</i> liefert als Ergebnis eine sogenannte 
+<i>Matches</i> Collection (alle Treffer) zur&uuml;ck.
+Die einzelnen Objekte der <i>Matches</i> Collection sind die
+<i>Match</i> (Treffer) Objekte. 
+Diese enthalten Informationen &uuml;ber jene Textstellen,
+die zum regul&auml;ren Ausdruck (<i>Pattern</i> Eigenschaft des
+<i>RegExp</i> Objektes) passen: Position der Textstelle in der 
+Zeichenkette, L&auml;nge der passenden Textstelle, den Wert der
+Textstelle (also der passende Ausschnitt aus der Zeichenkette).
+</p>
+<p>
+Die <i>Count</i> Eigenschaft der <i>Matches</i> Collection
+enth&auml;lt einfach nur die Anzahl der passenden Textstellen 
+(also die Anzahl der <i>Match</i> Objekte).
+</p>
+<p>
+In den folgenden Abs&auml;tzen m&ouml;chte ich auf die 
+M&ouml;glichkeiten eingehen, die man bei der Definition eines 
+Suchmusters (Pattern) hat.
+</p>
+
+<a name="pattern"></a><h2>Suchmuster (Pattern)</h2>
+<p>
+Das Wesen des regul&auml;ren Ausdruckes
+<i>"^.+@.+\...+$"</i> ist ein wenig komplexer, ich werde 
+die Einzelheiten sp&auml;ter genauer erl&auml;utern.
+</p>
+<p>
+Zuerst ein kurzer &Uuml;berblick &uuml;ber die wichtigsten 
+Sonderzeichen, die man in regul&auml;ren Ausdr&uuml;cken
+verwendet:
+</p>
+<p>
+<ul>
+<li><b>\</b> : Vor ein Sonderzeichen gestellt, damit das Zeichen als Zeichen
+und nicht als Sonderzeichen interpretiert wird. Dient auch zusammen mit
+speziellen Buchstaben zur Kennzeichnung von Zeilenumbr&uuml;chen 
+(<b>\n</b>) oder f&uuml;r eine allgemeine Zahl (<b>\d</b>)
+
+</li>
+<li><b>(</b> und <b>)</b> : Schlie&szlig;en eine Ausdruck ein. Um nach Klammern "(" oder  ")"
+	zu suchen benutzen Sie "<b>\(</b>" und "<b>\)</b>".
+</li>
+<li><b><i>x</i>|<i>y</i></b> : Trifft auf jede Textstelle zu, in der 
+entweder <i>x</i> oder <i>y</i> vorkommmt. Um alle Textstellen
+zu suchen, die entweder "<i>de</i>", "<i>at</i>" oder "<i>ch</i>" 
+enthalten, kann man nach dem regul&auml;ren Ausdruck "<i>(de|at|ch)</i>"
+suchen. Um nach "<i>Tisch</i>" und "<i>Fisch</i>" zu suchen kann man den Ausdruck 
+"<i>(T|F)isch</i>" benutzen.
+</li>
+<li><b>.</b> : Ist ein Platzhalter f&uuml;r ein beliebiges Zeichen.
+	So passen zum Ausdruck "<i>.age</i>" die Worte "<i>Sage</i>", "<i>Lage</i>", 
+	"<i>Tage</i>". Um nach einen Punkt zu suchen mu&szlig; man den Punkt 
+	mit "\" kennzeichnen. Der Pattern "\.at" pa&szlig;t also zu "<i>.at</i>".
+	Der Pattern Ausdruck "\..." passt zu allen Textstellen, die aus einem
+	Punkt und zwei beliebigen Zeichen bestehen 
+	("<i>.de</i>","<i>.at</i>", aber auch "<i>.z.</i>").
+</li>
+<li><b>\d</b> : Kennzeichnet eine Zahl (engl. Digit) von 0 bis 9.
+	So pa&szlig;t der Pattern "<i>\d\d/\d\d/\d\d</i>" zu "27/02/00".
+	Der Ausdruck "<i>\d\d\.</i>" passt zu "<i>17.</i>", "<i>08.</i>" oder "<i>33.</i>".</li>
+	<li><b>\D</b> : Steht f&uuml;r ein beliebiges Zeichen, da&szlig; allerdings
+	keine Zahl sein darf.
+</li>
+<li><b>\w</b> : Entspricht einem Schriftzeichen, wie es in Worten
+	Verwendung findet. Von a bis z, A bis Z, 0 bis 9 und
+	Unterstrich "_". Zum Beispiel pa&szlig;t der Pattern "<i>\.\w\w\w</i>" zu 
+	"<i>.asp</i>", aber nicht zu ".  ", ".7-9", ".@at" usw.
+</li>
+<li><b>*</b> : Das vorhergehende Zeichen kann von gar nicht bis 
+	beliebig oft vorkommen. Der Ausdruck "Al*" pa&szlig;t zu den 
+	Textstellen "A", "Al", "Alllll".
+</li>
+<li><b>+</b> : Das vorhergehende Zeichen mu&szlig; mindestens
+	einmal vorkommen. Der Ausdruck "Se+" pa&szlig;t zu "Se" und "See" aber
+	nicht zu "S".
+</li>
+<li><b>?</b> : Das voranstehende Zeichen darf h&ouml;chstens einmal
+	vorkommen. So passt der Ausdruck "a?e" zu "ae" und "e".
+</li>
+<li><b>[abc]</b> : Die eckigen Klammern begrenzen einen Satz von Zeichen,
+	von denen eines an der Stelle des Ausdrucks vorkommen mu&szlig;.
+	So pa&szlig;t der Ausdruck "[BRS]aum" zu den Textstellen "Baum", "Raum",
+	"Saum".
+</li>
+<li><b>[^abc]</b> : Ein "negativer" Satz von Zeichen. 
+	Anstelle des Ausdrucks darf jedes Zeichen stehen, da&szlig; nicht
+	im Ausdruck vorkommt. Der Ausdruck "Te[^aism]" pa&szlig;t zum Beispiel
+	zu den Textstellen "Tee" und "Ter".
+</li>
+<li><b>[a-z]</b> : Ein Bereich von Zeichen. Der Ausdruck
+	"[a-f]77" pa&szlig;t zu "a77", "e77" aber nicht zu "z77". 
+	Der Ausdruck "[1-3]. Platz" pa&szlig;t zu "1. Platz", aber nicht
+	zu "4. Platz".
+</li>
+<li><b>[^a-z]</b> : Ein "negativer" Bereich. Der Ausdruck steht
+	als Platzhalter f&uuml;r ein beliebiges Zeichen, das nicht in den
+	spezifizierten Bereich fallen darf.
+</li>
+</ul>
+</p>
+<p>
+Die Aufz&auml;hlung der vorhergehenden Tabelle ist nicht vollst&auml;ndig.
+Allerdings enth&auml;lt die VBScript Dokumentation die vollst&auml;ndige Liste.
+</p>
+<p>
+Um noch einmal zum Ausdruck des ASP Listings zur&uuml;ckzukommen.
+Die Bedeutung der einzelnen Teile des Ausdrucks "<i>^.+@.+\...+$</i>" 
+lautet wie folgt:
+</p>
+<p>
+<ul>
+<li><b>^</b> steht f&uuml;r den Anfang (den linken Rand) einer 
+Zeichenkette. Das Muster kann also nur am Anfang der Zeichenkette 
+"passen".
+</li>
+<li><b>.</b> ist ein beliebiges Zeichen. Das <b>+</b> bedeutet, 
+da&szlig; das vorhergehende Zeichen einmal oder &ouml;fter
+vorkommen mu&szlig;. Daher ist <b>.+</b> der Platzhalter f&uuml;r 
+ein oder mehrere beliebige Zeichen.
+</li>
+<li><b>@</b> steht einfach f&uuml;r das Zeichen "@".</li>
+<li><b>\</b> kennzeichnet das n&auml;chste Zeichen als Sonderzeichen. 
+	<b>\.</b> steht einfach f&uuml;r "." (Punkt).
+</li>
+<li><b>.</b> bedeutet ein beliebiges Zeichen.</li>
+<li><b>.+</b> steht f&uuml;r ein oder mehrere beliebige Zeichen.</li>
+<li><b>$</b> steht f&uuml;r das Ende (den rechten Rand) einer Zeichenkette.
+	Das Muster mu&szlig; also mit den Ende der Zeichenkette abschlie&szlig;en.
+</li>
+</ul>
+</p>
+
+
+<h2>Die Replace Methode des RegExp Objektes</h2>
+<p>
+Mit Hilfe der <b>Replace</b> Methode
+kann man eine Zeichenkette nach bestimmten Textmustern
+(Pattern) durchsuchen, und die gefundenen Textstellen
+durch einen anderen Text ersetzen.
+</p>
+<p>
+Die Verwendung ist wie folgt:
+<pre style="background='silver';">
+&lt;%
+  Set objRegAusdr = New RegExp
+  ' ### Setzten des Suchmusters (Pattern)
+  objRegAusdr.Pattern = "ist"
+  ' ### Alle Pattern austauschen
+  objRegAusdr.Global = True
+  strA = "Dies ist ein Test."
+  strB = "war"
+  ' ### Alle Pattern in strA gegen strB austauschen
+  strA = objRegAusdr.Replace(strA, strB)
+  Response.Write(strA)
+%&gt;
+</pre>
+</p>
+<p>
+Nachdem das <i>RegExp</i> Objekt generiert und die Suchpattern gesetzt sind,
+kann man in einer beliebigen Zeichenkette (<i>strA</i>) die zum Suchmuster
+passenden Textstellen gegen eine andere Zeichenkette (<i>strB</i>) 
+austauschen.
+</p>
+<p>
+Dadurch, da&szlig; die <i>Global</i> Eigenschaft des <i>RegExp</i> Objektes
+auf <i>True</i> gesetzt ist werden <u>alle</u> Textstellen, die zum Pattern
+passen ausgetauscht. H&auml;tte <i>Global</i> den Wert <i>False</i>, 
+so w&uuml;rde nur die erste passende Textstelle ausgetauscht werden
+</p>
+
+<h2>Die Test Methode des RegExp Objektes</h2>
+<p>
+Mit Hilfe der <i>Test</i> Methode l&auml;sst sich feststellen,
+ob die Pattern ein- oder mehrmals in einer Zeichenkette vorkommen.
+Dies illustriert das folgende Beispiel.
+<pre style="background='silver';">
+&lt;%
+  Set objRegAusdr = New RegExp
+  ' ### Setzten des Suchmusters (Pattern)
+  objRegAusdr.Pattern = "ist"
+  strA = "Dies ist ein Test."
+  ' ### Alle Pattern in strA gegen strB austauschen
+  boolGefunden = objRegAusdr.Test(strA)
+  If boolGefunden = True Then
+    Response.Write("Pattern in Text gefunden!")
+  Else
+    Response.Write("Pattern nicht gefunden!")
+  End If
+%&gt;
+</pre>
+</p>
+
+<h2>Die Matches (Treffer) Collection</h2>
+<p>
+Die <i>Matches</i> Collection enth&auml;lt alle Textstellen
+einer Zeichenkette, die zu den Pattern des <i>RegExp</i>
+Objektes passen. Die <i>Matches</i> Collection erh&auml;lt man,
+indem man ein <i>RegExp</i> Objekt erstellt, die Pattern setzt
+und dann die <i>Execute</i> Methode des <i>RegExp</i> Objektes
+ausf&uuml;hrt.
+</p>
+<p>
+<pre style="background='silver';">
+objRegAusdr = New RegExp
+...
+Set Matches = objRegAusdr.Execute(strMatchString)
+</pre>
+</p>
+<p>
+Man kann dann die Collection durchlaufen, zum Beispiel in einer
+<i>For Each ... Next</i> Schleife, und die folgenden Informationen 
+zu jeder gefundenen Textstelle auslesen: Position des passenden
+Textes, genauer Text an der Fundstelle, L&auml;nge des passenden 
+Textes.
+</p>
+<p>
+<pre style="background='silver';">
+...
+For Each Match in Matches
+   ...
+Next
+</pre>
+</p>
+<p>
+Dazu stellt jedes Match Objekt der Matches Collection
+die folgenden Eigenschaften zur Verf&uuml;gung:
+</p>
+<p>
+<ul>
+	<li><b>FirstIndex</b> : Gibt die Position der gefundenen Textstelle zur&uuml;ck. 
+Der Wert ist dabei 0-basierend, daher wird ein Fund am Anfang der Zeichenkette
+durch den Wert 0 (Null) angezeigt. Eine passende Textstelle, die mit dem 
+3. Buchstaben der Zeichenkette beginnt, gibt den Wert 2 in der <i>FirstIndex</i>
+Eigenschaft zur&uuml;ck.</li>
+	<li><b>Value</b> : Enth&auml;lt den genauen Wert der gefundenen Textstelle.</li>
+	<li><b>Length</b> : Spezifiziert die L&auml;nge der passenden Textstelle.</li>
+</ul>
+</p>
+<p>
+<pre style="background='silver';">
+...
+For Each Match in Matches
+   Response.Write("FirstIndex: ")
+   Response.Write(Match.FirstIndex &amp; "&lt;br&gt;")
+   Response.Write("Value: ")
+   Response.Write(Match.Value &amp; "&lt;br&gt;")
+   Response.Write("Length: "
+   Response.Write(Match.Length &amp; "&lt;br&gt;")
+   Response.Write("&lt;br&gt;" &amp; vbcrlf)
+Next
+</pre>
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Regul&auml;re Ausdr&uuml;cke und das RegExp Objekt erlauben ein
+effizientes Suchen nach spezifischen Textstellen in einer Zeichenkette.
+Mit Hilfe der <i>Replace</i> Methode kann man dar&uuml;ber hinaus
+in einem Text auf sehr bequeme Weise definierte Textstellen
+durch einen anderen Text ersetzen.
+</p><h2>Verwandte Artikel</h2>
+<p>
+<a href="20020130.htm">Eigene Tags - User Input einfach und sicher</a><br>
+<a href="20011031.htm">Gegengifte f&uuml;r SQL Injection</a><br>
+<a href="20010803.htm">Meta Tags von fremden Seiten parsen</a><br>
+<a href="20020902.htm">Regex'en zu Assemblies kompilieren</a><br>
+<a href="20011203.htm">Verhinderung von SQL Injection Marke .NET</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2Fmsdownload%2Fvbscript%2Fscripting%2Easp%3Fid%3D11">VBScript Engine (deutsch)</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2Fmsdownload%2Fvbscript%2Fscripting%2Easp">VBScript Engine (US)</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20000829" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Regul&auml;re Ausdr&uuml;cke / Regular Expressions"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20000829.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Koller"><input type="hidden" name="AuthorEmail" value="christiank@aspexpert.com"><input type="hidden" name="Artikel" value="20000829"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20000829.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

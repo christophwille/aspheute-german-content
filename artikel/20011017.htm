@@ -1,0 +1,421 @@
+<HTML>
+<HEAD>
+<TITLE>T-SQL Clauses: GROUP BY und HAVING</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Die beiden T-SQL Clauses GROUP BY und HAVING, ob in Kombination verwendet oder nicht, dienen allgemein zum Gruppieren von Datenspalten. Dies geschieht in Verbindung mit dem SELECT Statement.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,GROUP BY,HAVING,ROLLUP,WITH CUBE,Gruppierung,SUM,Aggregate,Aggregierung,Aggregates,Aggregate Function">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>T-SQL Clauses: GROUP BY und HAVING</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20011017"></SCRIPT>
+</p>
+<p>
+Die beiden T-SQL Clauses GROUP BY und HAVING, ob in Kombination verwendet oder nicht, dienen allgemein zum Gruppieren von
+Datenspalten. Dies geschieht in Verbindung mit dem SELECT Statement. Diese Gruppierung ist vor allem bei 
+gr&ouml;&szlig;eren ("rohen") Datenmengen von Vorteil, da hierbei die Daten schnell und &uuml;bersichtlich in einzelne Gruppen gegliedert werden.
+Die dadurch durchgef&uuml;hrten &Auml;nderungen werden dabei nicht permanent in der Datenbank gespeichert.
+</p>
+
+<p>
+In diesem Artikel pr&auml;sentiere ich Ihnen einmal die Basics &uuml;ber die beiden Clauses und werde dabei mit kleinen Beispielen
+die Theorie veranschaulichen.
+</p>
+
+<h2>Die GROUP BY Clause</h2>
+
+<p>
+In Verbindung mit einer (optionalen) Aggregate Function fa&szlig;t die GROUP BY Clause die betroffenen Datenspalten im zur&uuml;ckgelieferten 
+Ergebnis der Query (Datenbankabfrage) in einzelne Gruppen zusammen. Mit Aggregate Function ist eine Funktion gemeint, die eine Berechung/Manipulation 
+(z.B. SUM, MAX, MIN) mit der angegebenen Spalte durchf&uuml;hrt. Hierbei ist aber zu beachten, da&szlig; die GROUP BY
+Clause zwar die betroffene(n) Datenspalte(n) in einzelne Gruppen teilt, aber keine Sortierung durchf&uuml;hrt. Daher sollte
+bei zus&auml;tzlicher Sortierungsanfordernis eine ORDER BY Clause verwendet werden.
+</p>
+
+<p>
+Weiters ist bei der Verwendung der Clause zu beachten, da&szlig; Spalten mit Datentyp ntext, text oder image nicht
+zum Gruppieren verwendet werden k&ouml;nnen. Der Gruppierungsarbeit sind aber auch Grenzen gesetzt. Die Gr&ouml;&szlig;e der 
+Datenspalten ist begrenzt, da max. 8060 Bytes im Zwischentabellenspeicher abgelegt werden k&ouml;nnen. 
+</p>
+<p>
+Prinzipiell sieht die 
+Clause in der Verwendenung so aus bzw. kann sie folgende (optionale) Argumente noch zus&auml;tzlich aufnehmen:
+</p>
+
+<pre style="background='silver';">
+GROUP BY <i>ALL</i> Ausdruck-Kommaliste (mit/ohne Aggregate Function) <i>WITH CUBE / ROLLUP</i>
+</pre>
+
+<p>
+Hierbei bedeutet - wobei Angaben in Kursivschrift als optional gelten:
+</p>
+
+<ul>
+<li><i>ALL:</i> liefert alle Gruppen, auch wenn sie nicht ver&auml;ndert wurden, weil sie die angegebenen Kriterien nicht
+erf&uuml;llt haben. Dadurch ist es nicht m&ouml;glich ALL mit CUBE oder ROLLUP zu verwenden (siehe sp&auml;ter). Leere Spalten werden mit null Werten 
+belegt. </li>
+<li>Ausdruck-Kommaliste: hier werden alle zu gruppierenden Spalten angegeben. Die Trennung der einzelnen Spalten erfolgt durch
+Kommas. Wichtig dabei ist, da&szlig; in dieser Liste keine Aliases (z.B. LN AS 'Last Name') verwendet werden. Zudem k&ouml;nnen maximal 10
+Ausdr&uuml;cke in einem Job verarbeitet werden. Ein Ausdruck, der nicht in Verbindung mit einer Aggregate Function steht mu&szlig;
+in der Ausdruck-Kommaliste enthalten sein. Die Clause beginnt mit Gruppierung in Richtung links nach rechts der angegebenen Spalten</li>
+<li>WITH: ist das Bindeverb f&uuml;r CUBE und ROLLUP. CUBE bietet die M&ouml;glichkeit eine Zusammenfassungsdatenreihe zwischen den 
+einzelenen Gruppen einzuf&uuml;gen. ROLLUP hingegen bietet zus&auml;tzlich zur CUBE Funktion eine hierarchische Ordnung 
+- Bottom To Top - der einzelnen Gruppen.
+</li>
+</ul>
+
+<p>
+Sehen wir uns zu der GROUP BY Clause ein paar einfache Beispiele an. Die Queries wurden gegen die Northwind SQL-Datenbank
+gefahren. Wie Sie vielleicht wissen bietet der MS SQL Server u.a. ein bequeme M&ouml;glichkeit den Sytanx von Queries zu &uuml;berpr&uuml;fen und
+zugleich diesen gegen die Datenbank zu fahren - n&auml;mlich im SQL Query Analyzer.
+</p>
+
+<p>
+Die erste Aufgabe besteht darin, aus der Products Tabelle der Northwind Datenbank alle Produkte aufzulisten und
+die Summe der im Lager vorhandenen Einheiten zu ermitteln. Es ist nach dem Produktnamen zu gruppieren. Eine m&ouml;gliche
+L&ouml;sung w&auml;re:
+</p>
+
+<pre style="background='silver';">
+SELECT ProductName, SUM(UnitsInStock) AS 'Units In Stock' FROM Products GROUP BY ProductName
+</pre>
+
+<p>
+Um das Ergebnis zu veranschaulichen, hier die Query und ein Auschnitt aus dem Ergebnis der Query:
+</p>
+
+<IMG SRC="Bilder/200110/20011017_1.png" width="628" height="295" alt="" border="0">
+
+<p>
+Als n&auml;chstes sollen der Produktname und die SupplierId wieder aus der Products Tabelle aufgelistet werden. Jetzt soll aber
+nach der SupplierID gruppiert und WITH CUBE verwendet werden:
+</p>
+
+<pre style="background='silver';">
+SELECT ProductName,SupplierId FROM Products GROUP BY SupplierId, ProductName
+WITH CUBE
+</pre>
+
+<p>
+Dargestellt im SQL Query Analyzer sieht dies wieder so aus:
+</p>
+
+<IMG SRC="Bilder/200110/20011017_2.png" width="740" height="293" alt="" border="0">
+
+<p>
+Weil wir schon bei CUBE sind, tauschen wir dies gegen ROLLUP und sehen uns das Ergebnis an:
+</p>
+
+<pre style="background='silver';">
+SELECT ProductName,SupplierId FROM Products GROUP BY SupplierId, ProductName
+WITH ROLLUP
+</pre>
+
+<IMG SRC="Bilder/200110/20011017_3.png" width="695" height="341" alt="" border="0">
+
+<p>
+Auf den ersten Blick eigentlich hier kein Unterschied gegen&uuml;ber dem vorigen Screenshot. Sehen wir uns aber die 
+Rowcounts (im folgenden Screenshot roter Kringel) an und scrollen wir beim CUBE ans Ende der Rowliste -
+da sehen wir einen gewaltigen Unterschied:
+</p>
+
+<IMG SRC="Bilder/200110/20011017_4.png" width="737" height="293" alt="" border="0">
+
+<p>
+CUBE hat die Datenreihen die keine SupplierId besitzen, mit null ausgewiesen - das ist ja ok! Aber ROLLUP hat durch die hierarchische
+Ordnung diese "leeren" Felder nochmals gruppiert und angeordnet.
+</p>
+
+<h2>Die HAVING Clause</h2>
+
+<p>
+Diese Clause wird &uuml;blicherweise mit der GROUP BY Clause kombiniert verwendet. Man verwendet sie quasi wie eine
+WHERE Clause in Verbindung mit der GROUP BY Clause - z.B. als ein Eingrenzungskriterum zur Gruppierung. Diese
+Annahme der &Auml;hnlichkeit zur WHERE Clause best&auml;tigt sich auch darin, da&szlig; sie ohne GROUP BY verwendet, sich auch wie diese 
+verh&auml;lt. Zu beachten ist, da&szlig; wie bei der ORDER BY Clause die Datentypen ntext, text oder image nicht zul&auml;ssig sind.
+</p>
+
+<p>
+Die HAVING Clause nimmt folgenden Syntax:
+</p>
+
+<pre style="background='silver';">
+HAVING Kriterumsausdruck
+</pre>
+
+<p>
+Wenn wir also unser erstes Beispiel recyclen und zus&auml;tzlich ein Eingrenzungskriterum anwenden, d.h. es sollen nur jene Produkte 
+angezeigt werden deren St&uuml;ckzahl unter 30 liegt, sieht das SQL Statement so aus:
+</p>
+
+<pre style="background='silver';">
+SELECT ProductName, SUM(UnitsInStock) AS 'Units In Stock' FROM Products 
+GROUP BY ProductName HAVING SUM(UnitsInStock) < 30
+</pre>
+
+<p>
+Im Query Analyzer stellt sich dann so dar:
+</p>
+
+<IMG SRC="Bilder/200110/20011017_5.png" width="630" height="297" alt="" border="0">
+
+<p>
+Wie erwartet tritt unsere gew&uuml;nschte Einschr&auml;nkung ein.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Dieser Artikel sollte als Tutorial dienen um Ihnen anhand von einfachen Beispielen die beiden T-SQL Clauses
+GROUP BY und HAVING vorzustellen. Diese k&ouml;nnen sich bei der Gruppierung bzw. Auswertung von gr&ouml;&szlig;eren Datenmengen 
+als sehr n&uuml;tzlich erweisen.
+</p><h2>Verwandte Artikel</h2>
+<p>
+<a href="20001124.htm">Aktualisieren von Daten mit dem UPDATE Statement</a><br>
+<a href="20001023.htm">Das SQL Join Statement</a><br>
+<a href="20011015.htm">Der SQL UNION Operator</a><br>
+<a href="20001201.htm">Die SQL ORDER BY Clause</a><br>
+<a href="20001107.htm">Einf&uuml;gen eines Datensatzes mit dem INSERT Statement</a><br>
+<a href="20020903.htm">Stored Procedures einfach erstellt</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20011017" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="T-SQL Clauses: GROUP BY und HAVING"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20011017.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Holm"><input type="hidden" name="AuthorEmail" value="office@holmcs.com"><input type="hidden" name="Artikel" value="20011017"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20011017.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

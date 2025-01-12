@@ -1,0 +1,332 @@
+<HTML>
+<HEAD>
+<TITLE>Unicode und ASP (Einf&uuml;hrung)</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel erkl&auml;rt der Autor die Grundlagen von Unicode, und die grundlegende Verwendung in ASP. Dieser Artikel ist der Beginn einer Serie zu Unicode in Active Server Pages.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Unicode,ANSI,Ascii,CodePage,Character Set,Zeichensatz,Landeseinstellungen,Darstellung,DBCS,Double Byte character set">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Unicode und ASP (Einf&uuml;hrung)</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000831"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Unicode ist ein weltweiter Zeichensatz-Standard, der die g&auml;ngigsten 
+Buchstaben und Zeichen enth&auml;lt, die weltweit in der  Gesch&auml;ftswelt Verwendung finden.
+Mit Hilfe von Systemen, die Unicode verarbeiten k&ouml;nnen, wird die 
+Erstellung und Verwaltung von Software f&uuml;r verschiedenste Sprachen stark vereinfacht.
+Anstatt f&uuml;r jede Sprache einen eigenen Zeichensatz einsetzen zu m&uuml;&szlig;en,
+erlaubt Unicode das Hantieren von mehrsprachigen Texten allein mit dem Unicode Zeichensatz.
+</p>
+<p>
+Unicode weist jedem Zeichen eine 2 Byte lange Nummer zu (von 0 bis 65535), soda&szlig;
+das Zeichen in der Computerwelt unabh&auml;ngig von Plattform, Programm und Sprache verwendet
+werden kann.
+</p>
+<p>
+Der Unicode Standard ist die Basis f&uuml;r weitere Standards wie XML, JavaScript oder WML.
+Die Entwicklung und Verbreitung des Unicode Standards wird vom 
+<a href="http://www.unicode.org" target="_blank">Unicode-Konsortium</a> betrieben.
+</p>
+<p>
+<i>Was hat nun Unnicode mit ASP zu tun, und wo wird Unicode heute schon auf breiter Basis
+in der Software-Entwicklung eingesetzt?</i>
+</p>
+<p>
+Active Server Pages (ASP) auf IIS 4.0 oder IIS 5.0 arbeitet intern mit Unicode 
+um Zeichen zu speichern und zu verarbeiten.
+Viele weitere Microsoft Produkte arbeiten bereits vollst&auml;ndig mit Unicode,
+oder sind zumindest Unicode kompatibel:
+</p>
+<p>
+<ul>
+	<li>Windows 2000</li>
+	<li>Office 2000 (mit Access 2000)</li>
+	<li>ASP</li>
+	<li>ADO</li>
+	<li>Index Server</li>
+	<li>SQL Server 7.0</li>
+	<li>Internet Explorer 5</li>
+</ul>
+</p>
+<p>
+<i>Wo kommt nun der ASP-Entwickler mit Unicode in Ber&uuml;hrung?</i>
+</p>
+<p>
+Je nach Einstellung des Webservers benutzt die ASP Engine eine
+bestimmte "Codepage". Diese Codepage legt fest, wie der Ascii-Code eines
+Zeichens zu interpretieren ist. Es gibt Codepages f&uuml;r Westeurop&auml;ische Sprachen,
+Griechisch, Kyrillisch, Chinesisch, Japanisch usw.
+</p>
+<p>
+In jedem ASP Script werden Strings in Variablen gespeichert und zum Browser geschrieben. 
+Jedesmal, wenn ASP ein Zeichen zu interpretieren hat, sei es nun, weil es in einer
+Variablen gespeichert wird, oder weil es mittels <i>Response.Write</i> zum 
+Browser geschrieben wird, konvertiert ASP das Zeichen von Unicode zur eingestellten Codepage.
+</p>
+<p>
+Die Codepage kann man unter ASP mittels der <i>@Codepage</i> Direktive oder mittels
+<i>Session.Codepage</i> einstellen.
+</p>
+<p>
+Da&szlig; ASP intern Unicode zum Speichern von Strings verwendet wurde bereits erw&auml;hnt,
+daneben gibt es aber beim Schreiben von ASP-Seiten auch folgende
+Ber&uuml;hrungspunkte mit Unicode-Einstellungen und -Parametern:
+</p>
+<p>
+<ul>
+	<li><i>@CODEPAGE </i>und <i>Session.CodePage</i> : Einstellungen zur Interpretation von 
+	Strings. ASP benutzt diese Einstellungen um die intern gespeicherten Unicode Strings
+	in Ascii Zeichen gem&auml;&szlig; der eingestellten Codepage auszugeben, oder um
+	Zeichen zur internen Speicherung in Unicode umzuwandlen.</li>
+	<li><i>FileSystemObject</i> Objekt: Beim Erstellen und &Ouml;ffnen von Textdateien
+	mittels <i>FileSystemObject</i> kann man zum Beispiel einstellen, ob man Textstreams als 
+	Unicode auslesen will, oder ob man eine Datei als Unicode (anstatt Ansi) auf der
+	Festplatte speichern will.</li>
+	<li><i>ActiveX Data Objects (ADO)</i> erlaubt Zugriff auf Strings die in Datenbanken gespeichert
+	sind. Die Datenbank (Access 2000 oder SQL Server 7.0) kann dabei intern den String,
+	je nach Tabellendefinition, als Ansi-Code oder als Unicode speichern.
+	Mittels der Eigenschaften eines ADO <i>Field</i> Objektes kann man herausfinden,
+	ob ein Datenbankfeld nun Unicode speichert oder nicht. Bei Datenbankafragen mittels
+	SQL Kommando ist es in SQL Server 7.0 n&ouml;tig, die String Werte als Unicode
+	zu kennzeichnen um eine korrekte Verarbeitung der Kommandos zu gew&auml;hrleisten.
+	Das ADO <i>Stream</i> Objekt l&auml;&szlig;t sich konfigurieren um Unicode Daten zu verarbeiten.
+	Weiters kann man unter ADOX Tabellen mit Unicode-Feldern erstellen.</li>
+	<li>Bei der Programmierung von Index Server Abfragen mu&szlig; man darauf achten,
+	da&szlig; man entweder Unicode Zeichen f&uuml;r die Abfrage benutzt, oder
+	den richtigen Zeichensatz in der ASP Seite und dem Indexserver einstellt.</li>
+	<li>Beim Ausgeben von HTML Seiten in bestimmten Sprachen (oder in Unicode) gibt
+	man mittels &lt;META HTTP-EQUIV&gt; Tag die gew&auml;hlte Codepage (auch Unicode) an.</li>
+	<li>Beim Generieren und Schreiben von standardkonformen XML Daten aus ASP mu&szlig;
+	man das XML Dokument als Unicode-Dokument erstellen und zum Client schreiben.</li>
+	<li>Die VBScript Funktionen <i>AscW</i> und <i>ChrW</i> erlauben direkte Manipulation von 
+	Unicode-Zeichen.</li>
+</ul>
+</p>
+<p>
+All dies wird in nachfolgenden Artikeln dieser Artikelreihe <i>Unicode und ASP</i>
+ausf&uuml;hrlich und detailliert erkl&auml;rt werden. Probleme, Bugs und
+Fallen in der Programmierung werden erl&auml;utert und L&ouml;sungen zu
+Aufgabenstellungen pr&auml;sentiert werden.
+</p>
+<p>
+Zum Abschlu&szlig; dieses Artikels m&ouml;chte ich noch mit einem kleinen Beispiel demonstrieren,
+da&szlig; ASP intern Unicode benutzt, und die gespeicherten Daten mittels
+Codepage Einstellung interpretiert:
+</p>
+<p>
+<pre style="background='silver';">
+&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"&gt;
+
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Beispiel&lt;/title&gt;
+&lt;!-- Griechischer Zeichensatz im Browser benutzen - ISO --&gt;  
+&lt;META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-7"&gt;  
+&lt;/head&gt;
+
+&lt;body&gt;
+&lt;%
+' Speichern der Original Codepage
+Session("OriginalCodePage") = Session.CodePage
+
+' Griechische Codepage einstellen
+Session.CodePage = 1253
+
+Response.Write("Codepage = " &amp; Session.Codepage)
+Response.Write("&lt;br&gt;")
+
+strA = Chr(&amp;HC1) &amp; _
+  Chr(&amp;HD3) &amp; _
+  Chr(&amp;HD0)
+  
+Response.Write(strA &amp; "&lt;br&gt;")
+
+Response.Write("Asc Werte(Ansi): &lt;br&gt;")
+For intI = 1 to Len(strA)
+  Response.Write(Asc(Mid(strA,intI,1)) &amp; " ")
+Next
+Response.Write("&lt;br&gt;&lt;br&gt;")
+
+Response.Write("AscW Werte (Unicode): &lt;br&gt;")
+For intI = 1 to Len(strA)
+  Response.Write(AscW(Mid(strA,intI,1)) &amp; " ")
+Next
+Response.Write("&lt;br&gt;&lt;br&gt;&lt;br&gt;")
+
+' Westeuropaeische Codepage: 
+' Verschiebt Interpretation des Unicodes
+Session.CodePage = 1252
+
+Response.Write("Codepage = " &amp; Session.Codepage)
+Response.Write("&lt;br&gt;")
+
+Response.Write(strA &amp; "&lt;br&gt;")
+
+Response.Write("Asc Werte(Ansi): &lt;br&gt;")
+For intI = 1 to Len(strA)
+  Response.Write(Asc(Mid(strA,intI,1)) &amp; " ")
+Next
+Response.Write("&lt;br&gt;&lt;br&gt;")
+
+Response.Write("AscW Werte (Unicode): &lt;br&gt;")
+For intI = 1 to Len(strA)
+  Response.Write(AscW(Mid(strA,intI,1)) &amp; " ")
+Next
+Response.Write("&lt;br&gt;&lt;br&gt;")
+
+Response.Write("Darstellung mittles HTML-Syntax &amp;amp#xxx; :&lt;br&gt;")
+For intI = 1 to Len(strA)
+  Response.Write("&amp;#" &amp; AscW(Mid(strA,intI,1)) &amp; ";")
+Next
+
+%&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+
+&lt;%
+' Zuruecksetzen der Codepage Einstellungen
+Session.CodePage =  Session("OriginalCodePage")
+%&gt;
+</pre>
+</p>
+<p>
+Die Ausgabe des Scripts im Browser ist im folgenden Screenshot gezeigt:
+</p>
+<p><IMG SRC="/artikel/Bilder/200008/20000831_01.png" width=313 height=385 alt="" border="0"></p>
+<p>
+Nun aber zur Analyse des Sourcecodes.
+Der META HTTP-EQUIV Code zeigt dem Browser an, den HTML Inhalt mit dem Griechischen
+Zeichensatz zu interpretieren: 
+</p>
+<p>
+<pre style="background='silver';">
+&lt;META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-7"&gt;  
+</pre>
+</p>
+<p>
+Danach wird der Wert (Integer) der augenblicklichen Codepage aus 
+<i>Session.Codepage</i> ausgelesen und in 
+der Sessionvariablen <i>Session("OriginalCodePage")</i> gespeichert.
+</p>
+<p>
+Die griechische Codepage hat den Wert 1253. Um die griechische Codepage
+f&uuml;r Ein- und Ausgaben des ASP-Skripts einzustellen, wird 
+<i>Session.Codepage</i> der Wert 1253 zugewiesen.
+</p>
+<p>
+Im String strA werden die griechischen Zeichen <i>Alpha</i>, <i>Sigma</i>, <i>Pi</i> 
+als Unicode gespeichert. Dies erreicht man durch Verwendung der <i>ChrW</i> Funktion
+und der entsprechenden Unicodes f&uuml;r die einzelnen Zeichen.
+</p>
+<p>
+Danach wird der String <i>strA</i> zum Browser geschrieben und dort
+als griechische Schrift angezeigt (vorausgesetzt, der Browser stellt
+die griechischen Buchstaben zur Verf&uuml;gung).
+</p>
+<p>
+Die nachfolgenden Schleifen schreiben die 
+ANSI Werte (entsprechend der eingestellten Codepage) und die Unicode Werte 
+des Strings <i>strA</i> zum Browser.
+</p>
+<p>
+Nun stellt das Skript die Codepage 1252 ein, die alle Zeichen der 
+westeurop&auml;ischen Sprachen beinhaltet. Als nun strA zum Browser geschickt wird,
+kann ASP die als Unicode gespeicherten Zeichen nicht richtig als Zeichen der 
+eingestellten Codepage interpretieren (weil griechische Zeichen nicht
+in der westeurop&auml;ischen Codepage vorgesehen sind).
+Das Skript hat versucht, die Zeichen in <i>strA</i> von Unicode
+in die Ansi-Werte zu &uuml;bersetzen, wie die ge&auml;nderten Asc Werte anzeigen.
+Intern speichert ASP den String aber immer noch als den gleichen Unicode,
+wie die unver&auml;nderten Unicode-Werte anzeigen, die die <i>AscW</i> Funktion ausgibt.
+</p>
+<p>
+Zum Schlu&szlig; schreibt das Skript noch die einzelnen Zeichen des Strings
+in der HTML-kodierten Form &amp;#xxx; zum Browser. Dadurch kann man sozusagen
+sowohl die eingestellte Codepage des ASP-Skripts als auch die verwendete
+Codepage des Browsers umgehen!
+</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Unicode wird immer wichtiger, wie seine wachsende Verbreitung in 
+professioneller Software bereits zeigt.
+In ASP-Seiten gibt es einige Ber&uuml;hrungspunkte mit Unicode
+und der jeweiligen Interpretation gem&auml;&szlig; der eingestellten Codepage
+des Webservers bzw. des Browsers.
+</p>
+<p>
+Beim Zugriff von ASP auf andere Datenquellen (wie Dateien, Datenbanken, XML oder Streams)
+ist es unbedingt n&ouml;tig, auch mit Unicode-codierten Daten umgehen zu k&ouml;nnen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000831.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000831.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001010.htm">Fern&ouml;stliche Formulare / Unicode die Zweite</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001010.htm</span><br>
+<a href="../artikel/20020704.htm">Zahl, Datum und W&auml;hrung korrekt formatiert ausgeben</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020704.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eunicode%2Eorg">Unicode.org</a><br>
+<SPAN class="content">http://www.unicode.org</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

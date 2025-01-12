@@ -1,0 +1,210 @@
+<HTML>
+<HEAD>
+<TITLE>Sprache des Benutzers erkennen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel erkl&auml;rt der Autor wie man mit einer ASP Seite herausfindet, welche Sprache der Besucher denn gerne auf Webseiten lesen w&uuml;rde, und somit der Browser die dementsprechende Version der Seite anzeigt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Sprache,Sprachversion,Spracheinstellungen,Servervariables,HTTP_ACCEPT_LANGUAGE,Request,Sprachinformationen">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Sprache des Benutzers erkennen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001004"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>Das Internet ist ein wunderbares Medium - Man hat auf seiner Internetsite 
+Besucher aus aller Welt. Die Schattenseite dabei ist, nicht jeder spricht Englisch
+oder Deutsch. In vielen internationalen Sites findet man daher Links oder Buttons
+zu Versionen der Site in anderen Sprachen vor.</p>
+
+<p>M&ouml;chte man es dem Besucher ein wenig bequemer machen, so kann man in 
+einer ASP Seite durchaus herausfinden, welche Sprache der Besucher denn gerne auf
+Webseiten lesen w&uuml;rde, und die dementsprechende Version der Seite anzeigen.</p>
+
+<p>Woher kann man nun vom Webserver aus Informationen &uuml;ber die Sprache des
+Users der Website bekommen?</p>
+
+<p>Zum einen besitzt (fast) jeder moderne Browser die M&ouml;glichkeit,
+da&szlig; der Benutzer die Sprache angibt, die er auf Websites 
+mit mehrsprachigem Inhalt gerne lesen w&uuml;rde.
+Meist ist diese Einstellung automatisch auf die Standardsprache
+des Betriebssystems oder Sprachversion der Browsersoftware gesetzt.</p>
+
+<p>Zum anderen schickt der Browser eine Kurzbeschreibung seiner selbst
+zum Webserver, die oft auch Informationen &uuml;ber die Sprachversion des Browsers 
+enth&auml;lt.</p>
+
+<p>Wie man auf beiden Wegen Informationen &uuml;ber die bevorzugte Sprache des 
+Benutzers gewinnt und dementsprechende Inhalte auf einer ASP Seite anzeigt, 
+m&ouml;chte ich in den folgenden Abs&auml;tzen schildern.</p>
+
+<H2>Abfragen der bevorzugten Sprache des Benutzers.</H2>
+
+<p>Jeder moderne Browser sendet Informationen &uuml;ber die bevorzugte Sprache des Benutzers
+zum Webserver. Die Spracheinstellung in einem Internet Explorer kann zum Beispiel
+unter dem Men&uuml;punkt Extras, Internetoptionen vorgenommen werden.
+Im Fenster der Internetoptionen k&ouml;nnen Sie &uuml;ber den Button "Sprachen"
+das Fenster zu den "Spracheinstellungen" &ouml;ffnen.</p>
+
+<p>Wenn Sie den Button "Hinzuf&uuml;gen" dr&uuml;cken, so k&ouml;nnen Sie weitere
+Sprachen zur Liste der gew&uuml;nschten Sprachen hinzuf&uuml;gen. Der Wert
+in der eckigen Klammer, der jeweils nach der Sprache steht (zum Beispiel
+[de] oder auch [de-at]), ist ein Code der f&uuml;r die eingestellte Sprachversion steht.
+Dieser Code wird beim Aufruf jeder Internetseite an den Webserver geschickt.</p>
+
+<p>Das Auslesen des vom Browser geschickten Sprachencodes unter ASP gestaltet sich einfach.
+Da der Code im sogenannten HTTP Header zum Server geschickt wird, kann man
+seinen Wert unter ASP aus einer ServerVariablen mittels <i>Request.ServerVariables</i> auslesen.
+Hat der Benutzer mehrere Sprachen gew&auml;hlt, so werden alle zur&uuml;ckgegeben:
+</p>
+
+<p>
+<pre style="background='silver';">
+ strSprachCode = Request.ServerVariables("HTTP_ACCEPT_LANGUAGE")
+ Response.Write(strSprachCode)
+</pre>
+</p>
+<p>Das Ergebnis des Scripts auf einem Browser, der deutschsprachigen und englischsprachigen
+Inhalt bevorzugt, k&ouml;nnte wie folgt aussehen: <i>de-at,en-us</i></p>
+
+<p>Das folgende ASP Skript liest den Spachcode aus und gibt entsprechend der Sprache eine
+Meldung in Deutsch oder in Englisch aus:</p>
+
+<p>
+Sourcecode der Datei <i>BevSprache.asp</i> (im Download):
+</p>
+<p>
+<pre style="background='silver';">
+ strSprachCode = Request.ServerVariables("HTTP_ACCEPT_LANGUAGE")
+ iDeutsch = Instr(strSprachCode, "de") 
+ iEnglisch = Instr(strSprachCode, "en") 
+ If iDeutsch &gt; 0 Then
+    AcceptDeutsch = TRUE
+ Else 
+    iDeutsch = 9999
+ End If
+ If iEnglisch &gt; 0 Then
+    AcceptEnglish = TRUE
+ Else
+    iEnglisch = 9999
+ End If
+
+ If (iDeutsch &lt; iEnglisch) Then
+    Response.Write("Willkommen auf meiner Internetseite!")
+ ElseIf (iEnglisch &lt; iDeutsch) Then
+    Response.Write("Welcome to my webpage!")
+ Else
+    Response.Write("Welcome - Willkommen")
+ End If
+</pre>
+</p>
+
+<p>Man kann also, entsprechend Reihungen der gew&uuml;nschten Sprachen,
+dem Besucher der Internetseite die passende Sprache pr&auml;sentieren.</p>
+
+<H2>Herausfinden der Sprachversion des Browsers</H2>
+
+<p>Manche Browser geben im Browserstring, der an den Webserver geschickt wird,
+Angaben &uuml;ber die Sprachversion des Browsers.</p>
+
+<P>Aus ASP l&auml;&szlig;t sich der Browserstring wie folgt auslesen:</p>
+
+<pre style="background='silver';">
+strBrowserString = Request.ServerVariables("HTTP_USER_AGENT")
+</pre>
+
+<p>Sehr oft enth&auml;lt nun der Browserstring Sprachinformationen, wie zum Beispiel
+die Zeichenkette <i>[en]</i> f&uuml;r Englisch oder <i>[de]</i> f&uuml;r Deutsch.
+Nicht jeder Browser sendet Sprachinformationen im Browserstring. Aber vor allem bei 
+&auml;lteren Browsern, die keinerlei sonstige Sprachinformationen zum Server schicken,
+findet sich sehr oft im Browserstring die Sprachversion des Browsers.
+Da oftmals deutschprachige Besucher auch deutsche Browserversionen benutzen,
+ist es naheliegend, da&szlig; die Sprachversion des Browsers oftmals
+mit der dem User vertrauten Sprache &uuml;bereinstimmt.</p>
+
+<p>
+Sourcecode der Datei <i>SprachVer.asp</i>:
+</p>
+<p>
+<pre style="background='silver';">
+strBrowserString = Request.ServerVariables("HTTP_USER_AGENT")
+
+Response.Write("Der Browserstring ist wie folgt:" & _
+   strBrowserString & "&lt;BR&gt;")
+If Instr(strBrowserString,"[en]") Then
+   Response.Write("Englischer Browser!")
+ElseIf Instr(strBrowserString,"[de]") Then
+   Response.Write("Deutscher Browser!")
+Else
+   Response.Write("Sprachversion des Browsers unbekannt!")
+End If
+</pre>
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>Will man die bevorzugte Sprache des Benutzers einer Internetseite herausfinden,
+so kann man die vom Browser zum Server gesendeten Informationen dazu benutzen. 
+ASP hat Zugriff auf diese Informationen &uuml;ber die <i>Request.ServerVariables</i> Collection.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001004.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20001004.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010509.htm">Neue Inhalte einer Web Site f&uuml;r den Benutzer hervorheben</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010509.htm</span><br>
+<a href="../artikel/20040901.htm">Optimiertes Erstellen von DropDowns</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040901.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

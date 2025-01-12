@@ -1,0 +1,324 @@
+<HTML>
+<HEAD>
+<TITLE>Zwischenspeichern von ASP Seiten</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Durch das Puffern von ASP-Seiten gewinnt man neue M&ouml;glichkeiten der Fehlerbehandlung in ASP-Seiten, oder des Umleitens von ASP Seiten zu anderen Internetseiten.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Response.Flush, Response.Buffer, Zwischenspeichern von ASP Seiten, IIS, Active Server Pages">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Zwischenspeichern von ASP Seiten</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000517"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>Wenn eine ASP Seite aufgerufen wird, so wird das Ergebnis
+(als HTML) an den aufrufenden Browser geschickt.
+Normalerweise schickt der Webserver die Ergebnis-Seite 
+nach Belieben, St&uuml;ck f&uuml;r St&uuml;ck, zum Browser.</p>
+
+<p>"Zwischenspeichern" (oder "Puffern") von ASP-Seiten bedeutet nun,
+da&szlig; das Ergebnis einer ASP Seite (oder Teile davon) solange im Webserver-Cache 
+zwischengespeichert wird, bis die ASP-Seite komplett ausgef&uuml;hrt wurde, 
+oder die ASP Seite explizit den Befehl zum Senden des Inhaltes (aus dem Zwischenspeicher) 
+zum Browser gibt.</p>
+
+<p>Ein ASP Skript kann nicht nur steuern, ob und wann das Puffern
+der Ergebnis-Seite erfolgen soll. Aus einer ASP Seite heraus kann man
+genau steuern, wann das Senden des Zwischenspeicher-Inhaltes zu
+erfolgen hat. Dar&uuml;ber hinaus kann man den Zwischenspeicher aus
+ASP heraus l&ouml;schen.</p>
+
+<p>Wann in der ASP-Programmierung hat man nun mit dem Puffern von Seiten zu tun, 
+und wo kann man es sinnvoll einsetzen?</p> 
+
+<h2>Webseiten schneller darstellen</h2>
+
+<p>Eine interessante Tatsache ist, da&szlig; der komplette Inhalt einer Webseite schneller 
+im Browser angezeigt wird, wenn man die Ausgabe puffert.
+Dies ist eine Konsequenz der Art und Weise, wie Webserver und Browser w&auml;hrend eines 
+Seitenaufrufes kommunizieren; bei nicht-gepuffertem Output werden viele kleine Pakete geschickt,
+bei eingeschaltetem hingegen am Ende Transfer-optimierte Pakete. Weiters kommt hinzu, da&szlig; der Server w&auml;hrend
+der Abarbeitung des Skripts nicht mit dem Schicken von Daten belastet ist.
+</p>
+
+<p>Um die Ausgabe einer ASP-Seite zu puffern kann man den Befehl <i>Response.Buffer&nbsp;=&nbsp;True</i> 
+benutzen.
+Dieses Kommando sollte ganz am Anfang der ASP-Seite, gleich nach den (optionalen) @-Direktiven, angef&uuml;hrt sein:</p>
+
+<pre style="background='silver';">
+&lt;% @ LANGUAGE="VBScript" ENABLESESSIONSTATE=FALSE %&gt;
+&lt;% 
+Option Explicit
+
+<b>Response.Buffer = True</b>
+
+%&gt;
+
+...</pre>
+
+<p>S&auml;mtliche Ausgaben der ASP-Seite werden nach dem Befehl <i>Response.Buffer&nbsp;=&nbsp;True</i>
+erst einmal im Server Cache zwischengespeichert und deshalb (vorl&auml;ufig) nicht zum Browser geschickt. 
+Durch den Befehl <i>Response.Buffer&nbsp;=&nbsp;False</i> kann man das Zwischenspeichern wieder abstellen.</p>
+
+<p>Will man den angesammelten Inhalt des Zwischenspeichers zum Browser schicken,
+so benutzt man den Befehl <i>Response.Flush</i>. 
+Um hingegen den Inhalt des Zwischenspeichers zu l&ouml;schen, f&uuml;hrt man <i>Response.Clear</i> aus.
+Ein implizites <i>Response.Flush</i> wird auch dann ausgef&uuml;hrt (und somit der Inhalt
+des Speichers zum Browser geschickt), wenn die ASP-Seite zur G&auml;nze abgearbeitet wurde.
+Das gleiche gilt auch dann, wenn die Ausf&uuml;hrung der ASP-Seite mit dem Befehl <i>Response.End</i>
+abgebrochen wird.</p>
+
+<p>Das folgende Beispiel-Skript soll die Interaktionen der einzelnen Befehle
+mit dem Zwischenspeicher verdeutlichen:</p>
+
+<pre style="background='silver';">
+&lt;% @ LANGUAGE="VBScript" ENABLESESSIONSTATE=FALSE %&gt;
+&lt;% 
+Option Explicit
+
+' Zwischenspeicher einschalten
+<b>Response.Buffer = True</b>
+
+' <i><u>Text A</u></i> ausgeben
+Response.Write "<i><u>Text A</u></i> wird (in den Zwischenspeicher) geschrieben.&lt;br&gt;"
+
+' Zwischenspeicher loeschen
+<b>Response.Clear</b>
+
+' <i><u>Text B</u></i> ausgeben
+Response.Write "<i><u>Text B</u></i> wird (abermals in den Zwischenspeicher) " &amp; _
+               "geschrieben.&lt;br&gt;"
+
+' Inhalt des Zwischenspeichers (nur <i><u>Text B</u></i>) zum Browser schicken
+<b>Response.Flush</b>
+
+' <i><u>Text C</u></i> ausgeben
+Response.Write "Kurzer <i><u>Text C</u></i>.&lt;br&gt;"
+
+' Ende der ASP-Seite: Verbliebener Inhalt aus dem Zwischenspeicher 
+'    wird automatisch zum Browser geschickt
+%&gt;</pre>
+
+<p>Die Ausgabe dieser ASP-Seite sieht dann wie folgt aus:</p>
+
+<pre style="background='silver';">
+<i><u>Text B</u></i> wird (abermals in den Zwischenspeicher) geschrieben.
+Kurzer <i><u>Text C</u></i>.</pre>
+
+<p>Der Text A wird gar nicht zum Browser geschickt, da er mit dem
+<i>Response.Clear</i> Befehl aus dem Zwischenspeicher gel&ouml;scht wurde.
+Wann immer <i>Response.Clear</i> aufgerufen wird, l&ouml;scht es den Zwischenspeicher.
+Bereits davor (mit <i>Response.Flush</i>) zum Browser gesendeter Inhalt kann
+dadurch nat&uuml;rlich nicht gel&ouml;scht werden.</p>
+
+<h2>Nachtr&auml;gliche Fehlermeldungen</h2>
+
+<p>Wie bereits kurz gezeigt ist es m&ouml;glich, einen Teil der Seite bereits (in den Puffer) auszugeben, 
+um dann in bestimmten Situationen den Puffer-Inhalt zu l&ouml;schen.
+Ein Paradebeispiel daf&uuml;r ist, wenn man eine beim Auftreten eines Fehlers 
+eine Fehlermeldung statt der normalen Seite anzeigen will.</p>
+
+<p>Das folgende Skript enth&auml;lt eine Fehlerbehandlung, die statt dem 
+bereits von der ASP-Seite ausgegebenen HTML Code nur eine Fehlermeldung
+zum Browser schickt. 
+Dies erreicht das Skript, indem der Fehlerbehandlungs Code den Zwischenspeicher l&ouml;scht
+und anschlie&szlig;end die Fehlermeldung ausgibt. 
+Voraussetzung ist nat&uuml;rlich, da&szlig; der gesamte bisher ausgegebene HTML Code sich noch im 
+Zwischenspeicher befindet und nicht zum Browser gesendet wurde:</p>
+
+<pre style="background='silver';">
+&lt;% 
+' HTML Ausgabe in Zwischenspeicher umleiten
+<b>Response.Buffer = True</b> 
+%&gt;
+
+&lt;HTML&gt;
+&lt;BODY&gt;
+Normale HTML Ausgabe ...&lt;br&gt;
+
+&lt;%
+' Fehlerbehandlungsroutine beginnt
+On Error Resume Next
+
+' Das Script produziert einen Fehler,
+'   daher gibt Err.Number einen Wert ungleich 0 zurueck 
+If Err.Number &lt;&gt; 0 Then
+    ' Zwischenspeicher loeschen
+    <b>Response.Clear</b>
+ 
+    ' Fehlermeldung ausgeben 
+    Response.Write "Im Skript ist ein Fehler aufgetreten..."
+    <b>Response.End</b>   ' beendet das Script
+End If
+%&gt;
+
+Weiterer Text
+&lt;/BODY&gt;
+&lt;/HTML&gt;</pre>
+
+<p>Wenn kein Fehler auftritt, so wird folgendes Ergebnis zum Browser geschickt:</p>
+
+<pre style="background='silver';">
+Normale HTML Ausgabe ...
+Weiterer Text</pre>
+
+<p>Wenn jedoch ein Fehler auftritt, so wird die bisherige HTML Ausgabe
+gel&ouml;scht und stattdessen nur die folgende Fehlermeldung ausgegeben:</p>
+
+<pre style="background='silver';">
+Im Skript ist ein Fehler aufgetreten...</pre>
+
+<h2>Nachtr&auml;gliche Umleitung mit <i>Response.Redirect</i></h2>
+
+<p>Wenn man einmal in die Situation kommt, in einer ASP-Seite eine <b>Umleitung</b>
+(engl. <b>redirect</b>) zu einer anderen Internetseite einzubauen, so ist
+diese Umleitung (mit Hilfe der Methode <i>Response.Redirect</i>) nur 
+dann m&ouml;glich, wenn noch kein Seiteninhalt zum Browser geschrieben wurde.</p>
+
+<p>Dies bedeutet f&uuml;r gew&ouml;hnlich, da&szlig; der <i>Response.Redirect</i> Befehl in der ASP Seite
+vor dem ersten <i>Response.Write</i> und vor dem ersten HTML-Teil stehen mu&szlig;!
+Mit einem gewollten Zwischenspeichern des Seiteninhaltes ist es jedoch m&ouml;glich,
+eine Umleitung an beliebiger Stelle der ASP Seite zu plazieren.</p>
+
+<p>Dies erreicht man dadruch, da&szlig; man alle HTML-Ausgaben mit <i>Response.Buffer&nbsp;=&nbsp;True</i> 
+in den Zwischenspeicher umleitet.
+Um nun an einer beliebigen Stelle der ASP-Seite den Befehl <i>Response.Redirect</i> 
+ausf&uuml;hren zu k&ouml;nnen, l&ouml;scht man den Zwischenspeicher des Webservers und schickt die 
+Anweisung zur Seiten-Umleitung (mit einem <i>Response.Redirect</i> Befehl) zum Browser:</p>
+
+<pre style="background='silver';">
+&lt;% 
+' HTML Ausgabe in Zwischenspeicher umleiten
+<b>Response.Buffer = True</b> 
+%&gt;
+
+&lt;HTML&gt;
+&lt;BODY&gt;
+Normale HTML Ausgabe ...&lt;br&gt;
+
+&lt;%
+
+' Aus irgendeinem Grund will man nun zu einer anderen Seite umleiten:
+blnUmleitung = True
+
+If blnUmleitung = True Then
+	' Umleiten zu anderer Seite
+	<b>Response.Redirect "<i>AndereSeite.asp</i>"</b>
+	' Ausf&uuml;hren des Scripts beenden, sodass der HTTP-Header,
+	'  den der Befehl Response.Redirect erzeugt,
+	'  aus dem Zwischenspeicher zum Browser geschickt wird.
+	<b>Response.End</b>
+End If
+
+%&gt;
+
+Weiterer Text
+&lt;/BODY&gt;
+&lt;/HTML&gt;</pre>
+
+<p>Weiters kann man mit diesem Trick auch alle anderen ASP Befehle, die
+so wie <i>Response.Redirect</i> einen HTTP-Header zum Browser schicken, 
+&uuml;berall in einer ASP Seite verwenden.</p> 
+
+<p>Beipspiele f&uuml;r ASP Kommandos, die HTTP-Headers zum Browser schicken, enthalten zum Beispiel
+die <i>Cookies</i> Collection, oder eine der nachfolgenden Eigenschaften des <i>Response</i> Objektes:<br>
+<i>CacheControl</i>, <i>ContentType</i>, <i>Expires</i>, <i>ExpiresAbsolute</i>.</p> 
+
+<p>HTTP-Header werden ausserdem von den Methoden <i>AddHeader</i> und <i>Redirect</i> des 
+<i>Response</i> Objektes zum Browser geschickt.</p>
+
+<h2>Standardeinstellungen unter IIS</h2>
+
+<p>Standardm&auml;ssig ist der Default-Wert f&uuml;r das Zwischenspeichern
+wie folgt eingestellt:<br><br>
+<b>IIS 4.0</b> benutzt den Zwischenspeicher nur, wenn <i>Response.Buffer&nbsp;=&nbsp;True</i>
+aufgerufen wird.<br><br>
+<b>IIS 5.0</b> hingegen benutzt den Zwischenspeicher immer, solange die
+ASP Seite nicht den Befehl <i>Response.Buffer&nbsp;=&nbsp;False</i> benutzt.<br>
+Daher kann man unter IIS 5.0 normalerweise auch die Befehle <i>Response.Clear</i> und 
+<i>Response.Flush</i> benutzen, ohne vorher explizit <i>Response.Buffer&nbsp;=&nbsp;True</i> aufzurufen.</p>
+
+<h2>HTTP-Keep Alive Headers</h2>
+
+<p>Noch ein Tip f&uuml;r Programmierprofis:<br>
+Immer wenn der Zwischenspeicher f&uuml;r die ASP-Ausgabe aktiv ist,
+egal ob nun f&uuml;r alle ASP-Seiten der Website im Internet Service Manager so eingestellt,
+oder per Response.Buffer&nbsp;=&nbsp;True aktiviert, werden sogenannte
+HTTP Keep-Alive Headers zwischen Webserver und Browser geschickt.</p>
+
+<p>Um dies zu unterbinden ruft man ganz am Anfang der ASP Seite die
+<i>Response.Flush</i> Methode auf:</p>
+
+<pre style="background='silver';">
+&lt;% @ LANGUAGE="VBScript" ENABLESESSIONSTATE=FALSE %&gt;
+&lt;% 
+Option Explicit
+
+' Zwischenspeicher einschalten
+<b>Response.Buffer = True</b>
+' HTTP-Keep Alive Headers unterdr&uuml;cken
+<b>Response.Flush</b>
+
+...
+%&gt;</pre>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000405.htm">@-Direktiven auf ASP Seiten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000405.htm</span><br>
+<a href="../artikel/20000512.htm">ASP-Fehlerbehandlung unter IIS5</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000512.htm</span><br>
+<a href="../artikel/20000412.htm">Pr&uuml;fen ob ein Browser Cookies annimmt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000412.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

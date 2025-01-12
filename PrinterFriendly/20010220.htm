@@ -1,0 +1,240 @@
+<HTML>
+<HEAD>
+<TITLE>Applikationen aus ASP.NET ausf&uuml;hren</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Irgendwo gibt es immer eine kleine Kommandozeilenapplikation, die etwas kann, was keine Komponente kann. Und dann taucht die Frage auf, wie man dieses Programm aus ASP.NET heraus starten, und den Output dann weiterverwenden kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ASP.NET,Csharp,C Sharp,Executor,CodeDOM,Namespace,ExecWaitWithCapture,TempFileCollection,SharpDevelop">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Applikationen aus ASP.NET ausf&uuml;hren</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010220"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Irgendwo gibt es immer eine kleine Kommandozeilenapplikation, die etwas kann, was keine
+Komponente kann. Und dann taucht die Frage auf, wie man dieses Programm aus ASP.NET heraus
+starten, und den Output dann weiterverwenden kann.
+</p>
+<p>
+Unter ASP gibt's die AspExec Gratiskomponente von <a href="http://www.serverobjects.com/" target="_blank">ServerObjects</a>,
+die im Artikel <a href="../artikel/20000822.htm">Mailadressen-&uuml;berpr&uuml;fen f&uuml;r Fortgeschrittene</a> beschrieben ist.
+Obwohl man diese Komponente theoretisch unter ASP.NET einsetzen k&ouml;nnte, rate ich wie immer von
+nicht-managed L&ouml;sungen ab - sie sind zu langsam.
+</p>
+<p>
+Daher mu&szlig; ich wohl oder &uuml;bel eine managed L&ouml;sung pr&auml;sentieren, oder?
+</p>
+<p>
+Da ich ja in die Entwicklung von <a href="http://www.icsharpcode.net/OpenSource/SD/">SharpDevelop</a>
+eingebunden bin, habe ich beim Code Review einiges &uuml;ber die verschiedenen "versteckten" Klassen
+gelernt - weil wer bitte kommt auf die Idee, eine Klasse zur Ausf&uuml;hrung von Programmen im Namespace
+f&uuml;r Compiler zu verstecken? Dort findet sie nun wirklich kein normaler Mensch!
+</p>
+<p>
+Die Klasse, die uns interessiert, ist <i>Executor</i>, die sich im <i>System.CodeDom.Compiler</i>
+Namespace versteckt. Diese bietet die Methode <i>ExecWaitWithCapture</i> (der Name sagt ja fast
+alles), welche wir sogleich in eine wiederverwendbare Funktion f&uuml;r uns verpacken:
+</p>
+
+<pre style="background='silver';">
+// execute an application, return output string
+string ExecuteCmdLineApp(string strCmd)
+{
+  string output = &quot;&quot;;
+  string error  = &quot;&quot;;
+
+  TempFileCollection tf = new TempFileCollection();
+  Executor.ExecWaitWithCapture(strCmd, tf, ref output, ref error);
+
+  StreamReader sr = File.OpenText(output);
+  StringBuilder strBuilder = new StringBuilder();
+  string strLine = null;
+
+  while (null != (strLine = sr.ReadLine()))
+  {
+    if (&quot;&quot; != strLine)
+    {
+      strBuilder.Append(strLine);
+      strBuilder.Append(&quot;\r\n&quot;);
+    }
+  }
+  sr.Close();
+
+  File.Delete(output);
+  File.Delete(error);
+
+  return strBuilder.ToString();
+}
+</pre>
+
+<p>
+Der meiste Code kommt von der speziellen Art der Verwendung der <i>ExecWaitWithCapture</i> Methode. Diese
+schreibt den Output als auch die Fehler in tempor&auml;re Dateien, die man auslesen kann. Die Dateien
+kommen als <i>TempFileCollection</i> Parameter in die Methode, die Namen der Dateien als zwei String Parameter
+retour. Der erste Parameter ist wenigstens von Anfang an klar - die Befehlszeile der Applikation,
+deren Output gecaptured werden soll.
+</p>
+
+<p>
+Da der Output in einer Datei landet, mu&szlig; ich diese auch wieder auslesen. Dazu verwende ich
+einen StreamReader als auch einen StringBuilder. Gr&uuml;nde f&uuml;r diese Vorgehensweise finden sich im Artikel
+<a href="../artikel/20000929.htm">Dateien lesen in ASP.NET</a>.
+</p>
+
+<p>
+Eine wichtige Information mu&szlig; ich noch weitergeben: wie man aus dem Sourcecode ersehen kann,
+l&ouml;sche ich Leerzeilen aus dem Output. Wer dies nicht m&ouml;chte, sollte auf folgende Eigenheit
+der Executor Klasse aufpassen: ein Carriage Return/Line Feed Paar im Output des Programms wird
+in ein solches plus eine Leerzeile umgesetzt!
+</p>
+
+<p>
+Ein wichtiger Part fehlt uns noch, um die Funktion zumindest theoretisch zum funktionieren zu
+bringen - die Namespace Import Statements:
+</p>
+
+<pre style="background='silver';">
+&lt;% @Import Namespace=&quot;System.IO&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Text&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.CodeDom.Compiler&quot; %&gt;
+</pre>
+
+<p>
+Nun bauen wir uns noch ein highly sophisticated User Interface:
+</p>
+
+<pre style="background='silver';">
+&lt;form runat=&quot;server&quot; method=&quot;post&quot;&gt;
+Kommando: &lt;asp:TextBox id=&quot;txtCommand&quot; runat=&quot;server&quot; 
+    value=&quot;ping localhost&quot; size=30 /&gt;
+&lt;asp:Button id=&quot;btnSubmit&quot; text=&quot;Kommando ausf&uuml;hren&quot; 
+    onClick=&quot;btnSubmit_Click&quot; 
+    runat=&quot;server&quot; /&gt;
+
+&lt;pre&gt;
+&lt;asp:Label id=&quot;txtResult&quot; runat=&quot;server&quot; /&gt;
+&lt;/pre&gt;
+
+&lt;/form&gt;
+</pre>
+
+<p>
+und verdrahten die Schaltfl&auml;che zur entsprechenden Event Methode:
+</p>
+
+<pre style="background='silver';">
+void btnSubmit_Click(Object Sender, EventArgs E)
+{
+  string strResult = &quot;Error&quot;;
+  try
+  {
+    strResult = ExecuteCmdLineApp(txtCommand.Text);
+  }
+  catch(Exception e)
+  {
+    strResult = e.ToString();
+  }
+  txtResult.Text = strResult;
+}
+</pre>
+
+<p>
+Das w&auml;r's. Sogar Exceptions werden jetzt behandelt (Programm existiert nicht, oder ein
+Fehler irgendeiner anderen Art).
+</p>
+
+<p>
+Nat&uuml;rlich erproben wir unser highly sophisticated User Interface mit einer ebensolchen
+Applikation: ping.exe. Hier der entsprechende Screenshot:
+</p>
+
+<IMG SRC="/artikel/Bilder/200102/20010220.png" width="685" height="387" alt="" border="0">
+
+<p>
+Der Grund, warum ich die Leerzeilen alle gel&ouml;scht habe? Den Output der Applikation wird
+der Benutzer sowieso nur in den seltensten F&auml;llen zu Gesicht bekommen - weil die ASP.NET
+Seite den Output aufparst und die wichtigen Infos herausfiltert - f&uuml;r die Weiterverwendung.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Oft findet man wichtige Funktionalit&auml;ten gerade dort, wo man sie nicht vermuten w&uuml;rde, und 
+wo schon gar nicht gesucht h&auml;tte. Daher mein Rat: einen Tag Zeit nehmen, und nur die .NET
+Reference durchklicken, damit man einen &Uuml;berblick bekommt, welcher Namespace welche
+Funktionalit&auml;ten zur Verf&uuml;gung stellt.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010220.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010220.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000929.htm">Dateien lesen in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000929.htm</span><br>
+<a href="../artikel/20010516.htm">Kommandozeilen-Programme aufrufen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010516.htm</span><br>
+<a href="../artikel/20000822.htm">Mailadressen-&uuml;berpr&uuml;fen f&uuml;r Fortgeschrittene</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000822.htm</span><br>
+<a href="../artikel/20010928.htm">Schlu&szlig; mit lustig Teil 3 - das Hfnetchk Tool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010928.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eserverobjects%2Ecom%2F">ServerObjects</a><br>
+<SPAN class="content">http://www.serverobjects.com/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eicsharpcode%2Enet%2FOpenSource%2FSD%2F">SharpDevelop</a><br>
+<SPAN class="content">http://www.icsharpcode.net/OpenSource/SD/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

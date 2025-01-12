@@ -1,0 +1,486 @@
+<HTML>
+<HEAD>
+<TITLE>Was ist neu in ADO.NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel gibt Ihnen einen &Uuml;berblick &uuml;ber die wesentlichen Neuerungen in ADO.NET um einen raschen Umstieg zu erm&ouml;glichen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ADO.NET,ADO dot net,.NET,Framework,SDK,ASP.NET,DataReader,DataSet,DataSetCommand">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Was ist neu in ADO.NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ADOdotNET.htm">ADO.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001031"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Dieser Artikel gibt Ihnen einen &Uuml;berblick &uuml;ber die wesentlichen Neuerungen in ADO.NET um einen raschen
+Umstieg zu erm&ouml;glichen. ADO.NET ist nicht &quot;nur&quot; eine neue Version von ADO 
+(Microsoft ActiveX Data Objects), sondern bietet ernstzunehmende Vorteile in der Programmierung, Wartung,
+Performance und dem Datenaustausch zwischen einzelnen Komponenten, der auf dem universellen XML Standard
+basiert.
+</p>
+<p>
+Wir werden uns mit dem grunds&auml;tzlichen Komponentenmodell auf dem ADO.NET aufbaut befassen, und die beiden wesentlichsten
+Grundbestandteile, das <i>DataSet</i> und die <i>.NET Data Providers</i> besprechen. Nat&uuml;rlich behandeln wir auch
+die Begriffe <i>DataTable</i>, <i>DataReader</i> und <i>DataColumn</i> damit Sie so schnell wie m&ouml;glich
+effiziente L&ouml;sungen mit Hilfe von ADO.NET erstellen k&ouml;nnen.
+</p>
+<h2>Warum eine neue Technologie?</h2>
+<p>
+ADO.NET enth&auml;lt umfangreiche Verbesserungen von Microsoft ActiveX Data Objects (ADO), welches ein standardisiertes
+Entwicklungs-Modell f&uuml;r auf Datenaustausch basierende Applikationen bietet. Das Kernst&uuml;ck einer 
+auf ADO.NET aufbauenden Applikation ist das <i>Data Set</i>. Das <i>Data Set</i> ist eine im Speicher
+abgelegte Kopie eines Datenbankinhaltes, einer oder mehrerer Datenbanken. Ein Data Set kann mehrere Datentabellen
+enthalten, welche sich auf die einzelnen Tabellen in der Datenbank oder auf spezielle <i>Views</i> beziehen. W&auml;hrend dem Arbeiten
+mit einem Data Set besteht aber keine aktive Verbindung mit der physikalischen Datenquelle, weil ja das
+Data Set im Speicher abgelegt wird.
+</p>
+<p>
+Das folgende vereinfachte Schema zeigt die Hauptstruktur von ADO.NET:
+</p>
+
+<IMG SRC="/artikel/Bilder/200010/20001031_ADOSchema.png" width="590" height="431" alt="" border="0">
+
+<p>
+Anders als in fr&uuml;heren Versionen von ADO, werden folgende Schritte durchgef&uuml;hrt um den Datenaustausch bzw.
+die Manipulation von Daten durchzuf&uuml;hren:
+</p>
+
+<ul>
+<li>Erstellen der Verbindung zur ben&ouml;tigten Datenbank
+<li>Gewinnung der erforderlichen Daten, z.B. &uuml;ber SQL-Statements
+<li>Ablegen der Datens&auml;tze im DataSet welches im Speicher residiert
+<li>Schlie&szlig;en der aktiven Verbindung zur Datenquelle
+<li>Manipulation der im DataSet enthalten Daten bei getrennter Verbindung
+</ul>
+
+<h2>Vorteile von ADO.NET</h2>
+<p>
+<li>Flexibilit&auml;t:
+Die Flexibilit&auml;t von ADO.NET ist auf die Verwendung von XML zur&uuml;ckzuf&uuml;hren. Dadurch, da&szlig; XML als
+Format f&uuml;r Datenaustausch zwischen den einzelnen Applikationen verwendet wird und XML schon eine gro&szlig;e Akzeptanz 
+genie&szlig;t ist der Programmieraufwand relativ gering. Die Komponente die das Data Set als XML erh&auml;lt mu&szlig; zudem nicht
+unbedingt eine ADO.NET Komponente sein. Sie k&ouml;nnen die Komponente entweder mit Visual Studio.NET entwickeln
+oder auch mit jeder anderen IDE. Die einzige Vorausetzung f&uuml;r die Komponete ist, da&szlig; diese mit XML umgehen kann.
+</p>
+<p>
+<li>Einfache Wartung:
+Es gibt kaum eine Komponente die sich nicht laufend verbessert oder erweitert. Durch die Verwendung von XML gestaltet
+sich dies aber sehr einfach. Wenn Sie nun Funktionen erweitern bzw. hinzuf&uuml;gen wollen, brauchen Sie z.B. nur dem Data Set
+die Informationen f&uuml;r die hinzugef&uuml;gte Tabelle oder Datenquelle bekannt geben.
+<p>
+<li>&Uuml;bersichtliche und typensichere Programmstruktur:
+Entwickler k&ouml;nnen die Objekte des ADO.NET einfachst durch die typensichere Programmstruktur ver&auml;ndern. 
+Beispiel:
+</p>
+
+<p>in ADO:</p>
+ 
+<pre style="background='silver';">
+...
+IF LieferDatum &gt; rsProducts.Fields("Verfuegbarkeit").Value
+...
+</pre>
+
+<p>
+typensichere Programmstruktur in ADO.NET:
+</p>
+
+<pre style="background='silver';">
+...
+IF LieferDatum &gt; tProdukt.Verfuegbarkeit
+...
+</pre>
+
+<p>
+<li>Performance:
+Signifikante Unterschiede besonders gegen&uuml;ber Disconnected Recordsets. In ADO.NET ist
+keine Datentypumwandlung in von COM akzeptierte Datentypen mehr n&ouml;tig, um mit anderen Komponenten
+zu kommunizieren. Weiters enf&auml;llt durch Verwendung von XML das aufwendige COM Marshalling.
+</p>
+
+<p>
+<li>Skalierbarkeit:
+Durch die Verwendung von <i>Data Sets</i> werden lange Datenbank-Locks sowie lange aktive Datenbankverbindungen
+vermieden. Das spart Serverresourcen und stellt sicher, da&szlig; Ihre Applikation sowohl f&uuml;r 10 als auch 1000
+User optimal arbeitet.
+</p>
+
+<h2>Das MS .NET Framework und ADO.NET</h2>
+<p>
+Wie Sie vielleicht schon wissen oder in unseren bereits erschienenen Artikeln gelesen haben, ist
+das .NET Framework objektorientiert. Wenn Sie nun einen speziellen Teil aus dem Framework bzw. eben ADO.NET
+verwenden wollen, m&uuml;ssen Sie den gew&uuml;nschten Namespace referenzieren. Sie m&uuml;ssen sowohl angeben da&szlig; Sie
+mit ADO.NET arbeiten wollen, als auch den gew&uuml;nschten Provider ausw&auml;hlen:
+</p>
+<p>
+C#:
+</p>
+
+<pre style="background='silver';">
+//Referenz auf Data Namespace:
+using System.Data;
+</pre>
+
+<pre style="background='silver';">
+//Auswahl des OleDb Providers
+using System.Data.OleDb;
+</pre>
+
+<p>
+oder
+</p>
+
+<pre style="background='silver';">
+//Auswahl des SQL Providers
+using System.Data.SqlClient;
+</pre>
+
+
+<p>
+VB.NET:<br>
+<pre style="background='silver';">
+Imports System.Data
+Imports System.Data.OleDb
+</pre>
+
+<p>
+oder
+</p>
+
+<pre style="background='silver';">
+Imports System.Data.SqlClient
+</pre>
+
+
+<p>
+Beginnen wir nun mit einem kurzen &Uuml;berblick &uuml;ber das <i>DataSet</i>-Objekt und seine Bestandteile.
+</p>
+<h2>Das DataSet</h2>
+<p>
+Ein <i>Data Set</i> ist im XML Format gespeichert, was nat&uuml;rlich den Datenaustausch unter verschiedenen
+Anwendungen erheblich erleichtert. DataSets k&ouml;nnen auch Daten enthalten die mit Beziehungen verkn&uuml;pft
+sind, wie z.B. <i>Parent-Child</i>-Beziehungen die in einer hierarchischen Anordnung gespeichert sind.
+Das DataSet ist also ein universell einsetzbares Modell welches unabh&auml;ngig von der zugrundeliegenden
+Datenquelle ist, und Tabellen, Datenspalten bzw. -reihen, Constraints und Beziehungen enth&auml;lt.
+</p>
+
+<p>
+Die hierarchische Struktur des Data Set Modells sieht so aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200010/20001031_DataSetSchema.png" width="590" height="555" alt="" border="0">
+
+<p>
+Um einen reibungslosen Austausch der Daten zwischen Data Sets und den zugeordneten Datenquellen zu erm&ouml;glichen,
+verwendet ADO.NET ein Objekt namens <i>DataSetCommand</i>. Microsoft bietet hierf&uuml;r zwei M&ouml;glichkeiten
+je nach Datenquelle an:
+</p>
+
+
+<ul>
+<li>Das <i>SqlDataAdapter</i>-Objekt: Wie der Name schon suggeriert, verwendet man es um mit SQL Server Datenbanken zu
+kommunizieren.
+<li>Das <i>OleDbDataAdapter</i>-Objekt: Mit diesem kann man auf alle Datenquellen zugreifen
+die von <i>OLEDB Providern</i> unterst&uuml;tzt werden.
+</ul>
+
+<p>
+Als n&auml;chsten wichtigen Punkt folgt der <i>DataTable</i>, der die Struktur der Datenbank-Tabelle (Table) und die Daten an sich enth&auml;lt.
+</p>
+
+<h3>Der DataTable</h3>
+
+<p>
+Ein DataTable stellt eine Tabelle (Table) der im Speicher abgelegten Daten dar. Wie schon erw&auml;hnt enth&auml;lt dieser
+die Struktur der Tabelle, welche durch die Aufteilung in Spalten (ColumnsCollection) gegeben ist. Hinzu
+kommen noch die einzelnen Datenreihen (RowsCollection), welche die in der Tabelle gespeicherten Daten repr&auml;sentieren.
+Der DataTable speichert sowohl den originalen State der Daten als auch die Ver&auml;nderungen.
+</p>
+
+<p>
+Erstellen wir nun unter Verwendung von C# als Beispiel eine neue Instanz eines DataTables namens <i>Verkauf</i> mit 
+einem Table mit der Bezeichnung <i>tProdukte</i>. Als sinnvolle Eigenschaft sollen die Stringvergleiche
+im DataTable <i>case sensitiv</i> sein:
+</p>
+
+<p>
+Instanzieren des DataTables:
+</p>
+
+<pre style="background='silver';">
+DataTable Verkauf = new DataTable();
+Verkauf.CaseSensitive = true;
+</pre>
+
+<p>
+Erstellen des <i>tProdukte</i> Tables:
+</p>
+
+<pre style="background='silver';">
+Verkauf.TableName = "tProdukte";
+</pre>
+
+<p>
+Alternativ bietet sich nat&uuml;rlich der um einiges k&uuml;rzerer Code an:
+</p>
+
+<pre style="background='silver';">
+DataTable Verkauf = new DataTable("tProdukte");
+Verkauf.CaseSensitive = true;
+</pre>
+
+
+<h3>Die DataColumn</h3>
+
+<p>
+Nat&uuml;rlich wollen Sie dem Table auch Spalten hinzuf&uuml;gen. Hierbei gibt es zwei M&ouml;glichkeiten. Die eine ist die
+Erstellung von normalen Spaltenfeldern, worin wie gewohnt Daten gespeichert werden. Die andere M&ouml;glichkeit
+besteht darin, Berechnungsfelder mit enthaltenen Berechnungsformel zu erstellen.
+</p>
+
+<p>
+Befassen wir uns zun&auml;chst mit der ersten M&ouml;glichkeit. Erstellen wir eine Spalte namens <i>ProduktName</i> in
+unserem zuvor erstellten DataTable <i>Verkauf</i>. Diese Spalte soll vom Datentyp <i>String</i> sein,
+da darin wie der Name suggeriert die tats&auml;chlichen Namen der Produkte gespeichert werden.
+</p>
+
+<p>
+Wir deklarieren zun&auml;chst eine Variable namens <i>VerkaufSpalte</i> vom Datentyp <i>DataColumn</i>. Diese
+erh&auml;lt am Anfang den Wert <i>null</i>, da es am Beginn noch keine Spalten gibt.
+</p>
+
+<pre style="background='silver';">
+DataColumn VerkaufSpalte = null;
+</pre>
+
+<p>
+Nun erstellen wir die neue Spalte <i>ProduktName</i> samt String Datentyp-Zuweisung, nachdem wir wie
+oben gezeigt den DataTable instanziert haben.
+</p>
+
+<pre style="background='silver';">
+VerkaufSpalte = tProdukte.Columns.Add("ProduktName", 
+    System.Type.GetType("System.String"));
+</pre>
+
+<p>
+Da wir f&uuml;r Endkunden die Mehrwertsteuer zum Nettopreis hinzurechen wollen, k&ouml;nnen wir dies elegant mit
+einem Berechnungsfeld l&ouml;sen:
+</p>
+
+<pre style="background='silver';">
+DataColumn Bruttopreis = new DataColumn();
+Bruttopreis.DataType = System.Type.GetType("System.Currency");
+Bruttopreis.Expression = "Nettopreis * 1.2";
+</pre>
+
+<p>
+Sie wissen nun wie man <i>DataTables</i>, <i>Tables</i> und <i>Colums</i> erstellt. Welche M&ouml;glichkeiten
+des Zugriffs es auf eine bestehende Datenbank gibt, beschreibt der zweite Kernpunkt dieses Artikels:
+</p>
+
+<h2>.NET Data Providers</h2>
+
+<p>
+Unter diesem Punkt m&ouml;chte ich beschreiben, wie man eine Verbindung allgemein aufbaut, eine einfache 
+Abfrage erstellt und was es mit dem <i>DataReader</i> so auf sich hat.
+</p>
+
+<h3>Erstellung einer Verbindung</h3>
+
+<p>
+Microsoft bietet Ihnen innerhalb des .NET Frameworks zwei <i>Connection</i> Objekte an:
+</p>
+
+<ul>
+<li>Das SqlConnection Object - Zugriff auf MS SQL Server
+<li>Das OleDbConnection Object - Zugriff auf eine DB via OLEDB Provider
+</ul>
+
+<p>
+Um einen .NET Data Provider des .NET Frameworks in Ihrem Sourcecode zu verwenden, m&uuml;ssen Sie wie gewohnt auf
+den dazugeh&ouml;rigen Namespace referenzieren:
+</p>
+
+<ul>
+<li> SQL Server .NET Data Provider - System.Data.SqlClient
+<li> OleDb .NET Data Provider - System.Data.OleDb
+</ul>
+
+<p>
+In dem nun folgenden Beispiel erstellen und &ouml;ffen wir eine Verbindung zu einer SQL Datenbank unter
+Verwendung von C#. Einmal verwenden wir das <i>OleDbConnection Object</i> und dann das optimalere 
+<i>SqlConnection Object</i>:
+</p>
+
+<p>
+OleDbConnection Object:<br>
+</p>
+
+<pre style="background='silver';">
+string strConn ="Provider= SQLOLEDB.1; Data Source=localhost; uid=sa; pwd=;" _
+  " Initial Catalog=MyDatabase;";
+OleDbConnection MyDBConn = new OleDbConnection(strConn);
+MyDBConn.Open();
+...
+</pre>
+
+<p>
+SqlConnection Object:<br>
+</p>
+
+<pre style="background='silver';">
+string strConn ="server=localhost; uid=sa; pwd=; database=MyDatabase;";
+SqlConnection MyDBConn = new SqlConnection(strConn);
+MyDBConn.Open();
+...
+</pre>
+
+
+<p>
+Nachdem wir also die Verbindung zur Datenbank ge&ouml;ffnet haben wollen wir nun ein einfaches
+SQL Statment ausf&uuml;hren.
+</p>
+
+<p>
+OledbCommand:
+</p>
+
+<pre style="background='silver';">
+string strSQL = "SELECT * FROM tProdukte";
+OleDbDataAdapter MyCmd = new OleDbDataAdapter(strSQL, MyDBConn);
+</pre>
+
+<p>
+SQLCommand:
+</p>
+
+<pre style="background='silver';">
+string strSQL = "SELECT * FROM tProdukte";
+SqlDataAdapter MySqlCmd = new SqlDataAdapter(strSQL, MyDBConn);
+</pre>
+
+<p>
+Bevor wir wir nun den Befehl ausf&uuml;hren k&ouml;nnen, m&uuml;ssen wir noch das <i>DataReader</i> Objekt erstellen.
+</p>
+
+<p>
+OldbDataReader:
+</p>
+
+<pre style="background='silver';">
+OlDbDataReader MySqlReader = MySqlCmd.ExecuteReader();
+</pre>
+
+<p>
+SqlDataReader:
+</p>
+
+<pre style="background='silver';">
+SqlDataReader MySqlReader = MySqlCmd.ExecuteReader();
+</pre>
+
+
+<p>
+DataReader sch&ouml;n und gut, aber warum sollte man diesen verwenden, wenn man ja das DataSet auch verwenden k&ouml;nnte? 
+Nun bei sehr gro&szlig;en Datenbanken und 
+gro&szlig;er Benutzeranzahl werden Serverresourcen schnell aufgebraucht. Wenn diese User nun zus&auml;tzlich von der Datenbank
+10000 Datenreihen einlesen, mu&szlig; Speicher f&uuml;r diese allokiert werden und bis zum Schlu&szlig; verf&uuml;gbar sein. Und das Data Set
+cacht diese Daten.
+</p>
+
+<p>
+Bei einfachen Ausleseoperationen verwenden Sie den resourcenschonenden <i>DataReader</i>. Dieser ist ein
+<i>forward-</i> und <i>read-only</i> Cursor, der immer nur eine Zeile abarbeitet:
+</p>
+
+<pre style="background='silver';">
+while (MySqlReader.Read()) 
+{
+  // Statements
+}
+</pre>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Dieser Artikel stellt eine Einf&uuml;hrung in ADO.NET dar, mit dem Focus auf Umsteiger, die schon Erfahrung 
+mit ADO haben - damit ein schnellerer Umstieg auf ADO.NET m&ouml;glich wird. 
+</p>
+
+<p>
+Sie haben das neue ADO.NET Objektmodell und seinen Aufbau bzw. Struktur kennengelernt. Sie wissen in
+groben Z&uuml;gen die Vorteile dieser neuen interessanten Technologie, und kennen die Begriffe <i>DataSet</i>,
+<i>DataTable</i> sowie <i>DataColumn</i>. Das Erstellen einer Datenbank-Verbindung, eines einfachen Abfrage-Statements
+und das effiziente Auslesen der einzelnen Datenreihen mit Hilfe des <i>DataReaders</i> haben ich Ihnen ebenfalls
+kurz gezeigt.
+</p>
+
+<p>
+In zuk&uuml;nftigen Artikeln &uuml;ber ADO.NET werde ich mich ausf&uuml;hrlicher mit dem Datenbankzugriff befassen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001116.htm">Das DataTable Objekt in ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001116.htm</span><br>
+<a href="../artikel/20001106.htm">Datenaufbereitung in ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001106.htm</span><br>
+<a href="../artikel/20001102.htm">Datenbankzugriff mittels ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001102.htm</span><br>
+<a href="../artikel/20020117.htm">Last but not least - .NET 1.0 ist da!</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020117.htm</span><br>
+<a href="../artikel/20010626.htm">Stored Procedures 101 in ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010626.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

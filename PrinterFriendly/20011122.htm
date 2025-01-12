@@ -1,0 +1,297 @@
+<HTML>
+<HEAD>
+<TITLE>Einstellungssache - Applikationsdaten in web.config</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In der XML-basierten web.config Datei lassen sich auf einfache und strukturierte Weise Informationen f&uuml;r Web Applikationen oder Web Services speichern. Dieser Artikel beschreibt wie man f&uuml;r einen Web Service diverse Einstellungen speichern kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,XML,web.config,Konfiguration,Konfigurationsdatei,Einstellungen,DSN,sicher,strukturiert,Daten,connection string">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Einstellungssache - Applikationsdaten in web.config</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20011122"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+In der XML-basierten web.config Datei lassen sich auf einfache und strukturierte Weise Informationen f&uuml;r
+Web Applikationen oder Web Services speichern. Dieser Artikel beschreibt zwei M&ouml;glichkeiten, wie man
+f&uuml;r einen Web Service diverse Einstellungen speichern kann, und auch wie man  
+das Standardset der ASP.NET Configuration Settings mit eigenen Tags erweitern kann.
+</p>
+
+<p>
+Der Artikel <a href="../artikel/20010802.htm">Web.Config 101</a> hat Ihnen die Grundlagen zur 
+Organisation bzw. Strukturierung, sowie die einzelnen Sections der web.config vermittelt. Heute wollen wir
+einen Schritt weiter gehen und Einstellungen eines einfachen Web Service konfigurieren. Hierf&uuml;r habe ich zwei Beispiele
+erstellt, die einen - je nach Anforderung - unterschiedlichen Ansatz verwenden.
+</p>
+
+<h2>Aufgabenstellung</h2>
+
+<p>
+Es ist ein Web Service zu erstellen, der aus einer Datenbank (Northwind) anhand eines Querystrings ein
+XML formatiertes DataSet zur&uuml;ckliefert. Die Parameter des Connection-Strings sollen dabei in der web.config
+abgelegt werden. Da im Connection-String meist Parameter wie User ID und Pa&szlig;wort vorkommen, sollen diese
+vor unerlaubtem Zugriff gesch&uuml;tzt werden. Hierf&uuml;r ist die web.config hervorragend geeignet, da .config Dateien
+vom IIS gesch&uuml;tzt werden und somit diese von au&szlig;en nicht angreifbar sind. 
+</p>
+
+<p>
+Kurz gesagt, die sicherheitssensitiven Informationen bleiben vom Client verborgen. Punkt. 
+</p>
+<p>
+Beginnen wir
+mit der einfachsten M&ouml;glichkeit einen Web Service mittels web.config zu konfigurieren. Beim ersten Beispiel verwenden
+wir die standardm&auml;&szlig;ig verf&uuml;gbaren Section Handler (&lt;appSettings&gt;). Die Definition dieses Handlers ist bereits
+in der <b>machine.config</b> vorgenommen worden.
+</p>
+
+<h2>Die appSettings Sektion</h2>
+<p>
+In der appSettings Sektion k&ouml;nnen schnell und einfach Werte eingetragen werden. Um die Settings aus dieser Section zu erhalten, ist nur wenig Code erforderlich.
+Diese Section ist zwar leicht zu erreichen , aber sie l&auml;&szlig;t auch keine Neudefinierung des
+Namens zu. Bei komplexern, bzw. umfangreichern Applikationskonfigurationen kann sich dies als Nachteil erweisen.
+</p>
+
+<p>
+Aber nun zum ersten Beispiel. F&uuml;r den oben genannten Fall ist folgendes in der web.config einzutragen:
+</p>
+
+<pre style="background='silver';">
+&lt;configuration&gt;
+        &lt;appSettings&gt;
+            &lt;add key="NorthwindConn" value="server=(local);database=northwind;Trusted_Connection=yes" /&gt;
+        &lt;/appSettings&gt;
+&lt;/configuration&gt;
+</pre>
+
+<p>
+Um den Connection-String in der web.config anzugeben, m&uuml;ssen sie einfach innerhalb der &lt;appSettings&gt; Sektion
+ein neues <i>add</i>-Element erzeugen, und den Connection-String dann im <i>value</i> Attribut eintragen.
+Das <i>key</i>-Attribut wird f&uuml;r die eindeutige Zuweisung ben&ouml;tigt. Typdefinition des
+Section Handlers ist hier nicht notwendig da, wie schon erw&auml;hnt dies in der <b>machine.config</b> erfolgt ist. Das w&auml;r's 
+zun&auml;chst f&uuml;r die Konfiguration unseres einfachen Web Service.
+</p>
+
+<p>
+Was noch fehlt ist der eigentliche Web Service (<b>DataSrv.asmx</b>), welcher als Ergebnis das XML formatierte DataSet 
+zur&uuml;ckliefert. Um dies zu realisieren, m&uuml;ssen wir nat&uuml;rlich zuerst den Connection String einlesen:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ WebService Language="C#" Class="SimpleDataService" %&gt;
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Web.Services;
+using System.Configuration;
+
+public class SimpleDataService 
+{
+    [WebMethod]
+    public DataSet GetProductData() 
+    {          		
+        string strNorthwindConn = ConfigurationSettings.AppSettings["NorthwindConn"];
+        SqlConnection MyConnection = new SqlConnection(strNorthwindConn);
+       	SqlDataAdapter MySqlCommand = new SqlDataAdapter ("SELECT ProductName,UnitPrice,
+            UnitsInStock FROM Products", MyConnection);
+	  	
+      	DataSet MyDataSet = new DataSet();
+       	MySqlCommand.Fill(MyDataSet, "Products");
+        return MyDataSet;
+    }
+}
+</pre>
+
+<p>
+Da dieses Beispiel einfach gehalten ist, besitzt dieser Web Service auch nur eine
+Web Method (<i>GetProductData</i>), die von au&szlig;en zug&auml;nglich ist. Diese Methode hat als R&uuml;ckgabewert
+ein DataSet.
+</p>
+Um die Einstellung aus <i>appSettings</i> verwenden zu k&ouml;nnen, m&uuml;ssen wir zun&auml;chst auf den <i>System.Configuration</i>
+Namspace referenzieren.  Dann lesen wir den Wert der Property ein (<i>ConfigurationSettings.AppSettings</i>) und weisen den Wert
+der String-Variable <i>strNorthwindConn</i> zu. Den Inhalt dieser verwenden wir dann um die Verbindung zur 
+Northwind SQL Datenbank aufzubauen. 
+</p>
+
+<p>
+Nach Instanzierung eines neuen DataSet Objektes und dessen Bef&uuml;llung geben wir die XML formatierten Datens&auml;tze
+zur&uuml;ck. Da hier kein Consumer vorhanden ist, der den Web Service konsumiert, erhalten wir nach Ausf&uuml;hrung der
+Web Method <i>GetProductData</i> die Rohdaten als XML. In diesem strukturierten, offenen Standard kann man die Daten
+einfachst jeder Client Applikation, die XML verarbeiten kann, &uuml;bergeben.
+</p>
+
+<p>
+Die beschriebene M&ouml;glichkeit des Auslesens der Applikationseinstellungen funktioniert aber nur, wenn Sie die Keys samt
+Values in die vordefinierte &lt;appSettings&gt; Sektion eintragen. Was aber, wenn Sie bei komplexeren Anwendungen oder
+speziell in diesem Fall eines Web Services, eigenes definierte Gruppen bzw. Section Handler in der web.config angeben wollen?
+</p>
+
+<h2>Benutzerdefinierte Section Handler</h2>
+
+<p>
+Um auf eigens definierte Sektionsgruppen bzw. Section Handler zugreifen zu k&ouml;nnen, m&uuml;ssen Sie u.a. die 
+<i>SingleTagSectionHandler</i> Klasse und die <i>NameValueSectionHandler</i> Klasse des .NET Frameworks
+verwenden. Wie dies zu machen ist, zeigt das zweite Beispiel. Zun&auml;chst definieren wir in der web.config
+eine neue Section Group (Sektionsgruppe) und neue Section Handler (Sektionen) innerhalb des &lt;configSections&gt;
+Container-Tags:
+</p>
+
+<pre style="background='silver';">
+&lt;configuration&gt;
+  &lt;configSections&gt;
+   &lt;sectionGroup name="SimpleDataService"&gt;
+      &lt;section name="DataAccessConnString" type="System.Configuration.NameValueSectionHandler,System" /&gt;
+      &lt;section name="DataAccessQuery" type="System.Configuration.NameValueSectionHandler,System" /&gt;
+   &lt;/sectionGroup&gt;
+  &lt;/configSections&gt;
+</pre>
+
+<p>
+Wie Sie sehen k&ouml;nnen, k&ouml;nnen Sie somit einfach das Standardset der ASP.NET Konfigurationseinstellungen mit Ihren eigenen 
+Tags erweitern. Die Tags m&uuml;ssen lediglich dem Typ eines Configuration Section Handlers entsprechen. Damit kann der
+Section Handler der <i>NameValueSectionHandler</i> Klasse den Tag interpretieren und abarbeiten. Vorteilhaft ist hier auch,
+da&szlig; Sie dadurch beim Configuration Object, welches Sie in weiterer Folge als Ergebnis erhalten, nicht an
+einen speziellen Datentyp gebunden sind.
+</p>
+
+<p>
+Nachdem die neue Section Group <i>SimpleDataService</i> und die beiden Section Handler <i>DataAccessConnString</i>
+(f&uuml;r Connection String) und <i>DataAccessQuery</i> (f&uuml;r Query String) definiert bzw. die Typen angegeben wurden, k&ouml;nnen 
+wir den Handlern Keys und Werte zuweisen: 
+</p>
+
+<pre style="background='silver';">
+   &lt;SimpleDataService&gt;
+        &lt;DataAccessConnString&gt;
+            &lt;add key="Northwind" value="server=(local);database=northwind;Trusted_Connection=yes" /&gt;
+        &lt;/DataAccessConnString&gt;
+	&lt;DataAccessQuery&gt;
+            &lt;add key="NorthwindQuery" value="SELECT ProductName,UnitPrice,UnitsInStock FROM Products" /&gt;
+        &lt;/DataAccessQuery&gt;
+    &lt;/SimpleDataService&gt;
+&lt;/configuration&gt;
+</pre>
+
+<p>
+Interessant ist nun, wie man innerhalb des Web Services (<b>DataSrvAdv.asmx</b>) die Werte ausliest:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ WebService Language="C#" Class="SimpleDataService" %&gt;
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Web.Services;
+using System.Configuration;
+using System.Collections.Specialized;
+
+public class SimpleDataService 
+{
+    [WebMethod]
+    public DataSet GetNWProductData()    
+    {       
+        NameValueCollection ConStringSection = (NameValueCollection)ConfigurationSettings
+            .GetConfig("SimpleDataService/DataAccessConnString");
+        NameValueCollection QuerySection = (NameValueCollection)ConfigurationSettings
+            .GetConfig("SimpleDataService/DataAccessQuery");		
+        string strNorthwindDSN = ConStringSection["Northwind"];
+        string strNorthwindQuery = QuerySection["NorthwindQuery"]; 
+        SqlConnection MyConnection = new SqlConnection(strNorthwindDSN);
+        SqlDataAdapter MySqlCommand = new SqlDataAdapter (strNorthwindQuery, MyConnection);
+	  	
+      	DataSet MyDataSet = new DataSet();
+       	MySqlCommand.Fill(MyDataSet, "Products");
+        return MyDataSet;
+    }
+}
+</pre>
+
+<p>
+Da die Werte der benutzerdefinierten Section Handler Teil von Collections sind, m&uuml;ssen Sie zuerst auf den 
+<i>System.Collections.Specialized</i> Namespace referenzieren. In der Web Method <i>GetNWProductData</i>
+verweisen Sie zuerst auf den jeweiligen Section Handler und k&ouml;nnen dann direkt den Wert daraus auslesen,
+da Sie den Key ja kennen. Nun m&uuml;ssen Sie nur noch die ausgelesenen Werte, die in einer Stringvariable
+(strNorthwindDSN bzw. strNorthwindQuery) gespeichert wurden dem <i>SqlConnection</i> und dem
+<i>SqlDataAdapter</i> Objekt &uuml;bergeben - fertig.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Je nach Anforderung k&ouml;nnen Sie die Einstellungen Ihrer Web Applikation in der web.config ablegen. Entweder
+Sie begn&uuml;gen sich mit dem standardm&auml;&szlig;igen Section Handler, der Ihnen von Haus aus zur Verf&uuml;gung gestellt wird, oder
+Sie erweitern die ASP.NET Configuration Settings durch Ihre eigenen Section Handler. Diese lassen sich, da
+XML basierend, auch leicht verschachteln und durch die Erfordernis der Eindeutigkeit korrekt anfordern.
+Weiters erweist sich als praktisch, da&szlig; die web.config von au&szlig;en f&uuml;r den Client nicht angreifbar ist, und somit
+zur Speicherung sensitiver Daten geeignet ist.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20011122.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20011122.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001102.htm">Datenbankzugriff mittels ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001102.htm</span><br>
+<a href="../artikel/20020705.htm">Formularbasierte Authentifizierung in f&uuml;nf Minuten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020705.htm</span><br>
+<a href="../artikel/20021107.htm">Index Server Abfragen per Web Service</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021107.htm</span><br>
+<a href="../artikel/20020801.htm">MS IE WebControls 101</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020801.htm</span><br>
+<a href="../artikel/20010621.htm">Web Services 101 in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010621.htm</span><br>
+<a href="../artikel/20010802.htm">Web.Config 101</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010802.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

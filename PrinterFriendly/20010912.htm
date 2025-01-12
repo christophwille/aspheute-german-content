@@ -1,0 +1,222 @@
+<HTML>
+<HEAD>
+<TITLE>SMS versenden in .NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Ein &auml;u&szlig;erst beliebtes Handyfeature ist heutzutage die SMS, oder in der Langform das Short Message System. Heute m&ouml;chte ich vorstellen, wie man SMS selbst versenden kann, und zwar mit Hilfe verschiedener Framework Klassen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SMS,Short Message System,Gateway,provider,WebRequest,WebResponse,GET,POST,Stream,Byte,UTF8">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>SMS versenden in .NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010912"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Ein &auml;u&szlig;erst beliebtes Handyfeature ist heutzutage die SMS, oder in der Langform das Short
+Message System. Es gibt viele Websites am Netz, von wo aus man seine SMS gratis abschicken kann - meist
+Werbung mitinkludiert. Heute m&ouml;chte ich vorstellen, wie man SMS selbst versenden kann, und zwar mit Hilfe
+verschiedener Framework Klassen.
+</p>
+
+<p>
+Auch unter .NET geht es ohne einen Gateway (Internet zu GSM) nicht. Und wenn man einen zuverl&auml;ssigen haben
+will, dann mu&szlig; man daf&uuml;r bezahlen. Ich habe mich f&uuml;r <a href="http://www.sms-wap.com/" target="_blank">sms-wap.com</a>
+entschieden, und wenn man sich anmeldet, bekommt man drei Test-SMS gratis dazu - bevor man irgendetwas zahlen
+mu&szlig;. Also probieren kostet im Prinzip nichts.
+</p>
+
+<p>
+Es gibt unter <a href="http://www.sms-wap.com/e/services.html" target="_blank">SMS Delivery Interfaces</a>
+die notwendige Dokumentation, wie man das HTTP Application Interface ansprechen kann. Wer es sich durchlesen
+will, der m&ouml;ge es tun - ich finde es etwas &uuml;berzogen, f&uuml;r HTTP direkt mit Sockets zu programmieren. Deshalb
+habe ich f&uuml;r den heutigen Artikel den direkten Weg eingeschlagen: das <i>WebRequest</i> Objekt.
+</p>
+
+<p>
+Das gesamte Versenden einer SMS l&auml;uft &uuml;ber die Seite <i>http://clients.sms-wap.com/cgi/csend.cgi</i>,
+der man einige Parameter via POST &uuml;bergeben mu&szlig;: klarerweise die eigenen Accountdaten (Benutzername
+und Passwort), die Zielhandynummer sowie die Nachricht.
+</p>
+
+<p>
+Wie gehen wir also vor? Nun, die Grundlagen haben wir bereits im Artikel <a href="../artikel/20000824.htm">Scrapen von Webseiten</a>
+gelernt, allerdings haben wir dort keine (POST) Daten vom Client zum Server geschickt. Um diesen Part m&uuml;ssen
+wir unsere Implementation erweitern. Weil ich gerade von Implementation rede: es spielt sich alles in der Klasse
+<i>SMSGateway</i> ab, und obwohl das Beispiel heute eine Kommandozeilenapplikation ist, kann man die Klasse in
+beliebigen anderen Anwendungstypen verwenden.
+</p>
+
+<p>
+Nun zum Code der Klasse, der haupts&auml;chlich in der Methode <i>SendMessage</i> zu finden ist:
+</p>
+
+<pre style="background='silver';">
+ class SMSGateway
+ {
+  public string Username;
+  public string Password;
+  
+  public bool SendMessage(string strMessage, string strTelNoTo, out string strResponse)
+  {
+   string strQuery, strPage;
+   
+   strQuery = &quot;N=&quot; + HttpUtility.UrlEncode(strTelNoTo) + &quot;&amp;UID=&quot; + 
+      HttpUtility.UrlEncode(Username) + &quot;&amp;PW=&quot; + 
+      HttpUtility.UrlEncode(Password) + &quot;&amp;M=|*UTF8|&quot; + 
+      HttpUtility.UrlEncode(strMessage);
+   
+   strPage = &quot;http://clients.sms-wap.com/cgi/csend.cgi&quot;;
+
+   try
+    {
+     WebRequest wrq = WebRequest.Create(strPage);
+     wrq.Method = &quot;POST&quot;;
+     wrq.ContentType = &quot;application/x-www-form-urlencoded&quot;;
+     
+     byte[] bPayload = Encoding.UTF8.GetBytes(strQuery.ToString());
+     wrq.ContentLength = bPayload.Length;
+     Stream reqStream = wrq.GetRequestStream();
+     reqStream.Write(bPayload, 0, bPayload.Length);
+     reqStream.Close();
+     
+     WebResponse wrp = wrq.GetResponse();
+   
+     StreamReader sr = new StreamReader(wrp.GetResponseStream(), Encoding.UTF8);
+     StringBuilder strBuildContent = new StringBuilder();
+     while (-1 != sr.Peek())
+        strBuildContent.Append(sr.ReadLine());
+ 
+     strResponse = strBuildContent.ToString();
+     if (&quot;01&quot; == strResponse) return true;
+    }
+    catch(Exception e)
+    {
+      strResponse = e.ToString();
+      return false;
+    }
+   
+   return false;
+  }
+ }
+</pre>
+
+<p>
+Was sind die wichtigen Parts? Der erste ist das Erzeugen der Variable <i>strQuery</i>, die die POST Daten
+repr&auml;sentiert. GET als auch POST Daten m&uuml;ssen URL-encoded werden, und diese Arbeit geben wir an die 
+<i>HttpUtility.UrlEncode</i> Methode ab (deren Verwendung ist nicht an ASP.NET Anwendungen gebunden). Ebenfalls
+sehr wichtig ist bei <b>M=</b> der Part <b>|*UTF8|</b> - ohne diese Angabe bekommen wir beim SMS Gateway
+Probleme mit den Sonderzeichen.
+</p>
+
+<p>
+Es folgt der Code zum Senden der Daten an den Server, und das Abholen der R&uuml;ckgabewerte. Kein Magic, aber 
+notwendig. Ein R&uuml;ckgabewert von <b>01</b> repr&auml;sentiert OK, also die SMS wurde korrekt gesendet. Alles andere
+ist Mi&szlig;erfolg. Um ganz auf der sicheren Seite zu sein, liefert die Funktion nicht nur <i>true</i> oder <i>false</i>,
+sondern f&uuml;r alle F&auml;lle auch den vollen (Fehler)Text.
+</p>
+
+<p>
+Wie verwendet man nun diese Klasse? Hier der Code einer simplen Consolenanwendung, aber ASP.NET w&uuml;rde
+genauso funktionieren:
+</p>
+
+<pre style="background='silver';">
+ class MainClass
+ {
+   public static void Main(string[] args)
+   {
+    SMSGateway mySMS = new SMSGateway();
+    mySMS.Username = &quot;username_here&quot;;
+    mySMS.Password = &quot;password_here&quot;;
+  
+    string strResponse;
+    bool bResult = mySMS.SendMessage(&quot;Melcome Sir Walcom [<a href="http://us.imdb.com/Title?0090297" target="_blank">Water</a>]&quot;, 
+                           &quot;4369929675231&quot;, 
+                           out strResponse);
+    Console.WriteLine(&quot;Sending SMS, status: {0}, response: {1}&quot;, bResult, strResponse);
+   }
+ }
+</pre>
+
+<p>
+Ich habe mir erlaubt, meinen Benutzernamen und Passwort herauszunehmen...
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die Klasse zum Versenden von SMS ist nun fertig. Sp&auml;tere Artikel werden diese Klasse dann einsetzen, um 
+spezielle Services f&uuml;r Handys anzubieten. &Uuml;brigens: den Film
+<a href="http://us.imdb.com/Title?0090297" target="_blank">Water</a> kann ich nur sehr empfehlen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010912.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010912.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000824.htm">Scrapen von Webseiten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000824.htm</span><br>
+<a href="../artikel/20010913.htm">Wetterbericht per SMS versenden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010913.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Esms%2Dwap%2Ecom%2Fe%2Fservices%2Ehtml">SMS Delivery Interfaces</a><br>
+<SPAN class="content">http://www.sms-wap.com/e/services.html</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Esms%2Dwap%2Ecom%2F">sms-wap.com</a><br>
+<SPAN class="content">http://www.sms-wap.com/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fus%2Eimdb%2Ecom%2FTitle%3F0090297">Water</a><br>
+<SPAN class="content">http://us.imdb.com/Title?0090297</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

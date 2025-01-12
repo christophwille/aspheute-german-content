@@ -1,0 +1,421 @@
+<HTML>
+<HEAD>
+<TITLE>Dateiupload mit ASP.NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel zeigt der Autor, wie man unter ASP.NET eine Datei auf den Webserver laden kann. Und zwar, ohne eine Komponente von einem Fremdhersteller zu kaufen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,HtmlInputFile,Upload,Dateiupload,MemoryStream,Stream,SaveAs,PostedFile,FileName,ASP.NET,.NET,Framework,File Upload">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Dateiupload mit ASP.NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASPdotNET.htm">ASP.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000802"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Etwas das unter ASP ohne Fremdkomponente nicht vern&uuml;nftig m&ouml;glich war ist das Uploaden
+von Dateien auf einen Webserver, obwohl die Verwendungsm&ouml;glichkeiten dieses Features
+vom Content-Managementsystem bis zu einem Kostenvoranschlagsservice f&uuml;r &Uuml;bersetzungen
+(basierend auf dem Inhalt von upgeloadeten Dateien) reichen kann. Nat&uuml;rlich sind das nur
+zwei von vielen Anwendungsm&ouml;glichkeiten.
+</p>
+<p>
+Wie gesagt, unter ASP ben&ouml;tigt man Fremdkomponenten, um mittels ASP Dateien am Webserver
+entgegennehmen zu k&ouml;nnen. ASP.NET bietet diese Funktionalit&auml;t mit einer HTML Control names 
+<i>HtmlInputFile</i>, die sich von der bereits bekannten <nobr><i>INPUT TYPE=FILE</i></nobr> 
+im groben nur durch das <i>RUNAT=SERVER</i> Tag unterscheidet. Aber sie ist fixer Bestandteil
+des Produkts, managed den Upload f&uuml;r Sie, und verh&auml;lt sich am Browser wie die normale Control
+die Sie bereits kennen.
+</p>
+<p>
+In diesem Artikel stelle ich zwei Anwendungsf&auml;lle des Dateiuploads vor:
+</p>
+
+<ul>
+	<li>Upload in eine Datei
+	<li>Upload und direkte Weiterverwendung der Daten
+</ul>
+
+<p>
+Bei ersterem Ansatz handelt es sich um die einfachste L&ouml;sung, der zweite demonstriert ein
+sehr flexibles Konzept wie man die Daten des Uploads selbst in Empfang nehmen und weiterverarbeiten
+kann.
+</p>
+<p>
+Voraussetzung um den Sourcecode dieses Artikels verwenden zu k&ouml;nnen ist eine Installation des <i>Microsoft .NET Framework SDK's</i> auf
+einem Webserver. Weiters setze ich voraus, da&szlig; der Leser die Programmiersprache C# zu einem gewissen Grad beherrscht -
+es finden sich etliche Artikel auf diesem Server, um das notwendige Wissen zu erlernen.
+</p>
+
+<h2>Upload in eine Datei</h2>
+<p>
+Sehen Sie sich den nachfolgenden Screenshot an - solche Beispiele d&uuml;rften Ihnen vom Dateiupload
+unter ASP auch bereits bekannt sein.
+</p>
+
+<IMG SRC="/artikel/Bilder/200008/20000802_1.png" width="620" height="388" border="0" alt="">
+
+<p>
+Obwohl es von "au&szlig;en" nicht viel anders aussieht, so passiert unter der Haube doch etwas deutlich
+anderes als wir es von ASP gewohnt sind. Dazu werden wir jetzt den Sourcecode genauer unter die 
+Lupe nehmen (<b>uploadNsave.aspx</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;Dateiupload in ASP.NET&lt;/title&gt;
+&lt;/head&gt;
+&lt;body bgcolor=&quot;#ffffff&quot; style=&quot;font:8pt verdana;&quot;&gt;
+&lt;script language=&quot;C#&quot; runat=&quot;server&quot;&gt;
+void btnUploadTheFile_Click(object Source, EventArgs evArgs) 
+{
+  string strFileNameOnServer = txtServername.Value;
+  string strBaseLocation = &quot;c:\\temp\\&quot;;
+  
+  if (&quot;&quot; == strFileNameOnServer) 
+  {
+    txtOutput.InnerHtml = &quot;Fehler - es mu&szlig; ein Dateiname angegeben werden.&quot;;
+    return;
+  }
+
+  if (null != uplTheFile.PostedFile) 
+  {
+    try 
+    {
+      uplTheFile.PostedFile.SaveAs(strBaseLocation+strFileNameOnServer);
+      txtOutput.InnerHtml = &quot;Datei erfolgreich nach &lt;b&gt;&quot; + 
+        strBaseLocation+strFileNameOnServer+&quot;&lt;/b&gt; upgeloadet&quot;;
+    }
+    catch (Exception e) 
+    {
+      txtOutput.InnerHtml = &quot;Fehler beim Speichern von &lt;b&gt;&quot; + 
+        strBaseLocation+strFileNameOnServer+&quot;&lt;/b&gt;&lt;br&gt;&quot;+ e.ToString();
+    }
+  }
+}
+&lt;/script&gt;
+
+&lt;table&gt;
+&lt;form enctype=&quot;multipart/form-data&quot; runat=&quot;server&quot;&gt;
+&lt;tr&gt;
+  &lt;td&gt;Datei ausw&amp;auml;hlen:&lt;/td&gt;
+  &lt;td&gt;&lt;input id=&quot;uplTheFile&quot; type=file runat=&quot;server&quot;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td&gt;Name am Server:&lt;/td&gt;
+  &lt;td&gt;&lt;input id=&quot;txtServername&quot; type=&quot;text&quot; runat=&quot;server&quot;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td colspan=&quot;2&quot;&gt;
+  &lt;input type=button id=&quot;btnUploadTheFile&quot; value=&quot;Speichern&quot; 
+                    OnServerClick=&quot;btnUploadTheFile_Click&quot; runat=&quot;server&quot;&gt;
+  &lt;/td&gt;
+&lt;/tr&gt;
+&lt;/form&gt;
+&lt;/table&gt;
+    
+&lt;span id=txtOutput style=&quot;font: 8pt verdana;&quot; runat=&quot;server&quot; /&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Betrachten wir f&uuml;r den Anfang nur das Formular, das die Datei (und den Namen, den sie am Server
+erhalten soll) an den Server schickt. Da wir gemischte Daten schicken, ist der <i>enctype</i> auf
+<nobr><i>multipart/form-data</i></nobr> gesetzt. Das ist noch nichts Neues. Das Einzige, das auf ASP.NET 
+hinweist ist da&szlig; das Form am Server ausgef&uuml;hrt wird (<i>RUNAT=SERVER</i>).
+</p>
+<p>
+In diesem Formular verwende ich im Gegensatz zum Artikel 
+<a href="../artikel/20000728.htm">On-the-fly Generierung von Graphiken</a> keine Web Controls,
+sondern HTML Controls - deswegen sieht es auch sehr vertraut aus. Allerdings w&uuml;rde man unter
+ASP sicher nicht das finden:
+</p>
+
+<pre style="background='silver';">
+&lt;input type=button id=&quot;btnUploadTheFile&quot; value=&quot;Speichern&quot; 
+   OnServerClick=&quot;btnUploadTheFile_Click&quot; runat=&quot;server&quot;&gt;
+</pre>
+
+<p>
+Der Klick auf den Button l&ouml;st am Server ein Event aus, das in der Funktion <i>btnUploadTheFileFile_Click</i>
+abgehandelt wird. Und somit sind wir beim Code, der notwendig ist, um eine Datei am Server
+erfolgreich abzuspeichern:
+</p>
+
+<pre style="background='silver'";>
+if (null != uplTheFile.PostedFile) 
+{
+  try 
+  {
+    uplTheFile.PostedFile.SaveAs("c:\\temp\\file.bin");
+    txtOutput.InnerHtml = &quot;Datei erfolgreich upgeloadet&quot;;
+  }
+  catch (Exception e) 
+  {
+    txtOutput.InnerHtml = &quot;Fehler beim Speichern&lt;br&gt;&quot;+ e.ToString();
+  }
+}
+</pre>
+
+<p>
+Das ist zwar nicht exakt der Sourcecode aus dem Beispiel, allerdings fehlt nur das "Rundherum"
+f&uuml;r die Namensvergabe am Server - der Fileupload funktioniert hier ebenso. Also was passiert?
+Die <i>if</i> Abfrage &uuml;berpr&uuml;ft, ob eine Datei gepostet wurde, indem sie die Eigenschaft <i>PostedFile</i>
+gegen <i>null</i> vergleicht. Wird eine Datei upgeloadet, so h&auml;lt diese Eigenschaft eine g&uuml;ltige Referenz
+auf ein Objekt vom Typ <i>HttpPostedFile</i>, und ist somit verschieden von <i>null</i>.
+</p>
+<p>
+Nach diesem Sicherheitscheck bleibt uns "nur noch" die Datei zu speichern - ein simpler Aufruf der
+Funktion <i>SaveAs</i> auf dem Objekt <i>HttpPostedFile</i> erledigt alles f&uuml;r uns. Sollte etwas schiefgehen,
+wird unser Code dar&uuml;ber mit einer Exception benachrichtigt. So einfach ist es in ASP.NET eine Datei
+auf den Webserver zu laden.
+</p>
+<p>
+Der Code im Beispiel selbst differiert nur dahingehend, da&szlig; die Datei einen benutzergew&auml;hlten Namen
+erhalten kann. Dadurch ist er zwar etwas l&auml;nger, aber bereits sehr flexibel. Der Weiterverwendung
+und Erweiterung in eigenen Projekten steht nichts im Wege.
+</p>
+
+<h2>Upload und direkte Weiterverwendung der Daten</h2>
+<p>
+So nett und sch&ouml;n das einfache Speichern der upgeloadeten Datei in eine Datei am Server
+auch sein kein, so oft m&ouml;chte man mit den upgeloadeten Daten (den Bits) sofort wieder
+weiterarbeiten - ohne den Umweg in eine Datei. Anwendungsf&auml;lle w&auml;ren etwa die Daten in 
+die Datenbank zu speichern, die Daten zu parsen, oder irgendeine andere Bearbeitung durchzuf&uuml;hren. 
+</p>
+<p>
+Auch in diesem Fall l&auml;&szlig;t uns ASP.NET und das .NET Framework nicht im Stich. Anstatt die Kontrolle
+mit der <i>SaveAs</i> Funktion aus der Hand zu geben, kann man direkten Zugriff auf den Stream der
+upgeloadeten Daten bekommen und mit diesen sofort weiterarbeiten - w&auml;hrend der Upload passiert.
+</p>
+<p>
+Das Beispiel, das ich zu Demonstrationszwecken gebastelt habe, erf&uuml;llt derzeit nur einen
+Zweck: die upgeloadeten Daten werden aus dem Stream ausgelesen und in einer Stringvariablen 
+zwischengespeichert - um dann einfach an den Client zur&uuml;ckgeschickt zu werden. F&uuml;r Textuploads
+mag das bereits sinnvoll sein, bei bin&auml;ren Uploads (Bilder zum Beispiel) ist der Output nicht
+gerade &uuml;berw&auml;ltigend:
+</p>
+
+<IMG SRC="/artikel/Bilder/200008/20000802_2.png" width="620" height="388" border="0" alt="">
+
+<p>
+Der vorige Screenshot zeigt, da&szlig; mein Sourcecode (<b>uploadNdump.aspx</b>) auch mit bin&auml;ren 
+Daten korrekt umgehen kann. Dies erreicht ich durch eine Zwangsumkonvertierung auf ASCII.
+Die Details dazu k&ouml;nnen Sie dem Sourcecode und der folgenden Beschreibung entnehmen.
+</p>
+
+<pre style="background='silver';">
+&lt;% @Page Language=&quot;C#&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.IO&quot; %&gt;
+&lt;% @Import Namespace=&quot;System.Text&quot; %&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;Dateiupload in ASP.NET&lt;/title&gt;
+&lt;/head&gt;
+&lt;body bgcolor=&quot;#ffffff&quot; style=&quot;font:8pt verdana;&quot;&gt;
+&lt;script language=&quot;C#&quot; runat=&quot;server&quot;&gt;
+void btnUploadTheFile_Click(object Source, EventArgs evArgs) 
+{
+  if (null != uplTheFile.PostedFile) 
+  {
+    try 
+    {
+      const int BUFFER_SIZE = 255;
+      int nBytesRead = 0;
+      Byte[] Buffer = new Byte[BUFFER_SIZE];
+      StringBuilder strUploadedContent = new StringBuilder(&quot;&quot;);
+      
+      Stream theStream = uplTheFile.PostedFile.InputStream;
+      nBytesRead = theStream.Read(Buffer, 0, BUFFER_SIZE);
+      
+      while (0 != nBytesRead)
+      {
+        strUploadedContent.Append(
+                Encoding.ASCII.GetString(Buffer,0,nBytesRead));
+        nBytesRead = theStream.Read(Buffer,0,BUFFER_SIZE);
+      }
+      
+      txtOutput.InnerHtml = strUploadedContent.ToString();
+    }
+    catch (Exception e) 
+    {
+      txtOutput.InnerHtml = &quot;Fehler beim Speichern von &lt;b&gt;&quot; + 
+        uplTheFile.PostedFile.FileName + &quot;&lt;/b&gt;&lt;br&gt;&quot;+ e.ToString();
+    }
+  }
+}
+&lt;/script&gt;
+
+&lt;table&gt;
+&lt;form enctype=&quot;multipart/form-data&quot; runat=&quot;server&quot;&gt;
+&lt;tr&gt;
+  &lt;td&gt;Datei ausw&amp;auml;hlen:&lt;/td&gt;
+  &lt;td&gt;&lt;input id=&quot;uplTheFile&quot; type=file runat=&quot;server&quot;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td colspan=&quot;2&quot;&gt;
+  &lt;input type=button id=&quot;btnUploadTheFile&quot; value=&quot;Speichern&quot; 
+                    OnServerClick=&quot;btnUploadTheFile_Click&quot; runat=&quot;server&quot;&gt;
+  &lt;/td&gt;
+&lt;/tr&gt;
+&lt;/form&gt;
+&lt;/table&gt;
+    
+&lt;span id=txtOutput style=&quot;font: 8pt verdana;&quot; runat=&quot;server&quot; /&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Der Formularteil des Scripts ist bereits aus dem vorigen Listing bekannt, einzig und allein das Feld
+f&uuml;r die Namensgebung der Datei am Server fehlt - man braucht es nicht mehr. Was sind nun aber
+die &Auml;nderungen am Code f&uuml;r den Upload selbst? Im Grunde ist es nur dieser Part:
+</p>
+
+<pre style="background='silver';">
+const int BUFFER_SIZE = 255;
+int nBytesRead = 0;
+Byte[] Buffer = new Byte[BUFFER_SIZE];
+StringBuilder strUploadedContent = new StringBuilder(&quot;&quot;);
+
+Stream theStream = uplTheFile.PostedFile.InputStream;
+nBytesRead = theStream.Read(Buffer, 0, BUFFER_SIZE);
+
+while (0 != nBytesRead)
+{
+  strUploadedContent.Append(
+          Encoding.ASCII.GetString(Buffer,0,nBytesRead));
+  nBytesRead = theStream.Read(Buffer,0,BUFFER_SIZE);
+}
+</pre>
+
+<p>
+Zuerst definiere ich eine Konstante, und instanziere darauffolgend drei Variablen, die in der Bearbeitung
+der Streamdaten ben&ouml;tigt werden: eine Variable, die die Anzahl der gelesenen Bytes speichert, der
+Puffer f&uuml;r die gelesenen Daten, und der StringBuilder, der dazu verwendet wird, um die auf ASCII
+konvertierten eingelesenen Streamdaten zu speichern.
+</p>
+<p>
+Und dann beginnt die Action - zuerst hole ich mir eine Referenz auf den <i>Stream</i>, der &uuml;ber das
+Object <i>HttpPostedFile</i> zur Verf&uuml;gung gestellt wird (dieses wiederum &uuml;ber die Eigenschaft <i>PostedFile</i>
+des <i>HtmlInputFile</i> Objects). Dadurch erspare ich mir weitere Zugriffe auf Eigenschaften und
+fremde Objekte, die nur die Rechenzeit verl&auml;ngern w&uuml;rden.
+</p>
+<p>
+Dann lese ich die ersten Daten ein, und steige damit in die <i>while</i>
+Schleife ein. Dort wird der Puffer auf ASCII konvertiert, und die n&auml;chsten Daten eingelesen. Die
+<i>while</i> Schleife wird dann abgebrochen, wenn keine Daten mehr am Server angekommen sind.
+</p>
+<p>
+Ist die <i>while</i> Schleife beendet, habe ich die Daten als String zur Weiterverarbeitung in der Hand -
+anstatt sie zur&uuml;ck an den Client zu schicken, k&ouml;nnte ich auch den String parsen - oder in eine 
+Datenbank schreiben. Der Anwendungsfall bestimmt die Weiterverwendung.
+</p>
+<p>
+&Uuml;brigens: wenn man die unmodifizierten Bin&auml;rdaten verwenden m&ouml;chte, dann
+sollte man die Konvertierung auf ASCII unterlassen, und je nach Bedarf den richtigen
+"Zwischenspeicher" verwenden - ein gro&szlig;es Bytearray, einen MemoryStream oder eigene Datenstrukturen.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+In diesem Artikel habe ich Ihnen zwei Methoden des Dateiuploads vorgestellt: das Speichern der
+upgeloadeten Datei am Server mit Hilfe der <i>SaveAs</i> Methode, als auch das direkte Auslesen
+der Daten mit Hilfe des <i>Stream</i> Objekts. Die letztere Methode wird dann zum Einsatz kommen,
+wenn man direkt mit den Daten der Datei weiterarbeiten m&ouml;chte, ohne vorher den Umweg &uuml;ber eine
+physikalische Datei am Server zu gehen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000802.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000802.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010510.htm">Beliebige Anzahl von Dateien uploaden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010510.htm</span><br>
+<a href="../artikel/19990812.htm">Dateien mit dem Browser auf Webserver laden</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990812.htm</span><br>
+<a href="../artikel/20010202.htm">Dateiupload mit ASP und WSC</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010202.htm</span><br>
+<a href="../artikel/20010124.htm">Dateiupload mit ASP.NET und VB.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010124.htm</span><br>
+<a href="../artikel/20000724.htm">Exception Handling in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000724.htm</span><br>
+<a href="../artikel/20000714.htm">Kontrollstatements in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000714.htm</span><br>
+<a href="../artikel/20000728.htm">On-the-fly Generierung von Graphiken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000728.htm</span><br>
+<a href="../artikel/20000717.htm">Schleifenbefehle in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000717.htm</span><br>
+<a href="../artikel/20001030.htm">Uploaden einer beliebigen Datei in eine Datenbank</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001030.htm</span><br>
+<a href="../artikel/20040303.htm">Vergleich von DataGrid, DataList und Repeater-Control - was verwende ich wann?</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040303.htm</span><br>
+<a href="../artikel/20000731.htm">Verwendung von Arrays in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000731.htm</span><br>
+<a href="../artikel/20010507.htm">Web-basiertes Dateimanagement mit dem ASP FileMan</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010507.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Edotnetgerman%2Ecom%2Flinks%2Fdl%5Faspnet%2Easp">ASP.NET Download</a><br>
+<SPAN class="content">http://www.dotnetgerman.com/links/dl_aspnet.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Edotnetgerman%2Ecom%2Flisten%2FaspDEdotnet%2Easp">Die aspDEdotnet Liste</a><br>
+<SPAN class="content">http://www.dotnetgerman.com/listen/aspDEdotnet.asp</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

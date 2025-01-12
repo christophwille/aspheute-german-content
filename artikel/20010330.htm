@@ -1,0 +1,534 @@
+<HTML>
+<HEAD>
+<TITLE>Passw&ouml;rter mit SHA1 absichern</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Das Einloggen von Benutzern in gesperrte Bereiche findet (meist) &uuml;ber ein ASP Formular statt, das nicht mit SSL gesichert ist. Heute zeigt der Autor, wie man dieses mit SHA1 (Secure Hash Algorithm) absichern kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SHA1,Secure Hash Algorithmus,MD5,Message Digest,SSL,Sicherheit,Verschlüsselung,Kryptographie,Cryptography">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Passw&ouml;rter mit SHA1 absichern</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010330"></SCRIPT>
+</p>
+<p>
+Da&szlig; man bestimmte Teile einer Website nur f&uuml;r authentifizierte Benutzer zug&auml;nglich macht, ist mittlerweile
+bereits ein &uuml;blicher Vorgang. Das Einloggen der Benutzer findet (meist) &uuml;ber ein ASP Formular statt,
+das nicht &uuml;ber SSL abgesichert ist - und dabei wird das Passwort im Klartext &uuml;ber das Netzwerk
+&uuml;bertragen - zur freien Entnahme sozusagen. Der heutige Artikel zeigt, wie man den potentiellen
+Mitlesern die Arbeit erschweren kann.
+</p>
+<p>
+Ich m&ouml;chte gleich vorweg sagen, da&szlig; die heute vorgestellte Methode - das Verwenden eines Hash-Algorithmus - 
+nach wie vor Sicherheitsprobleme in sich birgt. Das "einzige", das man gewinnt ist, da&szlig; das Passwort
+nicht mehr geknackt werden kann, wenn man den Netzwerktraffic mitprotokolliert. Technisch ist es aber
+dennoch m&ouml;glich, sich als der jeweilige Benutzer auszugeben. Um auch das zu verhindern, m&uuml;&szlig;te man ein zu NT &auml;hnliches
+Challenge-Response System aufbauen. Dies ist zwar aufwendiger, aber durchf&uuml;hrbar.
+</p>
+<p>
+F&uuml;r heute bleiben wir aber beim Secure Hash Algorithmus SHA1 (spricht sich wie der ebensolche von Persien
+aus). Dieser generiert aus einem String einen
+160 Bit langen Hash, der eindeutig ist - und zweitens nur in eine Richtung funktioniert: hat man den Hash,
+kann man daraus das Passwort nicht mehr errechnen. Wenn man also am Client das Passwort durch den Algorithmus
+schickt, kann jeder, der den Netzwerktraffic protokolliert, nichts mehr damit anfangen.
+</p>
+
+<h2>SHA1 verwenden</h2>
+<p>
+Jetzt widmen wir uns der Frage, wie man diesen Algorithmus implementieren mu&szlig; - gar nicht! Es gibt n&auml;mlich 
+die Website <a href="http://www.pajhome.org.uk/crypt/md5/index.html" target="_blank">JavaScript MD5</a>, 
+auf der man eine JavaScript Implementierung zur Gratis-Verwendung downloaden kann. Obwohl dort immer nur
+von Client-Side Anwendungen geredet wird, kann man diese ohne Umwege sofort am Server
+einsetzen (<b>simpletest.asp</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;SHA1 Simple Test&lt;/title&gt;
+&lt;/head&gt;
+&lt;body bgcolor="#ffffff"&gt;
+
+&lt;form method="post" action="&lt;%=Request.ServerVariables("SCRIPT_NAME")%&gt;"&gt;
+&lt;input type="text" name="txtText2Scramble" value="SHA1 ist 160 Bit"&gt;&amp;nbsp;
+&lt;input type="submit"&gt;
+&lt;/form&gt;
+
+&lt;!-- #include file="serversidesha1.asp"--&gt;
+&lt;%
+str2Scramble = Trim(Request.Form("txtText2Scramble"))
+If "" &lt;&gt; str2Scramble Then
+  Response.Write "&lt;pre&gt;" &amp; calcSHA1(str2Scramble) &amp; "&lt;/pre&gt;"
+End If
+%&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Ich habe mir erlaubt, eine kleine Includedatei zu erstellen, die auf die <b>sha1.js</b> verweist, die
+man von <a href="http://www.pajhome.org.uk/crypt/md5/index.html" target="_blank">JavaScript MD5</a>
+downgeloadet hat. Es ist nur ein server-side Wrapper der einfachsten Art:
+</p>
+
+<pre style="background='silver';">
+&lt;script language="JScript" runat="server" src="sha1.js"&gt;
+&lt;/script&gt;
+</pre>
+
+<p>
+In <b>sha1.js</b> findet sich auch die Implementierung der Funktion <i>calcSHA1</i>, die ich in meinem
+bescheiden kurzen server-side Code aufrufe. Als Ausgabe erhalte ich einen 40 Zeichen langen String, der
+die hexadezimale Repr&auml;sentation des Hashes darstellt.
+</p>
+
+<h2>Die Login Seite</h2>
+<p>
+Der Algorithmus funktioniert also, Zeit ihn bei einem Login Formular einzubauen. Um ein realit&auml;tsnahes
+Beispiel zu erstellen, enth&auml;lt der heutige Download auch eine Demodatenbank, mit einer Tabelle <i>Logins</i>.
+Diese hat zwei Spalten: Username und Password. Der Praxisbezug? Auch in der Datenbank speichere ich nur
+den Hash des Passwortes - dadurch kann ein Hacker nirgends an das Passwort herankommen. Nachteil? Wenn
+ein Benutzer sein Passwort vergisst, kann man ihm nur ein neues zuweisen - was eigentlich auch deutlich
+sicherer ist (siehe Windows 2000 Benutzeraccounts).
+</p>
+<p>
+Ich habe die Seite zweigeteilt - eine Datei enth&auml;lt das Formular, das angezeigt wird. Die andere enth&auml;lt
+die Logik, um den Account zu &uuml;berpr&uuml;fen. Diese letztere Datei inkludiert das Formular, soda&szlig; alles wie
+eine einzige Seite funktioniert - es l&auml;&szlig;t sich aber leichter verstehen, wenn man die Teile getrennt betrachtet.
+</p>
+
+<h3>Das Formular</h3>
+<p>
+Unser "Hauptproblem" ist das Formular, in dem der Benutzer den Benutzernamen und das Passwort eingibt. Ich
+mu&szlig; n&auml;mlich bevor er das Formular abschickt, das Passwort mit SHA1 hashen. Und der einzige Weg dazu ist,
+client-seitiges JavaScript zu verwenden.
+</p>
+<p>
+Ja, ich kenne die Einw&auml;nde, die jetzt kommen, aber: wer Zutritt zu einem gesperrten Bereich m&ouml;chte, mu&szlig;
+leiden, ergo JavaScript einschalten.
+</p>
+<p>
+Bevor ich Sie jetzt auf den Code von <b>logonform.asp</b> loslasse, noch ein Hinweis: der Validierungscode
+plus das Hashen des Passwortes passieren in der JavaScript Funktion <i>Validate</i>.
+</p>
+
+<pre style="background='silver';">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Login&lt;/title&gt;
+&lt;!--#include file="clientsidesha1.asp"--&gt;
+&lt;script language="JavaScript"&gt;
+var errfound = false;
+
+function Validate() 
+{
+   errfound = false;
+   myForm = document.frmLogon;
+
+   if (!ValidLength(myForm.txtUsername.value,6)) 
+      error(myForm.txtUsername,"Bitte geben Sie einen Benutzernamen ein!");
+   if (!ValidLength(myForm.txtPassword.value,6)) 
+      error(myForm.txtPassword,"Bitte geben Sie Ihr Passwort ein (&gt; 6 ...");
+
+   if (!errfound)
+   {
+      myForm.txtPassword.value = calcSHA1(myForm.txtPassword.value);
+   }
+
+   return !errfound;
+}
+
+//function to validate by length
+function ValidLength(item, len) 
+{
+   return (item.length &gt;= len);
+}
+
+// display an error alert
+function error(elem, text) 
+{
+// abort if we already found an error
+   if (errfound) return;
+   window.alert(text);
+   elem.select();
+   elem.focus();
+   errfound = true;
+}
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body bgcolor="#ffffff"&gt;
+
+&lt;table width="100%"&gt;
+&lt;tr&gt;&lt;td align="center"&gt;
+&lt;table border=1&gt;
+&lt;tr&gt;&lt;td bgcolor="#33ccff" valign="center" align="center" width="350"&gt;
+&lt;H1&gt;Login&lt;/H1&gt;
+
+&lt;% if bValidationFailed Then %&gt;
+&lt;p&gt;&lt;strong&gt;Login fehlgeschlagen. Bitte erneut versuchen&lt;/strong&gt;&lt;/p&gt;
+&lt;% End If %&gt;
+&lt;p&gt;
+&lt;form method="post" action="&lt;%=Request.ServerVariables("SCRIPT_NAME")%&gt;" 
+       id=frmLogon name=frmLogon LANGUAGE="JAVASCRIPT" onsubmit="return Validate();"&gt;
+&lt;table&gt;
+&lt;tr&gt;
+  &lt;td&gt;Username:&lt;/td&gt;&lt;td&gt;&lt;input type=text name="txtUsername" size="20"&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td&gt;Password:&lt;/td&gt;&lt;td&gt;&lt;input type=password name="txtPassword" size ="20"&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td colspan=2&gt;&amp;nbsp;&lt;br&gt;&lt;center&gt;
+      &lt;input type="submit" value="Enter secured area"&gt;&lt;/center&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/form&gt;
+&lt;/p&gt;
+
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+
+&lt;/BODY&gt;
+&lt;/HTML&gt;
+</pre>
+
+<p>
+Der HTML Code f&uuml;r das Formular ist nichts besonderes, nur aus Sicherheitsgr&uuml;nden m&uuml;&szlig;te man das <i>ACTION</i>
+Tag herausnehmen, da&szlig; niemand, der JavaScript ausgeschaltet hat, das Formular ohne Passwort-Hashing abschickt.
+Apropos Hash: SHA1 wird &uuml;ber die Datei <b>clientsidesha1.asp</b> eingebunden, die den gleichen Zweck wie sein
+server-seitiger Bruder erf&uuml;llt:
+</p>
+
+<pre style="background='silver';">
+&lt;script language="JavaScript" src="sha1.js"&gt;&lt;/script&gt; 
+</pre>
+
+<p>
+Die <i>Validate</i> Funktion ist eigentlich keineswegs "Rocket Science". Es werden die Felder &uuml;berpr&uuml;ft
+(willk&uuml;rlich, hier kann der Leser die &Uuml;berpr&uuml;fung nach eigenen Gesichtspunkten gestalten), und danach
+das Passwort gehasht, und wieder zur&uuml;ck in das Passwortfeld geschrieben. Per POST-Back geht es dann zur&uuml;ck
+an den Server, an unsere &Uuml;berpr&uuml;fungslogik.
+</p>
+
+<h3>&Uuml;berpr&uuml;fung des Accounts</h3>
+<p>
+Wir bekommen einen Benutzernamen und ein gehashtes Passwort geliefert, und da in unserer Datenbank
+genau die gleichen Informationen gespeichert sind, brauchen wir nur eine einfache SELECT Abfrage.
+Der notwendige Code ist in der Datei <b>logon.asp</b> zu finden:
+</p>
+
+<pre style="background='silver';">
+&lt;% @ Language=VBScript %&gt;
+&lt;%
+bValidationFailed = False
+If Request.ServerVariables("CONTENT_LENGTH") &gt; 0 Then
+  strUsername = Trim(Request.Form("txtUsername"))
+  strPassword = Trim(Request.Form("txtPassword"))
+  
+  Set conn = Server.CreateObject("ADODB.Connection")
+  Set rs = Server.CreateObject("ADODB.Recordset")
+  strPath = Server.MapPath("logindb.mdb")
+  strConnection = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" &amp; strPath
+  conn.Open strConnection
+  rs.Open "select * from Logins where Username='" &amp; strUsername &amp; _
+       "' AND Password='" &amp; strPassword &amp; "'", conn
+
+  If not rs.EOF and not rs.BOF then
+   ' beliebige Daten aus der Tabelle auslesen...
+   Session("AccessGranted") = True
+   rs.Close
+   conn.Close
+   Response.Redirect "ok.asp"
+   Response.End
+  End if
+
+  Response.AppendToLog " Logon failed: " &amp; strUsername &amp; " " &amp; strPassword
+  bValidationFailed = True
+End If
+%&gt;
+&lt;!--#include file="logonform.asp"--&gt;
+</pre>
+
+<p>
+Dieser Code ist selbsterkl&auml;rend, und einfach zu erweitern: zB mehr Daten aus der Logins Tabelle auslesen,
+andere Session Variablen setzen, oder ein anderes Redirect-Ziel vorgeben. Ich habe sogar daran gedacht,
+fehlgeschlagene Logins in das Log mitzuprotokollieren.
+</p>
+<p>
+Ach ja, beinahe h&auml;tte ich es vergessen - die letzte Zeile inkludiert das Login-Formular, das ich in der
+vorangegangenen Sektion vorgestellt habe. Damit w&auml;re unser sicherer Login realisiert.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Der SHA1 Algorithmus eignet sich nicht nur f&uuml;r dieses Szenario - was ist, wenn man bei einem Shop
+keine Cookies verwenden will, und eine Art SessionID im Querystring mitgibt? Hier kann der SHA1 
+Algorithmus ebenfalls helfen, denn minimalste &Auml;nderungen am Inputstring ergeben einen beinahe v&ouml;llig
+anderen Hashwert. Andere Kundenwarenk&ouml;rbe zu "erraten" wird damit beinahe unm&ouml;glich.
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010330.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20010528.htm">Aber bitte mit Rijndael</a><br>
+<a href="20010521.htm">ASP-basierte Basic Authentication</a><br>
+<a href="20020429.htm">Benutzerverwaltung leicht gemacht: Teil 1</a><br>
+<a href="20020115.htm">CAPICOM One</a><br>
+<a href="20020319.htm">Ein einfacher Eventkalender f&uuml;r Projektteams</a><br>
+<a href="20010608.htm">Formular-basierte Basic Authentication</a><br>
+<a href="20011031.htm">Gegengifte f&uuml;r SQL Injection</a><br>
+<a href="20011207.htm">On Demand Zugriffsrechte f&uuml;r Web Sites vergeben</a><br>
+<a href="20040105.htm">Passw&ouml;rter speichern - aber richtig!</a><br>
+<a href="20000920.htm">PGP-Verschl&uuml;sselung bei Dateien</a><br>
+<a href="20010601.htm">Sicherheitsaspekte bei der Gestaltung von ASP Sites ohne Cookies</a><br>
+<a href="20010924.htm">Unknackbare Verschl&uuml;sselung mit Onetime Pads</a><br>
+<a href="20000921.htm">Ver- und entschl&uuml;sseln von Texten mit PGP</a><br>
+<a href="20000630.htm">Verwendung von SSL Test-Certificates</a><br>
+<a href="20001109.htm">Verzeichnissicherheit mit NTFS und IIS Authentifizierung</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Epajhome%2Eorg%2Euk%2Fcrypt%2Fmd5%2Findex%2Ehtml">JavaScript MD5</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20010330" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Passw&ouml;rter mit SHA1 absichern"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20010330.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christoph Wille"><input type="hidden" name="AuthorEmail" value="christophw@alphasierrapapa.com"><input type="hidden" name="Artikel" value="20010330"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20010330.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

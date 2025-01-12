@@ -1,0 +1,186 @@
+<HTML>
+<HEAD>
+<TITLE>&Uuml;berpr&uuml;fen von HTML-Formularen mit ASP</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel pr&auml;sentiert ein Grundger&uuml;st f&uuml;r die immer wiederkehrenden &Uuml;berpr&uuml;fungen von Formularwerten.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Request,Form,QueryString,FORM,METHOD,POST,GET,ACTION,Check,Überprüfung,Formular,Formularwerte">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>&Uuml;berpr&uuml;fen von HTML-Formularen mit ASP</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000522"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>Wenn ein Besucher Ihrer Site ein HTML-Formular abschickt, so ist oft der n&auml;chste Schritt, die eingegebenen Werte
+des Formulares zu &uuml;berpr&uuml;fen und gegebenenfalls eine Fehlermeldung auszugeben.</p>
+
+
+<p>Wie setzt man dies mit ASP im einzelnen technisch um?
+</p>
+
+<p>Wenn es sich um ein einfaches Formular handelt, so ist das folgende Verfahren oft zielf&uuml;hrend:
+Das Formular wird von der selben ASP-Seite ausgegeben, die auch die &Uuml;berpr&uuml;fung der eingegebenen Formularwerte &uuml;bernimmt.
+Ausserdem verarbeitet die ASP-Seite bei positiver &Uuml;berpr&uuml;fung die Formular-Werte, um danach erst
+eine neue Seite aufzurufen.</p>
+
+<p>Sollte die &Uuml;berpr&uuml;fung der Formularwerte negativ sein, so wird eine Fehlermeldung ausgegeben und
+das Formular noch einmal angezeigt.</p>
+
+<p>Dies bedeutet, da&szlig; das Formular an die selbe Seite abgeschickt wird, von der das Formular generiert wird.
+Die Seite pr&uuml;ft dann, ob die Werte g&uuml;ltig sind, und entscheidet, ob das Formular zusammen mit einer
+Fehlermeldung noch einmal ausgegeben wird, oder die Werte verarbeitet werden und eine neue Seite aufgerufen wird.
+</p>
+
+<p>Das folgende Beispiel zeigt, wie dies mit ASP implementiert werden kann:</p>
+
+<pre style="background='silver';">
+&lt;%
+
+' Fehlerflag setzen, bisher kein Fehler gefunden
+bError = False
+
+' Hier den Namen des Submit Buttons statt "Abschicken" einfuegen
+If Request.Form("Abschicken") &lt;&gt; "" Then
+   ' Formular abgeschickt, Werte lesen
+   ' Abgeschickte Feldwerte auslesen
+   strName = Request.Form("Name")
+   strEmail = Request.Form("Email")
+   
+
+   ' Ueberpruefen des Wertes der Email-Adresse
+   If Instr(strEmail,"@") = 0 Then
+      ' Kein "@" in Email Adresse, daher ungueltig
+      ' Fehlerflag setzen
+      bError = True
+   ElseIf Instr(strEmail,".") = 0 Then
+      ' Kein "." in Email Adresse, daher ungueltig
+      ' Fehlerflag setzen
+      bError = True
+   Else
+      ' Werte sind gueltig, daher verarbeiten
+      
+      ' Werte verarbeiten
+      ...
+
+      ' Neue Seite aufrufen, statt "neueSeite.asp" den Namen der
+      '  neuen Seite angeben
+      Response.Redirect "neueSeite.asp"
+      Response.End
+   End If
+End If
+
+' Fehlermeldung ausgeben wenn Formularwerte ungueltig
+If bError = True Then
+   Response.Write "Ihre Email Adresse ist nicht gueltig"
+End If
+
+' Formular ausgeben
+'  Da das Formular an die erzeugende ASP Seite geschickt wird,
+'   nutzt das Script den Befehl Request.ServerVariables("SCRIPT_NAME")
+'  um Pfad und Namen der eigenen ASP-Seite auszugeben
+%&gt;
+
+&lt;FORM ACTION="&lt;%= Request.ServerVariables("SCRIPT_NAME") %&gt;" METHOD="POST&gt;
+Name:  &lt;INPUT TYPE="TEXT" NAME="Name" VALUE="&lt;%= strName %&gt;"&gt;&lt;BR&gt;
+Email: &lt;INPUT TYPE="TEXT" NAME="Email" VALUE="&lt;%= strEmail %&gt;"&gt;&lt;BR&gt;
+&lt;INPUT TYPE="Submit" NAME="Abschicken" VALUE="Absenden"&gt;
+&lt;/FORM&gt;
+</pre>
+
+<p><u>Anmerkung</u>: Wenn man zum Abschicken des Formulares statt der 
+<i>POST</i> Methode die <i>GET</i> Methode verwendet, so muss im ASP-Code
+jedes "<i>Request.Form</i>" gegen "<i>Request.QueryString</i>" ausgetauscht werden.
+</p>
+
+<p>Das Skript im vorhergehenden Beispiel pr&uuml;ft also beim Aufrufen, ob
+es gerade Werte eines abgesendeten Formulares erh&auml;lt. Wenn das Formular
+tats&auml;chlich abgeschickt wurde, so hat <i>Request.Form("Abschicken")</i> 
+einen Wert verschieden vom Leerstring "". Dementsprechend liest das
+Skript in der ersten <i>If</i>-Verzweigung die Werte des Formulares aus und
+pr&uuml;ft die Email Adresse in den nachfolgenden <i>If</i>-Verzweigungen.
+Wenn die Email Adresse g&uuml;ltig ist, so verarbeitet das Skript die Werte und
+ruft die Seite <i>neueSeite.asp</i> auf.</p>
+
+<p>Wenn die Email nicht g&uuml;ltig sein sollte, so enth&auml;lt <i>bError</i> den Wert
+<i>False</i>, eine Fehlermeldung wird ausgegeben und das Formular noch einmal 
+mit den bereits eingegebenen Werten angezeigt.</p>
+
+<p>Sollte die Seite aufgerufen worden sein, ohne da&szlig; vorher das Formular an die Seite
+geschickt wurde, so liefert <i>Request.Form("Abschicken")</i> in der ersten <i>If</i>-Verzweigung keinen Wert. 
+Dies bewirkt, da&szlig; keine Formularwerte abgefragt oder &uuml;berpr&uuml;ft werden, sondern nur das Formular
+ausgegeben wird.</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000529.htm">&Uuml;bergeben von Informationen von einer ASP-Seite zur n&auml;chsten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000529.htm</span><br>
+<a href="../artikel/20000406.htm">Auswertung von HTML Formularen mit ASP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000406.htm</span><br>
+<a href="../artikel/20001121.htm">AutoCompletion f&uuml;r Web Formulare</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001121.htm</span><br>
+<a href="../artikel/20020429.htm">Benutzerverwaltung leicht gemacht: Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020429.htm</span><br>
+<a href="../artikel/20010306.htm">Dynamische Stylesheets</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010306.htm</span><br>
+<a href="../artikel/20001010.htm">Fern&ouml;stliche Formulare / Unicode die Zweite</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001010.htm</span><br>
+<a href="../artikel/20010531.htm">Keine gefakten Bestellungen mehr!</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010531.htm</span><br>
+<a href="../artikel/20020411.htm">Kopieren verboten - Lizenzsicherung bei ASP Scripts</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020411.htm</span><br>
+<a href="../artikel/20010404.htm">Sonderzeichen f&uuml;r Forms decodieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010404.htm</span><br>
+<a href="../artikel/20011112.htm">Strukturierter Aufbau in der ASP-Programmierung</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011112.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

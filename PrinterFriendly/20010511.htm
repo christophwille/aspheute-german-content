@@ -1,0 +1,324 @@
+<HTML>
+<HEAD>
+<TITLE>Tabellenexistenz in Datenbanken &uuml;berpr&uuml;fen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Heute stellt der Autor diverse Varianten vor, wie man feststellen kann, ob eine Tabelle in einer Datenbank enthalten ist. Es werden verschiedenen Wege f&uuml;r SQL Server und Access demonstriert.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ADOX,sysobjects,MSysObjects,Admin,sa,Security,Sicherheit,Catalog,JET">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Tabellenexistenz in Datenbanken &uuml;berpr&uuml;fen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010511"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Im Normalfall wei&szlig; man, wenn man mit einer Datenbank arbeitet, welche Tabellen in ihr enthalten sind.
+Andererseits gibt es aber Anwendungsf&auml;lle, wo man erst zur Laufzeit auf eine Datenbank connected, und dann
+dynamisch herausfinden mu&szlig;, welche Tabellen es gibt, oder &uuml;berpr&uuml;fen mu&szlig;, ob eine spezielle Tabelle
+existiert.
+</p>
+
+<p>
+Heute stelle ich diverse Varianten vor, wie man feststellen kann, ob eine Tabelle in einer Datenbank
+enthalten ist. Das Auflisten aller Tabellen ist, wie sich zeigt, immer nur der Spezialfall der Suche
+nach einer Tabelle (oder anders herum, je nach dem, wie man das Problem betrachtet). Sei es wie es sei,
+ich demonstriere die verschiedenen Wege f&uuml;r SQL Server und Access, beginnend mit SQL Server.
+</p>
+
+<h2>In SQL Server</h2>
+<p>
+In SQL Server ist die Sache sehr einfach, wenn man wei&szlig;, wo man nachsehen mu&szlig;. Die ber&uuml;hmte
+"allwissende M&uuml;llhalde" ist in SQL Server die Tabelle namens <i>sysobjects</i> - in dieser
+sind alle Objekte einer Datenbank vermerkt. Jedes dieser Objekte hat einen Typ, und der Typ
+der Tabellen zugeordnet ist, ist <b>U</b>.
+</p>
+<p>
+Das nun folgende Beispiel <b>alltables_sql.asp</b> zeigt, wie man sich alle Tabellen in einer 
+SQL Server Datenbank auflisten lassen kann:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+strConnStr = "Provider=SQLOLEDB;Data Source=strangelove;Initial Catalog=Northwind;..."
+strTableStmt = "select * from sysobjects where type='U'"
+
+Set rs = Server.CreateObject("ADODB.Recordset")
+rs.Open strTableStmt, strConnStr
+While Not rs.EOF
+  Response.Write rs.Fields("name").Value &amp; "&lt;br&gt;" &amp; vbCrlf
+  rs.MoveNext
+Wend
+
+rs.Close
+Set rs = Nothing
+%&gt;
+</pre>
+
+<p>
+Damit h&auml;tten wir alle Tabellen aufgelistet, die es gibt. Nun m&uuml;ssen wir diesen Code nur noch modifizieren
+- und etwas leichter wiederverwendbar machen - damit wir die Existenz oder Nichtexistenz einer einzelnen
+Tabelle nachweisen. Dies erledigt das nun folgende Script <b>tableexists_sql.asp</b>.
+</p>
+
+<pre style="background='silver';">
+&lt;% Option Explicit%&gt;
+&lt;script language="vbscript" runat="server"&gt;
+Function TableExistsSql(ByVal strConnStr, ByVal strTable)
+ Dim strSQL, rs, nCount
+ strSQL = "select count(*) from sysobjects where type='U' AND name='" &amp; _
+    strTable &amp; "'"
+
+ Set rs = Server.CreateObject("ADODB.Recordset")
+ rs.Open strSQL, strConnStr
+ nCount = rs.Fields(0).Value
+ rs.Close
+ Set rs = Nothing
+
+ TableExistsSql = False
+ If (1 = nCount) Then TableExistsSql = True
+End Function
+
+&lt;/script&gt;
+
+&lt;%
+Dim strConnStr
+strConnStr = "Provider=SQLOLEDB;Data Source=strangelove;Initial Catalog=Northwind;..."
+
+Response.Write TableExistsSql(strConnStr, "Customers")
+%&gt;
+</pre>
+
+<p>
+Die Funktion <i>TableExistsSql</i> kann man in ein zentrales Include geben, um eine leichte Wiederverwendbarkeit
+zu erzielen.
+</p>
+
+<h2>In Access - mit Bordmitteln</h2>
+<p>
+SQL Server war quasi "aufgelegt". In Access wird's unter Umst&auml;nden schon etwas verzwickter, au&szlig;er man
+kennt zuf&auml;lligerweise die "Untiefen" des Systems.
+</p>
+<p>
+Die angesprochene Untiefe ist das Faktum, da&szlig; Access seine Objekte ebenfalls in Tabellen verwaltet, diese
+allerdings versteckt sind. Man mu&szlig; diese erst in <i>Tools</i> / <i>Options</i> zu Tage f&ouml;rdern:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010511_2.png" width="536" height="406" alt="" border="0">
+
+<p>
+Und dann hat man pl&ouml;tzlich etliche zus&auml;tzliche Tabellen im Datenbankfenster (<b>simple.mdb</b>
+ist im heutigen Download enthalten):
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010511_1.png" width="480" height="345" alt="" border="0">
+
+<p>
+Der Name <i>MSysObjects</i> sieht doch bereits verd&auml;chtig nach dem aus, was wir suchen. Und tats&auml;chlich -
+diese Tabelle enth&auml;lt alle Objekte inklusive Tabellen, und Tabellen haben hier den Typ <b>1</b>. Also
+m&uuml;ssen wir unseren Code nur geringf&uuml;gig modifizieren - zuerst <b>alltables_access.asp</b>:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+strConnStr = "Provider=Microsoft.Jet.OLEDB.4.0;" &amp; _
+      "Data Source=" &amp; Server.MapPath("simple.mdb")
+
+strTableStmt = "select * from MSysObjects where type=1"
+
+Set rs = Server.CreateObject("ADODB.Recordset")
+rs.Open strTableStmt, strConnStr
+While Not rs.EOF
+  Response.Write rs.Fields("name").Value &amp; "&lt;br&gt;" &amp; vbCrlf
+  rs.MoveNext
+Wend
+
+rs.Close
+Set rs = Nothing
+%&gt;
+</pre>
+
+<p>
+Die Sache hat nur einen Sch&ouml;nheitsfehler, der uns bei der Ausf&uuml;hrung des Scripts schnell aufgezeigt wird:
+</p>
+
+<pre style="background='silver';">
+Microsoft JET Database Engine error '80040e09' 
+Record(s) cannot be read; no read permission on 'MSysObjects'. 
+/aspheute/findtable/alltables_access.asp, line 8 
+</pre>
+
+<p>
+Im Vergleich zu SQL Server ist die Tabelle sogar gegen Zugriff durch den <i>Admin</i> (<i>sa</i>-&Auml;quivalent in Access)
+gesperrt. Eine kurze Visite in <i>Tools</i> / <i>Security</i> / <i>User and Group Permissions</i> ist notwendig - wir m&uuml;ssen
+uns (dem <i>Admin</i>) die <i>Read Data</i> Rechte erlauben:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010511_3.png" width="395" height="437" alt="" border="0">
+
+<p>
+Und jetzt funktioniert unser Script klaglos. Somit k&ouml;nnen wir auch unser Script zum Auffinden einer
+einzelnen Tabelle anpassen (<b>tableexists_access.asp</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;% Option Explicit%&gt;
+&lt;script language="vbscript" runat="server"&gt;
+Function TableExistsAccess(ByVal strConnStr, ByVal strTable)
+ Dim strSQL, rs, nCount
+ strSQL = "select count(*) from MSysObjects where Type=1 AND Name='" &amp; _
+    strTable &amp; "'"
+
+ Set rs = Server.CreateObject("ADODB.Recordset")
+ rs.Open strSQL, strConnStr
+ nCount = rs.Fields(0).Value
+ rs.Close
+ Set rs = Nothing
+
+ TableExistsAccess = False
+ If (1 = nCount) Then TableExistsAccess = True
+End Function
+
+&lt;/script&gt;
+
+&lt;%
+Dim strConnStr
+strConnStr = "Provider=Microsoft.Jet.OLEDB.4.0;" &amp; _
+      "Data Source=" &amp; Server.MapPath("simple.mdb")
+
+Response.Write TableExistsAccess(strConnStr, "TestTable")
+%&gt;
+</pre>
+
+<p>
+Einzig der SQL String wurde ge&auml;ndert, sonst funktioniert alles gleich wie f&uuml;r SQL Server. Praktisch.
+</p>
+
+<h2>In Access mit ADOX</h2>
+<p>
+Es hei&szlig;t, es f&uuml;hren mehrere Wege nach Rom. F&uuml;r das &Uuml;berpr&uuml;fen der Tabellenexistenz stimmt das - man
+kann dies auch mit ADOX (<i>ADO Extensions for Data Definition Language and Security</i>) bewerkstelligen.
+</p>
+<p>
+Dieses Mal erspare ich uns den Umweg &uuml;ber das Auflisten aller Tabellen (das kann jeder selbst &uuml;ber die
+<i>Tables</i> Collection nachholen), und starte sogleich mit <b>tableexists_adox.asp</b>:
+</p>
+
+<pre style="background='silver';">
+&lt;% Option Explicit%&gt;
+&lt;script language="vbscript" runat="server"&gt;
+Function TableExistsADOX(ByVal strConnStr, ByVal strTable)
+ Dim cat, tbl
+ Set cat = Server.CreateObject("ADOX.Catalog")
+ cat.ActiveConnection = strConnStr
+
+ On Error Resume Next
+ Set tbl = cat.Tables.Item(strTable)
+
+ TableExistsADOX = True
+ If Err.Number &lt;&gt; 0 Then
+   TableExistsADOX = False
+ End If
+ Set cat = Nothing
+End Function
+
+&lt;/script&gt;
+
+&lt;%
+Dim strConnStr
+strConnStr = "Provider=Microsoft.Jet.OLEDB.4.0;" &amp; _
+      "Data Source=" &amp; Server.MapPath("simple.mdb")
+
+Response.Write TableExistsADOX(strConnStr, "TestTable")
+%&gt;
+</pre>
+
+<p>
+Ich greife mit <i>cat.Tables.Item(strTable)</i> direkt in die <i>Tables</i> Collection hinein, um mir eine Referenz
+auf die gew&uuml;nschte Tabelle zu holen. Die Frage ist, was passiert, wenn diese nicht existiert - es wird ein
+Fehler ausgel&ouml;st:
+</p>
+
+<pre style="background='silver';">
+ADOX.Tables error '800a0cc1' 
+Item cannot be found in the collection corresponding to the requested name or ordinal. 
+/aspheute/findtable/tableexists_adox.asp, line 9 
+</pre>
+
+<p>
+Genau deshalb verwende ich das <i>On Error Resume Next</i> Statement - wird kein Fehler ausgel&ouml;st, existiert
+die Tabelle - kommt ein Fehler, war keine Tabelle dieses Namens in der Datenbank auffindbar. Diese Information
+verwende ich, um den R&uuml;ckgabewert der Funktion zu belegen.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Was ist jetzt der bessere Weg um die Tabellenexistenz abzufragen? Nun, in SQL Server stellt sich die Frage
+nicht, und in Access ist der Weg &uuml;ber ADOX sicherlich der des geringsten Widerstands, da man die Originaldatenbank
+nicht modifizieren mu&szlig;.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010511.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010511.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000329.htm">ADO Component Checker Tool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000329.htm</span><br>
+<a href="../artikel/20000328.htm">Installation der neuesten ADO Version (ADO 2.5)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000328.htm</span><br>
+<a href="../artikel/20000626.htm">Tabellenerstellung mit ADOX</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000626.htm</span><br>
+<a href="../artikel/20020410.htm">Yet Another Access Database Administration Tool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020410.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

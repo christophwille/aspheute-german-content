@@ -1,0 +1,363 @@
+<HTML>
+<HEAD>
+<TITLE>Passw&ouml;rter mit SHA1 absichern</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Das Einloggen von Benutzern in gesperrte Bereiche findet (meist) &uuml;ber ein ASP Formular statt, das nicht mit SSL gesichert ist. Heute zeigt der Autor, wie man dieses mit SHA1 (Secure Hash Algorithm) absichern kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SHA1,Secure Hash Algorithmus,MD5,Message Digest,SSL,Sicherheit,Verschlüsselung,Kryptographie,Cryptography">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Passw&ouml;rter mit SHA1 absichern</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Sicherheit.htm">Sicherheit</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010330"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Da&szlig; man bestimmte Teile einer Website nur f&uuml;r authentifizierte Benutzer zug&auml;nglich macht, ist mittlerweile
+bereits ein &uuml;blicher Vorgang. Das Einloggen der Benutzer findet (meist) &uuml;ber ein ASP Formular statt,
+das nicht &uuml;ber SSL abgesichert ist - und dabei wird das Passwort im Klartext &uuml;ber das Netzwerk
+&uuml;bertragen - zur freien Entnahme sozusagen. Der heutige Artikel zeigt, wie man den potentiellen
+Mitlesern die Arbeit erschweren kann.
+</p>
+<p>
+Ich m&ouml;chte gleich vorweg sagen, da&szlig; die heute vorgestellte Methode - das Verwenden eines Hash-Algorithmus - 
+nach wie vor Sicherheitsprobleme in sich birgt. Das "einzige", das man gewinnt ist, da&szlig; das Passwort
+nicht mehr geknackt werden kann, wenn man den Netzwerktraffic mitprotokolliert. Technisch ist es aber
+dennoch m&ouml;glich, sich als der jeweilige Benutzer auszugeben. Um auch das zu verhindern, m&uuml;&szlig;te man ein zu NT &auml;hnliches
+Challenge-Response System aufbauen. Dies ist zwar aufwendiger, aber durchf&uuml;hrbar.
+</p>
+<p>
+F&uuml;r heute bleiben wir aber beim Secure Hash Algorithmus SHA1 (spricht sich wie der ebensolche von Persien
+aus). Dieser generiert aus einem String einen
+160 Bit langen Hash, der eindeutig ist - und zweitens nur in eine Richtung funktioniert: hat man den Hash,
+kann man daraus das Passwort nicht mehr errechnen. Wenn man also am Client das Passwort durch den Algorithmus
+schickt, kann jeder, der den Netzwerktraffic protokolliert, nichts mehr damit anfangen.
+</p>
+
+<h2>SHA1 verwenden</h2>
+<p>
+Jetzt widmen wir uns der Frage, wie man diesen Algorithmus implementieren mu&szlig; - gar nicht! Es gibt n&auml;mlich 
+die Website <a href="http://www.pajhome.org.uk/crypt/md5/index.html" target="_blank">JavaScript MD5</a>, 
+auf der man eine JavaScript Implementierung zur Gratis-Verwendung downloaden kann. Obwohl dort immer nur
+von Client-Side Anwendungen geredet wird, kann man diese ohne Umwege sofort am Server
+einsetzen (<b>simpletest.asp</b>):
+</p>
+
+<pre style="background='silver';">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;SHA1 Simple Test&lt;/title&gt;
+&lt;/head&gt;
+&lt;body bgcolor="#ffffff"&gt;
+
+&lt;form method="post" action="&lt;%=Request.ServerVariables("SCRIPT_NAME")%&gt;"&gt;
+&lt;input type="text" name="txtText2Scramble" value="SHA1 ist 160 Bit"&gt;&amp;nbsp;
+&lt;input type="submit"&gt;
+&lt;/form&gt;
+
+&lt;!-- #include file="serversidesha1.asp"--&gt;
+&lt;%
+str2Scramble = Trim(Request.Form("txtText2Scramble"))
+If "" &lt;&gt; str2Scramble Then
+  Response.Write "&lt;pre&gt;" &amp; calcSHA1(str2Scramble) &amp; "&lt;/pre&gt;"
+End If
+%&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Ich habe mir erlaubt, eine kleine Includedatei zu erstellen, die auf die <b>sha1.js</b> verweist, die
+man von <a href="http://www.pajhome.org.uk/crypt/md5/index.html" target="_blank">JavaScript MD5</a>
+downgeloadet hat. Es ist nur ein server-side Wrapper der einfachsten Art:
+</p>
+
+<pre style="background='silver';">
+&lt;script language="JScript" runat="server" src="sha1.js"&gt;
+&lt;/script&gt;
+</pre>
+
+<p>
+In <b>sha1.js</b> findet sich auch die Implementierung der Funktion <i>calcSHA1</i>, die ich in meinem
+bescheiden kurzen server-side Code aufrufe. Als Ausgabe erhalte ich einen 40 Zeichen langen String, der
+die hexadezimale Repr&auml;sentation des Hashes darstellt.
+</p>
+
+<h2>Die Login Seite</h2>
+<p>
+Der Algorithmus funktioniert also, Zeit ihn bei einem Login Formular einzubauen. Um ein realit&auml;tsnahes
+Beispiel zu erstellen, enth&auml;lt der heutige Download auch eine Demodatenbank, mit einer Tabelle <i>Logins</i>.
+Diese hat zwei Spalten: Username und Password. Der Praxisbezug? Auch in der Datenbank speichere ich nur
+den Hash des Passwortes - dadurch kann ein Hacker nirgends an das Passwort herankommen. Nachteil? Wenn
+ein Benutzer sein Passwort vergisst, kann man ihm nur ein neues zuweisen - was eigentlich auch deutlich
+sicherer ist (siehe Windows 2000 Benutzeraccounts).
+</p>
+<p>
+Ich habe die Seite zweigeteilt - eine Datei enth&auml;lt das Formular, das angezeigt wird. Die andere enth&auml;lt
+die Logik, um den Account zu &uuml;berpr&uuml;fen. Diese letztere Datei inkludiert das Formular, soda&szlig; alles wie
+eine einzige Seite funktioniert - es l&auml;&szlig;t sich aber leichter verstehen, wenn man die Teile getrennt betrachtet.
+</p>
+
+<h3>Das Formular</h3>
+<p>
+Unser "Hauptproblem" ist das Formular, in dem der Benutzer den Benutzernamen und das Passwort eingibt. Ich
+mu&szlig; n&auml;mlich bevor er das Formular abschickt, das Passwort mit SHA1 hashen. Und der einzige Weg dazu ist,
+client-seitiges JavaScript zu verwenden.
+</p>
+<p>
+Ja, ich kenne die Einw&auml;nde, die jetzt kommen, aber: wer Zutritt zu einem gesperrten Bereich m&ouml;chte, mu&szlig;
+leiden, ergo JavaScript einschalten.
+</p>
+<p>
+Bevor ich Sie jetzt auf den Code von <b>logonform.asp</b> loslasse, noch ein Hinweis: der Validierungscode
+plus das Hashen des Passwortes passieren in der JavaScript Funktion <i>Validate</i>.
+</p>
+
+<pre style="background='silver';">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Login&lt;/title&gt;
+&lt;!--#include file="clientsidesha1.asp"--&gt;
+&lt;script language="JavaScript"&gt;
+var errfound = false;
+
+function Validate() 
+{
+   errfound = false;
+   myForm = document.frmLogon;
+
+   if (!ValidLength(myForm.txtUsername.value,6)) 
+      error(myForm.txtUsername,"Bitte geben Sie einen Benutzernamen ein!");
+   if (!ValidLength(myForm.txtPassword.value,6)) 
+      error(myForm.txtPassword,"Bitte geben Sie Ihr Passwort ein (&gt; 6 ...");
+
+   if (!errfound)
+   {
+      myForm.txtPassword.value = calcSHA1(myForm.txtPassword.value);
+   }
+
+   return !errfound;
+}
+
+//function to validate by length
+function ValidLength(item, len) 
+{
+   return (item.length &gt;= len);
+}
+
+// display an error alert
+function error(elem, text) 
+{
+// abort if we already found an error
+   if (errfound) return;
+   window.alert(text);
+   elem.select();
+   elem.focus();
+   errfound = true;
+}
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body bgcolor="#ffffff"&gt;
+
+&lt;table width="100%"&gt;
+&lt;tr&gt;&lt;td align="center"&gt;
+&lt;table border=1&gt;
+&lt;tr&gt;&lt;td bgcolor="#33ccff" valign="center" align="center" width="350"&gt;
+&lt;H1&gt;Login&lt;/H1&gt;
+
+&lt;% if bValidationFailed Then %&gt;
+&lt;p&gt;&lt;strong&gt;Login fehlgeschlagen. Bitte erneut versuchen&lt;/strong&gt;&lt;/p&gt;
+&lt;% End If %&gt;
+&lt;p&gt;
+&lt;form method="post" action="&lt;%=Request.ServerVariables("SCRIPT_NAME")%&gt;" 
+       id=frmLogon name=frmLogon LANGUAGE="JAVASCRIPT" onsubmit="return Validate();"&gt;
+&lt;table&gt;
+&lt;tr&gt;
+  &lt;td&gt;Username:&lt;/td&gt;&lt;td&gt;&lt;input type=text name="txtUsername" size="20"&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td&gt;Password:&lt;/td&gt;&lt;td&gt;&lt;input type=password name="txtPassword" size ="20"&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td colspan=2&gt;&amp;nbsp;&lt;br&gt;&lt;center&gt;
+      &lt;input type="submit" value="Enter secured area"&gt;&lt;/center&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/form&gt;
+&lt;/p&gt;
+
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+
+&lt;/BODY&gt;
+&lt;/HTML&gt;
+</pre>
+
+<p>
+Der HTML Code f&uuml;r das Formular ist nichts besonderes, nur aus Sicherheitsgr&uuml;nden m&uuml;&szlig;te man das <i>ACTION</i>
+Tag herausnehmen, da&szlig; niemand, der JavaScript ausgeschaltet hat, das Formular ohne Passwort-Hashing abschickt.
+Apropos Hash: SHA1 wird &uuml;ber die Datei <b>clientsidesha1.asp</b> eingebunden, die den gleichen Zweck wie sein
+server-seitiger Bruder erf&uuml;llt:
+</p>
+
+<pre style="background='silver';">
+&lt;script language="JavaScript" src="sha1.js"&gt;&lt;/script&gt; 
+</pre>
+
+<p>
+Die <i>Validate</i> Funktion ist eigentlich keineswegs "Rocket Science". Es werden die Felder &uuml;berpr&uuml;ft
+(willk&uuml;rlich, hier kann der Leser die &Uuml;berpr&uuml;fung nach eigenen Gesichtspunkten gestalten), und danach
+das Passwort gehasht, und wieder zur&uuml;ck in das Passwortfeld geschrieben. Per POST-Back geht es dann zur&uuml;ck
+an den Server, an unsere &Uuml;berpr&uuml;fungslogik.
+</p>
+
+<h3>&Uuml;berpr&uuml;fung des Accounts</h3>
+<p>
+Wir bekommen einen Benutzernamen und ein gehashtes Passwort geliefert, und da in unserer Datenbank
+genau die gleichen Informationen gespeichert sind, brauchen wir nur eine einfache SELECT Abfrage.
+Der notwendige Code ist in der Datei <b>logon.asp</b> zu finden:
+</p>
+
+<pre style="background='silver';">
+&lt;% @ Language=VBScript %&gt;
+&lt;%
+bValidationFailed = False
+If Request.ServerVariables("CONTENT_LENGTH") &gt; 0 Then
+  strUsername = Trim(Request.Form("txtUsername"))
+  strPassword = Trim(Request.Form("txtPassword"))
+  
+  Set conn = Server.CreateObject("ADODB.Connection")
+  Set rs = Server.CreateObject("ADODB.Recordset")
+  strPath = Server.MapPath("logindb.mdb")
+  strConnection = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" &amp; strPath
+  conn.Open strConnection
+  rs.Open "select * from Logins where Username='" &amp; strUsername &amp; _
+       "' AND Password='" &amp; strPassword &amp; "'", conn
+
+  If not rs.EOF and not rs.BOF then
+   ' beliebige Daten aus der Tabelle auslesen...
+   Session("AccessGranted") = True
+   rs.Close
+   conn.Close
+   Response.Redirect "ok.asp"
+   Response.End
+  End if
+
+  Response.AppendToLog " Logon failed: " &amp; strUsername &amp; " " &amp; strPassword
+  bValidationFailed = True
+End If
+%&gt;
+&lt;!--#include file="logonform.asp"--&gt;
+</pre>
+
+<p>
+Dieser Code ist selbsterkl&auml;rend, und einfach zu erweitern: zB mehr Daten aus der Logins Tabelle auslesen,
+andere Session Variablen setzen, oder ein anderes Redirect-Ziel vorgeben. Ich habe sogar daran gedacht,
+fehlgeschlagene Logins in das Log mitzuprotokollieren.
+</p>
+<p>
+Ach ja, beinahe h&auml;tte ich es vergessen - die letzte Zeile inkludiert das Login-Formular, das ich in der
+vorangegangenen Sektion vorgestellt habe. Damit w&auml;re unser sicherer Login realisiert.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Der SHA1 Algorithmus eignet sich nicht nur f&uuml;r dieses Szenario - was ist, wenn man bei einem Shop
+keine Cookies verwenden will, und eine Art SessionID im Querystring mitgibt? Hier kann der SHA1 
+Algorithmus ebenfalls helfen, denn minimalste &Auml;nderungen am Inputstring ergeben einen beinahe v&ouml;llig
+anderen Hashwert. Andere Kundenwarenk&ouml;rbe zu "erraten" wird damit beinahe unm&ouml;glich.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010330.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010330.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010528.htm">Aber bitte mit Rijndael</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010528.htm</span><br>
+<a href="../artikel/20010521.htm">ASP-basierte Basic Authentication</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010521.htm</span><br>
+<a href="../artikel/20020429.htm">Benutzerverwaltung leicht gemacht: Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020429.htm</span><br>
+<a href="../artikel/20020115.htm">CAPICOM One</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020115.htm</span><br>
+<a href="../artikel/20020319.htm">Ein einfacher Eventkalender f&uuml;r Projektteams</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020319.htm</span><br>
+<a href="../artikel/20010608.htm">Formular-basierte Basic Authentication</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010608.htm</span><br>
+<a href="../artikel/20011031.htm">Gegengifte f&uuml;r SQL Injection</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011031.htm</span><br>
+<a href="../artikel/20011207.htm">On Demand Zugriffsrechte f&uuml;r Web Sites vergeben</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011207.htm</span><br>
+<a href="../artikel/20040105.htm">Passw&ouml;rter speichern - aber richtig!</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040105.htm</span><br>
+<a href="../artikel/20000920.htm">PGP-Verschl&uuml;sselung bei Dateien</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000920.htm</span><br>
+<a href="../artikel/20010601.htm">Sicherheitsaspekte bei der Gestaltung von ASP Sites ohne Cookies</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010601.htm</span><br>
+<a href="../artikel/20010924.htm">Unknackbare Verschl&uuml;sselung mit Onetime Pads</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010924.htm</span><br>
+<a href="../artikel/20000921.htm">Ver- und entschl&uuml;sseln von Texten mit PGP</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000921.htm</span><br>
+<a href="../artikel/20000630.htm">Verwendung von SSL Test-Certificates</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000630.htm</span><br>
+<a href="../artikel/20001109.htm">Verzeichnissicherheit mit NTFS und IIS Authentifizierung</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001109.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Epajhome%2Eorg%2Euk%2Fcrypt%2Fmd5%2Findex%2Ehtml">JavaScript MD5</a><br>
+<SPAN class="content">http://www.pajhome.org.uk/crypt/md5/index.html</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

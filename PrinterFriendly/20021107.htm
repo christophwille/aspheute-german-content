@@ -1,0 +1,402 @@
+<HTML>
+<HEAD>
+<TITLE>Index Server Abfragen per Web Service</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wenn Google seinen Suchkatalog per Web Service anbietet, warum sollte man dann nicht seine lokale Sitesuche per Web Service den Programmierern &ouml;ffnen? Heute werden wir einen solchen Suchservice basierend auf dem Index Server implementieren.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,IXSSO,Index Server,Web Service,Cisso,Query,Abfrage,DataSet,OleDbDataAdapter,ADO,Recordset,COM,InterOp">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Index Server Abfragen per Web Service</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Web%20Services.htm">Web Services</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20021107"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wenn Google seinen Suchkatalog per Web Service anbietet, warum sollte man dann nicht seine lokale Sitesuche per Web
+Service den Programmierern &ouml;ffnen? Heute werden wir einen solchen Suchservice basierend auf dem Index Server, der ja
+Teil von Windows 2000 ist, implementieren. Und damit man die N&uuml;tzlichkeit eines solchen Services sieht, erstellen wir
+ihn f&uuml;r AspHeute.com, und geben auch noch einen Windows-Client mit dazu.
+</p>
+<p>
+Es gibt bis dato keine managed Klassen um auf die Index Server Catalogs zugreifen zu k&ouml;nnen. Daher m&uuml;ssen wir den Weg mit 
+COM InterOp w&auml;hlen, und wie im Artikel <a href="../artikel/20010403.htm">Objektbasierte Index Server Suche</a> die
+Index Server Search Objects (IXSSO) einsetzen. Damit erhalten wir die volle Suchfunktionalit&auml;t von Index Server, die auch
+sehr gut in <a href="http://www.microsoft.com/mspress/books/WW/sampchap/4072a.asp" target="_blank">Integrating Other Server-Side Technologies</a>
+beschrieben ist.
+</p>
+
+<h2>Erstellen des Web Services</h2>
+<p>
+Unser erster Schritt ist ein leeres Web Service Projekt in Visual Studio.NET zu erstellen (Hinweis: nat&uuml;rlich kann man diesen Web
+Service auch ohne VS.NET erstellen). Diesem f&uuml;gen wir die COM Referenz f&uuml;r die Index Server Search Objects hinzu:
+</p>
+
+<IMG SRC="/artikel/Bilder/200211/20021107_1.png" width="566" height="439" alt="" border="0">
+
+<p>
+Wir erhalten einen RCW - einen Runtime Callable Wrapper (siehe auch Artikel <a href="../artikel/20000828.htm">Verwenden von 
+COM Komponenten in ASP.NET</a>). Diesen k&ouml;nnen wir im Object Browser betrachten:
+</p>
+
+<IMG SRC="/artikel/Bilder/200211/20021107_2.png" width="818" height="647" alt="" border="0">
+
+<p>
+Im Interface <i>IixssoQuery</i> sind die f&uuml;r uns vordringlich wichtigen Eigenschaften und Methoden beheimatet, so auch die
+<i>CreateRecordset</i> Methode, die die Query ausf&uuml;hrt und die Resultate zur&uuml;ckliefert. Das interessante daran ist, da&szlig; die Resultate
+als ADO Recordset geliefert werden, wir also eine weitere COM Referenz in unserem Projekt ben&ouml;tigen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200211/20021107_3.png" width="566" height="439" alt="" border="0">
+
+<p>
+Hierbei handelt es sich um eine sogenannte <b>Primary Interoperability Assembly</b>, das hei&szlig;t, sie wird vom Hersteller (Microsoft
+in diesem Fall) geliefert, und ist im GAC abgelegt. Einige Internet Provider sperren den GAC jedoch, soda&szlig; es notwendig sein kann,
+diese Assembly aus dem GAC der lokalen Maschine herauszukopieren und ins <b>bin</b> Verzeichnis der Website zu installieren (dazu 
+mehr sp&auml;ter).
+</p>
+<p>
+Damit h&auml;tten wir alle Vorbereitungen abgeschlossen, und wir k&ouml;nnen an das Schreiben des Web Service Codes gehen:
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Web;
+using System.Web.Services;
+
+using System.Data;
+using System.Data.OleDb;
+
+namespace Suche
+{
+  [WebService(Namespace="http://microsoft.com/webservices/")]
+  public class AspHeuteSearch : System.Web.Services.WebService
+  {
+    private static string CiCatalog = "aspheute.com";
+    private static string CiScope = "/artikel/";
+    private static string CiFlags = "SHALLOW";  // "DEEP" not needed in CiScope
+
+    public AspHeuteSearch()
+    {
+      InitializeComponent();
+    }
+</pre>
+
+<p>
+Zu den standardm&auml;&szlig;igen <i>using</i> Statements hat sich <i>System.Data.OleDb</i> dazugesellt - den Grund sehen wir sp&auml;ter im Code.
+Es folgt die Klasse <i>AspHeuteSearch</i>, und einige statische Variablen, die nicht ver&auml;nderbare Werte halten, zB den Namen des
+Index Server Catalogs, das Suchverzeichnis und die Suchtiefe. Mit diesen Definitionen k&ouml;nnen wir daran gehen, unsere beiden 
+Suchmethoden zu implementieren:
+</p>
+
+<pre style="background='silver';">
+    [WebMethod]
+    public DataSet KeywordSearch(string Keyword, int MaxResults)
+    {
+      if (MaxResults &lt; 5 || MaxResults &gt; 250)
+        throw new ArgumentOutOfRangeException("MaxResults", MaxResults, 
+			"Range is 5-250");
+
+      if (Keyword.Length &lt; 3)
+        throw new ArgumentOutOfRangeException("Keyword", Keyword, 
+			"Minimum length of search keyword is 3 characters");
+
+      return PerformQuery("@ALL " + Keyword, MaxResults);
+    }
+    
+    [WebMethod]
+    public DataSet IXAdvancedQuery(string Query, int MaxResults)
+    {
+      if (MaxResults &lt; 5 || MaxResults &gt; 250)
+        throw new ArgumentOutOfRangeException("MaxResults", MaxResults, 
+			"Range is 5-250");
+
+      return PerformQuery(Query, MaxResults);
+    }
+</pre>
+
+<p>
+Einerseits ist das <i>KeywordSearch</i> und andererseits <i>IXAdvancedQuery</i>. Der Unterschied ist, da&szlig; erstere eine einfache
+Schl&uuml;sselwortsuche erlaubt, wohingegen die zweite die gesamte Suchsyntax des Index Servers bis hin zu Regular Expressions erlaubt,
+der Expertenmodus sozusagen. Beide Methoden checken die &uuml;bergebenen Parameter, und werfen n&ouml;tigenfalls Exceptions falls der Input
+nicht den Erwartungen entspricht ("All input is evil until proven otherwise"). Gemeinsam ist beiden der Aufruf von
+<i>PerformQuery</i>:
+</p>
+
+<pre style="background='silver';">
+    private DataSet PerformQuery(string strQuery, int nMaxResults)
+    {
+      Cisso.CissoQueryClass cqc = new Cisso.CissoQueryClass();
+      cqc.Catalog = CiCatalog;
+      cqc.MaxRecords = nMaxResults;
+      cqc.CiScope = CiScope;
+      cqc.CiFlags = CiFlags; 
+      cqc.Query = strQuery;
+      cqc.Columns = "Vpath,DocTitle,Characterization,Rank";
+      cqc.SortBy = "Rank[d]";
+
+      ADODB.Recordset rsIX = (ADODB.Recordset)cqc.CreateRecordset("nonsequential");
+
+      OleDbDataAdapter daConvertToDataset = new OleDbDataAdapter();
+      DataSet myDS = new DataSet();
+      daConvertToDataset.Fill(myDS, rsIX, "IXResults");
+      return myDS;
+    }
+</pre>
+
+<p>
+Diese Methode ist das "Arbeitstier" unseres Webservices. Es erstellt ein Objekt vom Typ <i>CissoQueryClass</i>, und weist
+alle Eigenschaften zu, die man f&uuml;r die Ausf&uuml;hrung der <i>CreateRecordset</i> Methode ben&ouml;tigt. In dieser Methode wird auch
+der Grund ersichtlich, warum wir den <i>System.Data.OleDb</i> Namespace eingebunden haben - der <i>OleDbAdapter</i> bietet
+eine performante M&ouml;glichkeit, ein ADO Recordset in ein ADO.NET DataSet umzuwandeln. Und dieses DataSet wird zum Client 
+geschickt, der es dann weiterverarbeiten kann.
+</p>
+
+<p>
+Bevor wir soweit sind, m&ouml;chte ich noch das eine oder andere Wort &uuml;ber das Deployment dieses Web Services verlieren. Abgesicherte
+Web Server eines Providers unterscheiden sich von den "weltoffenen" Entwicklungsmaschinen, die VS.NET installiert haben. Deshalb
+mu&szlig; man die <b>web.config</b> seinen Bed&uuml;rfnissen anpassen:
+</p>
+
+<pre style="background='silver';">
+&lt;?xml version="1.0" encoding="utf-8" ?&gt;
+&lt;configuration&gt;
+    
+  &lt;system.web&gt;
+    &lt;compilation 
+         defaultLanguage="c#"
+         debug="true"&gt;
+
+     &lt;assemblies&gt;
+        &lt;add assembly="Suche" /&gt;
+        &lt;add assembly="InterOp.Cisso" /&gt;
+	&lt;add assembly="ADODB"/&gt;
+     &lt;/assemblies&gt;
+
+    &lt;/compilation&gt;
+
+    &lt;customErrors mode="Off" /&gt; 
+
+
+    &lt;trace
+        enabled="false"
+        requestLimit="10"
+        pageOutput="false"
+        traceMode="SortByTime"
+		localOnly="true"
+    /&gt;
+
+ &lt;/system.web&gt;
+
+&lt;/configuration&gt;
+</pre>
+
+<p>
+Der wichtige Punkt hier ist der Abschnitt <i>assemblies</i> - hier definiert man, welche Assemblies in dieser Web Applikation
+geladen werden sollen. Klarerweise ben&ouml;tigt man die Assembly des Web Services. Ebenso wichtig sind aber auch die Assemblies
+f&uuml;r COM InterOp von IXSSO und ADODB. Die Assembly <b>adodb.dll</b> kann man aus dem GAC kopieren, sie ist im Download des 
+Web Services im <b>deploy</b> Folder mit dabei. Damit ist der Web Service lauff&auml;hig und kann verwendet werden.
+</p>
+
+<h2>Aufrufen des Web Services</h2>
+<p>
+Den ersten Test kann man nat&uuml;rlich online im Web Browser durchf&uuml;hren, indem man die Adresse
+</p>
+
+<pre style="background='silver';">
+http://www.aspheute.com/suche/aspheutesearch.asmx
+</pre>
+
+<p>
+eintippt. Damit gelangt man zur autogenerierten Seite des Webservices und kann beide Suchmethoden einmal durchtesten:
+</p>
+
+<IMG SRC="/artikel/Bilder/200211/20021107_4.png" width="784" height="330" alt="" border="0">
+
+<p>
+Interessanter ist nat&uuml;rlich ein vollst&auml;ndiger Client, der einige nette Features bieten kann:
+</p>
+
+<IMG SRC="/artikel/Bilder/200211/20021107_5.png" width="456" height="392" alt="" border="0">
+
+<p>
+Dieses Programm stellt Suchergebnisse in einer Listview dar. Klickt der Anwender auf einen Artikel, wird das Abstract angezeigt.
+Ist der Artikel interessant f&uuml;r den Benutzer, klickt er auf "View Article!", und das Programm l&auml;dt den Artikel im Internet Explorer
+(man k&ouml;nnte dies nat&uuml;rlich in einer weiteren Ausbaustufe in die Applikation integrieren).
+</p>
+<p>
+Der erste Schritt bei der Erstellung einer Clientapplikation ist es, den Web Service zu referenzieren, und zwar mittels Add
+Web Refernce:
+</p>
+
+<IMG SRC="/artikel/Bilder/200211/20021107_6.png" width="754" height="552" alt="" border="0">
+
+<p>
+Das Erstellen des User Interfaces wird nicht gezeigt, interessant hingegen ist der Code der ausgef&uuml;hrt wird, wenn
+der Benutzer auf den "Search!" Button in der Applikation klickt:
+</p>
+
+<pre style="background='silver';">
+    private void btnSearch_Click(object sender, System.EventArgs e)
+    {
+      string strKeyword = txtKeyword.Text;
+      AspHeute.AspHeuteSearch ahs = new AspHeute.AspHeuteSearch();
+      DataSet ds = ahs.KeywordSearch(strKeyword, 50);
+      DataTable dt = ds.Tables[0];
+
+      lvResults.BeginUpdate();
+      txtUrl.Text = "";
+      lvResults.Items.Clear();
+      foreach (DataRow dr in dt.Rows)
+      {
+        ListViewItem lvi = new ListViewItem();
+
+        // Vpath,DocTitle,Characterization,Rank -> order of columns in table
+        lvi.Text = dr[1].ToString(); 
+        lvi.SubItems.Add(dr[0].ToString());
+        lvi.SubItems.Add(dr[2].ToString());
+        lvResults.Items.Add(lvi);
+      }
+      lvResults.EndUpdate();
+
+      MessageBox.Show("Search is complete - " + 
+        dt.Rows.Count.ToString() + 
+        " results returned from search",
+        "Search AspHeute.com");
+  }
+</pre>
+
+<p>
+Der Aufruf des Services sind nur zwei Zeilen (zugegebenerma&szlig;en fehlt Exception Handling). Der Rest des Codes befasst sich mit
+dem Bef&uuml;llen der Listview basierend auf den Resultaten der Suche. Die Daten f&uuml;r URL und Abstract werden in unsichtbaren 
+SubItems der Listview versteckt - ausgelesen werden diese im <i>SelectedIndexChanged</i> Event:
+</p>
+
+<pre style="background='silver';">
+    private void lvResults_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      if (lvResults.SelectedItems.Count == 0) return;
+      ListViewItem lvi = lvResults.SelectedItems[0];
+      txtSummary.Text = lvi.SubItems[2].Text;  // show summary text
+      txtUrl.Text = lvi.SubItems[1].Text;      // define hyperlink of document
+    }
+</pre>
+
+<p>
+Bei <i>txtUrl</i> handelt es sich um eine versteckte Textbox, die dann auch zum Anzeigen des Artikels im Internet Explorer
+verwendet wird:
+</p>
+
+<pre style="background='silver';">
+    private void btnViewArticle_Click(object sender, System.EventArgs e)
+    {
+      if (txtUrl.Text != "")
+        Process.Start("http://www.aspheute.com" + txtUrl.Text);
+    }
+</pre>
+
+<p>
+F&uuml;r <i>Process.Start</i> ben&ouml;tigt man noch den <i>System.Diagnostics</i> Namespace, aber das war dann schon der gesamte Code
+f&uuml;r den Windows-Client f&uuml;r unseren Web Service. Der Client ist nat&uuml;rlich ausbauf&auml;hig: ein asynchroner Aufruf des Web Services
+w&auml;re w&uuml;nschenswert, ein Paging durch die Resultate, ein integrierter Web Browser, etc.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+F&uuml;r den Web Service gibt es einen Kritikpunkt in punkto Interoperabilit&auml;t: er liefert ein DataSet zur&uuml;ck, das an .NET gebunden
+ist. Hier sollte man auf ein Array von Result-Objekten umstellen, was nicht weiter schwierig ist - aber ein wenig Programmieraufwand
+bedeutet.
+</p>
+<p>
+Ein kleiner Performancetip am Ende - die Index Server Search Objects (IXSSO) erlauben Paging mittels Querystrings - dies kann
+die Performance des ganzen Web Services deutlich verbessern. Der Web Service m&uuml;&szlig;te nur dahingehend ver&auml;ndert werden, da&szlig; anstatt
+des MaxRecords Parameters ein String als "Bookmark" &uuml;bergeben wird, der diesen Querystring emuliert.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20021107.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20021107.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001116.htm">Das DataTable Objekt in ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001116.htm</span><br>
+<a href="../artikel/20020318.htm">Das using Schl&uuml;sselwort</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020318.htm</span><br>
+<a href="../artikel/20001102.htm">Datenbankzugriff mittels ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001102.htm</span><br>
+<a href="../artikel/20011122.htm">Einstellungssache - Applikationsdaten in web.config</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011122.htm</span><br>
+<a href="../artikel/20000724.htm">Exception Handling in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000724.htm</span><br>
+<a href="../artikel/20010403.htm">Objektbasierte Index Server Suche</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010403.htm</span><br>
+<a href="../artikel/20020415.htm">Programmieren mit den Google Web APIs Beta 2</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020415.htm</span><br>
+<a href="../artikel/20000828.htm">Verwenden von COM Komponenten in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000828.htm</span><br>
+<a href="../artikel/20010621.htm">Web Services 101 in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010621.htm</span><br>
+<a href="../artikel/20010622.htm">Web Services in Anwendungen konsumieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010622.htm</span><br>
+<a href="../artikel/20010802.htm">Web.Config 101</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010802.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2Fmspress%2Fbooks%2FWW%2Fsampchap%2F4072a%2Easp">Integrating Other Server-Side Technologies</a><br>
+<SPAN class="content">http://www.microsoft.com/mspress/books/WW/sampchap/4072a.asp</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

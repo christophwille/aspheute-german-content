@@ -1,0 +1,408 @@
+<HTML>
+<HEAD>
+<TITLE>Datenaufbereitung in ADO.NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel lernen Sie wie man in ADO.NET Daten einer Datenbank für den Client mithilfe von dem ADODataReader oder mit DataBind bzw. DataGrid strukturiert und optisch ansprechend im Browser darstellt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,DataBind,DataGrid,ADO.NET,ADO dot net,.NET,Framework,SDK,ASP.NET,DataReader,DataSet,DataSetCommand">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Datenaufbereitung in ADO.NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ADOdotNET.htm">ADO.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001106"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+In diesem Artikel lernen Sie wie man in ADO.NET Daten einer Datenbank f&uuml;r den Client strukturiert und
+optisch ansprechend darstellt. Sie werden zwei M&ouml;glichkeiten kennen lernen - n&auml;mlich den <i>OleDbDataReader</i> sowie die
+Verwendung von <i>DataBind</i> und die Visualisierung der Daten mit der <i>DataGrid</i> Web Control. Mit diesen zwei M&ouml;glichkeiten
+k&ouml;nnen Sie die zur&uuml;ckgegebenen Daten aus einer Datenbank einfachst mit ADO.NET aufbereitet im Webbrowser darstellen.
+Anhand von Beispielen werden wir den Syntax besprechen und die Vor- und Nachteile in der Anwendung dieser
+kennenlernen.
+</p>
+
+<p>
+Beachten Sie, da&szlig; dieser Artikel auf einigen Artikeln aufbaut. Damit Sie so schnell wie m&ouml;glich zum gew&uuml;nschten
+Erfolg kommen, habe ich den Sourcecode der Beispiele in jedem dieser Artikel Schritt f&uuml;r Schritt erweitert.
+Daher ist es ratsam, falls Sie neu auf dem Gebiet sind, die folgenden Artikel vorher durchzustudieren:
+</p>
+
+
+<ul>
+<li><a href="../artikel/20001023.htm">Das SQL Join Statement</a>
+<li><a href="../artikel/20001031.htm">Was ist neu in ADO.NET</a>
+<li><a href="../artikel/20001102.htm">Datenbankzugriff mittels ADO.NET</a>
+</ul>
+
+<p>
+Da der Sourcecode der Beispiele in <a href="../kategorien/Csharp.htm">C#</a> geschrieben ist, sollten Sie
+grundlegende Kenntnisse &uuml;ber diese Programmiersprache haben - es finden sich dazu nat&uuml;rlich etliche Artikel
+bei <a href="../kategorien/Csharp.htm">AspHeute</a>, die Ihnen das notwendige Wissen vermitteln. 
+</p>
+
+<p>
+Wenn Sie den Beispiel-Sourcecode (im Download <i>20001106.zip</i>) selbst ausprobieren m&ouml;chten, so ben&ouml;tigen
+Sie die Datenbanksoftware Microsoft SQL Server 7.0 (oder h&ouml;her). Die Beispiele verwenden die folgende 
+Zugangsberechtigung (Username / Password): <i>uid=sa; pwd=;</i>. Als Beispieldatenbank habe ich die <i>Northwind</i>
+Datenbank herangezogen. Diese ist standardm&auml;&szlig;ig in den Beispieldatenbanken des SQL Servers enthalten. Wenn
+die SQL Server Datenbank nicht auf dem lokalen Computer (dem Webserver) installiert ist, so m&uuml;ssen Sie zus&auml;tzlich
+den <i>Data Source</i> Parameter im <i>Connection-String</i> auf den Namen (oder die IP Adresse) des 
+Datenbankservers &auml;ndern.
+</p>
+
+<p>
+Weiters ist zu beachten, da&szlig; wie immer bei unseren ASP.NET Artikeln, Sie nur dann vom downloadbaren Sourcecode 
+profitieren k&ouml;nnen, wenn Sie das Microsoft .NET Framework SDK auf einem Webserver installiert haben. 
+Damit werden auf diesem Webserver ASP.NET Seiten ( .aspx ) ausf&uuml;hrbar. 
+</p>
+
+<h2>Der OleDbDataReader</h2>
+
+<p>
+Die <i>OleDbDataReader</i> Klasse bietet Ihnen eine einfache und resourcenschonende M&ouml;glichkeit um Daten am
+Webbrowser darzustellen. Der <i>OleDbDataReader</i> liefert Ihnen einen <i>read-only</i>, <i>forward-only</i> Stream der instanzierten
+Verbindung einer Datenquelle. Der OleDbDataReader wird durch die <i>Execute</i> Methode des <i>OleDbCommand</i>
+Objektes ausgef&uuml;hrt. Im Gegensatz zur Verwendung des <i>DataTables</i> der auf den gesamten Inhalt des Streams
+zugreift und dieser im Speicher ablegt ist, iteriert der DataReader stattdessen durch jede einzelne Datenreihe. 
+</p>
+
+<p>
+Somit liegt der Hauptvorteil seiner Verwendung in der Geschwindigkeit der Ausgabe und der geringere 
+Webserver Resourcenaufwand. Dies kann bei den ohnehin schon limitierten Webserver Resourcen bei z.B. einigen
+1000 Datenreihen zum Vorteil werden.
+</p>
+
+<p>
+Der DataReader findet also durch seine Eigenschaften (<i>read-only</i>, <i>forward-only</i> Stream) dort Anwendung
+wo Sie nur Daten am Browser ausgeben wollen und nicht n&auml;chtr&auml;glich bearbeiten wollen bzw. m&uuml;ssen. Zus&auml;tzlich ist noch 
+folgendes zu beachten:
+</p>
+
+<p>
+<li>W&auml;hrend der OleDbDataReader aktiv ist, beansprucht er die referenzierte <i>OleDbConnection</i> zur G&auml;nze
+f&uuml;r sich. Das soll hei&szlig;en, da&szlig; Sie keine anderen Operationen mit der vom DataReader ben&uuml;tzten Connection
+durchf&uuml;hren k&ouml;nnen, solange Sie nicht die <i>Close</i> Methode des DataReaders aufrufen. Danach steht Ihnen die
+Verbindung wieder zur Verf&uuml;gung.
+</p>
+
+<li>Die OleDbDataReader Klasse ist nicht vererbbar
+<li>Sie m&uuml;ssen streng die Syntaxrichtlinien bzw. die Reihenfolge der Statements einhalten
+
+<p>
+Wie nun die richtige Reihenfolge aussieht, m&ouml;chte ich Ihnen im folgenden minimal Beispiel demonstrieren. Sie finden
+es im Dowload unter der Bezeichnung <i>SQLDataReader.aspx</i>:
+</p>
+
+<pre style="background='silver';">
+// Namespace Referenzen
+
+&lt;script language=C# runat="server"&gt;
+void Page_Load(Object Src, EventArgs E)
+{
+  // Deklaration des Connection Strings
+  // Deklaration des SQL-Statement Strings
+  
+  SqlConnection MyNWConn = new SqlConnection(strConn);
+  SqlCommand MySqlCmd = new SqlCommand(strSQL, MyNWConn);  
+
+  MyNWConn.Open();
+  SqlDataReader MySqlReader = MySqlCmd.ExecuteReader();
+  while (MySqlReader.Read())
+  {
+    Response.Write(MySqlReader["Productname"].ToString());
+  }
+  
+  MySqlReader.Close(); 
+  MyNWConn.Close();
+}
+&lt;/script&gt;
+</pre>
+
+<p>
+Wie immer mu&szlig; zuerst auf die ben&ouml;tigten Namespaces referenziert werden. Mit der <i>Page_Load</i> Methode
+weisen wir die Runtime daraufhin, diesen Codeblock beim Seitenaufruf ablaufenzulassen. Wir deklarieren danach
+den <i>Connection</i> String sowie den <i>SQL-Statement</i> String damit der DataReader auch was zutun hat. Nachdem
+nun alle Voraussetzungen getroffen sind, k&ouml;nnen wir nun &quot;Kontakt&quot; zur Datenbank aufnehmen.
+</p>
+
+<p>
+Bis hierher nichts Neues. Jetzt wirds aber spanned! Bevor wir die <i>Execute</i> Methode aufrufen k&ouml;nnen,
+brauchen wir f&uuml;r diese Methode ein Objekt als Parameter. Dieses Objekt ist nat&uuml;rlich der <i>DataReader</i> und geben ihm
+einen &quot;sinnvollen&quot; Namen. <i>MySqlReader</i> ist zwar nicht sonderlich aufregend, hat aber Wiedererkennungswert
+bei sp&auml;teren m&ouml;glichen Problemen. Wenn also etwas schiefgehen sollte, und die Compilermeldung enth&auml;lt diesen Namen,
+dann wei&szlig; man oft was los ist.
+</p>
+
+<p>
+Da wir nun das SqlDataReader Objekt mit dem Namen <i>MySqlReader</i> erstellt haben, k&ouml;nnen wir sofort die 
+<i>Execute</i> Methode anwenden. Da der DataReader jedoch nur <i>eine</i> Reihe auf einmal ausgibt, m&uuml;ssen wir
+uns mit dem simplen <i>while</i> Statement abhelfen. Solange der DataReader Datens&auml;tze einlesen kann arbeitet er
+(siehe Condition im while-Statement) und h&ouml;rt auf wenn es nichts mehr zu tun gibt.
+</p>
+
+<p>
+Das ist sehr praktisch, und wir brauchen somit am Ende des Auslesens nur die nicht mehr ben&ouml;tigten Resourcen wieder freigeben.
+Das Ergebnis des oben besprochenen Codes sieht dann im Browser folgenderma&szlig;en aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200011/20001106_1.png" width="421" height="344" alt="" border="0">
+
+<p>
+Sobald Sie diesen Screenshot sehen, fragen Sie sich sicher &quot;Was ist daran &uuml;bersichtlich -
+alles in einer Wurscht!&quot; Zurecht! Man bedenke, da&szlig; ich hier nur eine Datenspalte ausgegeben habe und
+durch ein spezifisches SQL-Statement das Resultat schon eingeschr&auml;nkt habe. Ich glaube, da&szlig; die <i>Northwind</i>
+Datenbank gro&szlig; genug ist, um mit einem <i>SELECT *</i> das gesamte Browserfenster zukleistern zu k&ouml;nnen.
+</p>
+
+<p>
+Daher werden wir nat&uuml;rlich den Sourcecode verbessern m&uuml;ssen.
+</p>
+
+<h3>M&ouml;glichkeiten der Strukturierung</h3>
+
+<p>
+Nichts leichter als das! Diesmal geben wir alle Datenspalten des SQL-Staments aus und formatieren die
+gewonnen Daten mithilfe eines ganz gew&ouml;hnlichen HTML Tables. Trivial, aber einfach und brauchbar.
+</p>
+
+<p>
+Diese Verbesserung des vorigen Sourcecodes sehen Sie nun folgend, und Sie finden den gesamten im Download in der Datei
+<i>SqlDataReader_WellFormed.aspx</i> (die Unterstriche/Underscores bei manchen Sourcecodezeilen dienen lediglich als <i>Zeilenumbruch</i>
+um diese Seite passend darzustellen zu k&ouml;nnen!):
+</p>
+
+
+<p>
+<pre style="background='silver';">
+...
+Response.Write("&lt;table cellspacing=\"2\" cellpadding=\"2\" border=\"2\"&gt;");
+  Response.Write("&lt;tr&gt;&lt;th&gt;Produktname&lt;/th&gt;&lt;th&gt;Firma&lt;/th&gt;&lt;th&gt; _
+  St&uuml;ckpreis (USD)&lt;/th&gt;&lt;/tr&gt;");
+  while (MySqlReader.Read()) {
+    Response.Write("&lt;tr&gt;");
+    Response.Write("&lt;td&gt;" + MySqlReader["Productname"].ToString() + "&lt;/td&gt;");
+    Response.Write("&lt;td&gt;" + MySqlReader["CompanyName"].ToString() + "&lt;/td&gt;");
+    Response.Write("&lt;td align=\"center\"&gt;" + MySqlReader["UnitPrice"].ToString() _
+	 + "&lt;/td&gt;");
+    Response.Write("&lt;/tr&gt;");
+  }
+  Response.Write("&lt;/table&gt;");
+...
+</pre>
+</p>
+
+<p>
+Wie Sie nun feststellen wirklich nichts aufregendes aber wirkungsvoll (siehe n&auml;chsten Screenshot)!
+</p>
+
+<IMG SRC="/artikel/Bilder/200011/20001106_2.png" width="450" height="404" alt="" border="0">
+
+<p>
+Beachten Sie bitte, da&szlig; Sie nat&uuml;rlich die <i>doppelten Anf&uuml;hrungszeichen</i> der HTML Tags mit <i>\&quot;</i>
+maskieren m&uuml;ssen, denn <i>Response.Write</i> und der Rest des Codes reagieren etwas bockig, wenn Sie dies
+unterlassen.
+</p>
+
+<p>
+Es gibt in gewissen Situationen immer M&ouml;glichkeiten wie man es besser, schneller und einfacher machen kann.
+So auch hier. Wenn Sie zum Beispiel sehr viele Datenspalten anzeigen wollen, schafft man sich mit dem folgenden
+Codebeispiel Abhilfe (<i>SQLDataReader_WellFormedNEU.aspx</i>):
+</p>
+
+<p>
+<pre style="background='silver';">
+Response.Write("&lt;table cellspacing=\"2\" cellpadding=\"2\" border=\"2\">");
+  Response.Write("&lt;tr&gt;&lt;th&gt;Produktname&lt;/th&gt;&lt;th&gt;Firma&lt;/th&gt; _
+    &lt;th&gt;St&uuml;ckpreis (USD)&lt;/th&gt;&lt;/tr&gt;");
+  while (MySqlReader.Read()) {
+    Response.Write("&lt;tr&gt;");
+      
+      for (int i=0; i &lt; 3; i++) { 
+         Response.Write("&lt;td&gt;" + MySqlReader.GetValue(i) + "&lt;/td&gt;");
+      }
+    Response.Write("&lt;/tr&gt;");
+  }
+  Response.Write("&lt;/table&gt;");  
+</pre>
+</p>
+
+<p>
+Zugegeben eine brutale Methode, aber bei vielen Datenspalten spart man sich einige Schreib- bzw. Kopier-
+und Ausbesserungsarbeit. Einfach im <i>for</i>-Statement die richtige Anzahl der Datenspalten angeben
+(sonst hagelts Exceptions) und man hat mit diesen zwei einfachen Codezeilen ganze Arbeit geleistet.
+</p>
+
+<p>
+Da aber so wie hier eine Datenbank selten immer den gleichen Datentyp in den einzelen Datenspalten verwendet,
+mache ich Gebrauch von der <i>GetValue</i> Methode um <i>Casting Exceptions</i> sicher aus dem Wege zu gehen.
+Die &quot;overloaded&quot; <i>GetValue</i> Methode sorgt daf&uuml;r, da&szlig; alle gew&uuml;nschten Daten, egal welchen
+Datentyps, zur&uuml;ckgegeben werden. Brutal, aber da der Stream sowieso <i>forward-only</i> und <i>read-only</i>
+ist, ist diese Methode verzeihbar.
+</p>
+<p>
+Nat&uuml;rlich unterst&uuml;tzt der DataReader auch andere <i>Get</i> Methoden, wie <i>GetString</i>, <i>GetDataTime</i>, <i>GetDouble</i>,
+<i>GetInt32</i>, etc.
+</p>
+
+<p>
+Was aber, wenn die obigen Voraussetzungen f&uuml;r den DataReader nicht zutreffen; z.B. Sie m&ouml;chten die Daten 
+aus der Datenbank sp&auml;ter noch Manipulieren. Daf&uuml;r gibt es folgende M&ouml;glichkeit:
+</p>
+
+<h2>Die Verwendung von DataBind und DataGrid</h2>
+
+<p>
+<i>DataBind</i> verwenden Sie in Zusammenhang mit einem zuvor bef&uuml;llten <i>DataSet</i> (siehe 
+<a href="../artikel/20001102.htm">Datenbankzugriff mittels ADO.NET</a>). Das 
+<i>disconnected DataSet</i> beinhaltet eine im Speicher abgelegte Kopie eines Datenbankinhaltes einer
+oder mehrerer Datenbanken. Daher m&uuml;ssen Sie auch zuerst das <i>DataSet</i> Objekt instanzieren um es 
+danach mit der <i>Fill</i> Methode des <i>OleDbDataAdapter</i> Objektes bef&uuml;llen zu k&ouml;nnen.
+</p>
+
+<p>
+Mit <i>DataBind</i> k&ouml;nnen Sie einer <i>DataGrid</i> Web Control Daten zuweisen. Die <i>DataGrid</i>
+Web Control ist f&uuml;r die Aufbereitung der Daten zust&auml;ndig, und enth&auml;lt ein umfangreiche Formatoptionen.
+</p>
+
+<p>
+Das n&auml;chste Sourcecodebeispiel zeigt die Bef&uuml;llung eines <i>DataSets</i>, sowie die Verwendung von
+<i>DataBind</i> und <i>DataGrid</i> (<i>DataBindnGrid.aspx</i>):
+</p>
+
+
+<p>
+<pre style="background='silver';">
+// Namspace Referenzen, Deklarationen, etc.
+...
+  DataSet MyDataSet = new DataSet();
+  SqlDataAdapter oCommand = new SqlDataAdapter(strSQL,MyNWConn);
+  
+  oCommand.Fill(MyDataSet,"Lieferanten");
+
+  MyNWConn.Close();
+
+  MyDG.DataSource = MyDataSet.Tables["Lieferanten"].DefaultView;
+  MyDG.DataBind();
+}
+&lt;/script&gt;
+
+&lt;html&gt;
+&lt;body&gt;
+
+  &lt;form runat="server"&gt;
+    &lt;asp:DataGrid id="MyDG" runat="server"
+      Width="700"
+      BorderColor="black"
+      CellPadding="2" 
+      CellSpacing="2"
+      HeaderStyle-BackColor="#f8d07a"
+    /&gt;
+
+  &lt;/form&gt;
+  
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</p>
+
+<p>
+Das Ergebnis sieht dann im Browser (mit den angewandten Formatoptionen) so aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200011/20001106_3.png" width="448" height="404" alt="" border="0">
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Nachdem Sie sicherlich alle angef&uuml;hrten Artikel gelesen haben, haben Sie somit einen einfachen und 
+sicheren Einstieg in ADO.NET erhalten. Sie k&ouml;nnen nun in ADO.NET Connections zu Datenbanken &ouml;ffnen und zumindest die
+gewonnenen Daten &uuml;bersichtlich am Browser darstellen. Sie haben die Option die Daten mit Hilfe eines
+read-only und forward-only Streams (<i>DataReader</i>) auszulesen und z.B. mit einem einfachen HTML Table strukturiert
+darzustellen.
+</p>
+
+<p>
+Oder falls Sie die Daten auch nach dem Auslesen manipulieren m&ouml;chten, schreiben Sie die Daten in ein 
+disconnected <i>DataSet</i>. Dann k&ouml;nnen diese nach Schlie&szlig;en der aktiven Verbindung bzw. der Resourcenfreigabe
+ausgeben oder auch weiter bearbeiten (<i>DataBind</i> bzw. <i>DataGrid</i>).
+</p>
+
+<p>
+Das ist aber nur ein sehr, sehr kleiner Ausschnitt von dem was ADO.NET alles kann. Wie Sie den Artikeln schon entnehmen
+k&ouml;nnen, ist ADO.NET um einiges verst&auml;ndlicher und strukturierter als die vorigen Versionen ADO.
+ADO.NET bietet einen riesigen Funktionsumfang, bleibt aber programmiertechnisch klar strukturiert und
+relativ einfach erlernbar - der Umstieg auf bzw. der Einsatz von ADO.NET lohnt sich auf jeden Fall!
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001106.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20001106.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001116.htm">Das DataTable Objekt in ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001116.htm</span><br>
+<a href="../artikel/20001023.htm">Das SQL Join Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001023.htm</span><br>
+<a href="../artikel/20001102.htm">Datenbankzugriff mittels ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001102.htm</span><br>
+<a href="../artikel/20020206.htm">Der ODBC .NET Data Provider</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020206.htm</span><br>
+<a href="../artikel/20040317.htm">Eintr&auml;ge numerieren im DataGrid</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040317.htm</span><br>
+<a href="../artikel/20000717.htm">Schleifenbefehle in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000717.htm</span><br>
+<a href="../artikel/20010626.htm">Stored Procedures 101 in ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010626.htm</span><br>
+<a href="../artikel/20001031.htm">Was ist neu in ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001031.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

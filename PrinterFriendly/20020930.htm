@@ -1,0 +1,576 @@
+<HTML>
+<HEAD>
+<TITLE>Tee Off - Das erste ASP Golf Turnier</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Den Perl Programmierern sind Golfturniere bereits ein Begriff, und seit kurzem geh&ouml;ren auch die ASP Programmierer zu den begeisterten Code-Golfern: wer eine vorgegebene Aufgabe mit den wenigsten Schl&auml;gen l&ouml;st, der hat das Turnier gewonnen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Golf,Golfturnier,Tee Off,Abschlag,Drive,Slice,Codeturnier,Wettkampf,ASP Golf,ASP.NET Golf,Code Golf">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Tee Off - Das erste ASP Golf Turnier</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Tee%20Off.htm">Tee Off</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020930"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Den Perl Programmierern sind Golfturniere bereits ein Begriff, und seit kurzem geh&ouml;ren auch die ASP Programmierer zu
+den begeisterten Code-Golfern: wer eine vorgegebene Aufgabe mit den wenigsten Schl&auml;gen (Zeichen in einer ASP Datei) l&ouml;st,
+der hat das Turnier gewonnen. Unser erstes Turnier hat gleich eine ganze Zahl von Cracks auf den Platz gelockt, sehen Sie
+selbst...
+</p>
+<p>
+Die Golfturniere werden in der <a href="http://www.aspgerman.com/aspgerman/listen/anmelden/aspDEgolf.asp" target="_blank">ASP Golf Liste</a>
+von <a href="http://www.aspgerman.com/" target="_blank">AspGerman</a> abgehalten. Die Regeln sind einfach aber effektiv:
+</p>
+
+<ul>
+<li>Der Code mu&szlig; lauff&auml;higes ASP Script sein.
+<li>Die erlaubten Programmiersprachen sind: VBScript only.
+<li>Das Programm darf aus einer oder mehreren Zeilen bestehen. Gez&auml;hlt wird die Anzahl der Bytes des Programmes 
+	(Zeilenumbr&uuml;che kosten somit auch Bytes). Die Anzahl der Zeilen flie&szlig;t nicht in die Bewertung ein.
+<li>Verwendung externer Komponenten au&szlig;er solchen die im Betriebssystem ausgeliefert werden (zB CDONTS) ist nicht erlaubt.
+<li>L&ouml;sungsvorschl&auml;ge werden an den jeweiligen Turnierleiter gemailt, und nicht in die Liste gepostet.
+<li>Jeder kann so oft er will einen L&ouml;sungsvorschlag vor Turnierende einschicken. Der Turnierleiter gibt immer den aktuell 
+	besten Bytecount bekannt, man wei&szlig; also, nach welcher "Deckenh&ouml;he" man sich strecken (oder ducken) mu&szlig;.
+</ul>
+
+<p>
+Nat&uuml;rlich kann es auch vorkommen, da&szlig; eine eingeschickte L&ouml;sung nicht den Anforderungen entspricht - dann wandert die L&ouml;sung
+in den sprichw&ouml;rtlichen Bunker (aus dem man sich jederzeit mit einer neuen L&ouml;sung wieder befreien kann). Die Turnierleiter
+waren <a href="../autoren/christophwille.htm">Christoph Wille</a> und 
+<a href="../autoren/bernhardspuida.htm">Bernhard Spuida</a>, beides Autoren von AspHeute.
+</p>
+
+<h2>Aufgabenstellung und Musterl&ouml;sung</h2>
+<p>
+Beginnen wir mit der Aufgabenstellung: "Es ist eine Liste von allen Zahlen zu erzeugen, die in einem
+bestimmten Bereich liegen und einem vorgegebenen Muster/Format entsprechen. Der Bereich ist definiert
+durch eine untere und obere Grenze, z.B. 2345 und 36456. Das Format ist 5-stellig und besteht aus den
+Buchstaben a bis e, z.B. "aabbc". Die abzugebende Datei entnimmt die Aufgabenstellung aus <i>Application("input")</i>,
+das ein drei-elementiges Array mit unterer Grenze, oberer Grenze und Format enth&auml;lt und schreibt die L&ouml;sung
+als String-Array in <i>Application("output")</i>. Das Ergebnis-Array mu&szlig; nicht sortiert sein."
+</p>
+<p>
+Beispiel:
+</p>
+<pre style="background='silver';">
+Aufgabe: Application("input") = Array(89,12123,"aaabb")
+L&ouml;sung: Application("output") = Array("00099","11100","11111","11122","11133", _
+                                           "11144","11155","11166","11177","11188","11199")
+</pre>
+
+
+
+<p>
+Die Musterl&ouml;sung (<b>Musterloesung.asp</b>) gibt neben der Erf&uuml;llung der eigentlichen Aufgabe auch noch die errechneten
+Zahlen aus:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+dim arr,start,ende,form
+arr = Application("input")
+start = arr(0)
+ende = arr(1)
+form = arr(2)
+dim a,b,c,d,e,f,loes,n,loesAr
+set loes = server.CreateObject("Scripting.Dictionary")
+Response.Write "&lt;br&gt;&lt;b&gt;"
+for a=0 to 9:for b=0 to 9:for c=0 to 9:for d=0 to 9:for e=0 to 9
+        n=replace(replace(replace(replace(replace(form,"a",a),"b",b),"c",c),"d",d),"e",e)
+        if (clng(n)&gt;=start) and (clng(n)&lt;=ende) then
+                if not loes.Exists(n) then
+                        loes(n) = 1
+                        Response.Write n&amp;"&lt;br&gt;"
+                end if
+        end if
+next:next:next:next:next
+Response.Write "&lt;/b&gt;"
+loesAr = loes.Keys
+Application("output") = loesAr
+%&gt;
+</pre>
+
+<p>
+Sehen wir uns die L&ouml;sungen der Golf-Cracks an, was sie aus 609 Bytes gemacht haben.
+</p>
+
+<h2>Die L&ouml;sungen der Turnierteilnehmer</h2>
+<p>
+Bevor wir zu den L&ouml;sungen kommen, m&ouml;chte ich den Endstand am Leaderboard des Golfturniers pr&auml;sentieren:
+</p>
+
+<ol>
+<li>Platz Wolfgang Kluge: 179
+<li>Platz Alexander Veit: 180
+<li>Platz Roman Pittroff: 181
+<li>Platz Alexander Schoeppl: 185
+<li>Platz Gerhard Buchner: 209
+<li>Platz Heiko Richler: 215
+<li>Platz Claudius Ceteras: 216
+<li>Platz Andreas Roth: 220
+<li>Platz Nils Kochan: 239
+</ol>
+
+<p>
+Pr&auml;sentiert werden die L&ouml;sungen in umgekehrter Reihenfolge, basierend auf den Post Mortem Einsendungen (ohne Erkl&auml;rung
+w&auml;re der Sourcecode nicht verst&auml;ndlich) der Teilnehmer. Und nun auf zum Abschlag!
+</p>
+
+<h3>9 - Nils Kochan, 239 Schl&auml;ge</h3>
+<p>
+Die L&ouml;sung von Nils sieht so aus (zur leichteren Lesbarkeit in mehrere Zeilen aufgegliedert, Originalfile ist
+<b>NilsKochan.asp</b>)
+</p>
+<pre style="background='silver';">
+&lt;%b=Application("input")
+for i=b(0)to b(1)
+  e=string(5-len(i),48)&amp;i
+  d=0
+  for j=1to 5
+    for k=1to j
+      if mid(b(2),j,1)=mid(b(2),k,1)and mid(e,j,1)&lt;&gt;mid(e,k,1)then d=1
+    next
+  next
+  if d=0then c=c&amp;","&amp;e
+next
+Application("output")=split(mid(c,2),",")%&gt;
+</pre>
+<p>
+Der Gedanke war, die Zahlen aus dem Bereich mit dem Muster zu vergleichen.
+Dabei wurde in dem JoJo in der Mitte der <i>For...Next</i> Schleifen einfach nach doppelten
+Zeichen im Muster gesucht. Waren dort welche vorhanden, m&uuml;&szlig;en an den gleichen
+Positionen die Ziffern in der Zahl (schon zum String gewandelt) auch gleich sein.
+War das nicht der Fall wurde d auf 1 gesetzt und die Zahl war rausgefallen.
+</p>
+<p>
+Mein Dozent in Software Engineering hat gro&szlig;en Wert darauf gelegt,
+nicht trickreich zu programmieren. Er w&auml;re heute stolz auf mich ;-).
+Damit kann man aber beim Golfen nicht im Mittelfeld oder gar auf den vorderen
+Pl&auml;tzen landen. Deshalb werde ich heimlich von eurem Code etwas in meine Trickkiste
+stecken (f&uuml;r das n&auml;chste Turnier).
+</p>
+<p>
+In dem Bunker war ich gelandet, weil ich beim letzten <i>Split</i> nicht an das f&uuml;hrende
+Komma gedacht hatte. (<i>Kommentar der Spielleitung</i>: tja, so eine kleine Unachtsamkeit und schon liegt man im Bunker...)
+Seit heute morgen wei&szlig; ich aber, wie man soetwas viiieeel eleganter macht.
+</p>
+
+<h3>8 - Andreas Roth, 220 Schl&auml;ge</h3>
+<p>
+Die L&ouml;sung von Andreas sieht so aus (zur leichteren Lesbarkeit in mehrere Zeilen aufgegliedert, Originalfile ist
+<b>AndreasRoth.asp</b>)
+
+<pre style="background='silver';">
+&lt;%Set V=Application
+A=V("input")
+For B=A(0)To A(1)
+Y=right("0000"&amp;B,5)
+O=1
+For C=1To 5
+D=mid(A(2),C,1)
+G=mid(Y,C,1)
+I=I&amp;D&amp;G
+O=O And Mid(I,InStr(I,D)+1,1)=G
+Next
+I=0
+If O Then T=T&amp;" "&amp;Y
+Next
+V("output")=split(mid(T,2))%&gt;
+</pre>
+
+<p>
+Mein Ansatz ist es, alle Zahlen durchzugehen, und alle Zahlen auf die G&uuml;ltigkeit mit dem Muster zu vergleichen.
+</p>
+
+<p>
+<i>&lt;%Set V=Application</i><br>
+Zeile 1: Ich er&ouml;ffne ASP Code (&lt;%) und, um sp&auml;ter Platz zu sparen, setze ich erst einen Zeiger
+auf das Application-Objekt,
+</p>
+<p>
+<i>A=V("input")</i><br>
+Zeile 2: Und referenziere das Input Array in eine weitere Variable
+</p>
+<p>
+<i>For B=A(0)To A(1)</i><br>
+Zeile 3: Eine Schleife die alle Zahlen zwischen Start und Ende einmal (in B) zur&uuml;ckgibt
+</p>
+<p>
+<i>Y=right("0000"&amp;B,5)</i><br>
+Jetzt lasse ich mir die Zahl im erforderlichen Format (5 Stellig mit f&uuml;hrenden Nullen als String) geben
+</p>
+<p>
+<i>O=1</i><br> 
+Zeile 5: Indem ich der Variablen O den Wert 1 zuweise ist sie aus VB Boolean Sicht: "nicht false "(0), also True, 
+mit dieser Variablen wird sp&auml;ter die G&uuml;ltigkeit gegengerechnet.
+</p>
+<p>
+<i>For C=1To 5</i><br>
+Zeile 6: Jetzt er&ouml;ffne ich eine 2. Schleife, die die 5 Stellen der Zahl der Reihe nach durchgeht
+</p>
+<p>
+<i>D=mid(A(2),C,1)</i><br>
+Zeile 7: Der aktuelle Buchstabe aus dem Muster wird geholt
+</p>
+<p>
+<i>G=mid(Y,C,1)</i><br>
+Zeile 8: Die aktuelle Ziffer aus der aktuellen Zahl wird geholt.
+</p>
+<p>
+<i>I=I&amp;D&amp;G</i><br>
+Zeile 9: Beides wird hintereinander an eine Variable angef&uuml;gt die f&uuml;r jede Zahl in Zeile 12 wieder zur&uuml;ckgesetzt wird
+</p>
+<p>
+<i>O=O And Mid(I,InStr(I,D)+1,1)=G</i><br>
+Zeile 10: der  eigentliche Trick bei der Sache. Von innen nach au&szlig;en: <i>Instr()</i> gibt immer das erste Vorhandensein
+eines Teilstrings. Hier &uuml;berpr&uuml;fe ich das erste Auftreten des aktuell getesten Buchstabens. Direkt daneben steht 
+ja die Ziffer, die diesem Buchstaben als erstes zugewiesen wurde. Also lasse ich mir den mit <i>Mid()</i> Buchstaben aus 
+dem in Zeile 9 zusammengesetzten String geben, und teste, ob er der aktuellen Ziffer entspricht. Ein Vergleich gibt 
+einen Boolean zur&uuml;ck, und um diese nicht mit If nutzen zu m&uuml;ssen, was viel Platz kostet, weise ich der boolschen 
+Variable aus Zeile 5 das Ergebnis der logischen Operation und das Ergebnis des Vergleichs zu 
+(zB:O=O AND true). Dies ist nur dann Wahr, wenn beide Variablen Wahr sind. Ist O also aus einem
+fr&uuml;heren Vergleich falsch, oder der aktuelle Vergleich ist nicht wahr. Trifft der Vergleich also einmal nicht zu, 
+ist O falsch.
+</p>
+<p>
+<i>Next</i><br>
+Zeile 11: Die n&auml;chste Ziffer wird kontrolliert
+</p>
+<p>
+Zeile 12: <i>I=0</i><br>
+I, das die Buchstaben / Zahlen Kombinationen f&uuml;r den Vergleich enth&auml;lt, wird wieder zur&uuml;ckgesetzt. Um zu sparen 
+nicht mit einem Leersting ("") sondern mit einer Ziffer. Es wird ja nach dem ersten Auftreten eines Buchstabens 
+gesucht, soda&szlig; eine Ziffer am Anfang nicht weiter st&ouml;rt.
+</p>
+<p>
+Zeile 13: <i>If O Then T=T&amp;" "&amp;Y</i><br>
+Wenn O nach dem ganzen Prozedere noch immer Wahr ist, entsprach der Vergleich dem Muster der Buchstaben, und die 
+Zahl wird zusammen mit einem anf&uuml;hrenden Lehrzeichen an ein String angeh&auml;ngt, der die Ergebnisse enth&auml;lt
+</p>
+<p>
+Zeile 14: <i>Next</i><br>
+Die n&auml;chste Zahl wird untersucht
+</p>
+<p>
+Zeile 15: <i>V("output")=split(mid(T,2))</i>%&gt;<br>
+Nachdem nun alle Zahlen ausortiert und in den String T geschrieben wurden, wird der erste Buchstabe ignoriert 
+(mid(T,2) =&gt; alles von Tab dem 2. Zeichen) und anhand des Leerzeichens (Der Defaultwert, wenn kein anderer 
+Buchstabe angegeben wurde) mit Split ein Array generiert, das dem Zeiger auf das Application Object, 
+Variable("output") &uuml;bergeben wird.
+</p>
+
+<p>
+<i>Kommentar der Spielleitung</i>: bravur&ouml;s - ein gekonnter Slice um den Bunker herum. Weiter so!
+</p>
+
+<h3>7 - Claudius Cetera, 216 Schl&auml;ge</h3>
+<p>
+Die L&ouml;sung von Claudius sieht so aus (zur leichteren Lesbarkeit in mehrere Zeilen aufgegliedert, Originalfile ist
+<b>ClaudiusCeteras.asp</b>)
+</p>
+<pre style="background='silver';">
+&lt;%set x=Application
+y=x("input")
+for k=10^5to 10^6
+n=right(k,5)
+m=y(2)
+for i=1to 5
+m=replace(m,mid(y(2),i,1),mid(n,i,1))
+next
+if m+0&gt;=y(0)and m+0&lt;=y(1)and instr(z,m)=0then z=z&amp;" "&amp;m
+next
+x("output")=split(mid(z,2))%&gt;
+</pre>
+<p>
+Der Algorithmus basiert darauf alle im Formatstring vorkommenden Buchstaben durch alle m&ouml;glichen Kombinationen von
+0 bis 9 zu ersetzen. Da dies mit Replace geschieht, wird automatisch dem Format gehorcht. Tricks:
+</p>
+<p>
+<b>1</b> Zeilenumbr&uuml;che = CR
+</p>
+<p>
+<b>2</b> Folgender Block: <i>for k=10^5to 10^6</i> und <i>n=right(k,5)</i> ist ein Ersatz f&uuml;r: <i>for k=0 to 99999</i> und <i>n=right("0000"&amp;k,5)</i>.
+Letzteres ist einfacher zu lesen, aber auch l&auml;nger. Der Block dient dazu alle 5stelligen Kombinationen von 0-9 zu
+erzeugen. Da&szlig; die Kombinationen mehrfach erzeugt werden macht nichts, da doppelte L&ouml;sungen sp&auml;ter rausgefiltert werden.
+</p>
+<p>
+<b>3</b> <i>m+0</i> ist eine kurze M&ouml;glichkeit Strings in Zahlen umzuwandeln. Normalerweise: <i>CInt(m)</i> oder &auml;hnliches.
+</p>
+<p>
+<b>4</b> Wenn man Space (Leerzeichen) als Trenner benutzt, mu&szlig; man bei <i>Split</i> den Trenner nicht angeben.
+</p>
+<p>
+<i>Kommentar der Spielleitung</i>: ein harter Drive, f&uuml;rwahr!
+</p>
+
+<h3>6 - Heiko Richler, 215 Schl&auml;ge</h3>
+<p>
+Die L&ouml;sung von Heiko sieht so aus (zur leichteren Lesbarkeit in mehrere Zeilen aufgegliedert, Originalfile ist
+<b>HeikoRichler.asp</b>)
+</p>
+<pre style="background='silver';">
+&lt;%i=application("input"):
+
+for z=i(0)to i(1):
+        m=i(2):
+        for y=1to 5:
+                c=chr(y+96):
+                p=instr(m,c):
+                if p then m=replace(m,c,mid(right(1e6&amp;z,5),p,1))
+        Next
+        if m-z=0 then o=o&amp;","&amp;m
+next:
+
+application("output")=split(mid(o,2),",")%&gt;
+</pre>
+<p>
+Der Algorithmus &uuml;berpr&uuml;ft die aktuelle Zahl (z) indem er im Formatstring (<i>m=i(2)</i>) die Buchstaben 'a' bis 'e' (c) der
+Reihe nach durch die Ziffer ersetzt die in der Zahl (z, bzw. <i>right(1e6&zamp;,5)</i>)am ersten Vorkommen (p) des Buchstaben
+steht (<i>mid(right(1e6&amp;z,5),p,1)</i>). Um die Zahl auf f&uuml;nf Stellen zu erweitern brauchte ich mindestens vier Nullen am
+Ende einer Zeichenkette. Die bekomme ich mit <i>1e6 =1.0*10^6 = 1000000</i> (1e4 w&uuml;rde reichen). Ich erhalte
+dadurch in m eine g&uuml;ltige Zahl. Sind nun m und z noch immer g&uuml;ltig (<i>m-z=0</i>) dann h&auml;nge ich die Zahl an mein Ergebnis an.
+Nach dem <i>then</i>-Teil der bedingten Ausdr&uuml;cke hatte ich einen Zeilenumbruch (nur CR), ansonsten nur den Doppelpunkt. 
+</p>
+<p>
+<i>Kommentar der Spielleitung</i>: Nach der Beispiell&ouml;sung f&uuml;r den Test mit 609 ist das ein wahrer Quantensprung. Wir sind alle 
+schon auf die n&auml;chsten Turniere gespannt.
+</p>
+
+<h3>5 - Gerhard Buchner, 209 Schl&auml;ge</h3>
+<p>
+Die L&ouml;sung von Gerhard sieht so aus (zur leichteren Lesbarkeit in mehrere Zeilen aufgegliedert, Originalfile ist
+<b>GerhardBuchner.asp</b>)
+</p>
+<pre style="background='silver';">
+&lt;%set a=Application
+e=a("input")
+f=e(2)
+for t=e(0) to e(1)
+z=right("0000"&amp;t,5)
+for i=0 to 3
+if mid(z,5-i,1)&lt;&gt;mid(z,instr(f,mid(f,5-i,1)),1) then i=4
+if i=3 then r=r&amp;z&amp;" "
+next
+next
+a("output")=split(trim(r))%&gt;
+</pre>
+
+<ol>
+<li>Instanz <i>a</i> der Application erzeugen da &ouml;fter ben&ouml;tigt.
+<li>Instanz <i>e</i> des <i>Application("Input")</i> erzeugen da &ouml;fter ben&ouml;tigt.
+<li>Format der Variablen <i>f</i> zuweisen.
+<li>Schleife durch alle Zahlen laufen. <i>t</i> hat die aktuelle Zahl.
+<li>5-stellige Zahl generieren.
+<li>Schleife mit 4 Durchl&auml;ufen 0-3
+<li><i>mid(z,5-i,1)</i> entspricht der Zahl an der aktuellen Stelle (es wird von
+hinten begonnen 5-i). Ich nehme den Buchstaben an der aktuellen Stelle
+<i>mid(f,5-i,1)</i>, nehme das erste Vorkommen desselben Buchstabens
+<i>instr(f,mid(f,5-i,1))</i> und von der Position des Treffers wieder die Zahl
+<i>mid(z,instr(f,mid(f,5-i,1)),1)</i> und vergleiche die beiden. Sind die Zahlen
+unterschiedlich, ist dies eine Zahl welche nicht dem Format entspricht und
+beende die &Uuml;berpr&uuml;fung mit <i>i=4</i>. Dies geschieht mit den Positionen 5-2.
+<li>Ist die &Uuml;berpr&uuml;fung OK und der Durchlauf bei 3 (letzte Position des
+Formats) dann diese Zahl <i>r</i> hinzuf&uuml;gen. Das Leerzeichen wird f&uuml;r den
+sp&auml;teren <i>Split</i> ben&ouml;tigt, da dies das Standardtrennzeichen ist.
+<li>N&auml;chste Position im Format.
+<li>N&auml;chste Zahl.
+<li>Zuweisung an das Application-Array mit <i>Trim</i> um das letzte (&uuml;berfl&uuml;ssige) Leerzeichen abzuschneiden.
+</ol>
+
+<p>
+<i>Kommentar der Spielleitung</i>: Golf mit mehreren B&auml;llen (Instanzen) im Spiel, sozusagen...
+</p>
+
+<h3>3 - Roman Pittroff, 181 Schl&auml;ge</h3>
+<p>
+Die L&ouml;sung von Roman sieht so aus (zur leichteren Lesbarkeit in mehrere Zeilen aufgegliedert, Originalfile ist
+<b>RomanPittroff.asp</b>)
+</p>
+<pre style="background='silver';">
+set a = Application
+i = a("input")
+for c = i(0)to i(1)
+        w = right(10^9&amp;c,5)
+        v=i(2)
+        for h=1to 5
+                v = replace(v,mid(v,h,1),mid(w,h,1))
+        next
+        if v=w then s=s&amp;x&amp;v:x=" "
+next
+a("output")=split(s)
+</pre>
+
+<p>
+Die L&ouml;sung &auml;hnelt denen der ersten Pl&auml;tze. Der lustige Punkt dieser L&ouml;sung war:
+</p>
+
+<pre style="background='silver';">
+        for h=1to 5
+                v = replace(v,mid(v,h,1),mid(w,h,1))
+        next
+</pre>
+<p>
+<i>Kommentar der Spielleitung</i>: wie im echten Leben, die asiatischen Golfer holen stark auf.
+</p>
+
+<h3>1 - Wolfgang Kluge, 179 Schl&auml;ge</h3>
+<p>
+Die L&ouml;sung von Wolfgang sieht so aus (zur leichteren Lesbarkeit in mehrere Zeilen aufgegliedert, Originalfile ist
+<b>WolfgangKluge.asp</b>)
+</p>
+
+<pre style="background='silver';">
+&lt;%set f=application
+t=f("input")
+for i=t(0)to t(1)
+x=t(2)
+for a=1to 5
+x=replace(x,mid(x,a,1),int(0&amp;mid(i/1e5,a+2,1)))
+next
+if i=x*1then o=o&amp;x&amp;" "
+next
+f("output")=split(trim(o))%&gt;
+</pre>
+
+<h4>Grunds&auml;tzliches</h4>
+<p>
+<b>1</b> Die Datei wurde im Unix-Format gespeichert. Dies hat zur Folge, da&szlig; ein Zeilenumbruch aus nur einem statt
+2 Zeichen besteht. Letztendlich spart man damit in diesem Beispiel aber nur ein einziges Byte ein, da man in VBScript
+Anweisungen auch mit ":" trennen kann. Das eine Byte kommt in der <i>If</i>-Zeile zustande. <i>Next</i> darf hier
+nicht in derselben Zeile stehen, da es sonst nur ausgef&uuml;hrt werden w&uuml;rde, wenn i=x*1 ist. (Dies geht nicht da Syntaxfehler).
+</p>
+<p>
+<b>2</b> Das Application-Objekt (bzw. eine Referenz darauf) wurde in einer
+Variable gespeichert. Dies spart in diesem Code exakt 2 Bytes ;)
+</p>
+<p>
+<b>3</b> Alle unn&ouml;tigen Leerzeichen wurden entfernt. Da eine Variable in VBScript niemals mit einer Zahl oder einem
+Sonderzeichen beginnen darf, ist es m&ouml;glich auf eine Zahl oder einer Klammer folgend eine Anweisung anzugeben. zB.
+<i>For a=1To</i>. Hier 3 Bytes geholt.
+</p>
+
+<h4>Etwas Spezifischer</h4>
+<p>
+<b>4</b> <i>i/1e5</i> Das war das letzte Byte und hat die l&auml;ngste Zeit gekostet. <i>1e5</i> ist eine Kurzschreibweise von
+<i>1.e+5</i> und dies ist wiederum die Expotentialschreibweise einer Zahl gleichbedeutend
+mit 10^5. Heraus kommt 100000.
+</p>
+<p>
+<b>5</b> <i>int(0&amp;mid(i/1e5,a+2,1))</i> Der Sinn des Ganzen ist, die vorangestellten 0-en der Zahl i zur&uuml;ckgeben
+zu k&ouml;nnen. Durch das Teilen durch 100000, ergibt sich eine Zahl von 0.00000 und 0.99999 (durch den Wertebereich).
+Da 0-en nach der letzten Wertziffer auch automatisch "abgeschnitten" werden, w&uuml;rde <i>Mid()</i> alleine eine Leerstring
+zur&uuml;ckgeben. Deswegen mu&szlig;te eine nochmalige Umwandlung mittels <i>Int()</i> erfolgen. <i>Int("")</i> ist allerdings
+auch ein Fehler - daher mu&szlig; wieder eine 0 vorangestellt werden. 0.00012 ist jetzt nat&uuml;rlich 2 Zeichen l&auml;nger, und man
+mu&szlig; die Position mit +2 angeben.
+</p>
+<p>
+<b>6</b> <i>i=x*1</i> Da <i>i</i> in diesem Beispiel eine Zahl und <i>x</i> ein String ist, k&ouml;nnen diese
+beiden nicht direkt verglichen werden (geht schon, ist aber nicht das erw&uuml;nschte Ergebnis).
+In der Variable <i>x</i> steht definitiv kein Buchstabe mehr, daher gibt es mindestems 3 M&ouml;glichkeiten - eine Umwandlung mit
+<i>CInt()</i>, ein voranstellen von <i>&amp;H</i> (an beide Variablen) oder eben das Multiplizieren mit 1. Letzteres ist
+nat&uuml;rlich k&uuml;rzer und wird dadurch bevorzugt.
+</p>
+<p>
+<b>7</b> <i>o=o&amp;x&amp;" "</i> In der Variablen <i>o</i> wird das Ausgabearray (bis dahin noch einfacher String)
+gespeichert. Die Trennung der einzelnen Werte erfolgt mit einem Leerzeichen, da dies das Standardtrennzeichen f&uuml;r die
+<i>Split</i>-Funktion ist.
+</p>
+<p>
+<b>8</b> <i>f("output")=split(trim(o))</i> Mittels <i>Trim</i> wird noch das letzte Leerzeichen abgeschnitten, damit das
+Ausgabearray nicht ein Feld zuviel hat. <i>Split()</i> braucht keine weiteren Parameter, da " " wie geschrieben Standard
+ist.
+</p>
+<p>
+Der ganze Algorithmus basiert auf der Tatsache, da&szlig; die Replace-Funktion immer alle gefundenen Zeichen ersetzt, die
+sie findet. Da gleichzeitig immer alle 5 "Zeichen" der Zahl ersetzt werden, kommt es zu wirren/falschen Ergebnissen,
+wenn die Zahl nicht "in" das Format passt.
+</p>
+<p>
+Zum Beispiel wird bei einem Format-String "aaabb" und der Zahl 00089 erst a durch 0 ersetzt(000bb), danach noch 2x 0
+durch 0, dann wird b durch 8 ersetzt (00088) und danach nochmal 8 durch 9 (00099). Die Eingangszahl war 89 ergo falsch.
+Daher reicht zum Schlu&szlig; auch das Testen des neu erstellten Strings x gegen die Zahl i aus um festzustellen, da&szlig; es sich
+eine g&uuml;ltige Zahl handelt - oder auch nicht.
+</p>
+
+<p>
+<i>Kommentar der Spielleitung</i>: ein m&auml;chtiger Drive - ist Wolfgang der Tiger Woods des ASP Golf?
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Das erste Golfturnier war bereits ein gro&szlig;er Erfolg unter den Teilnehmern, das n&auml;chste Turnier kommt bestimmt!
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020930.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020930.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20021202.htm">3. Loch - Dr. Evils Qualit&auml;tskontrolle</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021202.htm</span><br>
+<a href="../artikel/20021104.htm">Tee Off! Die Zweite</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021104.htm</span><br>
+<a href="../artikel/20031222.htm">Tee Off! Wolpertinger Genome Project</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20031222.htm</span><br>
+<a href="../artikel/20030115.htm">Tee Off! Zahlen, W&ouml;rter, Zahlw&ouml;rter</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20030115.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpgerman%2Ecom%2Faspgerman%2Flisten%2Fanmelden%2FaspDEgolf%2Easp">ASP Golf Liste</a><br>
+<SPAN class="content">http://www.aspgerman.com/aspgerman/listen/anmelden/aspDEgolf.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpgerman%2Ecom%2F">AspGerman</a><br>
+<SPAN class="content">http://www.aspgerman.com/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

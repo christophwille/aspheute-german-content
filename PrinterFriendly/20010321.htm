@@ -1,0 +1,206 @@
+<HTML>
+<HEAD>
+<TITLE>MS Access Datenbanken kompaktieren</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Der heutige Artikel zeigt Ihnen wie man mit Hilfe der Jet and Replication Objects Microsoft Jet kompatible Datenbanken (z.B. MS Access Datenbanken) warten kann. F&uuml;r diesen Artikel habe ich die CompactDatabase Methode ausgew&auml;hlt...">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,JRO,Compact,CompactDatabase,kompaktieren,Access,Jet,Datenbank,Komprimierung,Reparieren">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>MS Access Datenbanken kompaktieren</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010321"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Der heutige Artikel zeigt Ihnen wie man mit Hilfe der Jet and Replication Objects Microsoft Jet kompatible Datenbanken
+(z.B. MS Access Datenbanken) warten kann. F&uuml;r diesen Artikel habe ich die CompactDatabase Methode 
+ausgew&auml;hlt, die wir gegen eine Datenbank am Server ausf&uuml;hren - um die gew&auml;hlte Datenbank
+(wieder) in eine brauchbare Gr&ouml;&szlig;e zu komprimieren.
+</p>
+
+<h2>JRO - Wie?</h2>
+
+<p>
+Die <i>JRO</i> (Jet and Replication Objects) erm&ouml;glichen die Durchf&uuml;hrung automatisierbarer Datenbankdienste,
+die auf Microsoft Jet kompatible Datenbanken anwendbar sind. Diese Datenbankdienste beinhalten u.a. auch
+das Kompaktieren einer Datenbank, aber Sie k&ouml;nnen auch die Daten vom Cache aktualisieren lassen oder
+Datenbankreplika erstellen bzw. warten.
+</p>
+
+<p>
+Da sich wie gesagt diese Dienste automatisieren lassen, liegt nichts n&auml;her als diese in ein ASP Script zu verpacken und 
+diese bei Gebrauch auf einem Web Server ablaufen zu lassen -  und das ohne Access am Web Server installieren zu m&uuml;ssen.
+Heute widmen wir uns aber nur der <i>CompactDatabase</i> Methode.
+</p>
+
+<h2>Die CompactDatabase Methode</h2>
+
+<p>
+Da Datenbanken mit der Zeit anfangen tr&auml;ge zu werden, wenn sie oft ge&auml;ndert bzw. aktualisiert werden, wird diese Methode
+sehr n&uuml;tzlich. Denn diese f&uuml;hrt einige Optimierungen, wie Tabellendefragmentierung oder die R&uuml;ckgewinnung von freiem
+Speicherplatz von bereits gel&ouml;schten Eintr&auml;gen durch.
+</p>
+
+<p>
+Der Programmieraufwand ist dabei sehr gering. Die Methode nimmt zwei Parameter - die Quelldatenbank und ihr Ziel.
+Sie k&ouml;nnen jedoch, da es sich dabei um Connection Strings handelt, diesen einige Properties (Eigenschaften) zuweisen.
+Die einzige Property die logischerweise zwingend angegeben werden mu&szlig; ist der <i>Data Source</i>, also die Angabe der 
+zu behandelnden Datenbank selbst.
+Die optionalen w&auml;ren z.B. eine genaue Angabe des <i>Providers</i>, die <i>User ID</i> und das <i>Pa&szlig;wort</i>,
+wenn es sich um eine gesch&uuml;tzte Datenbank handelt.
+</p>
+
+<p>
+Die <i>Jet OLEDB</i> Property erlaubt mehrere Angaben in boolscher Form. Sie k&ouml;nnen z.B. die neu zu erstellende Datenbank
+verschl&uuml;sseln (<i>Encrypt</i>),  die JetEngine Versionsnummer angeben (<i>Engine Type</i>) oder die Beziehungen der
+alten Datenbank in der neuen weglassen.
+</p>
+
+<p>
+Beginnen wir also - wie immer - mit einem einfachen Beispiel. Dies bietet zwar keinen Komfort, soll aber auch nur 
+die Funktion der Methode demonstrieren (<b>Compact101.asp</b>):
+</p>
+
+<pre style="background='silver';">
+Set objJRO = Server.CreateObject("JRO.JetEngine")
+
+strOldFile = Server.MapPath("NorthWind.mdb")
+strNewFile = Server.MapPath("NorthWindNew.mdb")
+
+objJRO.CompactDatabase "Data Source=" &amp; strOldFile, "Data Source=" &amp; strNewFile
+
+Set objJRO = Nothing
+</pre>
+
+<p>
+Dies ist wie Sie sehen die Minimalversion. Einfach das <i>JRO.JetEngine</i> Objekt erstellen, die Datenbankdateinamen
+samt Pfad (hier mit <i>Server.MapPath</i> gel&ouml;st) angeben und die Methode ausf&uuml;hren. Etwas komfortabler ist
+das n&auml;chste Beispiel, da&szlig; sich zus&auml;tzlich f&uuml;r die Dateioperationen das <i>FileSystem Objekt</i> zuhilfe nimmt.
+</p>
+
+<p>
+Mit dem FileSystem Objekt erstellen wir ein Backup und l&ouml;schen nach erfolgter Optimierung die alte Datenbank. Damit es
+zu keinen Komplikationen kommt und Sie die neue Datenbank gleich wieder verwenden k&ouml;nnen erh&auml;lt Sie 
+wieder den urspr&uuml;nglichen Namen.
+</p>
+
+<p>
+Das ASP-Beispiel sieht dann so aus (<b>CompactAdvanced.asp</b>):
+</p>
+
+<pre style="background='silver';">
+Set objJRO = Server.CreateObject("JRO.JetEngine")
+Set fso = CreateObject("Scripting.FileSystemObject")
+
+strOldFile = Server.MapPath("NorthWind.mdb")
+strNewFile = Server.MapPath("NorthWindNew.mdb")
+strBakFile = Replace(strOldFile, "mdb","BAK")
+
+If (fso.FileExists(strOldFile)) Then
+    Set SourceFile = fso.GetFile(strOldFile)
+    SourceFile.Copy strBakFile
+    
+    If (fso.FileExists(strNewFile)) Then
+        Set DuplicateFile = fso.GetFile(strNewFile)
+        DuplicateFile.Delete
+        Response.Write "Duplicate compacted file has been deleted!"
+    End If
+</pre>
+
+<p>
+Nach der Objekterstellung und der Dateinamensbelegung &uuml;berpr&uuml;fen wir zun&auml;chst mit der <i>FileExists</i> Methode
+ob die zu optimierende Datenbank &uuml;berhaupt existiert. Wenn ja, dann erstellen wir mit der <i>Copy</i> Methode des File System Objektes
+eine Sicherungskopie. Um Probleme bei der Erstellung der optimierten Datenbankdatei zu vermeiden l&ouml;schen wir eine
+eventuell schon vorhandene Datei. Den L&ouml;schvorgang best&auml;tigen wir mit einer einfachen Meldung.
+</p>
+
+<p>
+Nun zum Rest des ASP Codes:
+</p>
+
+<pre style="background='silver';">
+    objJRO.CompactDatabase "Data Source=" &amp; strOldFile, "Data Source=" &amp; strNewFile
+    SourceFile.Delete
+    Set CompactedFile = fso.GetFile(strNewFile)
+    CompactedFile.Copy strOldFile
+    CompactedFile.Delete
+Else
+    Response.Write "<b>" &amp; strOldFile &amp; "</b> - No such file found!"
+End If
+</pre>
+
+<p>
+Dann wenden wir wie gewohnt die <i>CompactDatabase</i> Methode an. Nach erfolgter Optimierung k&ouml;nnen wir die
+alte, nicht optimierte &quot;mdb&quot;-Datei l&ouml;schen und der optimierten Datenbank wieder den urspr&uuml;nglichen Namen geben. Jetzt noch die gebrauchten
+Objekte (<i>objJRO</i> und <i>fso</i>) zerst&ouml;ren - fertig!
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Wie sich aus den Beispielen gezeigt hat, ist die CompactDatabase Methode sehr einfach anzuwenden. Weitere Vorteile sind
+neben der Datenbankoptimierungen und meist auch Dateigr&ouml;&szlig;enreduzierung, da&szlig; man den Vorgang mithilfe von ASP automatisieren kann 
+und hierf&uuml;r Access am Web Server nicht ben&ouml;tigt wird.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010321.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010321.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010605.htm">CSVs aus MDBs leicht gemacht</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010605.htm</span><br>
+<a href="../artikel/20000626.htm">Tabellenerstellung mit ADOX</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000626.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,419 @@
+<HTML>
+<HEAD>
+<TITLE>Monitoring von ASP</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Performance Monitoring ist ein weiterer Baustein am Weg zu einer erfolgreichen Website. Heute wendet sich der Autor dem Active Server Pages Performance Counter Objekt zu, das spezielle Informationen &uuml;ber ASP zu Tage f&ouml;rdert.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Performance,performance monitor,active server pages,pdh,performance counter,counter string,Überwachung,code">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Monitoring von ASP</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Optimierung.htm">Optimierung</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000502"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Performance Monitoring ist ein weiterer Baustein am Weg zu einer erfolgreichen Website. Im letzten Artikel
+habe ich besonderes Augenmerk auf das Monitoring der Serverperformance gelegt, die mit den Performance Counter
+Objekten <i>Memory</i>, <i>Processor</i> und <i>Physical</i>/<i>Logical Disk</i> &uuml;berwacht werden kann. Heute wende ich mich dem <i>Active
+Server Pages</i> Performance Counter Objekt zu, das spezielle Informationen &uuml;ber ASP zu Tage f&ouml;rdert.
+</p>
+
+<h2>Remote Performance Monitoring</h2>
+<p>
+Im letzten Artikel haben wir uns die Performance Counter mit Hilfe des Performance Monitors angesehen. Bei Servern,
+die im Internet laufen, hat man allerdings nicht immer Zugriff auf die Konsole mittels eines Remote Administration Tools
+(Remotely Possible, Terminal Services, ...) - besonders nicht, wenn man auf einem Shared Server eines Providers
+hostet.
+</p>
+<p>
+Das kann man allerdings umgehen - mit Hilfe einer Gratis Komponente von AlphaSierraPapa (Downloadlink am Ende des Artikels).
+Die <b>AspQPerfCounters Komponente</b> erlaubt es, beliebige Performance Counter auszulesen - solange man wei&szlig;,
+wie sie hei&szlig;en. 
+</p>
+<p>
+Generell sieht ein Counter wie folgt aus:
+<pre style="background='silver';">\\Machine\PerfObject(ParentInstance/ObjectInstance#InstanceIndex)\Counter</pre>
+Der <i>\\Machine</i> Teil ist optional; wenn er inkludiert ist, dann ist es der NetBIOS Name der Maschine (Achtung:
+f&uuml;r Maschinen au&szlig;er der lokalen Maschine ben&ouml;tigt man die entsprechenden Benutzerrechte, um auf die Performancedaten
+zugreifen zu d&uuml;rfen!).
+</p>
+<p>
+Der Teil <i>\PerfObject</i> mu&szlig; angeben werden, und stellt das Objekt dar, von dem man den Counter auslesen m&ouml;chte.
+Sollte das Objekt Instanzen unterst&uuml;tzen (zB mehrere Prozessoren in einer MPS Maschine), mu&szlig; man den <i>InstanceIndex</i> 
+angeben.
+</p>
+<p>
+Um das Ganze mit einem praktischen Beispiel f&uuml;r die AspQPerfCounters Komponente zu kombinieren:
+<pre style="background='silver';">
+Set objQPerfCnt = CreateObject(&quot;Softwing.AspQPerfCounters&quot;)
+bResult = objQPerfCnt.OpenQuery()
+bResult = objQPerfCnt.AddCounter(&quot;\\.\Active Server Pages\Requests/sec&quot;)
+bResult = objQPerfCnt.CollectQueryData()
+varResult = objQPerfCnt.GetFormattedCounterVal(_
+		&quot;\\.\Active Server Pages\Requests/sec&quot;, 0)
+bResult = objQPerfCnt.CloseQuery()
+</pre>
+In der dritten Zeile wird der Counter <i>Requests/sec</i> f&uuml;r das <i>Active Server Pages</i> Objekt auf der lokalen Maschine
+zur Abfrage hinzugef&uuml;gt. Generell wird das AspQPerfCounters Objekt wie folgt verwendet:
+<ol>
+<li>Eine neue Abfrage wird mit <b>OpenQuery</b> erstellt
+<li>Performance Counter werden mit <b>AddCounter</b> hinzugef&uuml;gt
+<li>Die aktuellen Werte der Counter werden mit <b>CollectQueryData</b> abgeholt. Um die Werte zu aktualisieren, reicht ein erneuter Aufruf.
+<li>Die Werte werden mit <b>GetFormattedCounterVal</b> ausgelesen
+<li>Die Abfrage wird mit <b>CloseQuery</b> geschlossen
+</ol>
+</p>
+<p>
+Welche Performance Counter gibt es nun eigentlich f&uuml;r das Active Server Pages Objekt? Dar&uuml;ber gibt die n&auml;chste Sektion
+Auskunft, und zwar etwas ausf&uuml;hrlicher als der Performance Monitor von Microsoft.
+</p>
+
+<a name="ASPCNTROBJ"><h2><i>Active Server Pages</i> Performance Counter Objekt</h2></a>
+<p>
+Die folgende Tabelle beschreibt die einzelnen Performance Counter die f&uuml;r das Active
+Server Pages Objekt zur Verf&uuml;gung stehen. Zur leichteren Orientierung sind sowohl die
+englischsprachigen als auch die deutschsprachigen Performance Counter Namen aufgef&uuml;hrt - weil
+teilweise die &Uuml;bersetzungen aus dem Englischen nicht sehr intuitiv sind (und f&uuml;r den Performance
+Monitor kann man nur die deutschen Strings verwenden).
+</p>
+<table border=0 width="100%">
+<tr><th width="220" align="left">Counter</th><th align="left">Beschreibung</th></tr>
+<tr><td valign="top"><b>Debugging Requests</b><br>
+Debug-Anfragen</td>
+<td valign="top">
+Anzahl der Seiten, die eine Debug Anfrage einleiten (aufgrund eines Fehlers).
+</td></tr>
+
+<tr><td valign="top"><b>Errors During Script Runtime</b><br>
+Skriptlaufzeit-Fehler</td>
+<td valign="top">
+Gibt die Anzahl der Seiten (Anfragen im generellen) an, die durch einen Skriptlaufzeitfehler ausgel&ouml;st
+haben, und somit fehlgeschlagen sind.
+</td></tr>
+
+<tr><td valign="top"><b>Errors From ASP Preprocessor</b><br>
+ASP-Pr&auml;prozessor-Fehler</td>
+<td valign="top">
+Anzahl der Fehler, die der ASP Pr&auml;prozessor liefert. Gr&uuml;nde daf&uuml;r sind ASP Skripts, die nicht korrekt
+f&uuml;r den Compiler vorbereitet werden k&ouml;nnen (zB fehlende oder fehlerhafte Includeanweisungen).
+</td></tr>
+
+<tr><td valign="top"><b>Errors From Script Compilers</b><br>
+Skript-Kompilierfehler</td>
+<td valign="top">
+Anzahl der Fehler, die beim Kompilieren von Skripts gefunden werden (pro Seite nur einer, da beim ersten
+Kompilierungsfehler abgebrochen wird).
+</td></tr>
+
+<tr><td valign="top"><b>Errors/Sec</b><br>
+Fehler/s</td>
+<td valign="top">
+Gesamtanzahl der pro Sekunde ausgel&ouml;sten Fehler.
+</td></tr>
+
+<tr><td valign="top"><b>Memory Allocated</b><br>
+Reservierter Speicher</td>
+<td valign="top">
+Gesamtmenge (in Bytes) des Speichers, der von Active Server Pages im Moment allokiert ist.
+</td></tr>
+
+<tr><td valign="top"><b>Request Bytes In Total</b><br>
+Byte in Warteschlange</td>
+<td valign="top">
+Gesamtgr&ouml;&szlig;e aller Anfragen in Bytes, die auf Bearbeitung warten.
+</td></tr>
+
+<tr><td valign="top"><b>Request Bytes Out Total</b><br>
+Byte aus Warteschlange</td>
+<td valign="top">
+Gesamtmenge der mit Anworten an die Clients (Browser) geschickten Bytes. Standard HTTP Header werden
+in diese Zahl nicht miteingerechnet.
+</td></tr>
+
+<tr><td valign="top"><b>Request Execution Time</b><br>
+Bearbeitungszeit</td>
+<td valign="top">
+Die Ausf&uuml;hrungszeit der zuletzt durchgef&uuml;hrten Anfrage in Millisekunden.
+</td></tr>
+
+<tr><td valign="top"><b>Request Wait Time</b><br>
+Anfragen-Wartezeit</td>
+<td valign="top">
+Wartezeit (in Millisekunden), die die aktuelle Anfrage in der Warteschlange verbracht hat.
+</td></tr>
+
+<tr><td valign="top"><b>Requests Disconnected</b><br>
+Unterbrochene Anfragen</td>
+<td valign="top">
+Anzahl der Anfragen die aufgrund von Kommunikationsfehlern abgebrochen wurden (vom Server).
+</td></tr>
+
+<tr><td valign="top"><b>Requests Executing</b><br>
+Browser-Anfragen</td>
+<td valign="top">
+Die Anzahl der Anfragen, die im Moment abgearbeitet werden.
+</td></tr>
+
+<tr><td valign="top"><b>Requests Failed Total</b><br>
+Fehlgeschlagene Anfragen insgesamt</td>
+<td valign="top">
+Anzahl der durch allgemeine Fehler, Autorisierungsfehler und Zur&uuml;ckweisungen fehlgeschlagenen Anfragen.
+</td></tr>
+
+<tr><td valign="top"><b>Requests Not Authorized</b><br>
+Nicht autorisierte Anfragen</td>
+<td valign="top">
+Anzahl der Anfragen die wegen Autorisierungsfehlern fehlgeschlagen sind.
+</td></tr>
+
+<tr><td valign="top"><b>Requests Not Found</b><br>
+Anfrage nicht gefunden</td>
+<td valign="top">
+Gesamtzahl der Anfragen, die auf nicht vorhandene Dateien zugreifen wollten.
+</td></tr>
+
+<tr><td valign="top"><b>Requests Queued</b><br>
+Aktuelle Anfragen</td>
+<td valign="top">
+Gesamtzahl der Anfragen, die in der Warteschlange auf Abarbeitung warten.
+</td></tr>
+
+<tr><td valign="top"><b>Requests Rejected</b><br>
+Abgelehnte Anfragen</td>
+<td valign="top">
+Anzahl der Anfragen, die nicht bearbeitet werden konnten, weil nicht gen&uuml;gend Serverresourcen zur Verf&uuml;gung stehen.
+</td></tr>
+
+<tr><td valign="top"><b>Requests Succeeded</b><br>
+Erfolgreiche Anfragen</td>
+<td valign="top">
+Anzahl der erfolgreich abgearbeiteten Anfragen.
+</td></tr>
+
+<tr><td valign="top"><b>Requests Timed Out</b><br>
+Zeit&uuml;berschreitungen von Anfragen</td>
+<td valign="top">
+Anzahl der Anfragen, die wegen Laufzeit&uuml;berschreitung abgebrochen wurden.
+</td></tr>
+
+<tr><td valign="top"><b>Requests Total</b><br>
+Anfragen insgesamt</td>
+<td valign="top">
+Gesamtzahl der Anfragen seit der Web Service gestartet wurde (nur ASP Seiten!).
+</td></tr>
+
+<tr><td valign="top"><b>Requests/Sec</b><br>
+Anfragen/s</td>
+<td valign="top">
+Anzahl der pro Sekunde abgearbeiteten Anfragen.
+</td></tr>
+
+<tr><td valign="top"><b>Script Engines Cached</b><br>
+Skript-Engines im Cache</td>
+<td valign="top">
+Anzahl der verschiedenen Skriptsprachen, die von ASP im Speicher vorgehalten werden.
+</td></tr>
+
+<tr><td valign="top"><b>Session Duration</b><br>
+Sitzungsdauer</td>
+<td valign="top">
+Zeit in Millisekunden, die die letzte Session gedauert hat (Session hier nicht im Sinne von ASP sondern HTTP).
+</td></tr>
+
+<tr><td valign="top"><b>Sessions Current</b><br>
+Sitzungen</td>
+<td valign="top">
+Die Anzahl der momentan betreuten Sessions.
+</td></tr>
+
+<tr><td valign="top"><b>Sessions Timed Out</b><br>
+Zeit&uuml;berschreitungen von Sitzungen</td>
+<td valign="top">
+Anzahl der wegen Zeit&uuml;berschreitung abgebrochenen Sessions (seit Start des Web Service).
+</td></tr>
+
+<tr><td valign="top"><b>Sessions Total</b><br>
+Sitzungen insgesamt</td>
+<td valign="top">
+Gesamtzahl der Sessions (seit Start des Web Service).
+</td></tr>
+
+<tr><td valign="top"><b>Templates Cached</b><br>
+Vorlagen im Cache</td>
+<td valign="top">
+Die Anzahl der Vorlagen, die im Moment gecacht werden.
+</td></tr>
+
+<tr><td valign="top"><b>Template Cache Hit Rate</b><br>
+Trefferanteil im Vorlagen-Cache</td>
+<td valign="top">
+Prozentsatz der Anfragen die aus dem Vorlagen-Cache bedient werden konnten.
+</td></tr>
+
+<tr><td valign="top"><b>Template Notifications</b><br>
+Vorlagen-Meldungen</td>
+<td valign="top">
+Anzahl der Vorlagen die aus dem Cache genommen werden mussten, weil eine &Auml;nderung an der Vorlage gemeldet wurde.
+</td></tr>
+
+<tr><td valign="top"><b>Transactions Aborted</b><br>
+Abgebrochene Transaktionen</td>
+<td valign="top">
+Anzahl der abgebrochenen Transaktionen.
+</td></tr>
+
+<tr><td valign="top"><b>Transactions Committed</b><br>
+Durchgef&uuml;hrte Transaktionen</td>
+<td valign="top">
+Anzahl der durchgef&uuml;hrten Transaktionen.
+</td></tr>
+
+<tr><td valign="top"><b>Transactions Pending</b><br>
+Transaktionen in Bearbeitung</td>
+<td valign="top">
+Anzahl der im Moment in Bearbeitung befindlichen Transaktionen.
+</td></tr>
+
+<tr><td valign="top"><b>Transactions Total</b><br>
+Transaktionen insgesamt</td>
+<td valign="top">
+Gesamtanzahl der Transaktionen seitdem der Web Service gestartet wurde.
+</td></tr>
+
+<tr><td valign="top"><b>Transactions/Sec</b><br>
+Transaktionen/s</td>
+<td valign="top">
+Anzahl der pro Sekunde gestarteten Transaktionen.
+</td></tr>
+</table>
+
+<h2>Auslesen einiger ASP Counter</h2>
+<p>
+Das folgende Skript &uuml;berwacht einige f&uuml;r Live-Server wichtige Performance Counter: diejenigen, die die 
+Anzahl der Fehler und ihre Ursachen ausweisen. Mit diesem Skript bekommt man eine Idee, ob, und wenn ja
+was falschl&auml;uft.
+</p>
+<p>
+<pre style="background='silver';">
+&lt;%  @LANGUAGE=VBSCRIPT %&gt;
+&lt;%  Option Explicit %&gt;
+
+&lt;%  
+' counters to watch
+Dim arrFriendlyName, arrCounterPath
+arrFriendlyName = Array(&quot;Total failed requests&quot;, _
+	&quot;Errors per second (current)&quot;,_
+  	&quot;Runtime errors (total)&quot;, &quot;Script compiler errors (total)&quot;,_
+  	&quot;ASP preprocessor errors (total)&quot;)
+  	
+arrCounterPath = Array(&quot;\\.\Active Server Pages\Requests Failed Total&quot;, _
+  	&quot;\\.\Active Server Pages\Errors/Sec&quot;, _
+  	&quot;\\.\Active Server Pages\Errors During Script Runtime&quot;,_
+  	&quot;\\.\Active Server Pages\Errors From Script Compilers&quot;, _
+  	&quot;\\.\Active Server Pages\Errors From ASP Preprocessor&quot;)
+%&gt;
+&lt;html&gt;
+&lt;head&gt;
+  	&lt;title&gt;Testing AspQPerfCounters&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;h1&gt;ASP Performance Counters for Debugging&lt;/h1&gt;
+
+&lt;body bgcolor=&quot;#ffffff&quot;&gt;
+&lt;%  
+        Dim objQPerfCnt, bResult, varResult, i 
+        Set objQPerfCnt = CreateObject(&quot;Softwing.AspQPerfCounters&quot;)
+
+        bResult = objQPerfCnt.OpenQuery()
+  	for i = 0 to UBound(arrCounterPath)
+    		bResult = objQPerfCnt.AddCounter(arrCounterPath(i))
+  	next	
+        
+        bResult = objQPerfCnt.CollectQueryData()
+  	for i=0 to UBound(arrCounterPath)
+  	  varResult=objQPerfCnt.GetFormattedCounterVal(arrCounterPath(i),0)
+   	  Response.Write &quot;&lt;b&gt;&quot; &amp; arrFriendlyName(i) &amp; &quot;&lt;/b&gt;: &quot; 
+      Response.Write varResult &amp; &quot;&lt;br&gt;&quot; &amp; vbCrLf
+  	next
+%&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</p>
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die <i>AspQPerfCounters Komponente</i> sollte man zu einem wichtigen Tool in der Server&uuml;berwachung machen - weil damit
+Performancedaten des Servers von einem beliebigen Ort aus einfach abrufbar werden. Die Counter des <i>Active
+Server Pages</i> Objekts erlauben es, Fehler bereits vor der Analyse der Web Logs zu identifizieren.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000502.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000502.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000428.htm">Einf&uuml;hrung in Performance Monitoring</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000428.htm</span><br>
+<a href="../artikel/20000809.htm">Performance Monitoring a la .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000809.htm</span><br>
+<a href="../artikel/20000814.htm">Webserver-Tuning mit XTune</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000814.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2FIisDev%2FComponents%2FPerfmon%2F">AspQPerfCounters Komponente</a><br>
+<SPAN class="content">http://www.alphasierrapapa.com/IisDev/Components/Perfmon/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

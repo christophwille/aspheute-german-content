@@ -1,0 +1,323 @@
+<HTML>
+<HEAD>
+<TITLE>Die Content Rotator Komponente</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wenn Sie auf Ihrer Homepage ein wenig Abwechslung z.B. im Design w&uuml;nschen und dies mit wenig Aufwand bewerkstelligen wollen ist die Content Rotator Komponente die L&ouml;sung.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Content Rotator,MSWC.ContentRotator,content rotation,wechselnde Inhalte">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Die Content Rotator Komponente</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000718"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wenn Sie auf Ihrer Homepage ein wenig Abwechslung z.B. im Design w&uuml;nschen und dies mit wenig 
+Aufwand bewerkstelligen wollen ist die Content Rotator Komponente die L&ouml;sung. Sie erm&ouml;glicht es 
+Ihnen dynamische, informationsreiche Internet-Sites zu erstellen. 
+</p>
+<p>
+Die Content Rotator Komponente 
+ist eine weitere von der Vielzahl derer die in ASP (Active Server Pages) inkludiert ist. Sie m&uuml;ssen 
+also nichts dazu installieren und in wenigen Schritten erhalten Sie eine Homepage die Ihren 
+Clients Abwechslung in Bezug auf den Inhalt bietet.
+</p>
+<p>
+<b>Wichtig</b> Unter IIS4 ist diese Komponente nicht standardm&auml;&szlig;ig installiert. Sie ben&ouml;tigen
+dazu das IIS Resource Kit (von MS Press).
+</p>
+
+<h2>Die Content  Rotator Komponente</h2>
+<p>
+Die Komponente erzeugt das Content Rotator Objekt, welches automatisch nach dem Zufallsprinzip 
+HTML Code (z.B Text, Bilder, Hyperlinks, etc.) rotieren l&auml;&szlig;t. Wenn ein Client auf Ihre Website 
+zugreift bekommt er jedesmal einen neuen Inhalt zu sehen. Die Inhalte, die Gewichtung (Sie k&ouml;nnen 
+sozusagen Schwerpunkte auf gewisse Inhalte legen, die somit h&auml;ufiger gezeigt werden) der Inhalte 
+werden aus der Content Schedule Datei bezogen. Diese im TXT-Format gespeicherte Datei beinhaltet
+also s&auml;mtlichen Text, die Bilder oder Hyperlinks, die Sie abwechselnd anzeigen m&ouml;chten.
+</p>
+<p>
+Diese Komponete k&ouml;nnen Sie dazu verwenden, um z.B. den Tip des Tages anzuzeigen, aktuelle Hyperlinks 
+abwechselnd bekanntzugeben, FAQ (Frequently Asked Questions) -Listings, oder Bilder bzw. Fotos aus 
+Ihrem Repertoire dem Client abwechselnd zu pr&auml;sentieren.
+</p>
+<p>
+Diese Content Rotator Komponente ben&ouml;tigt eine schon erw&auml;hnte Datei: die Content Schedule Datei.
+Dies ist eine Textdatei, welche die Anzeigesteuerung und die Dateiinformationen  (z.B. Text, Pfade 
+der Bilder, Hyperlinks) f&uuml;r den Webseiteninhalt enth&auml;lt.
+</p>
+<p>
+Diese Komponente besitzt 2 Methoden:
+<ul>
+<li><b>ChooseContent</b> Fordert aus der Content Schedule Datei die ben&ouml;tigten HTML-Informationen 
+	(z.B Text, Bilder, Hyperlinks, etc.) an und zeigt diese im Browser an.
+<li><b>GetAllContent</b> Holt alle vorhandenen HTML-Informationen aus der Content Schedule Datei. 
+	Diese Methode wird z.B. f&uuml;r Site-Testzwecke verwendet, um den Inhalt der Content Schedule Datei 
+	zu &uuml;berpr&uuml;fen.
+</ul>
+</p>
+
+<h2>Das Beispiel</h2>
+<p>
+Dieses einfache Beispiel gliedert sich in folgende Abschnitte: 
+<ul>
+<li>Einbindung der Komponente in die Hauptseite
+<li>Erstellung Content Schedule Datei
+<li>Der Einsatz der Methoden der Komponente
+</ul>
+</p>
+
+<h3>Einbindung der Komponente in die Hauptseite</h3>
+<p>
+Das Hinzuf&uuml;gen der Komponente zu Ihrer aktuellen Website oder in einer neuen ist sehr einfach. 
+Zus&auml;tzlich zu dem Einf&uuml;gen der Codezeile, welche die Instanz des Content Rotator Objekts erstellt, 
+m&uuml;ssen Sie nur mit Hilfe eines ASP-Statements die Content Schedule Datei, in welcher sich die 
+HTML-Informationen, wie z.B Text, Bilder, Hyperlinks, etc., einlesen.
+</p>
+<p>
+Nehmen wir an, Sie m&ouml;chten auf Ihrer Website dem Client den "Tip des Tages" pr&auml;sentieren. Daf&uuml;r eignet
+sich diese Komponente hervorragend. Erstellen Sie nun eine neue ASP Datei und schreiben folgenden Code:
+<pre style="background='silver';">
+ 1: &lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"&gt;
+ 2: &lt;html&gt;
+ 3: &lt;head&gt;
+ 4:   &lt;title&gt;Beispielseite "Tip des Tages"&lt;/title&gt;
+ 5: &lt;/head&gt;
+ 6: &lt;body bgcolor="#ffffff"&gt;
+ 7: Wussten Sie schon...
+ 8: 
+ 9: &lt;%
+10: 'Erstellen des Content Rotator Objekts
+11: Set TipODay = Server.CreateObject("MSWC.ContentRotator")
+12: 
+13: 'Einlesen der Infos aus der Content Schedule Datei
+14: Response.Write TipODay.ChooseContent("tipoday.txt")
+15: %&gt;
+16: 
+17: &lt;/body&gt;
+18: &lt;/html&gt;
+</pre>
+</p>
+<p>
+In Zeile 11 wird die Instanz des Content Rotator Objekts erstellt. Mit Hilfe des ASP-Statements  
+Response.Write  (Zeile 14) wird die Content Schedule Datei eingelesen, und der ausgew&auml;hlte
+Tip zum Client geschickt (<i>Response.Write</i>).
+</p>
+
+<h3>Erstellung Content Schedule Datei</h3>
+<p>
+Nun m&uuml;ssen Sie die Datei erstellen, welche in unserem Beispiel die Sammlung der Tips enth&auml;lt. Das 
+Content Rotator Objekt verwendet diese Datei um die Informationen zu verwalten und anzuzeigen.
+</p>
+<p>
+Sie k&ouml;nnen in diese Datei jeden g&uuml;ltigen HTML-Code einf&uuml;gen. Jeder Eintrag besteht aus zwei 
+Teilen. Die Zeile welche die Priorit&auml;t, also die Anzeigeh&auml;ufigkeit und Kommentare, die der 
+Dokumentation dienen, beginnt mit zwei aufeinanderfolgenden Prozentzeichen (%%). Die andere 
+enth&auml;lt die eigentliche HTML-Anweisung.
+</p>
+<p>
+<b>Syntax f&uuml;r einen Tip</b>
+<pre style="background='silver';">
+%% #Priorit&auml;t //Kommentar
+HTML-Anweisung
+</pre>
+</p>
+<p>
+Die Parameter bedeuten folgendes:
+<table>
+<tr>
+	<td valign="top"><i>#Priorit&auml;t</i></td>
+	<td>
+	<p>
+	Dieser Parameter (z.B. #10) ist optional; Er gibt die Anzeigeh&auml;ufigkeit der zugeh&ouml;rigen 
+	HTML-Anweisung an. G&uuml;ltige Werte hierf&uuml;r sind Zahlen von 0 bis 10000. Je h&ouml;her die Zahl desto 
+	wahrscheinlicher ist die Ausf&uuml;hrung der Anweisung. Die Auswertung der H&auml;ufigkeit erfolgt 
+	durch Bildung des arithmetischen Mittels &uuml;ber alle vorhandenen H&auml;ufigkeiten der Content 
+	Schedule Datei. 
+	</p>
+	<p>
+	<b>Beachte</b>
+	<ul>
+	<li>Die Angabe von #0 ignoriert den Eintrag
+	<li>Wenn kein Wert zugewiesen wurde, gilt der Standardwert von 1
+	<li>Falls die Summe aller H&auml;ufigkeiten 10000 &uuml;berschreitet, wird ein Fehler ausgegeben, wenn 
+	die Content Schedule Datei &uuml;ber die Methoden <i>GetAllContent</i> oder <i>ChooseContent</i> aufgerufen wird.
+	</ul>
+	</p>
+	</td>
+</tr>
+<tr>
+	<td valign="top"><i>//Kommentar</i></td>
+	<td>Hier k&ouml;nnen Sie Kommentare zu den Eintr&auml;gen einf&uuml;gen. Diese k&ouml;nnen bei der Siteentwicklung 
+	n&uuml;tzlich sein und werden nat&uuml;rlich nicht dem Client gezeigt. F&uuml;r den Fall, da&szlig; Ihr Kommentar 
+	mehr als eine Zeile ben&ouml;tigt, beginnen Sie jede weitere Kommentarzeile mit doppelten 
+	Prozentzeichen (%%) gefolgt von zwei Schr&auml;gstrichen ( Forward-Slash [//])</td>
+</tr>
+<tr>
+	<td valign="top"><i>HTML-Anweisung</i></td>
+	<td>
+	<p>
+	Dieser String wird vom Content Rotator Objekt angezeigt. Wie schon erw&auml;hnt k&ouml;nnen Sie hier 
+	Grafiken (&lt;img&gt;-Tag), Hyperlinks, Sound-Dateien, HTML-Tags (auch Tables, etc.), un- oder 
+	formatierten Text.
+	</p>
+	<p>
+	<b>Hinweis</b> Die HTML-Anweisung kann auch mehrzeilig sein, weil das Content Rotator Objekt 
+	alles zwischen den doppelten Prozentzeichen (%%) wie einen Anweisungsstring behandelt.
+	</p>
+	</td>
+</tr>
+</table>
+</p>
+<p>
+Sehen wir uns die Verwendung nun in einem Beispiel an (<b>tipoday.txt</b>):
+<pre style="background='silver';">
+ 1: %% #4 // Beispiel f&uuml;r Text
+ 2: Wenn um ASP geht &ndash; Dann ASPHeute.com
+ 3: %% // Beispiel f&uuml;r ein Bild; keine Priorit&auml;t angegeben, 
+ 4: %% // erh&auml;lt somit Wert 1
+ 5: &lt;img src="ad_aspheute.png"&gt;
+ 6: %% #3 // Beispiel f&uuml;r einen Hyperlink
+ 7: Wo geht's zu ASPHeute.com? &lt;a href="http://www.aspheute.com"&gt;Hier!&lt;/a&gt;
+ 8: %% #2 // Beispiel f&uuml;r HTML-Tags
+ 9: &lt;h2&gt;ASPHeute.com&lt;/h2&gt;
+10: &lt;p&gt;
+11: &lt;ul&gt;
+12:   &lt;li&gt;Artikel rund um ASP
+13:   &lt;li&gt;und mehr..
+14: &lt;/ul&gt;
+15: &lt;/p&gt;
+</pre>
+</p>
+<p>
+Zeile 3 enth&auml;lt zwei aufeinanderfolgende Kommentarzeilen; jede weitere ist wiederum mit 
+<nobr><i>%% //Kommentar</i></nobr> anzugeben.
+</p>
+<p>
+In diesem Beispiel haben wir vier Priorit&auml;tsvergaben: #4 (Beispiel f&uuml;r Text), #1 (Beispiel f&uuml;r 
+ein Bild), #3 (Beispiel f&uuml;r einen Hyperlink), #2 (Beispiel f&uuml;r HTML-Tags), in Summe gerechnet 10. 
+Das bedeutet, da&szlig; der Text zu 40%, das Bild zu 10%, der Hyperlink zu 30% und die 
+HTML-Tags zu 20% ausgef&uuml;hrt werden	
+</p>
+
+<h3>Einsatz der ChooseContent Methode</h3>
+<p>
+Diese Methode fordert eine HTML-Anweisung aus der Content Schedule Datei an und liefert das
+als String. Jedesmal wenn das Script neu abgearbeitet wird, z. B. wenn ein neuer Client die 
+Seite &ouml;ffnet oder aktualisiert, wird eine andere HTML-Anweisung angefordert.
+</p>
+<p>
+Syntax
+<pre style="background='silver';">
+ChooseContent(Pfad der Content Schedule Datei)
+</pre>
+</p>
+<p>
+<i>Pfad der Content Schedule Datei</i> gibt den physikalischen Speicherort der Content Schedule 
+Datei an. Dieser Parameter kann entweder als relativer oder als virtueller Pfad angegeben werden.
+</p>
+<p>
+Wenn die Content Schedule Datei (hier <b>tipoday.txt</b>) im gleichen Verzeichnis mit der Datei, die die 
+<i>ChooseContent</i> Methode aufgerufen hat, liegt, dann k&ouml;nnen Sie entweder den vollen virtuellen Pfad 
+angeben oder den relativen Pfad in der  Content Schedule Datei angeben.
+Das Content Rotator Objekt ruft die Server.MapPath Methode auf, um den angegeben Pfad in ein 
+physikalischen Verzeichnis einzumappen.
+</p>
+<p>
+In dem folgenden Beispiel wird jeweils ein neuer Tip aus der tipoday.txt angefordert.
+<pre style="background='silver';">
+&lt;% 
+  Set Tip = Server.CreateObject("MSWC.ContentRotator") 
+  Response.Write Tip.ChooseContent("tipoday.txt") 
+%&gt;
+</pre>
+</p>
+
+<h3>Einsatz der GetAllContent Methode</h3>
+<p>
+Diese Methode schreibt alle HTML-Anweisungen, die sich in der Content Schedule Datei befinden, 
+in Form einer Liste, deren Eintr&auml;ge durch einen &lt;hr&gt;-Tag getrennt werden, auf die Webpage. 
+Diese Funktion ist n&uuml;tzlich w&auml;hrend der Site-Testphase oder um die Eintr&auml;ge zu &uuml;berpr&uuml;fen.
+</p>
+<p>
+Syntax
+<pre style="background='silver';">
+GetAllContent(Pfad der Content Schedule Datei)
+</pre>
+</p>
+<p>
+Hier noch abschlie&szlig;end ein Beispiel zur Verwendung der <i>GetAllContent</i> Methode:
+<pre style="background='silver';">
+&lt;% 
+  Set AlleTips = Server.CreateObject("MSWC.ContentRotator")  
+%&gt;
+&lt;%=AlleTips.GetAllContent("tipoday.txt") %&gt;
+</pre>
+</p>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dieser Artikel sollte die Grundfunktionen der Content Rotator Komponete veranschaulichen und den 
+Einstieg in die Verwendung so einfach wie m&ouml;glich machen.
+</p>
+<p>
+Die erzielbaren Ergebnisse sind abgesehen vom Inhalt der HTML-Codes der Content Schedule Datei 
+optisch nicht so aufwendig gehalten wie im Vergleich zu Applets, jedoch erspart man sich ein 
+Studium diverser Script-Sprachen. Trotzdem kommt man mit wenig Aufwand zu akzeptablen 
+Ergebnissen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000718.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000718.zip</span></p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

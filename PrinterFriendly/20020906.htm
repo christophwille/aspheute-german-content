@@ -1,0 +1,311 @@
+<HTML>
+<HEAD>
+<TITLE>On-the-fly Erstellung von vCard's</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Die virtuellen Businesskarten - die vCards - werden vielen von uns schon einmal untergekommen sein. Einigen wird es dabei schon in den Sinn gekommen sein,
+f&uuml;r das eigene Communityportal solche vCards dynamisch f&uuml;r die Mitglieder zu generieren.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,vCard,vCalendar,Hashtable,Generierung,on the fly,automatisch,dynamisch,Businesskarte,Visitenkarte,elektronisch">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>On-the-fly Erstellung von vCard's</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Csharp.htm">C#</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20020906"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Die virtuellen Businesskarten - die vCards - werden vielen von uns schon einmal untergekommen sein. Entweder als
+Attachment bei einer Email, oder als Download von einer Website. Einigen wird es dabei schon in den Sinn gekommen sein,
+f&uuml;r das eigene Communityportal solche vCards dynamisch f&uuml;r die Mitglieder zu generieren. Dieser Artikel zeigt, wie's geht.
+</p>
+<p>
+Als ersten Schritt erzeugen wir uns eine vCard mittels Outlook Express, und sehen uns die Datenstrukturen an. Danach
+werden wir mit diesen Informationen an die Arbeit gehen, und uns eine Klasse programmieren, die Daten f&uuml;r die Erstellung
+der vCard annimmt, und als letzten Schritt aus diesen Daten eine vCard dynamisch erstellt.
+</p>
+
+<h2>Mit Outlook Express zur vCard</h2>
+<p>
+Der einfachste und schnellste Weg zu einer vCard ist mittels Outlook Express. Dazu geht man zu den Adressen:
+</p>
+
+<IMG SRC="/artikel/Bilder/200209/20020906_1.png" width="602" height="380" alt="" border="0">
+
+<p>
+Und exportiert dort eine der Adressen in das vCard Format:
+</p>
+
+<IMG SRC="/artikel/Bilder/200209/20020906_2.png" width="602" height="380" alt="" border="0">
+
+<p>
+Dann kann man auf die neu erstellte vCard (<b>Prefect, Ford.vcf</b>) doppelklicken, und bekommt personenbezogene Informationen aus der vCard
+angezeigt:
+</p>
+
+<IMG SRC="/artikel/Bilder/200209/20020906_3.png" width="503" height="424" alt="" border="0">
+
+<p>
+Was steckt nun in so einer .vcf Datei drinnen? Es ist ein ganz normales Textfile mit "Feldern":
+</p>
+
+<pre style="background='silver';">
+BEGIN:VCARD
+VERSION:2.1
+N:Prefect;Ford
+FN:Ford Prefect
+ADR;HOME:;;Vordernbergerstrasse 27/8;Leoben;AT;8700;Austria
+LABEL;HOME:Vordernbergerstrasse 27/8;Leoben;AT;8700;Austria
+EMAIL;PREF;INTERNET:ford@theGuide.net
+REV:20020905T163340Z
+END:VCARD
+</pre>
+
+<p>
+Details zu den einzelnen Feldern erf&auml;hrt man auf der Seite <a href="http://www.imc.org/pdi/" target="_blank">Personal Data Interchange
+- vCard and vCalendar</a>. Allerdings kann man sich aus einem vollausgef&uuml;llten Outlook-Adresseintrag nach dem Export alles
+selbst zusammenreimen - f&uuml;r die Generierung einer vCard.
+</p>
+
+<h2>Die <i>vCardGenerator</i> Klasse</h2>
+<p>
+Damit man den Code m&ouml;glichst in allen Anwendungen einsetzen kann - von Windows Forms bis hin zu ASP.NET - habe ich eine
+Klasse <i>vCardGenerator</i> designed, die das Erstellen einer vCard kapselt. Der Input sind die vCard-Felder, heraus
+kommt eine fertig korrekt formatierte elektronische Visitenkarte.
+</p>
+<p>
+Die einzelnen Elemente der vCard werden in der Klasse in einer Hashtable verwaltet. Um den Eigenschaften den Direktzugriff
+(und somit Fehlerbehandlung) zu ersparen, werden die Zugriffe in einer <i>GetProperty</i> sowie <i>SetProperty</i> Methode abgewickelt:
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.Collections;
+using System.Text;
+
+namespace AspHeute.Utilities {
+public class vCardGenerator {
+  Hashtable Elements;
+  
+  public vCardGenerator() {
+    Elements = new Hashtable();
+  }
+  
+  private void SetProperty(string strElement, string strValue) {
+    if (Elements.ContainsKey(strElement)) {
+      Elements[strElement] = strValue;
+    } else {
+      Elements.Add(strElement, strValue);
+    }
+  }
+  
+  private string GetProperty(string strElement) {
+    if (Elements.ContainsKey(strElement)) {
+      return Elements[strElement].ToString();
+    }
+    
+    return "";
+  }
+</pre>
+
+<p>
+Details zur Verwendung der Hashtable Klasse finden Sie im Artikel <a href="../artikel/20000823.htm">Die Hashtable Klasse</a>.
+</p>
+<p>
+Die Eigenschaften k&ouml;nnen diese Methoden nun einsetzen, um die Werte bequem zu speichern - und zu holen (in der Klasse
+sind nicht alle m&ouml;glichen Felder einer vCard implementiert, man kann das aber leicht nachholen):
+</p>
+
+<pre style="background='silver';">
+  public string FullName {
+    get { return GetProperty("FN:"); }
+    set { SetProperty("FN:", value); }
+  }
+  
+  public string HomeTelVoice {
+    get { return GetProperty("TEL;HOME;VOICE:"); }
+    set { SetProperty("TEL;HOME;VOICE:", value); }
+  }
+  
+  public string HomeTelFax {
+    get { return GetProperty("TEL;HOME;FAX:"); }
+    set { SetProperty("TEL;HOME;FAX:", value); }
+  }
+  
+  public string CellTelVoice {
+    get { return GetProperty("TEL;CELL;VOICE:"); }
+    set { SetProperty("TEL;CELL;VOICE:", value); }
+  }
+  
+  public string HomeAddress {
+    get { return GetProperty("ADR;HOME:;;:"); }
+    set { SetProperty("ADR;HOME:;;", value); }
+  }
+  
+  public string PreferedInternetEmailAddress {
+    get { return GetProperty("EMAIL;PREF;INTERNET:"); }
+    set { SetProperty("EMAIL;PREF;INTERNET:", value); }
+  }
+</pre>
+
+<p>
+Wie Sie sehen, verwende ich als Key f&uuml;r den Hashtable den linken Teil einer Zeile in der vCard, und als Wert das, was
+auch als Wert in der vCard rechts in der Zeile steht. Auf diese Art und Weise wird n&auml;mlich das Erstellen der vCard
+ein Leichtes:
+</p>
+
+<pre style="background='silver';">
+  public string Generate() {
+    StringBuilder stb = new StringBuilder();
+    stb.Append("BEGIN:VCARD\r\n");
+    stb.Append("VERSION:2.1\r\n");
+    
+    foreach (DictionaryEntry de in Elements)
+    {
+      stb.Append(de.Key);
+      stb.Append(de.Value);
+      stb.Append("\r\n");
+    }
+    
+    stb.Append("END:VCARD\r\n");
+    return stb.ToString();
+  }
+</pre>
+
+<p>
+Ein Vorspann und Ende fix in den <a href="../artikel/20000803.htm">StringBuilder</a> einf&uuml;gen, und die Datenpaare danach mit dem <a href="../artikel/20000720.htm">foreach Statement</a> auslesen
+und schreiben. Die Klasse sieht im Class Scout von <a href="http://www.icsharpcode.net/opensource/sd/" target="_blank">#develop</a> dann so aus:
+</p>
+
+<IMG SRC="/artikel/Bilder/200209/20020906_4.png" width="325" height="321" alt="" border="0">
+
+<h2>Generieren einer Beispiel-vCard</h2>
+<p>
+In der Beispielapplikation <b>vCardGenerator</b> ist neben der Klasse <i>vCardGenerator</i> auch noch ein Hauptprogramm
+mit dabei, das die Verwendung zeigt (<b>SampleApp.cs</b>):
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.IO;
+using AspHeute.Utilities;
+
+public class SampleApp {
+  public static void Main() {
+    vCardGenerator vcg = new vCardGenerator();
+    vcg.FullName = "Christoph Wille";
+    vcg.HomeAddress = "Vordernbergerstrasse 27/8;Leoben;AT;8700;Austria";
+    vcg.PreferedInternetEmailAddress = "christophw@icsharpcode.net";
+    vcg.CellTelVoice = "+43 4711 42";
+    
+    string strVCard = vcg.Generate();
+    FileInfo fi = new FileInfo("sample.vcf");
+    StreamWriter sw = fi.CreateText();
+    sw.Write(strVCard);
+    sw.Flush();
+    sw.Close();
+  }
+}
+</pre>
+
+<p>
+Heraus kommt ein perfekt g&uuml;ltiges <b>sample.vcf</b> (&uuml;berpr&uuml;fbar per Doppelklick): 
+</p>
+
+<pre style="background='silver';">
+BEGIN:VCARD
+VERSION:2.1
+TEL;CELL;VOICE:+43 4711 42
+EMAIL;PREF;INTERNET:christophw@icsharpcode.net
+ADR;HOME:;;Vordernbergerstrasse 27/8;Leoben;AT;8700;Austria
+FN:Christoph Wille
+END:VCARD
+</pre>
+
+<p>
+Nat&uuml;rlich kann das so generierte vCard per ASP.NET Downloadlink auch verschickt werden (zB interessant f&uuml;r die Mitglieder
+einer Community). Alles was zu tun ist, ist den entsprechenden MIME Type beim Download mitzuschicken - schon &ouml;ffnet Outlook
+die vCard.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Die heute vorgestellte Klasse implementiert nur einige wichtige Elemente einer vCard, allerdings bin ich mir sicher,
+da&szlig; Sie die von Ihnen ben&ouml;tigten schnell mit Copy&amp;Paste Programmierung einbauen werden k&ouml;nnen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20020906.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20020906.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001121.htm">AutoCompletion f&uuml;r Web Formulare</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001121.htm</span><br>
+<a href="../artikel/20000720.htm">Das foreach Statement</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000720.htm</span><br>
+<a href="../artikel/20020318.htm">Das using Schl&uuml;sselwort</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020318.htm</span><br>
+<a href="../artikel/20000823.htm">Die Hashtable Klasse</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000823.htm</span><br>
+<a href="../artikel/20000803.htm">Die String Klasse in C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000803.htm</span><br>
+<a href="../artikel/20000728.htm">On-the-fly Generierung von Graphiken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000728.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eicsharpcode%2Enet%2Fopensource%2Fsd%2F">#develop (SharpDevelop)</a><br>
+<SPAN class="content">http://www.icsharpcode.net/opensource/sd/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eimc%2Eorg%2Fpdi%2F">Personal Data Interchange - vCard and vCalendar</a><br>
+<SPAN class="content">http://www.imc.org/pdi/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

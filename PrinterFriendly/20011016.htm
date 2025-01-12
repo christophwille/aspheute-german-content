@@ -1,0 +1,449 @@
+<HTML>
+<HEAD>
+<TITLE>Verzeichnisb&auml;ume rekursiv generieren</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Heute wollen wir uns einen Verzeichnisbaum eines definierten Ordners erstellen, der die selben M&ouml;glichkeiten bietet, wie der Windows-Explorer Baum.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Ordner,Explorer,TreeView,Tree View,Verzeichnisbaum,Ordnerauflistung">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Verzeichnisb&auml;ume rekursiv generieren</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianmairoll.htm">Christian Mairoll</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20011016"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Ob im Intranet oder zur vereinfachten Fernwartung eines ASP Web Servers, Ordnerauflistungen k&ouml;nnen von 
+vielerlei Nutzen sein. Um einen Ordner samt seinen Unterordnern in gewohnter Weise darstellen zu k&ouml;nnen, 
+ben&ouml;tigt man rekursive Aufrufe. Heute wollen wir uns einen Verzeichnisbaum eines definierten Ordners 
+erstellen, der die selben M&ouml;glichkeiten bietet, wie der Windows-Explorer Baum.
+</p>
+
+<IMG SRC="/artikel/Bilder/200110/20011016_1.png" width="557" height="450" alt="" border="0">
+
+<h2>Methoden zum Auflisten von Ordnern</h2>
+
+<p>
+Um eine Auflistung alle Unterordner eines bestimmten Ordners zu bekommen, ben&ouml;tigt man lediglich das 
+<i>FileSystemObject</i>. Folgendes Listing zeigt, wie mit der GetFolder Methode eine Liste aller Unterordner 
+erzeugt wird (<b>listFolder.asp</b>).
+</p>
+
+<pre style="background='silver';">
+&lt;%
+'FileSystemObject in oFso anlegen 
+Set oFso = Server.CreateObject("Scripting.FileSystemObject")
+
+'Folder-Objekt mit GetFolder erzeugen
+Set oFolder = oFso.GetFolder("c:\winnt\")
+
+'Schleife zum Durchlaufen alle Unterordner von oFolder
+For Each oSubFolder in oFolder.SubFolders
+    Response.Write oSubFolder.Name &amp; "&lt;br&gt;"
+Next
+
+'Resourcen freigeben
+Set oFolder = nothing
+Set oFso = nothing
+%&gt;
+</pre>
+
+<p>
+Das <i>Scripting.FileSystemObject</i> erm&ouml;glicht den Zugriff auf Ordner und Dateien. Die M&ouml;glichkeiten 
+reichen hier von Ordner- und Dateiattributen anzeigen, bis hin zu deren Inhalt bearbeiten zu k&ouml;nnen. Jedoch 
+einen Schwachpunkt hat das <i>FileSystemObject</i> f&uuml;r ASP-Entwickler: Bin&auml;re Dateien lassen sich nicht 
+sinnvoll lesen und schreiben (z.B. Bildformate). Die Verwendung bleibt somit auf ASCII-Dateien 
+(z.B. txt, html, xml, ini, etc.) beschr&auml;nkt. 
+</p>
+
+<p>
+Eine vollst&auml;ndige Dokumentation der Scripting-Komponente finden Sie bei 
+<a href="http://msdn.microsoft.com/scripting" target="_blank">Microsoft</a>.
+</p>
+
+<h2>Eine einfache Baumstruktur generieren</h2>
+
+<p>
+Zun&auml;chst ein Beispiel f&uuml;r einen einfachen serverseitig abgebildeten Verzeichnisbaum. Die Verschachtelung 
+des Baumes erfolgt mit einem rekursiven Aufruf. Die vollst&auml;ndige Implementierung finden Sie in der Datei 
+<b>simpleTree.asp</b>.
+</p>
+
+<p>
+Als erstes ben&ouml;tigen wir das <i>FileSystemObject</i>.
+</p>
+
+<pre style="background='silver';">
+Set oFso = Server.CreateObject("Scripting.FileSystemObject")
+</pre>
+
+<p>
+Dann legen wir den Startordner fest, ab dem der Baum beginnen soll. Achtung: Wenn Sie hier z.B. c:\ 
+angeben, kann der Aufruf der Seite mehrere Minuten dauern, da alle Ordner auf dem Laufwerk 
+aufgelistet werden.
+</p>
+
+<pre style="background='silver';">
+sRootFolder = "c:\winnt\"
+</pre>
+
+<p>
+Damit wir sp&auml;ter im Code nicht st&auml;ndig die kompletten img-Tags verwenden m&uuml;ssen, legen wir zur Vereinfachung 
+Konstanten an.
+</p>
+
+<pre style="background='silver';">
+CONST FLD_CLOSE = "&lt;img src=""FldClose.gif"" border=""0""&gt;"
+CONST FLD_OPEN  = "&lt;img src=""FldOpen.gif"" border=""0""&gt;"
+CONST LINE_L    = "&lt;img src=""LineL.gif"" border=""0""&gt;"
+CONST LINE_T    = "&lt;img src=""LineT.gif"" border=""0""&gt;"
+CONST LINE_I    = "&lt;img src=""LineI.gif"" border=""0""&gt;"
+CONST WHTSPACE  = "&lt;img src=""WhtSpace.gif"" border=""0""&gt;" 
+</pre>
+
+<p>
+Ebenso f&uuml;r die Tabellen. Jede Zeile besteht aus einer Tabelle mit zwei Spalten. Dies ist eine einfache 
+Methode, um die Grafiken und den dabeistehenden Text (in diesem Fall den Ordnernamen) vertikal genau 
+zu zentrieren. Ohne Tabelle verschiebt der Browser den Text leider ein wenig nach unten, wodurch ein 
+unsch&ouml;ner Zwischenraum zwischen den Zeilen entsteht.
+</p>
+
+<pre style="background='silver';">
+CONST TAB_START  = "&lt;table border=0 cellspacing=0 cellpadding=0&gt;&lt;tr&gt;&lt;td&gt;"
+CONST TAB_MID    = "&lt;/td&gt;&lt;td&gt;"
+CONST TAB_END    = "&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;"
+</pre>
+
+<p>
+Als n&auml;chstes legen wir die Variablen f&uuml;r die beiden Bild-Pfade an. Diese sind beim Aufruf der Rekursion 
+notwendig, um die richtige Darstellung der Ordner-Einr&uuml;ckung zur gew&auml;hrleisten. Die Variable 
+<i>sImgPath1</i> enth&auml;lt den normalen Pfad bis zur Ordner-Grafik. Die zweite Variable enth&auml;lt den Pfad 
+f&uuml;r den jeweils letzten Unterordner eines Ordners. Dieser hat die besonderen Eigenschaften, da&szlig; die 
+letzte Grafik vor der Ordner-Grafik immer eine Ecke, und die Grafik davor immer eine Leer-Grafik sein mu&szlig;. 
+</p>
+
+<p>
+Bei jedem Durchlauf der rekursiven Funktion wird der bisher vorhandene Pfad gespeichert, und die 
+n&auml;chste Einr&uuml;ck-Stufe hinzugef&uuml;gt. Daher werden die beiden Variablen sImgPath1 und sImgPath2 ben&ouml;tigt, 
+welche die kompletten Bilderstrings bis zu den offenen oder geschlossenen Ordner-Grafiken speichern.
+</p>
+
+<p>
+Die boolsche Variable bStart legt lediglich fest, da&szlig; beim ersten Aufruf der rekursiven Funktion der 
+RootFolder angezeigt wird. Ist der RootFolder n&auml;mlich kein Unterordner des Laufwerkes, wird generell 
+nichts angezeigt, da das Laufwerk selbst Teil der Drives-Collection ist, und nicht als Ordner 
+angesehen wird.
+</p>
+
+<pre style="background='silver';">
+bStart = true
+</pre>
+
+<p>
+Als n&auml;chstes wird die rekursive Funktion das erste mal aufgerufen und somit die Rekursion angesto&szlig;en.
+</p>
+
+<pre style="background='silver';">
+Call getFolder(sRootFolder, sImgPath1, sImgPath2)
+</pre>
+
+<h3>Die getFolder Funktion</h3>
+
+<p>
+Innerhalb der rekursiven getFolder Funktion schalten wir das Error-Handling ab. Grund daf&uuml;r: Wenn die 
+Funktion auf einen Ordner trifft, f&uuml;r den Sie keine Leserechte besitzt, bricht sie mit einer 
+ASP-Fehlermeldung ab. Um dies zu vermeiden, und den Ordnernamen trotzdem anzuzeigen, wird das 
+Error-Handling deaktiviert.
+</p>
+
+<pre style="background='silver';">
+Function getFolder(sFolder, sImgPath1, sImgPath2)
+On Error Resume Next
+</pre>
+
+<p>
+Das Ordner-Objekt und die Unterordner-Collection werden erzeugt.
+</p>
+
+<pre style="background='silver';">
+Set oFolder = oFso.GetFolder(sFolder)
+Set oSubFldColl = oFolder.SubFolders
+</pre>
+
+<p>
+Wenn der Ordner keine weiteren Unterordner mehr enth&auml;lt, wird die Rekursion an diesem Punkt beendet.
+</p>
+
+<pre style="background='silver';">
+If oSubFldColl.Count = 0 Then
+</pre>
+
+<p>
+Eine Zeile besteht aus folgenden Teilen:
+</p>
+
+<ol>
+<li>TAB_START: Der Anfang der Tabellenzeile</li>
+<li>sImgPath1: Der Bilderpfad bis zum Ordner-Bild</li>
+<li>FLD_CLOSE: Das Bild des geschlossenen Ordners</li>
+<li>TAB_MID: Abschlu&szlig; der ersten und Beginn der zweiten Spalte der Tabelle.</li>
+<li>oFolder.Name: Der Name des Ordners. Beim ersten Durchlauf der Funktion der RootFolder. Hier k&ouml;nnte 
+man z.B. einen Link auf eine Detailseite des Ordners einsetzen.</li>
+<li>TAB_END: Der Abschlu&szlig; der Tabelle</li>
+</ol>
+
+<pre style="background='silver';">
+Response.Write TAB_START &amp; sImgPath1 &amp; FLD_CLOSE &amp; TAB_MID
+If bStart Then
+ Response.Write sRootFolder
+ bStart = False
+Else
+ Response.Write oFolder.Name
+End If
+Response.Write TAB_END &amp; vbCrLf
+</pre>
+
+<p>
+Enth&auml;lt der Ordner weitere Unterordner, geht die Rekursion weiter.
+</p>
+
+<pre style="background='silver';">
+ Else
+</pre>
+
+<p>
+Auch hier wieder das gleiche Schema wie oben, jedoch mit dem Unterschied, da&szlig; hier die Grafik 
+des ge&ouml;ffneten Ordners verwendet wird, da noch weitere Unterordner bestehen.
+</p>
+
+<pre style="background='silver';">
+Response.Write TAB_START &amp; sImgPath1 &amp; FLD_OPEN &amp; TAB_MID
+If bStart Then
+ Response.Write sRootFolder
+ bStart = False
+Else
+ Response.Write oFolder.Name
+End If
+Response.Write TAB_END &amp; vbCrLf
+</pre>
+
+<p>
+Die For-Each Schleife geht alle Unterordner des aktuellen Ordners durch.
+</p>
+
+<pre style="background='silver';">
+For Each oSubFld In oSubFldColl
+sSubFldPath = sFolder &amp; oSubFld.Name &amp; "\"
+i = i + 1
+If i &lt; oSubFldColl.Count Then
+ 'Bis auf den letzten Unterordner bei allen die T-Grafik verwenden
+ Call getFolder(sSubFldPath, sImgPath2 &amp; LINE_T, sImgPath2 + LINE_I)
+Else
+ 'Beim letzten Unterordner die L-Grafik vor dem Ordner verwenden
+ Call getFolder(sSubFldPath, sImgPath2 &amp; LINE_L, sImgPath2 + WHTSPACE)
+End If
+Next
+</pre>
+
+<p>
+Erl&auml;uterung: Zun&auml;chst wird der gesamte Pfad des Unterordners gespeichert, da dieser beim n&auml;chsten Aufruf 
+der Rekursion ben&ouml;tigt wird. Die Variable i z&auml;hlt die Unterordner mit um rechtzeitig vor dem letzten 
+Unterordner die aufzurufende Funktion &auml;ndern zu k&ouml;nnen. 
+</p>
+
+<p>
+Bis auf den letzten Unterordner wird beim Aufruf der rekursiven Funktion der normale Bilderpfad verwendet.
+Beim letzten Ordner mu&szlig; der zweite Pfad verwendet werden, da hier zwei andere Abschlu&szlig;-Grafiken eingesetzt 
+werden m&uuml;ssen.
+</p>
+
+<pre style="background='silver';">
+End If
+</pre>
+
+<p>
+Das w&auml;r's auch schon mit der rekursiven Funktion. Die getFolder-Methode ruft sich selbst immer wieder auf, 
+bis keine weiteren Unterordner mehr vorhanden sind.
+</p>
+
+<pre style="background='silver';">
+Set oFolder = Nothing
+On Error GoTo 0
+</pre>
+
+<p>
+Die Resourcen werden wieder freigegeben und das Error-Handling wieder aktiviert.
+</p>
+
+<pre style="background='silver';">
+End Function
+%&gt;
+</pre>
+
+<h2>Erweiterte Baumstruktur generieren</h2>
+
+<p>
+Das vorige Beispiel zeigt, wie der Verzeichnisbaum serverseitig erzeugt wird. W&uuml;nschenswert w&auml;re hier jedoch 
+noch, da&szlig; der Baum genauso wie im Windows-Explorer dynamisch auf- und zuklappbar ist. Dies lie&szlig;e sich 
+nun entweder auch serverseitig realisieren, jedoch die st&auml;ndigen Reloads der Seite w&uuml;rden unn&ouml;tige 
+Zeit des Users beanspruchen. Deshalb habe ich eine clientseitige L&ouml;sung gew&auml;hlt.
+</p>
+
+<p>
+Jeder Ordner samt seinen Unterordnern wird in einem eigenen fortlaufend durchnummerierten 
+em-Tag geschrieben. Somit wird es m&ouml;glich, den ganzen Ordner-Bereich mittels JavaScript 
+aus- und einzublenden. Diese JavaScript-Funktion wird beim Klicken auf die "-" Grafik aufgerufen.
+</p>
+
+<pre style="background='silver';">
+&lt;a href="javascript:HideItem(OrdnerID)"&gt;Grafik&lt;/a&gt;
+</pre>
+
+<p>
+Das Script zum Aus- und Einblenden sieht folgenderma&szlig;en aus:
+</p>
+
+<pre style="background='silver';">
+&lt;script language="JavaScript"&gt;
+function HideItem(itemID)
+{
+    document.all['open'+itemID].style.display = "none";
+    document.all['close'+itemID].style.display = "inline";
+}
+function ShowItem(itemID)
+{
+    document.all['open'+itemID].style.display = "inline";
+    document.all['close'+itemID].style.display = "none";
+}
+&lt;/script&gt;
+</pre>
+
+<p>
+Die zweite gr&ouml;&szlig;ere Erweiterung gegen&uuml;ber dem einfachen Verzeichnisbaum ist eine weitere 
+Unterscheidung beim Aufruf der rekursiven Funktion. Hier mu&szlig; zus&auml;tzlich noch unterschieden 
+werden, ob die Unterordner in der Ordner-Collection weitere Unterordner enthalten, um hier 
+gegebenenfalls die "-" Grafik mit dem Link zum Ausblenden anzuzeigen.
+</p>
+
+<p>
+Der vollst&auml;ndige SourceCode der <b>jsTree.asp</b> ist im heutigen Download enthalten. Aus Platzgr&uuml;nden 
+wird auf eine vollst&auml;ndige Beschreibung der langen Fassung verzichtet. Bitte beachten Sie, da&szlig; das 
+Zu- und Aufklappen eines Ordners nur mit dem Microsoft Internet-Explorer funktioniert. Es bleibt Ihnen 
+&uuml;berlassen, ob Sie auch eine Netscape-kompatible Routine mit layer bzw. div-Tags schreiben.
+</p>
+
+<h2>Weitere M&ouml;glichkeiten</h2>
+
+<p>
+Die oben gezeigten Beispiele zeigen, wie Sie einen Verzeichnisbaum eines bestimmten Ordners eines 
+Server-Laufwerks erzeugen. Baumstrukturen sind aber nicht nur f&uuml;r File-Browsing interessant. Nach 
+dem gleichen Schema k&ouml;nnen Sie nun z.B. ein Homepage-Men&uuml; oder ein Diskussionsforum mit den einzelnen 
+Forums-Threads erstellen. 
+</p>
+
+<p>
+&Uuml;bliche Baumstrukturen verf&uuml;gen zwar &uuml;ber die notwendige Einr&uuml;ckung der Eintr&auml;ge (Nodes), jedoch nicht 
+&uuml;ber eine ausgereifte grafische Darstellung der Einr&uuml;ckungen vor den Beschriftungen der Eintr&auml;ge, mit 
+der M&ouml;glichkeit, einzelne Nodes ein- oder auszublenden.
+</p>
+
+<h2>Sicherheitsaspekte</h2>
+
+<p>
+Das FileSystemObject ist ein sehr m&auml;chtiges Werkzeug zum navigieren auf einem Laufwerk. Beachten Sie 
+bitte, da&szlig; ohne ausreichende Absicherung des IUSR_&lt;maschine&gt;-Accounts jeder Besucher der Website 
+alle Dateien des Laufwerks einsehen, bearbeiten oder gar l&ouml;schen k&ouml;nnte. 
+</p>
+
+<p>
+Es ist daher zwingend notwendig, die NT-Rechte auf dem Server derart einzuschr&auml;nken, da&szlig; der 
+IUSR_&lt;maschine&gt; nicht weiter unterhalb des Webverzeichnisses zugreifen darf. Weitere 
+M&ouml;glichkeiten sind nat&uuml;rlich Passwortabfrage vor dem Zugriff auf die Seite oder generell in der 
+ASP-Applikation festlegen, da&szlig; der Besucher nur einen bestimmten Bereich browsen darf.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Die beiden Beispiele zum Erstellen eines Verzeichnisbaumes sollten als Grundlage dienen, um weitere Funktionen 
+zu implementieren. Denkbar w&auml;re ein vollst&auml;ndiger File-Browser, d.h. einen webbasierten Explorer mit 
+Modulen zum Anzeigen und Editieren von Dateien. Nat&uuml;rlich gibt es auch fertige Tree-Komponenten im Web 
+zum Download. Advantys bietet zum Beispiel die Gratis-Komponente TreeGen mit sehr umfangreichen 
+Optionen an. VisualASP stellt ebenfalls eine Gratis-Testversion seiner TreeView Komponente 
+zur Verf&uuml;gung. 
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20011016.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20011016.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000804.htm">Directory Browsing a la .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000804.htm</span><br>
+<a href="../artikel/20010507.htm">Web-basiertes Dateimanagement mit dem ASP FileMan</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010507.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Etreegen%2Ecom">Advantys TreeGen</a><br>
+<SPAN class="content">http://www.treegen.com</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easp%2Dcomponents%2Ede">ASP-Components Text2Tree</a><br>
+<SPAN class="content">http://www.asp-components.de</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eiiscart%2Ecom">iisCART iisTREE</a><br>
+<SPAN class="content">http://www.iiscart.com</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Evisualasp%2Ecom">VisualASP TreeView</a><br>
+<SPAN class="content">http://www.visualasp.com</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ewebintel%2Enet%2Fcomponents%2Fqtv">Webintel.net Quick Tree View</a><br>
+<SPAN class="content">http://www.webintel.net/components/qtv</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

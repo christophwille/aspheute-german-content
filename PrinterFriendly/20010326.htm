@@ -1,0 +1,271 @@
+<HTML>
+<HEAD>
+<TITLE>Records z&auml;hlen mit Stored Procedures</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wie viele Datens&auml;tze sind in meiner Tabelle gespeichert? Die &uuml;bliche Antwort f&uuml;r SQL Server ist COUNT(*), allerdings wird das wiederkehrende implementieren irgendwann l&auml;stig - Zeit, das Ganze in einer Stored Procedure zu verpacken!">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Stored Procedure,COUNT,Errors,Collection,ADO,Message,PRINT,Statement,RecordCount,Anzahl">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Records z&auml;hlen mit Stored Procedures</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010326"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Eine Frage, die immer wieder auftaucht, ist: "Wie viele Datens&auml;tze sind in meiner Tabelle 
+gespeichert?". Die &uuml;bliche (und richtige) Antwort f&uuml;r SQL Server ist COUNT(*), allerdings 
+wird das wiederkehrende implementieren irgendwann l&auml;stig - Zeit, das Ganze in einer Stored Procedure
+zu verpacken!
+</p>
+
+<h2>Die Stored Procedure</h2>
+<p>
+Auf den ersten Blick scheint die Antwort ja simpel zu sein: in meiner Datenbank lege ich eine
+Stored Procedure an, der ich den Tabellennamen &uuml;bergebe, und mit dem ich ein SELECT COUNT(*) 
+Statement absetze - jedoch so einfach ist es leider nicht. Hier eine Liste der Ans&auml;tze, die nicht
+funktionieren, und vor allem warum.
+</p>
+<p>
+<b>Cursors</b> Wir brauchen ein dynamisches SQL Statement, da erst zur Laufzeit bekannt ist, welche
+Tabelle wir abfragen m&uuml;ssen. Das funktioniert aber mit dem <i>DECLARE CURSOR</i> Statement nicht.
+Und auf die undokumentierten <i>sp_cursoropen</i> usw. XP's auszuweichen ist auch keine Idee.
+</p>
+<p>
+<b>Recordsets und EXEC</b> Technisch m&ouml;glich (und oft eingesetzt), aber ineffizient. Ich mu&szlig; f&uuml;r eine Zeile
+und eine Spalte ein ganzes Recordset aufbauen und danach zerst&ouml;ren.
+Da kann ich gleich bei reinem ADO Code ohne Stored Procedure bleiben.
+</p>
+<p>
+<b>RETURN und EXEC</b> W&auml;re zu sch&ouml;n, der SQL Server l&auml;&szlig;t es nur nicht zu. <i>RETURN</i> kann nur
+in Stored Procedures verwendet werden, nicht aber in <i>EXEC</i>, das in einer SP aufgerufen wird.
+</p>
+<p>
+Die L&ouml;sung, mit der ich mir Abhilfe verschafft habe? Ich benutze das <i>PRINT</i> Statement, das 
+eine Nachricht ausgibt. Was mir das hilft? Ich kann diese Nachricht &uuml;ber ein <i>ADO Error</i>
+Objekt am Client auslesen. Krank? Ja. Aber f&uuml;r solche L&ouml;sungen bin ich bekannt.
+</p>
+<p>
+Bevor wir jetzt theoretisch weiterdisktuieren, betrachten wir den Code der Stored Procedure:
+</p>
+<pre style="background='silver';">
+CREATE  PROCEDURE 
+   sp_GetRecordCount @Table_Name varchar(255)
+AS
+  DECLARE @qryStmt varchar(255)
+  SELECT @qryStmt = 'DECLARE @RCount int' + CHAR(13) + CHAR(10) + 
+                    'SELECT @RCount=COUNT(*) FROM ' + @Table_Name +
+                    CHAR(13) + CHAR(10) + 
+                    'PRINT @RCount'
+  EXEC(@qryStmt)
+GO
+</pre>
+
+<p>
+Hier sieht man das ganze Problem sehr eindringlich - ich mu&szlig; das ben&ouml;tigte Transact-SQL selbst
+dynamisch erstellen, und dann erst ausf&uuml;hren. Dadurch kann ich nicht auf lokale Variablen zugreifen,
+und das Zur&uuml;ckgeben von Werten funktioniert auch nicht wie gerne gew&uuml;nscht. Aber zumindest erlaubt
+mir das <i>PRINT</i> Statement die Anzahl der Datens&auml;tze effizient zur&uuml;ckzuliefern - denn die Messages
+des Servers werden immer abgeholt.
+</p>
+
+<h2>Das Beispielformular</h2>
+<p>
+Wie verwendet man diese Stored Procedure nun? Das Haupteinsatzgebiet wird zwar woanders liegen,
+aber machen wir uns ein kleines visuelles Formular, in dem der Benutzer eine Tabelle ausw&auml;hlen
+kann, und wir ihm dann mit Hilfe der Stored Procedure die Anzahl der Datens&auml;tze eruieren.
+</p>
+<p>
+Damit jeder eine Idee bekommt wie einfach ich mir das vorstelle, hier ein Screenshot der
+fertigen Anwendung.
+</p>
+
+<IMG SRC="/artikel/Bilder/200103/20010326.png" width="529" height="247" alt="" border="0">
+
+<p>
+Ein interessanter Part ist sicher, wie ich an die Namen der Tabellen herankomme - denn ich
+habe sie nicht eingetippt! Da ich ein von Natur aus effizienter (=fauler) Mensch bin, lasse
+ich mir die Liste vom SQL Server in die Hand dr&uuml;cken - und zwar mit einer einfachen Abfrage.
+Der folgende Formularcode enth&auml;lt alles notwendige, um die Tabellen der Northwind Datenbank
+zu erhalten:
+</p>
+
+<pre style="background='silver';">
+&lt;form method="POST" action="&lt;%=Request.ServerVariables("SCRIPT_NAME")%&gt;"&gt;
+&lt;select name="cbTableName"&gt;
+&lt;%
+strConnStr = "Provider=SQLOLEDB;Data Source=strangelove;Initial Catalog=Northwind;..."
+strTableStmt = "select * from sysobjects where type='U'"
+
+Set rs = Server.CreateObject("ADODB.Recordset")
+rs.Open strTableStmt, strConnStr
+While Not rs.EOF
+  Response.Write "&lt;option&gt;" &amp; rs("name") &amp; "&lt;/option&gt;" &amp; vbCrlf
+  rs.MoveNext
+Wend
+rs.Close
+Set rs = Nothing
+%&gt;
+&lt;/select&gt;
+&lt;input type="submit" value="Anzahl d. Records ermitteln"&gt;
+&lt;/form&gt;
+</pre>
+
+<p>
+SQL Server verwaltet alle Objekte selbst in Tabellen, und die "Mastertabelle" ist <i>sysobjects</i>,
+aus der ich mir alle Tabellenobjekte heraus-SELECTe. Mit dem erhaltenen Recordset baue ich eine
+DropDown Box auf, aus der der Benutzer dann die gew&uuml;nschte Tabelle selektieren kann.
+</p>
+<p>
+Nach Auswahl der Tabelle und klicken auf das Formular werden die Daten an den Server zur&uuml;ckgepostet,
+wo dann der folgende Code die Arbeit &uuml;bernimmt:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+strTableName = Request.Form("cbTableName")
+If "" &lt;&gt; strTableName Then
+  Response.Write "&lt;p&gt;&lt;b&gt;Die Tabelle " &amp; strTableName
+  strTableName = "[" &amp; strTableName &amp; "]"
+  Response.Write " hat " &amp; GetRecordCount(strConnStr, strTableName)
+  Response.Write " Eintr&auml;ge.&lt;/b&gt;&lt;/p&gt;"
+End If
+%&gt;
+</pre>
+
+<p>
+Ich &uuml;berpr&uuml;fe, ob eine Tabelle gew&auml;hlt wurde, und beginne dann mit der Ausgabe der Anzahl der
+Eintr&auml;ge. Der wichtige Part ist das Einschlie&szlig;en des Tabellennamens in eckige Klammern - weil
+Tabellennamen Leerzeichen enthalten k&ouml;nnten, die dann zu Fehlern in der Stored Procedure f&uuml;hren -
+die in der Funktion <i>GetRecordCount</i> aufgerufen wird.
+</p>
+
+<pre style="background='silver';">
+&lt;script language="vbscript" runat="server"&gt;
+Function GetRecordCount(ByVal strConnStr, ByVal strTableName)
+  Const adParamInput = 1
+  Const adVarChar = 200
+
+  Set conn = Server.CreateObject("ADODB.Connection")
+  conn.Open strConnStr
+
+  Set cmd = Server.CreateObject("ADODB.Command")
+  cmd.ActiveConnection = conn
+  cmd.CommandText = "sp_GetRecordCount"
+  cmd.CommandType = 4
+
+  Set adoParam = cmd.CreateParameter("@Table_Name", adVarChar, 
+                   adParamInput, 255, strTableName)
+  cmd.Parameters.Append adoParam
+
+  cmd.Execute
+
+  ' there should be only one! + .Number should be zero
+  nErrorObjects = conn.Errors.Count
+  Set errObj = conn.Errors(0)
+  GetRecordCount = CLng(errObj.Description)
+  Set cmd = Nothing
+  Set conn = Nothing
+End Function
+&lt;/script&gt;
+</pre>
+
+<p>
+Im Prinzip ist dies ein v&ouml;llig normaler Aufruf einer Stored Procedure. Der Unterschied besteht darin,
+da&szlig; wir uns den gew&uuml;nschten R&uuml;ckgabewert aus der <i>Errors</i> Collection abholen m&uuml;ssen.
+Und dort steht nur unser "Fehler", und die Beschreibung (<i>Description</i>) ist die Anzahl der Records
+in der gew&uuml;nschten Tabelle.
+</p>
+
+<p>
+Wie man sieht, ich brauche nicht einmal ein <i>On Error Resume Next</i> Statement, da der durch <i>PRINT</i>
+ausgel&ouml;ste "Fehler" kein ernsthafter ist, der die Abarbeitung des Befehls beeintr&auml;chtigt h&auml;tte. Es ist
+nur die Message, die an die aufrufende Applikation zur&uuml;ckgeliefert wird - entweder in den Query Analyzer,
+oder hier an ADO und ASP.
+</p>
+
+<p>
+Wer den heute hier vorgestellten Code weiterverwenden m&ouml;chte, mu&szlig; nur die Stored Procedure in die 
+jeweilige Datenbank importieren, und den Code von <i>GetRecordCount</i> in ein inkludierbares ASP
+File kopieren. Erweitert werden k&ouml;nnte die Stored Procedure auch noch: durch ein <i>use database</i>
+Statement, soda&szlig; man die Stored Procedure nur noch einmal pro Server installieren mu&szlig;.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Daten k&ouml;nnen auf vielerlei Arten ihren Weg in die Client-Anwendung finden - auch als Fehlermeldung
+getarnt.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010326.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010326.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010327.htm">Code Generator f&uuml;r die AddNew Methode</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010327.htm</span><br>
+<a href="../artikel/20010130.htm">Datens&auml;tze zuf&auml;llig sortieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010130.htm</span><br>
+<a href="../artikel/20010308.htm">Der ADO Command Code Generator</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010308.htm</span><br>
+<a href="../artikel/20011031.htm">Gegengifte f&uuml;r SQL Injection</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011031.htm</span><br>
+<a href="../artikel/20001013.htm">Highspeed-Abfragen einer SQL Server Datenbank</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001013.htm</span><br>
+<a href="../artikel/20040901.htm">Optimiertes Erstellen von DropDowns</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040901.htm</span><br>
+<a href="../artikel/20010626.htm">Stored Procedures 101 in ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010626.htm</span><br>
+<a href="../artikel/20000606.htm">Zugriff auf autom. generierte ID beim Einf&uuml;gen eines Datensatzes</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000606.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

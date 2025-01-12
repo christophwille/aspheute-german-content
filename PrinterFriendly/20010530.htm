@@ -1,0 +1,226 @@
+<HTML>
+<HEAD>
+<TITLE>Redirects mit Frame-Targets</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Eine der h&auml;ufigeren Fragen in den ASP Listen ist ob und wie man dem Befehl Response.Redirect ein Frame Target angeben kann. Die Antwort darauf ist nein, aber: was hindert uns, dem Client Code zu schicken...">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Response.Redirect,Frame Target,Target,Frameset,Redirect in Frames,Weiterleitung">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Redirects mit Frame-Targets</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010530"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Eine der h&auml;ufigeren Fragen in den ASP Listen ist ob und wie man dem Befehl <i>Response.Redirect</i> ein
+Frame Target angeben kann. Die Antwort darauf ist nein, denn Frames sind ein clientseitiges Konzept,
+von dem ASP nichts wei&szlig;. Aber - was hindert uns, dem Client clientseitigen Code zu schicken, die gew&uuml;nschte
+Seite in einem anderen Frame zu laden?
+</p>
+
+<p>
+Nichts. Alles was wir dazu brauchen, ist ein bischen JavaScript - nichts au&szlig;ergew&ouml;hnliches, nur ein 
+einfacher Redirect per JavaScript. Um das ganze nicht in der Luft h&auml;ngen zu lassen, habe ich ein
+einfaches Frameset gebastelt, das prim&auml;r aus rein statischen HTML Seiten besteht. Das Framsetdokument
+<b>framset.htm</b> sieht wie folgt aus:
+</p>
+
+<pre style="background='silver';">
+&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"&gt;
+&lt;html&gt;
+&lt;head&gt;
+	&lt;title&gt;Simple Frameset&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;!-- frames --&gt;
+&lt;frameset  cols="200,*"&gt;
+    &lt;frame name="frmLeft" src="Left.htm" marginwidth="10" marginheight="10" 
+        scrolling="auto" frameborder="1"&gt;
+    &lt;frame name="frmRight" src="Right.htm" marginwidth="10" marginheight="10" 
+        scrolling="auto" frameborder="1"&gt;
+&lt;/frameset&gt;
+
+&lt;body&gt;
+
+Browser doesn't support frames.
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Keine Tricks bis dato. Ebensowenige finden sich in <b>Right.htm</b>, das eigentlich nur eine leere
+HTML Datei ist (deshalb auch hier kein Listing). Interessant ist f&uuml;r unser Vorhaben eigentlich nur <b>left.htm</b>, das unser
+Script <b>RedirectSample.asp</b> aufruft:
+</p>
+
+<pre style="background='silver';">
+&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"&gt;
+
+&lt;html&gt;
+&lt;head&gt;
+	&lt;title&gt;Left&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+
+&lt;a href="RedirectSample.asp"&gt;Test Redirect&lt;/a&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>
+Was passiert also in <b>RedirectSample.asp</b>? Wir m&uuml;ssen ein JavaScript zur&uuml;ckschicken, das den
+Client auf die passende Seite im passenden Frame redirected. All diese gew&uuml;nschte Funktionalit&auml;t
+ist in der Funktion <i>TargetedRedirect</i> verpackt, die in unserer <b>RedirectSample.asp</b> wie
+folgt aufgerufen wird:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+TargetedRedirect "http://www.aspheute.com/", "frmRight", True
+%&gt;
+&lt;!--#include file="Left.htm"--&gt;
+</pre>
+
+<p>
+Damit bekommen wir folgendes Ergebnis:
+</p>
+
+<IMG SRC="/artikel/Bilder/200105/20010530.png" width="600" height="435" alt="" border="0">
+
+<p>
+Bevor ich das Geheimnis um die Implementierung von <i>TargetedRedirect</i> l&uuml;fte, mu&szlig; ich noch die
+Frage um das Warum? f&uuml;r die <i>#include</i> Anweisung beantworten: unser serverseitiger Code rendert
+ein clientseitiges JavaScript, das ein bestimmtes Dokument in einem anderen Frame l&auml;dt. Nur - um 
+unseren serverseitigen Code anzusto&szlig;en, wird der linke Frame neu geladen, und das bedeutet, er w&auml;re
+leer, wenn wir nur den Redirect-Code schicken w&uuml;rden. Deshalb schicke ich <b>left.htm</b> ganz einfach noch 
+einmal, der Redirect-Code ist vor dem Inhalt von <b>left.htm</b> "angeh&auml;ngt":
+</p>
+
+<pre style="background='silver';">
+&lt;script language="JavaScript"&gt;
+parent.frmRight.location.replace('http://www.aspheute.com/');
+&lt;/script&gt;
+... // hier folgt left.htm per #include ...
+</pre>
+
+<p>
+Dieser Code wird in der Funktion <i>TargetedRedirect</i> erzeugt. Diese will ich nun nicht l&auml;nger
+vorenthalten:
+</p>
+
+<pre style="background='silver';">
+&lt;script language="vbscript" runat="server"&gt;
+Sub TargetedRedirect(ByVal strTarget, ByVal strTargetFrame, ByVal bDontTouchHistory)
+    Response.Write "&lt;scr" &amp; "ipt language=""JavaScript""&gt;" &amp; vbCrLf
+    Response.Write "parent." &amp; strTargetFrame &amp; ".location."
+    If True = bDontTouchHistory Then
+        Response.Write "replace(" &amp; "'" &amp; strTarget &amp; "');"
+    Else
+        Response.Write "href='" &amp; strTarget &amp; "';"
+    End If
+    Response.Write vbCrlf &amp; "&lt;/scr" &amp; "ipt&gt;" &amp; vbCrlf
+End Sub
+&lt;/script&gt;
+</pre>
+
+<p>
+Die ersten beiden Parameter sind selbsterkl&auml;rend, interessant wird der dritte. Anhand dieses
+boolschen Parameters wird unterschiedliches JavaScript gerendert - einmal wird die History des
+Browsers nicht ver&auml;ndert, im anderen Falle wird der Redirect in die History eingetragen. Ein
+Parameter, der durchwegs n&uuml;tzlich werden kann.
+</p>
+
+<p>
+Vielleicht fragt sich der eine oder andere, warum ich die <i>&lt;script&gt;</i> Bl&ouml;cke so zerlegt
+habe. Nun, das hat einen guten Grund: der ASP Parser ist nicht gerade der Beste, er verstolpert sich
+&uuml;ber solche Tags mit der folgenden Fehlermeldung:
+</p>
+
+<pre style="background='silver';">
+Active Server Pages error 'ASP 0138' 
+
+Nested Script Block 
+/aspheute/redirects/RedirectSample.asp, line 3 
+A script block cannot be placed inside another script block. 
+</pre>
+
+<p>
+Ein bekanntes Problem, das durch Zerst&uuml;ckelung der Strings leicht gel&ouml;st werden kann. 
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Ein Problem bleibt klarerweise - hat der Benutzer JavaScript ausgeschaltet, dann ist die heute 
+vorgestellte Methode funktionsunt&uuml;chtig. Nur um dieses Problem gibt es dann tats&auml;chlich keinen Weg herum.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010530.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010530.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20001027.htm">Eigene History</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001027.htm</span><br>
+<a href="../artikel/20010919.htm">Erstellung eines Intranets in ASP (Teil 3) - Navigation</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010919.htm</span><br>
+<a href="../artikel/20020320.htm">Flash Detection ohne Komponente</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020320.htm</span><br>
+<a href="../artikel/19990819.htm">JavaScript &amp; DHTML - Wie man Fehler findet bevor die Kunden es tun</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990819.htm</span><br>
+<a href="../artikel/20000830.htm">Session State bei parallelen Browser-Frames und Fenstern</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000830.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

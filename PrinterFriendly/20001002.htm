@@ -1,0 +1,359 @@
+<HTML>
+<HEAD>
+<TITLE>Arrayfunktionen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel werden Sie die wichtigsten Array-Funktionen, wie z.B. Split() und Join(), kennen- und verwenden lernen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Array,VBScript,Array Funktion,Join,Split,Filter,UBound,Lbound,Redim">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Arrayfunktionen</H1>
+<p>
+Geschrieben von: <a href="../autoren/stefangruendhammer.htm">Stefan Gründhammer</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001002"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+In diesem Artikel werden Sie die wichtigsten Array-Funktionen, wie z.B. Split() und Join(), kennen- und verwenden
+lernen. F&uuml;r Ihr Grundlagenwissen gibt es bereits einen Artikel 
+<a href="../artikel/20000927.htm">Das Array, unendliche Weiten?</a> den Sie vielleicht 
+vorher lesen sollten.
+</p>
+
+<h2>Allgemeines zu Array-Funktionen</h2>
+<p>VBScript bietet Ihnen eine relativ gro&szlig;e Zahl an Array-Funktionen, welche Ihnen die Arbeit mit Arrays 
+erheblich erleichtern k&ouml;nnen. Auf folgende Funktionen werde ich im Laufe dieses Artikels n&auml;her 
+eingehen:
+</p>
+<p>
+<ul>
+<li>ReDim-Anweisung</li>
+<li>Array-Funktion</li>
+<li>LBound-Funktion</li>
+<li>UBound-Funktion</li>
+<li>IsArray-Funktion</li>
+<li>Split Funktion</li>
+<li>Join Funktion</li>
+<li>Erase-Anweisung</li>
+<li>Filter-Funktion</li>
+</ul>
+</p>
+<p>
+Im folgenden Abschnitt werde ich nun genauer auf die einzelnen Funktionen eingehen und diese mit der Hilfe
+von einigen kleinen Beispielen beschreiben.
+</p>
+<h3>ReDim-Anweisung</h3>
+<p>
+Die <i>ReDim-Anweisung</i> wurde im Artikel <a href="../artikel/20000927.htm">Das Array, 
+unendliche Weiten?</a> bereits ausf&uuml;hrlichst erkl&auml;rt. Die Redim-Anweisung wird zum verändern der Größe von
+dynamischen Arrays verwendet. Mit dieser Anweisung bestimmen Sie die Gr&ouml;&szlig;e Ihres Arrays. Sie k&ouml;nnen
+anstatt einer Zahl auch eine Variable als Gr&ouml;&szlig;enangabe benutzen, so k&ouml;nnen Sie die Gr&ouml;&szlig;e 
+Ihres Arrays dann wirklich dynamisch ver&auml;ndern. Aber aufgepasst: Wenn Sie die Gr&ouml;&szlig;e des Arrays 
+mittels ReDim-Anweisung ver&auml;ndern, gehen alle vorher eingegebenen Elemente verloren. Diesen Verlust k&ouml;nnen 
+Sie mit Hilfe des Schl&uuml;sselwortes <i>Preserve</i> vermeiden. Wenn Sie das Array verkleinern gehen Ihnen trotzdem
+Elemente verloren (das sollte aber klar sein). 
+</p>
+<p>
+Ich werde Ihnen jetzt kurz die Syntax der Redim-Anweisung anhand 
+einiger Codezeilen erkl&auml;ren.
+</p>
+<p>
+<pre style="background='silver';">
+ 1: &lt;% @LANGUAGE = VBScript %&gt;
+ 2: &lt;% Option Explicit
+ 3: Dim arrDyn(), x, i
+ 4: i = 2
+ 5: %&gt;
+ 6: Dynamisches Array &lt;br&gt;
+ 7: &lt;%
+ 8: ReDim arrDyn(i)
+ 9: arrDyn(0)= 1
+10: arrDyn(1)= 2
+11: arrDyn(2)= 3
+12: For x = 0 to UBound(arrDyn)
+13: Response.Write arrDyn(x) &amp; "&lt;br&gt;"
+14: Next
+15: %&gt;
+16: &lt;br&gt;Mit Preserve &lt;br&gt;
+17: &lt;%
+18: ReDim Preserve arrDyn(3)
+19: arrDyn(3)= 4
+20: For x = 0 to UBound(arrDyn)
+21: Response.Write arrDyn(x) &amp; "&lt;br&gt;"
+22: Next
+23: %&gt;
+24: &lt;br&gt;Ohne Preserve &lt;br&gt;
+25: &lt;%
+26: ReDim arrDyn(4)
+27: arrDyn(4) = 5
+28: For x = 0 to UBound(arrDyn)
+29: Response.Write arrDyn(x) &amp; "&lt;br&gt;"
+30: Next
+31: %&gt;
+</pre>
+</p>
+<p>
+Wenn Sie dieses Beispiel ausprobieren sehen Sie die Auswirkung der ReDim-Anweisung mit und ohne Preserve sehr 
+klar. Ohne Preserve werden die Inhalte der ersten vier Elemente gel&ouml;scht und nur das f&uuml;nfte hat
+einen Wert. Aber auch das kann manchmal von Nutzen sein.
+</p>
+
+<h3>Array-Funktion</h3>
+<p>
+Die Array-Funktion wurde auch schon im obengenannten Artikel ziehmlich genau beschrieben, deshalb gehe ich hier
+nur mehr sehr sparsam mit Erkl&auml;rungen um. Die Syntax ist wie folgt: <i>Array(Arguemntenliste)</i>. Diese 
+Argumenteliste sind Werte, welche durch Komma getrennt sind, und dann die Elemente des Arrays bilden.
+</p>
+<p>
+<pre style="background='silver';">
+ 1: &lt;% @LANGUAGE = VBScript %&gt;
+ 2: &lt;% Option Explicit %&gt;
+ 3: &lt;% Dim arrTest, i
+ 4:    arrTest = Array("a","b","c","d","e")
+ 5:       For i = 0 to UBound(arrTest)
+ 6:           Response.Write arrTest(i)&amp "&lt;br&gt;"
+ 7:       Next
+ 8: %&gt;
+</pre>
+</p>
+<p>
+In Zeile 3 deklariere ich eine Variable <i>arrTest</i>. Diese ist bis dahin noch kein Array, sondern eine einfache Variable mit
+dazugeh&ouml;rigem Speicherplatz. In Zeile 4 kommt die Array-Funktion zur Anwendung. Hier wird nun aus der 
+allgemeinen Variable <i>arrTest</i> ein eindimensionales null-basierendes Array arrTest(4) mit f&uuml;nf Elementen. 
+</p>
+<p>
+In den
+Zeilen 5 bis 7 schreibe ich das Array aus. Ich habe ein Beipiel mit mehreren Array-Funktionen (Array(), Split(),
+Join()) f&uuml;r Sie unter dem Namen <b>arrayfunktion.asp</b> bereitgelegt.
+</p>
+<h3>LBound-Funktion</h3>
+<p>
+Die <i>LBound-Funktion</i> gibt Ihnen den kleinsten Index der gesuchten Dimension Ihres Arrays zur&uuml;ck (sollte
+null sein). In Kombination mit der UBound-Funktion k&ouml;nnen Sie die Gr&ouml;&szlig;e eines Ihnen unbekannten
+Arrays feststellen. 
+</p>
+<p>
+Die LBound-Funktion hat folgende Syntax: <i>LBound(ArrayName, Dimension)</i>. Sie m&uuml;ssen 
+die Dimension nicht unbedingt anf&uuml;hren, es reicht auch wenn Sie <i>LBound(ArrayName)</i> schreiben, wenn Sie 
+keine bestimmte Dimension brauchen. Der R&uuml;ckgabewert der LBound-Funktion ist eine Zahl.
+</p>
+
+<h3>UBound-Funktion</h3>
+<p>
+Im Gegensatz zur LBound-Funktion liefert die <i>UBound-Funktion</i> den gr&ouml;&szlig;ten Index Ihres Arrays
+zur&uuml;ck. Ich habe diese Funktion beinahe in jedem Beispiel des heutigen Artikels verwendet um alle Elemente 
+eines Arrays auszuschreiben. 
+</p>
+<p>
+<pre style="background='silver';">
+ 1: For i = 0 to UBound(arrTrick)
+ 2:     Response.Write arrTrick(i)&amp; "&lt;br&gt; "
+ 3: Next
+</pre>
+</p>
+<p>
+Die Syntax ist dieselbe wie bei der LBound-Funktion, und auch hier ist der R&uuml;ckgabewert eine Zahl.
+Wenn Sie z.B. die Variable arrTrick(3,7,1) haben, bekommen Sie bei UBound(arrTrick,2) den Wert 7.
+</p>
+
+<h3>IsArray-Funktion</h3>
+<p>
+Die <i>IsArray-Funktion</i> gibt Ihnen entweder <i>True</i> oder <i>False</i> zur&uuml;ck und erlaubt Ihnen somit
+sicher zu sein, da&szlig; es sich bei der zu pr&uuml;fenden Variable um ein Array handelt oder nicht. Die Syntax
+dieser Funktion ist wieder sehr einfach: <i>IsArray(arrTrick)</i>, in unserem Fall wird True zur&uuml;ckgegeben.
+</p>
+
+<h3>Split-Function</h3>
+<p>
+Die <i>Split-Funktion</i> liefert ein nullbasiertes eindimensionales Array zur&uuml;ck, in welches die Segmente 
+der Split-Funktion als Elemente gespeichert werden. Die Syntax der Split-Funktion ist etwas komplizierter,
+mit dieser Funktion kann man aber einiges machen: 
+<pre style="background='silver';">
+Split(Ausdruck,Begrenzungszeichen,Z&auml;hler,Vergleich)
+</pre>
+</p>
+<p>
+Begrenzungszeichen, Z&auml;hler und Vergleich sind optional.
+Auch hierzu gibt es wieder ein kleines Beispiel:
+</p>
+<p>
+<pre style="background='silver';">
+ 1: strTestIP = "192.168.2.21"
+ 2: arrTestIP = Split(strTestIP, ".", -1, 0)
+ 3: Response.Write IsArray(arrTestIP) &amp; "&lt;br&gt;"
+ 4: For x = 0 to UBound(arrTestIP)
+ 5:     Response.Write arrTestIP(x) &amp; "&lt;br&gt;"
+ 6: Next
+</pre>
+</p>
+<p>
+Hier sind noch einige Erkl&auml;rungen zur Syntax: Das Begrenzungszeichen m&uuml;ssen Sie zwischen zwei
+Anf&uuml;hrungszeichen setzen (in unserem Fall "."). Wenn Sie -1 f&uuml;r den Z&auml;hler einsetzen, werden alle
+Teilstrings zur&uuml;ckgeliefert. Setzen Sie z.B. 2 in den Z&auml;hler werden nur zwei Teilstrings gemacht. Und mit
+Vergleich k&ouml;nnen Sie auf bin&auml;re Gleichheit (0 "Null eingeben") oder Textgleichheit (1 "Eins eingeben") 
+vergleichen. Nat&uuml;rlich geht das auch in die andere Richtung und zwar mittels Join-Funktion.
+</p> 
+<p>
+Noch einen Tip zum IP-Adressen-Beispiel oben. Das Aufsplitten der IP-Adresse kann sich bei oftmaligem Eintrag von
+IP-Adressen in eine Datenbank als sehr n&uuml;tzlich erweisen, Sie sparen n&auml;mlich bei jedem Eintrag in die 
+Datenbank 11 Byte. Das ist doch ein guter Grund f&uuml;r diese Prozedur, oder? Wie f&uuml;ge ich aber die 
+gesplitteten Teile wieder zusammen? Diese Frage beantworte ich im n&auml;chsten Abschnitt.
+</p>
+
+<h3>Join-Function</h3>
+<p>
+Die <i>Join-Funktion</i> f&uuml;gt die Element eines Arrays zu einem String zusammen, ist also im Prinzip das
+Gegenteil der Split-Funktion. Hier setze ich nun die vorher gesplittete IP-Adresse wieder zusammen:
+</p>
+<p>
+<pre style="background='silver';">
+ 1: strTestIP2 = Join(arrTestIP,".")
+ 2: response.write strTestIP2
+</pre>
+</p>
+<p>
+Die Syntax der Join-Funktion ist jedoch etwas einfacher als die der Split-Funktion und ist wie folgt: 
+<i>Join(arrName,Trennzeichen)</i>. Auch hier ist wieder beim Trennzeichen aufzupassen, da&szlig; dieses in 
+Anf&uuml;hrungszeichen gesetzt wird. Das Trennzeichen ist optional.
+</p>
+<p>
+In unserem Beispiel ist das Trennzeichen ein 
+Punkt, wenn Sie aber kein Trennzeichen wollen, dann m&uuml;ssen Sie das wie folgt machen: Join(arrTestIP,"") - hiermit 
+haben Sie ein Trennzeichen der L&auml;nge null eingef&uuml;gt. Wenn Sie kein Trennzeichen definieren wird ein
+Leerzeichen zwischen den einzelnen Elementen zur&uuml;ckgegeben.
+</p>
+
+<h3>Erase-Anweisung</h3>
+<p>Die Erase-Anweisung ist mit einiger Vorsicht zu genie&szlig;en. Diese Anweisung verh&auml;lt sich f&uuml;r 
+statische und dynamische Arrays verschieden: bei statischen Arrays werden die Elemente neu initialisiert, und bei 
+dynamischen wird der von den Elementen belegte Speicherplatz wieder freigegeben.
+</p>
+<p>
+Bei <i>statische Arrays</i> gibt die Erase-Anweisung keinen Speicherplatz frei sondern initialisiert die einzelnen
+Elemente neu, das hei&szlig;t die Inhalte der Elemente werden gel&ouml;scht nicht aber die Elemente selbst.
+</p>
+<p>
+Bei <i>dynamischen Arrays</i> gibt die Erase-Anweisung den vorher verwendeten Speicher wieder frei - hier werden
+die Elemente des Arrays tatsächlich gel&ouml;scht. Vorsicht: Sie m&uuml;ssen vor dem n&auml;chsten Gebrauch des Arrays dieses 
+wieder mit der ReDim-Anweisung neu deklarieren. Bei dynamischen Arrays kommt es somit zu einem Speichergewinn.
+</p>
+<p>
+<pre style="background='silver';">
+ 1: Dim arrStatisch(6)
+ 2: Dim arrDynamisch()
+ 3: ReDim arrDynamisch(4)
+ 4:
+ 5: <b>Erase</b> arrStatisch 
+ 6: <b>Erase</b> arrDynamisch
+</pre>
+</p>
+<p>
+In den ersten drei Zeilen dimensioniere ich ein statisches und ein dynamisches Array. In der Zeile 5 l&ouml;sche
+ich die Inhalte der Elemente des Arrays arrStatisch, und in Zeile 6 l&ouml;sche ich die Elemente des Arrays 
+arrDynamisch. Der Speicherplatz des dynamischen Arrays wird wieder freigegeben. Der Speicherplatz des statischen
+bleibt weiterhin allokiert. Sie k&ouml;nnen die Typen der Variablen mittels VarType(arrStatisch) pr&uuml;fen und 
+werden merken, da&szlig; es sich auch weiterhin um ein Array handelt (Ergebnis der VarType-&Uuml;berpr&uuml;fung 
+ist 8204 das bedeutet Array mit Untertyp Variant).
+</p>
+
+<h3>Filter-Funktion</h3>
+<p>
+Wenn Sie nach Zeichenfolgen suchen, aber nicht wissen in welchem Element sich diese befinden, dann ist die 
+<i>Filter-Funktion</i> eine gute Hilfe. Die Filter-Funktion gibt ein nullbasierendes eindimensionales Array
+zur&uuml;ck, dessen Inhalt &uuml;ber die Filterkriterien bestimmt wird - das hei&szlig;t, kommt in einem
+Element eines Arrays (sollte eine Zeichenfolge sein) die in der Filter-Funktion gesuchte Zeichenkette vor, wird
+dieses Element in ein neues Array an die Position (0) geschrieben, das n&auml;chste an die Position (1) usw. 
+</p>
+<p>
+Die Syntax ist wieder recht einfach: <i>Filter(arrSuche, Zeichenkette)</i>. Das Array arrSuche ist jenes, in dem Sie
+nach der Zeichenkette suchen wollen. <i>arrSuche</i> kann sowohl mit Zahlen als auch mit anderen Zeichen 
+bef&uuml;llt sein.
+</p>
+<p>
+<pre style="background='silver';">
+ 1: Dim arrSuche(2)
+ 2: Dim arrJahr
+ 3: arrSuche(0)= "Sommer" 
+ 4: arrSuche(1)= "Herbst"
+ 5: arrSuche(2)= "Winter"
+ 6:
+ 7: arrJahr = Filter(arrSuche, rbs)
+ 8: response.write arrJahr(0)
+</pre>
+</p>
+<p>
+Noch einige wichtige Details zur Filter-Funktion: Wenn die Funktion keine &uuml;bereinstimmende Zeichenfolge findet,
+wird ein leeres Array zur&uuml;ckgegeben. Das zur&uuml;ckgegebene Array hat genau so viele Elemente wie
+&Uuml;bereinstimmungen bei der Suche waren. Fehlermeldungen treten auf, wenn Sie keine Angaben f&uuml;r die
+Zeichenkette geben oder wenn Sie ein zwei- oder mehrdimensionales Array durchsuchen m&ouml;chten.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Mit diesem Artikel sollten Sie sich nun mit den wichtigsten Array-Funktionen auskennen und auch im Stande sein,
+diese einzusetzen. Sie haben unter anderem gelernt ,wie man vermeidet da&szlig; durch die ReDim-Anweisung Daten eines
+dynamischen Arrays verlorengehen, oder wie man gezielt nach Zeichenketten in Arrays suchen kann - und noch einiges 
+mehr.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001002.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20001002.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000927.htm">Das Array, unendliche Weiten?</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000927.htm</span><br>
+<a href="../artikel/19990807.htm">Dynamische Arrays - Fluch und Segen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990807.htm</span><br>
+<a href="../artikel/20000906.htm">Sortieren von Arrays in VBScript</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000906.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

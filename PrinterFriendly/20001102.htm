@@ -1,0 +1,347 @@
+<HTML>
+<HEAD>
+<TITLE>Datenbankzugriff mittels ADO.NET</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel beschreibt die grundlegenste Funktion von ADO.NET - den Zugriff auf eine Datenbank sowie das Bef&uuml;llen eines sogenannten DataSets.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ADO.NET,ADO dot net,.NET,Framework,SDK,ASP.NET,DataReader,DataSet,DataSetCommand,OleDbConnection">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Datenbankzugriff mittels ADO.NET</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ADOdotNET.htm">ADO.NET</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001102"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Dieser Artikel beschreibt die grundlegenste Funktion von ADO.NET - den Zugriff auf eine Datenbank 
+sowie das Bef&uuml;llen eines sogenannten <i>DataSets</i>. 
+Ein <i>DataSet</i> ist eine Struktur in ADO.NET, die zum Speichern von Daten und Datenbankstrukturen (wie Tabellen) dient.
+Zuerst werden wir eine Verbindung zu einer Datenbank mit Hilfe des <i>OleDbConnection</i> Objektes erstellen, 
+und danach mit einem SQL-Statement eine Datenbankabfrage durchf&uuml;hren.
+Das Ergebnis der Abfrage wird in das <i>DataSet</i> geschrieben.
+</p>
+
+<p>
+Der Einfachheit halber verzichte ich in diesem Artikel auf den Sourcecode der 
+f&uuml;r ansprechende Darstellung im Browser zust&auml;ndig ist.
+Diesen m&ouml;chte ich Ihnen aber nur f&uuml;r den Moment vorenthalten, 
+und werde ihn Ihnen in einem separaten Artikel pr&auml;sentieren. 
+</p>
+
+<p>
+Bitte beachten Sie, da&szlig; dieser Artikel auf den Artikeln 
+<a href="../artikel/20001031.htm">Was ist neu in ADO.NET</a> und 
+<a href="../artikel/20001023.htm">Das SQL Join Statement</a> aufbaut. 
+Da der Sourcecode der Beispiele in <a href="../kategorien/Csharp.htm">C#</a> geschrieben ist, 
+sollten Sie grundlegende Kenntnisse &uuml;ber dieser Programmiersprache haben - 
+es finden sich dazu etliche Artikel bei <a href="../kategorien/Csharp.htm">AspHeute</a>, die Ihnen das notwendige Wissen vermitteln.
+</p>
+
+<p>
+Wenn Sie den Beispiel-Sourcecode (im Download <i>20001102.zip</i>) selbst ausprobieren m&ouml;chten, 
+so ben&ouml;tigen Sie die Datenbanksoftware Microsoft SQL Server 7.0 (oder h&ouml;her) - 
+die Beispiele verwenden die folgende Zugangsberechtigung (Username / Password): <i>uid=sa; pwd=;</i>. 
+Als Beispieldatenbank habe ich die <i>Northwind</i> Datenbank herangezogen. 
+Diese ist standardm&auml;&szlig;ig in den Beispieldatenbanken des SQL Servers enthalten.
+Wenn die SQL Server Datenbank nicht auf dem lokalen Computer (dem Webserver) installiert ist, so m&uuml;ssen Sie
+zus&auml;tzlich den <i>Data Source</i> Parameter im Connection-String auf den Namen (oder die IP Adresse)
+des Datenbankservers &auml;ndern.
+</p>
+
+
+<h2>Die Angabe der Grundinformationen</h2>
+
+<p>
+Um in ADO.NET eine Verbindung zu einer Datenbank zu erstellen, verwenden Sie das <i>OleDbConnection</i> Objekt.
+Da wir den Sourcecode in einer ASP.NET Seite verwenden, m&uuml;ssen wir auf zwei .NET Namespaces referenzieren 
+um dieses Objekt benutzen zu k&ouml;nnen.
+Die beiden ben&ouml;tigten Namespaces sind in unserem Fall <i>System.Data</i> und <i>System.Data.OleDb</i>.
+</p>
+
+<p>
+Sehen wir uns nun die Umsetzung im Sourcecode an. 
+Der erste Teil des Sourcecodes enth&auml;lt die Referenzen auf die ben&ouml;tigten Namespaces,
+die Deklaration des Connection-Strings <i>strConn</i> der die Parameter f&uuml;r die Datenbankverbingung enth&auml;lt,
+sowie die Deklaration des SQL Statements (<i>strSQL</i>) zum Ausf&uuml;hren der Datenbankabfrage:
+</p>
+
+<pre style="background='silver';">
+&lt;%@ Page Language="C#" %&gt;
+
+//Referenz auf die Namespaces
+&lt;%@ Import Namespace="System.Data" %&gt;
+&lt;%@ Import Namespace="System.Data.OleDb" %&gt;
+&lt;%
+
+// Deklaration des Connection Strings
+  string strConn = "Provider= SQLOLEDB; Data Source=(local); " +
+     &quot;uid=sa; pwd=; Initial Catalog=Northwind;";
+	 
+// Deklaration des SQL Statements
+  string strSQL = "SELECT Productname, CompanyName, UnitPrice " +
+     "FROM Suppliers " +
+     "INNER JOIN Products ON " +
+     "(Suppliers.SupplierID = Products.SupplierID) " +
+     "WHERE UnitPrice &lt;= $70";
+...
+</pre>
+
+<p>
+Der <i>Connection String</i> beinhaltet hier folgende Parameter: Die Art des Providers (<i>Provider= SQLOLEDB</i>),
+wo sich die Datenbank befindet (<i>Data Source=(local);</i>)  - in unserem Fall auf einem "lokalen" Microsoft 
+SQL Server, daher auf dem selben Computer wie der Webserver f&uuml;r die <i>.aspx</i> Seite -
+sowie die ben&ouml;tigten Zugangsinformationen (<i>uid=sa; pwd=;</i>). 
+Damit das Skript zur <i>Northwind</i> Datenbank  verbindet, ist der Parameter <i>Initial Catalog=Northwind</i> angegeben.
+</p>
+
+<p>
+<b>Anmerkung:</b> Wenn Sie eine Verbindung zu einer Datenbank innerhalb einer ASP.NET Seite erstellen,
+k&ouml;nnen Sie aus zwei Providern w&auml;hlen. Zur Verf&uuml;gung stehen der <i>OleDbConnection</i> und der <i>SqlConnection</i> 
+.NET Data Provider.
+Verwenden Sie den <i>OleDbConnection</i> Provider f&uuml;r beliebige Datenquellen wie MS Access 2000 oder andere 
+g&auml;ngige Datenbanken. 
+Der <i>SqlConnection</i> Provider ist hochoptimiert und zur Kommunikation mit der MS SQL Server Datenbank gedacht.
+Der <i>OleDbConnection</i> Provider ist im <i>System.Data.OleDb</i> Namespace und der 
+<i>SqlConnection</i> Provider im <i>System.Data.SqlClient</i> Namespace des .NET Frameworks vorhanden.
+Bei anderen Datenbanken ist der <i>OleDbConnection</i> Provider aus Performancegr&uuml;nden zu w&auml;hlen.
+</p>
+
+<p>
+Mit dem SQL Statement, welches in der Variable <i>strSQL</i> vom Datentyp <i>string</i> gespeichert ist,
+wollen wir alle Produkte der Northwind Datenbank auslesen, die maximal USD 70 kosten. 
+Um detailliertere Informationen &uuml;ber die Produkte zu erhalten lassen wir uns noch zus&auml;tzlich 
+die Lieferanten und den tats&auml;chlichen Preis der Ware anzeigen.
+</p>
+
+<p>
+Nachdem wir nun die <i>System.Data</i> und <i>System.Data.OleDb</i> Namespaces angegeben haben 
+und die beiden erforderlichen Informationen - die Verbindungs-Parameter <i>strConn</i>
+sowie die SQL Abfrage <i>strSQL</i> - bereitgestellt sind, k&ouml;nnen wir nun zum Hauptteil schreiten:
+</p>
+
+
+<h2>Die Erstellung einer Verbindung zur Datenbank</h2>
+
+<p>
+Um eine Verbindung zu einer beliebigen Datenquelle mittles <i>OleDbConnection</i> Provider herzustellen,
+sind Statements wie die folgenden n&ouml;tig:
+</p>
+
+<pre style="background='silver';">
+...
+OleDbConnection MyNWConn = new OleDbConnection(strConn);
+MyNWConn.Open();
+...
+</pre>
+
+<p>Um eine performance-optimierte Verbindung zu einer SQL Server Datenbank herzustellen,
+kann man nat&uuml;rlich auch den <i>SqlConnection</i> Provider benutzen. 
+Hierf&uuml;r m&uuml;ssen wir die folgenden Statments angeben:
+</p>
+
+<pre style="background='silver';">
+...
+SqlConnection MyNWConn = new SqlConnection("server=localhost;uid=sa;pwd=;database=Northwind");
+MyNWConn.Open();
+...
+</pre>
+
+<p>
+In dem obigen Abschnitt des Beispiel-Sourcecodes erstellen wir eine neue Instanz der OleDbConnection.
+&Auml;hnlich wie unter der "alten" ADO Technologie verwenden wir die Methode <i>Open</i> des <i>OleDbConnection</i> 
+(bzw. <i>SqlConnection</i>) Objekts um die Verbindung zur Datenbank auch physikalisch herzustellen.
+</p>
+
+<p>
+Nun sind wir soweit, da&szlig; wir die angeforderten Daten in das <i>DataSet</i> schreiben k&ouml;nnen.
+</p>
+
+
+<h2>Das Bef&uuml;llen des DataSets</h2>
+
+<p>
+Da ADO.NET mit <i>disconnected</i> <i>Data Sets</i> arbeitet, m&uuml;ssen wir ein neues <i>DataSet</i> Objekt erstellen
+(siehe auch Artikel <a href="../artikel/20001031.htm">Was ist neu in ADO.NET</a>).
+</p>
+
+
+<pre style="background='silver';">
+...
+DataSet MyDataSet = new DataSet();
+OleDbDataAdapter oCommand = new OleDbDataAdapter(strSQL,MyNWConn);
+  
+...
+</pre>
+
+<p>
+Die hochoptimierte Version f&uuml;r eine SQL Server Datenbankversion w&uuml;rde dabei
+wie folgt aussehen:
+</p>
+
+<pre style="background='silver';">
+...
+DataSet MyDataSet = new DataSet();
+SqlDataAdapter oCommand = new SqlDataAdapter(strSQL,MyNWConn);
+  
+...
+</pre>
+
+<p>
+Das <i>OleDbDataAdapter</i> (bzw. <i>SqlDataAdapter</i>) Objekt sammelt die Informationen aus den Verbindungsdaten,
+die in der <i>strConn</i> Variable gespeichert sind; 
+Und nat&uuml;rlich werden auch die dazugeh&ouml;rigen Abfrageparameter unseres SQL-Statments,
+die in der Variable <i>strSQL</i> gespeichert sind, an das <i>oCommand</i> Objekt 
+&uuml;bergeben. 
+</p>
+
+<p>
+Diese nun folgende Anweisung bef&uuml;llt unser <i>DataSet</i> Objekt namens <i>oDataSet</i>:
+</p>
+
+<pre style="background='silver';">
+...
+oCommand.Fill(MyDataSet,"Lieferanten");
+...
+</pre>
+
+<p>
+Die Beendigung der Verbindung bzw. die Resourcenfreigabe erfolgt wie gewohnt mittels Aufruf der <i>Close</i> Methode.
+</p>
+
+<pre style="background='silver';">
+...
+MyNWConn.Close();   
+
+%&gt;
+</pre>
+
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Dieser Artikel zeigt nat&uuml;rlich nur einen sehr kleinen Ausschnitt von dem was ADO.NET bietet. Aber nichtdestotrotz
+erhalten Sie das Grundr&uuml;stzeug um eine Verbindung zu einer vom <i>OleDbConnection</i> Provider unterst&uuml;tzten 
+Datenbank zu erstellen.
+</p>
+
+<p>
+Sie haben gesehen welche .NET Namespaces anzugeben sind und wie man unter ADO.NET eine g&uuml;ltige Verbindung zu einer
+Datenbank angibt. 
+Weil ADO.NET mit <i>disconnected</i> Data Sets arbeitet, d.h. einer
+im Speicher abgelegten Kopie eines Datenbankinhaltes einer oder mehrerer Datenbanken, m&uuml;ssen Sie zuerst das
+<i>DataSet</i> Objekt instanzieren um es danach mit der <i>Fill</i> Methode des <i>OleDbDataAdapter</i> Objektes
+zu bef&uuml;llen.
+</p>
+
+<p>F&uuml;r hochoptimierte SQL Server Abfragen verwenden Sie statt der Objekte <i>OleDbConnection</i> und <i>OleDbDataAdapter</i>
+die auf den SQL Server zugeschnittenen Objekte <i>SqlConnection</i> und <i>SqlDataAdapter</i>.</p>
+
+<p>
+Nat&uuml;rlich m&ouml;chten Sie die erlangten bzw. gefilterten Informationen der Datenbank im Browser
+sichtbar machen. 
+Wie dies in C# zu programmieren ist und worauf man achten mu&szlig;, m&ouml;chte ich Ihnen in einem der 
+n&auml;chsten Artikel zum Thema ADO.NET zeigen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001102.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20001102.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000713.htm">A Brief History of C#</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000713.htm</span><br>
+<a href="../artikel/20030402.htm">Crystal Reports mit DataSets bef&uuml;llen - Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20030402.htm</span><br>
+<a href="../artikel/20030403.htm">Crystal Reports mit DataSets bef&uuml;llen - Teil 2</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20030403.htm</span><br>
+<a href="../artikel/20040123.htm">DataViews als DataTable persistieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040123.htm</span><br>
+<a href="../artikel/20001106.htm">Datenaufbereitung in ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001106.htm</span><br>
+<a href="../artikel/20020206.htm">Der ODBC .NET Data Provider</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020206.htm</span><br>
+<a href="../artikel/20031128.htm">Die ersten Schritte in Visual Basic .NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20031128.htm</span><br>
+<a href="../artikel/20040622.htm">Einf&uuml;hrung in Typed DataSets</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040622.htm</span><br>
+<a href="../artikel/20011122.htm">Einstellungssache - Applikationsdaten in web.config</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011122.htm</span><br>
+<a href="../artikel/20040317.htm">Eintr&auml;ge numerieren im DataGrid</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20040317.htm</span><br>
+<a href="../artikel/20020705.htm">Formularbasierte Authentifizierung in f&uuml;nf Minuten</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020705.htm</span><br>
+<a href="../artikel/20021107.htm">Index Server Abfragen per Web Service</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021107.htm</span><br>
+<a href="../artikel/20020801.htm">MS IE WebControls 101</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020801.htm</span><br>
+<a href="../artikel/20010626.htm">Stored Procedures 101 in ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010626.htm</span><br>
+<a href="../artikel/20001031.htm">Was ist neu in ADO.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001031.htm</span><br>
+<a href="../artikel/20000712.htm">Was ist neu in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000712.htm</span><br>
+<a href="../artikel/20010802.htm">Web.Config 101</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010802.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Flibrary%2Fdefault%2Easp%3FURL%3D%2Flibrary%2Ftechart%2Fadoplus%2Ehtm">ADO+ Guides the Evolution of the Data Species</a><br>
+<SPAN class="content">http://msdn.microsoft.com/library../default.htm?URL=/library/techart/adoplus.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Fvstudio%2Fnextgen%2Ftechnology%2Fadoplus%2Easp">Introducing ADO+</a><br>
+<SPAN class="content">http://msdn.microsoft.com/vstudio/nextgen/technology/adoplus.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Fmsdnmag%2Fissues%2F1100%2Fadoplus%2Fadoplus%2Easp">Introducing ADO+: Data Access Services for the Microsoft .NET Framework</a><br>
+<SPAN class="content">http://msdn.microsoft.com/msdnmag/issues/1100/adoplus/adoplus.asp</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Fnet%2F">MSDN Online .NET Information</a><br>
+<SPAN class="content">http://msdn.microsoft.com/net/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

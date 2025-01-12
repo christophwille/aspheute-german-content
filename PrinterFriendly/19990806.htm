@@ -1,0 +1,189 @@
+<HTML>
+<HEAD>
+<TITLE>Das Dictionary Objekt - Dein Feind und Helfer</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Das Dictionary Objekt ist sehr m&auml;chtig - allerdings bietet es auch einige M&ouml;glichkeiten, Fehler zu machen. Dieser Artikel beleuchtet das Verh&auml;ltnis zu ADO.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Dictionary,Recordset,IIS,ASP,ADO,VBScript,Scripting">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Das Dictionary Objekt - Dein Feind und Helfer</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=19990806"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Eine Komponente, die ein Schattendasein fristet (beziehungsweise gefristet hat) ist das <b>Dictionary</b> Objekt. Dabei kann
+es sehr n&uuml;tzlich sein. Wer PERL kennt, kennt die assoziativen Arrays - genau das ist ein Dictionary. F&uuml;r die, die PERL
+nicht kennen und sich unter einem assoziativen Array nichts vorstellen k&ouml;nnen, hier die Kurzfassung: ein Schl&uuml;sselwert
+wird verwendet um einen zugewiesenen Wert aufzufinden (zB: eine nette Assoziation ist Flensburg und Polizei).
+</p>
+<p>
+Also gleich mal zu einem Beispiel zum leichteren Verst&auml;ndnis:
+<pre>
+Set myDictionary = CreateObject("Scripting.Dictionary")
+myDictionary.Add "Flensburg", "Polizei"
+myDictionary.Add "Kuba", "Zigarren"
+</pre>
+Damit erstelle ich die Assoziation, die ich dann verwenden kann, um das Teil wieder aufzusuchen:
+<pre>
+Response.Write myDictionary.Item("Flensburg")
+</pre>
+Das Resultat ist wie nicht anders zu erwarten - "Polizei". Vern&uuml;nftigere Anwendungen w&auml;ren Benutzername zu Pa&szlig;wort Zuweisungen
+oder das Auslesen von Daten aus Tabellen (Prim&auml;rschl&uuml;ssel zugewiesen auf zB Nachname).
+</p>
+<p>
+Damit sind wir auch schon beim Thema, das Verwenden von Dictionaries zusammen mit Recordsets. Da gibt es n&auml;mlich eine 
+unheilige Allianz, die ich anhand des folgenden Beispiels erkl&auml;ren werde (ich verwende die <b>pubs</b> Datenbank eines SQL 7
+Servers names TOPGUN):
+<pre>
+&lt;% 
+Dim oConn, oRS, dicAuthors
+Set oConn = CreateObject(&quot;ADODB.Connection&quot;)
+oConn.ConnectionString = &quot;provider=sqloledb.1;user id=sa;&quot; & _
+		&quot;password=;initial catalog=pubs;data source=TOPGUN&quot;
+oConn.Open
+
+Set oRS = CreateObject(&quot;ADODB.Recordset&quot;)
+oRS.ActiveConnection = oConn
+oRS.Open &quot;SELECT au_id, au_lname FROM authors&quot;
+
+Set dicAuthors = CreateObject(&quot;Scripting.Dictionary&quot;)
+while not oRS.EOF
+	dicAuthors.Add oRS(0), oRS(1)
+	oRS.MoveNext
+wend
+
+oRS.Close
+oConn.Close
+
+Dim myKeys, myValues, i
+myKeys = dicAuthors.Keys
+myValues = dicAuthors.Items
+For i = 0 To (dicAuthors.Count -1)
+	Response.Write myKeys(i) &amp; &quot; &quot; &amp; myValues(i)
+Next
+%&gt;
+</pre>
+Eigentlich nichts besonders - au&szlig;er da&szlig; ich statt &uuml;ber ODBC direkt &uuml;ber den OLE-DB Treiber auf den
+SQL Server zugreife (bringt Geschwindigkeit, weil der ODBC Layer ausgeschaltet wird).
+</p>
+<p>
+Der eigentliche Haken an der Geschichte ist die while-Schleife:
+<pre>
+while not oRS.EOF
+	dicAuthors.Add oRS(0), oRS(1)
+	oRS.MoveNext
+wend
+</pre>
+Wenn ich das so laufen lasse, dann bekomme ich folgende Fehlermeldung:
+<pre>
+Microsoft VBScript runtime error '800a01c9' 
+This key is already associated with an element of this collection 
+/ASPGERMAN/dictionary2recordset.asp, line 21 
+</pre>
+Analyse: Der Fehler tritt bei der zweiten Datensatzzeile auf; der Prim&auml;rschl&uuml;ssel <i>au_id</i> ist aber eindeutig - was also ist da
+passiert? Der Grund liegt im Dictionary selbst - ich kann Objekte zuweisen, und zwar auf den Schl&uuml;ssel und den Wert (da wird die Adresse und nicht der Wert des Objekts gespeichert). Da ADO
+aber f&uuml;r <i>oRS.Fields(0)</i> immer das gleiche <i>Field</i> Objekt liefert, ist dessen Adresse im Speicher immer die gleiche - 
+und somit ist beim 2ten Durchlauf der Fehler vorprogrammiert. Der Fehler l&auml;&szlig;t sich aber leicht beheben:
+<pre>
+	dicAuthors.Add CStr(oRS(0)), oRS(1)
+</pre>
+</p>
+<p>
+Damit weise ich den Wert des Objekts (ein String) statt der Adresse des Objekts zu. Wenn ich das Skript jetzt laufen lasse,
+wird der Fehler allerdings noch um einiges lustiger, und zwar tritt er in der 2ten Zeile des folgenden Codes auf:
+<pre>
+For i = 0 To (dicAuthors.Count -1)
+	Response.Write myKeys(i) & " " & myValues(i)
+Next
+</pre>
+Und die Fehlermeldung schulde ich Euch noch:
+<pre>
+error '80020009' 
+Exception occurred. 
+/ASPGERMAN/dictionary2recordset.asp, line 32 
+</pre>
+Ich hoffe, einige haben das mit der Objektadresse aufmerksam gelesen - ich habe gesagt, Schl&uuml;ssel und Wert k&ouml;nnen ein Objekt aufnehmen,
+und genau das mache ich immer noch - der Wert ist <i>oRS.Fields(1)</i>, mit dem Haken, da&szlig; ich das Recordset schon geschlossen habe.
+Damit ist das <i>Field</i> Objekt schon gel&ouml;scht, und wenn ich zugreife, bekomme ich die Zugriffsverletzung. Auch dieser Fehler
+l&auml;&szlig;t sich mit der bekannten Methode beseitigen:
+<pre>
+	dicAuthors.Add CStr(oRS(0)), CStr(oRS(1))
+</pre>
+</p>
+<p>
+Was w&auml;re passiert, wenn das Recordset noch nicht geschlossen gewesen w&auml;re? Ich h&auml;tte einen einzigen Wert bekommen, und zwar
+den, der in der letzten Zeile gestanden ist. Selbstversuch!
+</p>
+<p>
+Die Moral von der Geschichte? Dictionaries sind ein m&auml;chtiges Werkzeug - sie nehmen alles auf (inklusive Objekten), wie man
+dann an die Daten wieder herankommt sollte man sich aber bereits vorher &uuml;berlegt haben. Die Fehler k&ouml;nnen gemein schwer
+zu finden sein!
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000602.htm">Allgemeine MailParser-Klasse mit ASPMail</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000602.htm</span><br>
+<a href="../artikel/20000926.htm">Collections einmal anders: Stacks und Queues</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000926.htm</span><br>
+<a href="../artikel/20010323.htm">Die LookUpTable Komponente</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010323.htm</span><br>
+<a href="../artikel/20020430.htm">Gro&szlig;e Datenmengen in Formularfeldern erfolgreich auslesen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020430.htm</span><br>
+<a href="../artikel/20020408.htm">Klassenauflistungen mit dem Dictionary-Objekt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020408.htm</span><br>
+<a href="../artikel/20010803.htm">Meta Tags von fremden Seiten parsen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010803.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

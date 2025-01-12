@@ -1,0 +1,456 @@
+<HTML>
+<HEAD>
+<TITLE>Datenimport von Access nach MySQL</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Wer z.B. von MS Access auf MySQL umsteigen m&ouml;chte, der fragt sich nicht zuletzt, wie denn seine Daten von Access nach MySQL &uuml;bertragen werden k&ouml;nnen. Mit der Installation von MySQL werden einige Tools mit ausgeliefert">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,MySQL,phpMyAdmin,MySQL-Front,Datenimport,Import,Access,Datenbank,Datentransfer,Textdatei,CSV,comma separated value,mySQL">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Datenimport von Access nach MySQL</H1>
+<p>
+Geschrieben von: <a href="../autoren/renedrescher-hackel.htm">Rene Drescher-Hackel</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010731"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Wer z.B. von MS Access auf MySQL umsteigen m&ouml;chte, der fragt sich nicht zuletzt, wie denn seine Daten von 
+Access nach MySQL &uuml;bertragen werden k&ouml;nnen. Mit der 
+<a href="../artikel/20010618.htm">Installation von MySQL unter Windows 2000 Professional</a>
+werden einige Tools mit ausgeliefert, die diese Arbeit &uuml;bernehmen. Auch gibt es im Internet diverse 
+Zusatzprogramme, die entsprechende Import/Exportfunktionen integriert haben. 
+</p>
+
+<p>
+Im heutigen Artikel m&ouml;chte ich Ihnen insbesondere das Programm <b>mysqlimport.exe</b> sowie die Importfunktionen des 
+<i>phpMyAdmin</i> und des Programms <b>MySQLFront.exe</b> vorstellen. Ich werde Ihnen dabei aufzeigen, was Sie beachten m&uuml;ssen, 
+was geht und was eben nicht geht.
+</p>
+
+<p>
+Das Programm <b>mysqlimport.exe</b> wird mit der MySQL-Installation in den Ordner <i>\bin</i> kopiert. Der Start des 
+Programmes erfolgt vom DOS-Prompt aus, wobei der Aufruf in der Regel nach folgendem Muster erfolgt:
+</p>
+
+<pre style="background='silver';">
+mysqlimport  --host=… --user=… --password=… dbname importdatei
+</pre>
+
+<p>
+Haben Sie in der my.ini-Optionsdatei Angaben zum User, Password und Host in der Gruppe [client] hinterlegt, 
+so k&ouml;nnen Sie mysqlimport.exe auch ohne Angaben zum Host, User und Password starten 
+(vgl. auch Artikel <a href="../artikel/20010730.htm">Administration des MySQL-Servers unter Windows 2000</a>).
+</p>
+
+<p>
+Statt "dbname" tragen Sie nat&uuml;rlich den Namen der Datenbank ein, in der sich die Tabelle befindet, die die zu 
+importierenden Daten aufnehmen soll.
+</p>
+
+<p>
+F&uuml;r "importdatei" geben Sie bitte den vollst&auml;ndigen Pfad und den Dateinamen inklusive Dateierweiterung der 
+Datei an, die die zu importierenden Daten enth&auml;lt. Unter Verwendung der Eintr&auml;ge in my.ini w&uuml;rde das dann wie 
+folgt aussehen:
+</p>
+
+<pre style="background='silver';">
+mysqlimport test E:\temp\tblcount.txt
+</pre>
+
+<p>
+Voraussetzung f&uuml;r einen fehlerfreien Ablauf des Datenimports ist unter anderem da&szlig; in der hier angegebenen 
+Datenbank eine Tabelle mit dem Namen "<i>tblcount</i>" existiert, denn anhand des Dateinamens der Importdatei wird 
+die Tabelle bestimmt, in die die Daten &uuml;bertragen werden sollen. Auch sollten Sie vorher entsprechend 
+sicherstellen, da&szlig; die Spaltendefinitionen den erwarteten Daten entsprechen.
+</p>
+
+<p>
+Bevor wir aber unsere <b>tblcount.txt</b> importieren k&ouml;nnen, wollen wir uns erst einmal ansehen, wie wir diese 
+Datei unter Access erzeugen. F&uuml;r den heutigen Artikel habe ich eine Tabelle "<i>tblcount</i>" erstellt, die wir 
+nach MySQL &uuml;bertragen wollen. Die Tabelle hat dabei folgende Struktur:
+</p>
+
+<IMG SRC="/artikel/Bilder/200107/20010731_1.png" width="386" height="289" alt="" border="0">
+
+<p>
+Auf unserem MySQL-Server (im folgenden nur noch SQL-Server) legen wir dann in der TEST-Datenbank die Tabelle "<i>tblcount</i>" 
+nach folgendem Muster an:
+</p>
+
+<IMG SRC="/artikel/Bilder/200107/20010731_2.png" width="386" height="141" alt="" border="0">
+
+<p>
+Kehren wir nun aber wieder zur&uuml;ck zu Access und beginnen wir den Export der Tabellendaten. Markieren Sie die 
+Tabelle, die Sie exportieren wollen - in unserem Beispiel ist dies die Tabelle "<i>tblcount</i>" - und rufen 
+Sie mit der rechten Maustaste das Kontextmen&uuml; auf. Hier klicken Sie auf "<i>Exportieren</i>".
+</p>
+
+<IMG SRC="/artikel/Bilder/200107/20010731_3.png" width="200" height="300" alt="" border="0">
+
+<p>
+Es &ouml;ffnet sich der Dialog, in dem Sie zun&auml;chst angeben m&uuml;ssen, unter welchem Namen, welchem Dateityp und in 
+welchem Verzeichnis Sie die zu exportierende Datei speichern m&ouml;chten.
+</p>
+
+<IMG SRC="/artikel/Bilder/200107/20010731_4.png" width="617" height="455" alt="" border="0">
+
+<p>
+Der Dateiname wird hier entsprechend dem Tabellennamen vorgegeben, also hier "<i>tblcount</i>". Als Dateityp 
+w&auml;hlen wir  "<i>Textdatei</i>"; als Verzeichnis habe ich f&uuml;r unser Beispiel "<i>E:\temp</i>" ausgew&auml;hlt. 
+Best&auml;tigen Sie Ihre Eingaben abschlie&szlig;end mit "<i>Speichern</i>". 
+</p>
+
+<p>
+Jetzt &ouml;ffnet sich erneut ein Fenster.
+</p>
+
+<IMG SRC="/artikel/Bilder/200107/20010731_5.png" width="489" height="383" alt="" border="0">
+
+<p>
+W&auml;hlen Sie hier bitte die Schaltf&auml;che "<i>Weitere...</i>". Sie erhalten dann folgendes Bild, wo Sie weitere 
+Einstellungen f&uuml;r den Export Ihrer Daten vornehmen k&ouml;nnen. 
+</p>
+
+<IMG SRC="/artikel/Bilder/200107/20010731_6.png" width="489" height="383" alt="" border="0">
+
+<p>
+Als "<i>Feldtrennzeichen</i>" w&auml;hlen Sie bitte "<i>{Tabulator}</i>". Dies ist der Standardwert, den das Programm 
+<i>mysqlimport</i> erwartet. Geben Sie stattdessen ein anderes Zeichen/Merkmal an, so m&uuml;ssen Sie sp&auml;ter beim 
+Import das Programm mysqlimport mit der Option - <i>-fields-terminated-by= '....'</i> aufrufen, wobei statt der 
+in den einfachen Hochkommatas eingeschlossenen Punkte Ihr entsprechendes Zeichen anzugeben ist.
+</p>
+
+<p>
+Als "<i>Textbegrenzungszeichen</i>" w&auml;hlen Sie hier bitte "<i>{kein}</i>" aus. Auch dies enspricht dem von 
+<i>mysqlimport</i> erwarteten Standardwert. Andernfalls m&uuml;ssen Sie <i>mysqlimport</i> mit der Option - 
+<i>-fields-enclosed-by='...'</i> aufrufen, wobei auch hier wieder statt der Punkte Ihr gew&auml;hltes Zeichen 
+anzugeben ist.
+</p>
+
+<p>
+Als "<i>Datumsreihenfolge</i>" w&auml;hlen Sie "<i>JMT</i>" und markieren die Option "<i>vierstellige Jahreszahlen</i>".
+Dies bedeutet, da&szlig; unabh&auml;ngig vom in der Accesstabelle gespeicherten Datumsformat, Datumsangaben im Format 
+Jahr-Monat-Tag gespeichert werden. Damit statt des Punktes auch der Bindestrich "-" als 
+Datumstrennzeichen benutzt wird, m&uuml;ssen Sie auch hier die ensprechende &Auml;nderung vornehmen. 
+</p>
+
+<p>
+Alle anderen Voreinstellungen k&ouml;nnen so verbleiben. 
+</p>
+
+<p>
+Damit diese Einstellungen Ihnen immer erhalten bleiben, speichern Sie diese zuvor ab. W&auml;hlen Sie hierf&uuml;r 
+"<i>Speichern...</i>" und tragen Sie in dem sich &ouml;ffnenden Dialogfenster "<i>mysql-spezifikation</i>" ein.
+</p>
+
+<IMG SRC="/artikel/Bilder/200107/20010731_7.png" width="348" height="102" alt="" border="0">
+
+<p>
+Wenn Sie die n&auml;chste Tabelle exportieren wollen, brauchen Sie nur noch Ihre "<i>Spezifikation..:</i>" ausw&auml;hlen und 
+alle Einstellungen sind dann entsprechend wieder vorhanden.
+</p>
+
+<IMG SRC="/artikel/Bilder/200107/20010731_8.png" width="294" height="167" alt="" border="0">
+
+<p>
+Best&auml;tigen Sie die folgenden zwei Dialogfenster mit "Weiter" und abschlie&szlig;end mit "Fertig stellen".
+Ihre Tabellendaten sind nun in die Textdatei "tblcount.txt" exportiert worden.
+</p>
+
+<IMG SRC="/artikel/Bilder/200107/20010731_9.png" width="640" height="155" alt="" border="0">
+
+<p>
+Ein Blick in die "<i>tblcount.txt</i>" verr&auml;t uns, da&szlig; die Daten absolut simpel abgespeichert sind.
+</p>
+
+<p>
+Um unsere Textdatei jetzt zu importieren, &ouml;ffnen wir die Eingabeaufforderung und rufen von hier das Programm 
+<b>mysqlimport</b> wie folgt auf:
+</p>
+
+<pre style="background='silver';">
+mysqlimport test E:\temp\tblcount.txt
+</pre>
+
+<p>
+Nach erfolgreichem Import erhalten wir dann folgende Anzeige:
+</p>
+
+<IMG SRC="/artikel/Bilder/200107/20010731_10.png" width="607" height="135" alt="" border="0">
+
+<p>
+In unserem Beispiel wurden 71 Datens&auml;tze erfolgreich importiert.
+</p>
+
+<p>
+Das SQL-Gegenst&uuml;ck zur Kommandozeilenapplikation mysqlimport ist die SQL Anweisung <i>LOAD DATA IN FILE</i>.
+</p>
+
+<p>
+Sie k&ouml;nnten auch im MySQL-Monitor bzw. scriptseitig &uuml;ber SQL (z.B. nach einem erfolgreichen Dateiupload) 
+den Datenimport folgenderma&szlig;en realisieren:
+</p>
+
+<pre style="background='silver';">
+LOAD DATA INFILE "E:\temp\tblcount.txt" INTO TABLE test.tblcount;
+</pre>
+
+<p>
+Statt vom DOS-Prompt mit <b>mysqlimport</b> die Daten zu importieren k&ouml;nnen Sie auch ein 
+entsprechendes Frontend einsetzen. Ich m&ouml;chte mich hierbei auf zwei - meiner Meinung nach die gel&auml;ufigsten - 
+Anwendungen beschr&auml;nken: den <b>phpmyadmin</b> und <b>mysqlfront</b>.
+</p>
+
+<p>
+Schauen wir uns als erstes den <b>phpmyadmin</b> an. PHPmyAdmin k&ouml;nnen Sie von 
+<a href="http://phpwizard.net/projects/phpMyAdmin/" target="_blank">phpwizard.net/projects/phpMyAdmin/</a> downloaden 
+(Installationshinweise finden Sie bei 
+<a href="http://phpmyadmin.sourceforge.net/documentation/" target="_blank">phpmyadmin.sourceforge.net/documentation/</a>).
+</p>
+
+<p>
+Wenn Sie den <b>phpmyadmin</b> aufgerufen haben, w&auml;hlen Sie als erstes die Datenbank ("<i>test</i>") und dann die 
+Tabelle ("<i>tblcount</i>") aus. Anschlie&szlig;end erhalten Sie folgende Anzeige,
+</p>
+
+<IMG SRC="/artikel/Bilder/200107/20010731_11.png" width="497" height="488" alt="" border="0">
+
+<p>
+wobei Sie dem Link "<i>Textdatei in Tabelle einf&uuml;gen</i>" folgen. Hierauf zeigt sich Ihnen folgendes Bild:
+</p>
+
+<IMG SRC="/artikel/Bilder/200107/20010731_12.png" width="856" height="359" alt="" border="0">
+
+<p>
+Wie Sie sehen, k&ouml;nnen Sie hier einige Einstellungen hinsichtlich des Aufbaus Ihrer Importdatei vornehmen. In 
+unserem Beispiel hatten wir festgelegt, da&szlig; das Feldtrennzeichen der Tabulator ist. Wir m&uuml;ssen also als 
+Feldtrennzeichen hier "<i>\t</i>" (f&uuml;r den Tabulator) eingeben.
+</p>
+
+<p>
+Alle anderen Optionsfelder bleiben leer. F&uuml;r den Fall, da&szlig; sich Daten schon in der Tabelle befinden, geben wir 
+hier an, da&szlig; der Tabelleninhalt gegebenenfalls zu ersetzen ist.
+</p>
+
+<p>
+Nun brauchen wir nur noch &uuml;ber die Schaltfl&auml;che "<i>Durchsuchen</i>" unsere Textdatei ausw&auml;hlen und 
+anschlie&szlig;end das Formular abschicken. 
+</p>
+
+<p>
+Zuvor sei an dieser Stelle eine Bemerkung zur Performance gemacht:
+</p>
+
+<p>
+Der Datenimport erfolgt hier &uuml;ber die SQL-Anweisung "<i>LOAD DATA INFILE</i>". Im php-Script des <b>phpmyadmin</b> 
+wird diese Anweisung um das Schl&uuml;sselwort "LOCAL" erweitert. Wenn <i>LOCAL</i> mit angegeben wird, werden die Daten vom 
+Client geholt, andernfalls mu&szlig; die Importdatei auf dem SQL-Server vorhanden sein. Wenn der Import der Daten - 
+was durchaus der Regelfall sein kann - &uuml;ber das Internet erfolgt, kann der Import mit "<i>LOCAL</i>" erheblich l&auml;nger 
+dauern. Aus diesem Grund habe ich das Script <b>ldi_check.php</b> um einen Dateiupload erweitert. 
+</p>
+
+<p>
+&Ouml;ffnen Sie die Datei <b>ldi_check.php</b> in Ihrem <i>phpmyadmin</i>-Verzeichnis mit einem Editor 
+(z.B. <i>phpEd</i>, den Sie unter der Adresse 
+<a href="http://www.soysal.com/PHPEd/download.php3" target="_blank">www.soysal.com/PHPEd/download.php3</a> 
+herunterladen k&ouml;nnen).
+</p>
+
+<p>
+In der Zeile 16 f&uuml;gen Sie folgenden Code ein:
+</p>
+
+<pre style="background='silver';">
+// ****** Dateiupload ***************************************
+// ****** Datei wird in der sql.php wieder gel&ouml;scht *********
+// Pfadangabe fuer das Ziel
+    $mypath = dirname($PATH_TRANSLATED)."/_upload/";  // das individuelle Upload-Verz.
+    if ($error &lt;&gt; 1):
+         $dest = $mypath.$textfile_name;
+         if (!copy($textfile, $dest))
+         {
+         echo "Die Datei $textfile_name konnte nicht auf den Server &uuml;bertragen werden!&lt;br&gt;\n";
+         $error = 1;
+         }
+     endif;
+// ************ Ende Dateiupload ****************************
+</pre>
+
+<p>
+In der Variable "<i>$mypath</i>" wird der Pfad des Uploadverzeichnisses angelegt. Das Verzeichnis "<i>_upload</i>" 
+m&uuml;ssen Sie dabei noch in Ihrem <i>phpmyadmin</i>-Verzeichnis erstellen. Mit der copy-Funktion wird dann letztlich 
+die Datei auf den Server &uuml;bertragen. 
+</p>
+
+<p>
+Nun m&uuml;ssen wir noch die SQL-Abfrage etwas umformulieren. &Auml;ndern Sie den Code (ca. in Zeile 36 nach Einf&uuml;gen der 
+Uploadfunktion) wie folgt ab:
+</p>
+
+<pre style="background='silver';">
+$query = "LOAD DATA INFILE '$mypath/$textfile_name' $replace INTO TABLE $into_table ";                           
+</pre>
+
+<p>
+Im wesentlichen ist das Schl&uuml;sselwort "<i>LOCAL</i>" zu entfernen und der vollst&auml;ndige Pfad zur Datei, sowie 
+die Datei selbst anzugeben. Den Pfad haben wir ja in der Variablen "<i>$mypath</i>" und den Dateinamen in 
+"<i>$textfile_name</i>" hinterlegt.
+</p>
+
+<p>
+Damit aber am Ende nicht Unmengen an verwaisten Importdateien auf dem Server "schlummern", werden wir diese 
+auch wieder l&ouml;schen, sobald sie nicht mehr ben&ouml;tigt werden.
+</p>
+
+<p>
+Hierzu &ouml;ffnen wir die Datei <b>sql.php</b> und f&uuml;gen in Zeile 71 folgende Anweisung ein:
+</p>
+
+<pre style="background='silver';">
+@unlink("_upload/".$textfile_name);
+</pre>
+
+<p>
+Die Funktion "<i>unlink</i>" ist f&uuml;r das Entfernen der Datei verantwortlich.
+</p>
+
+<p>
+Soviel zum PHP-spezifischen Teil. Kehren wir nun zur&uuml;ck zu unserem Formular im <b>phpmyadmin</b>. 
+Wenn Sie nun das Formular abschicken, wird die Datei zuerst auf den Server &uuml;bertragen, die Daten importiert, 
+die &uuml;bertragene Importdatei auf dem Server wieder gel&ouml;scht und Sie erhalten dann die folgende Anzeige:
+</p>
+
+<IMG SRC="/artikel/Bilder/200107/20010731_13.png" width="596" height="448" alt="" border="0">
+
+<p>
+Wenn kein Fehler angezeigt wird, sehen Sie - wie hier in der Grafik auch dargestellt - das SQL-Statement und die 
+Tabellendefinition. Um nun zu &uuml;berpr&uuml;fen, ob denn alle Daten auch wirklich korrekt &uuml;bernommen wurden, w&auml;hlen 
+Sie einfach "<i>Anzeigen</i>". 
+</p>
+
+<p>
+Statt des <b>phpmyadmin</b> k&ouml;nnen Sie aber auch mit <b>mysqlfront</b> den Datenimport durchf&uuml;hren.
+</p>
+
+<p>
+Zun&auml;chst m&uuml;ssen Sie auch hier wieder die Datenbank und Tabelle ausw&auml;hlen (markieren), in der die Daten der 
+Importdatei eingef&uuml;gt werden sollen. Anschlie&szlig;end w&auml;hlen Sie im Men&uuml; "<i>Im-/Export</i>" den Eintrag 
+"<i>Import Textfile</i>".
+</p>
+
+<IMG SRC="/artikel/Bilder/200107/20010731_14.png" width="365" height="238" alt="" border="0">
+
+<p>
+Daraufhin erhalten Sie die folgende Dialogbox:
+</p>
+
+<IMG SRC="/artikel/Bilder/200107/20010731_15.png" width="502" height="365" alt="" border="0">
+
+<p>
+Die Einstellungen f&uuml;r die Datenbank ("<i>Database</i>") und die Tabelle ("<i>Import into table</i>") werden auf 
+Grund der vorangegangenen Auswahl hier entsprechend &uuml;bernommen. Unter "<i>Filename</i>" w&auml;hlen Sie die 
+Importdatei - in unserem Beispiel ist dies wieder die "<b>tblcount.txt</b>".
+</p>
+
+<p>
+Die weiteren Einstellungen erfolgen analog den Ausf&uuml;hrungen zum <b>phpmyadmin</b>. F&uuml;r unser kleines Beispiel 
+bedeutet dies also wieder, da&szlig; als Feldbegrenzungszeichen der Tabulator, also <i>\t</i> anzugeben ist. Um 
+diesen Eintrag vornehmen zu k&ouml;nnen, m&uuml;ssen Sie die Kontrollbox vor "<i>terminated by</i>" entsprechend 
+aktivieren (anklicken). Alle weiteren Einstellungen k&ouml;nnen in unserem Beispiel wieder vernachl&auml;ssigt werden. 
+Lediglich "<i>Replace</i>" wird noch aktiviert, um eventuell vorhandene Datens&auml;tze zu &uuml;berschreiben.
+</p>
+
+<p>
+Anschlie&szlig;end lassen wir mysqlfront die Anweisung ausf&uuml;hren, indem wir die "<i>Import!</i>" -Schaltfl&auml;che bet&auml;tigen.
+</p>
+
+<h2>Zusammenfassung</h2>
+
+<p>
+Wie Ihnen der Artikel gezeigt hat, ist es relativ unproblematisch, seine bestehenden Daten aus einer 
+ACCESS-Datenbank nach MySQL zu  &uuml;bertragen. Zum einen k&ouml;nnen Sie das mit dem MySQL-Server ausgelieferten 
+Programm "mysqlimport" bewerkstelligen, oder aber auch durch ein eigenes Script &uuml;ber die SQL-Anweisung 
+"<i>LOAD DATA INFILE</i>" realisieren. 
+</p>
+
+<p>
+Weiters habe ich - neben einem kleinen Exkurs in die PHP-Programmierung - Ihnen heute gezeigt, wie sich der 
+Datenimport mit zwei stark verbreiteten Frontends (<b>phpmyadmin</b> und <b>mysqlfront</b>) umsetzen l&auml;&szlig;t. Neben diesen gibt es 
+sicherlich noch viele andere M&ouml;glichkeiten, wie man seine Daten nach MySQL &uuml;bertragen kann.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010731.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010731.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010730.htm">Administration von MySQL unter Windows 2000</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010730.htm</span><br>
+<a href="../artikel/20010618.htm">Installation und Konfiguration von MySQL unter Windows 2000 Professional</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010618.htm</span><br>
+<a href="../artikel/20020410.htm">Yet Another Access Database Administration Tool</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020410.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emysql%2Ecom">MySQL Home</a><br>
+<SPAN class="content">http://www.mysql.com</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Eanse%2Ede%2Fmysqlfront%2F">MySQL-Front</a><br>
+<SPAN class="content">http://www.anse.de/mysqlfront/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Esoysal%2Ecom%2FPHPEd%2F">PHPEd</a><br>
+<SPAN class="content">http://www.soysal.com/PHPEd/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fphpwizard%2Enet%2Fprojects%2FphpMyAdmin%2F">phpMyAdmin</a><br>
+<SPAN class="content">http://phpwizard.net/projects/phpMyAdmin/</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fphpmyadmin%2Esourceforge%2Enet%2Fdocumentation%2F">phpMyAdmin Documentation</a><br>
+<SPAN class="content">http://phpmyadmin.sourceforge.net/documentation/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

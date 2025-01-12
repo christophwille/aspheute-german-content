@@ -1,0 +1,222 @@
+<HTML>
+<HEAD>
+<TITLE>ADO Konstanten und die Datei Adovbs.inc</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Artikel der zeigt, wie man in  ADO Konstanten in ASP Seiten definiert, und wie man die Datei Adovbs.inc benutzt, die Teil der ADO Core Componentes ist.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,AdO Konstanten, ADO Constants, ADO, ActiveX Data Objects, Adovbs.inc, Adojavas.inc, IIS, Internet Information Server, PWS, Personal Web Server, VBScript, #include, Jscript, Server-Side-Include, SSI">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>ADO Konstanten und die Datei Adovbs.inc</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000518"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>Wenn Sie ADO unter ASP einsetzen, so werden Sie beim Benutzen der diversen
+Methoden und Eigenschaften des <i>Recordset-</i> und des <i>Connection</i> Objektes immer
+wieder ADO Konstanten ben&ouml;tigen. Diese Konstanten enthalten numerische Werte,
+die f&uuml;r bestimmte Attribute im Zusammenhang mit ADO Eigenschaften und Methoden stehen.
+Betrachten Sie die folgenden Befehle, die Eigenschaften des <i>Recordset</i> Objektes
+auf bestimmte Werte setzen:
+</p>
+
+<pre style="background='silver';">
+objRecordset.CursorLocation = <b>adUseClient</b>
+objRecordset.LockType = <b>adLockBatchOptimistic</b>
+objRecordset.CursorType = <b>adOpenStatic</b>
+</pre>
+
+<p>Die Variablen <i>adUseClient</i>, <i>adLockBatchOptimistic</i> und <i>adOpenStatic</i>
+sind ADO Konstanten.
+Sie werden im obigen Beispiel benutzt, 
+um die <i>Recordset</i> Eigenschaften auf bestimmte Werte zu setzen.
+Dadurch wird zum Beispiel der Funktionsumfang des <i>Recordset</i> wunschgem&auml;&szlig; eingestellt.</p>
+
+<p>Jede der ADO Konstanten steht f&uuml;r einen numerischen Wert.
+Zum Beispiel liefert <i>adUseClient</i> einfach den Wert <i>3</i>.
+Das obige Beispiel ist daher identisch mit folgendem:</p>
+
+<pre style="background='silver';">
+objRecordset.CursorLocation = <b>3</b>
+objRecordset.LockType = <b>4</b>
+objRecordset.CursorType = <b>3</b>
+</pre>
+
+<p>Nun ist es nicht sonderlich praktisch, wenn man beim Entwickeln einer
+ASP Datenbank Applikation einfach Zahlen statt den aussagekr&auml;ftigen ADO Konstanten
+benutzt.</p> 
+
+<p>Ein Beispiel: Mit der Konstante <i>adUseClient</i> definiert man den ADO Cursor als client-seitig.
+Das bedeutet, der <i>Recordset</i> Cursor wird vom Webserver verwaltet und nicht von
+der Datenbank.
+Wenn sie beim Programmieren die Konstante <i>adUseClient</i> in eine ASP Seite schreiben,
+so wissen Sie, wof&uuml;r diese steht. Hingegen ist ein Wert wie "<i>3</i>" nicht wirklich
+leicht zu deuten. Steht er nun f&uuml;r <i>adUseClient</i> oder <i>adUseServer</i>?</p>
+
+<p>Damit nicht nur Sie wissen, wof&uuml;r eine ADO Konstante wie <i>adUseClient</i> steht,
+sondern auch Ihr ASP Skript (VBScript) versteht, da&szlig; mit der Konstante <i>adUseClient</i> eigentlich
+der Wert <i>3</i> gemeint ist, m&uuml;ssen Sie die ADO Konstanten definieren.
+VBScript selbst hat keine ADO Konstanten definiert.</p>
+
+<h2>Definieren von ADO Konstanten</h2>
+
+<p>Sie k&ouml;nnen die ADO Konstanten, die Sie in Ihrer ASP Seite ben&ouml;tigen,
+mit dem VBScript Befehl <i>Const</i> definieren:</p>
+
+<pre style="background='silver';">
+<b>Const adUseClient = 3
+Const adUseServer = 2
+
+Const adOpenDynamic = 2
+Const adOpenForwardOnly = 0
+Const adOpenKeyset = 1
+Const adOpenStatic = 3</b>
+
+objRecordset.CursorLocation = <b>adUseClient</b>
+objRecordset.CursorType = <b>adOpenStatic</b>
+</pre>
+
+<p>Sie m&uuml;ssen diese Werte nicht aus der Dokumentation zusammensuchen,
+da ADO die Datei <i><b>Adovbs.inc</b></i> (f&uuml;r VBScript) bereitstellt, die alle
+ADO Konstanten enth&auml;lt.</p>
+
+<h2><i>Adovbs.inc</i> als Include-Datei</h2>
+
+<p>Eleganter als das Kopieren der Werte aus der Datei <i>Adovbs.inc</i>
+ist folgende Methode:</p>
+
+<ol>
+<li>Kopieren Sie die Datei <i>Adovbs.inc</i> in das Home-Directory Ihrer ASP Website.</li>
+<li>F&uuml;gen Sie in allen ASP Seiten, die ADO Konstanten benutzen, den folgenden Befehl ein:<br>
+
+<pre style="background='silver';">
+<b>&lt;!--#include virtual=&quot;/Adovbs.inc&quot;--&gt;</b></pre>
+
+</li>
+
+<li>Durch diesen Befehl k&ouml;nnen Sie alle ADO-Konstanten in der ASP-Seite benutzen.</li>
+</ol>
+
+<p>Der <i>#include</i>-Befehl muss <u>ausserhalb</u> der ASP Delimiter (&lt;% %&gt;) stehen. 
+Der Befehl selbst stellt ein sogenanntes Server-Side-Include (SSI) dar.
+Es bewirkt, da&szlig; alles, was in der Datei <i>Adovbs.inc</i> steht, 
+beim Ausf&uuml;hren an der Stelle des <i>#include</i>-Befehles in die ASP Seite eingef&uuml;gt wird.</p>
+
+<h2>Wo findet man die Datei <i>Adovbs.inc</i>?</h2>
+
+<p>Wenn Sie ADO auf einem Computer installiert haben,
+und das ist schon bei Internet Explorer 5.01 der Fall,
+so finden Sie die Datei <i>Adovbs.inc</i> im Verzeichnis
+<b>C:\Programme\Gemeinsame Dateien\System\Ado</b> (deutsche ADO Installation),
+oder in 
+C:\Program Files\Common Files\System\ADO (englische Version).
+<b>C:\</b> steht dabei f&uuml;r das Laufwerk, auf dem das Betriebssystem installiert ist.</p>
+
+<p>Die Datei <i>Adovbs.inc</i> ist integraler Bestandteil der ADO Core Components.
+Es ist somit in jeder ADO und MDAC Installation vorhanden. 
+Da ADO Bestandteil aufgrund seiner Bedeutung bereits Bestandteil vieler
+Software packete ist, befindet sich die Datei auf dem Computer, sobald man 
+zum Beispiel Internet Explorer (ab Version 4.01), Personal Web Server (PWS), 
+Internet Information Server (IIS), MDAC (Microsoft Data Access Components)
+oder Windows 98 SE installiert hat.</p>
+
+<h2>ADO Konstanten unter JScript</h2>
+
+Um ADO Konstanten in <b>JScript</b> benutzen zu k&ouml;nnen, verwenden Sie die Datei
+<b><i>Adojavas.inc</i></b>. Sie finden diese im selben Verzeichnis wie <i>Adovbs.inc</i>.</p>
+
+<h2>Abschlie&szlig;endes Beispiel</h2>
+
+<p>Zum Abschluss noch ein Beispiel, wie der Begin einer ASP-Seite
+mit inkludierter <i>Adovbs.inc</i> Datei aussehen k&ouml;nnte:</p>
+
+<pre style="background='silver';">
+&lt;% @ LANGUAGE="VBScript" ENABLESESSIONSTATE=False %&gt;
+&lt;% Option Explicit %&gt;
+<b>&lt;!--#include virtual=&quot;/Adovbs.inc&quot;--&gt;</b>
+
+&lt;%
+strTitle = "ADO Konstanten und die Datei Adovbs.inc"
+ %&gt;
+&lt;HTML&gt;
+&lt;HEAD&gt;
+   &lt;TITLE&gt;&lt;%= strT%&gt;&lt;/TITLE&gt;
+&lt;/HEAD&gt;
+&lt;BODY&gt;
+...</pre>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/19990825.htm">ADO und ASP - Datenbanken einmal n&auml;her betrachtet</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990825.htm</span><br>
+<a href="../artikel/20000327.htm">ADO und MDAC Versionen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000327.htm</span><br>
+<a href="../artikel/20020429.htm">Benutzerverwaltung leicht gemacht: Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020429.htm</span><br>
+<a href="../artikel/19990811.htm">Eigenschaften der Connection und Recordset Objekte</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990811.htm</span><br>
+<a href="../artikel/20020319.htm">Ein einfacher Eventkalender f&uuml;r Projektteams</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020319.htm</span><br>
+<a href="../artikel/20001013.htm">Highspeed-Abfragen einer SQL Server Datenbank</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001013.htm</span><br>
+<a href="../artikel/20000328.htm">Installation der neuesten ADO Version (ADO 2.5)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000328.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2FGERMANY%2Fmsdn%2Fquickie%2FASPTypeLibs%2Ehtm">ASP Typenbibliotheken in Active Server Pages</a><br>
+<SPAN class="content">http://www.microsoft.com/GERMANY/msdn/quickie/ASPTypeLibs.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2FGERMANY%2Fmsdn%2Flibrary%2Fodeopg%2Fdeovradocomponentlibraries%2Ehtm">Bibliotheken mit ADO-Komponenten</a><br>
+<SPAN class="content">http://www.microsoft.com/GERMANY/msdn/library/odeopg/deovradocomponentlibraries.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

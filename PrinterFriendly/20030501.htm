@@ -1,0 +1,213 @@
+<HTML>
+<HEAD>
+<TITLE>Authentifizierung in Web Services - SOAP Header</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Im letzten Artikel haben wir uns mit protokollabh&auml;ngiger Authentifizierung besch&auml;ftigt. Obwohl Windows Integrated eine gute Intranet-L&ouml;sung ist, so ist sie nicht Plattform-&uuml;bergreifend. Mit zus&auml;tzliche SOAP Headern ist das machbar">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SOAP,WS-Security,WSE,Security,Authentifizierung,Authentication,SOAP Header,SoapHeader,class,framework,platform">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Authentifizierung in Web Services - SOAP Header</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Web%20Services.htm">Web Services</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20030501"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Im letzten Artikel zum Thema Authentifizierung in Web Services haben wir uns mit protokollabh&auml;ngiger Authentifizierung
+besch&auml;ftigt. Obwohl Windows Integrated eine gute Intranet-L&ouml;sung ist, so ist sie nicht Plattform-&uuml;bergreifend, man ist
+an Windows Clients gebunden. Man kann diese Einschr&auml;nkung umgehen, indem man zus&auml;tzliche SOAP Header in den SOAP Nachrichten
+mitschickt.
+</p>
+<p>
+Der "Trick" mit den zus&auml;tzlichen SOAP Headern bringt uns Plattformunabh&auml;ngigkeit, allerdings auch ein "Problem": wir m&uuml;ssen
+unsere Authentifizierungs-SOAP-Header und deren Verwendung f&uuml;r Konsumenten unseres Services dokumentieren. Denn ohne das
+Mitsenden der Authentifizierungsdaten kann niemand mit unserem Service kommunizieren - und diesen werden wir jetzt gleich
+implementieren.
+</p>
+
+<h2>Der Web Service</h2>
+<p>
+Beginnen wir damit, uns den Code f&uuml;r den Service St&uuml;ck f&uuml;r St&uuml;ck anzusehen:
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Data;
+using System.Diagnostics;
+using System.Web;
+using System.Web.Services;
+
+// Notwendig f&uuml;r die Definition neuer SOAP Header
+using System.Web.Services.Protocols;
+
+namespace SoapHeaderAuth
+{
+  public class Service1 : System.Web.Services.WebService
+  {
+    public Service1()
+    {
+    }
+
+    // Unsere Klasse f&uuml;r den Authentifizerungs-SOAP-Header
+    public class ServiceAuthHeader : SoapHeader 
+    {
+      public string Username;
+      public string Password;
+    }
+</pre>
+
+<p>
+Das hinzugef&uuml;gte <i>using</i> Statement brauchen wir, damit wir eine von <i>SoapHeader</i> abgeleitete Klasse erstellen
+k&ouml;nnen. Diese Klasse - <i>ServiceAuthHeader</i> - ist der Authentifizierungs-SOAP-Header, der durch eine public Variable
+repr&auml;sentiert wird, welche via dem <i>SoapHeaderAttribute</i> auf der entsprechenden Methode bef&uuml;llt wird.
+</p>
+
+<pre style="background='silver';">
+    // Diese Instanzvariable wird sp&auml;ter verwendet, um den SOAP Header auszulesen
+    public ServiceAuthHeader CurrentUser;
+
+    [WebMethod]
+    [SoapHeader("CurrentUser")]
+    public string SoapHeaderAuthSampleMethod()
+    {
+      Authenticate();
+
+      return "Hello World, " + CurrentUser.Username;
+    }
+
+    private void Authenticate()
+    {
+      if (CurrentUser.Username != "test" || CurrentUser.Password != "test")
+      {
+        // Normalerweise w&uuml;rde man fehlgeschlagene Logins im Eventlog mitschreiben
+        // Dem User wird so wenig sicherheitsrelevante Information zur&uuml;ckgeschickt als m&ouml;glich
+        throw new SoapException("Log in fehlgeschlagen", 
+                                SoapException.ServerFaultCode);
+      }
+    }
+  }
+}
+</pre>
+
+<p>
+Da es sich um einen zus&auml;tzlichen SOAP Header und keine Authentifizierungsmethode der Infrastruktur handelt, m&uuml;ssen wir
+die Authentifizierung selbst vornehmen. Diese ist in die <i>Authenticate</i> Methode ausgelagert, damit sie in anderen
+Web Methods wiederverwendet werden kann. Im &uuml;brigen wird man im echten Leben gegen Benutzerdatenbanken und nicht
+hardcodierte Daten validieren.
+</p>
+
+<h2>Der Client</h2>
+<p>
+Das Generieren des Web Service Proxy verl&auml;uft identisch mit normalen, ungesicherten Web Services. Der Aufruf des Services
+&auml;ndert sich aber, da wir den zus&auml;tzlichen SOAP Header anlegen und &uuml;bergeben m&uuml;ssen:
+</p>
+
+<pre style="background='silver';">
+using System;
+
+namespace SoapHeaderAuthClient
+{
+  class ConsoleAppWsClient
+  {
+    [STAThread]
+    static void Main(string[] args)
+    {
+      // Instanz des Authentifierungs-SOAP-Headers anlegen und Werte eintragen
+      localhost.ServiceAuthHeader sah = new localhost.ServiceAuthHeader();
+      sah.Username = "test";
+      sah.Password = "test";
+
+      // Neue Service Instanz anlegen
+      localhost.Service1 svc = new localhost.Service1();
+      
+      // Den SOAP Header anf&uuml;gen; immer &lt;Datentyp&gt;Value
+      svc.ServiceAuthHeaderValue = sah;
+
+      string strResult = svc.SoapHeaderAuthSampleMethod();
+      Console.WriteLine(strResult);
+    }
+  }
+}
+</pre>
+
+<p>
+Das WSDL Utility (bzw das "Add Web Reference" Tool in VS.NET) autogeneriert eine Proxy-Klasse f&uuml;r den zus&auml;tzlichen SOAP
+Header. Einzig bei der Zuweisung mu&szlig; man aufpassen - es wird nicht auf die public Variable des Services zugewiesen, sondern
+auf eine Eigenschaft namens <i>&lt;Datentyp&gt;Value</i>. Da es immer so ist, ist es auch leicht zu merken.
+</p>
+<p>
+Damit h&auml;tten wir alles notwendige f&uuml;r die Authentifizierung via Custom SOAP Headers implementiert. Der Programmieraufwand
+h&auml;lt sich in Grenzen, und schon haben wir einen Service, der Cross-Plattform Authentifizerung beherrscht.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Der Haken an der Sache ist, da&szlig; jeder seine eigenen SOAP Authentifizierungsheader erfinden w&uuml;rde, und man jedes Mal nachlesen
+mu&szlig;, wie f&uuml;r den spezifischen Server diese Header auszusehen haben. Das haben sich einige Firmen wie IBM oder Microsoft auch
+gedacht, und einen Standard f&uuml;r Authentifizierung aus der Taufe gehoben: WS-Security. Dieser legt die Header f&uuml;r Authentifizierung
+fest, und die Herstellerfirmen liefern Toolkits, die man zur Programmierung von WS-Security verwenden kann. Mit dem Microsoft Toolkit
+besch&auml;ftigen wir uns in den n&auml;chsten beiden Artikeln.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20030501.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20030501.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20030429.htm">Authentifizierung in Web Services - Windows Integrated</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20030429.htm</span><br>
+<a href="../artikel/20030502.htm">Authentifizierung in Web Services - WS-Security, Benutzername / Passwort</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20030502.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

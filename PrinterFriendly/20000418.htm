@@ -1,0 +1,137 @@
+<HTML>
+<HEAD>
+<TITLE>ADO Feld-Abfragen Optimierung</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Viele Datenbankapplikationen, auch unter ASP, &ouml;ffnen ein ADO Recordset, um dann auf einzelne Felder oder Feldwerte des Recordsets zuzugreifen. Wenn man es richtig implementiert, kann man sich dabei 20% Performancesteigerung holen.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ADO,Field,Recordset,Optimierung,Geschwindigkeit,Referenz,Reference,Performance">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>ADO Feld-Abfragen Optimierung</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/Optimierung.htm">Optimierung</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000418"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>Viele Datenbankapplikationen, auch unter ASP, &ouml;ffnen ein ADO <i>Recordset</i>, 
+um dann auf einzelne Felder oder Feldwerte des <i>Recordsets</i> zuzugreifen. 
+Wenn man das ganze <i>Recordset</i> in einer Schleife durchl&auml;uft, so wird oft 
+ein Skript wie folgt benutzt (<i>rs</i> steht dabei f&uuml;r ein ge&ouml;ffnetes 
+<i>Recordset</i> Objekt mit Daten):</p>
+
+<pre style="background='silver';">
+...
+While Not rs.EOF
+   strName = rs("Name").Value
+   strAdresse = rs("Adresse").Value
+   strGebDat = rs("Geburtsdatum").Value
+   ...
+   rs.MoveNext
+Wend
+...</pre>
+
+<p>Analysieren wir kurz die Schleife: W&auml;hrend jedes Schleifendurchlaufs wird
+auf drei Felder (<i>Name</i>, <i>Adresse</i>, <i>Geburtsdatum</i>) zugegriffen.
+Dabei mu&szlig; Visual Basic (oder VBScript) in jedem Durchlauf erst anhand 
+des Feldnames ermitteln, welches Feld im <i>Recordset</i> nun gemeint ist. 
+Das hei&szlig;t, der Feldname wird gelesen, das zugeh&ouml;rige Feld im 
+<i>Recordset</i> gesucht, und eine Referenz auf das Feld zur&uuml;ckgegeben.
+Dann wird mit Hilfe dieser Feldreferenz der Wert des Feldes (<i>Value</i> Eigenschaft, 
+zugleich die Default Eigenschaft) ermittelt, soda&szlig; dieser Wert zur 
+Verarbeitung durch das Skript bereitsteht. </p>
+
+<p>Wenn das Recordset nun sehr gro&szlig; ist, so wird viel Rechenzeit damit vergeudet 
+in jeder Schleife wieder die Feldreferenz anhand des Namens zu ermitteln. 
+&Ouml;konomischer und damit schneller ist es, die Feldreferenz nur einmal 
+zu ermitteln und dann in jeder Schleife immer wieder diese Referenz zur 
+Ermittlung des Feldwertes des jeweiligen Datensatzes (<i>Record</i>) heranzuziehen.
+Genau das tut das folgende Skript, es speichert die Referenz zu den Feldern
+in 3 Variablen (<i>fldName</i>, <i>fldAdresse</i>, <i>fldGeburtsdatum</i>)
+um dann diese gespeicherten Referenzen in jedem Durchlauf der 
+<i>While...Wend</i> Schleife heranzuziehen:</p>
+
+<pre style="background='silver';">
+...
+Set fldName = rs("Name")
+Set fldAdresse = rs("Adresse")
+Set fldGeburtsdatum = rs("Geburtsdatum")
+While Not rs.EOF
+   strName = fldName.Value
+   strAdresse = fldAdresse.Value
+   fldGeburtsdatum = fldGebDat.Value
+   ...
+   rs.MoveNext
+Wend
+...</pre>
+
+<p>Dies bringt pro Durchlauf etwa eine Performancesteigerung von 20% 
+(gemessen mit der gratis erh&auml;ltlichen Profiling Komponente
+von AlphaSierraPapa).</p>
+
+<p>Weiteres &uuml;ber Performance Steigerung im Zusammenhang mit 
+Datenbankabfragen mittels ADO oder dem Recordset Objekt 
+in K&uuml;rze bei ASPHeute.com in der Kategorie Datenbank.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20020429.htm">Benutzerverwaltung leicht gemacht: Teil 1</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020429.htm</span><br>
+<a href="../artikel/20001013.htm">Highspeed-Abfragen einer SQL Server Datenbank</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001013.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ealphasierrapapa%2Ecom%2FIisDev%2FComponents%2FProfiler%2F">Profiling Komponente</a><br>
+<SPAN class="content">http://www.alphasierrapapa.com/IisDev/Components/Profiler/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

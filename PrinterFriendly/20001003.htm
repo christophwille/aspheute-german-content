@@ -1,0 +1,467 @@
+<HTML>
+<HEAD>
+<TITLE>Einf&uuml;hrung in Stringoperationen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="In diesem Artikel erkl&auml;rt der Autor einige Stringoperationen, sowie die Anwendung von Stringoperatoren.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Lcase, Ucase, len, strcomp, StrComp,Len,LCase, UCase,Trim,RTrim,LTrim,Operatoren,String,Zeichenkette">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Einf&uuml;hrung in Stringoperationen</H1>
+<p>
+Geschrieben von: <a href="../autoren/stefangruendhammer.htm">Stefan Gründhammer</a><br>
+Kategorie: <a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001003"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Jede Website mu&szlig; mit Strings arbeiten, und sei es "nur", um Daten vom Benutzer einzulesen und zu validieren.
+Um eine erfolgreiche Validierung durchzuf&uuml;hren, k&ouml;nnen Sie auf die vielen Stringbehandlungs-Funktionen in VBScript 
+zur&uuml;ckgreifen. Unter anderem sollten Sie besonders auf die Gro&szlig;- und Kleinschreibung der Dateinamen achten.
+Sie verwenden zum Beispiel ein Formular in Ihrer Webseite und wollen die dort eingegebenen Daten nutzen, sei es 
+f&uuml;r Ihre Statistiken oder nur zum Speichern dieser Daten in einer Datenbank. Dann sollten Sie eventuell 
+vorhandene Leerzeichen am Anfang und am Ende jedes Datensatzes entfernen. Oder wie oft haben Sie schon 
+verschiedenste Zeichenketten miteinander vergleichen m&uuml;ssen? 
+</p>
+<p>
+Zur L&ouml;sung solcher Probleme ohne viel Zeit- und Arbeitsaufwand, werde ich Ihnen in
+diesem Artikel einige Stringoperationen, sowie die Anwendung von Stringoperatoren erl&auml;utern.
+</p>
+<p>
+<b>Auf folgende Befehle (Funktionen) und Operatoren werde ich in diesem Artikel n&auml;her eingehen:</b>
+</p>
+<p>
+<table cellspacing="5">
+<tr><th align="left">Funktion</th><th align="left">Bedeutung der Funktion</th></tr>
+<tr><td>LCase()</td><td>Wandelt den Text in Kleinbuchstaben um</td></tr>
+<tr><td>UCase()</td><td>Wandelt den Text in Gro&szlig;buchstaben um</td></tr>
+<tr><td>Len()</td><td>Gibt die L&auml;nge eines Textes zur&uuml;ck</td></tr>
+<tr><td>StrComp()</td><td>Vergleicht 2 Strings miteinander</td></tr>
+<tr><td>Trim()</td><td>Entfernt Leerzeichen auf beiden Seiten des Textes</td></tr>
+<tr><td>LTrim()</td><td>Entfernt Leerzeichen auf der linken Seite des Textes</td></tr>
+<tr><td>RTrim()</td><td>Entfernt Leerzeichen auf der rechten Seite des Textes</td></tr>
+</table>	
+</p>
+<p>
+<b>Stringvergleiche, Operatoren</b>
+</p>
+<p>
+<table border="0" cellspacing="10" cellpadding="2">
+<tr><td><li>=</li></td><td><li>&gt;=</li></td><td><li>&lt;</li></td></tr>
+<tr><td><li>&amp;</li></td><td><li>&gt;</li></td><td><li>+</li></td></tr>
+<tr><td><li>&lt;&gt;</li></td><td><li>&lt;=</li></td></tr>
+</table>
+</p>
+<h2>Umwandeln von Gro&szlig;buchstaben auf Kleinbuchstaben und umgekehrt</h2>
+<p>
+Oft ist es nicht zu vermeiden ganze Zeichenketten klein zu schreiben und zwar genau dann,
+wenn Sie Buchstabenvergleiche machen, oder Strings zum Einf&uuml;gen in Ihre Datenbank
+vorbereiten m&uuml;ssen. Als Beispiel k&ouml;nnte man hier das Suchen nach einer bestimmten Folge von 
+Zeichen anf&uuml;hren. Um <i>caseinsensitiv</i> suchen zu k&ouml;nnen, m&uuml;ssen Sie zuerst
+alle Zeichen klein schreiben (zu Kleinbuchstaben konvertieren). Dies funktioniert umgekhert mit Gro&szlig;buchstaben
+nat&uuml;rlich auch.
+</p>
+<p>
+Ein besseres Beispiel daf&uuml;r ist zweifellos dieses hier. Sie haben ein Formular und m&ouml;chten
+Vor- und Nachname in Ihre Datenbank einf&uuml;gen. Beide Namen m&uuml;ssen klein geschrieben werden 
+da sonst ein Fehler in Ihrer Datenbank auftreten k&ouml;nnte (nur ein Beispiel). Hier liefere ich 
+Ihnen dazu die passende Funktion. Ich habe hierf&uuml;r ein einfaches Formular zur &Uuml;berpr&uuml;fung von Eingaben
+verwendet, welches ich etwas ausgeschm&uuml;ckt habe.
+</p>
+<p>
+<pre style="background='silver';">
+ 1: &lt;% @Language = VBScript %&gt;
+ 2: &lt;% Option Explicit 
+ 3: Response.Expires = 0 
+ 4:
+ 5: Dim strVorname, strNachname, strFirma, strStadt, strPLZ, intPLZ, strEmailAdresse 
+ 6: Dim bError, bErfolg, bPostBack, strError 
+ 7:
+ 8: bError = False		' Errorflag 
+ 9: strError = "&lt;font color=""Red""&lt;Korrigieren Sie folgende Felder:&lt;/font&gt;&lt;br&gt;"
+10: bPostback = False
+11: bErfolg = True	
+12: 
+13: 	 'pruefen ob formular gepostet
+14: 	 If 0 &lt; Request.ServerVariables("CONTENT_LENGTH") Then
+15: 		bPostBack = True
+16: 		strVorname = LCase(Trim(Request.Form("Vorname")))
+17: 		strNachname = UCase(Trim(Request.Form("Nachname")))
+...
+</pre>
+</p>	
+<p>
+F&uuml;r diesen Artikel wird es ab Zeile 16 interessant, denn hier habe ich gleich 2 Befehle kombiniert.
+Ich beginne von innen heraus. Es handelt sich in diesem Formular um eine Daten&uuml;bermittlung mit 
+der Post-Methode. Als erstes werden m&ouml;gliche Leerzeichen durch den Befehl <i>Trim()</i> vom String entfernt,
+soda&szlig; sich nur noch Buchstaben im String befinden. Und zweitens werden alle Buchstaben, welche noch nicht 
+klein geschrieben sind durch den Befehl <i>LCase()</i> zu Kleinbuchstaben konvertiert (nach dem Ausf&uuml;hren
+des Formular zu sehen). Die Trim-Funktion wird weiter unten noch genauer besprochen.
+</p>
+<p>
+In Zeile 17 werden wieder die Leerzeichen entfernt, aber diesmal werden die Buchstaben nicht
+in Kleinbuchstaben, sondern durch den Befehl <i>UCase()</i> in Gro&szlig;buchstaben konvertiert.
+</p>
+<p>
+Hier noch einige Details zur Syntax dieser beiden oft verwendeten Funktionen: <br>
+<i>LCase(Zeichenfolge)</i>. Die Funktion <i>LCase()</i> wandelt alle Gro&szlig;buchstaben in Kleinbuchstaben um.
+Die Kleinbuchstaben werden nat&uuml;rlich nicht noch einmal konvertiert.<br>
+<i>UCase(Zeichenfolge)</i> Die UCase() Funktion konvertiert alle Kleinbuchstaben in Gro&szlig;buchstaben, f&uuml;r 
+gro&szlig;geschriebene Buchstaben gilt das selbe wie vorher f&uuml;r die Kleinbuchstaben.
+</p>
+<p>
+Jetzt komme ich zur vorhin bereits erw&auml;hnten <i>Trim-Funktion</i> mit all ihren Varianten.
+Diese entfernt &uuml;berfl&uuml;ssige Leerzeichen, die am Anfang oder am Ende einer Zeichenkette stehen, wie in den folgenden
+Abs&auml;tzen erkl&auml;rt.
+</p>				
+<h2>Leerzeichen entfernen</h2>
+<p>
+Sie haben die Trim-Funktion bereits weiter oben kurz gesehen, um die Erkl&auml;rung <i>Trim()-Funktion</i> abzurunden
+beschreibe ich Ihnen hier auch noch die Funktion von <i>LTrim()</i> und <i>RTrim()</i>.
+</p>
+<p>
+Wenn Sie schon einmal mit Formularen zu tun hatten, haben Sie sicher schon bemerkt, da&szlig; manche User ihre
+Angaben in die Eingabefelder nicht so geschrieben haben wie Sie es sich vorgestellt haben. 
+Es wurden z.B. am Anfang 3 Leerzeichen und am Ende 7 Leerzeichen eingegeben; damit kann man nicht wirklich
+viel anfangen. Um diese Angaben aber dennoch in einer Datenbank verwerten zu k&ouml;nnen, m&uuml;ssen Sie diese Leerzeichen
+entfernen. Hierzu gibt es drei Funktionen:
+</p>
+<p>
+<ul>
+<li><i>LTrim(Zeichenfolge)</i>: entfernt alle Leerzeichen auf der linken Seite einer Zeichenfolge</li>
+<li><i>RTrim(Zeichenfolge)</i>: entfernt alle Leerzeichen auf der rechten Seite einer Zeichenfolge</li>
+<li><i>Trim(Zeichenfolge)</i>: entfernt alle Leerzeichen auf beiden Seiten einer Zeichenfolge</li>
+</ul>
+</p>
+<p>
+Wollen Sie nur die Leerzeichen auf der linken Seite entfernen, dann verwenden Sie die Funktion 
+<i>LTrim(Zeichenfolge)</i>. Diese Funktion liefert Ihnen eine Kopie Ihrer Zeichenkette wobei diese keine Leerzeichen
+auf der linken Seite enth&auml;lt. Ich haben in der Zeile 18 meines Formularbeispiels diese Funktion verwendet um Ihnen 
+seine Funktion zu zeigen (hier w&auml;re nat&uuml;rlich <i>Trim()</i> zielf&uuml;hrender). 
+</p>
+<p>
+<pre style="background='silver';">
+18: strStadt = LTrim(Request.Form("Stadt")) ' Leerzeichen von links weggeschnitten
+</pre>	
+</p>
+
+<p>
+Wenn Sie in Ihrer Datenbank ein Feld mit fester L&auml;nge (z.B.200 Zeichen) haben, in dem ein Datensatz 
+mit nur 80 Zeichen gespeichert ist, dann w&auml;re es sinnvoll, wenn Sie die restliche Zeichen (F&uuml;llzeichen)
+wegschneiden k&ouml;nnten. Dies machen Sie am einfachsten mit <i>RTrim(Zeichenfolge)</i>. Die Syntax dieser Funktion 
+ist wieder gleich wie die der <i>LTrim()</i> Funktion. In Zeile 20 habe ich von der Email Adresse die Leerzeichen auf der
+rechten Seite zur Demonstration weggeschnitten (auch in diesem Fall w&auml;re <i>Trim()</i> die geeignetere Variante Leerzeichen 
+zu entfernen).
+</p>
+<p>
+<pre style="background='silver';">
+    'Leerzeichen von rechts weggeschnitten
+20: strEmailAdresse = RTrim(Request.Form("EmailAdresse"))
+</pre>	
+</p>
+<p>
+Wenn Sie nun die Leerzeichen auf beiden Seiten entfernen wollen, dann verwenden Sie die bereits oben angef&uuml;hrte
+Funktion <i>Trim(Zeichenfolge)</i>
+</p>
+<h2>Die L&auml;nge von Strings bestimmen</h2>
+<p>
+Beim &Uuml;berpr&uuml;fen der Richtigkeit von Eingaben in Formularen kommt man nicht um die L&auml;ngenbestimmung von Strings
+herum. Da diese Funktion sehr wichtig f&uuml;r jeden ASP Programmierer ist, sollten Sie sich damit auskennen. Ich zeige
+im n&auml;chsten Listing wieder einen Ausschnitt meines einfachen Formularvalidierungsskripts (<i>formular.asp</i>).
+</p>
+<p>
+<pre style="background='silver';">
+45: ' Emailadresse auf Richtigkeit bei der Eingabe pruefen
+46: If 6 &gt; Len(strEmailAdresse) Or 0 = InStr(strEmailAdresse,"@") Or 0 _
+      = InStrRev(strEmailAdresse,".") or _
+47:   5 &lt;= (Len(strEmailAdresse) - InStrRev(strEmailAdresse,".")) or _
+48:   2 &gt; (Len(strEmailAdresse) - InStrRev(strEmailAdresse,".")) Then
+49:   bErfolg = False
+50:   strError = strError &amp; "Email Adresse, "
+51: End if
+</pre>	
+</p>
+<p>
+In Zeile 46 sehen Sie folgende Funktionen <i>Len(strEmailAdresse)</i>, <i>InStr(strEmailAdresse,"@"),</i>
+<i> InStrRev(strEmailAdresse,".")</i>. Mit <i>Instr</i> oder <i>InstrRev</i> kann man pr&uuml;fen ob und wo eine 
+Zeichenkette in einer anderen Zeichenkette enthalten ist. Au&szlig;erdem wird der gesamte Codeblock von einer 
+If-Bedingung eingeschlossen, was aber nicht Thema dieses Artikels ist.
+</p>
+<p>
+<i>6 &gt; Len(strEmailAdresse)</i> aus Zeile 46 mi&szlig;t die L&auml;nge des Strings <i>strEmailAdresse</i> und
+vergleicht die L&auml;nge mit der Zahl 6, dieser Vergleich liefert <i>True</i>, wenn die L&auml;nge des Strings 
+gr&ouml;&szlig;er als <i>6</i> ist.
+</p>
+<p>
+Die Funktion <i>Len(Zeichenfolge)</i> liefert Ihnen die Anzahl an Zeichen der Zeichenfolge. Spezielle Zeichen wie
+das Steuerzeichen f&uuml;r "Return", oder vbcrlf in VBScript, ben&ouml;tigen den Platz von 2 Zeichen in einer Zeichenkette.
+Vorsicht beim Eingeben von Zeichenketten: Vergessen Sie nicht diese in Anf&uuml;hrungszeichen zu setzen. Sie
+k&ouml;nnen aber auch den Variablennamen als Parameter f&uuml;r die L&auml;ngenbestimmung einsetzen, so wie im
+Beispiel oben.
+</p>
+
+<h2>Verwendung von VBScript-Operatoren</h2>
+<p>
+In diesem Abschnitt werde ich mich nur auf die f&uuml;r ASP-Programmierer wichtigsten VBScript-Operatoren
+beschr&auml;nken (siehe Auflistung oben).
+</p>
+<p>
+In den Zeilen 46 bis 48 des Scripts <i>formular.asp</i> kommen schon einige der oben angef&uuml;hrten Operatoren vor.
+Ich werde hier auf alle oben angef&uuml;hrten Operatoren n&auml;her eingehen:
+</p>
+<p>
+Zur Erkl&auml;rung der Operatoren nehme ich den L&auml;ngenvergleich des oberen Listings <i>6 &gt; Len(strEmailAdresse)</i>und baue
+diesen leicht um:
+</p>
+<p>
+<pre style="background='silver';">
+Ergebnis = 6 &gt; Len(strEmailAdresse)
+</pre>	
+</p>
+<p>
+"&gt;": Ergebnis ist True wenn die Zahl 6 gr&ouml;&szlig;er als die L&auml;nge der Strings strEmailAdresse ist. Ergebnis 
+ist False wenn 6 kleiner oder gleich der L&auml;nge des Strings ist, und ist Null wenn einer der zu vergleichenden Ausdr&uuml;cke 
+Null ist.
+</p>
+<p>
+Ersetzt man das Zeichen "&gt;" mit den anderen oben angef&uuml;hrten Operatoren so erh&auml;lt man:
+</p>
+"&lt;": Ergebnis ist True wenn 6 kleiner strEmailAdresse ist, False wenn 6 gr&ouml;&szlig;er gleich strEmailAdresse ist und 
+Null wenn einer der zuvergleichenden Ausdr&uuml;cke Null ist.
+<p>
+<p>
+"&lt;&gt;": Ergbnis ist True wenn 6 ungleich strEmailAdresse, False wenn 6 gleich strEmailAdresse und Null wenn einer
+der zu... Null ist.
+</p>
+<p>
+"&gt;=": Ergebnis ist True wenn 6 gr&ouml;&szlig;er oder gleich strEmailAdresse ist, False wenn 6 kleiner strEmailAdresse ist und
+Null...
+</p>
+<p>
+"&lt;=": Ergebnis ist True wenn 6 kleiner oder gleich strEmailAdresse ist, False wenn 6 gr&ouml;&szlig;er strEmailAdresse ist und
+Null...
+</p>
+<p>
+"=": Ergebnis ist True wenn 6 gleich strEmailAdresse ist, False wenn 6 ungleich strEmailAdresse ist und Null...
+</p>
+<p>
+Es gibt aber Operatoren bei deren Verwendung sehr aufgepa&szlig;t werden mu&szlig;. Wenn Sie Strings zusammenf&uuml;gen m&uuml;ssen 
+werden Sie meistens den Operator "&amp;" verwenden. Sie k&ouml;nnen theoretisch auch einfach das Pluszeichen (+) zum 
+Verbinden zweier Strings einsetzen. Hier m&uuml;ssen Sie aber sehr vorsichtig sein. Aus Sicherheitsgr&uuml;nden sollten Sie
+immer "&amp;" zum Verbinden von Strings verwenden, den das "+" kann zu einer Addition f&uuml;hren wenn einer der beiden
+Ausdr&uuml;cke eine Zahl und kein String ist.
+</p>
+<p>
+Um die Erl&auml;rung der VBScript-Operatoren mit einem Schlag beenden zu k&ouml;nnen kommt
+hier noch ein kurzes Beispiel. Ich zeige Ihnen wie Sie den Operator "=" noch verwenden k&ouml;nnen.
+Speichern Sie vergleich.asp ab, und starten Sie die Datei in Ihrem Browser. Hier ist ein Auszug daraus:
+</p>
+<p>
+<pre style="background='silver';">
+12: &lt;% Dim strText1, strText2
+13:    strText1 = "Vergleichen von Strings"
+14:    strText2 = "Vergleichen von strings"
+15:       If strText1 = strText2 Then
+16:          Response.Write "&lt;b&gt;SUPER, die Strings erf&uuml;llen die gew&uuml;nschte_
+             Bedingung&lt;/b&gt;"
+17:       Else
+18:          Response.Write "&lt;b&gt;SCHADE, die Strings erf&uuml;llen nicht die gew&uuml;nschte_
+             Bedingung&lt;/b&gt;"
+19:       End If
+20: %&gt;
+</pre>	
+</p>				
+<p>
+Obwohl auf den ersten Blick <i>strText1</i> und <i>strText2</i> gleich sind erzeugt diese Schleife eine 
+Fehlermeldung. Aber das ist ja logisch werden nun viele von Ihnen sagen, weil in <i>strText2</i> das Wort
+<i>strings</i> <b>klein</b> geschrieben ist. Der Grund f&uuml;r die Ungleichheit der beiden Strings ist, da&szlig; die 
+beiden Strings auf Gleichheit der ANSI-Zeichen &uuml;berpr&uuml;ft werden, was in diesem Beispiel nicht
+der Fall ist. Darum sollten Sie immer auf die Verwendung von <i>LCase()</i> oder <i>UCase()</i> achten wenn
+Sie Strings miteinander vergleichen, denn ein "a" ist gr&ouml;&szlig;er als ein "A".
+</p>	
+<p>
+Diese Regel gilt nat&uuml;rlich auch f&uuml;r alle anderen Stringsvergleiche, welche oben angef&uuml;hrt 
+sind.
+</p> 
+<p>
+<b>Achtung: </b>Wenn Sie Recordsets oder Strings aus Recordsets vergleichen kann es zu schweren
+Fehlern kommen und zwar dann wenn Ihnen das Recordset den Wert NULL zur&uuml;ckliefert. Es kommt zu einem Run-Time
+Error, wenn man einen Wert von NULL als Parameter an Stringfunktionen &uuml;bergibt, der zur Folge hat, da&szlig; die Ausf&uuml;hrung
+des Scripts unterbrochen und eine Fehlermeldung zum User gesendet wird. Dieser Fall
+tritt dann ein, wenn das Recordset leer ist. Wenn Sie dann einen Vergleich mit einem anderen
+String machen wollen, m&uuml;ssen Sie einen Leerstring zum Feldwert hinzuf&uuml;gen,daher wird aus der Anweisung
+<i>strRecord = rs(name)</i> die Anweisung <i>strRecord = ""&amp; strRecord</i>. Wenn das Recordset aus 
+irgendeinem Grund leer sein sollte, wird zwar immer noch NULL zur&uuml;ckgeliefert, aber statt NULL wird ein 
+Leerstring in der Variable gespeichert.
+</p>
+<p>
+<pre style="background='silver';">	
+ 1: &lt;%
+ 2: 	strRecord = rs("name")
+ 3: 		'umwandeln von StrRecord
+ 4: 	strRecord = ""&amp; strRecord
+ 5: 	strVergleich = "Hansi"
+ 6: 		'vergleichen von strRecord und strVergleich
+ 7: 	Vergleich = StrComp(strRecord, strVergleich)
+ 8: 	response.write Vergleich
+ 9: %&gt;
+</pre>	
+</p>	
+<p>
+Die Funktion StrComp wird im Anschlu&szlig; noch genauer erkl&auml;rt.
+</p>
+
+<h2>Vergleichen von Strings</h2>
+<p>
+Neben dem Vergleichen mit Hilfe des "=" Operators gibt es auch noch eine weitere Funktion:
+</p>
+<p>
+<pre style="background='silver';">
+StrComp(Zeichenkette1, Zeichenkette2[, Vergleichsmodus)
+</pre>	
+</p>
+<p>
+String1 und String2 werden entweder auf bin&auml;re Gleichheit
+oder Textgleichheit gepr&uuml;ft. Dies k&ouml;nnen Sie mit dem <i>Vergleichsmodus</i> Parameter entscheiden.
+</p>
+
+
+
+
+
+<p>
+Das <i>Vergleichsmodus</i> Parameter kann zwei Werte haben oder ganz weggelassen werden:
+</p>
+<p>
+<ul>
+<li><b>1 </b>Pr&uuml;ft auf Textgleichheit</li>
+<li><b>0 </b>Pr&uuml;ft auf bin&auml;re Gleichheit</li>
+</ul>
+</p>
+<p>
+Lassen Sie den <i>Vergleichsmodus</i> Parameter weg, dann wird automatisch auf bin&auml;re 
+Gleichheit gepr&uuml;ft. Zum besseren Verst&auml;ndnis habe ich nat&uuml;rlich wieder ein kurzes Beispiel
+geschrieben, speichern Sie <i>vergleichen.asp</i> wie gehabt ab.
+</p>
+				
+<p>
+<pre style="background='silver';">			
+ 1: &lt;% @Language = VBScript %&gt;
+ 2: &lt;% Option Explicit
+ 3: Response.Expires=0 %&gt;
+ 4: &lt;html&gt;
+ 5: &lt;head&gt;
+ 6: 	&lt;title&gt;vergleichen.asp&lt;/title&gt;
+ 7: &lt;/head&gt;
+ 8: &lt;body&gt;
+ 9: &lt;h3&gt;Vergleichen eines Strings mit einem anderen&lt;/h3&gt;
+10: &lt;p&gt;Zum Vergleichen zweier Strings wird der Befehl StrComp() verwendet:&lt;/p&gt;
+11: &lt;% dim strText1, strText2, strText3, strText4, vergleich1
+12: dim vergleich2, vergleich3, vergleich4, vergleich5
+13: 	strText1 = "HALLO"	
+14: 	strText2 = "hallo"
+15: 	strText3 = "HALLO"	
+16: 	strText4 = "wiedersehen"	
+17: 	vergleich1 = StrComp(strText1, strText2, 1)
+18: 	vergleich2 = StrComp(strText1, strText2, 0)
+19: 	vergleich3 = StrComp(strText1, strText3, 1)
+20: 	vergleich4 = StrComp(strText1, strText4, 1)
+21: 	vergleich5 = StrComp(strText1, strText2)
+22:  %&gt;
+23: &lt;b&gt;Das Ergebnis 1 lautet: &lt;% Response.write vergleich1 %&gt;&lt;/b&gt;&lt;br&gt;
+24: &lt;b&gt;Das Ergebnis 2 lautet: &lt;% Response.write vergleich2 %&gt;&lt;/b&gt;&lt;br&gt;
+25: &lt;b&gt;Das Ergebnis 3 lautet: &lt;% Response.write vergleich3 %&gt;&lt;/b&gt;&lt;br&gt;
+26: &lt;b&gt;Das Ergebnis 4 lautet: &lt;% Response.write vergleich4 %&gt;&lt;/b&gt;&lt;br&gt;
+27: &lt;b&gt;Das Ergebnis 5 lautet: &lt;% Response.write vergleich5 %&gt;&lt;/b&gt;&lt;br&gt;			
+</pre>
+</p>
+<p>
+Es gibt genau vier Werte welche von der <i>StrComp()</i> Funktion zur&uuml;ckgegeben werden: 
+</p>
+<p>
+<ul>
+<li><b>0 </b>bedeutet, da&szlig; <i>String1</i> und <i>String2</i> gleich sind</li>
+<li><b>-1 </b>bedeutet, da&szlig; <i>String1</i> im Vergleich zu <i>String2</i> kleiner ist</li>
+<li><b>1 </b> bedeutet, da&szlig; <i>String1</i> im Vergleich zu <i>String2</i> gr&ouml;&szlig;er ist</li>
+<li><b>Null </b>bedeutet, da&szlig; einer der beiden Strings NULL ist</li></ul>
+</p>
+<p>
+Ich habe in diesem Beipiel mehrere Vergleiche mit W&ouml;rtern gemacht. Wenn Sie <i>vergleichen.asp</i>
+downgeloadet und gestartet haben, so k&ouml;nnen Sie mit den Listings selbst experimentieren.
+</p>			
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Ich habe Ihnen in diesem Artikel eine Einf&uuml;hrung in Stringoperationen gegeben und diese anhand von Beispielen
+erkl&auml;rt, Sie sollten nun in der Lage sein die wichtigsten Funktionen anwenden zu k&ouml;nnen.
+</p>
+<p>
+Ich habe in diesem Artikel nicht alle Stringoperationen beschrieben die es in der weiten Welt von VBScript
+gibt. Ich werde Ihnen in einem der n&auml;chsten Artikel aber noch eine ganze Reihe von wichtigen Operationen erkl&auml;ren.
+Mit dieser kleinen Sammlung sollten Sie aber in der Lage sein, die meisten Ihrer Probleme professionell l&ouml;sen
+zu k&ouml;nnen. 
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001003.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20001003.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010306.htm">Dynamische Stylesheets</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010306.htm</span><br>
+<a href="../artikel/20000801.htm">Eine IP Adresse f&uuml;r mehrere Websites</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000801.htm</span><br>
+<a href="../artikel/20000503.htm">Einfache String Operationen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000503.htm</span><br>
+<a href="../artikel/20001020.htm">Stringoperationen, die Zweite</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20001020.htm</span><br>
+<a href="../artikel/20011112.htm">Strukturierter Aufbau in der ASP-Programmierung</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20011112.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

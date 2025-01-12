@@ -1,0 +1,189 @@
+<HTML>
+<HEAD>
+<TITLE>Authentifizierung in Web Services - Windows Integrated</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Standardm&auml;&szlig;ig sind Web Services die man programmiert f&uuml;r jedermann zug&auml;nglich, das hei&szlig;t, unauthentifizierte anonyme Benutzer k&ouml;nnen darauf zugreifen. Manches Mal ist das gew&uuml;nscht, in vielen anderen F&auml;llen nicht.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,WSE,Web Services Enhancements,NTLM,Basic,SOAP Header,Authentication,Authorization,web.config,NTFS,Web Services">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Authentifizierung in Web Services - Windows Integrated</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Web%20Services.htm">Web Services</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20030429"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Standardm&auml;&szlig;ig sind Web Services die man programmiert f&uuml;r jedermann zug&auml;nglich, das hei&szlig;t, unauthentifizierte anonyme Benutzer k&ouml;nnen
+darauf zugreifen. Manches Mal ist das gew&uuml;nscht, in vielen anderen F&auml;llen (zb Kreditkarten-Abbuchungsservice) allerdings nicht. In dieser
+Artikelserie werden wir verschiedene Authentifizierungsmethoden beleuchten, und wir beginnen heute mit der Windows Integrierten 
+Authentifizierung.
+</p>
+<p>
+Grunds&auml;tzlich kann man unter drei verschiedenen Authentifizierungsmethoden w&auml;hlen:
+</p>
+
+<ul>
+	<li>Protokollabh&auml;ngige Authentifizierung, im Falle von HTTP und IIS w&auml;ren dies zB Basic Authentication und Windows Integrated (NTLM)
+		Authentication.
+	<li>Zus&auml;tzliche SOAP Header. Man erweitert die SOAP Nachrichten um weitere Header, die Sicherheitsinformationen enthalten.
+	<li>Authentifizierung nach dem WS-Security Standard. Darunter fallen die UsernameToken und X.509 Authentifizierung aus den Web
+		Services Enhancements 1.0.
+</ul>
+
+<p>
+Heute besch&auml;ftigen wir uns mit der protokollabh&auml;ngigen Authentifizierung, im speziellen mit Windows Integrated. Bevor wir zum Hauptthema
+des Artikels kommen, m&ouml;chte ich noch auf HTTP Basic Authentication eingehen: diese ist die einfachste Variante, und wird von allen
+Browsern / SOAP Clients verstanden. Soferne man Basic Authentication &uuml;ber SSL einsetzt, ist die &Uuml;bertragung der Benutzerinformationen
+auch sicher, allerdings ohne SSL w&uuml;rde ich es nicht empfehlen - hier ist Windows Integrated Authentication besser.
+</p>
+<p>
+Da&szlig; es nichts gibt, das nur Vorteile bietet, ist bekannt und bei Windows Integrated genauso: nur Microsoft Clients beherrschen diese
+Authentifizierungsvariante. Damit kann man sie nicht f&uuml;r nach au&szlig;en zug&auml;ngliche Web Services einsetzen, aber f&uuml;r das Firmen-Intranet
+ist es bei weitem die beste L&ouml;sung.
+</p>
+<p>
+Grunds&auml;tzlich k&ouml;nnte man die gesamte Konfiguration f&uuml;r Windows Integrated in der web.config der jeweiligen ASP.NET Applikation abwickeln.
+Allerdings bin ich ein Fan von Sicherheit, deshalb sieht meine Liste f&uuml;r die Absicherung wie folgt aus:
+</p>
+
+<ol>
+	<li>Den Web Service per NTFS ACL's auf der WebServiceName.asmx Datei absichern, soda&szlig; nur berechtigte Personen Zutritt bekommen.
+		Warum? NTFS ist unsere letzte Bastion, hier kommt niemand daran vorbei.<br>
+		<IMG SRC="/artikel/Bilder/200304/20030429_2.png" width="370" height="443" alt="" border="0">
+	<li>In der ISM die Authentifizierung f&uuml;r die Web Applikation verbindlich machen - anonymen Zugriff verbieten.<br>
+		<IMG SRC="/artikel/Bilder/200304/20030429_1.png" width="371" height="334" alt="" border="0">
+	<li>In der web.config <i>Windows</i> Authentifizierung einschalten (standardm&auml;&szlig;ig ist das bereits so), und zus&auml;tzlich noch 
+		anonyme Nutzer vom Zugriff auf die Web Applikation ausschlie&szlig;en:
+<pre style="background='silver';">
+&lt;authentication mode="Windows" /&gt; 
+ &lt;authorization&gt;
+  &lt;deny users="?" /&gt;
+ &lt;/authorization&gt;
+</pre>
+</ol>
+
+<p>
+Damit haben wir unseren Web Service gr&uuml;ndlich auf Windows Integrated vorbereitet. Einerseits k&ouml;nnen wir uns jetzt darauf verlassen, da&szlig; nur
+authentifizierte Benutzer den Web Service verwenden, andererseits k&ouml;nnen wir auf diese Benutzerinformationen zugreifen:
+</p>
+
+<pre style="background='silver';">
+[WebMethod]
+public string SecureMethod()
+{
+	string strValue = User.Identity.AuthenticationType;
+	strValue += " " + User.Identity.IsAuthenticated;
+	strValue += " " + User.Identity.Name;
+	return strValue;
+}
+</pre>
+
+<p>
+Zus&auml;tzlich kann man mit der Funktion <i>User.IsInRole</i> feststellen, ob der Benutzer in einer spezifischen Benutzergruppe Mitglied ist.
+Dadurch kann man sehr einfach rollenbasierte Sicherheit in den Web Service integrieren.
+</p>
+
+<h2>Der Client</h2>
+<p>
+Nachdem die Serverseite so leicht zu implementieren war, wie sieht es auf der Clientseite aus? Nun, man erzeugt sich wie gewohnt eine
+Web Referenz in Visual Studio.NET, nur beim Aufruf mu&szlig; man die Benutzerinformationen weitergeben:
+</p>
+
+<pre style="background='silver';">
+using System;
+using System.Net;
+
+class ConsoleAppWsClient
+{
+  static void Main()
+  {
+    localhost.Service1 svc = new localhost.Service1();
+    svc.Credentials = CredentialCache.DefaultCredentials;
+    string strRetVal = svc.SecureMethod();
+    Console.WriteLine(strRetVal);
+  }
+}
+</pre>
+
+<p>
+Durch <i>CredentialCache.DefaultCredentials</i> werden die Credentials des aktuell eingeloggten Benutzers an den Web Service &uuml;bergeben.
+Alternativ kann man ein beliebiges Benutzerkonto mit &uuml;bergeben, allerdings steht dann das Passwort im Sourcecode:
+</p>
+
+<pre style="background='silver';">
+svc.Credentials = new NetworkCredential("Administrator", "pwd");
+string strRetVal = svc.SecureMethod();
+</pre>
+
+<p>
+Grunds&auml;tzlich bleibt der Client-Code bis auf das "Anh&auml;ngen" der Credentials identisch zu einem Web Service der keine Authentifizierung
+verlangt.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Protokollabh&auml;ngige Authentifizierung, im speziellen Windows Integrated, hat im Intranet seine Daseinsberechtigung. Mu&szlig; man aber unterschiedliche
+Plattformen miteinander kommunzieren lassen, mu&szlig; man zu anderen Mitteln und Wegen greifen, um die Authentifizierung zu implementieren.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20030501.htm">Authentifizierung in Web Services - SOAP Header</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20030501.htm</span><br>
+<a href="../artikel/20030502.htm">Authentifizierung in Web Services - WS-Security, Benutzername / Passwort</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20030502.htm</span><br>
+<a href="../artikel/20010621.htm">Web Services 101 in ASP.NET</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010621.htm</span><br>
+<a href="../artikel/20010622.htm">Web Services in Anwendungen konsumieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010622.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

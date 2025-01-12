@@ -1,0 +1,252 @@
+<HTML>
+<HEAD>
+<TITLE>Mailadressen sch&uuml;tzen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Ziel dieses Artikels ist es, eine Variante anzubieten, die es erm&ouml;glicht, Mailadressen bestm&ouml;glich vor Mi&szlig;brauch zu sch&uuml;tzen und trotzdem einen gr&ouml;&szlig;tm&ouml;glichen Komfort f&uuml;r die Besucher der Webseiten zu bieten.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Email,Spider,Spammer,Schutz,Codierung,Verstecken,Hiding,Emailadresse,Mailadresse,JavaScript,serverseitig">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Mailadressen sch&uuml;tzen</H1>
+<p>
+Geschrieben von: <a href="../autoren/stefanmayer.htm">Stefan Mayer</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20030428"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+G&auml;steb&uuml;cher und Diskussionsforen sind immer &ouml;fter Ziele von eMail-Spidern. Sie werden als unersch&ouml;pfliche Datenquelle f&uuml;r 
+Spammings diverser besonders "seri&ouml;ser" Firmen mi&szlig;braucht. Aber auch simple Kontaktadressen auf Homepages sind sehr beliebt, 
+weil diese mit hoher Wahrscheinlichkeit auch gelesen werden. Um sich vor Spammings zu sch&uuml;tzen, sollte man daher seine 
+Mailadresse nirgendwo hinterlassen. Trotzdem will und kann man nicht immer darauf verzichten - ganz besonders auf Kontaktseiten. 
+Ziel meines Vorhabens - und somit auch dieses Artikels - ist es, eine Variante anzubieten, die es erm&ouml;glicht, Mailadressen 
+bestm&ouml;glich vor Mi&szlig;brauch zu sch&uuml;tzen und trotzdem einen gr&ouml;&szlig;tm&ouml;glichen Komfort f&uuml;r die Besucher der Webseiten zu bieten.
+</p>
+<p>
+Gleich vorweg - einen 100%igen Schutz wird es nie geben. Selbst wenn man die Mailadressen grafisch an den Browser sendet, so 
+besteht immer noch die M&ouml;glichkeit, da&szlig; die Adressen abgeschrieben werden oder einzeln kopiert werden. Ich bin jedoch bem&uuml;ht, 
+es Spidern so schwer wie m&ouml;glich zu machen.
+</p>
+<p>
+Der Artikel <a href="../artikel/20010518.htm">Broken Links mit Link Sleuth erfassen</a> enth&auml;lt 
+eine Beschreibung eines Freeware-Spiders, der komplette Webs nach Hyperlinks aller Art durchsuchen kann - auch nach 
+eMail-Adressen. Diese lassen sich zwar nicht so leicht exportieren, aber trotzdem habe ich in weiterer Folge mit diesem 
+Programm gearbeitet, um meinen Erfolg zu testen, bzw. um auf eine genauere Funktionsbeschreibung eines anderen Programms 
+verzichten zu k&ouml;nnen.
+</p>
+
+<h2>Mailadressen im Klartext</h2>
+<pre style="background='silver';">
+...
+&lt;br&gt;
+Hier k&ouml;nnen Sie mit uns &lt;a href="mailto:Stefan.mayer@e-box.at"&gt;in Kontakt treten&lt;/a&gt;
+&lt;br&gt;
+...
+</pre>
+
+<p>
+&Ouml;ffne ich nun diese Seite mit Xenu erhalte ich folgenden Output:
+</p>
+
+<IMG SRC="/artikel/Bilder/200304/20030428_1.png" width="764" height="169" alt="" border="0">
+
+<p>
+Die Mailadresse wurde als solche erkannt. Ist ja auch kein Wunder, der Klammeraffe hat sie verraten. So schreiben es zumindest 
+einige Fachzeitschriften f&uuml;r Webdesigner oder Internetprofis. Dort wird vorgeschlagen, das <b>@</b> zu ersetzen, auf da&szlig; es nicht mehr 
+erkannt wird. Das kann man tun, in dem man stattdessen <b>&amp;#64;</b> schreibt. Der Browser wird das Zeichen verstehen und einen 
+g&uuml;ltigen Mail-Link daraus machen. Ich probiere es einfach aus:
+</p>
+
+<pre style="background='silver';">
+...
+&lt;br&gt;
+Hier k&ouml;nnen Sie mit uns &lt;a href="mailto:Stefan.mayer&amp;#64;e-box.at"&gt;in Kontakt treten&lt;/a&gt;
+&lt;br&gt;
+...
+</pre>
+
+<p>
+Lasse ich Xenu an die Seite, erhalte ich jedoch ein recht &auml;hnliches Ergebnis:
+</p>
+
+<IMG SRC="/artikel/Bilder/200304/20030428_2.png" width="764" height="169" alt="" border="0">
+
+<p>
+Tja, offenbar sind auch einfache Spiderprogramme genauso schlau wie Webbrowser - auf jeden Fall schlauer als so mancher 
+Fachjournalist. Die meisten Spider achten auf das &lt;a href="mailto:...
+</p>
+
+<p>
+Aber auch daf&uuml;r gibt es Abhilfe. Die Idee ist die, da&szlig; der Browser keinen HTML-Code mit dem Mail-Link erh&auml;lt, sondern ein 
+Script, das den Mail-Link erstellt. Das sieht zum Beispiel so aus: 
+</p>
+
+<pre style="background='silver';">
+...
+&lt;br&gt;
+Hier k&ouml;nnen Sie mit uns 
+&lt;script language="javascript"&gt;
+document.write("&lt;a href='mailto:stefan.mayer");
+document.write("@");
+document.write("e-box.at'&gt;");
+document.write("in Kontakt treten");
+document.write("&lt;/a&gt;");
+&lt;/script&gt;
+&lt;br&gt;
+...
+</pre>
+
+<p>
+Und siehe da - Xenu bekommt Probleme:
+</p>
+
+<IMG SRC="/artikel/Bilder/200304/20030428_3.png" width="764" height="169" alt="" border="0">
+
+<p>
+Warum wird die Mailadresse nun nicht erkannt? Sie befindet sich in einem Javascript, das von den meisten Spidern ignoriert 
+wird, und zus&auml;tzlich ist sie &uuml;ber mehrere Kommandos verteilt, soda&szlig; auch mit einer reinen Suche nach <b>*@*.*</b> keine Mailadresse 
+gefunden werden kann.
+</p>
+<p>
+Dieser Mechanismus wirkt jetzt vielleicht etwas un&uuml;bersichtlich und aufwendig, darum habe ich im n&auml;chsten Abschnitt ein 
+ASP-Script vorbereitet, das eine gewisse Hilfestellung anbietet und sich leicht in bestehende G&auml;steb&uuml;cher, Forensysteme, 
+etc. einbinden l&auml;sst.
+</p>
+
+<h2>Die Vollautomatik</h2>
+<p>
+Gleich vorweg, die Funktion sieht so aus:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Function WriteMail(email, text)
+ isOK = False
+ p = InStr(email, "@")
+ If p &gt; 0 Then
+  e1 = Left(email,p-1)
+  e2 = Mid(email,p+1)
+  strOut = "document.write(""&lt;a href='mailto:" &amp; e1 &amp; """);document.write(""@"");" & _
+      "document.write(""" &amp; e2 &amp; "'&gt;"");"
+  p = InStr(text, "@")
+  IsOK = True
+  If p &gt; 0 Then
+   e1 = Left(email,p-1)
+   e2 = Mid(email,p+1)
+   strOut = strOut &amp; "document.write(""" &amp; e1 &amp; """);document.write(""@"");" & _
+       "document.write(""" &amp; e2 &amp; "&lt;/a&gt;"");"
+  Else
+   strOut = strOut &amp; "document.write(""" &amp; text &amp; """);document.write(""&lt;/a&gt;"");"  
+  End If
+ End If
+ If IsOK Then 
+  WriteMail = "&lt;script language=""javascript""&gt;" &amp; strOut &amp; "&lt;/script&gt;" 
+ Else 
+  WriteMail = "-"
+ End If
+End Function
+%&gt;
+</pre>
+
+<p>
+Zur Erkl&auml;rung: Der Funktion <i>WriteMail</i> werden zwei Parameter &uuml;bergeben - die Mailadresse sowie ein Text, der angezeigt werden 
+soll. Zuerst wird die Mailadresse nach dem ber&uuml;hmten @ durchsucht. Wird das Zeichen gefunden, so kann der String in 2 Teile 
+zerlegt werden - in e1, dem Teil davor und in e2, der Dom&auml;ne. Ohne @ handelt es sich um keine g&uuml;ltige Mailadresse
+</p>
+<p>
+Im n&auml;chsten Schritt wird der Text ebenfalls durchsucht und gegebenenfalls wie die Mailadresse in 3 Teile erlegt. Das ist 
+notwendig, denn es k&ouml;nnte ja vorkommen, da&szlig; die Mailadresse auch im Klartext angezeigt werden soll. 
+</p>
+<p>
+Abschlie&szlig;end wird das so erstellte Javascript als Funktionswert zur&uuml;ckgegeben - oder ein "-", falls keine g&uuml;ltige Mailadresse 
+&uuml;bergeben wurde.
+</p>
+<p>
+Der Aufruf der Funktion erfolgt so: 
+</p>
+
+<pre style="background='silver';">
+...
+&lt;br&gt;
+Hier k&ouml;nnen Sie mit uns &lt;%=WriteMail("stefan.mayer@e-box.at","in Kontakt treten")%&gt;
+&lt;br&gt;
+...
+</pre>
+
+<p>
+Oder wenn die Daten aus einer Datenbank kommen:
+</p>
+
+<pre style="background='silver';">
+...
+&lt;% While Not rs.eof %&gt;
+...
+&lt;td&gt;&lt;%=WriteMail(RS.Fields("email").Value, RS.Fields("Anrede").Value)%&gt;&lt;/td&gt;
+...
+&lt;% rs.MoveNext
+Wend %&gt;
+...
+</pre>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Dieser doch relativ einfache Trick bietet zwar keinen 100%igen Schutz vor Mi&szlig;brauch, er macht es den &Uuml;belt&auml;tern jedoch 
+recht schwer. 
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20030428.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20030428.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010518.htm">Broken Links mit Link Sleuth erfassen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010518.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,169 @@
+<HTML>
+<HEAD>
+<TITLE>Ein Baummen&uuml; mit XTree Server erstellen</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Mit XTree k&ouml;nnen Sie entweder eine &uuml;bersichtliche Dokumenten- oder Sitenavigation erstellen. Die Treeeintr&auml;ge werden in der "Server" Version in einer MS Access Datenbank verwaltet und werden &uuml;ber ein XSLT als Html gerendert.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Xtree,XSLT,XML,TreeView,Tree,Baumansicht,Explorer View,Menü">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Ein Baummen&uuml; mit XTree Server erstellen</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/XML.htm">XML</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010424"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Mit XTree k&ouml;nnen Sie entweder eine &uuml;bersichtliche Dokumenten- oder Sitenavigation erstellen. Die Treeeintr&auml;ge werden in 
+der "Server" Version in einer MS Access Datenbank verwaltet und  &uuml;ber ein XSLT als Html gerendert. 
+Die Konfiguration ist nicht besonders aufwendig und XTree ist noch dazu kostenlos downloadbar. 
+Dieser Artikel soll Ihnen einen Vorgeschmack anhand eines einfachen Beispiels davon geben, was XTree Server kann.
+</p>
+
+<p>
+Voraussetzungen f&uuml;r die Verwendung von XTree ist der MS Internet Explorer 5 (oder besser 
+<a href="http://www.microsoft.com/windows/ie/default.htm" target="_blank">Version 5.5</a>) und der
+MS XML Parser in der 
+<a href="http://msdn.microsoft.com/downloads../default.htm?URL=/code/sample.asp?url=/msdn-files/027/001/596/msdncompositedoc.xml" target="_blank">Version 3</a>. 
+Um die bei der Server Version verwendeten ASP Dateien ablaufen zu lassen, ist der Internet Information Server 4 
+(WinNT) oder die Internet Information Services 5 (Win 2k) erforderlich.
+</p>
+
+<p>
+Mozilla &amp; Co. wird in der aktuell vorliegenden Version nur mangelhaft unterst&uuml;tzt bzw. wegen dem Einsatz von
+IE5 DHTML Behaviors ist das Ergebnis unbrauchbar. Eine Kompabilit&auml;t zu Mozilla &amp; Co. schafft auch nicht die 
+Version ohne die ASP Erweiterungen. Daher wird bei Verwendung von XTree auch der Internet Explorer 
+w&auml;rmstens empfohlen. Zumindest im Intranet wird XTree sicher seine Anh&auml;nger finden.
+</p>
+
+<p>
+XTree Server k&ouml;nnen Sie <a href="http://manudea.duemetri.net/xtree../default.htm" target="_blank">kostenlos downloaden</a>. 
+Die mit "Server" bezeichnete Version bietet den Vorteil, da&szlig; diese auf ASP/VBScript aufgebaut ist und die Treeeintr&auml;ge 
+mittels einer MS Access Datenbank verwaltet werden. Daher eignet sich XTree Server auch f&uuml;r umfangreichere Strukturen.
+Nach dem Download und entpacken der Datei kopieren Sie die einzelnen Scripts f&uuml;r Testzwecke in das 
+<i>\inetpub\wwwroot</i> Verzeichnis.
+</p>
+
+<p>
+Was noch fehlt ist die Erstellung eines System DSN (Data Source Name) f&uuml;r die MS Access Datenbank. Wie man einen DSN
+anlegt lesen Sie im Artikel <a href="../artikel/19990826.htm">ODBC und ASP - Eine DSN zur Verwendung mit ASP definieren</a>.
+Die Verbindungsinformationen f&uuml;r den System DSN entnehmen Sie dem folgenden Screenshot:
+</p>
+
+<IMG SRC="/artikel/Bilder/200104/20010424_1.png" width="467" height="308" alt="" border="0">
+
+<p>
+Nun sind die Grundvoraussetzungen f&uuml;r einen fehlerfreien Ablauf gegeben. Als n&auml;chstes bef&uuml;llen wir die Access Datenbank.
+Diese Datenbank (f&uuml;r Demozwecke <b>xtree.mdb</b>, welche sich im Stammverzeichnis von XTree befindet) besitzt 
+in der vorliegenden Server Version <i>1.2.3</i> von XTree nur eine Tabelle in der die Eintr&auml;ge verwaltet werden.
+</p>
+
+<p>
+Der n&auml;chste Screenshot zeigt eine f&uuml;r das Artikelbeispiel bef&uuml;llte Tabelle:
+</p>
+
+<IMG SRC="/artikel/Bilder/200104/20010424_2.png" width="566" height="317" alt="" border="0">
+
+<p>
+Die Spalte <i>Description</i> enth&auml;lt die Beschreibung bzw. Link&uuml;berschrift des Treeeintrags. Mit der <i>Parent_ID</i>
+werden die Zugeh&ouml;rigkeiten Parentnodes-Childnodes angegeben. So gibt z.B. der Parent_ID Wert <i>0</i> einen 
+Rooteintrag an und der Wert <i>4</i> einen Childnode des Men&uuml;eintrages "&Uuml;berblick ASP Grundlagen" an (lt.
+obigen Screenshot).
+</p>
+
+<p>
+Wenn Sie in der <i>Target</i> Spalte z.B. <i>_blank</i> eintragen, wird ein neues Browserfenster 
+ge&ouml;ffnet.
+</p>
+
+<p>
+Ein weiterer Vorteil von <i>XTree Server</i> ist, da&szlig; Sie einfach nur die Men&uuml;eintr&auml;ge an Ihre Anforderungen anpassen 
+m&uuml;ssen und eigentlich danach nichts weiteres an den XTree beigef&uuml;gten Scripts &auml;ndern m&uuml;ssen.
+</p>
+
+<p>
+Sie rufen das Men&uuml; zwar durch eine standardm&auml;&szlig;ig vorgegebene Html Datei (<b>default.htm</b>) auf, da aber z.B. f&uuml;r 
+die Datenbankanbindung ASP verwendet wird, mu&szlig; XTree auf einem Web Server laufen. Wenn Sie nun die <i>default.htm</i>
+Datei im Internet Explorer aufrufen, erhalten Sie ein Explorer &auml;hnliches Treemen&uuml;. Dieses basiert auf den von Ihnen 
+eingegebenen Daten in der Access Datenbank. Ein Beispiel f&uuml;r das Aussehen w&auml;re der folgende Screenshot:
+</p>
+
+<IMG SRC="/artikel/Bilder/200104/20010424_3.png" width="590" height="485" alt="" border="0">
+
+<p>
+Nun k&ouml;nnen Sie bequem - wie in einer CHM-Datei bzw. wie im Windows Explorer durch die die einzelnen Nodes 
+navigieren.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Wie Sie sicherlich erkannt haben, ist XTree einfach zu konfgurieren und auf die jeweiligen Bed&uuml;rfnisse anzupassen.
+Das einzige was man bem&auml;ngeln k&ouml;nnte, ist der fehlende Support f&uuml;r andere Browser als den MS IE 5.X. Aber da die
+Komponente kostenlos erh&auml;ltlich und einfachst zu bedienen ist - warum sollte man da das Rad neu erfinden wollen?
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/19990826.htm">ODBC und ASP - Eine DSN zur Verwendung mit ASP definieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/19990826.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Emicrosoft%2Ecom%2Fwindows%2Fie%2Fdefault%2Ehtm">MS Internet Explorer</a><br>
+<SPAN class="content">http://www.microsoft.com/windows/ie/default.htm</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmsdn%2Emicrosoft%2Ecom%2Fdownloads%2Fdefault%2Easp%3FURL%3D%2Fcode%2Fsample%2Easp%3Furl%3D%2Fmsdn%2Dfiles%2F027%2F001%2F596%2Fmsdncompositedoc%2Exml">MS XML Parser</a><br>
+<SPAN class="content">http://msdn.microsoft.com/downloads../default.htm?URL=/code/sample.asp?url=/msdn-files/027/001/596/msdncompositedoc.xml</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fmanudea%2Eduemetri%2Enet%2Fxtree%2Fdefault%2Easp">Xtree Download</a><br>
+<SPAN class="content">http://manudea.duemetri.net/xtree../default.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

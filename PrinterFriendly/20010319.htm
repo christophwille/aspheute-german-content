@@ -1,0 +1,294 @@
+<HTML>
+<HEAD>
+<TITLE>Mit ASP ein Word Dokument am Server generieren</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Mit dem Microsoft Word Object Modell lassen sich z.B. Word Dokumente auf einem Server generieren, die dann von einem Client weiter verwendet werden k&ouml;nnen. Dies kann sich bei der Generierung von Flyern, Intranetdokumenten oder Produktdaten..">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Word,Objektmodell,Vorlage,Template,Word instanzieren,Word in ASP,Word aufrufen,Word starten">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Mit ASP ein Word Dokument am Server generieren</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010319"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Mit dem Microsoft Word Object Modell lassen sich z.B. Word Dokumente auf einem Server generieren, die dann
+von einem Client weiter verwendet werden k&ouml;nnen. Dies kann sich bei der Generierung von Flyern, Intranetdokumenten
+oder Produktdaten als sehr n&uuml;tzlich erweisen. Der Weg durch den Word Object &quot;Dschungel&quot; ist aber
+bei anspruchsvolleren Aufgaben oftmals steinig.
+</p>
+
+<p>
+Damit die Beispiele auf Ihrem Web Server laufen, m&uuml;ssen einige Vorbereitungen getroffen werden. Zuerst einmal
+mu&szlig; nat&uuml;rlich Microsoft Word am Server installiert sein. Die Permissions f&uuml;r den Schreibzugriff und das 
+Ausf&uuml;hren von Scripts m&uuml;ssen ebenfalls f&uuml;r das Web Server Verzeichnis gegeben sein.
+</p>
+
+<p>
+Falls Sie beim Ausf&uuml;hren der Beispiele die sinnvolle Fehlermeldung <i>Error 800A175D - Could Not Open Macro Storage</i>
+erhalten, finden Sie im <a href="http://support.microsoft.com/support/kb/articles/Q224/3/38.ASP" target="_blank">KB Artikel Q224338</a> auf der 
+Microsoft MSDN Site die n&ouml;tige Abhilfe um diesen zu beseitigen. Die Bemerkung &quot;sinnvoll&quot; habe ich mir
+deshalb erlaubt, da die Meldung nicht eindeutig auf das Problem hinweist, sondern von mehreren Ursachen folgen kann.
+</p>
+
+<h2>Das 101er Beispiel</h2>
+
+<p>
+Das erste Beispiel ist sehr einfach gehalten. Es wird lediglich ein Word Dokument erstellt, ein unformatierter Text
+eingef&uuml;gt und dann im Web Server Verzeichnis gespeichert. Die Schritte, die hierf&uuml;r n&ouml;tig sind zeigt das nun folgende
+Listing der <b>GenWord101Sample.asp</b> Datei:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+   Set objWordApp = Server.CreateObject(&quot;Word.Application&quot;)
+   
+   objWordApp.Documents.Add
+   
+   objWordApp.Selection.TypeText &quot;This is a plain text that you'll see in word.&quot;
+   
+   objWordApp.ActiveDocument.SaveAs Server.MapPath(&quot;MyDocument.doc&quot;)   
+   objWordApp.Quit
+   
+   Set objWordApp = Nothing
+%&gt;
+</pre>
+
+<p>
+Wenn Sie die aus diesem Script generierte Datei <i>MyDocument.doc</i> in Word &ouml;ffnen, k&ouml;nnen Sie den
+durch die <i>TypeText</i> Methode erstellten Text sehen. Da dies aber noch nicht alles ist, werden wir 
+die Aufgabenstellung erweitern.
+</p>
+
+<h2>Ergebnisse aus einer Datenbankabfrage in Word darstellen</h2>
+
+<p>
+Nat&uuml;rlich k&ouml;nnen Sie wie mit Microsoft Excel auch eine Datenbankabfrage ausf&uuml;hren und das Ergebnis dem Word Objekt
+&uuml;bergeben. Als Datenbank habe ich die MS Access <i>Northwind</i> Datenbank (wird standardm&auml;&szlig;ig mit Access oder
+mit dem SQL Server mitinstalliert) herangezogen, die sich f&uuml;r &Uuml;bungszwecke 
+hervorragend eignet. Damit sich die retournierten Datens&auml;tze in Grenzen halten, habe ich eine spezielle Auswahl 
+mittels SQL Statements erstellt. Die Daten werden im Word Dokument in einer Tabelle gespeichert. Zweckm&auml;&szlig;ig verwendet
+das Script eine Dokumentenvorlage (<b>POView01.dot</b>) die eine formatierte Kopf- und Fu&szlig;zeile beinhaltet.
+</p>
+
+<p>
+Im Script (<b>GenWordSample.asp</b>) beginne ich mit der Datenbankabfrage. Ich hole mir die durch das SQL 
+Statement bestimmten Daten aus der Northwind Datenbank:
+</p>
+
+<pre style="background='silver';">
+Set objConn = Server.CreateObject("ADODB.Connection")
+Set objRS = Server.CreateObject("ADODB.Recordset") 
+
+strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source="
+strConn = strConn &amp; Server.MapPath("Northwind.mdb") 
+strSQL ="SELECT Products.ProductName, Products.UnitPrice "
+strSQL = strSQL &amp; "FROM Products "
+strSQL = strSQL &amp; "WHERE Products.UnitPrice &lt;= 15 "
+strSQL = strSQL &amp; "ORDER BY Products.ProductName ASC"
+
+objConn.Open strConn
+
+objRS.Open strSQL, objConn
+
+If Not objRS.EOF and Not objRS.BOF Then
+  arrData = objRS.GetRows()
+End If 
+
+objRS.Close
+objConn.Close
+Set objRS = Nothing
+Set objConn = Nothing
+</pre>
+
+<p>
+Die Trennung von Datenbeschaffung und Word Dokument Generierung hat den Sinn, da&szlig; wenn bei der Datenbeschaffung
+etwas schief geht, ich leicht die weiterfolgende Instanzierung des Word Objekts verhindern kann. So wird auch
+vermieden, da&szlig; das Word Objekt unt&auml;tig im Speicher verbleibt und auf die Daten wartet. Wenn Sie dies nicht beachten, 
+k&ouml;nnen sich schnell mehrere Instanzen - durch folgende Requests auf die ASP Seite - des Word Objektes im Speicher sammeln und den Web Server in die Knie zwingen
+oder gar zum Absturz bringen.
+</p>
+
+<p>
+Die angeforderten Daten speichere ich in einem Array namens <i>arrData</i>. Daher kann ich nach erfolgreicher 
+Beendigung der Datenbankfrage die hierf&uuml;r ben&ouml;tigten Objekte wieder freigeben.
+</p>
+
+<p>
+Als n&auml;chstes wird das Word Dokument mit den Daten bef&uuml;llt. Da Word mehrere Konstanten verwendet, die in VBScript
+als Zahlenwerte anzugeben sind, deklariere ich zun&auml;chst diese. Nat&uuml;rlich k&ouml;nnte man dort, wo sie ben&ouml;tigt werden
+auch sofort ihre Zahlenwerte einsetzen. Um aber sp&auml;ter &Auml;nderungen leichter durchf&uuml;hren zuk&ouml;nnen, gebe ich diese lieber so an:
+</p>
+
+<pre style="background='silver';">
+Const wdAlignParagraphCenter = 1
+Const wdAlignParagraphLeft = 0
+Const wdParagraph = 4
+Const wdHorizontalPositionMargin = 0
+Const wdTableLeft = -999998
+Const wdCollapseEnd = 0
+</pre>
+
+<p>
+Nun ist es Zeit das Word Objekt mithilfe von <i>Server.CreateObject</i> zu instanzieren, ein neues Dokument
+zu erstellen und die Dokumentvorlage (<i>POView01.dot</i>) anzugeben:
+</p>
+
+<pre style="background='silver';">
+Set WdApp = Server.CreateObject("Word.Application")
+WdApp.Application.Visible = False
+
+Set objDocument = WdApp.Documents.Add(Server.MapPath("POView01.dot"))
+</pre>
+
+<p>
+Mithilfe des erstellten Range Objektes (<i>objRange</i>) k&ouml;nnen wir das Dokumentschriftbild dezent formatieren:
+</p>
+
+<pre style="background='silver';">
+Set objRange = objDocument.Range
+
+With objRange
+    .ParagraphFormat.Alignment = wdAlignParagraphCenter
+    .Font.Size = 12
+    .Font.Name = "Arial"
+    .InsertAfter("Current Sales Report")
+    .MoveEnd(wdParagraph)
+    .Collapse(wdCollapseEnd)
+End With
+</pre>
+
+<p>
+Es sind nun alle Vorbereitungen getroffen. Die Daten, die in dem Array <i>arrData</i> gespeichert sind
+k&ouml;nnen nun eingef&uuml;gt werden. Um sie wie gesagt &uuml;bersichtlicher darzustellen, schreiben wir sie in eine Tabelle.
+Dazu m&uuml;ssen wir ein neues Tabellenobjekt namens <i>objTable</i> erstellen:
+</p>
+
+<pre style="background='silver';">
+Set objTable = WdApp.ActiveDocument.Tables.Add (objRange, Ubound(arrData,2), 2,1,1)
+</pre>
+
+<p>
+Die Tabelle wird innerhalb des im Range-Objekt <i>objRange</i> angegebenen Bereichs erstellt. Hierbei k&ouml;nnen auch die
+vorherig definierten Formatoptionen &uuml;bernommen werden. Die Tabelle wird dann mit der <i>Add</i> Methode der 
+<i>Tables Collection</i> erstellt.
+</p>
+
+<p>
+Um nicht zuviel oder zuwenig Tabellenreihen zu erstellen, finde ich mit der <i>UBound</i> Function die obere Grenze
+des Arrays, in dem die Daten gespeichert sind. Dieser Wert bestimmt die maximale Reihenanzahl der Tabelle.
+Die letzten beiden optionalen Parameter sind <i>DefaultTableBehavior</i> und <i>AutoFitBehavior</i>:
+</p>
+
+<p>
+<i>DefaultTableBehavior</i> gibt an, ob Word die Zellen der Tabelle an ihren Inhalt anpassen soll (<i>AutoFit</i>).
+<i>AutoFitBehavior</i> setzt die AutoFit Regeln fest, die von Word angeboten werden.
+</p>
+ 
+<p>
+Jetzt wird der Inhalt des Arrays <i>arrData</i> in die Tabelle eingef&uuml;gt:
+</p>
+
+<pre style="background='silver';">
+For i = 0 To Ubound(arrData,2)
+   objTable.Cell(i,1).Range.InsertAfter(arrData(0,i))
+   objTable.Cell(i,2).Range.InsertAfter(arrData(1,i))
+Next
+</pre>
+
+<p>
+Abschlie&szlig;end kann nun das Dokument im Web Server Verzeichnis gespeichert und dann die Applikation
+beendet werden:
+</p>
+
+<pre style="background='silver';">
+objDocument.SaveAs Server.MapPath("Sales.doc")
+objDocument.Close 
+
+WdApp.Application.Quit
+</pre>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Dies war eine kleine Einf&uuml;hrung in die vielen M&ouml;glichkeiten, die das Word Objekt bietet. So einfach dies auch klingen mag,
+durch die M&ouml;glichkeit der Verwendung von zwei unterschiedlichen Sprachformen (VBA und VBScript) mit diesem Objekt, 
+passieren oft f&uuml;r einen Web Server fatale Fehler.
+</p>
+
+<p>
+Wenn man aber die hier angef&uuml;hrten Hinweise beachtet, kann man sich viele Stunden in der Programmierung und
+sp&auml;ter durch die Verwendung des Scriptes sparen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010319.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010319.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010305.htm">Ein Excel-Sheet am Server generieren und zum Client schicken</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010305.htm</span><br>
+<a href="../artikel/20020128.htm">Serverdaten clientseitig in Exceltemplates importieren</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020128.htm</span><br>
+<a href="../artikel/20010925.htm">Verwendung von XML-Schemas (XSD)</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010925.htm</span><br>
+<a href="../artikel/20020122.htm">Wordfiles richtig &ouml;ffnen!</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020122.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsupport%2Emicrosoft%2Ecom%2Fsupport%2Fkb%2Farticles%2FQ224%2F3%2F38%2EASP">PRB: Error 800A175D - Could Not Open Macro Storage</a><br>
+<SPAN class="content">http://support.microsoft.com/support/kb/articles/Q224/3/38.ASP</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

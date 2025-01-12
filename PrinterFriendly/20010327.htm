@@ -1,0 +1,298 @@
+<HTML>
+<HEAD>
+<TITLE>Code Generator f&uuml;r die AddNew Methode</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Datens&auml;tze mit der AddNew Methode einer Datenbank hinzuf&uuml;gen ist ja prinzipiell nicht schwer - warum aber sollte man sich den hierf&uuml;r ben&ouml;tigen Code nicht aus einem ASP-Script generieren lassen?">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,AddNew,Connection,Recordset,CursorLocation,CommandType,Generator,Code,Automatisch,ADO">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Code Generator f&uuml;r die AddNew Methode</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010327"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Datens&auml;tze mit der AddNew Methode einer Datenbank hinzuf&uuml;gen ist ja prinzipiell nicht schwer. Wenn die Datenbank aber 
+viele Spalten hat ist der Schreibaufwand aber gro&szlig;. Auf jeden Fall so gro&szlig;, da&szlig; es um einiges bequemer ist, den hierf&uuml;r 
+ben&ouml;tigen Code aus einem ASP-Script generieren zu lassen.
+</p>
+
+<p>
+Diesen Task erledigt nun in Zukunft das Beispiel, da&szlig; ich f&uuml;r den heutigen Artikel vorbereitet habe. Um den ASP-Code
+f&uuml;r das Hinzuf&uuml;gen der Datens&auml;tze generieren zu k&ouml;nnen, m&uuml;ssen lediglich zwei Parameter dem Script &uuml;bergeben werden -
+der <i>Connection</i> String und ein <i>SQL Abfrage</i> Statement. Nach dem Postback auf den Web Server wird nach der erfolgreichen
+Verbindung zur Datenbank auch schon der Code generiert. Diesen k&ouml;nnen Sie dann einfach mittels Copy/Paste in Ihre bestehende
+ASP Seite einf&uuml;gen. 
+</p>
+
+<p>
+Das Beispiel Script (<b>Generator.asp</b>) funktioniert nat&uuml;rlich f&uuml;r eine beliebige Anzahl von Spalten. Das Script geht 
+davon aus, da&szlig; die erste
+Spalte ein Prim&auml;rschl&uuml;ssel ist und somit der Spaltenwert automatisch erh&ouml;ht wird. Ich habe das Script mit der 
+&quot;vielseitig&quot; einsetzbaren <i>Northwind</i> Datenbank getestet, wobei diese auf einem Microsoft SQL Server 2000 
+liegt.
+</p>
+
+<p>
+Das Beispiel-Script beginnt mit dem Einlesen der &Uuml;bergabewerte, welche zugleich durch die <i>Trim</i> Function von den 
+Leerzeichen am Anfang und Ende befreit werden:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Dim bIsPostback,strConn,strSQLStmt
+
+strConn = Trim(Request.Form("txtConn"))
+strSQLStmt = Trim(Request.Form("txtSQLStmt"))
+
+bIsPostback = CLng(Request.ServerVariables("CONTENT_LENGTH"))
+%&gt;
+</pre>
+
+<p>
+Danach folgt das Eingabeformular, in welchem der <i>Connection String</i> (<b>strConn</b>) und das 
+<i>SQL Abfrage Statement</i> (<b>strSQLStmt</b>) eingetragen werden m&uuml;ssen:
+</p>
+
+<pre style="background='silver';">
+&lt;form method="post" action="&lt;%=Request.ServerVariables("SCRIPT_NAME")%&gt;"&gt;
+&lt;table cellpadding="2" cellspacing="2" border="0"&gt;
+  &lt;tr&gt;
+     &lt;td&gt;Connection string:&lt;/td&gt;
+     &lt;td&gt;  
+        &lt;input type="text" name="txtConn" value="&lt;%=strConn%>" size="90"&gt;
+     &lt;/td&gt;
+  &lt;/tr&gt;
+   &lt;tr&gt;
+     &lt;td&gt;SQL Statement:&lt;/td&gt;
+     &lt;td&gt;  
+        &lt;input type="text" name="txtSQLStmt" value="&lt;%=strSQLStmt%&gt;"size="90"&gt;
+     &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+      &lt;td colspan="2" align="right"&gt;&lt;input type="submit" value="Generate"&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+&lt;/form&gt;
+</pre>
+
+<p>
+Der n&auml;chste Codeblock schickt die eingegebenen Daten durch die <i>GenerateCode</i> Function, die den Sourcecode f&uuml;r die <i>AddNew</i> Methode
+erstellt. Das Ergebnis wird der Einfachheit halber in einer <i>Textarea</i> eingebettet:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Dim strOutputCode
+If bIsPostback Then
+    strOutputCode = GenerateCode(strConn,strSQLStmt)
+    strOutputCode = Server.HtmlEncode(strOutputCode)
+    
+    Response.Write "Generierter Code:&lt;br&gt;"
+    Response.Write "&lt;textarea cols=90 rows=25&gt;"
+    Response.Write strOutputCode
+    Response.Write "&lt;/textarea&gt;"
+End If
+%&gt;
+</pre>
+
+<p>
+Nun wird es interessant. Der n&auml;chste Abschnitt repr&auml;sentiert das Kernst&uuml;ck des ASP-Scripts: den eigentlichen Code Generator:
+</p>
+
+<pre style="background='silver';">
+&lt;script language="vbscript" runat="server"&gt;
+
+Function GenerateCode(ByVal strConn, ByVal strSQLStmt)
+    
+    Dim FieldIndex,strFieldNames,strOutput,objConn,objRS
+    Set objConn = Server.CreateObject("ADODB.Connection")
+    Set objRS = Server.CreateObject("ADODB.Recordset")
+    objConn.Open strConn
+    objRS.Open strSQLStmt,strConn
+</pre>
+
+<p>
+Im ersten Teil der <i>GenerateCode</i> Function werden zun&auml;chst die Parameter aus dem Formular mit <i>ByVal</i>
+der Function &uuml;bergeben. Hier erstellen wir auch die beiden Objekte <i>objConn</i> und <i>objRS</i>, die f&uuml;r die
+Datenbankabfrage n&ouml;tig sind. Als n&auml;chstes k&ouml;nnen wir den sich nicht &auml;ndernden Teil des Codes generieren:
+</p>
+
+<pre style="background='silver';">
+strOutput  = strOutput &amp; "Set objConn = Server.CreateObject(""ADODB.Connection"")" &amp; vbCrlf
+strOutput = strOutput &amp; "Set objRS = Server.CreateObject(""ADODB.Recordset"")" &amp; vbCrlf
+strOutput  = strOutput &amp; "strSQLStmt = """ &amp; strSQLStmt &amp; """" &amp; vbCrlf
+strOutput  = strOutput &amp; "strConn = """ &amp; strConn &amp; """" &amp; vbCrlf
+strOutput  = strOutput &amp; "objConn.Open strConn" &amp; vbCrlf
+strOutput  = strOutput &amp; "objRS.CursorLocation = adUseServer" &amp; vbCrlf
+strOutput  = strOutput &amp; "objRS.CursorType = adOpenKeyset" &amp; vbCrlf
+strOutput  = strOutput &amp; "objRS.LockType = adLockOptimistic" &amp; vbCrlf
+strOutput  = strOutput &amp; "objRS.Open strSQLStmt, strConn" &amp; vbCrlf
+strOutput = strOutput &amp; "objRS.AddNew" &amp; vbCrlf
+</pre>
+
+<p>
+Nun m&uuml;ssen wir die Spalten bzw. Felder der Datenbank auslesen und diese in einen wiederverwertbaren Code packen.
+Hierf&uuml;r habe ich eine <i>For-Next</i> Schleife verwendet. Die Werte der <i>adUseServer</i>, <i>adOpenKeyset</i> und 
+der <i>LockType</i> Konstanten werden aus der <i>adovbs.inc</i> Datei bezogen. Diese Datei wird sp&auml;ter im neuen Script
+mithilfe von <i>#include file=...</i> eingebunden (kann auf METADATA umgestellt werden). Die erw&auml;hnten Konstanten sind notwendig, um einen neuen Datensatz
+hinzuf&uuml;gen zu k&ouml;nnen.
+</p>
+
+<pre style="background='silver';">
+For FieldIndex = 1 To objRS.Fields.Count - 1
+    strFieldNames = "   objRS.Fields(""" &amp; objRS.Fields(FieldIndex).Name &amp; """).Value"
+    strFieldNames = "= !INSERT VALUE HERE! "&amp; vbCrlf      
+    strOutput = strOutput &amp; strFieldNames
+Next
+</pre>
+
+<p>
+Ich habe den <i>FieldIndex</i> bei der <i>For-Next</i> Schleife absichtlich bei 1 beginnen lassen, da ich wie
+vorher schon erw&auml;hnt, davon ausgegangen bin, da&szlig; die erste Spalte ein <i>Prim&auml;rschl&uuml;ssel</i> ist. Somit wird dieses
+Feld automatisch beim Hinzuf&uuml;gen der Daten bef&uuml;llt bzw. erh&ouml;ht. Korrekt w&auml;re mit ADO-X diese Autowertspalte zu
+ermitteln - aber ein bischen Basteln sei dem Leser &uuml;berlassen!
+</p>
+<p>
+Abschlie&szlig;end m&uuml;ssen noch die Ver&auml;nderungen an der Datenbank (der hinzugef&uuml;gte Datensatz) mit der 
+<i>Update</i> Methode akzeptiert werden und das Recordset Objekt geschlossen werden:
+</p>
+
+<pre style="background='silver';">
+strOutput = strOutput &amp; "objRS.Update" &amp; vbCrlf
+strOutput = strOutput &amp; "objRS.Close" &amp; vbCrlf
+GenerateCode = strOutput
+</pre>
+
+<p>
+Wenn Sie nun die <i>Generator.asp</i> Datei auf einem Web Server ablaufen lassen, auf dem ein Datenbank Server installiert ist,
+auf dem die Northwind Datenbank liegt, so erhalten Sie folgendes Ergebnis:
+</p>
+
+<p>
+<IMG SRC="/artikel/Bilder/200103/20010327_1.png" width="590" height="537" alt="" border="0">
+</p>
+
+<p>
+Um den generierten Code auch verwenden zu k&ouml;nnen ist noch folgendes zu tun: Kopieren Sie den Code in eine ASP Seite
+und referenzieren Sie auf die <i>adovbs.inc</i> Datei. Das einzige was Sie noch tun m&uuml;ssen, ist die eigentlichen Daten angeben.
+Im einfachsten Fall sieht die von Ihnen zu erstellende bzw. vorhandene ASP Datei so aus
+(&Auml;hnlichkeiten mit bestehenden Firmen bzw. Personen sind unbeabsichtigt und rein zuf&auml;llig):
+</p>
+
+<pre style="background='silver';">
+<!-- #include file="adovbs.inc" -->
+&lt;%
+Set objConn = Server.CreateObject("ADODB.Connection")
+Set objRS = Server.CreateObject("ADODB.Recordset")
+strSQLStmt = "SELECT * FROM Suppliers WHERE -1=0"
+strConn = "Provider=SQLOLEDB;server=localhost;uid=sa;pwd=;Initial Catalog=Northwind;"
+objConn.Open strConn
+objRS.CursorLocation = adUseServer
+objRS.CursorType = adOpenKeyset
+objRS.LockType = adLockOptimistic
+objRS.Open strSQLStmt, strConn
+objRS.AddNew
+   objRS.Fields("CompanyName").Value = "Inferis Corp."
+   objRS.Fields("ContactName").Value = "Jon Doe"
+   objRS.Fields("ContactTitle").Value = "Marketing Manager"
+   objRS.Fields("Address").Value = "34 Rune Bvld."
+   objRS.Fields("City").Value =  "Los Angeles"
+   objRS.Fields("Region").Value = "CA"
+   objRS.Fields("PostalCode").Value = "92555"
+   objRS.Fields("Country").Value = "USA"
+   objRS.Fields("Phone").Value = "(202) 555-1234"
+   objRS.Fields("Fax").Value =  "(202) 555-1234-55"
+   objRS.Fields("HomePage").Value = "inferisultima.com" 
+objRS.Update
+objRS.Close
+%&gt;
+</pre>
+
+<p>
+Ich habe diesen einfachsten Fall unter dem Namen <i>TestDrive.asp</i> gespeichert. Wenn Sie diese Datei auf einem
+Web Server ausf&uuml;hren, wird der Northwind Datenbank ein Datensatz mit diesen Beispieldaten hinzugef&uuml;gt.
+</p>
+
+<p>
+Und wirklich, wenn wir einen Blick auf die <i>Suppliers</i> Tabelle im <i>SQL Server Enterprise Manager</i> werfen
+findet sich der Datensatz an der erwarteten letzten Stelle:
+</p>
+
+<p>
+<IMG SRC="/artikel/Bilder/200103/20010327_2.png" width="563" height="223" alt="" border="0">
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Dies war ein einfaches aber praktisches Beispiel um sich die Arbeit bei umfangreichen Datenbanken zu ersparen, indem
+man sich einfach den Code mit Hilfe eines ASP-Scriptes generieren l&auml;&szlig;t. Mit ein paar kleinen Anpassungen k&ouml;nnen Sie
+nat&uuml;rlich auch mehrere Datens&auml;tze hinzuf&uuml;gen lassen.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010327.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010327.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20010329.htm">Auto-Generierung von performantem Abfragecode</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010329.htm</span><br>
+<a href="../artikel/20010308.htm">Der ADO Command Code Generator</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010308.htm</span><br>
+<a href="../artikel/20010326.htm">Records z&auml;hlen mit Stored Procedures</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010326.htm</span><br>
+<a href="../artikel/20020903.htm">Stored Procedures einfach erstellt</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020903.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

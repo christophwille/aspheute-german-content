@@ -1,0 +1,445 @@
+<HTML>
+<HEAD>
+<TITLE>DataGrid - Daten bearbeiten leicht gemacht</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Das ASP.NET DataGrid ist das WebControl schlechthin, wenn es um die Anzeige und Bearbeitung tabellarischer Daten geht - w&auml;re da nicht das leidige Problem mit den Unique-IDs der Datens&auml;tze. Einen einfachen L&ouml;sungsweg zeigt dieser Artikel.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,DataGrid,Unique,Id,UniqueId,UpdateCommand,CancelCommand,DeleteCommand,EditCommand,Linkbutton,CommandArgument,CommandName">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>DataGrid - Daten bearbeiten leicht gemacht</H1>
+<p>
+Geschrieben von: <a href="../autoren/alexanderzeitler.htm">Alexander Zeitler</a><br>
+Kategorie: <a href="../kategorien/dotNET%20Fu.htm">.NET Fu</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20040929"></SCRIPT>
+</p>
+<p>
+Das ASP.NET <a href="http://msdn.microsoft.com/library/deu../default.htm?url=/library/DEU/cpref/html/frlrfSystemWebUIWebControlsDataGridClassTopic.asp?frame=true" target="_blank">DataGrid</a> 
+ist das WebControl schlechthin, wenn es um die Anzeige und Bearbeitung tabellarischer Daten geht - w&auml;re da nicht das 
+leidige Problem mit den Unique-IDs der Datens&auml;tze: in der Praxis steht man immer wieder vor dem Problem, wie man die 
+ID eines Datensatzes, der upgedatet  werden soll, ermittelt, ohne die ID-Spalte im DataGrid anzuzeigen. Einen einfachen 
+und eleganten L&ouml;sungsweg m&ouml;chte ich heute aufzeigen.
+</p>
+<p>
+Das heutige Ziel ist - zumindest im Ergebnis -  im nachfolgenden Screenshot zu sehen:
+</p>
+
+<IMG SRC="Bilder/200409/20040929.png" width="559" height="352" alt="" border="0">
+
+<h2>Die L&ouml;sung</h2>
+<p>
+Im ASP.NET DataGrid wird das Bearbeiten, Speichern, Abbrechen und L&ouml;schen von Datens&auml;tzen &uuml;ber die EventHandler 
+"<a href="http://msdn.microsoft.com/library/deu../default.htm?url=/library/DEU/cpref/html/frlrfSystemWebUIWebControlsDataGridClassEditCommandTopic.asp?frame=true" target="_blank">EditCommand</a>", 
+"<a href="http://msdn.microsoft.com/library/deu../default.htm?url=/library/DEU/cpref/html/frlrfSystemWebUIWebControlsDataGridClassUpdateCommandTopic.asp?frame=true" target="_blank">UpdateCommand</a>", 
+"<a href="http://msdn.microsoft.com/library/deu../default.htm?url=/library/DEU/cpref/html/frlrfSystemWebUIWebControlsDataGridClassCancelCommandTopic.asp?frame=true" target="_blank">CancelCommand</a>" und 
+"<a href="http://msdn.microsoft.com/library/deu../default.htm?url=/library/DEU/cpref/html/frlrfSystemWebUIWebControlsDataGridClassDeleteCommandTopic.asp?frame=true" target="_blank">DeleteCommand</a>" 
+gesteuert. Diese rufen die jeweiligen Methoden zur Ausf&uuml;hrung der notwendigen Operation auf. Im Aufruf der jeweiligen 
+Methode wird die Klasse <a href="http://msdn.microsoft.com/library/deu../default.htm?url=/library/DEU/cpref/html/frlrfSystemWebUIWebControlsDataGridCommandEventArgsClassTopic.asp?frame=true" target="_blank">DataGridCommandEventArgs</a> 
+&uuml;bergeben. 
+</p>
+<p>
+In eben dieser Klasse stecken die Informationen zum jeweiligen Command. Die 
+<a href="http://msdn.microsoft.com/library/deu../default.htm?url=/library/DEU/cpref/html/frlrfsystemwebuiwebcontrolscommandeventargsclasscommandnametopic.asp?frame=true" target="_blank">CommandName-Eigenschaft</a> 
+beinhaltet hierbei den Namen des jeweiligen Commands, z.B. "Edit". 
+</p>
+<p>
+Ein Blick in die Dokumentation der DataGridCommandEventArgs-Klasse zeigt, da&szlig; es eine weitere Eigenschaft namens 
+"<a href="http://msdn.microsoft.com/library/deu../default.htm?url=/library/DEU/cpref/html/frlrfsystemwebuiwebcontrolscommandeventargsclasscommandargumenttopic.asp" target="_blank">CommandArgument</a>" 
+gibt. Aus der Beschreibung dieser Eigenschaft: 
+</p>
+<p>
+<i>"Das CommandArgument kann eine beliebige, vom Programmierer festgelegte Zeichenfolge enthalten. Die 
+CommandArgument-Eigenschaft erg&auml;nzt die CommandName-Eigenschaft, indem sie das Angeben zus&auml;tzlicher Informationen 
+f&uuml;r den Befehl erm&ouml;glicht."</i>
+</p>
+<p>
+ Im Klartext: wenn wir unserem Befehl Parameter - z.B. die ID eines Datensatzes - f&uuml;r die Ausf&uuml;hrung mitgeben m&ouml;chten, 
+ so ist die Eigenschaft "CommandArgument" unsere erste Wahl. 
+</p>
+<p>
+Das einzige Problem, das sich jetzt noch stellt: wo &uuml;bergeben wir diesen Parameter? In der MSDN werden wir unter dem 
+<a href="http://search.microsoft.com/search/results.aspx?qu=CommandArgument&View=de-de&st=b&c=4&s=5&swc=0" target="_blank">Suchbegriff "CommandArgument"</a> 
+sehr schnell f&uuml;ndig und sto&szlig;en auf drei ASP.NET-Controls, die diese Eigenschaft besitzen:
+</p>
+
+<ul>
+	<li><a href="http://msdn.microsoft.com/library/deu../default.htm?url=/library/DEU/cpref/html/frlrfSystemWebUIWebControlsButtonClassTopic.asp?frame=true" target="_blank">System.Web.UI.WebControls.Button</a>
+	<li><a href="http://msdn.microsoft.com/library/deu../default.htm?url=/library/DEU/cpref/html/frlrfSystemWebUIWebControlsLinkButtonClassTopic.asp?frame=true" target="_blank">System.Web.UI.WebControls.LinkButton</a>
+	<li><a href="http://msdn.microsoft.com/library/deu../default.htm?url=/library/DEU/cpref/html/frlrfSystemWebUIWebControlsImageButtonClassTopic.asp?frame=true" target="_blank">System.Web.UI.WebControls.ImageButton</a>
+</ul>
+
+<p>
+Hiermit schlie&szlig;t sich der Kreis, denn eben diese drei Controls sind es, die auch unsere vorgenannten ItemCommands 
+(Edit, Update etc.) im DataGrid ausl&ouml;sen k&ouml;nnen.
+</p>
+<p>
+Der Weg ist somit also folgender:
+</p>
+
+<ol>
+	<li>Auslesen der Unique-ID des Datensatzes beim Erzeugen des DataGrids und zuweisen als CommandArgument an 
+		den jeweiligen Button
+	<li>Auslesen des CommandArguments im EditCommand und Zuweisung als CommandArgument f&uuml;r den UpdateCommand-Button
+	<li>Auslesen des CommandArguments im UpdateCommand und Updaten des gew&auml;hlten Datensatzes in der Datenbank
+</ol>
+
+<h2>Der Code</h2>
+<p>
+Die Details zum Auslesen der Daten aus der Datenbank und das erstmalige Binden an das DataGrid spare ich mir hier und 
+steige direkt in die Methode 
+<a href="http://msdn.microsoft.com/library/deu../default.htm?url=/library/DEU/cpref/html/frlrfSystemWebUIWebControlsDataGridClassItemDataBoundTopic.asp?frame=true" target="_blank">ItemDataBound</a> 
+ein, die aufgerufen wird, nachdem die Daten an das DataGrid gebunden wurden und uns somit f&uuml;r Punkt 1 unserer ToDo-Liste 
+zur Verf&uuml;gung stehen:
+</p>
+
+<pre style="background='silver';">
+private void DataGrid1_ItemDataBound(object sender, DataGridItemEventArgs e) {
+  if((e.Item.ItemType == ListItemType.AlternatingItem) ||
+    (e.Item.ItemType == ListItemType.Item)) {
+       LinkButton lbtEdit = (LinkButton)e.Item.Cells[2].Controls[0];
+       lbtEdit.CommandArgument = 
+          ((DataRowView)e.Item.DataItem)["CustomerID"].ToString();
+    }
+} 
+</pre>
+
+<p>
+Zun&auml;chst pr&uuml;fen wir, ob es sich um ein 
+<a href="http://msdn.microsoft.com/library/deu../default.htm?url=/library/DEU/cpref/html/frlrfSystemWebUIWebControlsDataGridItemClassTopic.asp?frame=true" target="_blank">DataGridItem</a> 
+vom <a href="http://msdn.microsoft.com/library/deu../default.htm?url=/library/DEU/cpref/html/frlrfsystemwebuiwebcontrolslistitemtypeclasstopic.asp?frame=true" target="_blank">ListItemType</a> 
+AlternatingItem oder Item handelt, denn nur diese beinhalten Daten aus der Datenbank und werden beim 
+ersten Laden des DataGrids angezeigt.
+</p>
+<p>
+Danach wird der <a href="http://msdn.microsoft.com/library/deu../default.htm?url=/library/DEU/cpref/html/frlrfSystemWebUIWebControlsLinkButtonClassTopic.asp?frame=true" target="_blank">LinkButton</a> 
+in der entsprechenden Spalte der aktuellen Zeile einem LinkButton-Objekt zugewiesen. 
+</p>
+<p>
+Dessen CommandArgument-Eigenschaft weisen wir nun den Wert des aktuellen 
+<a href="http://msdn.microsoft.com/library/deu../default.htm?url=/library/DEU/cpref/html/frlrfSystemWebUIWebControlsDataGridItemClassDataItemTopic.asp?frame=true" target="_blank">DataItem</a> 
+zu, das wir in eine <a href="http://msdn.microsoft.com/library/deu../default.htm?url=/library/DEU/cpref/html/frlrfsystemdatadatarowviewclasstopic.asp?frame=true" target="_blank">DataRowView</a> 
+casten und somit &uuml;ber den Spaltennamen der zugrundeliegenden 
+<a href="http://msdn.microsoft.com/library/deu../default.htm?url=/library/DEU/cpref/html/frlrfSystemDataDataTableClassTopic.asp?frame=true" target="_blank">DataTable</a> 
+unseres <a href="http://msdn.microsoft.com/library/deu../default.htm?url=/library/DEU/cpref/html/frlrfSystemDataDataTableClassTopic.asp?frame=true" target="_blank">DataSets</a> 
+ansprechen k&ouml;nnen. 
+</p>
+<p>
+Damit ist Schritt 1 bereits vollst&auml;ndig abgehandelt - das DataGrid ist erzeugt und wir warten auf den Klick 
+des Benutzers auf den Bearbeiten-Button unseres DataGrids.
+</p>
+<p>
+Beim Klick auf besagten Button springen wir in die Methode "EditCommand", die sich wie folgt darstellt:
+</p>
+
+<pre style="background='silver';">
+private void DataGrid1_EditCommand(object source, DataGridCommandEventArgs e) {
+	DataGrid1.EditItemIndex = e.Item.ItemIndex;
+	DataGrid1.SelectedIndex = e.Item.ItemIndex;
+
+	DataGrid1.DataSource = this.ReadDataFromDB();
+	DataGrid1.DataBind();			
+	LinkButton lbtUpdate = 
+	   (LinkButton)this.DataGrid1.Items[e.Item.ItemIndex].Cells[2].Controls[0];
+	lbtUpdate.CommandArgument = e.CommandArgument.ToString();
+}
+</pre>
+
+<p>
+Nach den bekannten Schritten zum Setzen von 
+<a href="http://msdn.microsoft.com/library/deu../default.htm?url=/library/DEU/cpref/html/frlrfSystemWebUIWebControlsDataGridClassEditItemIndexTopic.asp?frame=true" target="_blank">EditItem</a>
+- und <a href="http://msdn.microsoft.com/library/deu../default.htm?url=/library/DEU/cpref/html/frlrfSystemWebUIWebControlsDataGridClassSelectedIndexTopic.asp?frame=true" target="_blank">SelectedIndex</a> 
+und anschlie&szlig;endem DataBinding holen wir uns nun den LinkButton f&uuml;r das Update-Command. Zu beachten ist hierbei, da&szlig; wir 
+nun den Button sowohl &uuml;ber den Spalten als auch &uuml;ber den Zeilenindex 
+(<i>= e.Item.<a href="http://msdn.microsoft.com/library/deu../default.htm?url=/library/DEU/cpref/html/frlrfsystemwebuiwebcontrolsdatagriditemclassitemindextopic.asp?frame=true" target="_blank">ItemIndex</a></i>) 
+unseres DataGrids ansprechen m&uuml;ssen, da <i>e.Item.Cells[2].Controls[0]</i> den Button nicht zur&uuml;ckliefert. Schlie&szlig;lich weisen 
+wir dem LinkButton das aktuelle CommandArgument - also unsere CustomerID - zu.
+</p>
+<p>
+Nun fehlt uns lediglich noch die Methode zum Speichern der Daten beim Klick auf den Update-Button:
+</p>
+
+<pre style="background='silver';">
+private void DataGrid1_UpdateCommand(object source, DataGridCommandEventArgs e) {
+	string companyName  = ((TextBox)e.Item.Cells[0].Controls[0]).Text;
+	string address      = ((TextBox)e.Item.Cells[1].Controls[0]).Text;
+	string customerID   = e.CommandArgument.ToString();
+	this.UpdateCustomer(customerID, companyName, address);
+	
+	DataGrid1.SelectedIndex = -1;
+	DataGrid1.EditItemIndex = -1;
+	DataGrid1.DataSource = this.ReadDataFromDB();
+	DataGrid1.DataBind();
+}
+</pre>
+
+<p>
+Zun&auml;chst lesen wir die m&ouml;glicherweise ge&auml;nderten Daten aus den TextBoxen in lokale Variablen. Unsere CustomerID 
+schreiben wir nun einfach vom aktuellen CommandArgument ebenfalls in eine lokale Variable, welche wir zusammen 
+mit den beiden anderen an die UpdateCustomer-Methode &uuml;bergeben. Diese k&uuml;mmert sich erwartungsgem&auml;&szlig; um das 
+eigentliche Update der Daten in der Datenbank.
+</p>
+<p>
+Abschlie&szlig;end versetzen wir unser DataGrid wieder in den Urzustand, indem wir die Indexe f&uuml;r das ausgew&auml;hlte und 
+das EditItem l&ouml;schen und das DataGrid mit den aktualisierten Daten erneut binden.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+<p>
+Wie man sieht, hat sich Microsoft bei der Entwicklung des .NET Frameworks durchaus Gedanken gemacht und es lohnt sich, 
+ab und zu einen Blick in dessen Dokumentation zu werfen. Der Verwendung des CommandArgument sind praktisch keine 
+Grenzen gesetzt - denken Sie nur an das L&ouml;schen und Sortieren von Daten im DataGrid…
+</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20040929.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20030909.htm">Das ASP.NET DataGrid selbst erweitern</a><br>
+<a href="20040317.htm">Eintr&auml;ge numerieren im DataGrid</a><br>
+<a href="20040628.htm">MouseOver-Effekte beim DataGrid</a><br>
+<a href="20040318.htm">Pager- und Footerzeilen des DataGrid erweitern</a><br>
+<a href="20040303.htm">Vergleich von DataGrid, DataList und Repeater-Control - was verwende ich wann?</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Eine weitere sehr hilfreiche Resource ist das <a href="http://aspxfiles.com/">deutsche ASP.NET Wiki</a>,
+das als zentrale Anlaufstelle f&uuml;r Tips, Tricks, Know How und alles N&uuml;tzliche was man in seinem Alltag als 
+(ASP).NET-Entwickler so braucht und entdeckt gedacht ist. 
+</p>
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20040929" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="DataGrid - Daten bearbeiten leicht gemacht"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20040929.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Alexander Zeitler"><input type="hidden" name="AuthorEmail" value="azeitler@aspintranet.de"><input type="hidden" name="Artikel" value="20040929"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20040929.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

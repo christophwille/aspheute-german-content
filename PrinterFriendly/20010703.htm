@@ -1,0 +1,268 @@
+<HTML>
+<HEAD>
+<TITLE>Web Services einfach konsumieren</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel zeigt Ihnen anhand eines einfachen Beispiels, wie man Web Services mit Hilfe des SOAP Toolkits konsumieren kann.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,SOAP,Web Service,SOAP Toolkit,ASP,Visual Basic,Scripting,Wscript,cscript,mssoapinit,SoapClient">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Web Services einfach konsumieren</H1>
+<p>
+Geschrieben von: <a href="../autoren/christianholm.htm">Christian Holm</a><br>
+Kategorie: <a href="../kategorien/Web%20Services.htm">Web Services</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20010703"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Web Services sind dazu da um konsumiert zu werden! Die Erstellung eines Web Services mit klassischen
+Entwicklungstools wie Visual Basic 6 und Active Server Pages ist ja Dank des Microsoft SOAP Toolkits relativ 
+einfach.
+Nach der Erstellung des Web Service soll der Client aber auch die Dienste benutzen, d.h. konsumieren k&ouml;nnen.
+Dieser Artikel zeigt Ihnen anhand eines einfachen Beispiels, wie das mit Hilfe des SOAP Toolkits geht.
+</p>
+
+<p>
+Im Artikel <a href="../artikel/20010629.htm">Web Services mit dem SOAP Toolkit erstellen</a> haben wir einen
+einfachen Web Service erstellt, der einen String zur&uuml;ckliefert. Im heutigen Artikel zeige ich Ihnen, wie man diesen
+Web Service client-seitig konsumieren kann. F&uuml;r das Konsumieren ben&ouml;tigt man das SOAP Toolkit, weitere Informationen
+dazu (und Download) finden sich im zuvor genannten Artikel.
+</p>
+
+<p>
+Der "Konsum"-Prozess (&Auml;hnlichkeiten mit realen Bez&uuml;gen nicht beabsichtigt) beginnt mit einem Request des Clients.
+Dieser Request stellt bei Verwendung unseres 
+Web Services aus dem Artikel <a href="../artikel/20010629.htm">Web Services mit dem SOAP Toolkit erstellen</a>
+einen Methodenaufruf dar. Eben dieser Request wird vom <i>SoapClient</i> Objekt entgegengenommen und erstellt einen
+<i>SOAP Request</i> der dem Web Server &uuml;bergeben wird. Der Server bearbeitet dann den Request, f&uuml;hrt die erhaltenen Anweisungen 
+aus, und schickt das Ergebnis als <i>SOAP Response</i> wieder zur&uuml;ck zum Client. Dort formuliert der <i>SoapClient</i>
+aus der <i>SOAP Response</i> eine, f&uuml;r den Benutzer des Web Service lesbare Anwort, die das Ergebnis aus der Prozedur
+enth&auml;lt.
+</p>
+
+<p>
+Bildlich gesprochen passiert also folgendes:
+</p>
+
+<IMG SRC="/artikel/Bilder/200107/20010703_1.png" width="569" height="359" alt="" border="0">
+
+<p>
+Damit dieser Proze&szlig; ablaufen kann, mu&szlig; vorher das <i>SoapClient</i> Objekt von der jeweiligen Anwendung 
+instanziert werden.
+Nachdem dies erfolgreich geschehen ist, initialisieren wir das Objekt mit der <i>mssoapinit</i> Methode, welche
+aus der WSDL (Web Services Description Language) Datei die n&ouml;tigen Informationen f&uuml;r diesen Vorgang bezieht.
+</p>
+
+<p>
+Die Syntax der <i>mssoapinit</i> Methode sieht folgenderma&szlig;en aus:
+</p>
+
+<pre style="background='silver';">
+object.mssoapinit("WSDLFile", "ServiceName", "Port", "WSMLFile")
+</pre>
+
+<p>
+Die Parameter dieser Methode bedeuten:
+</p>
+
+
+<li><i>WSDLFile</i>: Angabe des URLs der WSDL Datei</li>
+<li><i>ServiceName</i>: Eigentlicher Service, der in der WSDL Datei beschrieben wird. Dieser Parameter is optional, d.h
+wenn er weggelassen wird, verwendet die Methode den ersten in der Datei berschriebenen Service. Der Eintrag in der WSDL Datei sieht so aus:</li>
+
+<pre style="background='silver';">
+&lt;service name='SimpleWebService' &gt;
+</pre>
+
+<li><i>Port</i>: Der Name des Ports, der in Der WSDL Datei angef&uuml;hrt ist; optional; Eintrag in der WSDL Datei:</li>
+ 
+<pre style="background='silver';">
+&lt;portType name='SimpleWSSoapPort'&gt;
+</pre>
+
+<li><i>WSMLFile</i>: Angabe des URLs der WSML (Web Services Meta Language) Datei; optional</li>
+
+
+<p>
+Nach der Initialisierung tritt der <i>WSDLReader</i> in Aktion. Dieses Objekt liest die von den WSDL und WSML Dateien bereitgestellten 
+Informationen, die den Web Service beschreiben ein, und l&auml;dt diese in ein DOM (Document Object Model). Durch die nun
+erhaltenen Informationen (Methodenaufruf der zug&auml;nglichen Methode <i>RetString</i>) kann ein <i>WSDLOperation</i>
+Objekt erstellt werden. Dieses Objekt enth&auml;lt Eigenschaften, die die IO Messages des Web Service betreffen.
+</p>
+
+<p>
+Danach erstellt der <i>SoapClient</i> f&uuml;r die <i>RetString</i> Methode einen <i>SoapMapper</i> und zus&auml;tzlich werden vom
+<i>SoapClient</i> Objekt die IO Messages (in unserem Fall wird nur ein Outputstring erwartet) in diesen geladen.  
+Der <i>SoapSerializer</i> erstellt anhand des <i>SoapMappers</i> einen <i>SoapRequest</i> der dann zum Server 
+geschickt und verarbeitet wird.
+</p>
+
+<p>
+Nach der serverseitigen Verarbeitung schickt der Server eine SOAP Response (den Outputstring) zum Client zur&uuml;ck.
+Das <i>SoapClient</i> Objekt nimmt diese Response entgegen, packt diese in den daf&uuml;r vorgesehenen Outputteil des
+vorher erstellten <i>SoapMappers</i> und schickt dies zur&uuml;ck zur Client Applikation.
+</p>
+
+<p>
+Sehen wir uns nun aber die Theorie in einem einfachen Beispiel an. Es gibt viele M&ouml;glichkeiten um einen Web Service
+zu konsumieren. Die erste und gleichzeitig einfachste ist jene, den Methodenaufruf der von au&szlig;en zug&auml;nglichen Methode(n)
+in eine VBScript Datei zu packen. Warum dies? Es ist, wie gesagt die einfachste und schnellste M&ouml;glichkeit einen
+Web Service zu testen, bevor man es mit einer GUI konsumiert.
+</p>
+
+<p>
+Wir erstellen also eine VBScript Datei (<b>consumer.vbs</b>), die die n&ouml;tigen Anweisungen zum Konsumieren des Web Service
+beinhaltet:
+</p>
+
+<pre style="background='silver';">
+Option Explicit
+
+Dim SoapClient
+Set SoapClient = CreateObject("MSSOAP.SoapClient") 
+On Error Resume Next
+Call SoapClient.mssoapinit("http://127.0.0.1/WSSoap/SimpleWebService.WSDL",  _
+       "SimpleWebService", "SimpleWSSoapPort")
+       
+If err &lt;&gt; 0 Then
+  wscript.echo "Init Failure: " + err.description
+End If
+
+wscript.echo  SoapClient.RetString
+If err &lt;&gt; 0 Then
+  wscript.echo   "Error: " + err.description
+  wscript.echo   "Error Code: " + SoapClient.faultcode
+  wscript.echo   "Error String: " + SoapClient.faultstring
+  wscript.echo   "Fault Actor: " + SoapClient.faultactor
+  wscript.echo   "Detailed Information: " + SoapClient.detail
+End If
+</pre>
+
+<p>
+Da f&uuml;r Testzwecke auch eine Fehlerbehandlung notwendig ist, habe ich diese gleich miterstellt. Das <i>SoapClient</i>
+Object besitzt schon von Haus aus einige Properties, mit denen man eine m&ouml;gliche Fehlerquelle diagnostizieren kann.
+</p>
+<p>
+Nach dem Speichern der Datei rufen wir das Command Prompt (<b>cmd.exe</b>) auf, und wechseln in das Verzeichnis, wo sich die WScript 
+Datei befindet. Wir k&ouml;nnen nun mit 
+</p>
+
+<pre style="background='silver';">
+cscript consumer.vbs
+</pre>
+
+<p>
+den Web Service konsumieren. Bei erfolgreichem Ablauf pr&auml;sentiert sich an der Kommandozeile folgendes Ergebnis:
+</p>
+
+<IMG SRC="/artikel/Bilder/200107/20010703_2.png" width="652" height="167" alt="" border="0">
+
+<p>
+Da dieses Beispiel sehr einfach ist, schreiben wir schnell eine ASP Version, indem wir einfach den obigen Code
+etwas anpassen:
+</p>
+
+<pre style="background='silver';">
+&lt;%
+Set SoapClient = CreateObject("MSSOAP.SoapClient")
+On Error Resume Next
+
+SoapClient.mssoapinit "http://127.0.0.1/WSSoap/SimpleWebService.WSDL"
+
+If err &lt;&gt; 0 Then
+  Response.Write "Init Failure: " &amp; Err.description
+End If
+
+SoapClient.RetString()
+If Err &lt;&gt; 0 Then
+  Response.Write "&lt;br&gt;&lt;b&gt;Error:&lt;/b&gt; " &amp; Err.description 
+  Response.Write "&lt;br&gt;&lt;b&gt;Error Code:&lt;/b&gt; " &amp; SoapClient.faultcode
+  Response.Write "&lt;br&gt;&lt;b&gt;Error String:&lt;/b&gt; " &amp; SoapClient.faultstring
+  Response.Write "&lt;br&gt;&lt;b&gt;Fault Actor:&lt;/b&gt; " &amp; SoapClient.faultactor
+  Response.Write "&lt;br&gt;&lt;b&gt;Detailed Information:&lt;/b&gt; " &amp; SoapClient.detail
+End If
+
+%&gt;
+</pre>
+
+<p>
+Bei Ausf&uuml;hren dieser Datei bietet sich das gleiche - zugegebenerma&szlig;en einfallslose - Bild. Interessanter wird es aber wenn 
+ein Fehler auftritt. Wenn ich nun gemeinerweise etwas an den Dateien "herumpfusche" (nat&uuml;rlich nur f&uuml;r die 
+Demozwecke), pr&auml;sentiert sich f&uuml;r des Entwickers Augen eine ausf&uuml;hrliche Fehlerbeschreibung:
+</p>
+
+<IMG SRC="/artikel/Bilder/200107/20010703_3.png" width="563" height="430" alt="" border="0">
+
+<p>
+Was ich damit demonstrieren wollte ist, da&szlig; man auf Fehlerbehandlung beim Konsumieren von Web Services nicht
+verzichten sollte. Es handelt sich ja schlie&szlig;lich um Services, die &uuml;ber Netzwerkverbindungen angesprochen werden - 
+und diese als auch die Services selbst k&ouml;nnen ja einmal nicht verf&uuml;gbar sein.
+</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>
+Dieser Artikel zeigte Ihnen wie man auf altbew&auml;hrte Art und Weise, also mit VBScript und ASP, einen Web Service
+konsumiert. Das Beispiel war mit Absicht einfach gehalten, um den ablaufenden Prozess verst&auml;ndlich zu machen. 
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20010703.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20010703.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20021029.htm">Amazon.com Web Services 2.0</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20021029.htm</span><br>
+<a href="../artikel/20020415.htm">Programmieren mit den Google Web APIs Beta 2</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20020415.htm</span><br>
+<a href="../artikel/20010629.htm">Web Services mit dem SOAP Toolkit erstellen</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20010629.htm</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

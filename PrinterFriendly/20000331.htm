@@ -1,0 +1,199 @@
+<HTML>
+<HEAD>
+<TITLE>Ein G&auml;stebuch in ASP erstellen - Teil 1</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="21 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Lernen sie die Datenbank f&uuml;r ein G&auml;stebuch zu erstellen. Bauen sie ein Eingabeformular, und speichern sie die &uuml;berpr&uuml;ften Daten in die Datenbank.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,ADO,ASP,Gästebuch,Guestbook,Sourcecode,Datenbank,AspGerman">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<H1>Ein G&auml;stebuch in ASP erstellen - Teil 1</H1>
+<p>
+Geschrieben von: <a href="../autoren/christophwille.htm">Christoph Wille</a><br>
+Kategorie: <a href="../kategorien/Datenbank.htm">Datenbank</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20000331"></SCRIPT>
+</p>
+
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p><p>
+Willkommen zum ersten Artikel in einer Serie von insgesamt drei. Das Ziel ist es, am Ende der Serie ein voll funktionsf&auml;higes
+G&auml;stebuch mit ASP und ADO zu erstellen. Im ersten Artikel besch&auml;ftigen wir uns mit dem Datenbankdesign
+und dem Erstellen eines Eintrages in das G&auml;stebuch (Teil 2 behandelt dann die Ausgabe, und Teil 3 die 
+Administration des G&auml;stebuchs).
+</p>
+<p>
+Bevor ich mit dem Datenbankdesign beginne, 
+sehen wir uns einmal ein typisches Eingabeformular f&uuml;r ein G&auml;stebuch an:
+</p>
+<p>
+<IMG SRC="/artikel/Bilder/200003/20000331_2.png" width="581" height="475" alt="Eingabeformular" border="0">
+</p>
+<p>
+Der Benutzer mu&szlig; Name und Emailadresse angeben, die Angabe der Homepage beziehungsweise eines 
+Kommentars ist freiwillig. Um das Formular einfach zu halten, habe ich auf die &Uuml;berpr&uuml;fung der
+Eingabe vor dem Abschicken des Formulars an den Server verzichtet, man kann dies allerdings leicht
+zum <a href="../artikel/20000331_code1.htm" target="_blank">Sourcecode</a> mittels JavaScript Routinen
+anf&uuml;gen.
+</p>
+<p>
+Auf diesem Bildschirmphoto sind bereits vier Felder zu sehen, die in der Datenbank ebenfalls abgelegt
+werden m&uuml;ssen: Name, Emailadresse, Homepage und Kommentar. 
+</p>
+<p>
+Neben diesen explizit abgefragten 
+Benutzereingaben kann man allerdings auch einiges an implizit &uuml;ber den Benutzer erhaltenen Information
+ablegen. So zum Beispiel schickt jeder Browser seine Kennung (User Agent Header) mit, aus der der
+Hersteller, die Version sowie das verwendete Betriebssystem mit Hilfe der BrowserType Komponente
+ermittelt werden kann.
+</p>
+<p>
+Weiters erh&auml;lt man noch die IP Adresse des Client Computers mitgeteilt (Achtung: dies k&ouml;nnte auch ein
+Proxy Server sein!). Als letzte verwertbare Information bleibt dann noch das aktuelle Datum des Servers,
+allerdings sollte man hier darauf vorbereitet sein, eine Korrektur auf Grund der Zeitzonen 
+vorzunehmen.
+</p>
+<p>
+Damit ergibt sich folgendes Design f&uuml;r die Tabelle <b>Guestbook</b>:
+</p>
+<p>
+<IMG SRC="/artikel/Bilder/200003/20000331_1.png" width="274" height="226" alt="Tabelle Guestbook" border="0">
+</p>
+<p>
+Die Felder sind von ihren Namen klar identifizierbar, allerdings d&uuml;rften bei einigen Datentypen
+Fragen auftreten, so zum Beispiel bei <i>EntryDate</i> (Datum des Eintrags). Warum speichere ich das 
+nicht als Datumstyp, sondern als Text? Der Grund ist, da&szlig; ich das Datum nicht zum Sortieren brauche
+(daf&uuml;r reicht <i>IdField</i>), und ich es somit bereits korrekt formatiert in der Datenbank ablegen kann,
+was mich unabh&auml;ngig von der Landeseinstellung des Webservers macht (man k&ouml;nnte es Faulheit nennen).
+</p>
+<p>
+Die IP Adresse habe ich in vier Felder des Types <b>Byte</b> zerlegt, womit nur 4 Byte Speicherplatz 
+verbraucht werden. H&auml;tte ich im Gegensatz dazu die IP Adresse (192.192.192.192) als Textfeld 
+gespeichert, w&auml;re der Speicherplatzverbrauch 15 Byte gewesen - 11 Byte gespart.
+</p>
+<p>
+Das letzte Feld <i>IsEntryLive</i> wird in der Implementierung des G&auml;stebuchs im Moment nicht verwendet,
+allerdings k&ouml;nnte man es dazu verwenden, einen Eintrag erst nach Pr&uuml;fung durch den Administrator
+freizuschalten. In der Datenbank ist der Standardwert True vorgegeben.
+</p>
+<p>
+Jetzt, da die Datenbank fertig ist, k&ouml;nnen wir uns Gedanken machen, was passieren soll, wenn der
+Benutzer Daten eingibt und das Formular abschickt. Dazu habe ich eine kleine Process flow Graphik
+gezeichnet:
+</p>
+<p>
+<IMG SRC="/artikel/Bilder/200003/20000331_3.png" width="517" height="205" alt="Process flow" border="0">
+</p>
+<p>
+Das Eingabeformular <i>signupform.htm</i> ist statisch und f&uuml;hrt keine serverseitigen Aktionen durch.
+Die ASP Datei, auf die die eingegebenen Daten gepostet werden (<i>signup.asp</i>), hat allerdings
+sehr viele Aufgaben zu erledigen. Im ersten Schritt wird kontrolliert, ob der Benutzer plausible Daten
+eingeben hat - und wenn nicht, ihn auffordert, die fehlenden/falschen Daten einzugeben. Nach dieser
+Erstkontrolle postet signup.asp auf sich selbst, und f&uuml;hrt die Einf&uuml;geoperation in die Datenbank durch.
+</p>
+<p>
+Der <a href="../artikel/20000331_code1.htm" target="_blank">Code f&uuml;r signupform.htm</a> ist simpel, der <a href="../artikel/20000331_code2.htm" target="_blank">Code f&uuml;r signup.asp</a>
+bedarf allerdings einiger Erkl&auml;rungen. 
+</p>
+<p>
+Zuerst werden alle Felder ausgelesen (Zeilen 13 bis 18), und dann einer einfachen - leicht f&uuml;r 
+eigene Zwecke erweiterbaren - &Uuml;berpr&uuml;fung unterzogen (Zeile 21). Eine Zeile vorher allerdings findet
+die &Uuml;berpr&uuml;fung statt, ob dies jetzt der Datenkontrolldurchlauf ist, oder das Einf&uuml;gen in die Datenbank
+durchgef&uuml;hrt werden soll (<i>strFinal</i>). Der Teil der Datenkontrolle zieht sich von Zeile 21 bis
+45, der Teil f&uuml;r die Einf&uuml;geoperation in die Datenbank von Zeile 47 bis 94.
+</p>
+<p>
+Der Datenkontrolldurchlauf beeinhaltet keine nennenswerten Tricks, in dieser Hinsicht interessanter
+ist die Einf&uuml;geoperation. Zuerst wird mit Hilfe des <b>BrowserType</b> Objekts der Browser und das
+Betriebssystem ermittelt. Wichtig zu beachten ist, da&szlig; das BrowserType Objekt diese Daten nur dann
+bereitstellen kann, wenn es den Browser kennt - dies bedeutet, er mu&szlig; in der Datei <b>browscap.ini</b>
+definiert sein (aktuelle Versionen dieser Datei findet man bei AspTracker.com - ein Link
+befindet sich am Ende des Artikels).
+</p>
+<p>
+Das Datum wird mit Hilfe der <i>DatePart</i> Funktion in Zeile 55 zusammengebaut, und danach folgt ein
+Block (58-63), der die Felder auf die richtige L&auml;nge k&uuml;rzt (sonst gibt es Einf&uuml;gefehler in die Datenbank).
+Darauf folgend wird die IP Adresse in vier Blocks zerlegt, und zwar mit Hilfe der <i>Split</i> Funktion aus
+VBScript.
+</p>
+<p>
+Um das Einf&uuml;gen in die Datenbank angenehm zu gestalten, habe ich ein Recordset Objekt ge&ouml;ffnet. Dieses
+hat allerdings eine spezielle Eigenschaft - es kann keine Zeilen aufweisen, da das <i>WHERE</i> Statement
+mit <b>IdField-1</b> niemals erf&uuml;llt sein kann (AutoNumber Felder beginnen bei 1). Der Sinn und Zweck
+eines leeren Recordsets besteht darin, da&szlig; es sehr schnell ge&ouml;ffnet wird, speziell wenn die Anzahl der
+Eintr&auml;ge in das G&auml;stebuch steigt.
+</p>
+<p>
+Zum Schlu&szlig; bleibt mir nur noch die Funktion <b>SafeHtmlEncode</b> zu erw&auml;hnen - diese macht ihrem 
+Namen alle Ehre, da <i>Server.HtmlEncode</i> bei Null-Werten einen Fehler produziert, und diese Funktion nichts
+anderes macht, als diesen Fehler zu verhindern. 
+</p>
+<p>
+Damit w&uuml;nsche ich ihnen auch schon viel Spa&szlig; beim
+Ausprobieren des Sourcecodes, und ich hoffe wir lesen uns wieder beim 2 Artikel der G&auml;stebuchserie.
+</p>
+
+<p><strong>This printed page brought to you by <a href="http://www.alphasierrapapa.com/">AlphaSierraPapa</a></strong></p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20000331.zip">Klicken Sie hier</a>, um den Download zu starten.<br><SPAN class="content">http://www.aspheute.com/code/20000331.zip</span></p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="../artikel/20000403.htm">Ein G&auml;stebuch in ASP erstellen - Teil 2</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000403.htm</span><br>
+<a href="../artikel/20000404.htm">Ein G&auml;stebuch in ASP erstellen - Teil 3</a><br>
+<SPAN class="content">http:/www.aspheute.com/artikel/20000404.htm</span><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easptracker%2Ecom">browscap.ini Update</a><br>
+<SPAN class="content">http://www.asptracker.com</span><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Easpgerman%2Ecom%2Faspgerman%2Fguestbook%2F">Live Gästebuch</a><br>
+<SPAN class="content">http://www.aspgerman.com/aspgerman/guestbook/</span><br>
+
+</p>
+
+&nbsp;<P>
+<center>
+
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>

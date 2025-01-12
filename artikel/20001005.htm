@@ -1,0 +1,489 @@
+<HTML>
+<HEAD>
+<TITLE>Zippen und entzippen von Dateien</TITLE>
+<META HTTP-EQUIV="content-type: text/html; charset= ISO-8859-1">
+<META HTTP-EQUIV="Content-Language" CONTENT="DE">
+<META NAME="robots" CONTENT="FOLLOW,INDEX">
+<META NAME="generator" CONTENT="Xitra Site Publishing">
+<meta name="Author" content="webmaster@aspheute.com">
+
+<META NAME="revisit-after" CONTENT="7 days">
+<META NAME="copyright" CONTENT="(c) 2000-2006. Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich geschützt.">
+<META HTTP-EQUIV="expires" CONTENT="1999-03-30T00:00:00+00:00"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+
+<meta http-equiv="Description" name="Description" content="Dieser Artikel beschreibt wie man gro&szlig;e Datenmengen schnell und einfach auf den Webserver &uuml;bertr&auml;gt.">
+<meta http-equiv="Keywords" name="Keywords" content="ASP,Active Server Pages,IIS,Internet Information Server,PWS,Personal Web Server,ADO,Archiv,Komprimieren,Entpacken,Webserver,Datenmengen,Datentransfer,Extrahieren,Packen">
+<link rel="stylesheet" href="../includes/default.css">
+</HEAD>
+<BODY BGCOLOR="#ffffff"  BACKGROUND="../images/layout/aspheutemainbg.gif" >
+
+
+<div style="border-bottom: solid 5px white;">
+<div class="DotNetGermanCommunityBar">
+    <a href="http://www.glengamoi.com">Glengamoi (Forum)</a> &middot;
+    <a href="http://www.aspheute.com/" style="font-weight: bold">AspHeute</a> &middot;
+    <a href="http://dotnetheute.com/">.NET Heute (RSS-Suche)</a> &middot;
+    <a href="http://aspxfiles.com/">AspxFiles (Wiki)</a> &middot;
+    <a href="http://blogs.dotnetgerman.com/">.NET Blogs</a>
+</div>
+</div>
+
+
+<MAP NAME="titlebar">
+<!--<AREA SHAPE=RECT COORDS="116,46,191,61" HREF="http://www.aspaktuell.com" ALT="ASP Aktuell">-->
+<!--<AREA SHAPE=RECT COORDS="192,46,255,61" HREF="http://www.aspwelt.com" ALT="ASP Welt">-->
+<AREA SHAPE=RECT COORDS="256,46,432,61" HREF="http://www.aspgerman.com/aspgerman/" ALT="ASP German">
+<AREA SHAPE=RECT COORDS="115,15,269,42" HREF="../default.htm" ALT="Homepage">
+<AREA SHAPE=RECT COORDS="278,26,587,42" HREF="../default.htm" ALT="Homepage">
+</MAP>
+
+<div style="position:absolute;left:0px;top:30px">
+<table border=0 cellspacing=0 cellpadding=0>
+<tr>
+<td background="../images/layout/aspheutetitle.gif">
+<img src="../images/layout/blind.gif" width="715" height="73" usemap="#titlebar" border="0">
+</td>
+<td width="100%" background="../images/layout/aspheutetitleext.gif">
+&nbsp;
+</td>
+<td background="../images/layout/aspheutetitleend.gif">
+<img src="../images/layout/blind.gif" width="25" height="1">
+</td>
+</tr>
+</table>
+</div>
+
+<div style="position:absolute;left:1px;top:115px">
+<table width="110" border="0" cellspacing="0" cellpadding="0">
+<tr><td width="110"><img src="../Images/spacer.gif" width="110" height="1" alt="" border="0"></td></tr>
+<tr>
+<td background="../images/layout/aspheuteheader.gif" class="header" height=16 width="110">
+<p>Liste</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+
+<p class="content">
+<a href="../kategorien/dotNET%202dot0.htm">.NET 2.0 (1)</a><br>
+<a href="../kategorien/dotNET%20Allgemein.htm">.NET Allgemein (16)</a><br>
+<a href="../kategorien/dotNET%20Fu.htm">.NET Fu (5)</a><br>
+<a href="../kategorien/ADOdotNET.htm">ADO.NET (11)</a><br>
+<a href="../kategorien/Aprilscherz.htm">Aprilscherz (3)</a><br>
+<a href="../kategorien/ASP%20Grundlagen.htm">ASP Grundlagen (44)</a><br>
+<a href="../kategorien/ASP%20Tricks.htm">ASP Tricks (83)</a><br>
+<a href="../kategorien/ASPdotNET.htm">ASP.NET (44)</a><br>
+<a href="../kategorien/ASPIntranetdotde.htm">ASPIntranet.de (5)</a><br>
+<a href="../kategorien/Csharp.htm">C# (28)</a><br>
+<a href="../kategorien/Datenbank.htm">Datenbank (44)</a><br>
+<a href="../kategorien/Dokumentation.htm">Dokumentation (4)</a><br>
+<a href="../kategorien/IIS%206dot0.htm">IIS 6.0 (1)</a><br>
+<a href="../kategorien/Komponenten.htm">Komponenten (29)</a><br>
+<a href="../kategorien/Optimierung.htm">Optimierung (10)</a><br>
+<a href="../kategorien/Server.htm">Server (21)</a><br>
+<a href="../kategorien/Sicherheit.htm">Sicherheit (34)</a><br>
+<a href="../kategorien/Tee%20Off.htm">Tee Off (6)</a><br>
+<a href="../kategorien/VBdotNET.htm">VB.NET (6)</a><br>
+<a href="../kategorien/WAP.htm">WAP (8)</a><br>
+<a href="../kategorien/Web%20Services.htm">Web Services (11)</a><br>
+<a href="../kategorien/XML.htm">XML (9)</a><br>
+
+
+<br>
+<a href="/syndication/rss.xml"><img src="../Images/rss_small.png" width="25" height="10" alt="RSS 2.0 - Die neuesten f&uuml;nf Artikel auf AspHeute.com" border="0"></a>
+
+</p><!-- </p> remains -->
+
+
+<br>
+
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearch.gif" class="header" height=16 width="110">
+<p>Suchen</p>
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheutesearchext.gif" class="header" width="110">
+<form class="content" ACTION="REMOVED" METHOD="GET">
+<div>
+<input class="Newsletter" type="text" size="10" name="CiRestriction">
+<span class="spacer2"><br></span>
+<span class="spacer4"><br></span>
+<INPUT TYPE="HIDDEN" NAME="CiMaxRecordsPerPage" VALUE="10">
+<INPUT TYPE="HIDDEN" NAME="CiSort" VALUE="rank[d]">
+<INPUT TYPE="HIDDEN" NAME="HTMLQueryForm" VALUE="../default.htm">
+<img src="../images/layout/blind.gif" width="41" height="1"><input type="image" src="../images/layout/aspheutesearchenter.gif" border="0" width="49" height="14"><br>
+<span class="spacer4"><br></span>
+</div>
+</form>
+</td>
+</tr>
+<tr>
+<td class="empty" width="110">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td background="../images/layout/aspheuteheaderext.gif" class="header" width="110">
+<p class="content">
+<a href="/REMOVED/" title="Our most popular articles translated into English">English Articles</a><br>
+<a href="/REMOVED/" title="Visit our Chinese content section">Chinese Articles</a><br>
+<a href="../autoren/UnsereAutoren.htm" title="Unsere Autoren">Unsere Autoren</a><br>
+&nbsp;<br>
+<a href="/REMOVED/link2us.asp" title="Setzen Sie einen Link zu AspHeute!">Link zu AspHeute</a><br>
+<a href="/REMOVED/impressum.asp" title="Das Impressum von AspHeute">Impressum</a><br>
+<a href="/REMOVED/advertise.asp" title="Werben auch Sie auf AspHeute">Werben</a><br>
+<a href="/REMOVED/kontakt.asp" title="Teilen Sie uns Ihre W&uuml;nsche, Beschwerden und Anregungen mit">Anfragen</a><br>
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+
+
+<!-- Content starts here  -->
+<div style="position:absolute;left:120px;top:108px">
+<table cellspacing="0" cellpadding="0"><!--Tabelle aussen-->
+<tr><!--Tabelle aussen, 1/2-->
+<td><!--Tabelle aussen, 1/1-->
+    <table border=0 align=center><tr><td align=center>
+
+
+</td></tr></table>
+
+<H1>Zippen und entzippen von Dateien</H1>
+<p>
+Geschrieben von: <a href="../autoren/christiankoller.htm">Christian Koller</a><br>
+Kategorie: <a href="../kategorien/ASP%20Tricks.htm">ASP Tricks</a><br>
+<SCRIPT src="/service/artikelbewertung.asp?Artikel=20001005"></SCRIPT>
+</p>
+<p>Das &Uuml;bertragen von gro&szlig;en Datenmengen im Internet ist oftmals eine Frage der Geduld
+- oder der Planung. Hat man zum Beispiel jeden Tag eine komplette Website auf den Webserver zu 
+kopieren, so ist dies sp&auml;testens bei 1 MB und 100 Dateien ein langwieriges Unterfangen.</p>
+
+<p>Genauso lang dauert es im Allgemeinen, um vom Webserver gro&szlig;e Datenmengen,
+wie zum Beispiel eine Access Datenbank (*.mdb Datei) zur Sicherung vom Webserver zu laden.</p>
+
+<p>Um nun die Datenmenge und die Ladezeit zu minimieren, kann man Tools zum Komprimieren von 
+Dateien, wie <a href="http://www.winzip.de">Winzip</a>, verwenden.</p>
+
+<p>Winzip ist das wohl verbreitetste Komprimierungsprogramm unter Windows.
+Die mit Winzip erzeugten Archive haben &uuml;berlicherweise die Dateiendung <i>ZIP</i>.
+Solch ein ZIP-Archiv kann eine Datei, mehrere Dateien sowie
+ganze Verzeichnisse samt Unterverzeichnissen enthalten. 
+Das Archiv selbst ist etwa 10% - 95% kleiner als die &uuml;rspr&uuml;nglichen Dateien.</p>
+
+<p>Arbeitet man mit einem FTP (File Transfer Protocol) Programm um Zugriff auf die 
+Dateien eines Webservers zu erlangen, so ist das Laden oder Senden einer ZIP-Datei 
+schneller als wenn man die unkomprimierten Daten transferiert. Nicht nur, da&szlig; eine
+geringere Datenmenge schneller &uuml;bertragen wird, auch das &Uuml;bertragen von einer Datei
+(dem ZIP-Archiv) anstatt von mehreren Dateien erlaubt eine Steigerung der durchschnittlichen
+&Uuml;bertragungsrate.</p>
+
+<p>Das folgende Diagramm (Bild 1) zeigt, wie der Prozess des &Uuml;bertragens von komprimierten 
+Daten zum Webserver vor sich geht: Beliebig viele Dateien werden
+in ein ZIP-Archiv (im Diagramm <i>Transfer.zip</i>) gepackt. Dabei vermindert sich die
+Gesamtgr&ouml;&szlig;e der Datenmenge vor allem bei Textdateien (wie .htm, .asp) 
+erheblich. Das Archiv wird dann mittels FTP auf den Webserver transferiert,
+und die darin enthaltenen Dateien werden dann wieder entpackt und auf den Webserver geschrieben.</p>
+
+<p><IMG SRC="Bilder/200010/20001005_FTP.png" width="398" height="369" alt="" border="0">
+<br>
+<i>Bild 1: Senden von gepackten Dateien an den Webserver</i></p>
+
+<h2>Komprimieren von Dateien und Verzeichnissen</h2>
+<p>Der erste Teil des Prozesses ist einfach: Sie benutzen 
+<a href="http://www.winzip.de">WinZip</a> und komprimieren ein Verzeichnis 
+mit allen darin enthaltenen Dateien und Unterverzeichnissen und speichern das Archiv
+unter <i>Transfer.zip</i> (oder einem anderen Namen) in einem beliebigen Verzeichnis
+auf Ihrem Computer ab.</p>
+
+<p>Tip: Wenn Winzip auf Ihrem Computer installiert ist, so klicken Sie 
+mit der rechten Maustaste auf das zu komprimierende Verzeichnis 
+oder eine einzelne Datei und w&auml;hlen "Zu ZIP Archiv hinzuf&uuml;gen" (Siehe Bild 2).
+Das ZIP-Archive wird im selben Verzeichnis erstellt, das auch das zu komprimierende
+Verzeichnis enth&auml;lt.</p>
+
+<p><IMG SRC="Bilder/200010/20001005_CreateZip.png" width="242" height="238" alt="" border="0">
+<br>
+<i>Bild 2: Komprimieren eines Verzeichnisses</i></p>
+
+<p>&Ouml;ffnen Sie das ZIP-Archiv mit einem Doppelklick, so sehen Sie die darin
+gespeicherten Dateien, deren Komprimierung und den urspr&uuml;nglichen,
+relativen Pfad der Datei (Bild 3). </p>
+
+<p><IMG SRC="Bilder/200010/20001005_ZIPArchive.png" width="499" height="309" alt="" border="0">
+<br>
+<i>Bild 3: Inhalt des ZIP-Archives</i></p>
+
+<p>Dieses Archiv k&ouml;nnen Sie mit jedem beliebigen FTP-Pragramm
+(z.b. <a href="http://www.ipswitch.com/index.html">WS_FTP LE</a>) 
+zum Webserver transferieren.</p>
+
+<p>Jetzt kommt die eigentliche H&uuml;rde des Prozesses: 
+Wie entpackt man das Archiv wieder am Webserver? Wenn Sie direkten Zugriff auf den Server
+haben, so k&ouml;nnen Sie das Archiv wieder mit Winzip entpacken. 
+Wenn Sie allerdings nur &uuml;ber FTP und ASP auf Ihren Server zugreifen k&ouml;nnen,
+wie dies oft bei gemieteten Webserver-Accounts der Fall ist, so m&uuml;ssen Sie zu anderen
+Mitteln greifen.</p>
+
+<h2>Entpacken des ZIP-Archives am Webserver</h2>
+
+<p>Um ein ZIP-Archiv am Webserver zu entpacken und die Dateien in der gespeicherten 
+Verzeichnisstruktur auf den Webserver zu schreiben, empfiehlt sich der Einsatz einer
+ASP Komponente.</p>
+
+<p>Ich habe f&uuml;r diesen Artikel (exemplarisch f&uuml;r andere Komponenten),
+die <a href="http://www.infomentum.com/activefile/">ActiveFile Komponente</a> 
+der Firma <a href="http://www.infomentum.com/">Infomentum</a> gew&auml;hlt,
+da diese mit ZIP Dateien am Server umgehen kann und von ASP aus problemlos
+einsetzbar ist.</p>
+
+<h3>Installation der ActiveFile Komponente am Webserver</h3>
+
+<p>Bevor die <i>ActiveFile Komponente</i> am Webserver benutzt werden kann,
+mu&szlig; sie am Webserver installiert werden. Dies erlaubt f&uuml;r 
+gew&ouml;hnlich jeder ernstzunehmende ASP Provider. Wenn Sie 
+ActiveFile selber am Webserver installieren wollen, so m&uuml;ssen Sie 
+dazu nur die Datei <i>ActiveFile22.exe</i> (bei ActiveFile Version 2.2.7) 
+vom Hersteller laden und mit einem Doppelklick auf die Datei die Installation starten.</p>
+
+<p>W&auml;hrend der Installation k&ouml;nnen Sie eventuell eine 
+kompakte Installation ("Compact" bei Setup Type) w&auml;hlen, um 
+nur die zum Betrieb notwendigen Dateien, aber keine Dokumentation 
+und Beispiele zu installieren. Installieren Sie die ActiveFile Komponente
+auf einem beliebigen virtuellen Server, so ist sie normalerweise von den
+ASP Dateien in allen virtuellen Servern desselben Computers aus verwendbar.</p>
+
+<h3>Verwendung der ActiveFile Komponente</h3>
+
+<p>Die ActiveFile Komponente ist eine ActiveX Komponente und kann daher von jeder
+ASP Datei am Webserver benutzt werden.</p>
+
+<p>Dabei verf&uuml;gt die ActiveFile Komponente &uuml;ber eine Vielzahl von
+Objekten zum Manipulieren von Dateien, Verzeichnissen und ZIP-Archiven.</p>
+
+<p>Hier ein einfaches ASP Skript (<i>ExtractZIP.asp</i>), das ein beliebiges ZIP-Archiv,
+das am Webserver liegt, entpackt und die darin enthaltenen Dateien auf den Webserver
+schreibt. Die Datei <i>ExtractZIP.asp</i> ist im Download zu diesem Artikel enthalten.
+Die ASP-Fehlerbehandlung mittels <i>On Error Resume Next</i>, die Fehler auff&auml;ngt 
+wenn zum Beispiel auf ein nicht existierendes Archiv zugegriffen werden soll,
+sind im nachfolgenden Listing der &Uuml;berischt halber weggelassen.</p>
+
+<p><pre style="background='silver';">
+&lt;%
+ If Request.ServerVariables("CONTENT_LENGTH") &lt;&gt; 0 Then
+    isPostBack = True
+    ZipDatei = Trim(Request.Form("ZipDatei"))
+    Verzeichnis = Trim(Request.Form("Verzeichnis"))
+    
+    PhysVerzeichnis = Server.MapPath(Verzeichnis)
+    PhysZipDatei = Server.MapPath(ZipDatei)
+ 
+    Response.Write("Entpacke Datei&lt;br&gt;" &amp; ZipDatei &amp; _
+    " (" &amp; PhysZipDatei &amp; ")&lt;br&gt;in Verzeichnis&lt;br&gt;" &amp; _
+    Verzeichnis &amp; " (" &amp; PhysVerzeichnis &amp; ").&lt;br&gt;&lt;br&gt;")
+    
+    ' Instanziere das Archive Objekt
+     Set Archive = Server.CreateObject("ActiveFile.Archive")
+    
+    ' Schreibe alle Dateien auf den Webserver
+    ' ACHTUNG: Ueberschreibt alle Dateien ohne Vorwarnung!
+    Archive.Extract "*.*", PhysVerzeichnis
+    
+	Set Archive = Nothing   
+ Else
+    isPostBack = False
+ End If
+%&gt;
+
+&lt;% If  isPostBack = False Then %&gt;
+
+ &lt;form action="&lt;%= Request.ServerVariables("SCRIPT_NAME") %&gt;" 
+    method="POST"&gt;
+ ZipDatei am Server: 
+   &lt;input type="Text" name="ZipDatei" 
+   value="/Verzeichnis/Datei.zip"&gt; &lt;br&gt;
+ Entpacken in Verzeichnis: 
+   &lt;input type="Text" name="Verzeichnis" value="/Verzeichnis"&gt;
+ &lt;br&gt;
+
+ &lt;input type="Submit" name="Submit" value="Entpacken"&gt;
+ &lt;/form&gt;
+
+&lt;% End If %&gt;
+</pre></p>
+
+<p>Dieses ASP Skript pr&auml;sentiert ein Webformular, in dem Sie
+angeben k&ouml;nnen, wo sich die zu entpackenden ZIP-Dateien befinden,
+und in welches Verzeichnis die Dateien und Verzeichnisse 
+des ZIP-Archives geschrieben werden sollen.
+Das Programm verlangt relative Pfadangaben (relativ zum Hauptverzeichnis des Webservers),
+die mittels <i>Server.MapPath</i> in absolute Pfade umgerechnet werden.</p>
+
+<p>Damit das Skript ausf&uuml;hrbar ist, mu&szlig; der <i>IUSR_Machine</i>
+Account des Windows NT 4.0 oder Windows 2000 Webservers ausreichende 
+Schreibrechte f&uuml;r die Verzeichnisse und Dateien der Website haben.
+Die Gr&uuml;nde daf&uuml;r finden Sie in unserem Artikel 
+<a href="20000725.htm">Schreiben einer Textdatei auf den Server</a>
+unter der &Uuml;berschrift "Probleme mit der Zugriffserlaubnis".</p>
+
+<p>Nachdem der Benutzer das Formular abgeschickt hat, werden die Werte der 
+Formularfelder in den Variablen <i>ZipDatei</i> und <i>Verzeichnis</i> gespeichert.</p>
+
+<p>Aus den relativen Pfaden werden mittels <i>Server.MapPath</i> die 
+absoluten Pfade f&uuml;r die ZIP-Datei und das Verzeichnis ermittelt und 
+in den Variablen <i>PhysVerzeichnis </i> und <i>PhysZipDatei </i> gespeichert.</p>
+
+<p>Sodann wird eine Instanz des <i>ActiveFile.Archive</i> Objektes mittels
+<i>CreateObject</i> instanziert und in der Variablen <i>Archive</i> gespeichert.
+&Uuml;ber diese Variable kann man nun alle Aktionen setzen, die das  
+<i>ActiveFile.Archive</i> Objekt zur Verf&uuml;gung stellt.</p>
+
+<p>Das Entpacken der ZIP-Datei selbst geht durch Aufruf der
+<i>Extract</i> Methode des <i>ActiveFile.Archive</i> Objektes
+vonstatten:</p>
+
+<p><pre style="background='silver';">
+<i>Archive</i>.Extract <i>"*.*"</i>, <i>PhysVerzeichnis</i>
+</pre></p>
+
+<p>Der Parameter <i>"*.*"</i> bedeutet, da&szlig; alle Dateien des ZIP-Archives 
+entpackt und auf den Webserver geschrieben werden. 
+Der Parameter <i>PhysVerzeichnis</i> gibt das Verzeichnis 
+(als physikalischen Pfad) an, in das die Dateien und Verzeichnisse des
+ZIP-Archives geschrieben werden.</p>
+
+<p>Nachdem das ZIP-Archiv extrahiert ist, k&ouml;nnen Sie die ZIP-Datei
+auf dem Webserver (zum Beispiel mittels FTP Programm) l&ouml;schen,
+damit kein unn&ouml;tiger Speicherplatz verbraucht wird.</p>
+
+<p>Wie man nun den umgekehrten Weg geht und Dateien am Webserver,
+wie zum Beispiel volumin&ouml;se Access Datenbanken (*.mdb Dateien) zu
+komprimieren, um das Laden der Datei vom Webserver zu beschleunigen,
+m&ouml;chte ich in einem meiner n&auml;chsten Artikel zeigen.</p>
+
+<h2>Schlu&szlig;bemerkung</h2>
+
+<p>Dateien von und zum Webserver zu transferieren ist eine zeitaufwendige Aufgabe.
+Um speziell den Umgang mit einer gro&szlig;en Anzahl von Textdateien zu erleichtern,
+empfiehlt es sich, die Dateien zu komprimieren und in ein ZIP-Archiv zu verpacken,
+dieses Archiv zum Server zu transferieren, und es dort wieder zu entpacken.
+Die Verzeichnisstruktur aller Dateien, Verzeichnisse und Unterverzeichnisse 
+bleibt bei diesem Vorgang erhalten.</p>
+
+<p>Wenn man keinen direkten Zugriff auf den Webserver hat, so kann man sich selbst
+mittles ASP und einer ActiveX Komponente wie <i>ActiveFile</i> ein Skript schreiben,
+da&szlig; das Entpacken der ZIP-Datei und das Schreiben des komprimierten Inhaltes
+auf den Webserver erlaubt.</p>
+<h2>Download des Codes</h2>
+<p><a href="../Code/20001005.zip">Klicken Sie hier</a>, um den Download zu starten.</p>
+<h2>Verwandte Artikel</h2>
+<p>
+<a href="20001113.htm">Eine simple UNZIP-Komponente programmieren</a><br>
+<a href="20020411.htm">Kopieren verboten - Lizenzsicherung bei ASP Scripts</a><br>
+<a href="20001016.htm">Manipulieren von ZIP Archiven am Server</a><br>
+<a href="20000725.htm">Schreiben einer Textdatei auf den Server</a><br>
+<a href="20010507.htm">Web-basiertes Dateimanagement mit dem ASP FileMan</a><br>
+
+</p>
+<h2>Links zu anderen Sites</h2>
+<p>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Einfomentum%2Ecom%2Factivefile%2F">ActiveFile Komponente</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fsupport%2Emicrosoft%2Ecom%2Fsupport%2Fkb%2Farticles%2FQ188%2F7%2F12%2EASP">HOWTO: Troubleshoot IUSR_machine Permissions Problem</a><br>
+<a target="_blank" href="/REMOVED/3w_link.asp?3wsite=http%3A%2F%2Fwww%2Ewinzip%2Ede">Winzip</a><br>
+
+</p>
+
+<h2>Wenn Sie jetzt Fragen haben...</h2>
+<p>
+Wenn Sie Fragen rund um die in diesem Artikel vorgestellte Technologie haben, dann schauen Sie einfach bei uns
+in den <a href="http://glengamoi.com/forums/">Community Foren der deutschen .NET Community</a> vorbei. Die Teilnehmer 
+helfen Ihnen gerne, wenn Sie sich zur im Artikel vorgestellten Technologie weiterbilden m&ouml;chten.
+</p>
+
+<p>
+<a href="http://glengamoi.com/forums/"><img src="../images/glengamoi.com_250.gif" width="250" height="80" alt="" border="0"></a>
+</p>
+
+
+<p>
+Haben Sie Fragen die sich direkt auf den Inhalt des Artikels beziehen, dann schreiben Sie dem Autor! Unsere Autoren
+freuen sich &uuml;ber Feedback zu ihren Artikeln. Ein einfacher Klick auf die <i>Autor kontaktieren</i>
+Schaltfl&auml;che (weiter unten) und schon haben Sie ein f&uuml;r diesen Artikel personalisiertes Anfrageformular.
+</p>
+
+<p>&nbsp;</p>
+<p>
+Und zu guter Letzt m&ouml;chten wir Sie bitten, den Artikel zu bewerten. Damit helfen Sie uns, 
+die Qualit&auml;t der Artikel zu verbessern - und anderen Lesern bei der Auswahl der Artikel,
+die sie lesen sollten.
+</p>
+
+<FORM METHOD="POST" STYLE="margin-bottom: 0px;" NAME="formRating" ACTION="/service/bewerten.asp">
+<INPUT TYPE="HIDDEN" NAME="ArticleId" VALUE="20001005" />
+<CENTER>
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<TR>
+	<TD ALIGN="CENTER" VALIGN="MIDDLE" COLSPAN="7">Bewerten Sie diesen Artikel</TD>
+</TR>
+<TR>
+	<TD><EM>&nbsp;Sehr gut&nbsp;</EM></TD>
+	<TD><INPUT TYPE="radio" value="1" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="2" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="3" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="4" NAME="radioRating" /></TD>
+	<TD><INPUT TYPE="radio" value="5" NAME="radioRating" /></TD>
+	<TD ALIGN="right"><EM>&nbsp;Nicht gen&uuml;gend</EM></TD>
+	<TD ROWSPAN="2" VALIGN="middle">&nbsp;<INPUT TYPE="submit" VALUE="Werten!" /></TD>
+</TR>
+<TR>
+	<TD>&nbsp;</TD>
+	<TD ALIGN="CENTER">&nbsp;1</TD>
+	<TD ALIGN="CENTER">&nbsp;2</TD>
+	<TD ALIGN="CENTER">&nbsp;3</TD>
+	<TD ALIGN="CENTER">&nbsp;4</TD>
+	<TD ALIGN="CENTER">&nbsp;5</TD>
+	<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+</FORM>
+</center>
+&nbsp;<P>
+<center>
+<p><table><tr><td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="pagetitle" value="Zippen und entzippen von Dateien"><input type="hidden" name="pageurl" value="http://www.aspheute.com/artikel/20001005.htm"><input type="image" src="../images/layout/senden.png" width="107" height="20" border="0" alt="Schicken Sie diese Seite einem Freund!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top>
+<form action="REMOVED" method="GET"><input type="hidden" name="Author" value="Christian Koller"><input type="hidden" name="AuthorEmail" value="christiank@aspexpert.com"><input type="hidden" name="Artikel" value="20001005"><input type="image" src="../images/layout/kontakt.png" width="107" height="20" border="0" alt="Kontaktieren Sie den Autor!" style="cursor='hand';"></form>
+<td>&nbsp;&nbsp;</td>
+<td valign=top><a href="../PrinterFriendly/20001005.htm"><img src="../images/layout/druck.png" width="118" height="20" border="0" alt="F&uuml;r Ausdruck optimierte Seite"></a></td>
+</tr></table></p>
+</center>
+
+<center>
+<p class="content">
+&copy;2000-2006 <A HREF="../service/copyright.htm" title="Copyright Informationen">AspHeute.com</A><br>
+Alle Rechte vorbehalten. Der Inhalt dieser Seiten ist urheberrechtlich gesch&uuml;tzt.<br>
+Eine &Uuml;bernahme von Texten (auch nur auszugsweise) oder Graphiken bedarf unserer schriftlichen Zustimmung.
+<hr>
+</p>
+</center>
+
+</td>
+</tr><!--Tabelle aussen, 2/2-->
+</table><!--Tabelle aussen-->
+</div>
+
+</BODY>
+</HTML>
