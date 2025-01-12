@@ -7,5 +7,5 @@ ist in diesem Repository archiviert. Und zwar nur die deutschen Inhalte. Dh eini
 sind vollständig vorhanden (inklusive Beispielcode und printfähigen Versionen der Artikel)
 
 
-[Browsen starten](https://raw.githack.com/christophwille/aspheute-german-content/autoren/UnsereAutoren.htm)
+[Browsen starten](https://raw.githack.com/christophwille/aspheute-german-content/main/autoren/UnsereAutoren.htm)
 
